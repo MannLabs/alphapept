@@ -7,24 +7,51 @@ entries:
 - folders:
   - folderitems:
     - output: web,pdf
-      title: Export to modules
-      url: /export.html
+      title: Overview
+      url: /
     - output: web,pdf
-      title: Convert to html
-      url: /export2html.html
+      title: Main
+      url: /main
     - output: web,pdf
-      title: Show doc
-      url: /showdoc.html
+      title: Chem
+      url: /chem
     - output: web,pdf
-      title: Test functions
-      url: /test.html
+      title: Input / Output
+      url: /io
     - output: web,pdf
-      title: Core functions
-      url: /core.html
+      title: FASTA
+      url: /fasta
     - output: web,pdf
-      title: Command line functions
-      url: /cli.html
+      title: Feature Finding
+      url: /feature_finding
+    - output: web,pdf
+      title: Search
+      url: /search
+    - output: web,pdf
+      title: Score
+      url: /score
+    - output: web,pdf
+      title: Recalibration
+      url: /recalibration
+    - output: web,pdf
+      title: Quantification
+      url: /quantification
+    - output: web,pdf
+      title: Matching
+      url: /matching
+    - output: web,pdf
+      title: Constants
+      url: /constants
+    - output: web,pdf
+      title: Settings
+      url: /settings
+    - output: web,pdf
+      title: Settings Template
+      url: /settings_template
+    - output: web,pdf
+      title: Title
+      url: /WebTest
     output: web
-    title: Notebook
+    title: alphapept
   output: web
   title: Sidebar

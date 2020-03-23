@@ -1,10 +1,19 @@
 {
-  "Notebook": {
-    "Export to modules": "/export",
-    "Convert to html": "/export2html",
-    "Show doc": "/showdoc",
-    "Test functions": "/test",
-    "Core functions": "/core",
-    "Command line functions": "/cli"
+  "alphapept": {
+    "Overview": "/",
+    "Main": "/main",
+    "Chem": "/chem",
+    "Input / Output": "/io",
+    "FASTA": "/fasta",
+    "Feature Finding": "/feature_finding",
+    "Search": "/search",
+    "Score": "/score",
+    "Recalibration": "/recalibration",
+    "Quantification": "/quantification",
+    "Matching": "/matching",
+    "Constants": "/constants",
+    "Settings": "/settings",
+    "Settings Template": "/settings_template",
+    "Title": "/WebTest"
   }
 }
