@@ -60,5 +60,5 @@ sidebars:
 - home_sidebar
 permalink: pretty
 
-theme: jekyll-theme-slate
+theme: jekyll-theme-cayman
 baseurl: /alphapept/
