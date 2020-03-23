@@ -2,10 +2,7 @@
 
 __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
-index = {"alphapept_screen": "00_main.ipynb",
-         "main": "00_main.ipynb",
-         "version": "00_main.ipynb",
-         "IsotopeDistribution": "01_chem.ipynb",
+index = {"IsotopeDistribution": "01_chem.ipynb",
          "fast_add": "01_chem.ipynb",
          "numba_bin": "01_chem.ipynb",
          "dict_to_dist": "01_chem.ipynb",
@@ -161,8 +158,7 @@ index = {"alphapept_screen": "00_main.ipynb",
          "general": "11_settings.ipynb",
          "calibration": "11_settings.ipynb"}
 
-modules = ["main.py",
-           "chem.py",
+modules = ["chem.py",
            "io.py",
            "fasta.py",
            "feature_finding.py",
