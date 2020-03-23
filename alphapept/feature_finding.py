@@ -506,7 +506,6 @@ def split_recursive(current_hill, y_smooth, split_level):
 
     return [current_hill]
 
-
 # Cell
 def filter_hills(hills, centroids, hill_min_length=2, hill_peak_factor=2, hill_peak_min_length=40, smoothing=1, callback=None):
     """
@@ -1113,7 +1112,6 @@ def truncate(array, intensity_profile, seedpos):
 
     return array
 
-
 # Cell
 def get_isotope_patterns(pre_isotope_patterns, stats, data, averagine_aa, isotopes, min_charge = 1, max_charge = 6, mass_range = 5, seed_masses = 100, callback=None):
     """
@@ -1319,7 +1317,6 @@ def plot_isotope_pattern(index, df, sorted_stats, centroids, scan_range=100, mz_
 
     plt.style.use('ggplot')
 
-
 # Cell
 def find_features(query_data, callback = None, **kwargs):
     """
@@ -1364,4 +1361,3 @@ def find_features(query_data, callback = None, **kwargs):
     print('Time elapsed {}'. format(end-start))
 
     return df
-
