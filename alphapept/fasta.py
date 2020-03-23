@@ -251,7 +251,6 @@ def add_variable_mods_terminal(peptides, mods_variable_terminal, **kwargs):
 def get_unique_peptides(peptides):
     return list(set(peptides))
 
-
 # Cell
 def generate_peptides(peptide, **kwargs):
     """
@@ -329,7 +328,6 @@ def get_fragmass(parsed_pep, mass_dict):
         n_frag += 1
 
     return frag_masses, frag_type
-
 
 # Cell
 def get_frag_dict(parsed_pep, mass_dict):
