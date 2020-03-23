@@ -30,7 +30,7 @@ This file will become your README and also the index of your documentation.
 
 #### Calling individual functions
 
-```python
+```
 1+1
 ```
 
