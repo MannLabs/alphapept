@@ -51,7 +51,6 @@ def get_q_values(fdr_values):
 
     return q_values
 
-
 # Cell
 def cut_fdr(df, fdr_level=0.01, plot=True, verbose=True):
     """
@@ -136,7 +135,6 @@ def cut_fdr(df, fdr_level=0.01, plot=True, verbose=True):
 
     cutoff = cutoff.reset_index(drop=True)
     return cutoff_value, cutoff
-
 
 # Cell
 

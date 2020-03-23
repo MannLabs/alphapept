@@ -306,7 +306,6 @@ def read_mzXML(filename, most_abundant):
     return scan_list_ms1, rt_list_ms1, mass_list_ms1, int_list_ms1, ms_list_ms1, \
            scan_list_ms2, rt_list_ms2, mass_list_ms2, int_list_ms2, ms_list_ms2, prec_mass_list2
 
-
 # Cell
 def list_to_numpy_f32(long_list):
     """
