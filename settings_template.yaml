@@ -1,0 +1,320 @@
+calibration:
+  method:
+    default: linear
+    description: Interpolation method.
+    type: combobox
+    value:
+    - linear
+    - nearest
+    - cubic
+  min_mz_step:
+    default: 80
+    description: Minimum number of datapoints in for mz interpolation.
+    max: 999
+    min: 1
+    type: spinbox
+  min_rt_step:
+    default: 50
+    description: Minimum number of datapoints in for rt interpolation.
+    max: 999
+    min: 1
+    type: spinbox
+  minimum_score:
+    default: 20
+    description: Minimum score for psms used for calibration.
+    max: 999
+    min: 1
+    type: spinbox
+  outlier_std:
+    default: 3
+    description: Number of std. deviations to filter outliers in psms.
+    max: 5
+    min: 1
+    type: spinbox
+fasta:
+  fasta_folder:
+    default: '...'
+    description: Path to folder with fasta files.
+    filetype:
+    - fasta
+    folder: true
+    type: path
+  fasta_path:
+    default: '...'
+    description: Path to fasta file.
+    filetype:
+    - fasta
+    folder: false
+    type: path
+  library_path:
+    default: '...'
+    description: Path to library file (.npz).
+    filetype:
+    - npz
+    folder: false
+    type: path
+  max_isoforms:
+    default: 1024
+    description: Maximum number of isoforms per peptide.
+    max: 4096
+    min: 1
+    type: spinbox
+  max_length:
+    default: 27
+    description: Maximum peptide length.
+    max: 99
+    min: 6
+    type: spinbox
+  min_length:
+    default: 6
+    description: Minimum peptide length.
+    max: 99
+    min: 6
+    type: spinbox
+  mods_fixed:
+    default:
+    - cC
+    description: Fixed modifications.
+    type: checkgroup
+    value: &id001
+      aK: acetylation of lysine
+      cC: carbamidomethylation of C
+      deamN: deamidation of N
+      deamNQ: deamidation of Q
+      eK: EASItag 6-plex on K
+      itraq4K: iTRAQ 4-plex on K
+      itraq4Y: iTRAQ 4-plex on Y
+      itraq8K: iTRAQ 8-plex on K
+      itraq8Y: iTRAQ 8-plex on Y
+      oxM: oxidation of M
+      pS: phosphorylation of S
+      pT: phosphorylation of T
+      pY: phosphorylation of Y
+      tmt0K: TMT zero on K
+      tmt0Y: TMT zero on Y
+      tmt2K: TMT duplex on K
+      tmt2Y: TMT duplex on Y
+      tmt6K: TMT sixplex/tenplex on K
+      tmt6Y: TMT sixplex/tenplex on Y
+  mods_fixed_terminal:
+    default: []
+    description: Fixed terminal modifications.
+    type: checkgroup
+    value: &id002
+      cmC<: pyro-cmC
+      e<^: EASItag 6-plex on peptide N-terminus
+      itraq4K<^: iTRAQ 4-plex on peptide N-terminus
+      itraq8K<^: iTRAQ 8-plex on peptide N-terminus
+      pgE<: pyro-E
+      pgQ<: pyro-Q
+      tmt0<^: TMT zero on peptide N-terminus
+      tmt2<^: TMT duplex on peptide N-terminus
+      tmt6<^: TMT sixplex/tenplex on peptide N-terminus
+  mods_fixed_terminal_prot:
+    default: []
+    description: Fixed terminal modifications on proteins.
+    type: checkgroup
+    value: &id003
+      a<^: acetylation of protein N-terminus
+      am>^: amidation of protein C-terminus
+  mods_variable:
+    default:
+    - oxM
+    description: Fixed variable modifications.
+    type: checkgroup
+    value: *id001
+  mods_variable_terminal:
+    default: []
+    description: Fixed varibale terminal modifications.
+    type: checkgroup
+    value: *id002
+  mods_variable_terminal_prot:
+    default: []
+    description: Fixed varibale terminal modifications  on proteins.
+    type: checkgroup
+    value: *id003
+  num_missed_cleavages:
+    default: 2
+    description: Number of missed cleavages.
+    max: 99
+    min: 0
+    type: spinbox
+  protease:
+    default: trypsin
+    description: Protease for digestions.
+    type: combobox
+    value:
+    - arg-c
+    - asp-n
+    - bnps-skatole
+    - caspase 1
+    - caspase 2
+    - caspase 3
+    - caspase 4
+    - caspase 5
+    - caspase 6
+    - caspase 7
+    - caspase 8
+    - caspase 9
+    - caspase 10
+    - chymotrypsin high specificity
+    - chymotrypsin low specificity
+    - clostripain
+    - cnbr
+    - enterokinase
+    - factor xa
+    - formic acid
+    - glutamyl endopeptidase
+    - granzyme b
+    - hydroxylamine
+    - iodosobenzoic acid
+    - lysc
+    - ntcb
+    - pepsin ph1.3
+    - pepsin ph2.0
+    - proline endopeptidase
+    - proteinase k
+    - staphylococcal peptidase i
+    - thermolysin
+    - thrombin
+    - trypsin
+    - trypsin_exception
+    - non-specific
+    - morpheus trypsin
+features:
+  mass_importance:
+    default: 100
+    max: 1000
+    min: 1
+    type: spinbox
+  max_distance:
+    default: 0.4
+    max: 1.0
+    min: 0.0
+    type: doublespinbox
+  max_gap:
+    default: 2
+    max: 99
+    min: 1
+    type: spinbox
+  max_neighbors:
+    default: 4
+    max: 10
+    min: 1
+    type: spinbox
+  min_hill_length:
+    default: 3
+    max: 10
+    min: 1
+    type: spinbox
+  ppm_tol:
+    default: 8
+    max: 99
+    min: 1
+    type: spinbox
+  smoothing:
+    default: 1
+    max: 10
+    min: 1
+    type: spinbox
+general:
+  convert_raw:
+    default: true
+    description: Flag to re-create the npz container from raw.
+    type: checkbox
+  create_library:
+    default: true
+    description: Flag to re-create the database from fasta.
+    type: checkbox
+  parallel:
+    default: true
+    description: Use parallel processing.
+    type: checkbox
+  ppm:
+    default: true
+    description: Use ppm instead of Dalton.
+    type: checkbox
+  settings_path:
+    default: '...'
+    description: Path to settings file (.yaml).
+    filetype:
+    - yaml
+    folder: false
+    type: path
+raw:
+  most_abundant:
+    default: 400
+    description: Number of most abundant peaks to be isolated from raw spectra.
+    max: 1000
+    min: 1
+    type: spinbox
+  raw_folder:
+    default: '...'
+    description: Path to folder with raw files.
+    filetype:
+    - raw
+    folder: true
+    type: path
+  raw_path:
+    default: '...'
+    description: Path to raw file.
+    filetype:
+    - raw
+    folder: false
+    type: path
+  raw_path_npz:
+    default: '...'
+    description: Path to npz file, converted from raw.
+    filetype:
+    - npz
+    folder: false
+    type: path
+search:
+  calibrate:
+    default: true
+    description: Recalibrate masses.
+    type: checkbox
+  calibration_std:
+    default: 3
+    description: Std range for search after calibration.
+    max: 5
+    min: 1
+    type: spinbox
+  m_offset:
+    default: 10
+    description: Precursor mass offset.
+    max: 99
+    min: 1
+    type: spinbox
+  m_tol:
+    default: 20
+    description: MSMS mass offset.
+    max: 99
+    min: 1
+    type: spinbox
+  min_frag_hits:
+    default: 7
+    description: Minimum number of fragment hits.
+    max: 99
+    min: 1
+    type: spinbox
+  parallel:
+    default: true
+    description: Use parallel processing.
+    type: checkbox
+  peptide_fdr:
+    default: 0.01
+    description: FDR level for peptides.
+    max: 1.0
+    min: 0.0
+    type: doublespinbox
+  ppm:
+    default: true
+    description: Use ppm instead of Dalton.
+    type: checkbox
+  protein_fdr:
+    default: 0.01
+    description: FDR level for proteins.
+    max: 1.0
+    min: 0.0
+    type: doublespinbox
