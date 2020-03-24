@@ -559,4 +559,4 @@ def save_library(spectra, pept_dict, fasta_dict, library_path, **kwargs):
 
     print("DB File saved to {}".format)
 
-    return db_path
+    return library_path
