@@ -1318,6 +1318,7 @@ def plot_isotope_pattern(index, df, sorted_stats, centroids, scan_range=100, mz_
     plt.style.use('ggplot')
 
 # Cell
+from time import time
 def find_features(query_data, callback = None, **kwargs):
     """
     Wrapper for feature finding
