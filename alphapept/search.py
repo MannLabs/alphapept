@@ -172,6 +172,8 @@ def compare_specs_single(
 
 # Cell
 
+import pandas as pd
+
 def query_data_to_features(query_data):
 
     # if we dont use the feature finder we extract them from the query data..
