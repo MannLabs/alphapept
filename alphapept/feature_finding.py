@@ -1157,6 +1157,8 @@ def get_isotope_patterns(pre_isotope_patterns, stats, data, averagine_aa, isotop
     return isotope_patterns, isotope_charges
 
 # Cell
+
+#ToDo: include callback
 from .feature_finding import mz_to_mass
 
 import pandas as pd
@@ -1174,7 +1176,7 @@ def feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorte
 
     data = []
 
-    for runner in tqdm(range(len(isotope_patterns))):
+    for runner in range(len(isotope_patterns)):
 
         isotope_data = np.hstack([sorted_data[_] for _ in isotope_patterns[runner]])
 
