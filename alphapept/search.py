@@ -284,47 +284,45 @@ def get_psms(
         n_chunks = 100
         num_specs_compared = 0
 
-        with tqdm(total=n_chunks, desc="Comparing spectra", unit="chunks") as pbar:
-            for current_chunk in range(n_chunks):
-                chunk = (current_chunk, n_chunks)
-                offset = False
-                if parallel:
-                    frag_hits, num_specs_compared_chunk = compare_specs_parallel(
-                        frag_hits,
-                        query_masses,
-                        query_frags,
-                        db_masses,
-                        db_frags,
-                        idxs_lower,
-                        idxs_higher,
-                        m_tol,
-                        query_bounds,
-                        db_bounds,
-                        chunk,
-                        offset,
-                        ppm,
-                    )
-                else:
-                    frag_hits, num_specs_compared_chunk = compare_specs_single(
-                        frag_hits,
-                        query_masses,
-                        query_frags,
-                        db_masses,
-                        db_frags,
-                        idxs_lower,
-                        idxs_higher,
-                        m_tol,
-                        query_bounds,
-                        db_bounds,
-                        chunk,
-                        offset,
-                        ppm,
-                    )
+        for current_chunk in range(n_chunks):
+            chunk = (current_chunk, n_chunks)
+            offset = False
+            if parallel:
+                frag_hits, num_specs_compared_chunk = compare_specs_parallel(
+                    frag_hits,
+                    query_masses,
+                    query_frags,
+                    db_masses,
+                    db_frags,
+                    idxs_lower,
+                    idxs_higher,
+                    m_tol,
+                    query_bounds,
+                    db_bounds,
+                    chunk,
+                    offset,
+                    ppm,
+                )
+            else:
+                frag_hits, num_specs_compared_chunk = compare_specs_single(
+                    frag_hits,
+                    query_masses,
+                    query_frags,
+                    db_masses,
+                    db_frags,
+                    idxs_lower,
+                    idxs_higher,
+                    m_tol,
+                    query_bounds,
+                    db_bounds,
+                    chunk,
+                    offset,
+                    ppm,
+                )
 
-                pbar.update()
-                if callback is not None:
-                    callback(current_chunk/n_chunks)
-                num_specs_compared += num_specs_compared_chunk
+            if callback is not None:
+                callback(current_chunk/n_chunks)
+            num_specs_compared += num_specs_compared_chunk
 
     hit_query, hit_db = np.where(frag_hits >= min_frag_hits)
     hits = frag_hits[hit_query, hit_db]
