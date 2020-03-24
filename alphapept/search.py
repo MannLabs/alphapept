@@ -41,6 +41,7 @@ def compare_frags(query_frag, db_frag, mtol, ppm=False):
     return hits
 
 # Cell
+from numba import prange
 @njit
 def ppm_to_dalton(mass, m_offset):
     """
