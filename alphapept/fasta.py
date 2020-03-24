@@ -3,9 +3,9 @@
 __all__ = ['cleave_sequence', 'parse', 'list_to_numba', 'get_decoy_sequence', 'swap_KR', 'swap_AL', 'get_decoys',
            'add_decoy_tag', 'add_fixed_mods', 'get_mod_pos', 'get_isoforms', 'add_variable_mods',
            'add_fixed_mod_terminal', 'add_fixed_mods_terminal', 'add_variable_mods_terminal', 'get_unique_peptides',
-           'generate_peptides', 'get_precmass', 'get_fragmass', 'get_frag_dict', 'read_fasta_file',
-           'read_fasta_file_entries', 'read_fasta', 'check_sequence', 'add_to_pept_dict', 'generate_library',
-           'generate_spectra', 'save_library']
+           'generate_peptides', 'get_precmass', 'get_fragmass', 'get_frag_dict', 'get_spectrum', 'get_spectra',
+           'read_fasta_file', 'read_fasta_file_entries', 'read_fasta', 'check_sequence', 'add_to_pept_dict',
+           'generate_library', 'generate_spectra', 'save_library']
 
 # Cell
 from pyteomics import parser
@@ -359,6 +359,32 @@ def get_frag_dict(parsed_pep, mass_dict):
     return frag_dict
 
 # Cell
+@njit
+def get_spectrum(peptide, mass_dict):
+    parsed_peptide = parse(peptide)
+
+    fragmasses, fragtypes = get_fragmass(parsed_peptide, mass_dict)
+    sortindex = np.argsort(fragmasses)
+    fragmasses = fragmasses[sortindex]
+    fragtypes = fragtypes[sortindex]
+
+    precmass = get_precmass(parsed_peptide, mass_dict)
+
+    return (precmass, peptide, fragmasses, fragtypes)
+
+
+@njit
+def get_spectra(peptides, mass_dict):
+    # Numba function for parallel calculation of spectra
+    # prange does seem to make problems here..
+    spectra = []
+
+    for i in range(len(peptides)):
+        spectra.append(get_spectrum(peptides[i], mass_dict))
+
+    return spectra
+
+# Cell
 from Bio import SeqIO
 import os
 from glob import glob
@@ -510,7 +536,7 @@ def generate_spectra(to_add, mass_dict, callback = None):
 from .io import list_to_numpy_f32
 
 
-def save_library(spectra, pept_dict, fasta_dict, db_path, **kwargs):
+def save_library(spectra, pept_dict, fasta_dict, library_path, **kwargs):
     """
     Function to save a library to the *.npz format.
     """
@@ -529,7 +555,7 @@ def save_library(spectra, pept_dict, fasta_dict, db_path, **kwargs):
 
     to_save["bounds"] = np.sum(to_save['fragmasses']>=0,axis=0).astype(np.int64)
 
-    np.savez(db_path, **to_save)
+    np.savez(library_path, **to_save)
 
     print("DB File saved to {}".format)
 
