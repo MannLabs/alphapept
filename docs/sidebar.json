@@ -1,7 +1,6 @@
 {
   "alphapept": {
     "Overview": "/",
-    "Main": "/main",
     "Chem": "/chem",
     "Input / Output": "/io",
     "FASTA": "/fasta",
@@ -14,6 +13,6 @@
     "Constants": "/constants",
     "Settings": "/settings",
     "Settings Template": "/settings_template",
-    "Title": "/WebTest"
+    "Title": "/Runner"
   }
 }

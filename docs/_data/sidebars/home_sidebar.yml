@@ -10,9 +10,6 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
-      title: Main
-      url: /main
-    - output: web,pdf
       title: Chem
       url: /chem
     - output: web,pdf
@@ -50,7 +47,7 @@ entries:
       url: /settings_template
     - output: web,pdf
       title: Title
-      url: /WebTest
+      url: /Runner
     output: web
     title: alphapept
   output: web
