@@ -241,11 +241,11 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
         indexes = found_proteins[protein]
         report.loc[indexes, 'protein'] = fasta_dict[protein]['name']
 
-    report['Razor'] = False
+    report['razor'] = False
     for protein in found_proteins_razor.keys():
         indexes = found_proteins_razor[protein]
         report.loc[indexes, 'protein'] = fasta_dict[int(protein)]['name']
-        report.loc[indexes, 'Razor'] = True
+        report.loc[indexes, 'razor'] = True
 
     return report
 
