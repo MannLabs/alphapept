@@ -671,10 +671,8 @@ def get_score_columns(
 
         if 'int_sum' in features.keys():
             psms = add_column(psms, features['int_sum'].iloc[psms["query_idx"]].values, 'int_sum')
-
-
-
-
+        if 'int_apex' in features.keys():
+            psms = add_column(psms, features['int_apex'].iloc[psms["query_idx"]].values, 'int_apex')
 
     return psms, num_specs_scored
 
