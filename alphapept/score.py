@@ -53,6 +53,11 @@ def get_q_values(fdr_values):
     return q_values
 
 # Cell
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 def cut_fdr(df, fdr_level=0.01, plot=True, verbose=True):
     """
     Cuts a dataframe with a given fdr level
