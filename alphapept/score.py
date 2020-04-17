@@ -251,7 +251,10 @@ import seaborn as sns
 
 
 def score_RF(df,
-             features,
+             features = ['y_hits','b_hits','matched_int',
+                         'delta_m_ppm','abs_delta_m_ppm',
+                         'charge_2.0','charge_3.0','charge_4.0','charge_5.0',
+                         'nAA','nMissed','lnSequence','xTandem'],
              fdr_level = 0.01,
              ini_score = 'y_hits',
              n_iterations = 5,
