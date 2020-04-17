@@ -325,7 +325,7 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
                     found_proteins[proteins[0]] = [i]
 
         if callback:
-            callback(i/len(data))
+            callback((i+1)/len(data))
 
     print('A total of {:,} proteins with unique PSMs found'.format(len(found_proteins)))
 
