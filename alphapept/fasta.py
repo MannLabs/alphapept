@@ -523,7 +523,7 @@ def generate_spectra(to_add, mass_dict, callback = None):
             for i in range(0, len(to_add), stepsize):
                 sub = to_add[i:i + stepsize]
                 spectra.extend(get_spectra(sub, mass_dict))
-                callback(i/len(to_add))
+                callback((i+1)/len(to_add))
 
         else:
             spectra = get_spectra(to_add, mass_dict)
@@ -556,7 +556,5 @@ def save_library(spectra, pept_dict, fasta_dict, library_path, **kwargs):
     to_save["bounds"] = np.sum(to_save['fragmasses']>=0,axis=0).astype(np.int64)
 
     np.savez(library_path, **to_save)
-
-    print("DB File saved to {}".format)
 
     return library_path
