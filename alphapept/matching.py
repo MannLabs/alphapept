@@ -6,6 +6,7 @@ __all__ = ['match_ms2']
 
 from sklearn.neighbors import KDTree
 import pandas as pd
+import numpy as np
 
 
 def match_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, n_neighbors=3):
@@ -31,13 +32,16 @@ def match_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, n_neigh
 
     all_df = []
     for neighbor in range(n_neighbors):
-        ref_df = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'm/z', 'charge'])
+        ref_df = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'mz', 'charge'])
 
         ref_df['mass_matched'] = feature_table.iloc[idx[:,neighbor]]['mass'].values
         ref_df['mass_offset'] = ref_df['mass_matched'] - ref_df['mass']
 
         ref_df['rt_matched'] = feature_table.iloc[idx[:,neighbor]]['rt_apex'].values
         ref_df['rt_offset'] = ref_df['rt_matched'] - ref_df['rt']
+
+        ref_df['mz_matched'] = feature_table.iloc[idx[:,neighbor]]['mz'].values
+        ref_df['mz_offset'] = ref_df['mz_matched'] - ref_df['mz']
 
         ref_df['charge_matched'] = feature_table.iloc[idx[:,neighbor]]['charge'].values
 
