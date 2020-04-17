@@ -322,7 +322,7 @@ def get_psms(
                 )
 
             if callback is not None:
-                callback(current_chunk/n_chunks)
+                callback((current_chunk+1)/n_chunks)
             num_specs_compared += num_specs_compared_chunk
 
     hit_query, hit_db = np.where(frag_hits >= min_frag_hits)

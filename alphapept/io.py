@@ -93,7 +93,7 @@ def load_thermo_raw(raw_file, most_abundant, callback=None, **kwargs):
         charge_list.append(charge)
 
         if callback:
-            callback(idx/len(spec_indices))
+            callback((idx+1)/len(spec_indices))
 
     scan_list_ms1 = [scan_list[i] for i, _ in enumerate(ms_list) if _ == 1]
     rt_list_ms1 = [rt_list[i] for i, _ in enumerate(ms_list) if _ == 1]
