@@ -127,14 +127,14 @@ def raw_to_centroid(query_data, callback=None):
         )
 
         if callback:
-            callback(i/2*len(masses))
+            callback(i/len(masses)/2)
 
     centroids = []
 
     for i, _ in enumerate(centroids_pre):
         centroids.append(np.array(_, dtype=centroid_dtype))
         if callback:
-            callback((len(masses)+i)/2*len(masses))
+            callback((len(masses)+i)/len(masses)/2)
 
     return centroids
 
