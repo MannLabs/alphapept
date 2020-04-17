@@ -127,14 +127,14 @@ def raw_to_centroid(query_data, callback=None):
         )
 
         if callback:
-            callback(i/len(masses)/2)
+            callback((i+1)/len(masses)/2)
 
     centroids = []
 
     for i, _ in enumerate(centroids_pre):
         centroids.append(np.array(_, dtype=centroid_dtype))
         if callback:
-            callback((len(masses)+i)/len(masses)/2)
+            callback((len(masses)+i+1)/len(masses)/2)
 
     return centroids
 
@@ -343,7 +343,7 @@ def get_hills(centroids, max_gap = 2, min_hill_length = 3, ppm_tol = 8, buffer_s
                             G.remove_node(node)
 
         if callback:
-            callback(current_scan/len(centroids))
+            callback((current_scan+1)/len(centroids))
 
 
     c_comps = list(nx.connected_components(G))
@@ -449,7 +449,7 @@ def split_hills(hills, centroids, smoothing = 1, split_level=1.3, callback=None)
         split_hills.extend(split_hill(hill_data, current_hill, smoothing, split_level))
 
         if callback:
-            callback(index/len(hills))
+            callback((index+1)/len(hills))
 
     split_hills.sort(key=len, reverse=True)
 
@@ -526,7 +526,7 @@ def filter_hills(hills, centroids, hill_min_length=2, hill_peak_factor=2, hill_p
                     filtered_hills.append(current_hill)
 
         if callback:
-            callback(idx / len(hills))
+            callback((idx+1) / len(hills))
 
     return filtered_hills
 
@@ -605,7 +605,7 @@ def get_hill_data(hills, centroids, callback=None):
         hill_data.append(np.array([centroids[_[0]][_[1]] for _ in hill], dtype=centroid_dtype))
 
         if callback:
-            callback(idx/len(hills)*0.5) #First half
+            callback((idx+1)/len(hills)*0.5) #First half
 
 
     hill_stats = get_hill_data_numba(hill_data)
@@ -632,7 +632,7 @@ def get_hill_data(hills, centroids, callback=None):
         sorted_data_numba.append(_)
 
         if callback:
-            callback(idx/len(sorted_data)+0.5) #Second half
+            callback((idx+1)/len(sorted_data)+0.5) #Second half
 
     return sorted_hills, sorted_stats, sorted_data_numba
 
@@ -750,7 +750,7 @@ def get_edges(sorted_stats, hill_datas, cc_cutoff = 0.6, min_charge=1, max_charg
         pre_edges.extend(extract_edge(sorted_stats, runner, idxs_upper[runner], min_charge, max_charge, mass_range))
 
         if callback:
-            callback(runner/len(sorted_stats)*1/2)
+            callback((runner+1)/len(sorted_stats)*1/2)
 
     # Step 2
     edges = []
@@ -764,7 +764,7 @@ def get_edges(sorted_stats, hill_datas, cc_cutoff = 0.6, min_charge=1, max_charg
             edges.append(edge)
 
         if callback:
-            callback(runner/len(pre_edges)*1/2+1/2)
+            callback((runner+1)/len(pre_edges)*1/2+1/2)
 
 
     # Step 3
@@ -1151,7 +1151,7 @@ def get_isotope_patterns(pre_isotope_patterns, stats, data, averagine_aa, isotop
 
 
         if callback:
-            callback(idx/len(pre_isotope_patterns))
+            callback((idx+1)/len(pre_isotope_patterns))
 
 
     return isotope_patterns, isotope_charges
@@ -1162,7 +1162,7 @@ def get_isotope_patterns(pre_isotope_patterns, stats, data, averagine_aa, isotop
 from .feature_finding import mz_to_mass
 
 import pandas as pd
-def feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorted_data, sorted_hills, query_data):
+def feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorted_data, sorted_hills, query_data, callback=None):
     """
     Write a summary table
 
@@ -1223,6 +1223,10 @@ def feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorte
 
         int_sum = np.sum(isotope_data['int'])
         data.append((mz, mz_std, most_abundant_mz, charge, rt_start, rt_apex, rt_end, fwhm, n_isotopes, n_scans, mass, int_apex, int_sum))
+
+        if callback:
+            runner((runner+1)/len(isotope_patterns))
+
 
     df = pd.DataFrame(data, columns = ['mz', 'mz_std', 'most_abundant_mz', 'charge', 'rt_start', 'rt_apex', 'rt_end', 'fhwm',
            'n_isotopes', 'n_scans', 'mass', 'int_apex','int_sum'])
