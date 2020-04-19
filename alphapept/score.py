@@ -387,7 +387,7 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
     for a in connected_groups:
         protein_group = list(np.array(a)[np.array(list(isinstance(i, str) for i in a))])
         psms = [i for i in a if i not in protein_group]
-        report.loc[psms, 'protein_group'] = ','.join([fasta_dict[int(_)]['name'] for _ in protein_groups])
+        report.loc[psms, 'protein_group'] = ','.join([fasta_dict[int(_)]['name'] for _ in protein_group])
 
     return report
 
