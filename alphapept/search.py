@@ -234,8 +234,8 @@ def get_psms(
         query_masses = features['mass_matched'].values
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
-        query_frags = query_frags[:, features.index]
-        query_bounds = query_bounds[features.index]
+        query_frags = query_frags[:, features['query_idx'].values]
+        query_bounds = query_bounds[features['query_idx'].values]
     else:
         print('No features')
 
@@ -604,11 +604,10 @@ def get_score_columns(
         query_masses = features['mass_matched'].values
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
-        query_frags = query_frags[:, features.index]
-        query_bounds = query_bounds[features.index]
-        query_charges = query_charges[features.index]
-        query_ints = query_ints[:, features.index]
-
+        query_frags = query_frags[:, features['query_idx'].values]
+        query_bounds = query_bounds[features['query_idx'].values]
+        query_charges = query_charges[features['query_idx'].values]
+        query_ints = query_ints[:, features['query_idx'].values]
     else:
         print('No features')
 
@@ -667,12 +666,13 @@ def get_score_columns(
     psms = add_column(psms, charge, "charge")
 
     if features is not None:
-        psms["query_idx"] = features['feature_idx'].iloc[psms["query_idx"]].index.values #Overwrite query_idx with the values from the feature df
+
+        psms = add_column(psms, features.loc[psms['query_idx']]['feature_idx'].values, 'feature_idx')
 
         if 'int_sum' in features.keys():
-            psms = add_column(psms, features['int_sum'].iloc[psms["query_idx"]].values, 'int_sum')
+            psms = add_column(psms, features.loc[psms['query_idx']]['int_sum'].values, 'int_sum')
         if 'int_apex' in features.keys():
-            psms = add_column(psms, features['int_apex'].iloc[psms["query_idx"]].values, 'int_apex')
+            psms = add_column(psms, features.loc[psms['query_idx']]['int_apex'].values, 'int_apex')
 
     return psms, num_specs_scored
 
