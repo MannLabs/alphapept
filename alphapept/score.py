@@ -297,7 +297,7 @@ def score_RF(df,
 
 # Cell
 
-def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
+def get_protein_groups(data, pept_dict, fasta_dict, callback = None, verbose = False, **kwargs):
     """
     Function to perform protein grouping by razor approach
     ToDo: implement callback for solving
@@ -324,11 +324,14 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
         if callback:
             callback((i+1)/len(data))
 
-    print('A total of {:,} proteins with unique PSMs found'.format(len(found_proteins)))
+    if verbose:
+        print('A total of {:,} proteins with unique PSMs found'.format(len(found_proteins)))
 
     connected_groups = np.array([list(c) for c in sorted(nx.connected_components(G), key=len, reverse=True)])
     n_groups = len(connected_groups)
-    print('A total of {} ambigious proteins'.format(len(connected_groups)))
+
+    if verbose:
+        print('A total of {} ambigious proteins'.format(len(connected_groups)))
 
     #Solving with razor:
     found_proteins_razor = {}
