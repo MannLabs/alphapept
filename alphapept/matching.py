@@ -59,4 +59,7 @@ def match_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, n_neigh
 
     features = pd.concat(all_df)
 
+    features = features.sort_values('mass_matched', ascending=True)
+    features = features.reset_index(drop=True)
+
     return features
