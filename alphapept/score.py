@@ -302,7 +302,6 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
     Function to perform protein grouping by razor approach
     ToDo: implement callback for solving
     """
-
     G=nx.Graph()
 
     found_proteins = {}
@@ -372,16 +371,23 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
     #Put back in Df
     report = data.copy()
     report['protein'] = ''
+    report['protein_group'] = ''
 
     for protein in found_proteins.keys():
         indexes = found_proteins[protein]
         report.loc[indexes, 'protein'] = fasta_dict[protein]['name']
+        report.loc[indexes, 'protein_group'] = fasta_dict[protein]['name']
 
     report['razor'] = False
     for protein in found_proteins_razor.keys():
         indexes = found_proteins_razor[protein]
         report.loc[indexes, 'protein'] = fasta_dict[int(protein)]['name']
         report.loc[indexes, 'razor'] = True
+
+    for a in connected_groups:
+        protein_group = list(np.array(a)[np.array(list(isinstance(i, str) for i in a))])
+        psms = [i for i in a if i not in protein_group]
+        report.loc[psms, 'protein_group'] = ','.join([fasta_dict[int(_)]['name'] for _ in protein_groups])
 
     return report
 
@@ -394,13 +400,15 @@ def perform_protein_grouping(data, pept_dict, fasta_dict, **kwargs):
     data_sub_unique = data_sub.groupby(['sequence','decoy'], as_index=False).agg({"score": "max"})
 
     targets = data_sub_unique[data_sub_unique.decoy == False]
+    targets = targets.reset_index(drop=True)
     protein_targets = get_protein_groups(targets, pept_dict, fasta_dict, **kwargs)
 
     decoys = data_sub_unique[data_sub_unique.decoy == True]
+    decoys = decoys.reset_index(drop=True)
     protein_decoys = get_protein_groups(decoys, pept_dict, fasta_dict, **kwargs)
 
     protein_groups = protein_targets.append(protein_decoys)
-    protein_groups_app = protein_groups[['sequence','decoy','protein','Razor']]
+    protein_groups_app = protein_groups[['sequence','decoy','protein','razor']]
     protein_report = pd.merge(data,
                                 protein_groups_app,
                                 how = 'inner',
