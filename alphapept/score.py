@@ -192,8 +192,6 @@ def score_x_tandem(df, fdr_level = 0.01, plot = True, verbose=True, **kwargs):
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
     df = filter_score(df)
-    df = filter_seq(df)
-
     cval, cutoff = cut_fdr(df, fdr_level, plot, verbose)
 
     return cutoff
