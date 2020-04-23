@@ -197,7 +197,6 @@ def score_x_tandem(df, fdr_level = 0.01, plot = True, verbose=True, **kwargs):
     return cutoff
 
 
-
 # Cell
 
 import numpy as np
@@ -219,23 +218,26 @@ def score_RF(df,
                          'charge_2.0','charge_3.0','charge_4.0','charge_5.0',
                          'nAA','nMissed','lnSequence','xTandem'],
              fdr_level = 0.01,
+             train_fdr_level = 0.01,
              ini_score = 'y_hits',
              n_iterations = 5,
              n_train = 5000,
              max_depth = [5,20,50],
              max_leaf_nodes = [20,50, 100],
+             scoring='accuracy',
              plot = True,
              verbose = True,
+             random_state = 22,
              **kwargs):
 
     # Setup ML pipeline
     scaler = StandardScaler()
-    rfc = RandomForestClassifier(class_weight={False:1,True:5}, random_state=22)
+    rfc = RandomForestClassifier(random_state=random_state) # class_weight={False:1,True:5},
     ## Initiate scaling + classification pipeline
     pipeline = Pipeline([('scaler', scaler), ('clf', rfc)])
     parameters = {'clf__max_depth':(max_depth), 'clf__max_leaf_nodes': (max_leaf_nodes)}
     ## Setup grid search framework for parameter selection and internal cross validation
-    cv = GridSearchCV(pipeline, param_grid=parameters, cv=3) # Create grid search for hyperparameter optimization of the pipeline
+    cv = GridSearchCV(pipeline, param_grid=parameters, cv=3, scoring=scoring) # Create grid search for hyperparameter optimization of the pipeline
 
     # Append extra features
     # @ToDo only do so if these features are requested in the input
@@ -250,27 +252,30 @@ def score_RF(df,
 
     # Prepare target and decoy df
     df['decoy'] = df['sequence'].str[-1].str.islower()
+    df['target'] = ~df['decoy']
     df['score'] = df[ini_score]
     dfT = df[~df.decoy]
     dfD = df[df.decoy]
+
+    random.seed(random_state)
 
     for i in range(0,n_iterations):
         if (i == 0):
             df_prescore = dfT.append(dfD)
         else:
-            df_prescore["score"] = cv.predict_proba(df_prescore[features])
+            df_prescore["score"] = cv.predict_proba(df_prescore[features])[:,1]
 
         df_scored = filter_score(df_prescore)
         df_scored = filter_seq(df_scored)
-        scored = cut_fdr(df_scored, fdr_level, plot=False, verbose=False)[1]
+        scored = cut_fdr(df_scored, fdr_level = train_fdr_level, plot=False, verbose=False)[1]
         highT = scored[scored.decoy==False]
         dfT_high = dfT[dfT['query_idx'].isin(highT.query_idx)]
-        df_training = dfT_high.sample(n=n_train,random_state=22).append(dfD.sample(n=n_train,random_state=22))
+        df_training = dfT_high.sample(n=n_train, random_state=random_state+i).append(dfD.sample(n=n_train, random_state=random_state+i))
 
         X = df_training[features]
 
-        y = df_training['decoy']
-        X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, test_size=0.3, random_state=41, stratify=y.values)
+        y = df_training['target'].astype(int)
+        X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, test_size=0.3, random_state=random_state+i, stratify=y.values)
 
         cv.fit(X_train,y_train)
         if verbose:
@@ -280,7 +285,9 @@ def score_RF(df,
     if plot:
         feature_importances=cv.best_estimator_.named_steps['clf'].feature_importances_
         indices = np.argsort(feature_importances)[::-1][:40]
-        g = sns.barplot(y=X.columns[indices][:40],x = feature_importances[indices][:40] , orient='h', palette='RdBu')
+        g = sns.barplot(y=X.columns[indices][:40],
+                        x = feature_importances[indices][:40],
+                        orient='h', palette='RdBu')
         g.set_xlabel("Relative importance",fontsize=12)
         g.set_ylabel("Features",fontsize=12)
         g.tick_params(labelsize=9)
@@ -288,7 +295,7 @@ def score_RF(df,
         plt.show()
 
     df_new = df.copy()
-    df_new['score'] = cv.predict_proba(df_new[features])[:,0]
+    df_new['score'] = cv.predict_proba(df_new[features])[:,1]
     df_new = filter_score(df_new)
     df_new = filter_seq(df_new)
     cval, cutoff = cut_fdr(df_new, fdr_level, plot, verbose)
