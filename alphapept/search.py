@@ -203,6 +203,7 @@ def get_psms(
     ppm,
     min_frag_hits,
     callback = None,
+    m_offset_calibrated = None,
     **kwargs
 ):
     """
@@ -219,6 +220,9 @@ def get_psms(
         idxs_higher: upper search range
     Raises:
     """
+
+    if m_offset_calibrated:
+        m_offset = m_offset_calibrated
 
     query_masses = query_data['prec_mass_list2']
     query_mz = query_data['mono_mzs2']
