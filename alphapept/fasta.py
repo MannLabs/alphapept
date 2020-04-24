@@ -17,7 +17,7 @@ def get_missed_cleavages(sequences, n_missed_cleavages):
     """
     missed = []
     for k in range(len(sequences)-n_missed_cleavages):
-        missed.append(''.join(sequences[i-1:i+n_missed_cleavages]))
+        missed.append(''.join(sequences[k-1:k+n_missed_cleavages]))
 
     return missed
 
@@ -44,7 +44,7 @@ def cleave_sequence(
 
     sequences = base_sequences.copy()
 
-    for i in range(1, num_missed_cleavages):
+    for i in range(1, num_missed_cleavages+1):
         sequences.extend(get_missed_cleavages(base_sequences, i))
 
     sequences = [_ for _ in sequences if len(_)>=min_length and len(_)<=max_length]
