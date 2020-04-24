@@ -6,6 +6,7 @@ keywords: fastai
 sidebar: home_sidebar
 
 summary: "Functions related to feature finding"
+description: "Functions related to feature finding"
 ---
 <!--
 
@@ -18,11 +19,14 @@ summary: "Functions related to feature finding"
 -->
 
 <div class="container" id="notebook-container">
-    {% raw %}
         
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This part describes the implementation of the feature finding algorithm. The core of the algorithm is described in the <a href="https://www.nature.com/articles/nbt.1511">MaxQuant-Paper</a>.
@@ -53,21 +57,27 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </li>
 <li>Proper plotting of isotope patterns / environment should reveal shortcomings of the algorithm</li>
 </ul>
-<h2 id="Notes">Notes<a class="anchor-link" href="#Notes">&#182;</a></h2><p>We will use the reflected list type for numba. As of version 0.47, this will trigger a deprecation warning. However, as the newer typed list still has performance issues, we will stick to the reflected list.</p>
+<h2 id="Notes">Notes<a class="anchor-link" href="#Notes"> </a></h2><p>We will use the reflected list type for numba. As of version 0.47, this will trigger a deprecation warning. However, as the newer typed list still has performance issues, we will stick to the reflected list.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Centroiding">Centroiding<a class="anchor-link" href="#Centroiding">&#182;</a></h2><p>When having profile data, we firt need to perform centroiding. For this, we need to search local maxima ("peaks") of the intensity as a function of m/z. For this we use the function <a href="/alphapept/feature_finding#get_peaks"><code>get_peaks</code></a>. A peak is described by three points, the <code>start</code> of the peak, the <code>center</code> and the <code>end</code>. The function accepts an intensity array and calculates the delta (gradient) between consecutive datapoints to determine the start, center and end.</p>
+<h2 id="Centroiding">Centroiding<a class="anchor-link" href="#Centroiding"> </a></h2><p>When having profile data, we firt need to perform centroiding. For this, we need to search local maxima ("peaks") of the intensity as a function of m/z. For this we use the function <a href="/alphapept/feature_finding#get_peaks"><code>get_peaks</code></a>. A peak is described by three points, the <code>start</code> of the peak, the <code>center</code> and the <code>end</code>. The function accepts an intensity array and calculates the delta (gradient) between consecutive datapoints to determine the start, center and end.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -89,6 +99,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -119,6 +133,8 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>To determine the center of the peak, we distinguish based on the number of raw data points that are contained in the peak:</p>
@@ -133,9 +149,15 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -157,6 +179,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -178,6 +204,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -211,6 +241,8 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>The detected centroid can then be visualized:</p>
@@ -218,6 +250,8 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -278,16 +312,24 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Loading-Data">Loading Data<a class="anchor-link" href="#Loading-Data">&#182;</a></h2><p>From the <code>IO</code> library, we already have <code>*.npz</code> container that contains centroided data. To use it in feature finding, we load the data and convert this to a numba-compatible list of NumPy structured arrays.</p>
+<h2 id="Loading-Data">Loading Data<a class="anchor-link" href="#Loading-Data"> </a></h2><p>From the <code>IO</code> library, we already have <code>*.npz</code> container that contains centroided data. To use it in feature finding, we load the data and convert this to a numba-compatible list of NumPy structured arrays.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -308,17 +350,25 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Connecting-Centroids-to-Hills">Connecting Centroids to Hills<a class="anchor-link" href="#Connecting-Centroids-to-Hills">&#182;</a></h2><h3 id="Connecting-Centroids">Connecting Centroids<a class="anchor-link" href="#Connecting-Centroids">&#182;</a></h3><p>In this step, we search for centroids that are connected (i.e., within a specific mass difference) over time. The connected centroids are termed hills. As we have a list of centroid lists, we ideally would have a list of tuples with indices to the centroids that describe the connected hills.</p>
-<h4 id="Pairs-of-Centroids">Pairs of Centroids<a class="anchor-link" href="#Pairs-of-Centroids">&#182;</a></h4><p>First, we define the function <a href="/alphapept/feature_finding#get_pairs_centroids"><code>get_pairs_centroids</code></a> that checks two lists of centroids and checks for pairs of centroids. As the masses in the centroid lists are sorted, we can loop through the centroids with two indices and compare the mass difference. If the mass difference is within the defined threshold, <code>ppm_tol</code> (default is 7ppm), we have found ourselves a pair. If no match is found, we can advance either index, depending on whether the mass difference is positive or negative. A pair is a <code>tuple</code> containing the index to the first centroid list <code>i</code> and the second centroid list <code>j</code> as well as the difference in ppm <code>delta</code>. We add all found pairs to a list termed <code>pairs</code>.</p>
+<h2 id="Connecting-Centroids-to-Hills">Connecting Centroids to Hills<a class="anchor-link" href="#Connecting-Centroids-to-Hills"> </a></h2><h3 id="Connecting-Centroids">Connecting Centroids<a class="anchor-link" href="#Connecting-Centroids"> </a></h3><p>In this step, we search for centroids that are connected (i.e., within a specific mass difference) over time. The connected centroids are termed hills. As we have a list of centroid lists, we ideally would have a list of tuples with indices to the centroids that describe the connected hills.</p>
+<h4 id="Pairs-of-Centroids">Pairs of Centroids<a class="anchor-link" href="#Pairs-of-Centroids"> </a></h4><p>First, we define the function <a href="/alphapept/feature_finding#get_pairs_centroids"><code>get_pairs_centroids</code></a> that checks two lists of centroids and checks for pairs of centroids. As the masses in the centroid lists are sorted, we can loop through the centroids with two indices and compare the mass difference. If the mass difference is within the defined threshold, <code>ppm_tol</code> (default is 7ppm), we have found ourselves a pair. If no match is found, we can advance either index, depending on whether the mass difference is positive or negative. A pair is a <code>tuple</code> containing the index to the first centroid list <code>i</code> and the second centroid list <code>j</code> as well as the difference in ppm <code>delta</code>. We add all found pairs to a list termed <code>pairs</code>.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -340,6 +390,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -370,14 +424,16 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Connecting-all-Centroids">Connecting all Centroids<a class="anchor-link" href="#Connecting-all-Centroids">&#182;</a></h4><p>As we now have a function that can find pairs of centroids when given two lists of centroids, the next step is to write a function that connects all the centroids within a dataset. For this, we define the function <a href="/alphapept/feature_finding#connect_centroids_forward"><code>connect_centroids_forward</code></a>. Here, we use the <a href="/alphapept/feature_finding#get_pairs_centroids"><code>get_pairs_centroids</code></a> function to connect hills in consecutive scans <code>(n-&gt;n+1)</code> whenever their centroid m/z positions differ less than the defined threshold. If no matching peak is found in the next scan <code>(n+1)</code>, additional scans can be considered when looking in the scan after next <code>(n+2)</code>. The maximum distance between two hills can be set via the <code>gap</code> parameter.</p>
+<h4 id="Connecting-all-Centroids">Connecting all Centroids<a class="anchor-link" href="#Connecting-all-Centroids"> </a></h4><p>As we now have a function that can find pairs of centroids when given two lists of centroids, the next step is to write a function that connects all the centroids within a dataset. For this, we define the function <a href="/alphapept/feature_finding#connect_centroids_forward"><code>connect_centroids_forward</code></a>. Here, we use the <a href="/alphapept/feature_finding#get_pairs_centroids"><code>get_pairs_centroids</code></a> function to connect hills in consecutive scans <code>(n-&gt;n+1)</code> whenever their centroid m/z positions differ less than the defined threshold. If no matching peak is found in the next scan <code>(n+1)</code>, additional scans can be considered when looking in the scan after next <code>(n+2)</code>. The maximum distance between two hills can be set via the <code>gap</code> parameter.</p>
 <p>For an efficient implementation to find all connected hills over all scans, we create a sparse matrix, named <code>results</code> that represent indices to all possible centroids. As the number of centroids varies for each scan, not all positions within the matrix represent a valid centroid. To distinguish these values, we fill the matrix with <code>-1</code> upon initialization. We can use the matrix to store the matching centroid as an integer that encodes its position. The x,y index for each cell represents the indices to the centroid list. The idea here is to have an efficient data structure to represent connections between centroids.</p>
 <p>To calculate indexes back and forth we define the functions <a href="/alphapept/feature_finding#tup_to_ind"><code>tup_to_ind</code></a> and <a href="/alphapept/feature_finding#ind_to_tup"><code>ind_to_tup</code></a>. This could in principle be also done with <code>numpy.unravel_index</code>, however, the numba implementation seems to be much faster.</p>
 <p>Additionally, we define a sparse matrix named <code>scores</code> that is intended to store the mass difference. If there are multiple possible connections between two centroids, only the best (i.e., shortest distance) will be stored.</p>
 <p>The idea behind the matrix-indexing is explained with the following example:</p>
-<h5 id="Example:">Example:<a class="anchor-link" href="#Example:">&#182;</a></h5><p>Imagine you have three scans with the following centroids:</p>
+<h5 id="Example:">Example:<a class="anchor-link" href="#Example:"> </a></h5><p>Imagine you have three scans with the following centroids:</p>
 <ul>
 <li>Scan 0: 10, 20, 30</li>
 <li>Scan 1: 10.2, 40.1</li>
@@ -401,7 +457,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 -1 &amp; -1 &amp; -1 
 \end{bmatrix}$</p>
 <p>This allows us to not only easily store connections between centroids but also perform a quick lookup for the delta of an existing connection. Note that it also only stores the best connection for each centroid. To extract the connected centroids, we can use <code>np.where(results &gt;= 0)</code>. This implementation allows getting millions of connections within seconds.</p>
-<h5 id="Foward-and-Backward-Search">Foward and Backward Search<a class="anchor-link" href="#Foward-and-Backward-Search">&#182;</a></h5><p>One thing that still needs to be considered is that when searching with a large mass tolerance, we could get multiple matches that we do not want. Consider the following example:</p>
+<h5 id="Foward-and-Backward-Search">Foward and Backward Search<a class="anchor-link" href="#Foward-and-Backward-Search"> </a></h5><p>One thing that still needs to be considered is that when searching with a large mass tolerance, we could get multiple matches that we do not want. Consider the following example:</p>
 <ul>
 <li>Scan 0: 10 (a), </li>
 <li>Scan 1: 10 (b) , 10.1 (c)</li>
@@ -424,9 +480,15 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -448,6 +510,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -469,6 +535,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -490,6 +560,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -511,6 +585,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -532,6 +610,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -570,18 +652,26 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Connecting-hills">Connecting hills<a class="anchor-link" href="#Connecting-hills">&#182;</a></h3><p>Having all the connected centroids, we would like to find <code>hills</code>, referring to centroids that are connected. We can achieve this by creating a graph <code>G</code> with the <code>networkx</code>-package. Here, each connection is added as an edge using the <code>add_edge</code> method to the graph. We can then use the <code>connected_components</code> function to extract all the connected components.</p>
+<h3 id="Connecting-hills">Connecting hills<a class="anchor-link" href="#Connecting-hills"> </a></h3><p>Having all the connected centroids, we would like to find <code>hills</code>, referring to centroids that are connected. We can achieve this by creating a graph <code>G</code> with the <code>networkx</code>-package. Here, each connection is added as an edge using the <code>add_edge</code> method to the graph. We can then use the <code>connected_components</code> function to extract all the connected components.</p>
 <p><code>NetworkX</code> is known to be memory <a href="https://groups.google.com/forum/#!topic/networkx-discuss/Etd4GpkjPdA">consuming</a> and can take hundreds of bytes per edge. For millions of connections, we will, therefore, consume Gigabytes of memory. To keep the graph small, we continuously feed the graph until we reach a certain scan number <code>buffer size</code>. Once the limit is reached, we extract all completed hills and remove all nodes that are part of a completed hill or cannot be connected anymore. Once all edges are added, we perform a final extraction step. Finally, everything is put into the <a href="/alphapept/feature_finding#get_hills"><code>get_hills</code></a> function.</p>
-<h4 id="Parallelization-Strategies">Parallelization Strategies<a class="anchor-link" href="#Parallelization-Strategies">&#182;</a></h4><p>Currently, the parallel connection of hills is not implemented yet. A possible way could be to process individual chunks of edges in parallel and then combine them together, as it is done in <code>Dinosaur</code>.</p>
+<h4 id="Parallelization-Strategies">Parallelization Strategies<a class="anchor-link" href="#Parallelization-Strategies"> </a></h4><p>Currently, the parallel connection of hills is not implemented yet. A possible way could be to process individual chunks of edges in parallel and then combine them together, as it is done in <code>Dinosaur</code>.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -603,6 +693,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -638,9 +732,17 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -662,17 +764,25 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Refinement-of-Hills">Refinement of Hills<a class="anchor-link" href="#Refinement-of-Hills">&#182;</a></h2><p>There are several methods implemented to refine the hills.</p>
-<h3 id="Smoothing-of-Hills">Smoothing of Hills<a class="anchor-link" href="#Smoothing-of-Hills">&#182;</a></h3><p>For smoothing, we use the function <a href="/alphapept/feature_finding#smooth"><code>smooth</code></a> that first uses a median smoothing (<a href="/alphapept/feature_finding#smooth_median"><code>smooth_median</code></a>) which is followed by a mean smoothing (<a href="/alphapept/feature_finding#smooth_mean"><code>smooth_mean</code></a>) over a defined <code>window</code> size.</p>
+<h2 id="Refinement-of-Hills">Refinement of Hills<a class="anchor-link" href="#Refinement-of-Hills"> </a></h2><p>There are several methods implemented to refine the hills.</p>
+<h3 id="Smoothing-of-Hills">Smoothing of Hills<a class="anchor-link" href="#Smoothing-of-Hills"> </a></h3><p>For smoothing, we use the function <a href="/alphapept/feature_finding#smooth"><code>smooth</code></a> that first uses a median smoothing (<a href="/alphapept/feature_finding#smooth_median"><code>smooth_median</code></a>) which is followed by a mean smoothing (<a href="/alphapept/feature_finding#smooth_mean"><code>smooth_mean</code></a>) over a defined <code>window</code> size.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -694,6 +804,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -715,6 +829,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -736,6 +854,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -783,16 +905,24 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Hill-Splitting">Hill Splitting<a class="anchor-link" href="#Hill-Splitting">&#182;</a></h3><p>When having a hill with two or more maxima, we would like to split it at the minimum position. For this, we use a recursive approach. First, the minimum of a hill is detected. A hill is split at this minimum if the smaller of the surrounding maxima is at least the factor <code>split_level</code> larger than the minimum. For each split, the process is repeated.</p>
+<h3 id="Hill-Splitting">Hill Splitting<a class="anchor-link" href="#Hill-Splitting"> </a></h3><p>When having a hill with two or more maxima, we would like to split it at the minimum position. For this, we use a recursive approach. First, the minimum of a hill is detected. A hill is split at this minimum if the smaller of the surrounding maxima is at least the factor <code>split_level</code> larger than the minimum. For each split, the process is repeated.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -818,6 +948,10 @@ Here, the definition of a minimum is:
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -866,9 +1000,17 @@ Here, the definition of a minimum is:
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -890,6 +1032,10 @@ Here, the definition of a minimum is:
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -911,6 +1057,10 @@ Here, the definition of a minimum is:
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -932,6 +1082,10 @@ Here, the definition of a minimum is:
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -980,16 +1134,24 @@ Here, the definition of a minimum is:
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Filter-Hills">Filter Hills<a class="anchor-link" href="#Filter-Hills">&#182;</a></h3><p>To filter hills, we define a minimum length <code>hill_min_length</code>. All peaks below the threshold <code>hill_peak_min_length</code> are accepted as is. For longer hills, the intensity at the start and the end are compared to the maximum intensity. If the ratio of the maximum raw intensity to the smoothed intensity and the beginning and end are larger than <code>hill_peak_factor</code> the hills are accepted.</p>
+<h3 id="Filter-Hills">Filter Hills<a class="anchor-link" href="#Filter-Hills"> </a></h3><p>To filter hills, we define a minimum length <code>hill_min_length</code>. All peaks below the threshold <code>hill_peak_min_length</code> are accepted as is. For longer hills, the intensity at the start and the end are compared to the maximum intensity. If the ratio of the maximum raw intensity to the smoothed intensity and the beginning and end are larger than <code>hill_peak_factor</code> the hills are accepted.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1011,6 +1173,8 @@ Here, the definition of a minimum is:
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Since the mass estimate min the equation above is more complicated than just an average of the mj, a standard deviation based estimate of the error would not be appropriate. Therefore we calculate the error as a bootstrap2 estimate over B=150 bootstrap replications</p>
@@ -1020,18 +1184,27 @@ Here, the definition of a minimum is:
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Calculating-Hill-Statistics">Calculating Hill Statistics<a class="anchor-link" href="#Calculating-Hill-Statistics">&#182;</a></h2><p>Next, we calculate summary statistics for the connected centroids. We can obtain a high precision mass estimate for each hill by taking the average of the the masses and weighting this by their intensiteis:</p>
+<h2 id="Calculating-Hill-Statistics">Calculating Hill Statistics<a class="anchor-link" href="#Calculating-Hill-Statistics"> </a></h2><p>Next, we calculate summary statistics for the connected centroids. We can obtain a high precision mass estimate for each hill by taking the average of the the masses and weighting this by their intensiteis:</p>
 $$
 \overline{m} = \frac{\sum_{j=1}^nm_jI_j}{\sum_{j=1}^nI_j}
 $$<p>To estimate the mass error, we calculate the error as a boostrap estimate:</p>
-$$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m} )}{(B-1)}}$$<p>The calculation of hill statistics for a single hill is implemented in <a href="/alphapept/feature_finding#get_hill_stats"><code>get_hill_stats</code></a>. To calculate the hill stats for a list of hills, we can call the wrapper <a href="/alphapept/feature_finding#get_hill_data"><code>get_hill_data</code></a>.</p>
+<p>{% raw %}
+$$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m} )}{(B-1)}}$$
+{% endraw %}</p>
+<p>The calculation of hill statistics for a single hill is implemented in <a href="/alphapept/feature_finding#get_hill_stats"><code>get_hill_stats</code></a>. To calculate the hill stats for a list of hills, we can call the wrapper <a href="/alphapept/feature_finding#get_hill_data"><code>get_hill_data</code></a>.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1053,9 +1226,17 @@ $$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m}
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1077,6 +1258,10 @@ $$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m}
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1097,6 +1282,10 @@ $$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m}
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1118,6 +1307,10 @@ $$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m}
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -1168,18 +1361,29 @@ $$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m}
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Combining-Hills-to-Isotope-Patterns">Combining Hills to Isotope Patterns<a class="anchor-link" href="#Combining-Hills-to-Isotope-Patterns">&#182;</a></h2><p>After obtaining summary statistics of hills, the next step is to check whether they belong together to form an isotope pattern. For this, we check wheter it is possible that they are neighbors in an isotope pattern, e.g. one having a 12C atom that has been replaced by a 13C version. The detailed criterion for the check is implemented in <a href="/alphapept/feature_finding#check_isotope_pattern"><code>check_isotope_pattern</code></a> and is as follows:</p>
-$$\left | \Delta m-\frac{\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z}  \right )^{2}+\Delta {m_{1}}^{2} +\Delta {m_{2}}^{2}}$$<p>The left side contains $\Delta m$, being the delta of the precise mass estimates from the summary statistics and $\Delta M = 1.00286864$, which is the mass difference ebtween the 13C peak and the monoisotopic peak in an averagine molecule of 1500 Da mass divided by the charge $z$.</p>
+<h2 id="Combining-Hills-to-Isotope-Patterns">Combining Hills to Isotope Patterns<a class="anchor-link" href="#Combining-Hills-to-Isotope-Patterns"> </a></h2><p>After obtaining summary statistics of hills, the next step is to check whether they belong together to form an isotope pattern. For this, we check wheter it is possible that they are neighbors in an isotope pattern, e.g. one having a 12C atom that has been replaced by a 13C version. The detailed criterion for the check is implemented in <a href="/alphapept/feature_finding#check_isotope_pattern"><code>check_isotope_pattern</code></a> and is as follows:</p>
+<p>{% raw %}
+$$\left | \Delta m-\frac{\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z}  \right )^{2}+\Delta {m_{1}}^{2} +\Delta {m_{2}}^{2}}$$
+{% endraw %}</p>
+<p>The left side contains $\Delta m$, being the delta of the precise mass estimates from the summary statistics and $\Delta M = 1.00286864$, which is the mass difference ebtween the 13C peak and the monoisotopic peak in an averagine molecule of 1500 Da mass divided by the charge $z$.</p>
 <p>The right side contains $\Delta S = 0.0109135$, which is the maximum shift that a sulphur atom can cause ($\Delta S = 2m(^{13}C) - 2m(^{12}C) - m(^{34}S) + m(^{32}S)$) and $\Delta {m_{1}}$ and $\Delta {m_{2}}$, which are the bootstrapped mass standard deviations.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1201,6 +1405,10 @@ $$\left | \Delta m-\frac{\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -1238,23 +1446,34 @@ False
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Cosine-Correlation-of-two-hills">Cosine Correlation of two hills<a class="anchor-link" href="#Cosine-Correlation-of-two-hills">&#182;</a></h3>
+<h3 id="Cosine-Correlation-of-two-hills">Cosine Correlation of two hills<a class="anchor-link" href="#Cosine-Correlation-of-two-hills"> </a></h3>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>An additional criterion that is being checked is that the intensity profiles have sufficient overalp in retention time. This is validated by ensuring that two hills have a cosine correlation of at least 0.6.</p>
-$$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum_{s=s_{min}}^{s_{max}}J_s^{2}} \geq 0.6$$<p>The intensities of two hills are only compared if both have an intensity value in a particular scan. Otherwise, the intensity is set to zero. Additionally, an overlap of at least three elements is required.</p>
+<p>{% raw %}
+$$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum_{s=s_{min}}^{s_{max}}J_s^{2}} \geq 0.6$$
+{% endraw %}</p>
+<p>The intensities of two hills are only compared if both have an intensity value in a particular scan. Otherwise, the intensity is set to zero. Additionally, an overlap of at least three elements is required.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1276,17 +1495,25 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Extracting-pre-Isotope-Patterns">Extracting pre-Isotope Patterns<a class="anchor-link" href="#Extracting-pre-Isotope-Patterns">&#182;</a></h3><p>Now having two criteria to check whether hills could, in principle, belong together, we define the wrapper functions <a href="/alphapept/feature_finding#extract_edge"><code>extract_edge</code></a> and <a href="/alphapept/feature_finding#get_edges"><code>get_edges</code></a> to extract the connected hills. To minimize the number of comparisons we need to perform, we only compare the hills that overlap in time (i.e., the start of one hill <code>rt_min</code> needs to be before the end of the other hill <code>rt_max</code>) and are less than the sum of $\Delta M$ and $\Delta S$ apart.</p>
+<h3 id="Extracting-pre-Isotope-Patterns">Extracting pre-Isotope Patterns<a class="anchor-link" href="#Extracting-pre-Isotope-Patterns"> </a></h3><p>Now having two criteria to check whether hills could, in principle, belong together, we define the wrapper functions <a href="/alphapept/feature_finding#extract_edge"><code>extract_edge</code></a> and <a href="/alphapept/feature_finding#get_edges"><code>get_edges</code></a> to extract the connected hills. To minimize the number of comparisons we need to perform, we only compare the hills that overlap in time (i.e., the start of one hill <code>rt_min</code> needs to be before the end of the other hill <code>rt_max</code>) and are less than the sum of $\Delta M$ and $\Delta S$ apart.</p>
 <p>To extract all hills that belong together, we again rely on the <code>NetworkX</code>-package to extract the connected components.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1308,6 +1535,10 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1329,9 +1560,17 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1353,19 +1592,30 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Extracting-Isotope-Patterns">Extracting Isotope Patterns<a class="anchor-link" href="#Extracting-Isotope-Patterns">&#182;</a></h3><p>The extracted pre-isotope patterns may not be consistent because their pair-wise mass differences may not correspond to the same charge. To extract isotope patterns from pre-isotope patterns, we need to ensure that they are consistent for a single charge.</p>
+<h3 id="Extracting-Isotope-Patterns">Extracting Isotope Patterns<a class="anchor-link" href="#Extracting-Isotope-Patterns"> </a></h3><p>The extracted pre-isotope patterns may not be consistent because their pair-wise mass differences may not correspond to the same charge. To extract isotope patterns from pre-isotope patterns, we need to ensure that they are consistent for a single charge.</p>
 <p>To do this, we start with the 100 most intense peaks from a pre-isotope pattern to be used as a seed. For each seed and charge we then try to extract the longest consistent isotope pattern. To check wheter a hill is consistent with the seed we employ a modified checking criterion (<a href="/alphapept/feature_finding#check_isotope_pattern_directed"><code>check_isotope_pattern_directed</code></a>) to be as follows:</p>
-$$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z}  \right )^{2}+\Delta {m}^{2} +\Delta {m_{j}}^{2}}$$<p>Here $m$ is the mass of a seed peak, and $m_{j}$ refers to a peak relative to the seed. $j$ refers to the peaks to the left or right (negative or positive index) within the pattern. $j$ needs to run over consecutive values so that gaps are not allowed. Besides this consistency check, two hills are also checked to have a cosine correlation of at least 0.6.</p>
+<p>{% raw %}
+$$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z}  \right )^{2}+\Delta {m}^{2} +\Delta {m_{j}}^{2}}$$
+{% endraw %}</p>
+<p>Here $m$ is the mass of a seed peak, and $m_{j}$ refers to a peak relative to the seed. $j$ refers to the peaks to the left or right (negative or positive index) within the pattern. $j$ needs to run over consecutive values so that gaps are not allowed. Besides this consistency check, two hills are also checked to have a cosine correlation of at least 0.6.</p>
 <p>Programmatically, this is implemented in <a href="/alphapept/feature_finding#grow_trail"><code>grow_trail</code></a> and <a href="/alphapept/feature_finding#grow"><code>grow</code></a>. These function uses a recursive approach that adds matching hills to the seed on the left and right side until no more hills can be added.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1387,6 +1637,10 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1408,6 +1662,10 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1429,6 +1687,10 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1450,9 +1712,11 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Isolating-Isotope_patterns">Isolating Isotope_patterns<a class="anchor-link" href="#Isolating-Isotope_patterns">&#182;</a></h2><p>The extraction of the longest consistent isotope pattern is implemented in <a href="/alphapept/feature_finding#isolate_isotope_pattern"><code>isolate_isotope_pattern</code></a>. Here, three additional checks for an isotope pattern are implemented.</p>
+<h2 id="Isolating-Isotope_patterns">Isolating Isotope_patterns<a class="anchor-link" href="#Isolating-Isotope_patterns"> </a></h2><p>The extraction of the longest consistent isotope pattern is implemented in <a href="/alphapept/feature_finding#isolate_isotope_pattern"><code>isolate_isotope_pattern</code></a>. Here, three additional checks for an isotope pattern are implemented.</p>
 <p>The first one is <a href="/alphapept/feature_finding#truncate"><code>truncate</code></a>. Here, one checks the seed position, whether it has a minimum to its left or right side. If a minimum is found, the isotope pattern is cut off at this position.</p>
 <p>The second one is a mass filter. If the seed has a mass of smaller than 1000, the intensity maximum is detected, and all smaller masses are discarded. This reflects the averagine distribution for small masses where no minimum on the left side can be found.</p>
 <p>The third one is <a href="/alphapept/feature_finding#check_averagine"><code>check_averagine</code></a> that relies on <a href="/alphapept/feature_finding#pattern_to_mz"><code>pattern_to_mz</code></a> and <a href="/alphapept/feature_finding#cosine_averagine"><code>cosine_averagine</code></a>. It is used to ensure that the extracted isotope pattern has a cosine correlation of the averagine isotope pattern of the same mass of at least 0.6.</p>
@@ -1461,9 +1725,15 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1485,6 +1755,10 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1505,6 +1779,10 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1526,6 +1804,10 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1546,6 +1828,10 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1567,6 +1853,10 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1588,6 +1878,10 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1610,6 +1904,10 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1631,6 +1929,10 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1651,6 +1953,10 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1672,16 +1978,24 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Isotope-Patterns">Isotope Patterns<a class="anchor-link" href="#Isotope-Patterns">&#182;</a></h2><p>The wrapper function <a href="/alphapept/feature_finding#get_isotope_patterns"><code>get_isotope_patterns</code></a> iterates over all pre_isotope_patterns.</p>
+<h2 id="Isotope-Patterns">Isotope Patterns<a class="anchor-link" href="#Isotope-Patterns"> </a></h2><p>The wrapper function <a href="/alphapept/feature_finding#get_isotope_patterns"><code>get_isotope_patterns</code></a> iterates over all pre_isotope_patterns.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1703,6 +2017,10 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -1776,16 +2094,24 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Data-Output">Data Output<a class="anchor-link" href="#Data-Output">&#182;</a></h2><p>For each feature that is found we extract summary statistics and put it in tabular form to be used as as pandas dataframe.</p>
+<h2 id="Data-Output">Data Output<a class="anchor-link" href="#Data-Output"> </a></h2><p>For each feature that is found we extract summary statistics and put it in tabular form to be used as as pandas dataframe.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1807,16 +2133,24 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Plotting">Plotting<a class="anchor-link" href="#Plotting">&#182;</a></h2><p>For quality control reasons we also employ a function to plot a feature in its local environment.</p>
+<h2 id="Plotting">Plotting<a class="anchor-link" href="#Plotting"> </a></h2><p>For quality control reasons we also employ a function to plot a feature in its local environment.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1838,16 +2172,24 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Wrapper">Wrapper<a class="anchor-link" href="#Wrapper">&#182;</a></h2><p>For convenience reasons, we define a wrapper to find features. Note that in the AlphaPept runner a more extensive approach is implemented to properly log results and handle callbacks.</p>
+<h2 id="Wrapper">Wrapper<a class="anchor-link" href="#Wrapper"> </a></h2><p>For convenience reasons, we define a wrapper to find features. Note that in the AlphaPept runner a more extensive approach is implemented to properly log results and handle callbacks.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -1870,6 +2212,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 </div>
     {% endraw %}
+
 </div>
  
 

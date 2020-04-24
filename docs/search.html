@@ -6,6 +6,7 @@ keywords: fastai
 sidebar: home_sidebar
 
 summary: "Functions related to the search"
+description: "Functions related to the search"
 ---
 <!--
 
@@ -18,11 +19,14 @@ summary: "Functions related to the search"
 -->
 
 <div class="container" id="notebook-container">
-    {% raw %}
         
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This notebook contains all functions related to the searching and getting peptide-spectrum-matches (PSMS).</p>
@@ -38,14 +42,20 @@ summary: "Functions related to the search"
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Comparing-Fragments">Comparing Fragments<a class="anchor-link" href="#Comparing-Fragments">&#182;</a></h2><p>To efficiently compare two fragments, we use a pointer based approach. We start with two sorted arrays, the <code>query_frag</code> that contains the m/z positions of the query spectrum and the <code>db_frag</code> which contains the database fragment that is compared against to. The two pointers compare each m/z position with each other and check wheter they are within a certain tolerance <code>mtol</code>. Depending on their delta, either of the pointers is advanced. The function returns an arrray named <code>hits</code> that is the same length as the database spectrum and encodes the hit positions.</p>
+<h2 id="Comparing-Fragments">Comparing Fragments<a class="anchor-link" href="#Comparing-Fragments"> </a></h2><p>To efficiently compare two fragments, we use a pointer based approach. We start with two sorted arrays, the <code>query_frag</code> that contains the m/z positions of the query spectrum and the <code>db_frag</code> which contains the database fragment that is compared against to. The two pointers compare each m/z position with each other and check wheter they are within a certain tolerance <code>mtol</code>. Depending on their delta, either of the pointers is advanced. The function returns an arrray named <code>hits</code> that is the same length as the database spectrum and encodes the hit positions.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -67,6 +77,10 @@ summary: "Functions related to the search"
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -102,6 +116,8 @@ summary: "Functions related to the search"
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This function allows us to easily compare a query spectrum against a theoretical database.</p>
@@ -109,6 +125,8 @@ summary: "Functions related to the search"
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -200,18 +218,26 @@ def compare_frags(query_frag, db_frag, mtol, ppm=False):
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Comparing-Spectra">Comparing Spectra<a class="anchor-link" href="#Comparing-Spectra">&#182;</a></h2><p>To compare multiple spectra against a database, we first need some helper functions. Per default, AlphaPept calculates in Dalton. To use ppm boundaries, we need the function <a href="/alphapept/search#ppm_to_dalton"><code>ppm_to_dalton</code></a> for conversion.</p>
+<h2 id="Comparing-Spectra">Comparing Spectra<a class="anchor-link" href="#Comparing-Spectra"> </a></h2><p>To compare multiple spectra against a database, we first need some helper functions. Per default, AlphaPept calculates in Dalton. To use ppm boundaries, we need the function <a href="/alphapept/search#ppm_to_dalton"><code>ppm_to_dalton</code></a> for conversion.</p>
 <p>To minimize the search space, we typically only compare spectra with precursors in the same mass range as defined by <code>m_offset</code>. To look up the limits for search, we define the function <a href="/alphapept/search#get_idxs"><code>get_idxs</code></a>, which is a wrapper to the fast <code>searchsorted</code> method from NumPy.</p>
 <p>The actual search takes place in <a href="/alphapept/search#compare_specs_single"><code>compare_specs_single</code></a> and <a href="/alphapept/search#compare_specs_parallel"><code>compare_specs_parallel</code></a>, a single-core and multicore method for comparing spectra.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -232,6 +258,10 @@ def compare_frags(query_frag, db_frag, mtol, ppm=False):
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -253,6 +283,10 @@ def compare_frags(query_frag, db_frag, mtol, ppm=False):
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -274,6 +308,10 @@ def compare_frags(query_frag, db_frag, mtol, ppm=False):
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -295,15 +333,23 @@ def compare_frags(query_frag, db_frag, mtol, ppm=False):
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Wrapper">Wrapper<a class="anchor-link" href="#Wrapper">&#182;</a></h2>
+<h2 id="Wrapper">Wrapper<a class="anchor-link" href="#Wrapper"> </a></h2>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -324,6 +370,10 @@ def compare_frags(query_frag, db_frag, mtol, ppm=False):
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -355,21 +405,29 @@ Raises:</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Extracting-columns-for-scoring">Extracting columns for scoring<a class="anchor-link" href="#Extracting-columns-for-scoring">&#182;</a></h2>
+<h2 id="Extracting-columns-for-scoring">Extracting columns for scoring<a class="anchor-link" href="#Extracting-columns-for-scoring"> </a></h2>
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Frag-Delta">Frag Delta<a class="anchor-link" href="#Frag-Delta">&#182;</a></h3>
+<h3 id="Frag-Delta">Frag Delta<a class="anchor-link" href="#Frag-Delta"> </a></h3>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -391,15 +449,23 @@ Raises:</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Intensity-Fraction">Intensity Fraction<a class="anchor-link" href="#Intensity-Fraction">&#182;</a></h3>
+<h3 id="Intensity-Fraction">Intensity Fraction<a class="anchor-link" href="#Intensity-Fraction"> </a></h3>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -421,6 +487,10 @@ Raises:</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -434,9 +504,17 @@ Raises:</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -458,15 +536,23 @@ Raises:</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="B-&amp;-Y---Hits">B &amp; Y - Hits<a class="anchor-link" href="#B-&amp;-Y---Hits">&#182;</a></h3>
+<h3 id="B-&amp;-Y---Hits">B &amp; Y - Hits<a class="anchor-link" href="#B-&amp;-Y---Hits"> </a></h3>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -489,9 +575,17 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -513,6 +607,10 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -534,6 +632,10 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -547,9 +649,17 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -571,6 +681,10 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -592,9 +706,17 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -616,6 +738,10 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -636,15 +762,23 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Plot">Plot<a class="anchor-link" href="#Plot">&#182;</a></h2>
+<h2 id="Plot">Plot<a class="anchor-link" href="#Plot"> </a></h2>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -665,15 +799,23 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Wrapper">Wrapper<a class="anchor-link" href="#Wrapper">&#182;</a></h2>
+<h2 id="Wrapper">Wrapper<a class="anchor-link" href="#Wrapper"> </a></h2>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -696,6 +838,7 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 
 </div>
     {% endraw %}
+
 </div>
  
 
