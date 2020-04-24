@@ -6,6 +6,7 @@ keywords: fastai
 sidebar: home_sidebar
 
 summary: "Functions related to input and output"
+description: "Functions related to input and output"
 ---
 <!--
 
@@ -18,11 +19,14 @@ summary: "Functions related to input and output"
 -->
 
 <div class="container" id="notebook-container">
-    {% raw %}
         
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This notebook contains all functions related to importing and exporting files.</p>
@@ -36,14 +40,20 @@ summary: "Functions related to input and output"
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Conversion-functions">Conversion functions<a class="anchor-link" href="#Conversion-functions">&#182;</a></h2><p>To bring spectra in a usable form, we perform several conversion steps.</p>
+<h2 id="Conversion-functions">Conversion functions<a class="anchor-link" href="#Conversion-functions"> </a></h2><p>To bring spectra in a usable form, we perform several conversion steps.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -65,6 +75,10 @@ summary: "Functions related to input and output"
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -86,16 +100,24 @@ summary: "Functions related to input and output"
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Reading-Thermo-Files">Reading Thermo Files<a class="anchor-link" href="#Reading-Thermo-Files">&#182;</a></h2><p>Implementation Note: While creating a lot of different lists an filling them with list comprehensions, this may create a lot of variables. However, the approach seemd to work reasonable fast.</p>
+<h2 id="Reading-Thermo-Files">Reading Thermo Files<a class="anchor-link" href="#Reading-Thermo-Files"> </a></h2><p>Implementation Note: While creating a lot of different lists an filling them with list comprehensions, this may create a lot of variables. However, the approach seemd to work reasonable fast.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -117,15 +139,23 @@ summary: "Functions related to input and output"
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Wrapper">Wrapper<a class="anchor-link" href="#Wrapper">&#182;</a></h2>
+<h2 id="Wrapper">Wrapper<a class="anchor-link" href="#Wrapper"> </a></h2>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -147,6 +177,10 @@ summary: "Functions related to input and output"
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -168,9 +202,17 @@ summary: "Functions related to input and output"
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -192,6 +234,10 @@ summary: "Functions related to input and output"
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -212,6 +258,10 @@ summary: "Functions related to input and output"
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -232,6 +282,10 @@ summary: "Functions related to input and output"
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -253,6 +307,10 @@ summary: "Functions related to input and output"
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -274,9 +332,11 @@ summary: "Functions related to input and output"
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Saving">Saving<a class="anchor-link" href="#Saving">&#182;</a></h2><p>For saving, we are currently relying on the NumPy-native npz-container. It offers reasonable speed, dictionary-type access, and does not need individual type definitions.</p>
+<h2 id="Saving">Saving<a class="anchor-link" href="#Saving"> </a></h2><p>For saving, we are currently relying on the NumPy-native npz-container. It offers reasonable speed, dictionary-type access, and does not need individual type definitions.</p>
 <p>While we could, in principle, store the mz and int arrays as a list of variable length, this will come at a performance decrase. We, therefore, create an array of the dimensions of the n most abundant peaks and number of spectra with the function <a href="/alphapept/io#list_to_numpy_f32"><code>list_to_numpy_f32</code></a> and fill the unoccupied cells with <code>-1</code>. This allows an increase in accessing times at the cost of additional disk space.</p>
 <p>Implementation Note: For large files (e.g., choosing a large number of peaks that should be kept, the npz array can fail and trigger an ZIP64 error. This is supposed to be fixed in a later NumPy version
 a</p>
@@ -284,9 +344,15 @@ a</p>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -308,6 +374,10 @@ a</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -329,6 +399,7 @@ a</p>
 
 </div>
     {% endraw %}
+
 </div>
  
 

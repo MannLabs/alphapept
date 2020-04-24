@@ -6,6 +6,7 @@ keywords: fastai
 sidebar: home_sidebar
 
 summary: "Functions related to the score"
+description: "Functions related to the score"
 ---
 <!--
 
@@ -18,11 +19,14 @@ summary: "Functions related to the score"
 -->
 
 <div class="container" id="notebook-container">
-    {% raw %}
         
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This notebook contains all functions related to the scoring of peptide-spectrum-matches (PSMS).</p>
@@ -37,13 +41,19 @@ summary: "Functions related to the score"
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Q-Values">Q-Values<a class="anchor-link" href="#Q-Values">&#182;</a></h2>
+<h2 id="Q-Values">Q-Values<a class="anchor-link" href="#Q-Values"> </a></h2>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -65,6 +75,10 @@ summary: "Functions related to the score"
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -87,6 +101,10 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -108,16 +126,24 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="FDR">FDR<a class="anchor-link" href="#FDR">&#182;</a></h2><p>The employed FDR strategy is based on classical target-decoy competition approach. The FDR is approximated by dividing the number of decoy discoveries by the number of target discoveries at agiven score threshold ( #decoys / #targets ).</p>
+<h2 id="FDR">FDR<a class="anchor-link" href="#FDR"> </a></h2><p>The employed FDR strategy is based on classical target-decoy competition approach. The FDR is approximated by dividing the number of decoy discoveries by the number of target discoveries at agiven score threshold ( #decoys / #targets ).</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -147,6 +173,8 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Simulation of random scores for 50'000 measurements (corresponding to spectra). Simulated are decoys, true targets and false targets. We assume a false traget raio (pi0) of 0.8 and a mean score difference of 3.5.</p>
@@ -175,6 +203,8 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -226,6 +256,8 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Evaluation of the FDR estimated by the target-decoy approach versus the true FDR confirms accurate, slightly conservative FDR estimation by our approach:</p>
@@ -242,14 +274,20 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Global-FDR">Global FDR<a class="anchor-link" href="#Global-FDR">&#182;</a></h2><p>The global FDR model is based on the concept of selecting the best scoring analyte across the dataset and estimating the FDR by target-decoy competition. This function is also used for protein FDR estimation of a single run based on selecting the highest scoring peptided matching to the protein.</p>
+<h2 id="Global-FDR">Global FDR<a class="anchor-link" href="#Global-FDR"> </a></h2><p>The global FDR model is based on the concept of selecting the best scoring analyte across the dataset and estimating the FDR by target-decoy competition. This function is also used for protein FDR estimation of a single run based on selecting the highest scoring peptided matching to the protein.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -271,6 +309,8 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Similar to the sequence level simulations we can simulatae score distributions for peptides beloning to proteins. In our simulation we assumed a poisson distribution for the number of peptides for each protein centered at 4 peptides.</p>
@@ -285,6 +325,8 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -336,6 +378,8 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Evaluation of the protein-level FDR estimated by the target-decoy approach versus the true FDR confirms accurate FDR estimation by our approach:</p>
@@ -359,13 +403,19 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Scoring">Scoring<a class="anchor-link" href="#Scoring">&#182;</a></h2>
+<h2 id="Scoring">Scoring<a class="anchor-link" href="#Scoring"> </a></h2>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -386,6 +436,10 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -406,16 +460,24 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Machine-learning-based-scoring">Machine learning based scoring<a class="anchor-link" href="#Machine-learning-based-scoring">&#182;</a></h3><p>The score_RF function trains a random forest classifier to score psms.</p>
+<h3 id="Machine-learning-based-scoring">Machine learning based scoring<a class="anchor-link" href="#Machine-learning-based-scoring"> </a></h3><p>The score_RF function trains a random forest classifier to score psms.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -436,9 +498,11 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Protein-grouping">Protein grouping<a class="anchor-link" href="#Protein-grouping">&#182;</a></h2>
+<h2 id="Protein-grouping">Protein grouping<a class="anchor-link" href="#Protein-grouping"> </a></h2>
 </div>
 </div>
 </div>
@@ -451,9 +515,15 @@ TODO: PSMS could get the same score when having modifications. Only keep one</p>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -476,6 +546,10 @@ ToDo: implement callback for solving</p>
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -497,15 +571,23 @@ ToDo: implement callback for solving</p>
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Saving">Saving<a class="anchor-link" href="#Saving">&#182;</a></h2>
+<h2 id="Saving">Saving<a class="anchor-link" href="#Saving"> </a></h2>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -527,6 +609,7 @@ ToDo: implement callback for solving</p>
 
 </div>
     {% endraw %}
+
 </div>
  
 
