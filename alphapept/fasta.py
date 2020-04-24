@@ -478,7 +478,7 @@ def add_to_pept_dict(pept_dict, new_peptides, i):
 # Cell
 from collections import OrderedDict
 
-def generate_library(mass_dict, fasta_path, callback = None, **kwargs):
+def generate_library(mass_dict, fasta_path, callback = None, contaminants_path = None, **kwargs):
     """
     Function to generate a library from a fasta file
     """
@@ -504,6 +504,19 @@ def generate_library(mass_dict, fasta_path, callback = None, **kwargs):
 
         if callback:
             callback(fasta_index/n_entries)
+
+    if contaminants_path:
+        fasta_generator = read_fasta(contaminants_path)
+
+        for element in fasta_generator:
+            if check_sequence(element, constants.AAs):
+                fasta_dict[fasta_index] = element
+                mod_peptides = generate_peptides(element["sequence"], **kwargs)
+                pept_dict, added_seqs = add_to_pept_dict(pept_dict, mod_peptides, fasta_index)
+                if len(added_seqs) > 0:
+                    to_add.extend(added_seqs)
+
+            fasta_index += 1
 
     return to_add, pept_dict, fasta_dict
 
