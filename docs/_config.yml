@@ -62,3 +62,5 @@ permalink: pretty
 
 theme: jekyll-theme-cayman
 baseurl: /alphapept/
+
+encoding: UTF-8
