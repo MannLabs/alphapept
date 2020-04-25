@@ -48,8 +48,8 @@ def match_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, n_neigh
         ref_df['query_idx'] = ref_df.index
         ref_df['feature_idx'] = idx[:,neighbor]
 
-        ref_df['int_apex'] = feature_table.iloc[idx[:,neighbor]]['int_apex'].values
-        ref_df['int_sum'] = feature_table.iloc[idx[:,neighbor]]['int_sum'].values
+        for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+            ref_df[field] = feature_table.iloc[idx[:,neighbor]][field].values
 
         ref_df['dist'] = dist[:,neighbor]
 
