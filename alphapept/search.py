@@ -241,7 +241,7 @@ def get_psms(
         query_frags = query_frags[:, features['query_idx'].values]
         query_bounds = query_bounds[features['query_idx'].values]
     else:
-        print('No features')
+        pass
 
     idxs_lower, idxs_higher = get_idxs(db_masses, query_masses, m_offset, ppm)
     frag_hits = np.zeros(
@@ -613,7 +613,7 @@ def get_score_columns(
         query_charges = query_charges[features['query_idx'].values]
         query_ints = query_ints[:, features['query_idx'].values]
     else:
-        print('No features')
+        pass
 
     if parallel:
         delta_m, delta_m_ppm, o_mass, o_mass_ppm, total_int, matched_int, b_hits, y_hits, num_specs_scored = score_parallel(
@@ -673,10 +673,9 @@ def get_score_columns(
 
         psms = add_column(psms, features.loc[psms['query_idx']]['feature_idx'].values, 'feature_idx')
 
-        if 'int_sum' in features.keys():
-            psms = add_column(psms, features.loc[psms['query_idx']]['int_sum'].values, 'int_sum')
-        if 'int_apex' in features.keys():
-            psms = add_column(psms, features.loc[psms['query_idx']]['int_apex'].values, 'int_apex')
+        for key in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+            if key in features.keys():
+                psms = add_column(psms, features.loc[psms['query_idx']][key].values, key)
 
     return psms, num_specs_scored
 
