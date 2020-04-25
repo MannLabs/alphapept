@@ -1228,7 +1228,7 @@ def feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorte
             callback((runner+1)/len(isotope_patterns))
 
 
-    df = pd.DataFrame(data, columns = ['mz', 'mz_std', 'most_abundant_mz', 'charge', 'rt_start', 'rt_apex', 'rt_end', 'fhwm',
+    df = pd.DataFrame(data, columns = ['mz', 'mz_std', 'most_abundant_mz', 'charge', 'rt_start', 'rt_apex', 'rt_end', 'fwhm',
            'n_isotopes', 'n_scans', 'mass', 'int_apex','int_sum'])
 
     df.sort_values(['rt_start','mz'])
