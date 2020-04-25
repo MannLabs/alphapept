@@ -46,7 +46,7 @@ If AlphaPept is installed correctly, you should be able to import Alphapept as a
 ### As a Python Package
 Once AlphaPept is correctly installed you can use it like any other python module.
 
-```python
+```
 from alphapept.fasta import get_frag_dict, parse
 from alphapept import constants
 
