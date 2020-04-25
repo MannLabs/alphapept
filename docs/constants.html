@@ -68,7 +68,7 @@ description: "Where all constats are stored"
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>{&#39;Y&#39;, &#39;R&#39;, &#39;I&#39;, &#39;U&#39;, &#39;K&#39;, &#39;W&#39;, &#39;M&#39;, &#39;P&#39;, &#39;D&#39;, &#39;C&#39;, &#39;L&#39;, &#39;H&#39;, &#39;S&#39;, &#39;N&#39;, &#39;G&#39;, &#39;A&#39;, &#39;F&#39;, &#39;T&#39;, &#39;Q&#39;, &#39;E&#39;, &#39;V&#39;}
+<pre>{&#39;P&#39;, &#39;F&#39;, &#39;Q&#39;, &#39;G&#39;, &#39;D&#39;, &#39;U&#39;, &#39;W&#39;, &#39;R&#39;, &#39;C&#39;, &#39;A&#39;, &#39;K&#39;, &#39;Y&#39;, &#39;E&#39;, &#39;N&#39;, &#39;S&#39;, &#39;L&#39;, &#39;H&#39;, &#39;I&#39;, &#39;T&#39;, &#39;V&#39;, &#39;M&#39;}
 </pre>
 </div>
 </div>
@@ -239,7 +239,7 @@ description: "Where all constats are stored"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Protease-dict">Protease dict<a class="anchor-link" href="#Protease-dict"> </a></h2><p>A numba compatible dictionary that stores different regular expressions neeeded for digestion.</p>
+<h2 id="Protease-dict">Protease dict<a class="anchor-link" href="#Protease-dict"> </a></h2><p>A numba compatible dictionary that stores different regular expressions neeeded for digestion. The dictionary was largely taken from the <a href="https://pyteomics.readthedocs.io/en/latest/_modules/pyteomics/parser.html">Pyteomics</a> website which in turn derived the rules are from <a href="https://web.expasy.org/peptide_cutter/peptidecutter_enzymes.html">expasy</a>.</p>
 
 </div>
 </div>
@@ -273,7 +273,7 @@ description: "Where all constats are stored"
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>&#39;([KR](?=[^P]))|((?&lt;=W)K(?=P))|((?&lt;=M)R(?=P))&#39;</pre>
+<pre>&#39;([KR](?=[^P]))&#39;</pre>
 </div>
 
 </div>
