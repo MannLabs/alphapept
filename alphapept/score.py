@@ -214,20 +214,23 @@ import seaborn as sns
 
 def score_RF(df,
              features = ['y_hits','b_hits','matched_int',
-                         'delta_m_ppm','abs_delta_m_ppm',
-                         'charge_2.0','charge_3.0','charge_4.0','charge_5.0',
-                         'nAA','nMissed','lnSequence','xTandem'],
+              'delta_m_ppm','abs_delta_m_ppm',
+              'charge_2.0','charge_3.0','charge_4.0','charge_5.0',
+              'nAA','nMissed','nInternal','lnSequence','xTandem',
+              'mass_density','weighted_mass_density'],
              fdr_level = 0.01,
-             train_fdr_level = 0.01,
+             train_fdr_level = 0.1,
              ini_score = 'y_hits',
-             n_iterations = 5,
-             n_train = 5000,
-             max_depth = [5,20,50],
-             max_leaf_nodes = [20,50, 100],
+             min_train = 5000,
+             max_train_frac = 1,
+             test_size = 0.8,
+             max_depth = [5,25,50],
+             max_leaf_nodes = [5,50,100,150,200,250],
+             n_jobs=3,
              scoring='accuracy',
              plot = True,
              verbose = True,
-             random_state = 22,
+             random_state = 42,
              **kwargs):
 
     # Setup ML pipeline
@@ -237,14 +240,19 @@ def score_RF(df,
     pipeline = Pipeline([('scaler', scaler), ('clf', rfc)])
     parameters = {'clf__max_depth':(max_depth), 'clf__max_leaf_nodes': (max_leaf_nodes)}
     ## Setup grid search framework for parameter selection and internal cross validation
-    cv = GridSearchCV(pipeline, param_grid=parameters, cv=3, scoring=scoring) # Create grid search for hyperparameter optimization of the pipeline
+    cv = GridSearchCV(pipeline, param_grid=parameters, cv=5, scoring=scoring,
+                     verbose=0,return_train_score=True,n_jobs=n_jobs) # Create grid search for hyperparameter optimization of the pipeline
 
     # Append extra features
     # @ToDo only do so if these features are requested in the input
     df['abs_delta_m_ppm'] = np.abs(df['delta_m_ppm'])
     df['nakedSequence'] = df['sequence'].str.replace('[a-z]|_', '')
     df['nAA']= df['nakedSequence'].str.len()
-    df['nMissed'] = df['sequence'].str.count('K') + df['sequence'].str.count('R') - 1
+
+    df['nKR'] = df['sequence'].str.count('K') + df['sequence'].str.count('R') - 1
+    df['nMissed'] = np.where(df['nKR'] > 0, df['nKR'], 0)
+    df['nInternal'] = np.where(df['nKR'] < 0, df['nKR'], 0)
+
     df = pd.get_dummies(df, columns=['charge'])
     count_seq = df.groupby('sequence')['sequence'].count()
     df['lnSequence'] = np.log(count_seq[df['sequence']].values)
@@ -257,30 +265,40 @@ def score_RF(df,
     dfT = df[~df.decoy]
     dfD = df[df.decoy]
 
-    random.seed(random_state)
+    df_prescore = dfT.append(dfD)
 
-    for i in range(0,n_iterations):
-        if (i == 0):
-            df_prescore = dfT.append(dfD)
-        else:
-            df_prescore["score"] = cv.predict_proba(df_prescore[features])[:,1]
+    df_scored = filter_score(df_prescore)
+    #df_scored = filter_seq(df_scored)
+    scored = cut_fdr(df_scored, fdr_level = train_fdr_level, plot=False, verbose=False)[1]
+    highT = scored[scored.decoy==False]
+    dfT_high = dfT[dfT['query_idx'].isin(highT.query_idx)]
+    dfT_high = dfT_high[dfT_high['db_idx'].isin(highT.db_idx)]
 
-        df_scored = filter_score(df_prescore)
-        df_scored = filter_seq(df_scored)
-        scored = cut_fdr(df_scored, fdr_level = train_fdr_level, plot=False, verbose=False)[1]
-        highT = scored[scored.decoy==False]
-        dfT_high = dfT[dfT['query_idx'].isin(highT.query_idx)]
-        df_training = dfT_high.sample(n=n_train, random_state=random_state+i).append(dfD.sample(n=n_train, random_state=random_state+i))
+    n_train = int(dfT_high.shape[0]*max_train_frac)
 
-        X = df_training[features]
+    if dfD.shape[0]*max_train_frac < n_train:
+        n_train = int(dfD.shape[0]*max_train_frac)
 
-        y = df_training['target'].astype(int)
-        X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, test_size=0.3, random_state=random_state+i, stratify=y.values)
+    if n_train < min_train:
+        raise ValueError("There are fewer high scoring targets or decoys than required by 'min_train' and 'max_train_frac'.")
 
-        cv.fit(X_train,y_train)
-        if verbose:
-            print('Best parameters for iteration {} were {}'.format(i, cv.best_params_))
-            print('Best test score was {}'.format(cv.score(X_test, y_test)))
+    df_training = dfT_high.sample(n=n_train, random_state=random_state).append(dfD.sample(n=n_train, random_state=random_state))
+
+    X = df_training[features]
+
+    y = df_training['target'].astype(int)
+    X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, test_size=test_size, random_state=random_state, stratify=y.values)
+
+    if verbose:
+        print('Training & cross-validation on {} targets and {} decoys'.format(np.sum(y_train),X_train.shape[0]-np.sum(y_train)))
+        print('Testing on {} targets and {} decoys'.format(np.sum(y_test),X_test.shape[0]-np.sum(y_test)))
+
+    cv.fit(X_train,y_train)
+    if verbose:
+        print('The best parameters selected by 5-fold cross-validation were {}'.format(cv.best_params_))
+        print('The train {} was {}'.format(scoring, cv.score(X_train, y_train)))
+        print('The test {} was {}'.format(scoring, cv.score(X_test, y_test)))
+
 
     if plot:
         feature_importances=cv.best_estimator_.named_steps['clf'].feature_importances_
@@ -297,7 +315,7 @@ def score_RF(df,
     df_new = df.copy()
     df_new['score'] = cv.predict_proba(df_new[features])[:,1]
     df_new = filter_score(df_new)
-    df_new = filter_seq(df_new)
+    #df_new = filter_seq(df_new)
     cval, cutoff = cut_fdr(df_new, fdr_level, plot, verbose)
 
     return cutoff
