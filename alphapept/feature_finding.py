@@ -8,7 +8,8 @@ __all__ = ['get_peaks', 'get_centroid', 'gaussian_estimator', 'raw_to_centroid',
            'plot_pattern', 'check_isotope_pattern_directed', 'grow', 'grow_trail', 'get_trails',
            'isolate_isotope_pattern', 'check_averagine', 'pattern_to_mz', 'cosine_averagine', 'int_list_to_array',
            'mz_to_mass', 'get_minpos', 'get_local_minima', 'is_local_minima', 'truncate', 'M_PROTON',
-           'get_isotope_patterns', 'feature_finder_report', 'plot_isotope_pattern', 'find_features']
+           'get_isotope_patterns', 'feature_finder_report', 'plot_isotope_pattern', 'find_features', 'extract_bruker',
+           'convert_bruker', 'map_bruker', 'map_ms2']
 
 # Cell
 from numba import njit
@@ -1368,3 +1369,203 @@ def find_features(query_data, callback = None, **kwargs):
     print('Time elapsed {}'. format(end-start))
 
     return df
+
+# Cell
+import subprocess
+import os
+
+def extract_bruker(file, ff_dir = "./ext/bruker/FF/", config = "default.config"):
+    """
+    Call Bruker Feautre Finder via subprocess
+    """
+
+    if not os.path.isdir(ff_dir):
+        raise FileNotFoundError('Bruker feature finder cmd not found.')
+
+    feature_path = file + '/'+ os.path.split(file)[-1] + '.features'
+
+    if not os.path.exists(feature_path):
+        config_path = ff_dir + '/'+ 'default.config'
+        if not os.path.isfile(config_path):
+            raise FileNotFoundError('Config file not found.')
+
+        FF_parameters = [os.path.join(ff_dir, 'uff-cmdline.exe'),'--ff 4d','--readconfig ' + config_path,'--input ' + file]
+
+        subprocess.run(FF_parameters)
+
+    if os.path.exists(feature_path):
+        return feature_path
+    else:
+        raise FileNotFoundError('Feature extraction failed.')
+
+
+import sqlalchemy as db
+
+def convert_bruker(feature_path):
+    """
+    Reads feature table and converts to feature table to be used with AlphaPept
+
+    """
+    engine_featurefile = db.create_engine('sqlite:///{}'.format(feature_path))
+    feature_table = pd.read_sql_table('LcTimsMsFeature', engine_featurefile)
+
+    from .constants import mass_dict
+
+    M_PROTON = mass_dict['Proton']
+    feature_table['Mass'] = feature_table['MZ'].values * feature_table['Charge'].values - feature_table['Charge'].values*M_PROTON
+    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "Mobility": "mobility", "Charge":"charge","Intensity":'int_sum'})
+    feature_table['rt_apex'] = feature_table['rt_apex']/60
+
+    return feature_table
+
+
+def map_bruker(feature_path, feature_table, query_data):
+    """
+    Map Ms1 to Ms2 via Table FeaturePrecursorMapping from Bruker FF
+    """
+    engine_featurefile = db.create_engine('sqlite:///{}'.format(feature_path))
+
+    mapping = pd.read_sql_table('FeaturePrecursorMapping', engine_featurefile)
+    mapping = mapping.set_index('PrecursorId')
+    feature_table= feature_table.set_index('Id')
+
+
+    query_prec_id = query_data['prec_id']
+
+    #Now look up the feature for each precursor
+
+    mass_matched = []
+    mz_matched = []
+    rt_matched = []
+    query_idx = []
+    f_idx = []
+
+    for idx, prec_id in tqdm(enumerate(query_prec_id)):
+        try:
+            f_id = mapping.loc[prec_id]['FeatureId']
+            all_matches = feature_table.loc[f_id]
+            if type(f_id) == np.int64:
+                match = all_matches
+                mz_matched.append(match['mz'])
+                rt_matched.append(match['rt_apex'])
+                mass_matched.append(match['mass'])
+                query_idx.append(idx)
+                f_idx.append(match['FeatureId'])
+
+            else:
+                for k in range(len(all_matches)):
+                    match = all_matches.iloc[k]
+                    mz_matched.append(match['mz'])
+                    rt_matched.append(match['rt_apex'])
+                    mass_matched.append(match['mass'])
+                    query_idx.append(idx)
+                    f_idx.append(match['FeatureId'])
+
+        except KeyError:
+            pass
+
+    features = pd.DataFrame(np.array([mass_matched, mz_matched, rt_matched, query_idx, f_idx]).T, columns = ['mass_matched', 'mz_matched', 'rt_matched', 'query_idx', 'feature_idx'])
+
+    features['query_idx'] = features['query_idx'].astype('int')
+
+    return features
+
+# Cell
+
+from sklearn.neighbors import KDTree
+import pandas as pd
+import numpy as np
+
+
+def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=3):
+    """
+    Map MS1 features to MS2 based on rt and mz
+    if ccs is included also add
+    """
+
+    if 'mobility' in feature_table.columns:
+        use_mob = True
+    else:
+        use_mob = False
+
+    if use_mob:
+
+        tree_points = feature_table[['mz','rt_apex','mobility']].values
+
+        tree_points[:,0] = np.log(tree_points[:,0])*1e6/ppm_range #m/z -> log transform, this is in ppm then
+        tree_points[:,1] = tree_points[:,1]/rt_range # -> this is in minutes
+        tree_points[:,2] = tree_points[:,2]/mob_range
+
+        matching_tree = KDTree(tree_points, metric="minkowski")
+
+        query_mz = np.log(query_data['mono_mzs2'])*1e6/ppm_range
+        query_rt = query_data['rt_list_ms2'] / rt_range
+        query_mob = query_data['mobility'] / mob_range
+
+        ref_points = np.array([query_mz, query_rt, query_mob]).T
+
+        ref_points[ref_points == -np.inf] = 0
+        ref_points[ref_points == np.inf] = 0
+        ref_points[np.isnan(ref_points)] = 0
+
+        dist, idx = matching_tree.query(ref_points, k=n_neighbors)
+
+    else:
+        tree_points = feature_table[['mz','rt_apex']].values
+        tree_points[:,0] = np.log(tree_points[:,0])*1e6/ppm_range #m/z -> log transform, this is in ppm then
+        tree_points[:,1] = tree_points[:,1]/rt_range # -> this is in minutes
+
+        matching_tree = KDTree(tree_points, metric="minkowski")
+
+        query_mz = np.log(query_data['mono_mzs2'])*1e6/ppm_range
+        query_rt = query_data['rt_list_ms2'] / rt_range
+
+        ref_points = np.array([query_mz, query_rt]).T
+
+        ref_points[ref_points == -np.inf] = 0
+        ref_points[ref_points == np.inf] = 0
+        ref_points[np.isnan(ref_points)] = 0
+
+        dist, idx = matching_tree.query(ref_points, k=n_neighbors)
+
+    all_df = []
+    for neighbor in range(n_neighbors):
+        if use_mob:
+            ref_df = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2'], query_data['mobility']]).T, columns=['rt', 'mass', 'mz', 'charge','mobility'])
+        else:
+            ref_df = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'mz', 'charge'])
+
+        ref_df['mass_matched'] = feature_table.iloc[idx[:,neighbor]]['mass'].values
+        ref_df['mass_offset'] = ref_df['mass_matched'] - ref_df['mass']
+
+        ref_df['rt_matched'] = feature_table.iloc[idx[:,neighbor]]['rt_apex'].values
+        ref_df['rt_offset'] = ref_df['rt_matched'] - ref_df['rt']
+
+        ref_df['mz_matched'] = feature_table.iloc[idx[:,neighbor]]['mz'].values
+        ref_df['mz_offset'] = ref_df['mz_matched'] - ref_df['mz']
+
+        if use_mob:
+            ref_df['mobility_matched'] = feature_table.iloc[idx[:,neighbor]]['mobility'].values
+            ref_df['mobility_offset'] = ref_df['mobility_matched'] - ref_df['mobility']
+
+        ref_df['charge_matched'] = feature_table.iloc[idx[:,neighbor]]['charge'].values
+
+        ref_df['query_idx'] = ref_df.index
+        ref_df['feature_idx'] = idx[:,neighbor]
+
+        for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+            if field in feature_table.keys():
+                ref_df[field] = feature_table.iloc[idx[:,neighbor]][field].values
+
+        ref_df['dist'] = dist[:,neighbor]
+
+        ref_df = ref_df[ref_df['dist']<1]
+
+        all_df.append(ref_df)
+
+    features = pd.concat(all_df)
+
+    features = features.sort_values('mass_matched', ascending=True)
+    features = features.reset_index(drop=True)
+
+    return features
