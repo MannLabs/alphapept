@@ -167,7 +167,9 @@ def cut_global_fdr(data, analyte_level='sequence', fdr_level=0.01, plot=True, ve
     data_sub_unique = data_sub.groupby([analyte_level,'decoy'], as_index=False).agg({"score": "max"})
     #print(data_sub_unique)
 
-    if analyte_level=='sequence':
+    if analyte_level=='precursor':
+        agg_score = data_sub_unique.groupby([analyte_level,'decoy'])['score'].max().reset_index()
+    elif analyte_level=='sequence':
         agg_score = data_sub_unique.groupby([analyte_level,'decoy'])['score'].max().reset_index()
     elif analyte_level=='protein':
         agg_score = data_sub_unique.groupby([analyte_level,'decoy'])['score'].sum().reset_index()
