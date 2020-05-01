@@ -403,7 +403,7 @@ def density_weighted_fragment_sum(query_frag, hits, hist, hist_bins, bin_size = 
     return np.sum(np.array(matched_query_frag_density))
 
 @njit
-def weighted_intensity_sum(query_int, query_frag, hits, hist, hist_bins, bin_size = 100, norm=False):
+def weighted_intensity_sum(query_int, query_frag, hits, hist, hist_bins, bin_size = 100, norm=True):
     if norm:
         hist = (hist-min(hist))/(max(hist)-min(hist))
 
@@ -743,6 +743,8 @@ def get_score_columns(
     psms = add_column(psms, mass, "mass")
     psms = add_column(psms, mz, "mz")
     psms = add_column(psms, charge, "charge")
+
+    psms = add_column(psms, np.char.add(np.char.add(psms['sequence'],"_"), psms['charge'].astype(int).astype(str)), 'precursor')
 
     if features is not None:
 
