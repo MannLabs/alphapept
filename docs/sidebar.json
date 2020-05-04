@@ -12,7 +12,6 @@
     "Matching": "/matching",
     "Constants": "/constants",
     "Settings": "/settings",
-    "Settings Template": "/settings_template",
-    "Title": "/Runner"
+    "Runner": "/runner"
   }
 }
