@@ -161,13 +161,11 @@ index = {"IsotopeDistribution": "01_chem.ipynb",
          "averagine_avg": "10_constants.ipynb",
          "protease_dict": "10_constants.ipynb",
          "print_settings": "11_settings.ipynb",
-         "settings": "11_settings.ipynb",
-         "raw": "11_settings.ipynb",
-         "fasta": "11_settings.ipynb",
-         "search": "11_settings.ipynb",
-         "features": "11_settings.ipynb",
-         "general": "11_settings.ipynb",
-         "calibration": "11_settings.ipynb"}
+         "load_settings": "11_settings.ipynb",
+         "save_settings": "11_settings.ipynb",
+         "check_enviroment": "12_runner.ipynb",
+         "check_settings": "12_runner.ipynb",
+         "alpha_runner": "12_runner.ipynb"}
 
 modules = ["chem.py",
            "io.py",
@@ -178,7 +176,8 @@ modules = ["chem.py",
            "recalibration.py",
            "quantification.py",
            "constants.py",
-           "settings.py"]
+           "settings.py",
+           "runner.py"]
 
 doc_url = "https://mannlabs.github.io/alphapept/"
 
