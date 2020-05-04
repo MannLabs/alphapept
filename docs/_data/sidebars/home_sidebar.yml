@@ -43,11 +43,8 @@ entries:
       title: Settings
       url: /settings
     - output: web,pdf
-      title: Settings Template
-      url: /settings_template
-    - output: web,pdf
-      title: Title
-      url: /Runner
+      title: Runner
+      url: /runner
     output: web
     title: alphapept
   output: web

@@ -263,10 +263,6 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
 
     return query_data
 
-
-
-
-
 # Cell
 
 def check_sanity(mass_list):
