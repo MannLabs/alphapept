@@ -6,6 +6,7 @@ keywords: fastai
 sidebar: home_sidebar
 
 summary: "Chemistry related functions"
+description: "Chemistry related functions"
 ---
 <!--
 
@@ -18,10 +19,14 @@ summary: "Chemistry related functions"
 -->
 
 <div class="container" id="notebook-container">
+        
+    {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This notebook contains all chemistry-related functionality.  Here, a major part is functionality to generate isotope patterns and the averagine model. These is required for feature finding, where an isotope pattern is validated by being compared to its averagine model. We use the data structure <code>Isotopes</code> from constants to handle Isotopes. Next, we define the class <a href="/alphapept/chem#IsotopeDistribution"><code>IsotopeDistribution</code></a> to calculate isotope distributions for a given Isotope. The core of the calculation is the function <a href="/alphapept/chem#fast_add"><code>fast_add</code></a> which allows the fast estimation of isotope distributions. <br>
@@ -33,7 +38,7 @@ To calculate the isotope distribution for the averagine model, we define the fun
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="IsotopeDistributions">IsotopeDistributions<a class="anchor-link" href="#IsotopeDistributions">&#182;</a></h2><p>The calculation of isotope distributions is based on the algorithm introduced in the paper <em>Calculation of isotope distributions in mass spectrometry. A trivial solution for a non-trivial problem</em> by <em>Hugo Kubinyi</em>. 
+<h2 id="IsotopeDistributions">IsotopeDistributions<a class="anchor-link" href="#IsotopeDistributions"> </a></h2><p>The calculation of isotope distributions is based on the algorithm introduced in the paper <em>Calculation of isotope distributions in mass spectrometry. A trivial solution for a non-trivial problem</em> by <em>Hugo Kubinyi</em>. 
 The algorithm itself can be found in the <a href="https://doi.org/10.1016/1044-0305(95)00017-8">paper</a>.</p>
 <p>In brief,  the approach avoids expanding polynomial expressions by combining precalculated patterns of hypothetical atom clusters and pruning low-intensity peaks. <br>
 To calculate the isotope distribution for a given isotope, we define the function <code>dict_to_dist,</code> which accepts a dictionary of amino acids and returns the isotope distribution.</p>
@@ -41,9 +46,15 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -65,6 +76,10 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -86,6 +101,10 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -107,6 +126,10 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -128,6 +151,8 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>One can compare the implementation to the algorithm with plotting values from the paper against the own results. Example $K_{23}I_{22}$ is Table 2 from the paper.</p>
@@ -135,6 +160,8 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -201,16 +228,24 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Averagine">Averagine<a class="anchor-link" href="#Averagine">&#182;</a></h2><p>The averagine model is based on <a href="https://www.sciencedirect.com/science/article/pii/1044030595000178">Senko et al.</a>. We define the function <a href="/alphapept/chem#get_average_formula"><code>get_average_formula</code></a> to calculate a dictionary with averagine masses.</p>
+<h2 id="Averagine">Averagine<a class="anchor-link" href="#Averagine"> </a></h2><p>The averagine model is based on <a href="https://www.sciencedirect.com/science/article/pii/1044030595000178">Senko et al.</a>. We define the function <a href="/alphapept/chem#get_average_formula"><code>get_average_formula</code></a> to calculate a dictionary with averagine masses.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -232,6 +267,10 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -261,6 +300,8 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>To directly calculate the isotope distribution of a molecule mass based on the averagine model, we define the wrapper function <a href="/alphapept/chem#mass_to_dist"><code>mass_to_dist</code></a>.</p>
@@ -268,9 +309,15 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -292,6 +339,10 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -321,6 +372,8 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>We can use this to plot isotope distributions for a given mass.</p>
@@ -328,6 +381,8 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -381,15 +436,23 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Mass-Calculations">Mass Calculations<a class="anchor-link" href="#Mass-Calculations">&#182;</a></h2>
+<h2 id="Mass-Calculations">Mass Calculations<a class="anchor-link" href="#Mass-Calculations"> </a></h2>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -411,6 +474,10 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 
 </div>
+    {% endraw %}
+
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -441,6 +508,8 @@ To calculate the isotope distribution for a given isotope, we define the functio
 </div>
 
 </div>
+    {% endraw %}
+
 </div>
  
 
