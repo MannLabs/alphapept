@@ -970,7 +970,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[&#39;xAMAMA&#39;, &#39;AMAMA&#39;]</pre>
+<pre>[&#39;AMAMA&#39;, &#39;xAMAMA&#39;]</pre>
 </div>
 
 </div>
@@ -1318,41 +1318,6 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
  &#39;y3&#39;: 346.16087661033}</pre>
 </div>
 
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">peptide</span> <span class="o">=</span> <span class="n">parse</span><span class="p">(</span><span class="s1">&#39;PEPTIDE&#39;</span><span class="p">)</span>
-
-<span class="o">%</span><span class="k">timeit</span> get_frag_dict(peptide, constants.mass_dict)
-<span class="o">%</span><span class="k">timeit</span> get_fragmass(peptide, constants.mass_dict)
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>371 µs ± 2.47 µs per loop (mean ± std. dev. of 7 runs, 1000 loops each)
-12.8 µs ± 4.37 µs per loop (mean ± std. dev. of 7 runs, 100000 loops each)
-</pre>
-</div>
 </div>
 
 </div>
