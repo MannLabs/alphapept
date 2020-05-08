@@ -169,7 +169,7 @@ def parse_kwargs_path(kwargs, filetype='.raw'):
 
     return kwargs
 
-#export
+
 def raw_to_npz(kwargs, callback=None):
     """
     Wrapper function to convert raw to npz
@@ -177,7 +177,7 @@ def raw_to_npz(kwargs, callback=None):
     if not "raw_path" in kwargs.keys():
         raise FileNotFoundError('Raw Path not set.')
 
-    kwargs = parse_kwargs_path(kwargs)
+    #kwargs = parse_kwargs_path(kwargs)
     path = kwargs["raw_path"]
 
     out_path = []
@@ -186,9 +186,9 @@ def raw_to_npz(kwargs, callback=None):
     base, ext = os.path.splitext(raw_file)
 
     if ext == '.raw':
-        query_data = load_thermo_raw(raw_file, callback=partial_progress, **kwargs)
+        query_data = load_thermo_raw(raw_file, callback=callback, **kwargs)
     elif ext == '.d':
-        query_data = load_bruker_raw(raw_file, callback=partial_progress, **kwargs)
+        query_data = load_bruker_raw(raw_file, callback=callback, **kwargs)
     else:
         raise NotImplementedError('File extension {} not understood.'.format(ext))
 
@@ -205,6 +205,7 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
     Load bruker raw file and extract spectra
     """
     import sqlalchemy as db
+    import pandas as pd
     from ext.bruker import timsdata
 
     tdf = os.path.join(raw_file, 'analysis.tdf')
@@ -259,7 +260,6 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
     query_data['mobility'] = tdf.scanNumToOneOverK0(1, prec_data['ScanNumber'].to_list()) #check if its okay to always use first frame
     query_data["mass_list_ms2"] = mass_list_ms2
     query_data["int_list_ms2"] = int_list_ms2
-    query_data['bounds'] = np.sum(query_data['mass_list_ms2']>=0,axis=0).astype(np.int64)
 
     return query_data
 
