@@ -2,7 +2,8 @@
 
 __all__ = ['filter_seq', 'filter_score', 'filter_precursor', 'get_q_values', 'cut_fdr', 'cut_global_fdr',
            'get_x_tandem_score', 'score_x_tandem', 'score_psms', 'get_ML_features', 'train_RF', 'score_ML',
-           'get_protein_groups', 'perform_protein_grouping', 'save_report_as_npz']
+           'get_missed_cleavages', 'get_internal_cleavages', 'get_protein_groups', 'perform_protein_grouping',
+           'save_report_as_npz']
 
 # Cell
 from numba import njit
@@ -242,14 +243,24 @@ from sklearn.model_selection import GridSearchCV
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def get_ML_features(df):
+def get_ML_features(df, **kwargs):
+    df['decoy'] = df['sequence'].str[-1].str.islower()
+
     df['abs_delta_m_ppm'] = np.abs(df['delta_m_ppm'])
     df['naked_sequence'] = df['sequence'].str.replace('[a-z]|_', '')
     df['n_AA']= df['naked_sequence'].str.len()
+    df['matched_ion_fraction'] = df['hits']/(2*df['n_AA'])
 
-    df['n_KR'] = df['naked_sequence'].str.count('K') + df['sequence'].str.count('R') - 1
-    df['n_missed'] = np.where(df['n_KR'] > 0, df['n_KR'], 0)
-    df['n_internal'] = np.where(df['n_KR'] < 0, df['n_KR'], 0)
+    df['decoy_reversed_seq'] = df['naked_sequence']
+    df.loc[df['decoy'] == True, 'decoy_reversed_seq'] = df['decoy_reversed_seq'].apply(lambda x: x[::-1])
+    df['n_missed'] = df['decoy_reversed_seq'].apply(lambda x: get_missed_cleavages(x, protease))
+    df['n_internal'] = df['decoy_reversed_seq'].apply(lambda x: get_internal_cleavages(x, protease))
+    df = df.drop(columns=['decoy_reversed_seq'])
+
+    mz_bin, mz_count = np.unique(np.floor(df.mz/100), return_counts=True)
+    mz_count = np.log(mz_count)
+    df['ln_mz_range'] = df['mz'].apply(lambda x: mz_count[mz_bin == np.floor(x/100)])
+    df = df.astype({"ln_mz_range": float})
 
     df = pd.get_dummies(df, columns=['charge'])
     count_seq = df.groupby('naked_sequence')['naked_sequence'].count()
@@ -367,6 +378,27 @@ def score_ML(df,
     cval, cutoff = cut_fdr(df_new, fdr_level, plot, verbose)
 
     return cutoff
+
+# Cell
+import re
+from pyteomics import parser
+from alphapept import constants
+
+def get_missed_cleavages(sequence="", protease="trypsin",**kwargs):
+    proteases = constants.protease_dict
+    protease = proteases[protease]
+    n_missed = parser.num_sites(sequence, protease)
+    return n_missed
+
+def get_internal_cleavages(sequence="", protease="trypsin",**kwargs):
+    proteases = constants.protease_dict
+    protease = proteases[protease]
+    match = re.search(protease,sequence[-1]+'_')
+    if match:
+        n_internal = 0
+    else:
+        n_internal = 1
+    return n_internal
 
 # Cell
 
