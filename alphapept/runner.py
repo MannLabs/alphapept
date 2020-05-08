@@ -18,24 +18,24 @@ def check_settings(settings):
     """
     check_enviroment()
 
-    logging.info('Checking raw path.')
+    logging.info('Checking raw path {}.'.format(settings["raw"]["raw_path"]))
 
     #Check if a valid raw file is provided. If a npz file is also provided do not convert
 
     if os.path.isfile(settings["raw"]["raw_path_npz"]):
-        if settings["general"]["convert_raw"]:
-            settings["general"]["convert_raw"] = False
-            logging.info('NPZ for raw file present. Skipping conversion step.')
+        logging.info('NPZ for raw file present. Skipping conversion step.')
+
+        datatype = 'npz'
     else:
         if os.path.isfile(settings["raw"]["raw_path"]):
-            logging.info('No NPZ for raw present. Performing conversion step.')
-            settings["general"]["convert_raw"] = True
+            logging.info('Found raw but no NPZ present. Performing conversion step.')
+        elif os.path.isdir(settings["raw"]["raw_path"]):
+            logging.info('Found raw but no NPZ present. Performing conversion step.')
         else:
-            raise FileNotFoundError('No raw or converted raw file provided')
+            raise FileNotFoundError('Raw file {} and npz file {} not found'.format(settings['raw']['raw_path'], settings['raw']['raw_path_npz']))
 
 
     #check filetype -> todo what if we have an npz but no irignal file
-
     base, ext = os.path.splitext(settings["raw"]["raw_path"])
 
     if ext == '.raw':
@@ -51,15 +51,14 @@ def check_settings(settings):
     logging.info('Checking library path.')
 
     if os.path.isfile(settings["fasta"]["library_path"]):
+        logging.info('NPZ for library file present.')
+
         if settings["general"]["create_library"]:
-            settings["general"]["create_library"] = False
-            logging.info('NPZ for library file present. Skipping library creation step.')
+            logging.info('Create_library set to True. Creating library from FASTA.')
     else:
-        if os.path.isfile(settings["fasta"]["fasta_path"]):
-            logging.info('No NPZ for library present. Creating library from FASTA.')
-            settings["general"]["create_library"] = True
-        else:
-            raise FileNotFoundError('No FASTA or library file provided')
+        logging.info('No NPZ for library present. Creating library from FASTA.')
+        settings["general"]["create_library"] = True
+
 
     logging.info('Library path okay.')
 
@@ -115,8 +114,7 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
         """
         Wrapper function to change the overall progress with the current progress
         """
-
-        global progress
+        nonlocal progress
 
         if current_progress:
             current_progress(current)
@@ -130,7 +128,7 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
             progress += delta
 
     def set_progress(overall):
-        global progress
+        nonlocal progress
 
         overall_progress(overall)
 
@@ -168,8 +166,7 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
     set_progress(time_dict['library_generation']['total'])
     ### File Conversion ###
 
-    if settings["general"]["convert_raw"]:
-
+    if settings["raw"]["convert_raw"]:
         te = time_dict['file_conversion']['step']
 
         from .io import raw_to_npz
