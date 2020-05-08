@@ -244,32 +244,34 @@ import seaborn as sns
 
 def get_ML_features(df):
     df['abs_delta_m_ppm'] = np.abs(df['delta_m_ppm'])
-    df['nakedSequence'] = df['sequence'].str.replace('[a-z]|_', '')
-    df['nAA']= df['nakedSequence'].str.len()
+    df['naked_sequence'] = df['sequence'].str.replace('[a-z]|_', '')
+    df['n_AA']= df['naked_sequence'].str.len()
 
-    df['nKR'] = df['sequence'].str.count('K') + df['sequence'].str.count('R') - 1
-    df['nMissed'] = np.where(df['nKR'] > 0, df['nKR'], 0)
-    df['nInternal'] = np.where(df['nKR'] < 0, df['nKR'], 0)
+    df['n_KR'] = df['naked_sequence'].str.count('K') + df['sequence'].str.count('R') - 1
+    df['n_missed'] = np.where(df['n_KR'] > 0, df['n_KR'], 0)
+    df['n_internal'] = np.where(df['n_KR'] < 0, df['n_KR'], 0)
 
     df = pd.get_dummies(df, columns=['charge'])
-    count_seq = df.groupby('sequence')['sequence'].count()
-    df['lnSequence'] = np.log(count_seq[df['sequence']].values)
+    count_seq = df.groupby('naked_sequence')['naked_sequence'].count()
+    df['ln_sequence'] = np.log(count_seq[df['naked_sequence']].values)
     df['x_tandem'] = get_x_tandem_score(df)
 
     return df
 
 def train_RF(df,
              features = ['y_hits','b_hits','matched_int',
-              'delta_m_ppm','abs_delta_m_ppm',
-              'charge_2.0','charge_3.0','charge_4.0','charge_5.0',
-              'nAA','nMissed','nInternal','lnSequence','xTandem',
-              'mass_density','weighted_mass_density'],
+                        'delta_m_ppm','abs_delta_m_ppm',
+                        'charge_2.0','charge_3.0','charge_4.0','charge_5.0',
+                        'n_AA','n_missed','n_internal','ln_sequence','x_tandem',
+                        'db_mass_density','db_weighted_mass_density',
+                        'db_mass_density_digit','db_weighted_mass_density_digit',
+                        'hits'],
              train_fdr_level = 0.1,
              ini_score = 'y_hits',
              min_train = 5000,
              test_size = 0.8,
              max_depth = [5,25,50],
-             max_leaf_nodes = [5,50,100,150,200,250],
+             max_leaf_nodes = [150,200,250],
              n_jobs=3,
              scoring='accuracy',
              plot = True,
@@ -347,10 +349,12 @@ def train_RF(df,
 def score_ML(df,
              trained_classifier,
              features = ['y_hits','b_hits','matched_int',
-              'delta_m_ppm','abs_delta_m_ppm',
-              'charge_2.0','charge_3.0','charge_4.0','charge_5.0',
-              'nAA','nMissed','nInternal','lnSequence','x_tandem',
-              'mass_density','weighted_mass_density'],
+                        'delta_m_ppm','abs_delta_m_ppm',
+                        'charge_2.0','charge_3.0','charge_4.0','charge_5.0',
+                        'n_AA','n_missed','n_internal','ln_sequence','x_tandem',
+                        'db_mass_density','db_weighted_mass_density',
+                        'db_mass_density_digit','db_weighted_mass_density_digit',
+                        'hits'],
             fdr_level = 0.01,
             plot=True,
             verbose=True,
