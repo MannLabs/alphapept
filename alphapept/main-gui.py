@@ -1,5 +1,4 @@
 from PyQt5.QtCore import QUrl, QSize, QThread, pyqtSignal, Qt, QAbstractTableModel, QCoreApplication
-
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
@@ -21,18 +20,15 @@ from alphapept.stylesheets import (
 )
 
 from alphapept.runner import alpha_runner
-
 import yaml
 import numpy as np
 from time import time, sleep
-
 import psutil
 from qroundprogressbar import QRoundProgressBar
 import logging
-
 import pandas as pd
-
 import qdarkstyle
+
 
 dark_stylesheet = qdarkstyle.load_stylesheet_pyqt5()
 
@@ -43,10 +39,19 @@ URL_DOCUMENTATION = "https://en.wikipedia.org/wiki/Documentation"
 URL_ISSUE = "https://en.wikipedia.org/wiki/Issue"
 URL_CONTRIBUTE = "https://en.wikipedia.org/wiki/Contribution"
 
-ICON_PATH = "logo_200px.png"
-SETTINGS_TEMPLATE_PATH = "settings_template.yaml"
-BUSY_INDICATOR = "busy_indicator.gif"
+ICON_PATH = "./img/logo_200px.png"
+SETTINGS_TEMPLATE_PATH = "./nbs/settings_template.yaml"
+BUSY_INDICATOR = "./img/busy_indicator.gif"
 
+ICON_PATH = os.path.abspath(ICON_PATH)
+BUSY_INDICATOR = os.path.abspath(BUSY_INDICATOR)
+
+
+if not os.path.isfile(ICON_PATH):
+    raise FileNotFoundError('logo not found')
+
+if not os.path.isfile(BUSY_INDICATOR):
+    raise FileNotFoundError('busy indicator gif not found')
 
 def cancel_dialogs():
     dialogs = [_ for _ in _dialogs]
@@ -121,7 +126,7 @@ class searchThread(QThread):
 
     def run(self):
         #args = list(self.args)
-        features, df_calib = alpha_runner(self.settings, CALLBACK_GLOBAL = self.update_global_progress, CALLBACK_LOCAL = self.update_current_progress, CURRENT_TASK = self.update_task)
+        features, df_calib = alpha_runner(self.settings, self.update_global_progress, self.update_current_progress, self.update_task)
 
         self.features = features
         self.df = df_calib

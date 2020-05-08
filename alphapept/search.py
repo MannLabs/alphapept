@@ -186,6 +186,7 @@ def query_data_to_features(query_data):
     features = pd.DataFrame(np.array([query_masses, query_mz, query_rt]).T, columns = ['mass_matched', 'mz_matched', 'rt_matched'])
 
     features['feature_idx'] = features.index #Index to query_data
+    features['query_idx']  = np.arange(len(query_masses))
 
     features = features.sort_values('mass_matched', ascending=True)
 

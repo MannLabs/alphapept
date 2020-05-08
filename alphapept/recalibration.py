@@ -42,13 +42,13 @@ def get_calibration(df, features, minimum_score = 20, outlier_std = 3, method='l
 
     """
 
-    df_sub = df.copy()
+    df
 
     # Remove outliers for calibration
-    o_mass_std = df_sub['o_mass_ppm'].std()
-    o_mass_mean = df_sub['o_mass_ppm'].mean()
+    o_mass_std = np.abs(df['o_mass_ppm'].std())
+    o_mass_mean = df['o_mass_ppm'].mean()
 
-    df_sub = df_sub.query('score > @minimum_score and o_mass_ppm < @o_mass_mean+@outlier_std*@o_mass_std and o_mass_ppm > -@o_mass_mean-@outlier_std*@o_mass_std')
+    df_sub = df.query('score > @minimum_score and o_mass_ppm < @o_mass_mean+@outlier_std*@o_mass_std and o_mass_ppm > @o_mass_mean-@outlier_std*@o_mass_std').copy()
 
     mz_step, rt_step = estimate_stepsize(df_sub, min_mz_step, min_rt_step, **kwargs)
 
