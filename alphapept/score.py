@@ -296,7 +296,7 @@ def score_RF(df,
     return cutoff
 
 # Cell
-
+import networkx as nx
 def get_protein_groups(data, pept_dict, fasta_dict, callback = None, verbose = False, **kwargs):
     """
     Function to perform protein grouping by razor approach
@@ -317,7 +317,7 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, verbose = F
                 for protein in proteins:
                     G.add_edge(str(i), 'p'+str(protein), score=score)
             else: #if there is only one PSM just add to this protein
-                if proteins[0] in found_proteins.keys():
+                if 'p'+str(proteins[0]) in found_proteins.keys():
                     found_proteins['p'+str(proteins[0])] = found_proteins['p'+str(proteins[0])] + [str(i)]
                 else:
                     found_proteins['p'+str(proteins[0])] = [str(i)]
@@ -386,7 +386,8 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, verbose = F
     for protein_str in found_proteins_razor.keys():
         protein = int(protein_str[1:])
         indexes = [int(_) for _ in found_proteins_razor[protein_str]]
-        report.loc[indexes, 'protein'] = fasta_dict[int(protein)]['name']
+
+        report.loc[indexes, 'protein'] = fasta_dict[protein]['name']
         report.loc[indexes, 'razor'] = True
 
     for a in connected_groups:
