@@ -130,7 +130,8 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
     def set_progress(overall):
         nonlocal progress
 
-        overall_progress(overall)
+        if overall_progress:
+            overall_progress(overall)
 
         progress = overall
 
@@ -187,6 +188,8 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
     if settings["general"]["find_features"]:
 
         te = time_dict['feature_finding']['step']
+
+        # === Parallelization of Fature Finding
 
         logging.info('Finding Features')
 
@@ -259,6 +262,10 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
 
     ### Search part ###
 
+    ## The search is parallelized -> we can run this one after another.
+
+    # ==== Start looping through files
+
     te = time_dict['search']['step']
     n_steps = 2
 
@@ -275,15 +282,14 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
 
 
     if settings['search']['calibrate']:
+        CURRENT_TASK('Calibrating features.')
 
         CURRENT_TASK('Scoring psms.')
         df = score_x_tandem(pd.DataFrame(psms), plot=False, verbose=False, **settings["search"])
         logging.info('Scoring complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
 
-
         from .recalibration import get_calibration
 
-        CURRENT_TASK('Calibrating features.')
         logging.info('Precursor Offset (PPM) is {:.2f} (mean), {:.2f} (std)'.format(df['o_mass_ppm'].mean(), df['o_mass_ppm'].std()))
         'Calibrating MS1 spectra'
         features_calib, df_sub = get_calibration(df, features, **settings["calibration"])
@@ -305,6 +311,7 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
         psms, num_specs_scored = get_score_columns(psms, query_data, db_data, features_calib, **settings["search"])
         logging.info('Extracted columns for {:,} psms.'.format(num_specs_scored))
 
+
     ## Protein Groups and FDR control
 
 
@@ -313,7 +320,7 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
     set_progress(time_dict['combining_files']['total'])
 
 
-    from .score import cut_global_fdr, perform_protein_grouping, cut_global_fdr, get_x_tandem_score, filter_score
+    from .score import cut_global_fdr, perform_protein_grouping, cut_global_fdr, get_x_tandem_score, filter_score, cut_fdr
 
     CURRENT_TASK('Scoring')
     df = pd.DataFrame(psms)
@@ -321,10 +328,18 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
     df['decoy'] = df['sequence'].str[-1].str.islower()
     df = filter_score(df)
 
+    #Question: Should we combine all psms or just the once at 1% FDR?
+    #For filesize reasons I'd only like to take the ones at 1 % FDR
+
+    df = cut_fdr(df, fdr_level=0.01, plot=False, verbose=False)
+    logging.info('First FDR Cut Scoring peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
+
+
+    # ==== End looping through files and collection of dataframes
+
     CURRENT_TASK('FDR control on peptides')
     df = cut_global_fdr(df, analyte_level='sequence',  plot=False, verbose=False)
     logging.info('Scoring peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
-
 
     CURRENT_TASK('Perform protein grouping')
     df = perform_protein_grouping(df, db_data['pept_dict'].item(), db_data['fasta_dict'].item())
