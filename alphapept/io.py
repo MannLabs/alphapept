@@ -72,13 +72,21 @@ def load_thermo_raw(raw_file, most_abundant, callback=None, **kwargs):
         prec_mz = rawfile.GetPrecursorMassForScanNum(i, 2)
 
         trailer_extra = rawfile.GetTrailerExtraForScanNum(i)
-
-        label_data = rawfile.GetLabelData(i)
-        intensity = np.array(label_data[0][1])
-        masses = np.array(label_data[0][0])
-
         mono_mz = trailer_extra["Monoisotopic M/Z"]
         charge = trailer_extra["Charge State"]
+
+        label_data = rawfile.GetLabelData(i)
+
+        # if labeled data is not available extract else
+        # Todo: check for centroided or not
+
+        if label_data[0][0] == ():
+            mlist = rawfile.GetMassListFromScanNum(i)
+            masses = np.array(mlist[0][0])
+            intensity = np.array(mlist[0][1])
+        else:
+            intensity = np.array(label_data[0][1])
+            masses = np.array(label_data[0][0])
 
         if ms_order == 2:
             masses, intensity = get_most_abundant(masses, intensity, most_abundant)
@@ -177,17 +185,21 @@ def raw_to_npz(kwargs, callback=None):
     if not "raw_path" in kwargs.keys():
         raise FileNotFoundError('Raw Path not set.')
 
+    if not "most_abundant" in kwargs.keys():
+        raise ValueError('most_abundant not set.')
+
     #kwargs = parse_kwargs_path(kwargs)
     path = kwargs["raw_path"]
+
 
     out_path = []
 
     raw_file = path
     base, ext = os.path.splitext(raw_file)
 
-    if ext == '.raw':
+    if ext.lower() == '.raw':
         query_data = load_thermo_raw(raw_file, callback=callback, **kwargs)
-    elif ext == '.d':
+    elif ext.lower() == '.d':
         query_data = load_bruker_raw(raw_file, callback=callback, **kwargs)
     else:
         raise NotImplementedError('File extension {} not understood.'.format(ext))
