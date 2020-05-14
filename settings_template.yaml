@@ -32,6 +32,13 @@ calibration:
     min: 1
     type: spinbox
 fasta:
+  contaminants_path:
+    default: '...'
+    description: Path to conaminants fasta file.
+    filetype:
+    - fasta
+    folder: false
+    type: path
   fasta_folder:
     default: '...'
     description: Path to folder with fasta files.
@@ -177,10 +184,10 @@ fasta:
     - staphylococcal peptidase i
     - thermolysin
     - thrombin
-    - trypsin
+    - trypsin_full
     - trypsin_exception
     - non-specific
-    - morpheus trypsin
+    - trypsin
 features:
   mass_importance:
     default: 100
