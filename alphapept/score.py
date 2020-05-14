@@ -401,7 +401,7 @@ def get_internal_cleavages(sequence="", protease="trypsin",**kwargs):
     return n_internal
 
 # Cell
-
+import networkx as nx
 def get_protein_groups(data, pept_dict, fasta_dict, callback = None, verbose = False, **kwargs):
     """
     Function to perform protein grouping by razor approach
