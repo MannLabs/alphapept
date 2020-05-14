@@ -6,6 +6,7 @@ keywords: fastai
 sidebar: home_sidebar
 
 summary: "A template for settings"
+description: "A template for settings"
 ---
 <!--
 
@@ -18,11 +19,14 @@ summary: "A template for settings"
 -->
 
 <div class="container" id="notebook-container">
-    {% raw %}
         
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>ToDo:
@@ -35,7 +39,7 @@ If path to library is provided don't do this.</p>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Settings">Settings<a class="anchor-link" href="#Settings">&#182;</a></h2><p>Each entry has a type, default values and a description.</p>
+<h2 id="Settings">Settings<a class="anchor-link" href="#Settings"> </a></h2><p>Each entry has a type, default values and a description.</p>
 <ul>
 <li>spinbox -&gt; QSpinBox with minimum and maximum values (int)</li>
 <li>doublespinbox -&gt; QDoubleSpinBox with minimum and maximum values (float)</li>
@@ -48,6 +52,8 @@ If path to library is provided don't do this.</p>
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -118,6 +124,8 @@ If path to library is provided don't do this.</p>
 <span class="n">fasta</span><span class="p">[</span><span class="s2">&quot;fasta_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;path&#39;</span><span class="p">,</span><span class="s1">&#39;default&#39;</span><span class="p">:</span><span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="s1">&#39;filetype&#39;</span><span class="p">:[</span><span class="s1">&#39;fasta&#39;</span><span class="p">],</span> <span class="s1">&#39;folder&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span><span class="s2">&quot;Path to fasta file.&quot;</span><span class="p">}</span>
 <span class="n">fasta</span><span class="p">[</span><span class="s2">&quot;fasta_folder&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;path&#39;</span><span class="p">,</span><span class="s1">&#39;default&#39;</span><span class="p">:</span><span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="s1">&#39;filetype&#39;</span><span class="p">:[</span><span class="s1">&#39;fasta&#39;</span><span class="p">],</span> <span class="s1">&#39;folder&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span><span class="s2">&quot;Path to folder with fasta files.&quot;</span><span class="p">}</span>
 <span class="n">fasta</span><span class="p">[</span><span class="s2">&quot;library_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;path&#39;</span><span class="p">,</span><span class="s1">&#39;default&#39;</span><span class="p">:</span><span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="s1">&#39;filetype&#39;</span><span class="p">:[</span><span class="s1">&#39;npz&#39;</span><span class="p">],</span> <span class="s1">&#39;folder&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span><span class="s2">&quot;Path to library file (.npz).&quot;</span><span class="p">}</span>
+
+<span class="n">fasta</span><span class="p">[</span><span class="s2">&quot;contaminants_path&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;path&#39;</span><span class="p">,</span><span class="s1">&#39;default&#39;</span><span class="p">:</span><span class="s1">&#39;...&#39;</span><span class="p">,</span> <span class="s1">&#39;filetype&#39;</span><span class="p">:[</span><span class="s1">&#39;fasta&#39;</span><span class="p">],</span> <span class="s1">&#39;folder&#39;</span><span class="p">:</span><span class="kc">False</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span><span class="s2">&quot;Path to conaminants fasta file.&quot;</span><span class="p">}</span>
 
 <span class="n">proteases</span> <span class="o">=</span> <span class="p">[</span><span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">protease_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
 <span class="n">fasta</span><span class="p">[</span><span class="s2">&quot;protease&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;combobox&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:</span><span class="n">proteases</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span><span class="s1">&#39;trypsin&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span><span class="s2">&quot;Protease for digestions.&quot;</span><span class="p">}</span>
@@ -218,6 +226,13 @@ If path to library is provided don't do this.</p>
     min: 1
     type: spinbox
 fasta:
+  contaminants_path:
+    default: &#39;...&#39;
+    description: Path to conaminants fasta file.
+    filetype:
+    - fasta
+    folder: false
+    type: path
   fasta_folder:
     default: &#39;...&#39;
     description: Path to folder with fasta files.
@@ -363,10 +378,10 @@ fasta:
     - staphylococcal peptidase i
     - thermolysin
     - thrombin
-    - trypsin
+    - trypsin_full
     - trypsin_exception
     - non-specific
-    - morpheus trypsin
+    - trypsin
 features:
   mass_importance:
     default: 100
@@ -514,6 +529,7 @@ search:
 
 </div>
     {% endraw %}
+
 </div>
  
 
