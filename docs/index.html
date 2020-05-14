@@ -5,7 +5,8 @@ title: AlphaPept
 keywords: fastai
 sidebar: home_sidebar
 
-summary: "A modular, python-based framework for mass spectrometry. Powered by nbdev."
+summary: "A modular, python-based framework for mass spectrometry. Powered by nbdev. Supercharged with numba."
+description: "A modular, python-based framework for mass spectrometry. Powered by nbdev. Supercharged with numba."
 ---
 <!--
 
@@ -18,11 +19,14 @@ summary: "A modular, python-based framework for mass spectrometry. Powered by nb
 -->
 
 <div class="container" id="notebook-container">
-    {% raw %}
         
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><img src="/alphapept/img/alphapept_logo.png" alt="alphapept"></p>
@@ -32,10 +36,8 @@ summary: "A modular, python-based framework for mass spectrometry. Powered by nb
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Current ToDo here:</p>
-<ul>
-<li>Update Installation instructions</li>
-<li>Upload to GitHub and set up dependabot, Travis CI</li>
+<h2 id="Current-ToDo-here:">Current ToDo here:<a class="anchor-link" href="#Current-ToDo-here:"> </a></h2><ul>
+<li>Compile Standalone Installer / Gui and update Installation Instructions</li>
 <li>Write brief introduction on how to use the modules</li>
 <li>Write how to report bugs / contribute</li>
 </ul>
@@ -45,42 +47,62 @@ summary: "A modular, python-based framework for mass spectrometry. Powered by nb
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This file will become your README and also the index of your documentation.</p>
+<h2 id="Documentation">Documentation<a class="anchor-link" href="#Documentation"> </a></h2><p>The documentation is automatically build based the jupyter notebooks and can be found <a href="https://mannlabs.github.io/alphapept/">here</a>:</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Install">Install<a class="anchor-link" href="#Install">&#182;</a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<p><code>pip install your_project_name</code></p>
+<h2 id="Installation-Instructions">Installation Instructions<a class="anchor-link" href="#Installation-Instructions"> </a></h2><h3 id="Conda">Conda<a class="anchor-link" href="#Conda"> </a></h3><p>It is strongly recommended to install AlphaPept in its own environment.</p>
+<ol>
+<li>Open the console and create a new conda environment: conda create --name alphapept python</li>
+<li>Activate the environment: <code>source activate alphapept</code> for Linux / Mac Os X or <code>activate alphapept</code> for Windows</li>
+<li>Redirect to the folder of choice and clone the repository: <code>git clone https://github.com/MannLabs/alphapept.git</code></li>
+<li><p>Install the package with <code>python setup.py install</code></p>
+<p>Note: If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: <code>conda install nb_conda</code></p>
+</li>
+</ol>
+<p>If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment, see below.</p>
+<h3 id="Standalone-Installation">Standalone Installation<a class="anchor-link" href="#Standalone-Installation"> </a></h3><ul>
+<li>TBD</li>
+</ul>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="How-to-use">How to use<a class="anchor-link" href="#How-to-use">&#182;</a></h2>
+<h2 id="How-to-use">How to use<a class="anchor-link" href="#How-to-use"> </a></h2><h3 id="GUI">GUI<a class="anchor-link" href="#GUI"> </a></h3><ul>
+<li>TBD</li>
+</ul>
+<h3 id="Command-Line">Command-Line<a class="anchor-link" href="#Command-Line"> </a></h3><ul>
+<li>TBD</li>
+</ul>
+
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="GUI">GUI<a class="anchor-link" href="#GUI">&#182;</a></h3><h3 id="Command-Line">Command-Line<a class="anchor-link" href="#Command-Line">&#182;</a></h3><h3 id="As-a-Python-Package">As a Python Package<a class="anchor-link" href="#As-a-Python-Package">&#182;</a></h3><h4 id="Building-Workflows">Building Workflows<a class="anchor-link" href="#Building-Workflows">&#182;</a></h4><h4 id="Calling-individual-functions">Calling individual functions<a class="anchor-link" href="#Calling-individual-functions">&#182;</a></h4>
+<h3 id="As-a-Python-Package">As a Python Package<a class="anchor-link" href="#As-a-Python-Package"> </a></h3><p>Once AlphaPept is correctly installed you can use it like any other python module.</p>
+
 </div>
 </div>
 </div>
+    {% raw %}
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">alphapept.fasta</span> <span class="k">import</span> <span class="n">get_frag_dict</span><span class="p">,</span> <span class="n">parse</span>
+<span class="kn">from</span> <span class="nn">alphapept</span> <span class="k">import</span> <span class="n">constants</span>
+
+<span class="n">peptide</span> <span class="o">=</span> <span class="s1">&#39;PEPT&#39;</span>
+
+<span class="n">get_frag_dict</span><span class="p">(</span><span class="n">parse</span><span class="p">(</span><span class="n">peptide</span><span class="p">),</span> <span class="n">constants</span><span class="o">.</span><span class="n">mass_dict</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -95,7 +117,12 @@ summary: "A modular, python-based framework for mass spectrometry. Powered by nb
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>2</pre>
+<pre>{&#39;b1&#39;: 98.06004032687,
+ &#39;b2&#39;: 227.10263342686997,
+ &#39;b3&#39;: 324.15539728686997,
+ &#39;y1&#39;: 120.06551965033,
+ &#39;y2&#39;: 217.11828351033,
+ &#39;y3&#39;: 346.16087661033}</pre>
 </div>
 
 </div>
@@ -103,23 +130,24 @@ summary: "A modular, python-based framework for mass spectrometry. Powered by nb
 </div>
 </div>
 
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Notes-for-Programmers">Notes for Programmers<a class="anchor-link" href="#Notes-for-Programmers">&#182;</a></h2><h3 id="Literal-Programming">Literal Programming<a class="anchor-link" href="#Literal-Programming">&#182;</a></h3><p>A key feature is the use of <a href="https://github.com/fastai/nbdev">nbdev</a>. We like to keep the entrance barrier low to attract new coders to contribute to the AlphaPept package. For this, we see nbedv as an ideal tool to document and modify code.</p>
-<h3 id="Testing">Testing<a class="anchor-link" href="#Testing">&#182;</a></h3><p>In order to make AlphaPept a sustainable package, it is imperative that all functions have tests. This is not only to ensure the proper execution of the function but also for the long run when wanting to keep up-to-date with package updates. For tracking package updates, we rely on <a href="https://dependabot.com">dependabot</a>. For continous integration we use <a href="https://travis-ci.org">Travis-CI</a>.</p>
-<h3 id="Numba---first">Numba - first<a class="anchor-link" href="#Numba---first">&#182;</a></h3><p>We heavily rely on the <a href="http://numba.pydata.org">Numba</a> package for efficient computation. As writing classes in numba with <code>@jitclass</code> requires type specification, in most cases, we prefer functional programming over
-Object-oriented programming for simplicity. Here, adding the decorator <code>@njit</code> is mostly enough.</p>
-<h3 id="Parallelization-strategies">Parallelization strategies<a class="anchor-link" href="#Parallelization-strategies">&#182;</a></h3><p>Python has some powerful parallelization tools such as the <code>multiprocessing</code> library. <code>Numba</code> allows loops to be executed in parallel when flagging with <code>prange</code>, which is, from a syntactic point of view, a very elegant solution to parallel processing. It comes with the downside that we cannot easily track the progress of parallel functions that use <code>prange</code>. We therefore chunk data where possible to be able to have a progress bar. Additionally, currently, it is not possible to set the number of cores that should be used.</p>
-<p>From a data analysis point of view, there are several considerations to be taken into account: When processing multiple files in parallel, it would be suitable to launch several processes in parallel, where the multiprocessing library would come in handy. On the other hand, when only wanting to investigate a single file, having the individual functions parallelized would be beneficial.</p>
-<p>Hence, the core idea is to write fast single-core functions and also have parallelized versions where applicable. For multi-file processing, we will rely on the <code>multiprocessing</code>.</p>
-<h3 id="Callbacks">Callbacks<a class="anchor-link" href="#Callbacks">&#182;</a></h3><p>As AlphaPept is intended to be the backend of a tool with GUI, we ideally want to be able to get a progress bar out of the major functions. For this, we can pass a <code>callback</code>-argument to the major functions. If the argument is passed, it will return the current progress in the range from 0 to 1.</p>
-<h3 id="Constants">Constants<a class="anchor-link" href="#Constants">&#182;</a></h3><p>One good way to handle constants would be to use globals. However, numba is not able to use typed dictionaries/classes as globals. We therefore pass them as variables (such as the mass_dict), which in some cases leads to functions with a lot of arguments. Note that <code>numba</code> is not able to handle <code>kwargs</code> and <code>args</code> at this point.</p>
-
-</div>
-</div>
 </div>
     {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Notes-for-Programmers">Notes for Programmers<a class="anchor-link" href="#Notes-for-Programmers"> </a></h2><h3 id="Literal-Programming">Literal Programming<a class="anchor-link" href="#Literal-Programming"> </a></h3><p>A key feature is the use of <a href="https://github.com/fastai/nbdev">nbdev</a>. We like to keep the entrance barrier low to attract new coders to contribute to the AlphaPept package. For this, we see nbedv as an ideal tool to document and modify code.</p>
+<h3 id="Testing">Testing<a class="anchor-link" href="#Testing"> </a></h3><p>In order to make AlphaPept a sustainable package, it is imperative that all functions have tests. This is not only to ensure the proper execution of the function but also for the long run when wanting to keep up-to-date with package updates. For tracking package updates, we rely on <a href="https://dependabot.com">dependabot</a>. For continuous integration, we use GitHub Actions.</p>
+<h3 id="Numba---first">Numba - first<a class="anchor-link" href="#Numba---first"> </a></h3><p>We heavily rely on the <a href="http://numba.pydata.org">Numba</a> package for efficient computation. As writing classes in numba with <code>@jitclass</code> requires type specification, in most cases, we prefer functional programming over
+Object-oriented programming for simplicity. Here, adding the decorator <code>@njit</code> is mostly enough.</p>
+<h3 id="Parallelization-strategies">Parallelization strategies<a class="anchor-link" href="#Parallelization-strategies"> </a></h3><p>Python has some powerful parallelization tools, such as the <code>multiprocessing</code> library. <code>Numba</code> allows loops to be executed in parallel when flagging with <code>prange</code>, which is, from a syntactic point of view, a very elegant solution to parallel processing. It comes with the downside that we cannot easily track the progress of parallel functions that use <code>prange</code>. We, therefore, chunk data where possible to be able to have a progress bar. Additionally, currently, it is not possible to set the number of cores that should be used.</p>
+<p>From a data analysis point of view, there are several considerations to be taken into account: When processing multiple files in parallel, it would be suitable to launch several processes in parallel, where the multiprocessing library would come in handy. On the other hand, when only wanting to investigate a single file, having the individual functions parallelized would be beneficial.</p>
+<p>Hence, the core idea is to write fast single-core functions and also have parallelized versions where applicable. For multi-file processing, we will rely on the <code>multiprocessing</code>.</p>
+<h3 id="Callbacks">Callbacks<a class="anchor-link" href="#Callbacks"> </a></h3><p>As AlphaPept is intended to be the backend of a tool with GUI, we ideally want to be able to get a progress bar out of the major functions. For this, we can pass a <code>callback</code>-argument to the major functions. If the argument is passed, it will return the current progress in the range from 0 to 1.</p>
+<h3 id="Constants">Constants<a class="anchor-link" href="#Constants"> </a></h3><p>One good way to handle constants would be to use globals. However, numba is not able to use typed dictionaries/classes as globals. We therefore pass them as variables (such as the mass_dict), which in some cases leads to functions with a lot of arguments. Note that <code>numba</code> is not able to handle <code>kwargs</code> and <code>args</code> at this point.</p>
+
+</div>
+</div>
+</div>
 </div>
  
 
