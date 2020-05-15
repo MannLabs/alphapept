@@ -243,7 +243,7 @@ from sklearn.model_selection import GridSearchCV
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def get_ML_features(df, **kwargs):
+def get_ML_features(df, protease='trypsin', **kwargs):
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
     df['abs_delta_m_ppm'] = np.abs(df['delta_m_ppm'])
@@ -372,7 +372,7 @@ def score_ML(df,
              **kwargs):
     # Apply the classifier to the entire dataset
     df_new = df.copy()
-    df_new['score'] = RF.predict_proba(df_new[features])[:,1]
+    df_new['score'] = trained_classifier.predict_proba(df_new[features])[:,1]
     df_new = filter_score(df_new)
     df_new = filter_precursor(df_new)
     cval, cutoff = cut_fdr(df_new, fdr_level, plot, verbose)
