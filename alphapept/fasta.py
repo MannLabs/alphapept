@@ -417,11 +417,8 @@ def get_spectrum(peptide, mass_dict):
 
     return (precmass, peptide, fragmasses, fragtypes)
 
-
 @njit
 def get_spectra(peptides, mass_dict):
-    # Numba function for parallel calculation of spectra
-    # prange does seem to make problems here..
     spectra = []
 
     for i in range(len(peptides)):
@@ -533,22 +530,30 @@ def generate_library(mass_dict, fasta_path, callback = None, contaminants_path =
 
     pept_dict = {}
 
-    n_entries = read_fasta_file_entries(fasta_path)
+    if type(fasta_path) is str:
+        fasta_path = [fasta_path]
+        n_fastas = 1
 
-    fasta_generator = read_fasta(fasta_path)
+    elif type(fasta_path) is list:
+        n_fastas = len(fasta_path)
 
-    for element in fasta_generator:
-        if check_sequence(element, constants.AAs):
-            fasta_dict[fasta_index] = element
-            mod_peptides = generate_peptides(element["sequence"], **kwargs)
-            pept_dict, added_seqs = add_to_pept_dict(pept_dict, mod_peptides, fasta_index)
-            if len(added_seqs) > 0:
-                to_add.extend(added_seqs)
+    for f_id, fasta_file in enumerate(fasta_path):
+        n_entries = read_fasta_file_entries(fasta_file)
 
-        fasta_index += 1
+        fasta_generator = read_fasta(fasta_file)
 
-        if callback:
-            callback(fasta_index/n_entries)
+        for element in fasta_generator:
+            if check_sequence(element, constants.AAs):
+                fasta_dict[fasta_index] = element
+                mod_peptides = generate_peptides(element["sequence"], **kwargs)
+                pept_dict, added_seqs = add_to_pept_dict(pept_dict, mod_peptides, fasta_index)
+                if len(added_seqs) > 0:
+                    to_add.extend(added_seqs)
+
+            fasta_index += 1
+
+            if callback:
+                callback(fasta_index/n_entries/n_fastas+f_id)
 
     if contaminants_path:
         fasta_generator = read_fasta(contaminants_path)
