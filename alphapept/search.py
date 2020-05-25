@@ -777,11 +777,14 @@ def get_score_columns(
     psms = add_column(psms, mz, "mz")
     psms = add_column(psms, charge, "charge")
 
+
+
+
     psms = add_column(psms, np.char.add(np.char.add(psms['sequence'],"_"), psms['charge'].astype(int).astype(str)), 'precursor')
 
     if features is not None:
-
         psms = add_column(psms, features.loc[psms['query_idx']]['feature_idx'].values, 'feature_idx')
+        psms = add_column(psms, features.loc[psms['query_idx']]['query_idx'].values, 'raw_idx')
 
         for key in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
             if key in features.keys():
