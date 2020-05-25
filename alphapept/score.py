@@ -219,7 +219,7 @@ def score_psms(df, score = 'y_hits', fdr_level = 0.01, plot = True, verbose=True
     if score in df.columns:
         df['score'] = df[score]
     else:
-        raise ValueError("The specified 'score' is not available in 'df'.")
+        raise ValueError("The specified 'score' {} is not available in 'df'.".format(score))
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
     df = filter_score(df)
@@ -264,7 +264,10 @@ def get_ML_features(df, protease='trypsin', **kwargs):
     df['ln_mz_range'] = df['mz'].apply(lambda x: mz_count[mz_bin == np.floor(x/100)])
     df = df.astype({"ln_mz_range": float})
 
+    df['charge_'] = df['charge']
     df = pd.get_dummies(df, columns=['charge'])
+    df = df.rename(columns={'charge_': 'charge'})
+
     count_seq = df.groupby('naked_sequence')['naked_sequence'].count()
     df['ln_sequence'] = np.log(count_seq[df['naked_sequence']].values)
     df['x_tandem'] = get_x_tandem_score(df)
