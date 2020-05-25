@@ -167,7 +167,7 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
     set_progress(time_dict['library_generation']['total'])
     ### File Conversion ###
 
-    if settings["raw"]["convert_raw"]:
+    if settings["general"]["convert_raw"]:
         te = time_dict['file_conversion']['step']
 
         from .io import raw_to_npz
@@ -323,15 +323,27 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
     from .score import cut_global_fdr, perform_protein_grouping, cut_global_fdr, get_x_tandem_score, filter_score, cut_fdr
 
     CURRENT_TASK('Scoring')
+
+
     df = pd.DataFrame(psms)
-    df['score'] = get_x_tandem_score(df)
-    df['decoy'] = df['sequence'].str[-1].str.islower()
-    df = filter_score(df)
 
-    #Question: Should we combine all psms or just the once at 1% FDR?
-    #For filesize reasons I'd only like to take the ones at 1 % FDR
+    from .score import get_ML_features
 
-    df = cut_fdr(df, fdr_level=0.01, plot=False, verbose=False)
+    df = get_ML_features(df, **settings['fasta'])
+
+    if settings["general"]["score"] == 'random_forest':
+        from .score import train_RF, score_ML
+        cv = train_RF(df)
+        df = score_ML(df, cv)
+    elif settings["general"]["score"] == 'x_tandem':
+        from .score import score_x_tandem
+        df = score_x_tandem(df)
+    else:
+        raise NotImplementedError('Scoring method {} not implemented.'.format(settings["general"]["score"]))
+
+
+
+    #df = cut_fdr(df, fdr_level=0.01, plot=False, verbose=False)
     logging.info('First FDR Cut Scoring peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
 
 
