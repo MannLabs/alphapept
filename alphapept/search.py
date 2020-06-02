@@ -4,7 +4,7 @@ __all__ = ['compare_frags', 'ppm_to_dalton', 'get_idxs', 'compare_specs_parallel
            'query_data_to_features', 'get_psms', 'frag_delta', 'intensity_fraction', 'intensity_product',
            'get_frag_mass_density_norm', 'mass_density_weighted_fragment_sum', 'mass_density_weighted_intensity_sum',
            'b_y_hits', 'score_parallel', 'score_single', 'add_column', 'remove_column', 'get_sequences',
-           'get_score_columns', 'plot_hit', 'perform_search']
+           'get_score_columns', 'plot_hit', 'plot_psms', 'perform_search']
 
 # Cell
 from numba import njit
@@ -786,7 +786,7 @@ def get_score_columns(
         psms = add_column(psms, features.loc[psms['query_idx']]['feature_idx'].values, 'feature_idx')
         psms = add_column(psms, features.loc[psms['query_idx']]['query_idx'].values, 'raw_idx')
 
-        for key in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+        for key in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm','dist']:
             if key in features.keys():
                 psms = add_column(psms, features.loc[psms['query_idx']][key].values, key)
 
@@ -863,6 +863,90 @@ def plot_hit(
 
     plt.legend()
     plt.show()
+
+from .fasta import get_frag_dict, parse
+import matplotlib.pyplot as plt
+
+def plot_psms(query_data, df, index, mass_dict, ppm=True, m_tol=20):
+    """
+    Plot a psms
+    """
+    spectrum = df.iloc[index]
+
+    sequence = spectrum["sequence"]
+    db_idx = spectrum["db_idx"]
+    query_idx = spectrum["query_idx"]
+
+    if 'matched_int' in spectrum.index:
+        intensity_fraction = spectrum["matched_int"] / spectrum["total_int"]
+    else:
+        intensity_fraction = np.nan
+        matched_int = np.nan
+
+    frag_dict = get_frag_dict(parse(sequence), mass_dict)
+    frag_dict_r = {v: k for k, v in frag_dict.items()}
+
+    db_frag = list(frag_dict.values())
+    db_frag.sort()
+
+    db_int = [100 for _ in db_frag]
+
+    query_bounds = query_data['bounds']
+    query_frags = query_data['mass_list_ms2']
+    query_ints = query_data['int_list_ms2']
+
+    query_bound = query_bounds[query_idx]
+    query_frag = query_frags[:, query_idx] [:query_bound]
+    query_int = query_ints[:, query_idx] [:query_bound]
+
+    query_int = query_int / np.max(query_int) * 100
+
+    hits = compare_frags(query_frag, db_frag, m_tol, ppm)
+
+    n_hits = np.sum(hits > 0)
+
+    hitpos = hits[hits > 0] - 1
+
+    hit_x = query_frag[hitpos]
+    hit_y = query_int[hitpos]
+
+    # create an axis
+    ax = plt.figure(figsize=(10, 5))
+
+    plt.vlines(db_frag, 0, db_int, "k", label="DB", alpha=0.2)
+
+    plt.vlines(query_frag, 0, query_int, "r", label="Query", alpha=0.5)
+
+    plt.plot(hit_x, hit_y, "ro", label="Hit", alpha=0.5)
+
+    figure_title = "Peptide-Spectrum-Match for Spectra: {} - sequence {} \nHits {} - Intensity Fraction {:.2f} %".format(
+        query_idx, sequence, n_hits, intensity_fraction * 100
+    )
+
+    db_hits = np.array(db_frag)[hits>0]
+    ion_hits = [frag_dict_r[_] for _ in db_hits]
+
+    for _ in frag_dict.keys():
+
+        if _ in ion_hits:
+            color = 'r'
+        else:
+            color = 'k'
+
+        if _[0] == 'y':
+            plt.text(frag_dict[_], 110, _, fontsize=12, alpha = 0.8, color=color)
+        else:
+            plt.text(frag_dict[_], 104, _, fontsize=12, alpha = 0.8, color=color)
+
+    plt.title(figure_title)
+
+    plt.xlabel("Mass")
+    plt.ylabel("Relative Intensity (%)")
+    plt.ylim([0, 120])
+
+    plt.legend(loc='lower right')
+    plt.show()
+
 
 # Cell
 def perform_search(query_files, db_masses, db_frags, db_bounds, db_seqs, frag_types, plot, **kwargs):

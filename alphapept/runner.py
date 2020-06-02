@@ -159,8 +159,22 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
         logging.info('Generated {:,} spectra'.format(len(spectra)))
 
         CURRENT_TASK('Saving library')
-        base, ext = os.path.splitext(settings['fasta']['fasta_path'])
-        settings['fasta']['library_path'] = base + '.npz'
+
+        if settings['fasta']['library_path'] == '...':
+            logging.info('Library path not set. Trying to create library path from fasta files.')
+
+            if type(settings['fasta']['fasta_path']) is list:
+                base_names = [os.path.splitext(os.path.split(_)[1])[0] for _ in settings['fasta']['fasta_path']]
+                base_path = os.path.split(settings['fasta']['fasta_path'][0])[0]
+                #TODO: build in error check for too long paths
+                settings['fasta']['library_path'] = os.path.join(base_path, '_'.join(base_names)+'.npz')
+
+            else:
+                base, ext = os.path.splitext(settings['fasta']['fasta_path'])
+                settings['fasta']['library_path'] = base + '.npz'
+
+            logging.info('Database path set to {}'.format(settings['fasta']['library_path']))
+
         library_path = save_library(spectra, pept_dict, fasta_dict, **settings['fasta'])
         logging.info('Database saved to {}. Filesize {:.2f} Gb'.format(library_path, os.stat(library_path).st_size/(1024**3)))
 
