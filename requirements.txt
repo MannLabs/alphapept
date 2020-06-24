@@ -17,5 +17,5 @@ seaborn==0.10.0
 numpy==1.18.1
 h5py==2.10.0
 matplotlib==3.1.2
-pyyaml==5.3
+pyyaml==5.3.1
 qroundprogressbar==1.0.0
