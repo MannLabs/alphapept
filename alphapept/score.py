@@ -101,12 +101,12 @@ def cut_fdr(df, fdr_level=0.01, plot=True, verbose=True):
     last_q_value = df["q_value"].iloc[-1]
     first_q_value = df["q_value"].iloc[0]
 
-    if last_q_value < fdr_level:
+    if last_q_value <= fdr_level:
         if verbose:
             print('Last q_value {:.3f} of dataset is smaller than fdr_level {:.3f}'.format(last_q_value, fdr_level))
         cutoff_index = len(df)-1
 
-    elif first_q_value > fdr_level:
+    elif first_q_value >= fdr_level:
         if verbose:
             print('First q_value {:.3f} of dataset is larger than fdr_level {:.3f}'.format(last_q_value, fdr_level))
         cutoff_index = 0
@@ -191,16 +191,14 @@ def cut_global_fdr(data, analyte_level='sequence', fdr_level=0.01, plot=True, ve
 import networkx as nx
 
 def get_x_tandem_score(df):
-    df['b_hits_int'] = df['b_hits'].astype('int')
-    df['y_hits_int'] = df['y_hits'].astype('int')
 
-    df['b_hits_fac'] = df['b_hits_int'].apply(lambda x: np.math.factorial(x))
-    df['y_hits_fac'] = df['y_hits_int'].apply(lambda x: np.math.factorial(x))
+    b = df['b_hits'].astype('int').apply(lambda x: np.math.factorial(x)).values
+    y = df['y_hits'].astype('int').apply(lambda x: np.math.factorial(x)).values
+    x_tandem = np.log(b.astype('float')*y.astype('float')*df['matched_int'].values)
 
-    df['x_tandem'] = df['matched_int']*df['b_hits_fac']*df['y_hits_fac']
-    df['x_tandem'] = df['x_tandem'].apply(lambda x: np.log(x))
+    x_tandem[x_tandem==-np.inf] = 0
 
-    return df.x_tandem.values
+    return x_tandem
 
 def score_x_tandem(df, fdr_level = 0.01, plot = True, verbose=True, **kwargs):
     df['score'] = get_x_tandem_score(df)
