@@ -526,7 +526,8 @@ def score_parallel(
         if db_ints is None:
             db_int = None
         else:
-            db_int = db_ints[:, db_idx] [: db_bounds[db_idx] ]
+            db_int = db_ints[i]
+
         matched_int[i] = intensity_product(query_int, hits, db_int)
 
         db_mass_density[i] = mass_density_weighted_fragment_sum(query_frag, hits, db_mz_space_005, db_mz_density_005, mz_factor=0.05)
@@ -610,7 +611,7 @@ def score_single(
         if db_ints is None:
             db_int = None
         else:
-            db_int = db_ints[:, db_idx] [: db_bounds[db_idx] ]
+            db_int = db_ints[i]
         matched_int[i] = intensity_product(query_int, hits, db_int)
 
         db_mass_density[i] = mass_density_weighted_fragment_sum(query_frag, hits, db_mz_space_005, db_mz_density_005, mz_factor=0.05)
