@@ -11,7 +11,7 @@ pandas==1.0.1
 psutil==5.7.0
 pymsfilereader==1.0.1
 PyQt5==5.15.0
-pyteomics==4.1.2
+pyteomics==4.3.2
 pyyaml==5.3.1
 qdarkstyle==2.8
 qroundprogressbar==1.0.0
