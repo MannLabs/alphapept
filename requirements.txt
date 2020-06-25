@@ -6,7 +6,7 @@ matplotlib==3.2.2
 matplotlib==3.2.2
 networkx==2.4
 numba==0.48.0
-numpy==1.18.1
+numpy==1.19.0
 pandas==1.0.1
 psutil==5.7.0
 pymsfilereader==1.0.1
