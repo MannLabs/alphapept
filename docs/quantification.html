@@ -39,6 +39,22 @@ description: "Functions related to quantification"
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="LFQ">LFQ<a class="anchor-link" href="#LFQ"> </a></h2><p>Algorithms related to label-free quantifications are motivated by the <a href="https://doi.org/10.1074/mcp.m113.031591">MaxLFQ paper</a>.</p>
+<p>TODO: Include weighing?
+TODO: Check boundaries</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="In-Silico-Test-data">In Silico Test data<a class="anchor-link" href="#In-Silico-Test-data"> </a></h2><p>To test the performance of different approaches we resort to simulating peptide intensities and adjusting them with a simulated normalization. We can then use different approaches to recover the normalization.</p>
+
+</div>
+</div>
+</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -57,7 +73,7 @@ description: "Functions related to quantification"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="to_numba_list" class="doc_header"><code>to_numba_list</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L21" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>to_numba_list</code>(<strong><code>a_list</code></strong>)</p>
+<h4 id="gaussian" class="doc_header"><code>gaussian</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L11" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>gaussian</code>(<strong><code>mu</code></strong>, <strong><code>sigma</code></strong>, <strong><code>grid</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -81,8 +97,9 @@ description: "Functions related to quantification"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="fast_error" class="doc_header"><code>fast_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L30" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fast_error</code>(<strong><code>normalization</code></strong>, <strong><code>profiles</code></strong>)</p>
+<h4 id="return_elution_profile" class="doc_header"><code>return_elution_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L16" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>return_elution_profile</code>(<strong><code>timepoint</code></strong>, <strong><code>sigma</code></strong>, <strong><code>n_runs</code></strong>)</p>
 </blockquote>
+<p>Simulation of a Gaussian Elution Profile</p>
 
 </div>
 
@@ -105,152 +122,7 @@ description: "Functions related to quantification"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="fast_error_scalar" class="doc_header"><code>fast_error_scalar</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L42" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fast_error_scalar</code>(<strong><code>normalization</code></strong>, <strong><code>profiles</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="fast_peptide_error" class="doc_header"><code>fast_peptide_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L56" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fast_peptide_error</code>(<strong><code>profile</code></strong>, <strong><code>normalization</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="peptide_error" class="doc_header"><code>peptide_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L80" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>peptide_error</code>(<strong><code>profile</code></strong>, <strong><code>normalization</code></strong>)</p>
-</blockquote>
-<p>Calculates the peptide error for all runs</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="elution_profile" class="doc_header"><code>elution_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L103" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>elution_profile</code>(<strong><code>timepoint</code></strong>, <strong><code>sigma</code></strong>, <strong><code>n_runs</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="gaussian" class="doc_header"><code>gaussian</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L107" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>gaussian</code>(<strong><code>mu</code></strong>, <strong><code>sigma</code></strong>, <strong><code>grid</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="return_elution_profile" class="doc_header"><code>return_elution_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L112" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>return_elution_profile</code>(<strong><code>timepoint</code></strong>, <strong><code>sigma</code></strong>, <strong><code>n_runs</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="simulate_sample_profiles" class="doc_header"><code>simulate_sample_profiles</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L116" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>simulate_sample_profiles</code>(<strong><code>n_peptides</code></strong>, <strong><code>n_runs</code></strong>, <strong><code>n_samples</code></strong>, <strong><code>threshold</code></strong>, <strong><code>use_noise</code></strong>=<em><code>True</code></em>)</p>
+<h4 id="simulate_sample_profiles" class="doc_header"><code>simulate_sample_profiles</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L23" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>simulate_sample_profiles</code>(<strong><code>n_peptides</code></strong>, <strong><code>n_runs</code></strong>, <strong><code>n_samples</code></strong>, <strong><code>threshold</code></strong>=<em><code>0.2</code></em>, <strong><code>use_noise</code></strong>=<em><code>True</code></em>)</p>
 </blockquote>
 <p>Generate random profiles to serve as test data</p>
 
@@ -264,6 +136,19 @@ description: "Functions related to quantification"
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Delayed-Normalization">Delayed Normalization<a class="anchor-link" href="#Delayed-Normalization"> </a></h2>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -275,24 +160,8 @@ description: "Functions related to quantification"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="simulate_peptide_intensities" class="doc_header"><code>simulate_peptide_intensities</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L160" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>simulate_peptide_intensities</code>(<strong><code>n_sequences</code></strong>, <strong><code>n_samples</code></strong>, <strong><code>noise</code></strong>=<em><code>True</code></em>, <strong><code>remove</code></strong>=<em><code>True</code></em>, <strong><code>peptide_ratio</code></strong>=<em><code>True</code></em>, <strong><code>abundance</code></strong>=<em><code>True</code></em>, <strong><code>signal_level</code></strong>=<em><code>100</code></em>, <strong><code>noise_divider</code></strong>=<em><code>10</code></em>, <strong><code>keep</code></strong>=<em><code>0.7</code></em>)</p>
+<h4 id="get_peptide_error" class="doc_header"><code>get_peptide_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L74" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_peptide_error</code>(<strong><code>profile</code></strong>, <strong><code>normalization</code></strong>)</p>
 </blockquote>
-<p>Function simulate the peptide intensities</p>
-<p>Args:
-    n_sequences: number of petpides to be simulated
-    n_samples: number of samples
-    noise: boolean to set whether to simulate noise or not
-    remove: boolean to set whether to remove intensities below a certian threshold
-    peptide_ratio: boolean to generate a random peptide ratio between samples, otherwise one
-    abundance: boolean to simulate random abundance of peptides, otherwise one,
-    signal_level: signal_level
-    noise_divider: noise level
-    keep: float for keep</p>
-<p>Returns:</p>
-<p>Raises:
-    TODO: Include Exceptions
-    TODO: Consider maximum size limit of npz files.
-    TODO: also save a yaml file for this library</p>
 
 </div>
 
@@ -315,9 +184,8 @@ description: "Functions related to quantification"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_protein_ratios" class="doc_header"><code>get_protein_ratios</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L236" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_protein_ratios</code>(<strong><code>signal</code></strong>, <strong><code>minimum_ratios</code></strong>=<em><code>2</code></em>)</p>
+<h4 id="get_total_error_parallel" class="doc_header"><code>get_total_error_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L97" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_total_error_parallel</code>(<strong><code>normalization</code></strong>, <strong><code>profiles</code></strong>)</p>
 </blockquote>
-<p>Function to calculate pairwise protein ratios</p>
 
 </div>
 
@@ -340,10 +208,181 @@ description: "Functions related to quantification"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="triangle_error" class="doc_header"><code>triangle_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L268" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>triangle_error</code>(<strong><code>normalization</code></strong>, <strong><code>ratios</code></strong>)</p>
+<h4 id="get_total_error" class="doc_header"><code>get_total_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L110" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_total_error</code>(<strong><code>normalization</code></strong>, <strong><code>profiles</code></strong>)</p>
 </blockquote>
-<p>Cost function for peptide normalization
-For non-constrained solvers, returns scalar</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Benchmarking-different-optimiziers">Benchmarking different optimiziers<a class="anchor-link" href="#Benchmarking-different-optimiziers"> </a></h2>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">least_squares</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+
+<span class="n">n_peptides</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">n_runs</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">profiles</span><span class="p">,</span> <span class="n">true_normalization</span> <span class="o">=</span> <span class="n">simulate_sample_profiles</span><span class="p">(</span><span class="n">n_peptides</span><span class="p">,</span> <span class="n">n_runs</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
+
+<span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;L-BFGS-B&#39;</span><span class="p">,</span> <span class="s1">&#39;TNC&#39;</span><span class="p">,</span> <span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span><span class="s1">&#39;trf&#39;</span><span class="p">]</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+    
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;trf&#39;</span><span class="p">]:</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">x0</span><span class="o">*</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">least_squares</span><span class="p">(</span><span class="n">get_total_error</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">profiles</span><span class="p">],</span> <span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">bounds</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">x0</span><span class="p">]</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">get_total_error</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">profiles</span> <span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+
+    <span class="n">solution</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">solution</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+    
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    
+    <span class="n">time_elapsed_min</span> <span class="o">=</span> <span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span>
+
+    <span class="n">optimality</span> <span class="o">=</span> <span class="n">get_total_error</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span> <span class="n">profiles</span><span class="p">)</span> <span class="o">/</span><span class="n">get_total_error</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">profiles</span><span class="p">)</span>
+    <span class="n">optimality_</span> <span class="o">=</span> <span class="n">get_total_error</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span> <span class="n">profiles</span><span class="p">)</span> <span class="o">/</span> <span class="n">get_total_error</span><span class="p">(</span><span class="n">true_normalization</span><span class="p">,</span> <span class="n">profiles</span><span class="p">)</span>
+    
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">method</span><span class="p">,</span> <span class="n">time_elapsed_min</span><span class="p">,</span> <span class="n">optimality</span><span class="p">,</span> <span class="n">optimality_</span><span class="p">))</span>
+    
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Method&#39;</span><span class="p">,</span> <span class="s1">&#39;Time Elapsed (min)&#39;</span><span class="p">,</span><span class="s1">&#39;Error / Baseline Error&#39;</span><span class="p">,</span><span class="s1">&#39;Error / Ground Truth&#39;</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Method</th>
+      <th>Time Elapsed (min)</th>
+      <th>Error / Baseline Error</th>
+      <th>Error / Ground Truth</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>L-BFGS-B</td>
+      <td>0.055321</td>
+      <td>0.723333</td>
+      <td>0.505968</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>TNC</td>
+      <td>0.029185</td>
+      <td>0.813514</td>
+      <td>0.569050</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>SLSQP</td>
+      <td>0.004755</td>
+      <td>0.723332</td>
+      <td>0.505968</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>trf</td>
+      <td>0.258366</td>
+      <td>0.726323</td>
+      <td>0.508060</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation"> </a></h2>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="normalize_experiment_SLSQP" class="doc_header"><code>normalize_experiment_SLSQP</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L128" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>normalize_experiment_SLSQP</code>(<strong><code>profiles</code></strong>)</p>
+</blockquote>
+<p>Calculate normalization with SLSQP approach</p>
 
 </div>
 
@@ -366,10 +405,9 @@ For non-constrained solvers, returns scalar</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="solve_BFGS" class="doc_header"><code>solve_BFGS</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L286" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>solve_BFGS</code>(<strong><code>signal</code></strong>)</p>
+<h4 id="delayed_normalization" class="doc_header"><code>delayed_normalization</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L141" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>delayed_normalization</code>(<strong><code>df</code></strong>, <strong><code>field</code></strong>=<em><code>'int_sum'</code></em>, <strong><code>minimum_occurence</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Wrapper to solve with BFGS
-BFGS is not constrained</p>
+<p>Returns normalization for given peptide intensities</p>
 
 </div>
 
