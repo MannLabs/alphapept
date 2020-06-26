@@ -299,7 +299,7 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
         CURRENT_TASK('Calibrating features.')
 
         CURRENT_TASK('Scoring psms.')
-        df = score_x_tandem(pd.DataFrame(psms), plot=False, verbose=False, **settings["search"])
+        df = score_x_tandem(pd.DataFrame(psms), fdr_level = settings["search"]["peptide_fdr"], plot=False, verbose=False, **settings["search"])
         logging.info('Scoring complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
 
         from .recalibration import get_calibration
@@ -348,10 +348,10 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
     if settings["general"]["score"] == 'random_forest':
         from .score import train_RF, score_ML
         cv = train_RF(df)
-        df = score_ML(df, cv)
+        df = score_ML(df, cv, fdr_level=settings["search"]["peptide_fdr"])
     elif settings["general"]["score"] == 'x_tandem':
         from .score import score_x_tandem
-        df = score_x_tandem(df)
+        df = score_x_tandem(df, fdr_level=settings["search"]["peptide_fdr"])
     else:
         raise NotImplementedError('Scoring method {} not implemented.'.format(settings["general"]["score"]))
 
@@ -364,12 +364,12 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
     # ==== End looping through files and collection of dataframes
 
     CURRENT_TASK('FDR control on peptides')
-    df = cut_global_fdr(df, analyte_level='sequence',  plot=False, verbose=False)
+    df = cut_global_fdr(df, fdr_level=settings["search"]["peptide_fdr"], analyte_level='sequence',  plot=False, verbose=False)
     logging.info('Scoring peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
 
     CURRENT_TASK('Perform protein grouping')
     df = perform_protein_grouping(df, db_data['pept_dict'].item(), db_data['fasta_dict'].item())
-    df = cut_global_fdr(df, analyte_level='protein',  plot=False, verbose=False)
+    df = cut_global_fdr(df, fdr_level=settings["search"]["protein_fdr"], analyte_level='protein',  plot=False, verbose=False)
     logging.info('Scoring proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df['target'].sum(), df['decoy'].sum(), len(set(df['protein']))))
 
     ## Quantification
