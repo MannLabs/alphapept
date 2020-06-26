@@ -251,11 +251,11 @@ def get_ML_features(df, protease='trypsin', **kwargs):
     df['n_AA']= df['naked_sequence'].str.len()
     df['matched_ion_fraction'] = df['hits']/(2*df['n_AA'])
 
-    df['decoy_reversed_seq'] = df['naked_sequence']
-    df.loc[df['decoy'] == True, 'decoy_reversed_seq'] = df['decoy_reversed_seq'].apply(lambda x: x[::-1])
-    df['n_missed'] = df['decoy_reversed_seq'].apply(lambda x: count_missed_cleavages(x, protease))
-    df['n_internal'] = df['decoy_reversed_seq'].apply(lambda x: count_internal_cleavages(x, protease))
-    df = df.drop(columns=['decoy_reversed_seq'])
+    #df['decoy_reversed_seq'] = df['naked_sequence']
+    #df.loc[df['decoy'] == True, 'decoy_reversed_seq'] = df['decoy_reversed_seq'].apply(lambda x: x[::-1])
+    df['n_missed'] = df['naked_sequence'].apply(lambda x: count_missed_cleavages(x, protease))
+    df['n_internal'] = df['naked_sequence'].apply(lambda x: count_internal_cleavages(x, protease))
+    #df = df.drop(columns=['decoy_reversed_seq'])
 
     mz_bin, mz_count = np.unique(np.floor(df.mz/100), return_counts=True)
     mz_count = np.log(mz_count)
@@ -274,7 +274,7 @@ def get_ML_features(df, protease='trypsin', **kwargs):
 
 def train_RF(df,
              features = ['y_hits','b_hits','matched_int',
-                        'delta_m_ppm','abs_delta_m_ppm',
+                         'delta_m_ppm','abs_delta_m_ppm',
                         'charge_2.0','charge_3.0','charge_4.0','charge_5.0',
                         'n_AA','n_missed','n_internal','ln_sequence','x_tandem',
                         'db_mass_density','db_weighted_mass_density',
@@ -363,7 +363,7 @@ def train_RF(df,
 def score_ML(df,
              trained_classifier,
              features = ['y_hits','b_hits','matched_int',
-                        'delta_m_ppm','abs_delta_m_ppm',
+                         'delta_m_ppm','abs_delta_m_ppm',
                         'charge_2.0','charge_3.0','charge_4.0','charge_5.0',
                         'n_AA','n_missed','n_internal','ln_sequence','x_tandem',
                         'db_mass_density','db_weighted_mass_density',
