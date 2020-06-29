@@ -1379,12 +1379,12 @@ def extract_bruker(file, ff_dir = "./ext/bruker/FF/", config = "default.config")
     Call Bruker Feautre Finder via subprocess
     """
 
-    if not os.path.isdir(ff_dir):
-        raise FileNotFoundError('Bruker feature finder cmd not found.')
-
     feature_path = file + '/'+ os.path.split(file)[-1] + '.features'
 
     if not os.path.exists(feature_path):
+        if not os.path.isdir(ff_dir):
+            raise FileNotFoundError('Bruker feature finder cmd not found.')
+
         config_path = ff_dir + '/'+ 'default.config'
         if not os.path.isfile(config_path):
             raise FileNotFoundError('Config file not found.')
