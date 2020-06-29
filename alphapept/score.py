@@ -5,7 +5,6 @@ __all__ = ['filter_seq', 'filter_score', 'filter_precursor', 'get_q_values', 'cu
            'get_protein_groups', 'perform_protein_grouping', 'save_report_as_npz']
 
 # Cell
-from numba import njit
 import numpy as np
 import pandas as pd
 
@@ -22,7 +21,7 @@ def filter_seq(df):
     return df_filtered
 
 
-def filter_score(df):
+def filter_score(df, mode='multiple'):
     """
     Filter df by score
     TODO: PSMS could get the same score when having modifications. Only keep one
@@ -30,9 +29,26 @@ def filter_score(df):
     """
     df["rank"] = df.groupby("query_idx")["score"].rank("dense", ascending=False).astype("int")
 
-    df_filtered = df[df["rank"] == 1]
+    df = df[df["rank"] == 1]
     # in case two hits have the same score and therfore rank only accept the first one
-    df_filtered = df_filtered.drop_duplicates("query_idx")
+    df = df.drop_duplicates("query_idx")
+
+    if 'feature_idx' in df.columns:
+        df["feature_rank"] = df.groupby("feature_idx")["dist"].rank("dense", ascending=True).astype("int")
+        df["raw_rank"] = df.groupby("raw_idx")["score"].rank("dense", ascending=False).astype("int")
+
+        if mode == 'single':
+            df_filtered = df[(df["feature_rank"] == 1) & (df["raw_rank"] == 1) ]
+            df_filtered = df_filtered.drop_duplicates("raw_idx")
+
+        elif mode == 'multiple':
+            df_filtered = df[(df["feature_rank"] == 1)]
+
+        else:
+            raise NotImplementedError('Mode {} not implemented yet'.format(mode))
+
+    else:
+        df_filtered = df
 
     # TOD: this needs to be sorted out, for modifications -> What if we have MoxM -> oxMM, this will screw up with the filter sequence part
     return df_filtered
@@ -49,6 +65,8 @@ def filter_precursor(df):
 
     return df_filtered
 
+# Cell
+from numba import njit
 @njit
 def get_q_values(fdr_values):
     """
