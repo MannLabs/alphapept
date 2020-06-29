@@ -212,43 +212,57 @@ def alpha_runner(settings, overall_progress = None, current_progress = None, CUR
             n_steps = 8
 
             logging.info('Fature Finding for Thermo')
-            #Feature Finding Part
 
-            from .feature_finding import raw_to_centroid, get_hills, split_hills, filter_hills, get_hill_data, get_edges, get_isotope_patterns, feature_finder_report
-            from .constants import averagine_aa, isotopes
+            # Check if we have a feature file already
+            q_path = settings["raw"]["query_path"]
+            base, ext = os.path.splitext(q_path)
+            feature_path = base+'_features.hdf5'
+
+            if os.path.isfile(feature_path):
+                logging.info('Found feature file')
+                feature_table = pd.read_hdf(feature_path, 'features')
+            else:
+                #Feature Finding Part
+
+                from .feature_finding import raw_to_centroid, get_hills, split_hills, filter_hills, get_hill_data, get_edges, get_isotope_patterns, feature_finder_report
+                from .constants import averagine_aa, isotopes
 
 
-            CURRENT_TASK('Converting centroids')
-            centroids = raw_to_centroid(query_data, callback=partial(progress_wrapper, delta=te*1/n_steps))
-            logging.info('Loaded {:,} centroids.'.format(len(centroids)))
+                CURRENT_TASK('Converting centroids')
+                centroids = raw_to_centroid(query_data, callback=partial(progress_wrapper, delta=te*1/n_steps))
+                logging.info('Loaded {:,} centroids.'.format(len(centroids)))
 
-            CURRENT_TASK('Exctracting hills')
-            completed_hills = get_hills(centroids, callback=partial(progress_wrapper, delta=te*1/n_steps))
-            logging.info('A total of {:,} hills extracted. Average hill length {:.2f}'.format(len(completed_hills), np.mean([len(_) for _ in completed_hills])))
+                CURRENT_TASK('Exctracting hills')
+                completed_hills = get_hills(centroids, callback=partial(progress_wrapper, delta=te*1/n_steps))
+                logging.info('A total of {:,} hills extracted. Average hill length {:.2f}'.format(len(completed_hills), np.mean([len(_) for _ in completed_hills])))
 
-            CURRENT_TASK('Splitting hills')
-            splitted_hills = split_hills(completed_hills, centroids, smoothing=1, callback=partial(progress_wrapper, delta=te*1/n_steps))
-            logging.info('Split {:,} hills into {:,} hills'.format(len(completed_hills), len(splitted_hills)))
+                CURRENT_TASK('Splitting hills')
+                splitted_hills = split_hills(completed_hills, centroids, smoothing=1, callback=partial(progress_wrapper, delta=te*1/n_steps))
+                logging.info('Split {:,} hills into {:,} hills'.format(len(completed_hills), len(splitted_hills)))
 
-            CURRENT_TASK('Refining hills')
-            filtered_hills = filter_hills(splitted_hills, centroids, callback=partial(progress_wrapper, delta=te*1/n_steps))
-            logging.info('Filtered {:,} hills. Remaining {:,} hills'.format(len(splitted_hills), len(filtered_hills)))
+                CURRENT_TASK('Refining hills')
+                filtered_hills = filter_hills(splitted_hills, centroids, callback=partial(progress_wrapper, delta=te*1/n_steps))
+                logging.info('Filtered {:,} hills. Remaining {:,} hills'.format(len(splitted_hills), len(filtered_hills)))
 
-            CURRENT_TASK('Calculating hill statistics')
-            sorted_hills, sorted_stats, sorted_data = get_hill_data(filtered_hills, centroids, callback=partial(progress_wrapper, delta=te*1/n_steps))
-            logging.info('Extracting hill stats complete')
+                CURRENT_TASK('Calculating hill statistics')
+                sorted_hills, sorted_stats, sorted_data = get_hill_data(filtered_hills, centroids, callback=partial(progress_wrapper, delta=te*1/n_steps))
+                logging.info('Extracting hill stats complete')
 
-            CURRENT_TASK('Connecting pre isotope patterns')
-            pre_isotope_patterns = get_edges(sorted_stats, sorted_data, callback=partial(progress_wrapper, delta=te*1/n_steps))
-            logging.info('Found {} pre isotope patterns.'.format(len(pre_isotope_patterns)))
+                CURRENT_TASK('Connecting pre isotope patterns')
+                pre_isotope_patterns = get_edges(sorted_stats, sorted_data, callback=partial(progress_wrapper, delta=te*1/n_steps))
+                logging.info('Found {} pre isotope patterns.'.format(len(pre_isotope_patterns)))
 
-            CURRENT_TASK('Deisotope patterns')
-            isotope_patterns, isotope_charges = get_isotope_patterns(pre_isotope_patterns, sorted_stats, sorted_data, averagine_aa, isotopes, callback=partial(progress_wrapper, delta=te*1/n_steps))
-            logging.info('Extracted {} isotope patterns.'.format(len(isotope_patterns)))
+                CURRENT_TASK('Deisotope patterns')
+                isotope_patterns, isotope_charges = get_isotope_patterns(pre_isotope_patterns, sorted_stats, sorted_data, averagine_aa, isotopes, callback=partial(progress_wrapper, delta=te*1/n_steps))
+                logging.info('Extracted {} isotope patterns.'.format(len(isotope_patterns)))
 
-            CURRENT_TASK('Calculating feature statistics')
-            feature_table = feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorted_data, sorted_hills, query_data, callback=partial(progress_wrapper, delta=te*1/n_steps))
-            logging.info('Report complete.')
+                CURRENT_TASK('Calculating feature statistics')
+                feature_table = feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorted_data, sorted_hills, query_data, callback=partial(progress_wrapper, delta=te*1/n_steps))
+                logging.info('Report complete.')
+
+                feature_table.to_hdf(out_file, key='features', mode='w')
+                logging.info('Feature file saved to {}'.format(feature_path))
+
 
         elif settings["general"]['type'] == 'bruker':
 
