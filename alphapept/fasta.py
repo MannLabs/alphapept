@@ -110,24 +110,15 @@ def list_to_numba(a_list):
 
 # Cell
 @njit
-def get_decoy_sequence(peptide, pseudoReverse=True, AL_swap=False, KR_swap = False):
+def get_decoy_sequence(peptide, pseudo_reverse=True, AL_swap=False, KR_swap = False):
     """
     Reverses a sequence and adds the '_decoy' tag.
 
     """
     pep = parse(peptide)
-    if pseudoReverse:
-        str_pep = "".join(pep)
-        str_rev_pep = str_pep[:-1][::-1]+str_pep[-1:]
-
-        rev_pep = List()
-        string = ""
-
-        for i in str_rev_pep:
-            string += i
-            rev_pep.append(string)
-            string = ""
-
+    if pseudo_reverse:
+        rev_pep = pep[:-1][::-1]
+        rev_pep.append(pep[-1])
     else:
         rev_pep = pep[::-1]
 
