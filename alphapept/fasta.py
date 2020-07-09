@@ -5,7 +5,7 @@ __all__ = ['get_missed_cleavages', 'cleave_sequence', 'count_missed_cleavages', 
            'get_mod_pos', 'get_isoforms', 'add_variable_mods', 'add_fixed_mod_terminal', 'add_fixed_mods_terminal',
            'add_variable_mods_terminal', 'get_unique_peptides', 'generate_peptides', 'get_precmass', 'get_fragmass',
            'get_frag_dict', 'get_spectrum', 'get_spectra', 'read_fasta_file', 'read_fasta_file_entries', 'read_fasta',
-           'check_sequence', 'add_to_pept_dict', 'generate_library', 'generate_spectra', 'save_library']
+           'check_sequence', 'add_to_pept_dict', 'generate_database', 'generate_spectra', 'save_database']
 
 # Cell
 from alphapept import constants
@@ -524,9 +524,9 @@ def add_to_pept_dict(pept_dict, new_peptides, i):
 # Cell
 from collections import OrderedDict
 
-def generate_library(mass_dict, fasta_path, callback = None, contaminants_path = None, **kwargs):
+def generate_database(mass_dict, fasta_path, callback = None, contaminants_path = None, **kwargs):
     """
-    Function to generate a library from a fasta file
+    Function to generate a database from a fasta file
     """
     to_add = List()
     fasta_dict = OrderedDict()
@@ -577,7 +577,7 @@ def generate_library(mass_dict, fasta_path, callback = None, contaminants_path =
 
 def generate_spectra(to_add, mass_dict, callback = None):
     """
-    Function to generate a library from a fasta file
+    Function to generate a database from a fasta file
     """
 
     if len(to_add) > 0:
@@ -603,9 +603,9 @@ def generate_spectra(to_add, mass_dict, callback = None):
 from .io import list_to_numpy_f32
 
 
-def save_library(spectra, pept_dict, fasta_dict, library_path, **kwargs):
+def save_database(spectra, pept_dict, fasta_dict, database_path, **kwargs):
     """
-    Function to save a library to the *.npz format.
+    Function to save a database to the *.npz format.
     """
 
     precmasses, seqs, fragmasses, fragtypes = zip(*spectra)
@@ -622,6 +622,4 @@ def save_library(spectra, pept_dict, fasta_dict, library_path, **kwargs):
 
     to_save["bounds"] = np.sum(to_save['fragmasses']>=0,axis=0).astype(np.int64)
 
-    np.savez(library_path, **to_save)
-
-    return library_path
+    np.savez(database_path, **to_save)
