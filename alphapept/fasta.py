@@ -5,7 +5,9 @@ __all__ = ['get_missed_cleavages', 'cleave_sequence', 'count_missed_cleavages', 
            'get_mod_pos', 'get_isoforms', 'add_variable_mods', 'add_fixed_mod_terminal', 'add_fixed_mods_terminal',
            'add_variable_mods_terminal', 'get_unique_peptides', 'generate_peptides', 'get_precmass', 'get_fragmass',
            'get_frag_dict', 'get_spectrum', 'get_spectra', 'read_fasta_file', 'read_fasta_file_entries', 'read_fasta',
-           'check_sequence', 'add_to_pept_dict', 'generate_database', 'generate_spectra', 'save_database']
+           'check_sequence', 'add_to_pept_dict', 'merge_pept_dicts', 'generate_fasta_list', 'generate_database',
+           'generate_spectra', 'block_idx', 'blocks', 'digest_fasta_block', 'generate_database_parallel', 'mass_dict',
+           'save_database']
 
 # Cell
 from alphapept import constants
@@ -434,6 +436,7 @@ def get_spectra(peptides, mass_dict):
 from Bio import SeqIO
 import os
 from glob import glob
+import logging
 
 def read_fasta_file(fasta_filename=""):
     """
@@ -501,7 +504,7 @@ def check_sequence(element, AAs):
     Checks wheter a sequence from a FASTA entry contains valid AAs
     """
     if not set(element['sequence']).issubset(AAs):
-        print('Error. This FASTA Entry contains unknown AAs and will be skipped: \n {}\n'.format(element))
+        logging.error('This FASTA entry contains unknown AAs and will be skipped: \n {}\n'.format(element))
         return False
     else:
         return True
@@ -522,9 +525,70 @@ def add_to_pept_dict(pept_dict, new_peptides, i):
     return pept_dict, added_peptides
 
 # Cell
+
+def merge_pept_dicts(list_of_pept_dicts):
+
+    if len(list_of_pept_dicts) < 2:
+        raise ValueError('Need to pass at least two elements to merge.')
+
+    new_pept_dict = list_of_pept_dicts[0]
+
+    for pept_dict in list_of_pept_dicts[1:]:
+
+        for key in pept_dict.keys():
+            if key in new_pept_dict:
+                for element in pept_dict[key]:
+                    new_pept_dict[key].append(element)
+            else:
+                new_pept_dict[key] = pept_dict[key]
+
+    return new_pept_dict
+
+
+# Cell
 from collections import OrderedDict
 
-def generate_database(mass_dict, fasta_path, callback = None, contaminants_path = None, **kwargs):
+def generate_fasta_list(fasta_files, callback = None, contaminants_path = None, **kwargs):
+    """
+    Function to generate a database from a fasta file
+    """
+    fasta_list = []
+
+    fasta_dict = OrderedDict()
+
+    fasta_index = 0
+
+    if type(fasta_files) is str:
+        fasta_files = [fasta_files]
+        n_fastas = 1
+
+    elif type(fasta_files) is list:
+        n_fastas = len(fasta_files)
+
+    for f_id, fasta_file in enumerate(fasta_files):
+        n_entries = read_fasta_file_entries(fasta_file)
+
+        fasta_generator = read_fasta_file(fasta_file)
+
+        for element in fasta_generator:
+            if check_sequence(element, constants.AAs):
+                fasta_list.append(element)
+                fasta_dict[fasta_index] = element
+            fasta_index += 1
+
+    if contaminants_path:
+        fasta_generator = read_fasta_file(contaminants_path)
+
+        for element in fasta_generator:
+            if check_sequence(element, constants.AAs):
+                fasta_list.append(element)
+                fasta_dict[fasta_index] = element
+            fasta_index += 1
+
+    return fasta_list, fasta_dict
+
+
+def generate_database(mass_dict, fasta_files, callback = None, contaminants_path = None, **kwargs):
     """
     Function to generate a database from a fasta file
     """
@@ -534,17 +598,17 @@ def generate_database(mass_dict, fasta_path, callback = None, contaminants_path 
 
     pept_dict = {}
 
-    if type(fasta_path) is str:
-        fasta_path = [fasta_path]
+    if type(fasta_files) is str:
+        fasta_files = [fasta_files]
         n_fastas = 1
 
-    elif type(fasta_path) is list:
-        n_fastas = len(fasta_path)
+    elif type(fasta_files) is list:
+        n_fastas = len(fasta_files)
 
-    for f_id, fasta_file in enumerate(fasta_path):
+    for f_id, fasta_file in enumerate(fasta_files):
         n_entries = read_fasta_file_entries(fasta_file)
 
-        fasta_generator = read_fasta(fasta_file)
+        fasta_generator = read_fasta_file(fasta_file)
 
         for element in fasta_generator:
             if check_sequence(element, constants.AAs):
@@ -560,7 +624,7 @@ def generate_database(mass_dict, fasta_path, callback = None, contaminants_path 
                 callback(fasta_index/n_entries/n_fastas+f_id)
 
     if contaminants_path:
-        fasta_generator = read_fasta(contaminants_path)
+        fasta_generator = read_fasta_file(contaminants_path)
 
         for element in fasta_generator:
             if check_sequence(element, constants.AAs):
@@ -598,6 +662,83 @@ def generate_spectra(to_add, mass_dict, callback = None):
         raise ValueError("No spectra to generate.")
 
     return spectra
+
+# Cell
+from multiprocessing import Pool
+from alphapept import constants
+mass_dict = constants.mass_dict
+
+def block_idx(len_list, block_size = 1000):
+    blocks = []
+    start = 0
+    end = 0
+
+    while end <= len_list:
+        end += block_size
+        blocks.append((start, end))
+        start = end
+
+    return blocks
+
+def blocks(l, n):
+    n = max(1, n)
+    return (l[i:i+n] for i in range(0, len(l), n))
+
+def digest_fasta_block(to_process):
+    """
+    digest and create spectra for a whole fasta_block
+    """
+
+    fasta_index, fasta_block, settings = to_process
+
+    to_add = []
+
+    f_index = 0
+
+    pept_dict = {}
+    for element in fasta_block:
+        sequence = element["sequence"]
+        mod_peptides = generate_peptides(sequence, **settings['fasta'])
+        pept_dict, added_peptides = add_to_pept_dict(pept_dict, mod_peptides, fasta_index+f_index)
+
+        if len(added_peptides) > 0:
+            to_add.extend(added_peptides)
+        f_index += 1
+
+    spectra = []
+    if len(to_add) > 0:
+        for specta_block in blocks(to_add, settings['fasta']['spectra_block']):
+            spectra.extend(generate_spectra(specta_block, mass_dict))
+
+    return (spectra, pept_dict)
+
+def generate_database_parallel(settings, callback = None):
+    """
+    Function to generate a database from a fasta file
+    """
+    fasta_list, fasta_dict = generate_fasta_list(**settings['fasta'])
+
+    blocks = block_idx(len(fasta_list), settings['fasta']['fasta_block'])
+
+    to_process = [(idx_start, fasta_list[idx_start:idx_end], settings) for idx_start, idx_end in  blocks]
+
+    spectra = []
+    pept_dicts = []
+    with Pool() as p:
+        max_ = len(to_process)
+        for i, _ in enumerate(p.imap_unordered(digest_fasta_block, to_process)):
+            if callback:
+                callback((i+1)/max_)
+            spectra.extend(_[0])
+            pept_dicts.append(_[1])
+
+    spectra = sorted(spectra, key=lambda x: x[1])
+    spectra_set = [spectra[idx] for idx in range(len(spectra)-1) if spectra[idx][1] != spectra[idx+1][1]]
+    spectra_set.append(spectra[-1])
+
+    pept_dict = merge_pept_dicts(pept_dicts)
+
+    return spectra_set, pept_dict, fasta_dict
 
 # Cell
 from .io import list_to_numpy_f32
