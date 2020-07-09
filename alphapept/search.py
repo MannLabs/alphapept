@@ -4,7 +4,8 @@ __all__ = ['compare_frags', 'ppm_to_dalton', 'get_idxs', 'compare_specs_parallel
            'query_data_to_features', 'get_psms', 'frag_delta', 'intensity_fraction', 'intensity_product',
            'get_frag_mass_density_norm', 'mass_density_weighted_fragment_sum', 'mass_density_weighted_intensity_sum',
            'b_y_hits', 'score_parallel', 'score_single', 'add_column', 'remove_column', 'get_sequences',
-           'get_score_columns', 'plot_hit', 'plot_psms', 'perform_search']
+           'get_score_columns', 'plot_hit', 'plot_psms', 'perform_search', 'search_fasta_block', 'search_parallel',
+           'mass_dict']
 
 # Cell
 from numba import njit
@@ -970,3 +971,99 @@ def perform_search(query_files, db_masses, db_frags, db_bounds, db_seqs, frag_ty
     else:
         raise Exception('query_files should be either a string or a list. The selected query_files argument is of type: {}'.format(type(query_files)))
     return psms_all
+
+# Cell
+import pandas as pd
+from .fasta import blocks, generate_peptides, add_to_pept_dict, list_to_numpy_f32
+from .fasta import read_fasta, block_idx, generate_fasta_list, generate_spectra
+from alphapept import constants
+mass_dict = constants.mass_dict
+
+def search_fasta_block(to_process):
+    """
+    Search fasta block
+    For searches with big fasta files or unspecific searches
+    """
+
+    fasta_index, fasta_block, files_npz, settings, feature_list = to_process
+    spectra_block = settings['fasta']['spectra_block']
+
+    m_offset = settings['search']['m_offset']
+    m_tol = settings['search']['m_tol']
+    min_frag_hits = settings['search']['min_frag_hits']
+
+    psms_container = [list() for _ in files_npz]
+
+    to_add = []
+
+    f_index = 0
+
+    pept_dict = {}
+    for element in fasta_block:
+        sequence = element["sequence"]
+        mod_peptides = generate_peptides(sequence, **settings['fasta'])
+
+        pept_dict, added_peptides = add_to_pept_dict(pept_dict, mod_peptides, fasta_index+f_index)
+
+        if len(added_peptides) > 0:
+            to_add.extend(added_peptides)
+        f_index += 1
+
+    if len(to_add) > 0:
+        for seq_block in blocks(to_add, spectra_block):
+            spectra = generate_spectra(seq_block, mass_dict)
+            precmasses, seqs, fragmasses, fragtypes = zip(*spectra)
+            sortindex = np.argsort(precmasses)
+
+            db_data = {}
+            db_data['precursors'] = np.array(precmasses)[sortindex]
+            db_data['seqs'] = np.array(seqs)[sortindex]
+            db_data['fragmasses']  = list_to_numpy_f32(np.array(fragmasses)[sortindex])
+            db_data['fragtypes'] = list_to_numpy_f32(np.array(fragtypes)[sortindex])
+            db_data['bounds'] = np.sum(db_data['fragmasses']>=0,axis=0).astype(np.int64)
+
+            for file_idx, file_npz in enumerate(files_npz):
+                query_data = np.load(file_npz, allow_pickle=True)
+
+                psms, num_specs_compared = get_psms(query_data, db_data, feature_list[file_idx], **settings["search"])
+                if len(psms) > 0:
+                    psms, num_specs_scored = get_score_columns(psms, query_data, db_data, feature_list[file_idx], **settings["search"])
+
+                    fasta_indices = [pept_dict[_] for _ in psms['sequence']]
+
+                    psms_df = pd.DataFrame(psms)
+                    psms_df['fasta_index'] = fasta_indices
+
+                    psms_container[file_idx].append(psms_df)
+
+    return psms_container
+
+
+from multiprocessing import Pool
+
+
+def search_parallel(settings, feature_list = None, callback = None):
+    """
+    Function to generate a database from a fasta file
+    """
+    fasta_list, fasta_dict = generate_fasta_list(**settings['fasta'])
+
+    fasta_block = settings['fasta']['fasta_block']
+    files_npz = settings['experiment']['files_npz']
+
+    if not feature_list:
+        feature_list = [None for i in range(len(files_npz))]
+
+    to_process = [(idx_start, fasta_list[idx_start:idx_end], files_npz, settings, feature_list) for idx_start, idx_end in  block_idx(len(fasta_list))]
+
+    results = []
+    with Pool() as p:
+        max_ = len(to_process)
+        for i, _ in enumerate(p.imap_unordered(search_fasta_block, to_process)):
+            if callback:
+                callback((i+1)/max_)
+            results.append(_)
+
+    psms = [pd.concat([pd.concat([pd.DataFrame(_) for _ in x[i]]) for x in results if len(x[i]) > 0]) for i in range(len(results[0]))]
+
+    return psms, fasta_dict
