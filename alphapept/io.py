@@ -178,7 +178,7 @@ def parse_kwargs_path(kwargs, filetype='.raw'):
     return kwargs
 
 
-def raw_to_npz(to_process):
+def raw_to_npz(to_process, callback = None):
     """
     Wrapper function to convert raw to npz
     """
