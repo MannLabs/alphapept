@@ -9,7 +9,7 @@ __all__ = ['get_peaks', 'get_centroid', 'gaussian_estimator', 'raw_to_centroid',
            'isolate_isotope_pattern', 'check_averagine', 'pattern_to_mz', 'cosine_averagine', 'int_list_to_array',
            'mz_to_mass', 'get_minpos', 'get_local_minima', 'is_local_minima', 'truncate', 'M_PROTON',
            'get_isotope_patterns', 'feature_finder_report', 'plot_isotope_pattern', 'find_features', 'extract_bruker',
-           'convert_bruker', 'map_bruker', 'find_and_save_features', 'map_ms2']
+           'convert_bruker', 'map_bruker', 'find_and_save_features', 'find_and_save_features_parallel', 'map_ms2']
 
 # Cell
 from numba import njit
@@ -1476,25 +1476,27 @@ from .constants import averagine_aa, isotopes
 import logging
 import os
 
-def find_and_save_features(settings):
+def find_and_save_features(to_process):
     """
     Wrapper for feature finding
     """
 
-    base, ext = os.path.splitext(settings["raw"]["raw_path"].lower())
+    path, settings = to_process
 
-    if ext == '.raw':
+    base, ext = os.path.splitext(path)
+
+    if ext.lower() == '.raw':
         datatype='thermo'
-    elif ext == '.d':
+    elif ext.lower() == '.d':
         datatype='bruker'
     else:
         raise NotImplementedError('File extension {} not understood.'.format(ext))
 
+    file = base + '.npz'
+
+    query_data = np.load(file, allow_pickle=True)
+
     if datatype == 'thermo':
-
-        file = settings["raw"]["raw_path_npz"]
-
-        query_data = np.load(file, allow_pickle=True)
         centroids = raw_to_centroid(query_data)
         logging.info('Loaded {:,} centroids.'.format(len(centroids)))
         completed_hills = get_hills(centroids, buffer_size=500)
@@ -1512,28 +1514,32 @@ def find_and_save_features(settings):
         df = feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorted_data, sorted_hills, query_data)
         logging.info('Report complete.')
 
-        base, ext = os.path.splitext(file)
-        out_file = base+'_features.hdf5'
-        df.to_hdf(out_file, key='features', mode='w')
-        logging.info('Feature file saved to {}'.format(out_file))
-
-
     elif datatype == 'bruker':
-        file = settings["raw"]["raw_path"]
-
         logging.info('Feature finding on'.format(file))
-
         feature_path = extract_bruker(file)
         df = convert_bruker(feature_path)
         logging.info('Bruker Feature Finder compelte. Extracted {:,} features.'.format(len(df)))
-        base, ext = os.path.splitext(file)
-        out_file = base+'_features.hdf5'
-        df.to_hdf(out_file, key='features', mode='w')
 
-        logging.info('Feature file saved to {}'.format(out_file))
+    features = map_ms2(df, query_data)
 
-    return df
+    base, ext = os.path.splitext(file)
+    out_file = base+'.hdf'
+    df.to_hdf(out_file, key='feature_table')
+    features.to_hdf(out_file, key='features')
+    logging.info('Feature file saved to {}'.format(out_file))
 
+
+from multiprocessing import Pool
+
+def find_and_save_features_parallel(path_list, settings, callback=None):
+
+    to_process = [(_, settings) for _ in path_list]
+
+    with Pool() as p:
+        max_ = len(to_process)
+        for i, _ in enumerate(p.imap_unordered(find_and_save_features, to_process)):
+            if callback:
+                callback((i+1)/max_)
 
 # Cell
 
