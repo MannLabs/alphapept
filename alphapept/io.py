@@ -183,7 +183,7 @@ def raw_to_npz(to_process):
     Wrapper function to convert raw to npz
     """
 
-    path, entry = to_process
+    path, settings = to_process
 
     base, ext = os.path.splitext(path)
 
