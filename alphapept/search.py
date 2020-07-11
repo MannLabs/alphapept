@@ -4,8 +4,8 @@ __all__ = ['compare_frags', 'ppm_to_dalton', 'get_idxs', 'compare_specs_parallel
            'query_data_to_features', 'get_psms', 'frag_delta', 'intensity_fraction', 'intensity_product',
            'get_frag_mass_density_norm', 'mass_density_weighted_fragment_sum', 'mass_density_weighted_intensity_sum',
            'b_y_hits', 'score_parallel', 'score_single', 'add_column', 'remove_column', 'get_sequences',
-           'get_score_columns', 'plot_hit', 'plot_psms', 'perform_search', 'search_fasta_block', 'search_parallel',
-           'mass_dict']
+           'get_score_columns', 'plot_hit', 'plot_psms', 'perform_search', 'store_hdf', 'search_db',
+           'search_parallel_db', 'search_fasta_block', 'search_parallel', 'mass_dict']
 
 # Cell
 from numba import njit
@@ -973,7 +973,78 @@ def perform_search(query_files, db_masses, db_frags, db_bounds, db_seqs, frag_ty
     return psms_all
 
 # Cell
+import os
 import pandas as pd
+import copy
+
+def store_hdf(df, path, key):
+    try:
+        df.to_hdf(path, key=key, append=True)
+    except ValueError:
+        old_df = pd.read_hdf(path, key= key)
+        new_df = pd.concat([old_df, df])
+        new_df.to_hdf(path, key= key, append=False)
+
+def search_db(to_process):
+    """
+    Perform a databse search. One file at a time.
+    """
+
+    file_npz, settings = to_process
+    db_data = np.load(settings['fasta']['database_path'], allow_pickle=True)
+    query_data = np.load(file_npz, allow_pickle=True)
+
+    base, ext = os.path.splitext(file_npz)
+
+    try:
+        features = pd.read_hdf(base+'.hdf', 'features')
+    except FileNotFoundError:
+        features = None
+    except KeyError:
+        features = None
+
+    psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
+    if len(psms) > 0:
+        psms, num_specs_scored = get_score_columns(psms, query_data, db_data, features, **settings["search"])
+
+    if 'm_offset_calibrated' in settings["search"]:
+        store_hdf(pd.DataFrame(psms), base +'.hdf', 'second_search')
+    else:
+        store_hdf(pd.DataFrame(psms), base +'.hdf', 'first_search')
+
+
+def search_parallel_db(settings, calibration = None, callback = None):
+    """
+    Function to generate a database from a fasta file
+    """
+
+    files_npz = settings['experiment']['files_npz']
+
+
+    if calibration:
+        custom_settings = []
+        for _ in calibration:
+            settings_ = copy.deepcopy(settings)
+            settings_["search"]["m_offset_calibrated"] = _
+            custom_settings.append(settings_)
+    else:
+        custom_settings = [settings for _ in files_npz]
+
+
+    to_process = [(files_npz[i], custom_settings[i]) for i in range(len(files_npz))]
+
+    with Pool() as p:
+        max_ = len(to_process)
+        for i, _ in enumerate(p.imap_unordered(search_db, to_process)):
+            if callback:
+                callback((i+1)/max_)
+
+    db_data = np.load(settings['fasta']['database_path'], allow_pickle=True)
+
+    return db_data['fasta_dict'].item(), db_data['pept_dict'].item()
+
+# Cell
+
 from .fasta import blocks, generate_peptides, add_to_pept_dict, list_to_numpy_f32
 from .fasta import read_fasta, block_idx, generate_fasta_list, generate_spectra
 from alphapept import constants
@@ -985,23 +1056,21 @@ def search_fasta_block(to_process):
     For searches with big fasta files or unspecific searches
     """
 
-    fasta_index, fasta_block, files_npz, settings, feature_list = to_process
-    spectra_block = settings['fasta']['spectra_block']
+    fasta_index, fasta_block, files_npz, settings = to_process
 
-    m_offset = settings['search']['m_offset']
-    m_tol = settings['search']['m_tol']
-    min_frag_hits = settings['search']['min_frag_hits']
+
+    settings_ = settings[0]
+    spectra_block = settings_['fasta']['spectra_block']
+    to_add = []
 
     psms_container = [list() for _ in files_npz]
-
-    to_add = []
 
     f_index = 0
 
     pept_dict = {}
     for element in fasta_block:
         sequence = element["sequence"]
-        mod_peptides = generate_peptides(sequence, **settings['fasta'])
+        mod_peptides = generate_peptides(sequence, **settings_['fasta'])
 
         pept_dict, added_peptides = add_to_pept_dict(pept_dict, mod_peptides, fasta_index+f_index)
 
@@ -1025,11 +1094,21 @@ def search_fasta_block(to_process):
             for file_idx, file_npz in enumerate(files_npz):
                 query_data = np.load(file_npz, allow_pickle=True)
 
-                psms, num_specs_compared = get_psms(query_data, db_data, feature_list[file_idx], **settings["search"])
-                if len(psms) > 0:
-                    psms, num_specs_scored = get_score_columns(psms, query_data, db_data, feature_list[file_idx], **settings["search"])
+                base, ext = os.path.splitext(file_npz)
 
-                    fasta_indices = [pept_dict[_] for _ in psms['sequence']]
+                try:
+                    features = pd.read_hdf(base+'.hdf', 'features')
+                except FileNotFoundError:
+                    features = None
+                except KeyError:
+                    features = None
+
+                psms, num_specs_compared = get_psms(query_data, db_data, features, **settings[file_idx]["search"])
+
+                if len(psms) > 0:
+                    psms, num_specs_scored = get_score_columns(psms, query_data, db_data, features, **settings[file_idx]["search"])
+
+                    fasta_indices = [','.join([str(x) for x in pept_dict[_]]) for _ in psms['sequence']]
 
                     psms_df = pd.DataFrame(psms)
                     psms_df['fasta_index'] = fasta_indices
@@ -1038,11 +1117,10 @@ def search_fasta_block(to_process):
 
     return psms_container
 
-
 from multiprocessing import Pool
 
 
-def search_parallel(settings, feature_list = None, callback = None):
+def search_parallel(settings, calibration = None, callback = None):
     """
     Function to generate a database from a fasta file
     """
@@ -1051,19 +1129,33 @@ def search_parallel(settings, feature_list = None, callback = None):
     fasta_block = settings['fasta']['fasta_block']
     files_npz = settings['experiment']['files_npz']
 
-    if not feature_list:
-        feature_list = [None for i in range(len(files_npz))]
+    if calibration:
+        custom_settings = []
+        for _ in calibration:
+            settings_ = copy.deepcopy(settings)
+            settings_["search"]["m_offset_calibrated"] = _
+            custom_settings.append(settings_)
+    else:
+        custom_settings = [settings for _ in files_npz]
 
-    to_process = [(idx_start, fasta_list[idx_start:idx_end], files_npz, settings, feature_list) for idx_start, idx_end in  block_idx(len(fasta_list))]
 
-    results = []
+    to_process = [(idx_start, fasta_list[idx_start:idx_end], files_npz, custom_settings) for idx_start, idx_end in block_idx(len(fasta_list))]
+
     with Pool() as p:
         max_ = len(to_process)
         for i, _ in enumerate(p.imap_unordered(search_fasta_block, to_process)):
+
+            for j in range(len(_)):
+                base, ext = os.path.splitext(files_npz[j])
+
+                output = [_ for _ in _[j]]
+                if len(output) > 0:
+                    if calibration:
+                        store_hdf(pd.concat(output), base+'.hdf', 'second_search')
+                    else:
+                        store_hdf(pd.concat(output), base+'.hdf', 'first_search')
+
             if callback:
                 callback((i+1)/max_)
-            results.append(_)
 
-    psms = [pd.concat([pd.concat([pd.DataFrame(_) for _ in x[i]]) for x in results if len(x[i]) > 0]) for i in range(len(results[0]))]
-
-    return psms, fasta_dict
+    return fasta_dict
