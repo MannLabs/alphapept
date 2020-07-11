@@ -39,19 +39,19 @@ URL_DOCUMENTATION = "https://en.wikipedia.org/wiki/Documentation"
 URL_ISSUE = "https://en.wikipedia.org/wiki/Issue"
 URL_CONTRIBUTE = "https://en.wikipedia.org/wiki/Contribution"
 
-ICON_PATH = "./img/logo_200px.png"
-SETTINGS_TEMPLATE_PATH = "./nbs/settings_template.yaml"
-BUSY_INDICATOR = "./img/busy_indicator.gif"
+ICON_PATH = "../img/logo_200px.png"
+SETTINGS_TEMPLATE_PATH = "settings_template.yaml"
+BUSY_INDICATOR = "../img/busy_indicator.gif"
 
 ICON_PATH = os.path.abspath(ICON_PATH)
 BUSY_INDICATOR = os.path.abspath(BUSY_INDICATOR)
 
 
 if not os.path.isfile(ICON_PATH):
-    raise FileNotFoundError('logo not found')
+    raise FileNotFoundError('Logo not found')
 
 if not os.path.isfile(BUSY_INDICATOR):
-    raise FileNotFoundError('busy indicator gif not found')
+    raise FileNotFoundError('Busy Indicator')
 
 def cancel_dialogs():
     dialogs = [_ for _ in _dialogs]
