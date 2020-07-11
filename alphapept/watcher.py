@@ -11,6 +11,9 @@ import time
 
 MINIMUM_FILE_SIZE = 100
 
+with open("alphapept/__init__.py") as version_file:
+    version = version_file.read().strip().split('__version__ = ')[1][1:-1]
+
 def check_new_files(path):
     """
     Check for new files in folder
@@ -75,9 +78,10 @@ class WatchThread(QThread):
             new_files = check_new_files(path)
 
             if len(new_files) > 0:
-                report('Found file withouth npz')
+                report('Found file(s) withouth *.npz.')
 
                 for file in new_files:
+                    report('Checking file {}.'.format(file))
 
                     if file.endswith('.d'):
                         #Bruker
@@ -100,23 +104,18 @@ class WatchThread(QThread):
                     if filesize/1024/1024 > MINIMUM_FILE_SIZE: #bytes, kbytes, mbytes
 
                         file_set = copy.deepcopy(settings)
-                        file_set['raw']['raw_path'] = file
+
+                        to_process = (file, file_set)
 
                         report('File conversion for file {}.'.format(file))
-                        raw_to_npz(file_set['raw'])
-                        report('Complete')
-
-                        base, ext = os.path.splitext(file)
-                        file_set['raw']['raw_path_npz'] = base+'.npz'
-
+                        raw_to_npz(to_process)
+                        report('Complete.')
                         report('Feature finding for file {}.'.format(file))
 
-                        find_and_save_features(file_set)
+                        find_and_save_features(to_process)
                         report('Complete')
 
             time.sleep(refresh_rate)
-
-
 
     def stop(self):
         self.running = False
@@ -151,7 +150,7 @@ class Watcher(QWidget):
 
         self.setLayout(vbox)
 
-        self.setWindowTitle('AlphaPept FileWatcher')
+        self.setWindowTitle('AlphaPept FileWatcher {}'.format(version))
 
         self.push_button.clicked.connect(self.watch_folder)
         self.watch_thread = WatchThread()  # This is the thread object
