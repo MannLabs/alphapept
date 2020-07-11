@@ -2,7 +2,7 @@
 
 __all__ = ['filter_seq', 'filter_score', 'filter_precursor', 'get_q_values', 'cut_fdr', 'cut_global_fdr',
            'get_x_tandem_score', 'score_x_tandem', 'score_psms', 'get_ML_features', 'train_RF', 'score_ML',
-           'get_protein_groups', 'perform_protein_grouping', 'save_report_as_npz']
+           'get_protein_groups', 'perform_protein_grouping', 'score_hdf', 'score_hdf_parallel', 'save_report_as_npz']
 
 # Cell
 import numpy as np
@@ -526,6 +526,47 @@ def perform_protein_grouping(data, pept_dict, fasta_dict, **kwargs):
                                 on = ['sequence','decoy'],
                                 validate="many_to_one")
     return protein_report
+
+# Cell
+import os
+from multiprocessing import Pool
+
+def score_hdf(to_process):
+
+    path, settings = to_process
+
+    try:
+        df = pd.read_hdf(path, 'second_search')
+    except ValueError:
+        df = pd.read_hdf(path, 'first_search')
+
+    df = get_ML_features(df, **settings['fasta'])
+
+    if settings["general"]["score"] == 'random_forest':
+        cv = train_RF(df)
+        df = score_ML(df, cv, verbose=False, plot = False)
+    elif settings["general"]["score"] == 'x_tandem':
+        df = score_x_tandem(df, verbose=False, plot = False)
+    else:
+        raise NotImplementedError('Scoring method {} not implemented.'.format(settings["general"]["score"]))
+
+    df.to_hdf(path, key = 'peptide_fdr', append=False)
+
+
+def score_hdf_parallel(settings, callback=None):
+
+    files_npz = settings['experiment']['files_npz']
+
+    paths = [os.path.splitext(_)[0]+'.hdf' for _ in files_npz]
+
+    to_process = [(path, settings) for path in paths]
+
+    with Pool() as p:
+        max_ = len(to_process)
+        for i, _ in enumerate(p.imap_unordered(score_hdf, to_process)):
+            if callback:
+                callback((i+1)/max_)
+
 
 # Cell
 def save_report_as_npz(
