@@ -1381,7 +1381,9 @@ def extract_bruker(file, ff_dir = "./ext/bruker/FF/", config = "default.config")
 
     feature_path = file + '/'+ os.path.split(file)[-1] + '.features'
 
-    if not os.path.exists(feature_path):
+    if os.path.exists(feature_path):
+        return feature_path
+    else:
         if not os.path.isdir(ff_dir):
             raise FileNotFoundError('Bruker feature finder cmd not found.')
 
@@ -1393,10 +1395,10 @@ def extract_bruker(file, ff_dir = "./ext/bruker/FF/", config = "default.config")
 
         subprocess.run(FF_parameters)
 
-    if os.path.exists(feature_path):
-        return feature_path
-    else:
-        raise FileNotFoundError('Feature extraction failed.')
+        if os.path.exists(feature_path):
+            return feature_path
+        else:
+            raise FileNotFoundError('Feature extraction failed.')
 
 
 import sqlalchemy as db
@@ -1515,15 +1517,17 @@ def find_and_save_features(to_process):
         logging.info('Report complete.')
 
     elif datatype == 'bruker':
-        logging.info('Feature finding on'.format(file))
-        feature_path = extract_bruker(file)
+        logging.info('Feature finding on {}'.format(path))
+        feature_path = extract_bruker(path)
         df = convert_bruker(feature_path)
-        logging.info('Bruker Feature Finder compelte. Extracted {:,} features.'.format(len(df)))
+        logging.info('Bruker featurer finder complete. Extracted {:,} features.'.format(len(df)))
 
+    logging.info('Matching features to query data.')
     features = map_ms2(df, query_data)
 
     base, ext = os.path.splitext(file)
     out_file = base+'.hdf'
+    logging.info('Saving feature table and features.')
     df.to_hdf(out_file, key='feature_table')
     features.to_hdf(out_file, key='features')
     logging.info('Feature file saved to {}'.format(out_file))
