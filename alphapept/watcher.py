@@ -2,12 +2,21 @@
 
 import sys
 from PyQt5.QtCore import Qt, QSize, QThread, pyqtSignal
-from PyQt5.QtWidgets import (QWidget,
+from PyQt5.QtWidgets import (QWidget, QLabel,
                              QVBoxLayout, QApplication, QPlainTextEdit, QPushButton)
 
 import logging
 import os
 import time
+
+root = logging.getLogger()
+root.setLevel(logging.DEBUG)
+
+handler = logging.StreamHandler(sys.stdout)
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+root.addHandler(handler)
 
 MINIMUM_FILE_SIZE = 100
 
@@ -26,15 +35,18 @@ def check_new_files(path):
             new_file = os.path.join(dirpath, dirname)
             base, ext = os.path.splitext(dirname)
             npz_path = os.path.join(dirpath, base+'.npz')
+            hdf_path = os.path.join(dirpath, base+'.hdf')
 
-            if not os.path.exists(npz_path):
+            if (not os.path.exists(npz_path)) | (not os.path.exists(hdf_path)):
                 new_files.append(new_file)
 
         for filename in [f for f in filenames if f.lower().endswith('.raw')]: #Thermo
             new_file = os.path.join(dirpath, filename)
             base, ext = os.path.splitext(filename)
             npz_path = os.path.join(dirpath, base+'.npz')
-            if not os.path.exists(npz_path):
+            hdf_path = os.path.join(dirpath, base+'.hdf')
+
+            if (not os.path.exists(npz_path)) | (not os.path.exists(hdf_path)):
                 new_files.append(new_file)
 
     return new_files
@@ -53,17 +65,29 @@ class QTextEditLogger(logging.Handler):
 
 class WatchThread(QThread):
     signal = pyqtSignal('PyQt_PyObject')
+    stats_signal = pyqtSignal('PyQt_PyObject')
 
     def __init__(self):
         QThread.__init__(self)
         self.path = ""
 
+        self.files_processed = 0
+        self.gb_processed = 0
+        self.bruker_files = 0
+        self.raw_files = 0
+        self.failed = 0
+
+        self.start_time = 0
+
     # run method gets called when we start the thread
     def run(self):
+
+        self.start_time = time.time()
         report = self.signal.emit
+        stats_update = self.stats_signal.emit
         path = self.path
         report('Started watching folder {}.'.format(path))
-        self.running=True
+        self.running = True
 
         # Start processing new files
         import copy
@@ -77,10 +101,13 @@ class WatchThread(QThread):
         while self.running:
             new_files = check_new_files(path)
 
+            stats_update('Files processed {} \t GB {:.2f} \t Bruker {} \t Raw {} \t Running time {:.2f} h'.format(self.files_processed, self.gb_processed, self.bruker_files, self.raw_files, (time.time()-self.start_time)/60/60))
+
             if len(new_files) > 0:
-                report('Found file(s) withouth *.npz.')
+                report('Found file(s) withouth *.npz or *.hdf')
 
                 for file in new_files:
+
                     report('Checking file {}.'.format(file))
 
                     if file.endswith('.d'):
@@ -105,15 +132,35 @@ class WatchThread(QThread):
 
                         file_set = copy.deepcopy(settings)
 
+                        base, ext = os.path.splitext(file)
+                        npz_path = base +'.npz'
+                        hdf_path = base +'.hdf'
                         to_process = (file, file_set)
 
-                        report('File conversion for file {}.'.format(file))
-                        raw_to_npz(to_process)
-                        report('Complete.')
-                        report('Feature finding for file {}.'.format(file))
+                        if not os.path.exists(npz_path):
+                            report('File conversion for file {}.'.format(file))
+                            raw_to_npz(to_process)
+                            report('Complete.')
+                        else:
+                            report('*.npz exists for {}'.format(file))
 
-                        find_and_save_features(to_process)
-                        report('Complete')
+                        if not os.path.exists(hdf_path):
+                            report('Feature finding for file {}.'.format(file))
+                            try:
+                                find_and_save_features(to_process)
+                            except FileNotFoundError:
+                                self.failed += 1
+                            report('Complete.')
+                        else:
+                            report('*.hdf exists for {}'.format(file))
+
+                        self.files_processed +=1
+                        self.gb_processed += filesize / 1024**3
+                        if file.endswith('.d'):
+                            self.bruker_files += 1
+                        else:
+                            self.raw_files += 1
+                        stats_update('Files processed {} \t {:.2f} GB \t Bruker {} \t Raw {} \t Fail {} \t Running time {:.2f} h'.format(self.files_processed, self.gb_processed, self.bruker_files, self.raw_files, self.failed, (time.time()-self.start_time)/60/60))
 
             time.sleep(refresh_rate)
 
@@ -145,8 +192,10 @@ class Watcher(QWidget):
         vbox = QVBoxLayout()
         self.push_button = QPushButton('Drop Folder')
         self.push_button.setEnabled(False)
+        self.stats = QLabel()
         vbox.addWidget(self.push_button)
         vbox.addWidget(self.log_textbox.widget)
+        vbox.addWidget(self.stats)
 
         self.setLayout(vbox)
 
@@ -156,6 +205,7 @@ class Watcher(QWidget):
         self.watch_thread = WatchThread()  # This is the thread object
         # Connect the signal from the thread to the finished method
         self.watch_thread.signal.connect(self.thread_output)
+        self.watch_thread.stats_signal.connect(self.stats_update)
 
         self.show()
 
@@ -175,6 +225,9 @@ class Watcher(QWidget):
 
     def thread_output(self, signal):
         logging.info(signal)
+
+    def stats_update(self, signal):
+        self.stats.setText(signal)
 
     def path_from_drop(self, event):
         url = event.mimeData().urls()[0]
