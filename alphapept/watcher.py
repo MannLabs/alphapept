@@ -51,6 +51,34 @@ def check_new_files(path):
 
     return new_files
 
+
+def check_file_completion(list_of_files):
+    to_analyze = []
+    for file in list_of_files:
+
+        if file.endswith('.d'):
+            #Bruker
+            to_check = os.path.join(file, 'analysis.tdf_bin')
+        else:
+            to_check = file
+
+        filesize = os.path.getsize(to_check)
+
+        writing = True
+        while writing:
+            time.sleep(1)
+            new_filesize = os.path.getsize(to_check)
+            if filesize == new_filesize:
+                writing  = False
+            else:
+                filesize = new_filesize
+
+        if filesize/1024/1024 > MINIMUM_FILE_SIZE: #bytes, kbytes, mbytes
+            to_analyze.append(file)
+
+    return to_analyze
+
+
 class QTextEditLogger(logging.Handler):
     def __init__(self, parent):
         super().__init__()
@@ -61,6 +89,7 @@ class QTextEditLogger(logging.Handler):
         msg = self.format(record)
         self.widget.appendPlainText(msg)
         self.widget.verticalScrollBar().setValue(self.widget.verticalScrollBar().maximum())
+
 
 
 class WatchThread(QThread):
@@ -82,6 +111,9 @@ class WatchThread(QThread):
     # run method gets called when we start the thread
     def run(self):
 
+        def progress_wrap(progress):
+            self.signal.emit('Progress {:.2f} %'.format(progress*100))
+
         self.start_time = time.time()
         report = self.signal.emit
         stats_update = self.stats_signal.emit
@@ -93,74 +125,58 @@ class WatchThread(QThread):
         import copy
         from alphapept.settings import load_settings
         settings = load_settings('default_settings.yaml')
-        from alphapept.io import raw_to_npz
-        from alphapept.feature_finding import find_and_save_features
+
+        settings['general']['n_processes'] = 4
+
+        from alphapept.io import raw_to_npz_parallel
+        from alphapept.feature_finding import find_and_save_features_parallel
 
         refresh_rate = 5
 
         while self.running:
             new_files = check_new_files(path)
+            new_files = check_file_completion(new_files)
 
             stats_update('Files processed {} \t GB {:.2f} \t Bruker {} \t Raw {} \t Running time {:.2f} h'.format(self.files_processed, self.gb_processed, self.bruker_files, self.raw_files, (time.time()-self.start_time)/60/60))
 
             if len(new_files) > 0:
                 report('Found file(s) withouth *.npz or *.hdf')
 
+                npz_files = []
+                ff_files = []
+
+                gb_processed = 0
+
+                for path in new_files:
+                    base, ext = os.path.splitext(path)
+                    npz_path = base +'.npz'
+                    hdf_path = base +'.hdf'
+
+                    filesize = os.path.getsize(path)
+
+                    if not os.path.exists(npz_path):
+                        npz_files.append(path)
+                    if not os.path.exists(hdf_path):
+                        ff_files.append(path)
+
+                    gb_processed += filesize
+
+                report('NPZ conversion on {} files'.format(len(npz_files)))
+                raw_to_npz_parallel(npz_files, settings, callback=progress_wrap)
+                report('FF on {} files'.format(len(ff_files)))
+                find_and_save_features_parallel(ff_files, settings, callback=progress_wrap)
+
+
+                self.files_processed += len(new_files)
+                self.gb_processed += gb_processed / 1024**3
+
                 for file in new_files:
-
-                    report('Checking file {}.'.format(file))
-
                     if file.endswith('.d'):
-                        #Bruker
-                        to_check = os.path.join(file, 'analysis.tdf_bin')
+                        self.bruker_files += 1
                     else:
-                        to_check = file
+                        self.raw_files += 1
 
-                    filesize = os.path.getsize(to_check)
-
-                    writing = True
-                    while writing:
-                        time.sleep(1)
-                        report('Checking Filesize: {:,} Bytes.'.format(filesize))
-                        new_filesize = os.path.getsize(to_check)
-                        if filesize == new_filesize:
-                            writing  = False
-                        else:
-                            filesize = new_filesize
-
-                    if filesize/1024/1024 > MINIMUM_FILE_SIZE: #bytes, kbytes, mbytes
-
-                        file_set = copy.deepcopy(settings)
-
-                        base, ext = os.path.splitext(file)
-                        npz_path = base +'.npz'
-                        hdf_path = base +'.hdf'
-                        to_process = (file, file_set)
-
-                        if not os.path.exists(npz_path):
-                            report('File conversion for file {}.'.format(file))
-                            raw_to_npz(to_process)
-                            report('Complete.')
-                        else:
-                            report('*.npz exists for {}'.format(file))
-
-                        if not os.path.exists(hdf_path):
-                            report('Feature finding for file {}.'.format(file))
-                            try:
-                                find_and_save_features(to_process)
-                            except FileNotFoundError:
-                                self.failed += 1
-                            report('Complete.')
-                        else:
-                            report('*.hdf exists for {}'.format(file))
-
-                        self.files_processed +=1
-                        self.gb_processed += filesize / 1024**3
-                        if file.endswith('.d'):
-                            self.bruker_files += 1
-                        else:
-                            self.raw_files += 1
-                        stats_update('Files processed {} \t {:.2f} GB \t Bruker {} \t Raw {} \t Fail {} \t Running time {:.2f} h'.format(self.files_processed, self.gb_processed, self.bruker_files, self.raw_files, self.failed, (time.time()-self.start_time)/60/60))
+            stats_update('Files processed {} \t {:.2f} GB \t Bruker {} \t Raw {} \t Fail {} \t Running time {:.2f} h'.format(self.files_processed, self.gb_processed, self.bruker_files, self.raw_files, self.failed, (time.time()-self.start_time)/60/60))
 
             time.sleep(refresh_rate)
 
