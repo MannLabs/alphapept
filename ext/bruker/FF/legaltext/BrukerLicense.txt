@@ -1,0 +1,31 @@
+License Agreement
+
+Bruker Daltonics Inc. and Affiliates („BDAL")
+
+Product License Agreement and Limited Warranty
+
+Important: Please carefully read the License Agreement below before installing the software product. The right to use the software product which accompanies this Agreement (the „Software") is provided only on the condition that you agree to this Agreement. If you do not agree to the terms of this Agreement, you may not install the Software and you may return the package for a full refund. However, installing the Software indicates your acceptance of this Agreement.
+
+License
+
+In return for payment of the one-time license fee for the Software, you receive from BDAL a license to use the Software subject to the following terms and conditions:
+1. The Software may be used without time limit on one personal computer or workstation.
+2. A separate license agreement and fee is required for each personal computer or workstation on which the Software is used.
+3. The Software may not be duplicated or copied except for archive purposes, program error verification, or to replace defective media, and all copies made must bear the copyright notices contained in the original.
+4. This license and the Software may be transferred to a third party only with the prior written consent of BDAL, provided the third party agrees to all terms of this Agreement and you do not retain any copies of the Software.
+5. Purchase of this license does not transfer any right, title or interest in the Software to you except as specifically set forth in this Agreement. You are on notice that the Software is protected under various domestic and international copyright laws and treaties.
+6. BDAL reserves the right to terminate this Agreement by notice to you upon breach of this Agreement by you. In the event of termination, you will either return all copies of the Software to BDAL or, with BDAL's prior consent, provide BDAL with a certificate of destruction of all copies.
+7. In the event you modify the Software or include it in any other software program, upon termination of this Agreement you will either remove the Software or any portion thereof from the modified program and return it to BDAL or provide BDAL with a certificate of destruction therefore.
+
+
+Limited Warranty
+
+Software: BDAL warrants for a period of ninety (90) days from the date of purchase of the license that the Software will execute its programming instructions when properly installed on the personal computer or workstation indicated on this package. BDAL does not warrant that the operation of the Software will be uninterrupted or error free. In the event that the Software fails to execute its programming instructions during the warranty period, your remedy shall be to return the media to BDAL for replacement. Should BDAL be unable to replace the media within a reasonable amount of time, your alternate remedy shall be a refund of the license purchase price upon return of the Software and all copies.
+Media: BDAL warrants the media upon which the Software is recorded to be free from defects in materials and workmanship under normal use for a period of ninety (90) days from the day of purchase of the license. In the event any media prove to be defective during the warranty period, your remedy shall be to return the media to BDAL for replacement. Should BDAL be unable to replace the media within a reasonable amount of time, your alternate remedy shall be a refund of the license purchase price upon return of the Software and all copies.
+Notice of warranty claims: You must notify BDAL in writing of any warranty claim not later than the expiration of the warranty period.
+LIMITATIONS OF WARRANTY: BDAL MAKES NO OTHER EXPRESS WARRANTY, WHETHER WRITTEN OR ORAL, WITH RESPECT TO THE SOFTWARE. ANY IMPLIED WARRANTY OF MERCHANTABILITY OR FITNESS IS LIMITED TO THE 90-DAY DURATION OF THIS LIMITED WARRANTY. SOME STATES DO NOT ALLOW LIMITATIONS ON HOW LONG AN IMPLIED WARRANTY LASTS, SO THE ABOVE LIMITATION OR EXCLUSION MAY NOT APPLY TO YOU.
+This warranty gives specific legal rights, and you may also have other rights, which vary from state to state.
+EXCLUSIVE REMEDIES: THE REMEDIES PROVIDED ABOVE ARE YOUR SOLE AND EXCLUSIVE REMEDIES. IN NO EVENT SHALL BDAL BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES (INCLUDING LOST PROFIT) WHETHER BASED ON WARRANTY, CONTRACT, TORT, OR ANY OTHER LEGAL THEORY. SOME STATES DO NOT ALLOW THE EXCLUSION OR LIMITATION
+OF INCIDENTAL OR CONSEQUENTIAL DAMAGES, SO THE ABOVE LIMITATIONS OR EXCLUSIONS MAY NOT APPLY TO YOU.
+Warranty Service: Warranty service may be obtained from the nearest BDAL sales office or other location indicated in the owner's manual or service booklet.
+

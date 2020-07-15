@@ -1,0 +1,14 @@
+<bdal-logconf>
+    <sink name="LogFile" class="bdal.logging.RollingFileSink">
+        <file-path>${exe.home}/TimsFeatureFinder.log</file-path>
+        <max-file-size>300 MiB</max-file-size>
+        <max-backups>10</max-backups>
+    </sink>
+
+    <sink name="console" class="bdal.logging.ConsoleSink"/>
+
+    <root level="INFO">
+        <sink ref="LogFile"/>
+    </root>
+    
+</bdal-logconf>
