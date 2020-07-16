@@ -1,0 +1,59 @@
+calibration:
+  method: linear
+  min_mz_step: 80
+  min_rt_step: 50
+  minimum_score: 20
+  outlier_std: 3
+fasta:
+  contaminants_path: '...'
+  fasta_folder: '...'
+  fasta_path: '...'
+  library_path: '...'
+  max_isoforms: 1024
+  max_length: 27
+  min_length: 6
+  mods_fixed:
+  - cC
+  mods_fixed_terminal: []
+  mods_fixed_terminal_prot: []
+  mods_variable:
+  - oxM
+  mods_variable_terminal: []
+  mods_variable_terminal_prot: []
+  num_missed_cleavages: 2
+  protease: trypsin
+features:
+  mass_importance: 100
+  max_distance: 0.4
+  max_gap: 2
+  max_neighbors: 4
+  min_hill_length: 3
+  ppm_tol: 8
+  smoothing: 1
+general:
+  convert_raw: true
+  create_library: true
+  find_features: true
+  parallel: true
+  ppm: true
+  score: x_tandem
+  settings_path: '...'
+misc:
+  match_between_runs: true
+quantification:
+  max_lfq: true
+raw:
+  most_abundant: 400
+  raw_folder: '...'
+  raw_path: '...'
+  raw_path_npz: '...'
+search:
+  calibrate: true
+  calibration_std: 3
+  m_offset: 10
+  m_tol: 20
+  min_frag_hits: 7
+  parallel: true
+  peptide_fdr: 0.01
+  ppm: true
+  protein_fdr: 0.01
