@@ -1537,9 +1537,11 @@ from multiprocessing import Pool
 
 def find_and_save_features_parallel(path_list, settings, callback=None):
 
+    n_processes = settings['general']['n_processes']
+
     to_process = [(_, settings) for _ in path_list]
 
-    with Pool() as p:
+    with Pool(n_processes) as p:
         max_ = len(to_process)
         for i, _ in enumerate(p.imap_unordered(find_and_save_features, to_process)):
             if callback:
