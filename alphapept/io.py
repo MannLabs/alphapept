@@ -202,9 +202,11 @@ from multiprocessing import Pool
 
 def raw_to_npz_parallel(path_list, settings, callback=None):
 
+    n_processes = settings['general']['n_processes']
+
     to_process = [(_, settings) for _ in path_list]
 
-    with Pool() as p:
+    with Pool(n_processes) as p:
         max_ = len(to_process)
         for i, _ in enumerate(p.imap_unordered(raw_to_npz, to_process)):
             if callback:
