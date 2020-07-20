@@ -977,13 +977,19 @@ import os
 import pandas as pd
 import copy
 
-def store_hdf(df, path, key):
-    try:
-        df.to_hdf(path, key=key, append=True)
-    except ValueError:
-        old_df = pd.read_hdf(path, key= key)
-        new_df = pd.concat([old_df, df])
-        new_df.to_hdf(path, key= key, append=False)
+def store_hdf(df, path, key, replace=False):
+    """
+    Stores in hdf
+    """
+    if replace:
+        df.to_hdf(path, key=key, append=False)
+    else:
+        try:
+            df.to_hdf(path, key=key, append=True)
+        except ValueError:
+            old_df = pd.read_hdf(path, key= key)
+            new_df = pd.concat([old_df, df])
+            new_df.to_hdf(path, key = key, append=False)
 
 def search_db(to_process):
     """
@@ -991,26 +997,35 @@ def search_db(to_process):
     """
 
     file_npz, settings = to_process
-    db_data = np.load(settings['fasta']['database_path'], allow_pickle=True)
-    query_data = np.load(file_npz, allow_pickle=True)
 
-    base, ext = os.path.splitext(file_npz)
-
-    try:
-        features = pd.read_hdf(base+'.hdf', 'features')
-    except FileNotFoundError:
-        features = None
-    except KeyError:
-        features = None
-
-    psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
-    if len(psms) > 0:
-        psms, num_specs_scored = get_score_columns(psms, query_data, db_data, features, **settings["search"])
+    skip = False
 
     if 'm_offset_calibrated' in settings["search"]:
-        store_hdf(pd.DataFrame(psms), base +'.hdf', 'second_search')
-    else:
-        store_hdf(pd.DataFrame(psms), base +'.hdf', 'first_search')
+        calibration = settings['search']['m_offset_calibrated']
+        if calibration == 0:
+            skip = True
+
+    if not skip:
+        db_data = np.load(settings['fasta']['database_path'], allow_pickle=True)
+        query_data = np.load(file_npz, allow_pickle=True)
+
+        base, ext = os.path.splitext(file_npz)
+
+        try:
+            features = pd.read_hdf(base+'.hdf', 'features')
+        except FileNotFoundError:
+            features = None
+        except KeyError:
+            features = None
+
+        psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
+        if len(psms) > 0:
+            psms, num_specs_scored = get_score_columns(psms, query_data, db_data, features, **settings["search"])
+
+        if 'm_offset_calibrated' in settings["search"]:
+            store_hdf(pd.DataFrame(psms), base +'.hdf', 'second_search', replace=True)
+        else:
+            store_hdf(pd.DataFrame(psms), base +'.hdf', 'first_search', replace=True)
 
 
 def search_parallel_db(settings, calibration = None, callback = None):
@@ -1030,10 +1045,11 @@ def search_parallel_db(settings, calibration = None, callback = None):
     else:
         custom_settings = [settings for _ in files_npz]
 
+    n_processes = settings['general']['n_processes']
 
     to_process = [(files_npz[i], custom_settings[i]) for i in range(len(files_npz))]
 
-    with Pool() as p:
+    with Pool(n_processes) as p:
         max_ = len(to_process)
         for i, _ in enumerate(p.imap_unordered(search_db, to_process)):
             if callback:
@@ -1138,10 +1154,11 @@ def search_parallel(settings, calibration = None, callback = None):
     else:
         custom_settings = [settings for _ in files_npz]
 
-
     to_process = [(idx_start, fasta_list[idx_start:idx_end], files_npz, custom_settings) for idx_start, idx_end in block_idx(len(fasta_list))]
 
-    with Pool() as p:
+    n_processes = settings['general']['n_processes']
+
+    with Pool(n_processes) as p:
         max_ = len(to_process)
         for i, _ in enumerate(p.imap_unordered(search_fasta_block, to_process)):
 
