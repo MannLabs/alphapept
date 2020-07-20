@@ -7,7 +7,7 @@ __all__ = ['get_missed_cleavages', 'cleave_sequence', 'count_missed_cleavages', 
            'get_frag_dict', 'get_spectrum', 'get_spectra', 'read_fasta_file', 'read_fasta_file_entries', 'read_fasta',
            'check_sequence', 'add_to_pept_dict', 'merge_pept_dicts', 'generate_fasta_list', 'generate_database',
            'generate_spectra', 'block_idx', 'blocks', 'digest_fasta_block', 'generate_database_parallel', 'mass_dict',
-           'save_database']
+           'pept_dict_from_search', 'save_database']
 
 # Cell
 from alphapept import constants
@@ -716,6 +716,8 @@ def generate_database_parallel(settings, callback = None):
     """
     Function to generate a database from a fasta file
     """
+    n_processes = settings['general']['n_processes']
+
     fasta_list, fasta_dict = generate_fasta_list(**settings['fasta'])
 
     blocks = block_idx(len(fasta_list), settings['fasta']['fasta_block'])
@@ -724,7 +726,7 @@ def generate_database_parallel(settings, callback = None):
 
     spectra = []
     pept_dicts = []
-    with Pool() as p:
+    with Pool(n_processes) as p:
         max_ = len(to_process)
         for i, _ in enumerate(p.imap_unordered(digest_fasta_block, to_process)):
             if callback:
@@ -739,6 +741,46 @@ def generate_database_parallel(settings, callback = None):
     pept_dict = merge_pept_dicts(pept_dicts)
 
     return spectra_set, pept_dict, fasta_dict
+
+# Cell
+def pept_dict_from_search(settings):
+    """
+    Generates a peptide dict from a large search
+    """
+
+    paths = settings['experiment']['files']
+
+    bases = [os.path.splitext(_)[0]+'.hdf' for _ in paths]
+
+    all_dfs = []
+    for _ in bases:
+        try:
+            df = pd.read_hdf(_, key='peptide_fdr')
+        except KeyError:
+            df = pd.DataFrame()
+
+        if df > 0:
+            all_dfs.append(df)
+
+    df = pd.concat(all_dfs)
+
+    df['fasta_index'] = df['fasta_index'].str.split(',')
+
+    lst_col = 'fasta_index'
+
+    df_ = pd.DataFrame({
+          col:np.repeat(df[col].values, df[lst_col].str.len())
+          for col in df.columns.drop(lst_col)}
+        ).assign(**{lst_col:np.concatenate(df[lst_col].values)})[df.columns]
+
+    df_['fasta_index'] = df_['fasta_index'].astype('int')
+    df_grouped = df_.groupby(['sequence'])['fasta_index'].unique()
+
+    pept_dict = {}
+    for keys, vals in zip(df_grouped.index, df_grouped.values):
+        pept_dict[keys] = vals.tolist()
+
+    return pept_dict
 
 # Cell
 from .io import list_to_numpy_f32
