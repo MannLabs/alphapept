@@ -2,7 +2,8 @@
 
 __all__ = ['gaussian', 'return_elution_profile', 'simulate_sample_profiles', 'get_peptide_error',
            'get_total_error_parallel', 'get_total_error', 'normalize_experiment_SLSQP', 'delayed_normalization',
-           'minimum_occurence']
+           'minimum_occurence', 'get_protein_ratios', 'triangle_error', 'solve_profile_LFBGSB', 'solve_profile_SLSQP',
+           'solve_profile_trf', 'get_protein_table', 'protein_profile', 'protein_profile_parallel']
 
 # Cell
 import random
@@ -182,3 +183,203 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
     df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [experiment_dict[_] for _ in df['experiment']]]
 
     return df, normalization
+
+# Cell
+from numba import njit
+
+@njit
+def get_protein_ratios(signal, column_combinations, minimum_ratios = 2):
+    n_samples = signal.shape[1]
+    ratios = np.empty((n_samples, n_samples))
+    ratios[:] = np.nan
+
+    for element in column_combinations:
+        i = element[0]
+        j = element[1]
+
+        ratio = signal[:,j] / signal[:,i]
+
+        non_nan = np.sum(~np.isnan(ratio))
+
+        if non_nan >= minimum_ratios:
+            ratio_median = np.nanmedian(ratio)
+        else:
+            ratio_median = np.nan
+
+        ratios[j,i] = ratio_median
+
+    return ratios
+
+# Cell
+@njit
+def triangle_error(normalization, ratios):
+    int_matrix = np.repeat(normalization, len(normalization)).reshape((len(normalization), len(normalization))).transpose()
+    x = (np.log(ratios) - np.log(int_matrix.T) + np.log(int_matrix))**2
+
+    return np.nansum(x)
+
+# Cell
+## L-BFGS-B
+
+
+from scipy.optimize import minimize
+
+# LFBGSB
+
+def solve_profile_LFBGSB(ratios):
+    x0 = np.ones(ratios.shape[1])
+    bounds = [(x0[0]*0+0.01, x0[0]-0.01) for _ in x0]
+    res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = 'L-BFGS-B')
+    solution = res_wrapped.x
+    solution = solution/np.max(solution)
+    return solution, res_wrapped.success
+
+
+def solve_profile_SLSQP(ratios):
+    x0 = np.ones(ratios.shape[1])
+    bounds = [(x0[0]*0+0.01, x0[0]-0.01) for _ in x0]
+    res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = 'SLSQP', options={'maxiter':10000})
+    solution = res_wrapped.x
+    solution = solution/np.max(solution)
+    return solution, res_wrapped.success
+
+
+# TRF
+def solve_profile_trf(ratios):
+    x0 = np.ones(ratios.shape[1])
+    bounds = (x0*0+0.01, x0-0.01)
+    res_wrapped = least_squares(triangle_error, args = [ratios] , x0 = x0, bounds=bounds, verbose=0, method = 'trf')
+    solution = res_wrapped.x
+    solution = solution/np.max(solution)
+    return solution, res_wrapped.success
+
+
+# Cell
+from numba.typed import List
+from itertools import combinations
+
+def get_protein_table(df, field = 'int_sum', callback = None):
+    unique_proteins = df['protein'].unique()
+    experiments = df['experiment'].unique().tolist()
+    experiments.sort()
+
+    column_combinations = List()
+    [column_combinations.append(_) for _ in combinations(range(len(experiments)), 2)]
+
+    columnes_ext = [_+'_LFQ' for _ in experiments]
+    protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + experiments)
+
+    if field+'_dn' in df.columns:
+        field_ = field+'_dn'
+    else:
+        field_ = field
+
+    for idx, protein in enumerate(unique_proteins):
+        subset = df[df['protein'] == protein].copy()
+        per_protein = subset.groupby(['experiment','precursor'])[field_].sum().unstack().T
+
+        for _ in experiments:
+            if _ not in per_protein.columns:
+                per_protein[_] = np.nan
+
+        per_protein = per_protein[experiments]
+
+        ratios = get_protein_ratios(per_protein.values, column_combinations)
+        solution, success = solve_profile_SLSQP(ratios)
+
+        experiment_ids = per_protein.columns.tolist()
+
+        pre_lfq = per_protein.sum().values
+
+        if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
+            profile = pre_lfq
+        else:
+            total_int = subset[field_].sum()
+            total_int_ = np.sum(solution)
+            profile = total_int/total_int_*solution
+
+        protein_table.loc[protein, [_+'_LFQ' for _ in experiment_ids]] = profile
+        protein_table.loc[protein, experiment_ids] = pre_lfq
+
+        if callback:
+            callback((idx+1)/len(unique_proteins))
+
+    protein_table[protein_table == 0] = np.nan
+    protein_table = protein_table.astype('float')
+
+    return protein_table
+
+def protein_profile(df, experiments, field_, protein):
+    """
+    Calculate the protein profile for a a df based on a dateframe
+
+    """
+    column_combinations = List()
+    [column_combinations.append(_) for _ in combinations(range(len(experiments)), 2)]
+
+    subset = df[df['protein'] == protein].copy()
+    per_protein = subset.groupby(['experiment','precursor'])[field_].sum().unstack().T
+
+    for _ in experiments:
+        if _ not in per_protein.columns:
+            per_protein[_] = np.nan
+
+    per_protein = per_protein[experiments]
+
+    ratios = get_protein_ratios(per_protein.values, column_combinations)
+    solution, success = solve_profile_SLSQP(ratios)
+
+    experiment_ids = per_protein.columns.tolist()
+    pre_lfq = per_protein.sum().values
+
+    if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
+        profile = pre_lfq
+    else:
+        total_int = subset[field_].sum()
+        total_int_ = np.sum(solution)
+        profile = total_int/total_int_*solution
+
+    return profile, pre_lfq, experiment_ids, protein
+
+
+import os
+from multiprocessing import Pool
+from functools import partial
+
+
+def protein_profile_parallel(settings, df, callback=None):
+
+    n_processes = settings['general']['n_processes']
+    field = settings['quantification']['mode']
+
+    unique_proteins = df['protein'].unique().tolist()
+    experiments = df['experiment'].unique().tolist()
+    experiments.sort()
+
+    columnes_ext = [_+'_LFQ' for _ in experiments]
+    protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + experiments)
+
+    if field+'_dn' in df.columns:
+        field_ = field+'_dn'
+    else:
+        field_ = field
+
+    results = []
+
+    with Pool(n_processes) as p:
+        max_ = len(unique_proteins)
+        for i, _ in enumerate(p.imap_unordered(partial(protein_profile, df, experiments, field_), unique_proteins)):
+            results.append(_)
+            if callback:
+                callback((i+1)/max_)
+
+    for result in results:
+
+        profile, pre_lfq, experiment_ids, protein = result
+        protein_table.loc[protein, [_+'_LFQ' for _ in experiment_ids]] = profile
+        protein_table.loc[protein, experiment_ids] = pre_lfq
+
+    protein_table[protein_table == 0] = np.nan
+    protein_table = protein_table.astype('float')
+
+    return protein_table
