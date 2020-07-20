@@ -19,4 +19,4 @@ scikit-learn==0.22.2
 scipy==1.4.1
 seaborn==0.10.0
 tables==3.6.1
-tqdm==4.46.1
+tqdm==4.48.0
