@@ -101,20 +101,33 @@ def get_calibration(df, features, minimum_score = 20, outlier_std = 3, method='l
     o_mass_ppm_mean = df_sub['o_mass_ppm_calib'].mean()
     o_mass_ppm_std = df_sub['o_mass_ppm_calib'].std()
 
+
+    if np.isnan(o_mass_ppm_std):
+        o_mass_ppm_std = 0
+
     return features_calib, o_mass_ppm_std
 
 
 def calibrate_hdf(to_process):
 
     path, settings = to_process
-    psms = pd.read_hdf(path, 'first_search')
-    features = pd.read_hdf(path, 'features')
 
-    df = score_x_tandem(psms, fdr_level = settings["search"]["peptide_fdr"], plot=False, verbose=False, **settings["search"])
+    try:
+        features = pd.read_hdf(path, 'features')
+    except KeyError:
+        features = None
 
-    features_calib, o_mass_ppm_std = get_calibration(df, features, **settings["calibration"])
+    try:
+        psms = pd.read_hdf(path, 'first_search')
+    except KeyError: #no elements in search
+        psms = pd.DataFrame()
 
-    features_calib.to_hdf(path, key= 'features', append=False)
+    if len(psms) > 0 :
+        df = score_x_tandem(psms, fdr_level = settings["search"]["peptide_fdr"], plot=False, verbose=False, **settings["search"])
+        features_calib, o_mass_ppm_std = get_calibration(df, features, **settings["calibration"])
+        features_calib.to_hdf(path, key= 'features', append=False)
+    else:
+        o_mass_ppm_std = 0
 
     return (path, o_mass_ppm_std)
 
@@ -128,7 +141,9 @@ def calibrate_hdf_parallel(settings, callback=None):
 
     calibration_dict = {}
 
-    with Pool() as p:
+    n_processes = settings['general']['n_processes']
+
+    with Pool(n_processes) as p:
         max_ = len(to_process)
         for i, _ in enumerate(p.imap_unordered(calibrate_hdf, to_process)):
             path, offset = _
