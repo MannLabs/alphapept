@@ -354,6 +354,8 @@ def protein_profile_parallel(settings, df, callback=None):
 
     unique_proteins = df['protein'].unique().tolist()
     experiments = df['experiment'].unique().tolist()
+    files = df['filename'].unique().tolist()
+
     experiments.sort()
 
     columnes_ext = [_+'_LFQ' for _ in experiments]
@@ -366,20 +368,29 @@ def protein_profile_parallel(settings, df, callback=None):
 
     results = []
 
-    with Pool(n_processes) as p:
-        max_ = len(unique_proteins)
-        for i, _ in enumerate(p.imap_unordered(partial(protein_profile, df, experiments, field_), unique_proteins)):
-            results.append(_)
-            if callback:
-                callback((i+1)/max_)
+    if len(files) > 1:
+        with Pool(n_processes) as p:
+            max_ = len(unique_proteins)
+            for i, _ in enumerate(p.imap_unordered(partial(protein_profile, df, experiments, field_), unique_proteins)):
+                results.append(_)
+                if callback:
+                    callback((i+1)/max_)
 
-    for result in results:
+        for result in results:
 
-        profile, pre_lfq, experiment_ids, protein = result
-        protein_table.loc[protein, [_+'_LFQ' for _ in experiment_ids]] = profile
-        protein_table.loc[protein, experiment_ids] = pre_lfq
+            profile, pre_lfq, experiment_ids, protein = result
+            protein_table.loc[protein, [_+'_LFQ' for _ in experiment_ids]] = profile
+            protein_table.loc[protein, experiment_ids] = pre_lfq
 
-    protein_table[protein_table == 0] = np.nan
-    protein_table = protein_table.astype('float')
+        protein_table[protein_table == 0] = np.nan
+        protein_table = protein_table.astype('float')
+    else:
+        protein_table = df.groupby(['protein'])[field_].sum().to_frame().reset_index()
+        protein_table = protein_table.set_index('protein')
+        protein_table.index.name = None
+        protein_table.columns=[experiments[0]]
+
+        if callback:
+            callback(1)
 
     return protein_table
