@@ -440,7 +440,8 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Mass-Calculations">Mass Calculations<a class="anchor-link" href="#Mass-Calculations"> </a></h2>
+<h2 id="Mass-Calculations">Mass Calculations<a class="anchor-link" href="#Mass-Calculations"> </a></h2><p><a href="/alphapept/chem#calculate_mass"><code>calculate_mass</code></a>: This function allows to calculate the precursor mass from the monoisotopic m/z and the charge.</p>
+
 </div>
 </div>
 </div>
@@ -462,9 +463,9 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="mz_to_mass" class="doc_header"><code>mz_to_mass</code><a href="__main__.py#L6" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>mz_to_mass</code>(<strong><code>mz</code></strong>, <strong><code>charge</code></strong>)</p>
+<h4 id="calculate_mass" class="doc_header"><code>calculate_mass</code><a href="__main__.py#L6" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_mass</code>(<strong><code>mono_mz</code></strong>, <strong><code>charge</code></strong>)</p>
 </blockquote>
-<p>Function to calculate the mass from a mz value.</p>
+<p>Calculate the precursor mass from mono mz and charge</p>
 
 </div>
 
@@ -486,7 +487,7 @@ To calculate the isotope distribution for a given isotope, we define the functio
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">mz</span> <span class="o">=</span> <span class="mi">300</span>
 <span class="n">charge</span> <span class="o">=</span> <span class="mi">2</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">mz_to_mass</span><span class="p">(</span><span class="n">mz</span><span class="p">,</span> <span class="n">charge</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">calculate_mass</span><span class="p">(</span><span class="n">mz</span><span class="p">,</span> <span class="n">charge</span><span class="p">))</span>
 </pre></div>
 
     </div>

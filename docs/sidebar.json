@@ -1,6 +1,7 @@
 {
   "alphapept": {
     "Overview": "/",
+    "Settings": "/settings",
     "Chem": "/chem",
     "Input / Output": "/io",
     "FASTA": "/fasta",
@@ -11,7 +12,6 @@
     "Quantification": "/quantification",
     "Matching": "/matching",
     "Constants": "/constants",
-    "Settings": "/settings",
-    "Runner": "/runner"
+    "Utilities": "/XX_utilities"
   }
 }

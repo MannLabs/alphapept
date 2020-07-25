@@ -10,6 +10,9 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
+      title: Settings
+      url: /settings
+    - output: web,pdf
       title: Chem
       url: /chem
     - output: web,pdf
@@ -40,11 +43,8 @@ entries:
       title: Constants
       url: /constants
     - output: web,pdf
-      title: Settings
-      url: /settings
-    - output: web,pdf
-      title: Runner
-      url: /runner
+      title: Utilities
+      url: /XX_utilities
     output: web
     title: alphapept
   output: web
