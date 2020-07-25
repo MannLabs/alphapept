@@ -42,9 +42,6 @@ entries:
     - output: web,pdf
       title: Constants
       url: /constants
-    - output: web,pdf
-      title: Utilities
-      url: /XX_utilities
     output: web
     title: alphapept
   output: web
