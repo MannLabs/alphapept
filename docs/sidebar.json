@@ -11,7 +11,6 @@
     "Recalibration": "/recalibration",
     "Quantification": "/quantification",
     "Matching": "/matching",
-    "Constants": "/constants",
-    "Utilities": "/XX_utilities"
+    "Constants": "/constants"
   }
 }
