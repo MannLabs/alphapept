@@ -196,12 +196,7 @@ index = {"print_settings": "00_settings.ipynb",
          "isotopes": "10_constants.ipynb",
          "averagine_aa": "10_constants.ipynb",
          "averagine_avg": "10_constants.ipynb",
-         "protease_dict": "10_constants.ipynb",
-         "log_me": "XX_utilities.ipynb",
-         "check_hardware": "XX_utilities.ipynb",
-         "check_python_env": "XX_utilities.ipynb",
-         "check_settings": "XX_utilities.ipynb",
-         "assemble_df": "XX_utilities.ipynb"}
+         "protease_dict": "10_constants.ipynb"}
 
 modules = ["settings.py",
            "chem.py",
@@ -212,8 +207,7 @@ modules = ["settings.py",
            "score.py",
            "recalibration.py",
            "quantification.py",
-           "constants.py",
-           "utils.py"]
+           "constants.py"]
 
 doc_url = "https://mannlabs.github.io/alphapept/"
 
