@@ -29,22 +29,25 @@ description: "Functions related to input and output"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This notebook contains all functions related to importing and exporting files. The current way of handling data is to store as a *.npz container.</p>
-<p>Current ToDo here:</p>
-<ul>
-<li>The functions are not well described yet and proper callbacks are also not implemented.</li>
-</ul>
+<p>This notebook contains all functions related to importing and exporting files. The current way of handling data is to store as a numpy native *.npz container.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Conversion-functions">Conversion functions<a class="anchor-link" href="#Conversion-functions"> </a></h2><p>To bring spectra in a usable form, we perform several conversion steps.</p>
+<h2 id="Conversion-functions">Conversion functions<a class="anchor-link" href="#Conversion-functions"> </a></h2><p><a href="/alphapept/io#get_most_abundant"><code>get_most_abundant</code></a>: In order to save spectra in a more memory efficient form, we extract the 400 most abundant peaks</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -63,34 +66,9 @@ description: "Functions related to input and output"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_most_abundant" class="doc_header"><code>get_most_abundant</code><a href="__main__.py#L12" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_most_abundant</code>(<strong><code>mass</code></strong>, <strong><code>intensity</code></strong>, <strong><code>n_max</code></strong>)</p>
+<h4 id="get_most_abundant" class="doc_header"><code>get_most_abundant</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L22" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_most_abundant</code>(<strong><code>mass</code></strong>, <strong><code>intensity</code></strong>, <strong><code>n_max</code></strong>)</p>
 </blockquote>
 <p>Returns the n_max most abundant peaks of a spectrum</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="calculate_mass" class="doc_header"><code>calculate_mass</code><a href="__main__.py#L31" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_mass</code>(<strong><code>mono_mz</code></strong>, <strong><code>charge</code></strong>)</p>
-</blockquote>
-<p>Calculate the precursor mass from mono mz and charge</p>
 
 </div>
 
@@ -128,7 +106,7 @@ description: "Functions related to input and output"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="load_thermo_raw" class="doc_header"><code>load_thermo_raw</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L47" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_thermo_raw</code>(<strong><code>raw_file</code></strong>, <strong><code>most_abundant</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="load_thermo_raw" class="doc_header"><code>load_thermo_raw</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L35" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_thermo_raw</code>(<strong><code>raw_file</code></strong>, <strong><code>most_abundant</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Load thermo raw file and extract spectra</p>
 
@@ -166,7 +144,7 @@ description: "Functions related to input and output"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="parse_kwargs_path" class="doc_header"><code>parse_kwargs_path</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L150" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>parse_kwargs_path</code>(<strong><code>kwargs</code></strong>, <strong><code>filetype</code></strong>=<em><code>'.raw'</code></em>)</p>
+<h4 id="parse_kwargs_path" class="doc_header"><code>parse_kwargs_path</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L138" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>parse_kwargs_path</code>(<strong><code>kwargs</code></strong>, <strong><code>filetype</code></strong>=<em><code>'.raw'</code></em>)</p>
 </blockquote>
 <p>Checks the raw_path of the kwargs, replaces it when a list of rawfiles if this is a folder</p>
 
@@ -191,9 +169,33 @@ description: "Functions related to input and output"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="raw_to_npz" class="doc_header"><code>raw_to_npz</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L181" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>raw_to_npz</code>(<strong><code>kwargs</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="raw_to_npz" class="doc_header"><code>raw_to_npz</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L169" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>raw_to_npz</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Wrapper function to convert raw to npz</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="raw_to_npz_parallel" class="doc_header"><code>raw_to_npz_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L196" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>raw_to_npz_parallel</code>(<strong><code>path_list</code></strong>, <strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
 
 </div>
 
@@ -231,9 +233,34 @@ We should also be able to speed this up</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="load_bruker_raw" class="doc_header"><code>load_bruker_raw</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L215" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_bruker_raw</code>(<strong><code>raw_file</code></strong>, <strong><code>most_abundant</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="load_bruker_raw" class="doc_header"><code>load_bruker_raw</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L213" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_bruker_raw</code>(<strong><code>raw_file</code></strong>, <strong><code>most_abundant</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Load bruker raw file and extract spectra</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="one_over_k0_to_CCS" class="doc_header"><code>one_over_k0_to_CCS</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L277" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>one_over_k0_to_CCS</code>(<strong><code>one_over_k0s</code></strong>, <strong><code>charges</code></strong>, <strong><code>mzs</code></strong>)</p>
+</blockquote>
+<p>convert one_over_k0 to CCS</p>
 
 </div>
 
@@ -263,7 +290,7 @@ We should also be able to speed this up</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_sanity" class="doc_header"><code>check_sanity</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L280" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_sanity</code>(<strong><code>mass_list</code></strong>)</p>
+<h4 id="check_sanity" class="doc_header"><code>check_sanity</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L294" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_sanity</code>(<strong><code>mass_list</code></strong>)</p>
 </blockquote>
 <p>Sanity check for mass list to make sure the masses are sorted</p>
 
@@ -288,7 +315,7 @@ We should also be able to speed this up</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_mzml_info" class="doc_header"><code>extract_mzml_info</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L292" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mzml_info</code>(<strong><code>input_dict</code></strong>)</p>
+<h4 id="extract_mzml_info" class="doc_header"><code>extract_mzml_info</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L306" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mzml_info</code>(<strong><code>input_dict</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -312,7 +339,7 @@ We should also be able to speed this up</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_mzxml_info" class="doc_header"><code>extract_mzxml_info</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L309" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mzxml_info</code>(<strong><code>input_dict</code></strong>)</p>
+<h4 id="extract_mzxml_info" class="doc_header"><code>extract_mzxml_info</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L323" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mzxml_info</code>(<strong><code>input_dict</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -336,7 +363,7 @@ We should also be able to speed this up</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_mzML" class="doc_header"><code>read_mzML</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L322" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_mzML</code>(<strong><code>filename</code></strong>, <strong><code>most_abundant</code></strong>)</p>
+<h4 id="read_mzML" class="doc_header"><code>read_mzML</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L336" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_mzML</code>(<strong><code>filename</code></strong>, <strong><code>most_abundant</code></strong>)</p>
 </blockquote>
 <p>Read spectral data from an mzML file and return various lists separately for ms1 and ms2 data.</p>
 
@@ -361,7 +388,7 @@ We should also be able to speed this up</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_mzXML" class="doc_header"><code>read_mzXML</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L394" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_mzXML</code>(<strong><code>filename</code></strong>, <strong><code>most_abundant</code></strong>)</p>
+<h4 id="read_mzXML" class="doc_header"><code>read_mzXML</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L408" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_mzXML</code>(<strong><code>filename</code></strong>, <strong><code>most_abundant</code></strong>)</p>
 </blockquote>
 <p>Read spectral data from an mzXML file and return various lists separately for ms1 and ms2 data.</p>
 
@@ -402,7 +429,7 @@ We should also be able to speed this up</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="list_to_numpy_f32" class="doc_header"><code>list_to_numpy_f32</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L468" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>list_to_numpy_f32</code>(<strong><code>long_list</code></strong>)</p>
+<h4 id="list_to_numpy_f32" class="doc_header"><code>list_to_numpy_f32</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L482" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>list_to_numpy_f32</code>(<strong><code>long_list</code></strong>)</p>
 </blockquote>
 <p>Function to convert a list to float32 array</p>
 
@@ -427,7 +454,7 @@ We should also be able to speed this up</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="save_query_as_npz" class="doc_header"><code>save_query_as_npz</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L485" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_query_as_npz</code>(<strong><code>raw_file_npz</code></strong>, <strong><code>query_data</code></strong>)</p>
+<h4 id="save_query_as_npz" class="doc_header"><code>save_query_as_npz</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L499" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_query_as_npz</code>(<strong><code>raw_file_npz</code></strong>, <strong><code>query_data</code></strong>)</p>
 </blockquote>
 <p>Saves query_data as npz</p>
 

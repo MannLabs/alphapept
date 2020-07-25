@@ -58,7 +58,7 @@ description: "Functions related to recalibrating"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="estimate_stepsize" class="doc_header"><code>estimate_stepsize</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L11" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>estimate_stepsize</code>(<strong><code>df</code></strong>, <strong><code>min_mz_step</code></strong>=<em><code>80</code></em>, <strong><code>min_rt_step</code></strong>=<em><code>50</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="estimate_stepsize" class="doc_header"><code>estimate_stepsize</code><a href="__main__.py#L10" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>estimate_stepsize</code>(<strong><code>df</code></strong>, <strong><code>min_mz_step</code></strong>=<em><code>80</code></em>, <strong><code>min_rt_step</code></strong>=<em><code>50</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to estimate the stepsize for recalibration</p>
 
@@ -83,7 +83,7 @@ description: "Functions related to recalibrating"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_calibration" class="doc_header"><code>get_calibration</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L31" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_calibration</code>(<strong><code>df</code></strong>, <strong><code>features</code></strong>, <strong><code>minimum_score</code></strong>=<em><code>20</code></em>, <strong><code>outlier_std</code></strong>=<em><code>3</code></em>, <strong><code>method</code></strong>=<em><code>'linear'</code></em>, <strong><code>min_mz_step</code></strong>=<em><code>80</code></em>, <strong><code>min_rt_step</code></strong>=<em><code>50</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_calibration" class="doc_header"><code>get_calibration</code><a href="__main__.py#L30" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_calibration</code>(<strong><code>df</code></strong>, <strong><code>features</code></strong>, <strong><code>minimum_score</code></strong>=<em><code>20</code></em>, <strong><code>outlier_std</code></strong>=<em><code>3</code></em>, <strong><code>method</code></strong>=<em><code>'linear'</code></em>, <strong><code>min_mz_step</code></strong>=<em><code>80</code></em>, <strong><code>min_rt_step</code></strong>=<em><code>50</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Calibration</p>
 <p>Brief description</p>
@@ -91,6 +91,54 @@ description: "Functions related to recalibrating"
 (2) Estimate a stepsize for interpolation to ensure minimum sampling
 (3) Use points to interpolate on a grid
 (4) Use grid to interpolate offset for features</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="calibrate_hdf" class="doc_header"><code>calibrate_hdf</code><a href="__main__.py#L101" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_hdf</code>(<strong><code>to_process</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="calibrate_hdf_parallel" class="doc_header"><code>calibrate_hdf_parallel</code><a href="__main__.py#L121" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_hdf_parallel</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
 
 </div>
 
