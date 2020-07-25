@@ -5,10 +5,7 @@ calibration:
   minimum_score: 20
   outlier_std: 3
 fasta:
-  contaminants_path: '...'
-  fasta_folder: '...'
-  fasta_path: '...'
-  library_path: '...'
+  fasta_block: 1000
   max_isoforms: 1024
   max_length: 27
   min_length: 6
@@ -22,6 +19,7 @@ fasta:
   mods_variable_terminal_prot: []
   num_missed_cleavages: 2
   protease: trypsin
+  spectra_block: 100000
 features:
   mass_importance: 100
   max_distance: 0.4
@@ -34,7 +32,7 @@ general:
   convert_raw: true
   create_library: true
   find_features: true
-  parallel: true
+  n_processes: 128
   ppm: true
   score: x_tandem
   settings_path: '...'
@@ -42,11 +40,9 @@ misc:
   match_between_runs: true
 quantification:
   max_lfq: true
+  mode: int_sum
 raw:
   most_abundant: 400
-  raw_folder: '...'
-  raw_path: '...'
-  raw_path_npz: '...'
 search:
   calibrate: true
   calibration_std: 3
@@ -57,3 +53,4 @@ search:
   peptide_fdr: 0.01
   ppm: true
   protein_fdr: 0.01
+  recalibration_min: 100

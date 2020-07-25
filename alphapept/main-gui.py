@@ -32,16 +32,17 @@ import qdarkstyle
 
 dark_stylesheet = qdarkstyle.load_stylesheet_pyqt5()
 
-
-VERSION_NO = "a8529074"
+# Get Version
+with open("alphapept/__init__.py") as version_file:
+    VERSION_NO = version_file.read().strip().split('__version__ = ')[1][1:-1]
 
 URL_DOCUMENTATION = "https://en.wikipedia.org/wiki/Documentation"
 URL_ISSUE = "https://en.wikipedia.org/wiki/Issue"
 URL_CONTRIBUTE = "https://en.wikipedia.org/wiki/Contribution"
 
-ICON_PATH = "../img/logo_200px.png"
+ICON_PATH = "img/logo_200px.png"
 SETTINGS_TEMPLATE_PATH = "settings_template.yaml"
-BUSY_INDICATOR = "../img/busy_indicator.gif"
+BUSY_INDICATOR = "img/busy_indicator.gif"
 
 ICON_PATH = os.path.abspath(ICON_PATH)
 BUSY_INDICATOR = os.path.abspath(BUSY_INDICATOR)
@@ -125,12 +126,10 @@ class searchThread(QThread):
         self.task_update.emit(task)
 
     def run(self):
-        #args = list(self.args)
         features, df_calib = alpha_runner(self.settings, self.update_global_progress, self.update_current_progress, self.update_task)
 
         self.features = features
         self.df = df_calib
-
 
 
 class External(QThread):
@@ -147,7 +146,6 @@ class External(QThread):
             sleep(0.5)
             self.countChanged.emit(count)
             count -= 1
-
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -350,8 +348,8 @@ class MainWindow(QMainWindow):
         self.hardware = system_info
         self.ram_utilization = 0
         self.overall_progress = 0
-        self.resize(800, 600)
-        self.setMinimumSize(QSize(800, 600))
+        self.resize(1024, 800)
+        self.setMinimumSize(QSize(1024, 800))
 
         self.centralwidget = QWidget(self)
         self.centralwidget.setStyleSheet(dark_stylesheet)
@@ -388,6 +386,11 @@ class MainWindow(QMainWindow):
         spacerItem = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem)
 
+        self.btn_settings = QPushButton("Files")
+        self.btn_settings.setStyleSheet(big_font)
+        self.verticalLayout.addWidget(self.btn_settings)
+        self.btn_settings.clicked.connect(self.page_files)
+
         self.btn_settings = QPushButton("Settings")
         self.btn_settings.setStyleSheet(big_font)
         self.verticalLayout.addWidget(self.btn_settings)
@@ -413,31 +416,41 @@ class MainWindow(QMainWindow):
         self.verticalLayout.addItem(spacerItem1)
         self.verticalLayout.addWidget(self.busy_indicator)
         self.horizontalLayout.addLayout(self.verticalLayout)
-        self.stackedWidget = QStackedWidget(self.centralwidget)
 
+        self.stackedWidget = QStackedWidget(self.centralwidget)
         self.stackedWidget.setMinimumSize(QSize(550, 600))
 
+
+        # Files
+
+        self.files = QWidget()
+        self.files_layout_ = QHBoxLayout(self.files)
+        self.files_layout = QVBoxLayout()
+        self.label_files = QLabel("Files")
+        self.label_files.setStyleSheet(logo_font)
+        self.files_layout.addWidget(self.label_files)
+        self.files_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
+
+        self.files_layout_.addLayout(self.files_layout)
+        self.stackedWidget.addWidget(self.files)
+
+
+        # Settings
+
         self.settings = QWidget()
-
-        self.horizontalLayout_3 = QHBoxLayout(self.settings)
-
+        self.settings_layout_ = QHBoxLayout(self.settings)
         self.settings_layout = QVBoxLayout()
-
         self.label_settings = QLabel("Settings")
         self.label_settings.setStyleSheet(logo_font)
         self.settings_layout.addWidget(self.label_settings)
-
         self.combo_settings = QComboBox()
         self.combo_settings.addItem("default")
         self.settings_layout.addWidget(self.combo_settings)
-
         self.treeWidget = QTreeWidget(self.settings)
 
         self.init_tree()
-
         self.settings_layout.addWidget(self.treeWidget)
         self.button_layout = QHBoxLayout()
-
         self.btn_load_settings = QPushButton("Load")
         self.btn_load_settings.setStyleSheet(big_font)
         self.button_layout.addWidget(self.btn_load_settings)
@@ -454,12 +467,15 @@ class MainWindow(QMainWindow):
         self.btn_check_settings.clicked.connect(self.check_settings)
 
         self.settings_layout.addLayout(self.button_layout)
-        self.horizontalLayout_3.addLayout(self.settings_layout)
+        self.settings_layout_.addLayout(self.settings_layout)
         self.stackedWidget.addWidget(self.settings)
+
+
+        # RUN
+
         self.run = QWidget()
 
-        self.horizontalLayout_5 = QHBoxLayout(self.run)
-
+        self.run_layout_ = QHBoxLayout(self.run)
         self.run_layout = QVBoxLayout()
 
         self.label_run = QLabel("Run")
@@ -467,13 +483,9 @@ class MainWindow(QMainWindow):
         self.run_layout.addWidget(self.label_run)
 
         self.groupbox_layout = QVBoxLayout()
-
         self.groupbox_performance = QGroupBox(self.run)
-
         self.groupbox_performance.setTitle("")
-
         self.verticalLayout_7 = QVBoxLayout(self.groupbox_performance)
-
         self.performance_layout = QVBoxLayout()
 
         # Elements:
@@ -563,11 +575,13 @@ class MainWindow(QMainWindow):
         self.btn_start.clicked.connect(self.start)
 
         self.run_layout.addWidget(self.btn_start)
-        self.horizontalLayout_5.addLayout(self.run_layout)
+        self.run_layout_.addLayout(self.run_layout)
         self.stackedWidget.addWidget(self.run)
         self.explore = QWidget()
 
         self.verticalLayout_2 = QVBoxLayout(self.explore)
+
+        #Explore
 
         self.explore_layout = QVBoxLayout()
 
@@ -576,37 +590,24 @@ class MainWindow(QMainWindow):
         self.explore_layout.addWidget(self.label_explore)
 
         self.button_layout_explore = QHBoxLayout()
-
         self.verticalLayout_3 = QVBoxLayout()
-
         self.tabWidget = QTabWidget(self.explore)
-
         self.tab_features = QWidget()
-
         self.verticalLayout_4 = QVBoxLayout(self.tab_features)
-
         self.table_features = QTableView(self.tab_features)
-
         self.table_features.show()
-
         self.verticalLayout_4.addWidget(self.table_features)
         self.tabWidget.addTab(self.tab_features, "Features")
         self.tab_peptides = QWidget()
-
         self.horizontalLayout_4 = QHBoxLayout(self.tab_peptides)
-
         self.table_peptides = QTableView(self.tab_peptides)
-
         self.horizontalLayout_4.addWidget(self.table_peptides)
         self.tabWidget.addTab(self.tab_peptides, "Peptides")
         self.tab_plot = QWidget()
 
         self.horizontalLayout_6 = QHBoxLayout(self.tab_plot)
-
         self.verticalLayout_6 = QVBoxLayout()
-
         self.horizontalLayout_8 = QHBoxLayout()
-
         self.combo_plot = QComboBox(self.tab_plot)
 
         self.combo_plot.addItem("1")
@@ -679,7 +680,7 @@ class MainWindow(QMainWindow):
         logging.info("AlphaPept version {} started.".format(VERSION_NO))
 
         # Start with Run page
-        self.stackedWidget.setCurrentIndex(1)
+        self.stackedWidget.setCurrentIndex(2)
 
     def onCountChanged(self, value):
         cpu = psutil.cpu_percent()
@@ -687,17 +688,20 @@ class MainWindow(QMainWindow):
         memory = psutil.virtual_memory()
         self.progress_ram.setValue(int(memory.percent))
 
-    def page_settings(self):
+    def page_files(self):
         self.stackedWidget.setCurrentIndex(0)
 
-    def page_run(self):
+    def page_settings(self):
         self.stackedWidget.setCurrentIndex(1)
 
-    def page_explore(self):
+    def page_run(self):
         self.stackedWidget.setCurrentIndex(2)
 
-    def page_help(self):
+    def page_explore(self):
         self.stackedWidget.setCurrentIndex(3)
+
+    def page_help(self):
+        self.stackedWidget.setCurrentIndex(4)
 
     def init_tree(self):
 
