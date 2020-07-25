@@ -2,31 +2,34 @@
 
 __all__ = ['gaussian', 'return_elution_profile', 'simulate_sample_profiles', 'get_peptide_error',
            'get_total_error_parallel', 'get_total_error', 'normalize_experiment_SLSQP', 'delayed_normalization',
-           'minimum_occurence', 'get_protein_ratios', 'triangle_error', 'solve_profile_LFBGSB', 'solve_profile_SLSQP',
-           'solve_profile_trf', 'get_protein_table', 'protein_profile', 'protein_profile_parallel']
+           'get_protein_ratios', 'triangle_error', 'solve_profile_LFBGSB', 'solve_profile_SLSQP', 'solve_profile_trf',
+           'get_protein_table', 'protein_profile', 'protein_profile_parallel']
 
 # Cell
 import random
 import numpy as np
 
 def gaussian(mu, sigma, grid):
+    """
+    Gaussian function
+    """
     norm = 0.3989422804014327 / sigma
     return norm * np.exp(-0.5 * ((grid - mu) / sigma) ** 2)
 
 
 def return_elution_profile(timepoint, sigma, n_runs):
     """
-    Simulation of a Gaussian Elution Profile
+    Returns a gaussian elution profile for a given timepoint
     """
     return gaussian(timepoint, sigma, np.arange(0, n_runs))
 
 
 def simulate_sample_profiles(n_peptides, n_runs, n_samples, threshold=0.2, use_noise=True):
     """
-    Generate random profiles to serve as test data
-
+    Generate random profiles to serve as test_data
     """
     abundances = np.random.rand(n_peptides)*10e7
+
     true_normalization = np.random.normal(loc=1, scale=0.1, size=(n_runs, n_samples))
 
     true_normalization[true_normalization<0] = 0
@@ -50,14 +53,12 @@ def simulate_sample_profiles(n_peptides, n_runs, n_samples, threshold=0.2, use_n
         profile = profile * abundance
         elution_profiles = np.tile(profile, (n_samples, 1)).T
 
-        # Some gaussian noise
+        # Add Gaussian Noise
         if use_noise:
             noise = np.random.normal(1, 0.2, elution_profiles.shape)
             noisy_profile = noise * elution_profiles
         else:
             noisy_profile = elution_profiles
-
-        #print(noisy_profile)
 
         normalized_profile = noisy_profile * true_normalization
 
@@ -124,15 +125,13 @@ from scipy.optimize import minimize
 import pandas as pd
 import numpy as np
 
-minimum_occurence = 10
-
 def normalize_experiment_SLSQP(profiles):
     """
     Calculate normalization with SLSQP approach
     """
     x0 = np.ones(profiles.shape[0] * profiles.shape[1])
     bounds = [(0.1, 1) for _ in x0]
-    res = minimize(get_total_error, args = profiles , x0 = x0, bounds=bounds, method='SLSQP', options={'disp': False} )
+    res = minimize(get_total_error, args = profiles , x0 = x0*0.5, bounds=bounds, method='SLSQP', options={'disp': False} )
 
     solution = res.x/np.max(res.x)
     solution = solution.reshape(profiles.shape[:2])
@@ -154,7 +153,8 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
     prec_count = df_max.index.get_level_values('precursor').value_counts()
 
     if not minimum_occurence:
-        minimum_occurence = np.percentile(prec_count[prec_count>1], 75) #Take the 25% best datapoints
+        minimum_occurence = np.percentile(prec_count[prec_count>1].values, 75) #Take the 25% best datapoints
+        logging.info('Setting minimum occurence to {}'.format(minimum_occurence))
 
     shared_precs = prec_count[prec_count >= minimum_occurence]
     precs = prec_count[prec_count > minimum_occurence].index.tolist()
@@ -180,7 +180,12 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
 
     normalization = normalize_experiment_SLSQP(profiles)
 
+    #intensity normalization: total intensity to remain unchanged
+
+
     df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [experiment_dict[_] for _ in df['experiment']]]
+
+    df[field+'_dn'] *= df[field].sum()/df[field+'_dn'].sum()
 
     return df, normalization
 
@@ -222,14 +227,14 @@ def triangle_error(normalization, ratios):
 ## L-BFGS-B
 
 
-from scipy.optimize import minimize
+from scipy.optimize import minimize, least_squares
 
 # LFBGSB
 
 def solve_profile_LFBGSB(ratios):
     x0 = np.ones(ratios.shape[1])
-    bounds = [(x0[0]*0+0.01, x0[0]-0.01) for _ in x0]
-    res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = 'L-BFGS-B')
+    bounds = [(x0[0]*0+0.01, x0[0]) for _ in x0]
+    res_wrapped = minimize(triangle_error, args = ratios , x0 = x0*0.5, bounds=bounds, method = 'L-BFGS-B')
     solution = res_wrapped.x
     solution = solution/np.max(solution)
     return solution, res_wrapped.success
@@ -237,8 +242,8 @@ def solve_profile_LFBGSB(ratios):
 
 def solve_profile_SLSQP(ratios):
     x0 = np.ones(ratios.shape[1])
-    bounds = [(x0[0]*0+0.01, x0[0]-0.01) for _ in x0]
-    res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = 'SLSQP', options={'maxiter':10000})
+    bounds = [(x0[0]*0+0.01, x0[0]) for _ in x0]
+    res_wrapped = minimize(triangle_error, args = ratios , x0 = x0*0.5, bounds=bounds, method = 'SLSQP', options={'maxiter':10000})
     solution = res_wrapped.x
     solution = solution/np.max(solution)
     return solution, res_wrapped.success
@@ -247,8 +252,8 @@ def solve_profile_SLSQP(ratios):
 # TRF
 def solve_profile_trf(ratios):
     x0 = np.ones(ratios.shape[1])
-    bounds = (x0*0+0.01, x0-0.01)
-    res_wrapped = least_squares(triangle_error, args = [ratios] , x0 = x0, bounds=bounds, verbose=0, method = 'trf')
+    bounds = (x0*0+0.01, x0)
+    res_wrapped = least_squares(triangle_error, args = [ratios] , x0 = x0*0.5, bounds=bounds, verbose=0, method = 'trf')
     solution = res_wrapped.x
     solution = solution/np.max(solution)
     return solution, res_wrapped.success
@@ -257,6 +262,7 @@ def solve_profile_trf(ratios):
 # Cell
 from numba.typed import List
 from itertools import combinations
+import logging
 
 def get_protein_table(df, field = 'int_sum', callback = None):
     unique_proteins = df['protein'].unique()
@@ -294,9 +300,9 @@ def get_protein_table(df, field = 'int_sum', callback = None):
         if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
             profile = pre_lfq
         else:
-            total_int = subset[field_].sum()
-            total_int_ = np.sum(solution)
-            profile = total_int/total_int_*solution
+            total_int = subset[field_].sum() * solution
+            profile = total_int * subset[field_].sum().sum() / np.sum(total_int) #Normalize inensity again
+
 
         protein_table.loc[protein, [_+'_LFQ' for _ in experiment_ids]] = profile
         protein_table.loc[protein, experiment_ids] = pre_lfq
@@ -335,9 +341,8 @@ def protein_profile(df, experiments, field_, protein):
     if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
         profile = pre_lfq
     else:
-        total_int = subset[field_].sum()
-        total_int_ = np.sum(solution)
-        profile = total_int/total_int_*solution
+        total_int = subset[field_].sum() * solution
+        profile = total_int * subset[field_].sum().sum() / np.sum(total_int) #Normalize inensity again
 
     return profile, pre_lfq, experiment_ids, protein
 

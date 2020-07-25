@@ -8,6 +8,8 @@ __all__ = ['compare_frags', 'ppm_to_dalton', 'get_idxs', 'compare_specs_parallel
            'search_parallel_db', 'search_fasta_block', 'search_parallel', 'mass_dict']
 
 # Cell
+from .utils import log_me
+import logging
 from numba import njit
 import numpy as np
 
@@ -176,6 +178,7 @@ def compare_specs_single(
 # Cell
 
 import pandas as pd
+import logging
 
 def query_data_to_features(query_data):
 
@@ -195,7 +198,7 @@ def query_data_to_features(query_data):
     return features
 
 
-
+@log_me
 def get_psms(
     query_data,
     db_data,
@@ -339,6 +342,8 @@ def get_psms(
     psms = np.array(
         list(zip(hit_query, hit_db, hits)), dtype=[("query_idx", int), ("db_idx", int), ("hits", int)]
     )
+
+    logging.info('Compared {:,} spectra and found {:,} psms.'.format(num_specs_compared, len(psms)))
 
     return psms, num_specs_compared
 
@@ -779,9 +784,6 @@ def get_score_columns(
     psms = add_column(psms, mz, "mz")
     psms = add_column(psms, charge, "charge")
 
-
-
-
     psms = add_column(psms, np.char.add(np.char.add(psms['sequence'],"_"), psms['charge'].astype(int).astype(str)), 'precursor')
 
     if features is not None:
@@ -791,6 +793,8 @@ def get_score_columns(
         for key in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm','dist']:
             if key in features.keys():
                 psms = add_column(psms, features.loc[psms['query_idx']][key].values, key)
+
+    logging.info('Extracted columns from {:,} spectra for {:,} psms.'.format(num_specs_scored, len(psms)))
 
     return psms, num_specs_scored
 
@@ -1012,11 +1016,9 @@ def search_db(to_process):
         base, ext = os.path.splitext(file_npz)
 
         try:
-            features = pd.read_hdf(base+'.hdf', 'features')
-        except FileNotFoundError:
-            features = None
+            features = pd.read_hdf(base+'.hdf', 'features_calib')
         except KeyError:
-            features = None
+            features = pd.read_hdf(base+'.hdf', 'features')
 
         psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
         if len(psms) > 0:
@@ -1024,6 +1026,7 @@ def search_db(to_process):
 
         if 'm_offset_calibrated' in settings["search"]:
             store_hdf(pd.DataFrame(psms), base +'.hdf', 'second_search', replace=True)
+
         else:
             store_hdf(pd.DataFrame(psms), base +'.hdf', 'first_search', replace=True)
 
@@ -1034,7 +1037,6 @@ def search_parallel_db(settings, calibration = None, callback = None):
     """
 
     files_npz = settings['experiment']['files_npz']
-
 
     if calibration:
         custom_settings = []
@@ -1049,11 +1051,16 @@ def search_parallel_db(settings, calibration = None, callback = None):
 
     to_process = [(files_npz[i], custom_settings[i]) for i in range(len(files_npz))]
 
-    with Pool(n_processes) as p:
-        max_ = len(to_process)
-        for i, _ in enumerate(p.imap_unordered(search_db, to_process)):
-            if callback:
-                callback((i+1)/max_)
+    if len(to_process) == 1:
+        file_npz, settings_ = to_process[0]
+        settings_['search']['parallel'] = True
+        search_db((file_npz, settings_))
+    else:
+        with Pool(n_processes) as p:
+            max_ = len(to_process)
+            for i, _ in enumerate(p.imap_unordered(search_db, to_process)):
+                if callback:
+                    callback((i+1)/max_)
 
     db_data = np.load(settings['fasta']['database_path'], allow_pickle=True)
 
@@ -1112,11 +1119,14 @@ def search_fasta_block(to_process):
 
                 base, ext = os.path.splitext(file_npz)
 
-                try:
-                    features = pd.read_hdf(base+'.hdf', 'features')
-                except FileNotFoundError:
-                    features = None
-                except KeyError:
+                if settings_['search']["use_features"]:
+                    try:
+                        features = pd.read_hdf(base+'.hdf', 'features')
+                    except FileNotFoundError:
+                        features = None
+                    except KeyError:
+                        features = None
+                else:
                     features = None
 
                 psms, num_specs_compared = get_psms(query_data, db_data, features, **settings[file_idx]["search"])
@@ -1154,7 +1164,7 @@ def search_parallel(settings, calibration = None, callback = None):
     else:
         custom_settings = [settings for _ in files_npz]
 
-    to_process = [(idx_start, fasta_list[idx_start:idx_end], files_npz, custom_settings) for idx_start, idx_end in block_idx(len(fasta_list))]
+    to_process = [(idx_start, fasta_list[idx_start:idx_end], files_npz, custom_settings) for idx_start, idx_end in block_idx(len(fasta_list), fasta_block)]
 
     n_processes = settings['general']['n_processes']
 

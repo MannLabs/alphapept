@@ -80,27 +80,21 @@ def get_calibration(df, features, minimum_score = 20, outlier_std = 3, method='l
 
         offset = griddata(np.vstack([xx.flatten(), yy.flatten()]).T, f1.flatten(), features[['mz_matched','rt_matched']].values, fill_value=0, method = method, rescale=True)/1e6*features['mass_matched']
 
-        features_calib = features.copy()
-
-        if not 'mass_matched_raw' in features_calib.columns:
-            features_calib['mass_matched_raw'] = features_calib['mass_matched'].copy()
-        features_calib['mass_matched'] -= offset
-        features_calib['mass_offset'] = offset
-
     else:
-        features_calib = features.copy()
-        if not 'mass_matched_raw' in features_calib.columns:
-            features_calib['mass_matched_raw'] = features_calib['mass_matched'].copy()
-        features_calib['mass_matched_raw'] = features_calib['mass_matched'].copy()
+        offset = 0
 
         df_sub['o_mass_ppm_offset'] = 0
         df_sub['o_mass_ppm_calib'] = (df_sub['o_mass_ppm']-df_sub['o_mass_ppm_offset'])
+
+    features_calib = features.copy()
+
+    features_calib['mass_matched'] -= offset
+    features_calib['mass_offset'] = offset
 
     features_calib = features_calib.sort_values('mass_matched', ascending=True)
 
     o_mass_ppm_mean = df_sub['o_mass_ppm_calib'].mean()
     o_mass_ppm_std = df_sub['o_mass_ppm_calib'].std()
-
 
     if np.isnan(o_mass_ppm_std):
         o_mass_ppm_std = 0
@@ -112,10 +106,7 @@ def calibrate_hdf(to_process):
 
     path, settings = to_process
 
-    try:
-        features = pd.read_hdf(path, 'features')
-    except KeyError:
-        features = None
+    features = pd.read_hdf(path, 'features')
 
     try:
         psms = pd.read_hdf(path, 'first_search')
@@ -125,7 +116,7 @@ def calibrate_hdf(to_process):
     if len(psms) > 0 :
         df = score_x_tandem(psms, fdr_level = settings["search"]["peptide_fdr"], plot=False, verbose=False, **settings["search"])
         features_calib, o_mass_ppm_std = get_calibration(df, features, **settings["calibration"])
-        features_calib.to_hdf(path, key= 'features', append=False)
+        features_calib.to_hdf(path, key = 'features_calib', append=False)
     else:
         o_mass_ppm_std = 0
 
@@ -152,4 +143,4 @@ def calibrate_hdf_parallel(settings, callback=None):
                 callback((i+1)/max_)
 
 
-    return [calibration_dict[_] for _ in paths]
+    return [calibration_dict[_]*settings['search']['calibration_std'] for _ in paths]

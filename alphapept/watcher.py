@@ -10,10 +10,10 @@ import os
 import time
 
 root = logging.getLogger()
-root.setLevel(logging.DEBUG)
+root.setLevel(logging.INFO)
 
 handler = logging.StreamHandler(sys.stdout)
-handler.setLevel(logging.DEBUG)
+handler.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 root.addHandler(handler)
@@ -161,20 +161,23 @@ class WatchThread(QThread):
 
                     gb_processed += filesize
 
-                report('NPZ conversion on {} files'.format(len(npz_files)))
-                raw_to_npz_parallel(npz_files, settings, callback=progress_wrap)
-                report('FF on {} files'.format(len(ff_files)))
-                find_and_save_features_parallel(ff_files, settings, callback=progress_wrap)
 
+                try:
+                    report('NPZ conversion on {} files'.format(len(npz_files)))
+                    raw_to_npz_parallel(npz_files, settings, callback=progress_wrap)
+                    report('FF on {} files'.format(len(ff_files)))
+                    find_and_save_features_parallel(ff_files, settings, callback=progress_wrap)
 
-                self.files_processed += len(new_files)
-                self.gb_processed += gb_processed / 1024**3
+                    self.files_processed += len(new_files)
+                    self.gb_processed += gb_processed / 1024**3
 
-                for file in new_files:
-                    if file.endswith('.d'):
-                        self.bruker_files += 1
-                    else:
-                        self.raw_files += 1
+                    for file in new_files:
+                        if file.endswith('.d'):
+                            self.bruker_files += 1
+                        else:
+                            self.raw_files += 1
+                except Exception as e:
+                    logging.info('Exception: {}'.format(e))
 
             stats_update('Files processed {} \t {:.2f} GB \t Bruker {} \t Raw {} \t Fail {} \t Running time {:.2f} h'.format(self.files_processed, self.gb_processed, self.bruker_files, self.raw_files, self.failed, (time.time()-self.start_time)/60/60))
 
