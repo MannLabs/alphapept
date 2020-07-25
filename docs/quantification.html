@@ -29,28 +29,23 @@ description: "Functions related to quantification"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This notebook contains everything to perform quantification</p>
-<p>Current ToDo here:</p>
-<ul>
-<li>Most of the functions are not very well described yet</li>
-<li>Introductory text to give an overview / relevant papers would be nice.</li>
-</ul>
+<h2 id="Label-free-quantification">Label-free quantification<a class="anchor-link" href="#Label-free-quantification"> </a></h2><p>Algorithms related to label-free quantifications are motivated by the <a href="https://doi.org/10.1074/mcp.m113.031591">MaxLFQ paper</a>.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="LFQ">LFQ<a class="anchor-link" href="#LFQ"> </a></h2><p>Algorithms related to label-free quantifications are motivated by the <a href="https://doi.org/10.1074/mcp.m113.031591">MaxLFQ paper</a>.</p>
-<p>TODO: Include weighing?
-TODO: Check boundaries</p>
+<h2 id="Delayed-Normalization">Delayed Normalization<a class="anchor-link" href="#Delayed-Normalization"> </a></h2><p>Delayed normalization describes the process of normalizing the differences that occur from prefractionation.</p>
+<p>ToDo: Describe the mathematical background.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="In-Silico-Test-data">In Silico Test data<a class="anchor-link" href="#In-Silico-Test-data"> </a></h2><p>To test the performance of different approaches we resort to simulating peptide intensities and adjusting them with a simulated normalization. We can then use different approaches to recover the normalization.</p>
+<h3 id="In-Silico-Test-data">In Silico Test data<a class="anchor-link" href="#In-Silico-Test-data"> </a></h3><p>To test the delayed normalization approach we create an in silico test dataset with a known ground truth.
+We employ different solvers to recover the normalization parameters.</p>
 
 </div>
 </div>
@@ -73,8 +68,9 @@ TODO: Check boundaries</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="gaussian" class="doc_header"><code>gaussian</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L11" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>gaussian</code>(<strong><code>mu</code></strong>, <strong><code>sigma</code></strong>, <strong><code>grid</code></strong>)</p>
+<h4 id="gaussian" class="doc_header"><code>gaussian</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L12" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>gaussian</code>(<strong><code>mu</code></strong>, <strong><code>sigma</code></strong>, <strong><code>grid</code></strong>)</p>
 </blockquote>
+<p>Gaussian function</p>
 
 </div>
 
@@ -97,9 +93,9 @@ TODO: Check boundaries</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="return_elution_profile" class="doc_header"><code>return_elution_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L16" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>return_elution_profile</code>(<strong><code>timepoint</code></strong>, <strong><code>sigma</code></strong>, <strong><code>n_runs</code></strong>)</p>
+<h4 id="return_elution_profile" class="doc_header"><code>return_elution_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L20" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>return_elution_profile</code>(<strong><code>timepoint</code></strong>, <strong><code>sigma</code></strong>, <strong><code>n_runs</code></strong>)</p>
 </blockquote>
-<p>Simulation of a Gaussian Elution Profile</p>
+<p>Returns a gaussian elution profile for a given timepoint</p>
 
 </div>
 
@@ -122,9 +118,9 @@ TODO: Check boundaries</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="simulate_sample_profiles" class="doc_header"><code>simulate_sample_profiles</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L23" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>simulate_sample_profiles</code>(<strong><code>n_peptides</code></strong>, <strong><code>n_runs</code></strong>, <strong><code>n_samples</code></strong>, <strong><code>threshold</code></strong>=<em><code>0.2</code></em>, <strong><code>use_noise</code></strong>=<em><code>True</code></em>)</p>
+<h4 id="simulate_sample_profiles" class="doc_header"><code>simulate_sample_profiles</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L27" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>simulate_sample_profiles</code>(<strong><code>n_peptides</code></strong>, <strong><code>n_runs</code></strong>, <strong><code>n_samples</code></strong>, <strong><code>threshold</code></strong>=<em><code>0.2</code></em>, <strong><code>use_noise</code></strong>=<em><code>True</code></em>)</p>
 </blockquote>
-<p>Generate random profiles to serve as test data</p>
+<p>Generate random profiles to serve as test_data</p>
 
 </div>
 
@@ -160,7 +156,7 @@ TODO: Check boundaries</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_peptide_error" class="doc_header"><code>get_peptide_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L74" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_peptide_error</code>(<strong><code>profile</code></strong>, <strong><code>normalization</code></strong>)</p>
+<h4 id="get_peptide_error" class="doc_header"><code>get_peptide_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L76" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_peptide_error</code>(<strong><code>profile</code></strong>, <strong><code>normalization</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -184,7 +180,7 @@ TODO: Check boundaries</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_total_error_parallel" class="doc_header"><code>get_total_error_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L97" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_total_error_parallel</code>(<strong><code>normalization</code></strong>, <strong><code>profiles</code></strong>)</p>
+<h4 id="get_total_error_parallel" class="doc_header"><code>get_total_error_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L99" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_total_error_parallel</code>(<strong><code>normalization</code></strong>, <strong><code>profiles</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -208,7 +204,7 @@ TODO: Check boundaries</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_total_error" class="doc_header"><code>get_total_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L110" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_total_error</code>(<strong><code>normalization</code></strong>, <strong><code>profiles</code></strong>)</p>
+<h4 id="get_total_error" class="doc_header"><code>get_total_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L112" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_total_error</code>(<strong><code>normalization</code></strong>, <strong><code>profiles</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -257,12 +253,12 @@ TODO: Check boundaries</p>
     <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;trf&#39;</span><span class="p">]:</span>
         <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">x0</span><span class="o">*</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">least_squares</span><span class="p">(</span><span class="n">get_total_error</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">profiles</span><span class="p">],</span> <span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">least_squares</span><span class="p">(</span><span class="n">get_total_error</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">profiles</span><span class="p">],</span> <span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="o">*</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="p">)</span>
 
     <span class="k">else</span><span class="p">:</span>
         <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
         <span class="n">bounds</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">x0</span><span class="p">]</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">get_total_error</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">profiles</span> <span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">get_total_error</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">profiles</span> <span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="o">*</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
 
     <span class="n">solution</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
     <span class="n">solution</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
@@ -318,30 +314,30 @@ TODO: Check boundaries</p>
     <tr>
       <th>0</th>
       <td>L-BFGS-B</td>
-      <td>0.055321</td>
-      <td>0.723333</td>
-      <td>0.505968</td>
+      <td>0.026788</td>
+      <td>0.794378</td>
+      <td>0.582983</td>
     </tr>
     <tr>
       <th>1</th>
       <td>TNC</td>
-      <td>0.029185</td>
-      <td>0.813514</td>
-      <td>0.569050</td>
+      <td>0.029763</td>
+      <td>0.813308</td>
+      <td>0.596876</td>
     </tr>
     <tr>
       <th>2</th>
       <td>SLSQP</td>
-      <td>0.004755</td>
-      <td>0.723332</td>
-      <td>0.505968</td>
+      <td>0.004393</td>
+      <td>0.792191</td>
+      <td>0.581378</td>
     </tr>
     <tr>
       <th>3</th>
       <td>trf</td>
-      <td>0.258366</td>
-      <td>0.726323</td>
-      <td>0.508060</td>
+      <td>0.279043</td>
+      <td>0.799799</td>
+      <td>0.586961</td>
     </tr>
   </tbody>
 </table>
@@ -411,6 +407,833 @@ TODO: Check boundaries</p>
 
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;fraction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">6</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;experiment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+
+<span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
+<span class="n">test_df</span><span class="p">,</span> <span class="n">normalization</span> <span class="o">=</span> <span class="n">delayed_normalization</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="n">minimum_occurence</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">normalization</span><span class="p">))</span>
+<span class="n">display</span><span class="p">(</span><span class="n">test_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.000000</td>
+      <td>0.496190</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>0.958734</td>
+      <td>0.485063</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1.000000</td>
+      <td>0.496190</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>precursor</th>
+      <th>fraction</th>
+      <th>experiment</th>
+      <th>int_sum</th>
+      <th>int_sum_dn</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Prec_1</td>
+      <td>1</td>
+      <td>A</td>
+      <td>0.6</td>
+      <td>0.915112</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Prec_1</td>
+      <td>2</td>
+      <td>A</td>
+      <td>0.8</td>
+      <td>1.169798</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Prec_1</td>
+      <td>3</td>
+      <td>A</td>
+      <td>0.6</td>
+      <td>0.915112</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Prec_1</td>
+      <td>1</td>
+      <td>B</td>
+      <td>1.2</td>
+      <td>0.908139</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Prec_1</td>
+      <td>2</td>
+      <td>B</td>
+      <td>1.6</td>
+      <td>1.183699</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Prec_1</td>
+      <td>3</td>
+      <td>B</td>
+      <td>1.2</td>
+      <td>0.908139</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Constructing-protein-intensity-profiles">Constructing protein intensity profiles<a class="anchor-link" href="#Constructing-protein-intensity-profiles"> </a></h2>
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Test-Data">Test Data<a class="anchor-link" href="#Test-Data"> </a></h2>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="k">def</span> <span class="nf">generate_dummy_data</span><span class="p">(</span><span class="n">n_sequences</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">remove</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">peptide_ratio</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">abundance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">signal_level</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">noise_divider</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
+
+    <span class="n">species</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n_sequences</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="p">[</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)]</span>
+    
+    <span class="k">if</span> <span class="n">peptide_ratio</span><span class="p">:</span>
+        <span class="n">peptide_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_sequences</span><span class="p">)</span>
+        <span class="n">peptide_ratio</span> <span class="o">=</span> <span class="n">peptide_ratio</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">peptide_ratio</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">peptide_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n_sequences</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">abundance</span><span class="p">:</span>
+        <span class="n">abundance_profile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">abundance_profile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_samples</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">original_signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_sequences</span><span class="p">))</span>
+
+    <span class="n">noise_sim</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_sequences</span><span class="p">)</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">/</span><span class="n">noise_divider</span>
+
+    <span class="k">if</span> <span class="n">noise</span><span class="p">:</span>
+        <span class="n">noisy_signal</span> <span class="o">=</span> <span class="n">original_signal</span><span class="o">+</span><span class="n">noise_sim</span>
+        <span class="n">noisy_signal</span> <span class="o">=</span> <span class="n">noisy_signal</span><span class="o">*</span><span class="n">signal_level</span><span class="o">*</span><span class="n">peptide_ratio</span><span class="o">*</span><span class="n">abundance_profile</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">noisy_signal</span> <span class="o">=</span> <span class="n">original_signal</span><span class="o">*</span><span class="n">signal_level</span><span class="o">*</span><span class="n">peptide_ratio</span><span class="o">*</span><span class="n">abundance_profile</span>
+
+    <span class="k">if</span> <span class="n">remove</span><span class="p">:</span>
+        <span class="c1">#Remove points</span>
+        <span class="n">keep_probability</span> <span class="o">=</span> <span class="n">keep</span> <span class="c1">#keep 60% of the points </span>
+        <span class="n">to_remove</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">n_sequences</span><span class="p">)</span>
+        <span class="n">to_remove</span> <span class="o">=</span> <span class="n">to_remove</span><span class="o">&gt;=</span><span class="n">keep_probability</span>
+
+        <span class="n">dummy_data</span> <span class="o">=</span> <span class="n">noisy_signal</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="n">dummy_data</span><span class="p">[</span><span class="n">to_remove</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dummy_data</span> <span class="o">=</span> <span class="n">noisy_signal</span>
+
+            
+    <span class="n">dummy_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dummy_data</span><span class="p">,</span> <span class="n">index</span> <span class="o">=</span> <span class="n">sample</span><span class="p">,</span> <span class="n">columns</span> <span class="o">=</span> <span class="n">species</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    
+    <span class="n">ground_truth</span> <span class="o">=</span> <span class="n">abundance_profile</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+    <span class="n">ground_truth</span> <span class="o">=</span> <span class="n">ground_truth</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">ground_truth</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">dummy_data</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">ground_truth</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Determine-pair-wise-intenisty-ratios">Determine pair-wise intenisty ratios<a class="anchor-link" href="#Determine-pair-wise-intenisty-ratios"> </a></h2>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_protein_ratios" class="doc_header"><code>get_protein_ratios</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L195" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_protein_ratios</code>(<strong><code>signal</code></strong>, <strong><code>column_combinations</code></strong>, <strong><code>minimum_ratios</code></strong>=<em><code>2</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Error-Function">Error Function<a class="anchor-link" href="#Error-Function"> </a></h2>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="triangle_error" class="doc_header"><code>triangle_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L219" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>triangle_error</code>(<strong><code>normalization</code></strong>, <strong><code>ratios</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Different-ways-to-solve">Different ways to solve<a class="anchor-link" href="#Different-ways-to-solve"> </a></h2>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="solve_profile_LFBGSB" class="doc_header"><code>solve_profile_LFBGSB</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L234" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>solve_profile_LFBGSB</code>(<strong><code>ratios</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="solve_profile_SLSQP" class="doc_header"><code>solve_profile_SLSQP</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L243" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>solve_profile_SLSQP</code>(<strong><code>ratios</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="solve_profile_trf" class="doc_header"><code>solve_profile_trf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L253" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>solve_profile_trf</code>(<strong><code>ratios</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Benchmarking-different-Optimizers">Benchmarking different Optimizers<a class="anchor-link" href="#Benchmarking-different-Optimizers"> </a></h2>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
+<span class="kn">from</span> <span class="nn">numba.typed</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="n">n_sequences</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">6</span>
+
+<span class="n">column_combinations</span> <span class="o">=</span> <span class="n">List</span><span class="p">()</span>
+<span class="p">[</span><span class="n">column_combinations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span> <span class="mi">2</span><span class="p">)]</span>
+
+<span class="n">methods</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;L-FBGS-B&#39;</span><span class="p">:</span><span class="n">solve_profile_LFBGSB</span><span class="p">,</span> <span class="s1">&#39;SLSQP&#39;</span><span class="p">:</span><span class="n">solve_profile_SLSQP</span><span class="p">,</span> <span class="s1">&#39;trf&#39;</span><span class="p">:</span><span class="n">solve_profile_trf</span><span class="p">}</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+    <span class="n">signal</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">ground_truth</span> <span class="o">=</span> <span class="n">generate_dummy_data</span><span class="p">(</span><span class="n">n_sequences</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="n">get_protein_ratios</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">column_combinations</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">solution</span><span class="p">,</span> <span class="n">success</span> <span class="o">=</span> <span class="n">methods</span><span class="p">[</span><span class="n">method</span><span class="p">](</span><span class="n">ratios</span><span class="p">)</span>
+            <span class="n">mape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">solution</span><span class="o">-</span><span class="n">ground_truth</span><span class="p">)</span><span class="o">/</span><span class="n">ground_truth</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">mape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            
+        
+        <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+
+        <span class="n">time_elapsed_s</span> <span class="o">=</span> <span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">)</span>
+
+        <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">method</span><span class="p">,</span> <span class="n">time_elapsed_s</span><span class="p">,</span> <span class="n">mape</span><span class="p">,</span> <span class="n">error</span><span class="p">,</span> <span class="n">success</span><span class="p">))</span>
+    
+<span class="n">result_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Method&#39;</span><span class="p">,</span> <span class="s1">&#39;Time Elapsed (s)&#39;</span><span class="p">,</span> <span class="s1">&#39;Mean absolute percentage error&#39;</span><span class="p">,</span> <span class="s1">&#39;Errors&#39;</span><span class="p">,</span> <span class="s1">&#39;Success&#39;</span><span class="p">])</span>
+
+<span class="n">result_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;Method&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>C:\ProgramData\Anaconda3\envs\alphap\lib\site-packages\scipy\optimize\slsqp.py:63: RuntimeWarning: invalid value encountered in subtract
+  jac[i] = (func(*((x0+dx,)+args)) - f0)/epsilon
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Time Elapsed (s)</th>
+      <th>Mean absolute percentage error</th>
+      <th>Errors</th>
+      <th>Success</th>
+    </tr>
+    <tr>
+      <th>Method</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>L-FBGS-B</th>
+      <td>0.039460</td>
+      <td>0.264928</td>
+      <td>0.00</td>
+      <td>0.85</td>
+    </tr>
+    <tr>
+      <th>SLSQP</th>
+      <td>0.001557</td>
+      <td>0.028072</td>
+      <td>0.00</td>
+      <td>1.00</td>
+    </tr>
+    <tr>
+      <th>trf</th>
+      <td>0.033461</td>
+      <td>0.028072</td>
+      <td>0.15</td>
+      <td>0.95</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<blockquote><p>SLSQP seems to be a robust and fast choice</p>
+</blockquote>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">combinations</span>
+<span class="kn">from</span> <span class="nn">numba.typed</span> <span class="kn">import</span> <span class="n">List</span>
+
+<span class="n">n_sequences</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">6</span>
+
+<span class="n">column_combinations</span> <span class="o">=</span> <span class="n">List</span><span class="p">()</span>
+<span class="p">[</span><span class="n">column_combinations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">),</span> <span class="mi">2</span><span class="p">)]</span>
+
+<span class="n">methods</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;L-FBGS-B&#39;</span><span class="p">:</span><span class="n">solve_profile_LFBGSB</span><span class="p">,</span> <span class="s1">&#39;SLSQP&#39;</span><span class="p">:</span><span class="n">solve_profile_SLSQP</span><span class="p">,</span> <span class="s1">&#39;trf&#39;</span><span class="p">:</span><span class="n">solve_profile_trf</span><span class="p">}</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">20</span><span class="p">):</span>
+    <span class="n">signal</span><span class="p">,</span> <span class="n">sample</span><span class="p">,</span> <span class="n">ground_truth</span> <span class="o">=</span> <span class="n">generate_dummy_data</span><span class="p">(</span><span class="n">n_sequences</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
+    <span class="n">ratios</span> <span class="o">=</span> <span class="n">get_protein_ratios</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">column_combinations</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">error</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">solution</span><span class="p">,</span> <span class="n">success</span> <span class="o">=</span> <span class="n">methods</span><span class="p">[</span><span class="n">method</span><span class="p">](</span><span class="n">ratios</span><span class="p">)</span>
+            <span class="n">mape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">solution</span><span class="o">-</span><span class="n">ground_truth</span><span class="p">)</span><span class="o">/</span><span class="n">ground_truth</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">mape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>C:\ProgramData\Anaconda3\envs\alphap\lib\site-packages\scipy\optimize\slsqp.py:63: RuntimeWarning: invalid value encountered in subtract
+  jac[i] = (func(*((x0+dx,)+args)) - f0)/epsilon
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Wrapper-function">Wrapper function<a class="anchor-link" href="#Wrapper-function"> </a></h2>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_protein_table" class="doc_header"><code>get_protein_table</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L267" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_protein_table</code>(<strong><code>df</code></strong>, <strong><code>field</code></strong>=<em><code>'int_sum'</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="protein_profile" class="doc_header"><code>protein_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L318" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile</code>(<strong><code>df</code></strong>, <strong><code>experiments</code></strong>, <strong><code>field_</code></strong>, <strong><code>protein</code></strong>)</p>
+</blockquote>
+<p>Calculate the protein profile for a a df based on a dateframe</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="protein_profile_parallel" class="doc_header"><code>protein_profile_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L355" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel</code>(<strong><code>settings</code></strong>, <strong><code>df</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;fraction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">6</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;experiment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">18</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+
+<span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
+
+<span class="n">display</span><span class="p">(</span><span class="n">test_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+
+<span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+
+<span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">experiment_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pre_lfq</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>precursor</th>
+      <th>fraction</th>
+      <th>experiment</th>
+      <th>protein</th>
+      <th>int_sum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Prec_1</td>
+      <td>1</td>
+      <td>A</td>
+      <td>X</td>
+      <td>0.6</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Prec_1</td>
+      <td>2</td>
+      <td>A</td>
+      <td>X</td>
+      <td>0.8</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Prec_1</td>
+      <td>3</td>
+      <td>A</td>
+      <td>X</td>
+      <td>0.6</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Prec_1</td>
+      <td>1</td>
+      <td>B</td>
+      <td>X</td>
+      <td>1.2</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Prec_1</td>
+      <td>2</td>
+      <td>B</td>
+      <td>X</td>
+      <td>1.6</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Prec_1</td>
+      <td>3</td>
+      <td>B</td>
+      <td>X</td>
+      <td>1.2</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>[ 5.99799033 12.00200967]
+[ 6. 12.]
+</pre>
+</div>
 </div>
 
 </div>
