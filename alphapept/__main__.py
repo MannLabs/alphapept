@@ -18,11 +18,11 @@ import sys
 import os
 
 def _run_alphapept(args):
-    from runner import run_alphapept
-    from settings import load_settings
+    from .runner import run_alphapept
+    from .settings import load_settings
 
-    if os.path.isfile(args.settings):
-        _settings = load_settings(args.settings)
+    if os.path.isfile(args.settings_path):
+        _settings = load_settings(args.settings_path)
         run_alphapept(_settings)
 
 def _convert(args):
@@ -53,7 +53,7 @@ def main():
     subparsers = parser.add_subparsers(dest="command")
 
     workflow_parser = subparsers.add_parser("workflow", help="Process files with alphapept using a settings file.")
-    workflow_parser.add_argument("settings", help=("Path to settings file"))
+    workflow_parser.add_argument("settings_path", help=("Path to settings file"))
 
     gui_parser = subparsers.add_parser("gui", help="Open the AlphaPept GUI.")
 
@@ -88,7 +88,7 @@ def main():
 
     print("\n")
     print(r"     ___    __      __          ____             __ ")
-    print(r"    /   |  / /___  / /_  ____ _/ __ \___  ____  / /_")
+    print(r"    /   |  / /___  / /_  ____  / __ \___  ____  / /_")
     print(r"   / /| | / / __ \/ __ \/ __ \/ /_/ / _ \/ __ \/ __/")
     print(r"  / ___ |/ / /_/ / / / / /_/ / ____/  __/ /_/ / /_  ")
     print(r" /_/  |_/_/ .___/_/ /_/\__,_/_/    \___/ .___/\__/  ")
@@ -100,8 +100,8 @@ def main():
     args = parser.parse_args()
     if args.command:
 
-        if args.command == "workflow_parser":
-            if args.settings:
+        if args.command == "workflow":
+            if args.settings_path:
                 _run_alphapept(args)
 
         if args.command == "gui":
