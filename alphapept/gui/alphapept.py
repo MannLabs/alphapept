@@ -19,7 +19,7 @@ from alphapept.stylesheets import (
     progress_style_4,
 )
 
-from alphapept.runner import alpha_runner
+from .. import runner
 import yaml
 import numpy as np
 from time import time, sleep
@@ -48,11 +48,11 @@ ICON_PATH = os.path.abspath(ICON_PATH)
 BUSY_INDICATOR = os.path.abspath(BUSY_INDICATOR)
 
 
-if not os.path.isfile(ICON_PATH):
-    raise FileNotFoundError('Logo not found')
+#if not os.path.isfile(ICON_PATH):
+#    raise FileNotFoundError('Logo not found')
 
-if not os.path.isfile(BUSY_INDICATOR):
-    raise FileNotFoundError('Busy Indicator')
+#if not os.path.isfile(BUSY_INDICATOR):
+#    raise FileNotFoundError('Busy Indicator')
 
 def cancel_dialogs():
     dialogs = [_ for _ in _dialogs]
@@ -91,6 +91,10 @@ class pandasModel(QAbstractTableModel):
         return None
 
 
+
+
+
+
 class QTextEditLogger(logging.Handler):
     def __init__(self, parent):
         super().__init__()
@@ -126,7 +130,7 @@ class searchThread(QThread):
         self.task_update.emit(task)
 
     def run(self):
-        features, df_calib = alpha_runner(self.settings, self.update_global_progress, self.update_current_progress, self.update_task)
+        features, df_calib = run_alphapept(self.settings, self.update_global_progress, self.update_current_progress, self.update_task)
 
         self.features = features
         self.df = df_calib
@@ -930,8 +934,7 @@ class MainWindow(QMainWindow):
         #self.movie.setVisible(False)
 
 
-if __name__ == "__main__":
-
+def main():
     app = QApplication(sys.argv)
     app.setStyle(QStyleFactory.create("Fusion"))
     form = MainWindow()
@@ -953,3 +956,8 @@ if __name__ == "__main__":
     sys.excepthook = excepthook
 
     sys.exit(app.exec_())
+
+
+if __name__ == "__main__":
+
+    main()
