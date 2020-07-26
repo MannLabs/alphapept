@@ -35,7 +35,6 @@ general:
   n_processes: 128
   ppm: true
   score: x_tandem
-  settings_path: '...'
 misc:
   match_between_runs: true
 quantification:
