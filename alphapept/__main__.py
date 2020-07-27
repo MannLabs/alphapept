@@ -6,16 +6,13 @@
     :authors: Maximilian Thomas Strauss
     :copyright: Copyright (c) 2020 Mann Labs
 """
+import sys
+import os
 
-
-with open("alphapept/__init__.py") as version_file:
-    VERSION_NO = version_file.read().strip().split('__version__ = ')[1][1:-1]
+VERSION_NO = "0.1.5-dev0"
 
 COPYRIGHT = "2020 Mann Labs"
 URL = "https://github.com/MannLabs/alphapept"
-
-import sys
-import os
 
 def _run_alphapept(args):
     from .runner import run_alphapept
@@ -106,8 +103,8 @@ def main():
 
         if args.command == "gui":
             print('Launching GUI')
-            from .gui import alphapept as _alphapept
-            _alphapept.main()
+            from .gui import ui as _ui
+            _ui.main()
 
         if args.command == "convert":
             print('Convert')
