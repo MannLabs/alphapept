@@ -9,7 +9,7 @@
 import sys
 import os
 
-VERSION_NO = "0.1.5-dev0"
+VERSION_NO = "0.1.6-dev0"
 
 COPYRIGHT = "2020 Mann Labs"
 URL = "https://github.com/MannLabs/alphapept"
