@@ -7,7 +7,7 @@ import os
 
 from functools import partial
 
-from ..stylesheets import (
+from .stylesheets import (
     big_font,
     version_font,
     logo_font,
@@ -19,7 +19,8 @@ from ..stylesheets import (
     progress_style_4,
 )
 
-from .. import runner
+from .runner import run_alphapept
+
 import yaml
 import numpy as np
 from time import time, sleep
@@ -35,7 +36,7 @@ dark_stylesheet = qdarkstyle.load_stylesheet_pyqt5()
 
 _this_file = os.path.abspath(__file__)
 _this_directory = os.path.dirname(_this_file)
-SETTINGS_TEMPLATE_PATH = os.path.join(_this_directory, "..", "settings_template.yaml")
+SETTINGS_TEMPLATE_PATH = os.path.join(_this_directory,  "settings_template.yaml")
 
 ICON_PATH = os.path.join(_this_directory, "img", "logo_200px.png")
 BUSY_INDICATOR_PATH = os.path.join(_this_directory, "img", "busy_indicator.gif")

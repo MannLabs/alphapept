@@ -107,7 +107,7 @@ def run_alphapept(settings, callback=None):
             logging.info('No *.hdf file with features found for {}. Adding to feature finding list.'.format(_))
 
     if len(to_convert) > 0:
-        logging.info('Starting feature finding on {} files.'.format(len(to_convert)))
+        logging.info('Feature extraction for {} file(s).'.format(len(to_convert)))
         find_and_save_features_parallel(to_convert, settings, callback=partial(tqdm_wrapper, tqdm(total=1)))
 
     # First Search
@@ -175,9 +175,17 @@ def run_alphapept(settings, callback=None):
         protein_table.to_hdf(settings['experiment']['evidence'], 'protein_table')
         logging.info('LFQ complete.')
 
+    import yaml
+
+    base, ext = os.path.splitext(settings['experiment']['evidence'])
+    out_path_settings = base+'.yaml'
+
+    with open(out_path_settings, 'w') as file:
+        yaml.dump(settings, file)
+
+    logging.info('Settings saved to {}'.format(out_path_settings))
     logging.info('Complete')
 
-    return protein_table
 
 if __name__ == "__main__":
 

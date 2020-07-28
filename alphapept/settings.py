@@ -7,14 +7,14 @@ import yaml
 
 def print_settings(settings):
     """
-    Print settings
+    Print a yaml settings file
     """
     print(yaml.dump(settings, default_flow_style=False))
 
 
 def load_settings(path):
     """
-    Print settings
+    Load a yaml settings file
     """
     with open(path, "r") as settings_file:
         SETTINGS_LOADED = yaml.load(settings_file, Loader=yaml.FullLoader)
@@ -22,7 +22,7 @@ def load_settings(path):
 
 def save_settings(settings, path):
     """
-    Save settings
+    Save a yaml settings file to path
     """
     with open(path, "w") as file:
         yaml.dump(settings, file)
