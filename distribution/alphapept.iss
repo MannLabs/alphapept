@@ -1,10 +1,10 @@
 [Setup]
 AppName=AlphaPept
 AppPublisher=Mann Labs
-AppVersion=0.2.0-dev0
+AppVersion=0.2.1-dev0
 DefaultDirName={commonpf}\AlphaPept
 DefaultGroupName=AlphaPept
-OutputBaseFilename="AlphaPept-Windows-64bit-0.2.0-dev0"
+OutputBaseFilename="AlphaPept-Windows-64bit-0.2.1-dev0"
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 
