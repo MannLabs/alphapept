@@ -81,6 +81,7 @@ def main():
 
     feature_finder_parser = subparsers.add_parser('features', help='Find features on a specific file.')
     search_parser = subparsers.add_parser('search', help='Search a converted raw file against a AlphaPept compatible database.')
+    watcher_parser = subparsers.add_parser('watcher', help='Continuously monitor a folder and perform file conversion and feature finding.')
 # link parser
 
     print("\n")
@@ -103,7 +104,7 @@ def main():
 
         if args.command == "gui":
             print('Launching GUI')
-            from .gui import ui as _ui
+            from . import ui as _ui
             _ui.main()
 
         if args.command == "convert":
@@ -118,6 +119,11 @@ def main():
 
         if args.command == "search":
             _search(args)
+
+        if args.command == "watcher":
+            print('Launching Watcher')
+            from . import watcher as _watcher
+            _watcher.main()
 
     else:
         parser.print_help()

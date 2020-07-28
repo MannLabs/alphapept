@@ -54,7 +54,8 @@ description: "A modular, python-based framework for mass spectrometry. Powered b
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Installation-Instructions">Installation Instructions<a class="anchor-link" href="#Installation-Instructions"> </a></h2><h3 id="Conda">Conda<a class="anchor-link" href="#Conda"> </a></h3><p>It is strongly recommended to install AlphaPept in its own environment.</p>
+<h2 id="Installation-Instructions">Installation Instructions<a class="anchor-link" href="#Installation-Instructions"> </a></h2><h3 id="Windows-Installer">Windows Installer<a class="anchor-link" href="#Windows-Installer"> </a></h3><p>ToDo: Here you will find a link to a windows installer for installation.</p>
+<h3 id="Conda">Conda<a class="anchor-link" href="#Conda"> </a></h3><p>It is strongly recommended to install AlphaPept in its own environment.</p>
 <ol>
 <li>Open the console and create a new conda environment: conda create --name alphapept python</li>
 <li>Activate the environment: <code>source activate alphapept</code> for Linux / Mac Os X or <code>activate alphapept</code> for Windows</li>
@@ -64,35 +65,21 @@ description: "A modular, python-based framework for mass spectrometry. Powered b
 </li>
 </ol>
 <p>If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment, see below.</p>
-<h3 id="Standalone-Installation">Standalone Installation<a class="anchor-link" href="#Standalone-Installation"> </a></h3><ul>
-<li>TBD</li>
-</ul>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Watcher:">Watcher:<a class="anchor-link" href="#Watcher:"> </a></h2><p><code>python -m alphapept.watcher</code></p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="How-to-use">How to use<a class="anchor-link" href="#How-to-use"> </a></h2><h3 id="GUI">GUI<a class="anchor-link" href="#GUI"> </a></h3><ul>
-<li>TBD</li>
-</ul>
-<h3 id="Command-Line">Command-Line<a class="anchor-link" href="#Command-Line"> </a></h3><ul>
-<li>TBD</li>
-</ul>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="As-a-Python-Package">As a Python Package<a class="anchor-link" href="#As-a-Python-Package"> </a></h3><p>Once AlphaPept is correctly installed you can use it like any other python module.</p>
+<h2 id="How-to-use">How to use<a class="anchor-link" href="#How-to-use"> </a></h2><p>You can use AlphaPept via the command line or via the GUI.</p>
+<h3 id="Standalone-installation">Standalone installation<a class="anchor-link" href="#Standalone-installation"> </a></h3><p>Simply click the shortcut for the GUI or the command line.</p>
+<h3 id="Python-Package">Python Package<a class="anchor-link" href="#Python-Package"> </a></h3><p>To launch the command line interface use:
+<code>python -m alphapept</code></p>
+<p>This allows to select the different modules. To start the GUI use:
+<code>python -m alphapept gui</code></p>
+<p>Likewise, to start the watcher use:
+<code>python -m alphapept watcher</code></p>
+<p>Once AlphaPept is correctly installed you can use it like any other python module.</p>
 
 </div>
 </div>
@@ -151,7 +138,11 @@ Object-oriented programming for simplicity. Here, adding the decorator <code>@nj
 <p>Hence, the core idea is to write fast single-core functions and also have parallelized versions where applicable. For multi-file processing, we will rely on the <code>multiprocessing</code>.</p>
 <h3 id="Callbacks">Callbacks<a class="anchor-link" href="#Callbacks"> </a></h3><p>As AlphaPept is intended to be the backend of a tool with GUI, we ideally want to be able to get a progress bar out of the major functions. For this, we can pass a <code>callback</code>-argument to the major functions. If the argument is passed, it will return the current progress in the range from 0 to 1.</p>
 <h3 id="Constants">Constants<a class="anchor-link" href="#Constants"> </a></h3><p>One good way to handle constants would be to use globals. However, numba is not able to use typed dictionaries/classes as globals. We therefore pass them as variables (such as the mass_dict), which in some cases leads to functions with a lot of arguments. Note that <code>numba</code> is not able to handle <code>kwargs</code> and <code>args</code> at this point.</p>
-<h3 id="Processing-large-files">Processing large files<a class="anchor-link" href="#Processing-large-files"> </a></h3>
+<h3 id="Version-bumping">Version bumping<a class="anchor-link" href="#Version-bumping"> </a></h3><p>We are using the python package <code>bump2version</code>. You can use this to bump the version number. Currently specified is: <code>bump2version</code>: (<code>major</code>, <code>minor</code>, <code>patch</code>):</p>
+<ul>
+<li>e.g.: <code>bump2version patch</code> for a patch</li>
+</ul>
+
 </div>
 </div>
 </div>

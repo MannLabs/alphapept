@@ -17,6 +17,10 @@ The documentation is automatically build based the jupyter notebooks and can be 
 
 ## Installation Instructions
 
+### Windows Installer
+
+ToDo: Here you will find a link to a windows installer for installation.
+
 ### Conda
 It is strongly recommended to install AlphaPept in its own environment.
 1. Open the console and create a new conda environment: conda create --name alphapept python
@@ -28,26 +32,24 @@ It is strongly recommended to install AlphaPept in its own environment.
 
 If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment, see below.
 
-### Standalone Installation
-
-* TBD
-
-## Watcher:
-
-`python -m alphapept.watcher`
-
 ## How to use
+You can use AlphaPept via the command line or via the GUI.
 
-### GUI
+### Standalone installation
 
-* TBD
+Simply click the shortcut for the GUI or the command line.
 
-### Command-Line
+### Python Package
 
-* TBD
+To launch the command line interface use:
+`python -m alphapept`
 
+This allows to select the different modules. To start the GUI use:
+`python -m alphapept gui`
 
-### As a Python Package
+Likewise, to start the watcher use:
+`python -m alphapept watcher`
+
 Once AlphaPept is correctly installed you can use it like any other python module.
 
 ```
@@ -102,4 +104,8 @@ As AlphaPept is intended to be the backend of a tool with GUI, we ideally want t
 One good way to handle constants would be to use globals. However, numba is not able to use typed dictionaries/classes as globals. We therefore pass them as variables (such as the mass_dict), which in some cases leads to functions with a lot of arguments. Note that `numba` is not able to handle `kwargs` and `args` at this point.
 
 
-### Processing large files
+### Version bumping
+
+We are using the python package [`bump2version`](https://github.com/c4urself/bump2version). You can use this to bump the version number. Currently specified is: `bump2version`: (`major`, `minor`, `patch`):
+
+* e.g.: `bump2version patch` for a patch

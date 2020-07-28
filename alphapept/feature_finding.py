@@ -1529,7 +1529,7 @@ def find_and_save_features(to_process):
             logging.info('Feature finding on {}'.format(path))
             feature_path = extract_bruker(path)
             feature_table = convert_bruker(feature_path)
-            logging.info('Bruker featurer finder complete. Extracted {:,} features.'.format(len(df)))
+            logging.info('Bruker featurer finder complete. Extracted {:,} features.'.format(len(feature_table)))
 
         logging.info('Matching features to query data.')
         features = map_ms2(feature_table, query_data)
