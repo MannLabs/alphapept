@@ -43,7 +43,7 @@ BUSY_INDICATOR_PATH = os.path.join(_this_directory, "img", "busy_indicator.gif")
 
 # Get Version
 
-VERSION_NO = "0.2.0-dev0"
+VERSION_NO = "0.2.1-dev0"
 
 URL_DOCUMENTATION = "https://en.wikipedia.org/wiki/Documentation"
 URL_ISSUE = "https://en.wikipedia.org/wiki/Issue"
