@@ -4,7 +4,7 @@ __all__ = ['get_missed_cleavages', 'cleave_sequence', 'count_missed_cleavages', 
            'list_to_numba', 'get_decoy_sequence', 'swap_KR', 'swap_AL', 'get_decoys', 'add_decoy_tag', 'add_fixed_mods',
            'get_mod_pos', 'get_isoforms', 'add_variable_mods', 'add_fixed_mod_terminal', 'add_fixed_mods_terminal',
            'add_variable_mods_terminal', 'get_unique_peptides', 'generate_peptides', 'get_precmass', 'get_fragmass',
-           'get_frag_dict', 'get_spectrum', 'get_spectra', 'read_fasta_file', 'read_fasta_file_entries', 'read_fasta',
+           'get_frag_dict', 'get_spectrum', 'get_spectra', 'read_fasta_file', 'read_fasta_file_entries',
            'check_sequence', 'add_to_pept_dict', 'merge_pept_dicts', 'generate_fasta_list', 'generate_database',
            'generate_spectra', 'block_idx', 'blocks', 'digest_fasta_block', 'generate_database_parallel', 'mass_dict',
            'pept_dict_from_search', 'save_database']
@@ -32,6 +32,9 @@ def cleave_sequence(
     max_length=65,
     **kwargs
 ):
+    """
+    Cleave a sequence with a given protease. Filters to have a minimum and maximum length.
+    """
 
     proteases = constants.protease_dict
     pattern = proteases[protease]
@@ -308,7 +311,6 @@ def generate_peptides(peptide, **kwargs):
     Wrapper to get modified peptides from a peptide
     """
     mod_peptide = add_fixed_mods_terminal([peptide], kwargs['mods_fixed_terminal_prot'])
-
     mod_peptide = add_variable_mods_terminal(mod_peptide, kwargs['mods_variable_terminal_prot'])
 
     peptides = []
@@ -440,7 +442,7 @@ import logging
 
 def read_fasta_file(fasta_filename=""):
     """
-    given a fasta_file read fasta file line by line, return progress
+    Read a FASTA file line by line
     """
     with open(fasta_filename, "rt") as handle:
         iterator = SeqIO.parse(handle, "fasta")
@@ -481,23 +483,6 @@ def read_fasta_file_entries(fasta_filename=""):
 
         return count
 
-
-
-def read_fasta(path):
-    """
-    Wrapper to read multiple files.
-    """
-    if os.path.isdir(path):
-        paths = glob(path + "/*.fasta")
-    else:
-        paths = glob(path)
-
-    if len(paths) == 0:
-        raise KeyError("Not a valid Fasta Path: {}.".format(path))
-
-    for fasta_file in paths:
-        for entry in read_fasta_file(fasta_file):
-            yield entry
 
 def check_sequence(element, AAs):
     """
@@ -669,6 +654,9 @@ from alphapept import constants
 mass_dict = constants.mass_dict
 
 def block_idx(len_list, block_size = 1000):
+    """
+    Create indices for a list of length len_list
+    """
     blocks = []
     start = 0
     end = 0
@@ -681,12 +669,15 @@ def block_idx(len_list, block_size = 1000):
     return blocks
 
 def blocks(l, n):
+    """
+    Create blocks from a given list
+    """
     n = max(1, n)
     return (l[i:i+n] for i in range(0, len(l), n))
 
 def digest_fasta_block(to_process):
     """
-    digest and create spectra for a whole fasta_block
+    Digest and create spectra for a whole fasta_block
     """
 
     fasta_index, fasta_block, settings = to_process

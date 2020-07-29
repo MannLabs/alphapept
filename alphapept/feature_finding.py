@@ -8,8 +8,8 @@ __all__ = ['get_peaks', 'get_centroid', 'gaussian_estimator', 'raw_to_centroid',
            'plot_pattern', 'check_isotope_pattern_directed', 'grow', 'grow_trail', 'get_trails',
            'isolate_isotope_pattern', 'check_averagine', 'pattern_to_mz', 'cosine_averagine', 'int_list_to_array',
            'mz_to_mass', 'get_minpos', 'get_local_minima', 'is_local_minima', 'truncate', 'M_PROTON',
-           'get_isotope_patterns', 'feature_finder_report', 'plot_isotope_pattern', 'find_features', 'extract_bruker',
-           'convert_bruker', 'map_bruker', 'find_and_save_features', 'find_and_save_features_parallel', 'map_ms2']
+           'get_isotope_patterns', 'feature_finder_report', 'plot_isotope_pattern', 'extract_bruker', 'convert_bruker',
+           'map_bruker', 'find_and_save_features', 'find_and_save_features_parallel', 'map_ms2']
 
 # Cell
 from numba import njit
@@ -932,8 +932,6 @@ def isolate_isotope_pattern(pre_pattern, stats, data, mass_range, charge_range, 
         for index, trail in enumerate(trails):
             if len(trail) > longest_trace:  # Needs to be longer than the current champion
 
-                #print(type(trail))
-
                 arr = int_list_to_array(trail)
 
                 intensity_profile = stats[arr]["int_sum"]
@@ -1323,52 +1321,6 @@ def plot_isotope_pattern(index, df, sorted_stats, centroids, scan_range=100, mz_
     plt.show()
 
     plt.style.use('ggplot')
-
-# Cell
-from time import time
-def find_features(query_data, callback = None, **kwargs):
-    """
-    Wrapper for feature finding
-    """
-
-    start = time()
-    centroids = raw_to_centroid(query_data)
-
-    print('Loaded {:,} centroids.'.format(len(centroids)))
-
-    completed_hills = get_hills(centroids)
-
-    print('A total of {:,} hills extracted. Average hill length {:.2f}'.format(len(completed_hills), np.mean([len(_) for _ in completed_hills])))
-
-    splitted_hills = split_hills(completed_hills, centroids, smoothing=1)
-
-    print('Split {:,} hills into {:,} hills'.format(len(completed_hills), len(splitted_hills)))
-
-    filtered_hills = filter_hills(splitted_hills, centroids)
-
-    print('Filtered {:,} hills. Remaining {:,} hills'.format(len(splitted_hills), len(filtered_hills)))
-
-    sorted_hills, sorted_stats, sorted_data = get_hill_data(filtered_hills, centroids)
-
-    print('Extracting hill stats complete')
-
-    pre_isotope_patterns = get_edges(sorted_stats, sorted_data)
-
-    print('Found {} pre isotope patterns.'.format(len(pre_isotope_patterns)))
-
-    isotope_patterns, isotope_charges = get_isotope_patterns(pre_isotope_patterns, sorted_stats, sorted_data, averagine_aa, isotopes)
-
-    print('Extracted {} isotope patterns.'.format(len(isotope_patterns)))
-
-    df = feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorted_data, sorted_hills, query_data)
-
-    print('Report complete.')
-
-    end = time()
-
-    print('Time elapsed {}'. format(end-start))
-
-    return df
 
 # Cell
 import subprocess

@@ -8,6 +8,7 @@ __all__ = ['filter_score', 'filter_precursor', 'get_q_values', 'cut_fdr', 'cut_g
 # Cell
 import numpy as np
 import pandas as pd
+import logging
 
 def filter_score(df, mode='multiple'):
     """
@@ -78,14 +79,13 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-def cut_fdr(df, fdr_level=0.01, plot=True, verbose=True):
+def cut_fdr(df, fdr_level=0.01, plot=True):
     """
     Cuts a dataframe with a given fdr level
 
     Args:
         fdr_level: fdr level that should be used
         plot: flag to enable plot
-        verbose: flag to enable printing of results
 
     Returns:
         cutoff: df with psms within fdr
@@ -110,13 +110,11 @@ def cut_fdr(df, fdr_level=0.01, plot=True, verbose=True):
     first_q_value = df["q_value"].iloc[0]
 
     if last_q_value <= fdr_level:
-        if verbose:
-            print('Last q_value {:.3f} of dataset is smaller than fdr_level {:.3f}'.format(last_q_value, fdr_level))
+        logging.info('Last q_value {:.3f} of dataset is smaller than fdr_level {:.3f}'.format(last_q_value, fdr_level))
         cutoff_index = len(df)-1
 
     elif first_q_value >= fdr_level:
-        if verbose:
-            print('First q_value {:.3f} of dataset is larger than fdr_level {:.3f}'.format(last_q_value, fdr_level))
+        logging.info('First q_value {:.3f} of dataset is larger than fdr_level {:.3f}'.format(last_q_value, fdr_level))
         cutoff_index = 0
 
     else:
@@ -130,12 +128,12 @@ def cut_fdr(df, fdr_level=0.01, plot=True, verbose=True):
 
     fdr = df.loc[cutoff_index, "fdr"]
 
-    if verbose:
-        print(
-            "{:,} target ({:,} decoy) of {} PSM. fdr {:.6f} for a cutoff of {:.2f} ".format(
-                targets, decoy, len(df), fdr, cutoff_value
-            )
+
+    logging.info(
+        "{:,} target ({:,} decoy) of {} PSM. fdr {:.6f} for a cutoff of {:.2f} ".format(
+            targets, decoy, len(df), fdr, cutoff_value
         )
+    )
 
     if plot:
         import matplotlib.pyplot as plt
@@ -166,26 +164,23 @@ def cut_fdr(df, fdr_level=0.01, plot=True, verbose=True):
 
 # Cell
 
-def cut_global_fdr(data, analyte_level='sequence', fdr_level=0.01, plot=True, verbose=True, **kwargs):
+def cut_global_fdr(data, analyte_level='sequence', fdr_level=0.01, plot=True, **kwargs):
     """
     Function to estimate and filter by global peptide or protein fdr
 
     """
     data_sub = data[[analyte_level,'score','decoy']]
     data_sub_unique = data_sub.groupby([analyte_level,'decoy'], as_index=False).agg({"score": "max"})
-    #print(data_sub_unique)
 
-    if analyte_level=='precursor':
+    analyte_levels = ['precursor', 'sequence', 'protein']
+
+    if analyte_level in analyte_levels:
         agg_score = data_sub_unique.groupby([analyte_level,'decoy'])['score'].max().reset_index()
-    elif analyte_level=='sequence':
-        agg_score = data_sub_unique.groupby([analyte_level,'decoy'])['score'].max().reset_index()
-    elif analyte_level=='protein':
-        agg_score = data_sub_unique.groupby([analyte_level,'decoy'])['score'].sum().reset_index()
     else:
         raise Exception('analyte_level should be either sequence or protein. The selected analyte_level was: {}'.format(analyte_level))
 
-    agg_cval, agg_cutoff = cut_fdr(agg_score, fdr_level=fdr_level, plot=plot, verbose=verbose)
-    #print(agg_cval)
+    agg_cval, agg_cutoff = cut_fdr(agg_score, fdr_level=fdr_level, plot=plot)
+
     agg_report = pd.merge(data,
                           agg_cutoff,
                           how = 'inner',
@@ -208,20 +203,20 @@ def get_x_tandem_score(df):
 
     return x_tandem
 
-def score_x_tandem(df, fdr_level = 0.01, plot = True, verbose=True, **kwargs):
+def score_x_tandem(df, fdr_level = 0.01, plot = True, **kwargs):
     df['score'] = get_x_tandem_score(df)
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
     df = filter_score(df)
     df = filter_precursor(df)
-    cval, cutoff = cut_fdr(df, fdr_level, plot, verbose)
+    cval, cutoff = cut_fdr(df, fdr_level, plot)
 
     return cutoff
 
 
 # Cell
 
-def score_psms(df, score = 'y_hits', fdr_level = 0.01, plot = True, verbose=True, **kwargs):
+def score_psms(df, score = 'y_hits', fdr_level = 0.01, plot = True, **kwargs):
     if score in df.columns:
         df['score'] = df[score]
     else:
@@ -230,7 +225,7 @@ def score_psms(df, score = 'y_hits', fdr_level = 0.01, plot = True, verbose=True
 
     df = filter_score(df)
     df = filter_precursor(df)
-    cval, cutoff = cut_fdr(df, fdr_level, plot, verbose)
+    cval, cutoff = cut_fdr(df, fdr_level, plot)
 
     return cutoff
 
@@ -297,7 +292,6 @@ def train_RF(df,
              n_jobs=3,
              scoring='accuracy',
              plot = True,
-             verbose = True,
              random_state = 42,
              **kwargs):
 
@@ -321,7 +315,7 @@ def train_RF(df,
     # Select high scoring targets (<= train_fdr_level)
     df_prescore = filter_score(df)
     df_prescore = filter_precursor(df_prescore)
-    scored = cut_fdr(df_prescore, fdr_level = train_fdr_level, plot=False, verbose=False)[1]
+    scored = cut_fdr(df_prescore, fdr_level = train_fdr_level, plot=False)[1]
     highT = scored[scored.decoy==False]
     dfT_high = dfT[dfT['query_idx'].isin(highT.query_idx)]
     dfT_high = dfT_high[dfT_high['db_idx'].isin(highT.db_idx)]
@@ -330,8 +324,7 @@ def train_RF(df,
     n_train = int(dfT_high.shape[0])
     if dfD.shape[0] < n_train:
         n_train = int(dfD.shape[0])
-        if verbose:
-            print("The total number of available decoys is lower than the initial set of high scoring targets.")
+        logging.info("The total number of available decoys is lower than the initial set of high scoring targets.")
     if n_train < min_train:
         raise ValueError("There are fewer high scoring targets or decoys than required by 'min_train'.")
 
@@ -344,14 +337,13 @@ def train_RF(df,
     X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, test_size=test_size, random_state=random_state, stratify=y.values)
 
     # Train the classifier on the training set via 5-fold cross-validation and subsequently test on the test set
-    if verbose:
-        print('Training & cross-validation on {} targets and {} decoys'.format(np.sum(y_train),X_train.shape[0]-np.sum(y_train)))
+    logging.info('Training & cross-validation on {} targets and {} decoys'.format(np.sum(y_train),X_train.shape[0]-np.sum(y_train)))
     cv.fit(X_train,y_train)
-    if verbose:
-        print('The best parameters selected by 5-fold cross-validation were {}'.format(cv.best_params_))
-        print('The train {} was {}'.format(scoring, cv.score(X_train, y_train)))
-        print('Testing on {} targets and {} decoys'.format(np.sum(y_test),X_test.shape[0]-np.sum(y_test)))
-        print('The test {} was {}'.format(scoring, cv.score(X_test, y_test)))
+
+    logging.info('The best parameters selected by 5-fold cross-validation were {}'.format(cv.best_params_))
+    logging.info('The train {} was {}'.format(scoring, cv.score(X_train, y_train)))
+    logging.info('Testing on {} targets and {} decoys'.format(np.sum(y_test),X_test.shape[0]-np.sum(y_test)))
+    logging.info('The test {} was {}'.format(scoring, cv.score(X_test, y_test)))
 
     # Inspect feature importances
     if plot:
@@ -379,20 +371,19 @@ def score_ML(df,
                         'hits','matched_ion_fraction','ln_mz_range'],
             fdr_level = 0.01,
             plot=True,
-            verbose=True,
              **kwargs):
     # Apply the classifier to the entire dataset
     df_new = df.copy()
     df_new['score'] = trained_classifier.predict_proba(df_new[features])[:,1]
     df_new = filter_score(df_new)
     df_new = filter_precursor(df_new)
-    cval, cutoff = cut_fdr(df_new, fdr_level, plot, verbose)
+    cval, cutoff = cut_fdr(df_new, fdr_level, plot)
 
     return cutoff
 
 # Cell
 import networkx as nx
-def get_protein_groups(data, pept_dict, fasta_dict, callback = None, verbose = False, **kwargs):
+def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
     """
     Function to perform protein grouping by razor approach
     ToDo: implement callback for solving
@@ -420,14 +411,13 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, verbose = F
         if callback:
             callback((i+1)/len(data))
 
-    if verbose:
-        print('A total of {:,} proteins with unique PSMs found'.format(len(found_proteins)))
+    logging.info('A total of {:,} proteins with unique PSMs found'.format(len(found_proteins)))
 
     connected_groups = np.array([list(c) for c in sorted(nx.connected_components(G), key=len, reverse=True)])
     n_groups = len(connected_groups)
 
-    if verbose:
-        print('A total of {} ambigious proteins'.format(len(connected_groups)))
+
+    logging.info('A total of {} ambigious proteins'.format(len(connected_groups)))
 
     #Solving with razor:
     found_proteins_razor = {}
@@ -520,7 +510,7 @@ def perform_protein_grouping(data, pept_dict, fasta_dict, **kwargs):
 # Cell
 import os
 from multiprocessing import Pool
-import logging
+
 
 def score_hdf(to_process):
 
@@ -543,13 +533,13 @@ def score_hdf(to_process):
 
         if settings["general"]["score"] == 'random_forest':
             cv = train_RF(df)
-            df = score_ML(df, cv, verbose=False, plot = False)
+            df = score_ML(df, cv, plot = False)
         elif settings["general"]["score"] == 'x_tandem':
-            df = score_x_tandem(df, verbose=False, plot = False)
+            df = score_x_tandem(df, plot = False)
         else:
             raise NotImplementedError('Scoring method {} not implemented.'.format(settings["general"]["score"]))
 
-        df = cut_global_fdr(df, analyte_level='sequence',  plot=False, verbose=False, **settings['search'])
+        df = cut_global_fdr(df, analyte_level='sequence',  plot=False, **settings['search'])
 
         df.to_hdf(path, key = 'peptide_fdr', append=False)
         logging.info('FDR on peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
@@ -589,9 +579,9 @@ def protein_groups_hdf(to_process):
         skip = True
 
     if not skip:
-        df_pg = perform_protein_grouping(df, pept_dict, fasta_dict, callback = None, verbose = False)
+        df_pg = perform_protein_grouping(df, pept_dict, fasta_dict, callback = None)
 
-        df_pg = cut_global_fdr(df_pg, analyte_level='protein',  plot=False, verbose=False, **settings['search'])
+        df_pg = cut_global_fdr(df_pg, analyte_level='protein',  plot=False, **settings['search'])
 
         df_pg.to_hdf(path, key = 'protein_fdr', append=False)
 
@@ -633,4 +623,4 @@ def save_report_as_npz(
 
     np.savez(report_path_npz, **to_save)
 
-    print("Raw File saved to {}".format(report_path_npz))
+    logging.info("Raw File saved to {}".format(report_path_npz))
