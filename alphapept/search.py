@@ -8,7 +8,6 @@ __all__ = ['compare_frags', 'ppm_to_dalton', 'get_idxs', 'compare_specs_parallel
            'search_parallel_db', 'search_fasta_block', 'search_parallel', 'mass_dict']
 
 # Cell
-from .utils import log_me
 import logging
 from numba import njit
 import numpy as np
@@ -197,8 +196,6 @@ def query_data_to_features(query_data):
 
     return features
 
-
-@log_me
 def get_psms(
     query_data,
     db_data,
