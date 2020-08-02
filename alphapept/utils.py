@@ -46,6 +46,15 @@ def check_settings(settings):
         settings['general']['n_processes'] = n_actual
         logging.info('Setting number of processes to {}.'.format(n_actual))
 
+    for file in settings['experiment']['files']:
+        if file.endswith('.d'):
+            if not os.path.isdir(file):
+                raise FileNotFoundError(file)
+        else:
+            if not os.path.isfile(file):
+                raise FileNotFoundError(file)
+
+
     return settings
 
 def assemble_df(settings, callback = None):
@@ -82,3 +91,33 @@ def assemble_df(settings, callback = None):
     xx.to_hdf(settings['experiment']['evidence'], 'combined_protein_fdr')
 
     return xx
+
+def reset_hdf(hdf_path):
+    """
+    Removes previous search results from hdf file.
+    """
+    logging.info('Removing previous search results from hdf.')
+    for x in ['features_calib', 'first_search' ,'peptide_fdr' ,'protein_fdr','second_search']:
+        with pd.HDFStore(hdf_path) as hdf:
+            hdf.remove(x)
+
+def resave_hdf(hdf_path):
+    """
+    When overwriting hdf files HDF does not adjust size after removal
+    This function reads the hdf and overwrites it.
+    """
+    logging.info('Re-saving hdf file.')
+    new_hdf = {}
+    with pd.HDFStore(hdf_path) as hdf:
+        keys = hdf.keys()
+
+    for key in keys:
+        new_hdf[key] = pd.read_hdf(hdf_path, key)
+
+    first = True
+    for key in new_hdf.keys():
+        if first:
+            new_hdf[key].to_hdf(hdf_path, key, mode='w')
+            first = False
+        else:
+            new_hdf[key].to_hdf(hdf_path, key, mode='r+')
