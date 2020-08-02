@@ -10,7 +10,7 @@ from functools import partial
 
 from alphapept.constants import mass_dict
 from alphapept.search import search_parallel_db, search_parallel
-from alphapept.utils import check_hardware, check_python_env, check_settings, assemble_df
+from alphapept.utils import check_hardware, check_python_env, check_settings, assemble_df, resave_hdf, reset_hdf
 from alphapept.recalibration import calibrate_hdf_parallel
 from alphapept.io import raw_to_npz_parallel
 from alphapept.score import score_hdf_parallel, protein_groups_hdf_parallel
@@ -99,6 +99,9 @@ def run_alphapept(settings, callback=None):
             try:
                 pd.read_hdf(hdf_path, 'features')
                 logging.info('Found *.hdf with features for {}'.format(_))
+                reset_hdf(hdf_path)
+                resave_hdf(hdf_path)
+
             except KeyError:
                 to_convert.append(_)
                 logging.info('No *.hdf file with features found for {}. Adding to feature finding list.'.format(_))
@@ -159,14 +162,16 @@ def run_alphapept(settings, callback=None):
     df = assemble_df(settings)
     logging.info('Assembly complete.')
 
-    if settings['general']['find_features']:
+
+    field = settings['quantification']['mode']
+
+    if field in df.keys(): #Check if the quantification information exists.
         # We could include another protein fdr in here..
         if 'fraction' in df.keys():
             logging.info('Normalizing fractions.')
             df, normalization = delayed_normalization(df)
             df.to_hdf(settings['experiment']['evidence'], 'combined_protein_fdr_dn')
             pd.DataFrame(normalization).to_hdf(settings['experiment']['evidence'], 'fraction_normalization')
-            field = settings['quantification']['mode']
             df = df.groupby(['experiment', 'precursor', 'protein', 'filename'])[['{}_dn'.format(field)]].sum().reset_index()
             logging.info('Complete. ')
 
