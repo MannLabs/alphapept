@@ -251,6 +251,8 @@ def get_psms(
         (len(query_masses), np.max(idxs_higher - idxs_lower)), dtype=int
     )
 
+    logging.info('Performing search on {:,} query and {:,} db entries with m_tol = {} and m_offset = {}.'.format(len(query_masses), len(db_masses), m_tol, m_offset))
+
     if callback is None:
         chunk = (0, 0)
         offset = False
@@ -688,7 +690,7 @@ def get_score_columns(
     ppm,
     **kwargs
 ):
-
+    logging.info('Extracting columns for scoring.')
     query_masses = query_data['prec_mass_list2']
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
@@ -791,7 +793,7 @@ def get_score_columns(
             if key in features.keys():
                 psms = add_column(psms, features.loc[psms['query_idx']][key].values, key)
 
-    logging.info('Extracted columns from {:,} spectra for {:,} psms.'.format(num_specs_scored, len(psms)))
+    logging.info('Extracted columns from {:,} spectra.'.format(num_specs_scored))
 
     return psms, num_specs_scored
 
@@ -1003,7 +1005,9 @@ def search_db(to_process):
 
     if 'm_offset_calibrated' in settings["search"]:
         calibration = settings['search']['m_offset_calibrated']
+        logging.info('Found calibrated m_offset with value {}'.format(calibration))
         if calibration == 0:
+            logging.info('Calibration is 0, skipping second database search.')
             skip = True
 
     if not skip:
@@ -1022,9 +1026,11 @@ def search_db(to_process):
             psms, num_specs_scored = get_score_columns(psms, query_data, db_data, features, **settings["search"])
 
         if 'm_offset_calibrated' in settings["search"]:
+            logging.info('Saving second_search results to {}'.format(base+'.hdf'))
             store_hdf(pd.DataFrame(psms), base +'.hdf', 'second_search', replace=True)
 
         else:
+            logging.info('Saving first_search results to {}'.format(base+'.hdf'))
             store_hdf(pd.DataFrame(psms), base +'.hdf', 'first_search', replace=True)
 
 
@@ -1066,7 +1072,7 @@ def search_parallel_db(settings, calibration = None, callback = None):
 # Cell
 
 from .fasta import blocks, generate_peptides, add_to_pept_dict, list_to_numpy_f32
-from .fasta import read_fasta, block_idx, generate_fasta_list, generate_spectra
+from .fasta import block_idx, generate_fasta_list, generate_spectra
 from alphapept import constants
 mass_dict = constants.mass_dict
 
