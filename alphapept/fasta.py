@@ -559,7 +559,7 @@ def generate_fasta_list(fasta_files, callback = None, contaminants_path = None, 
             if check_sequence(element, constants.AAs):
                 fasta_list.append(element)
                 fasta_dict[fasta_index] = element
-            fasta_index += 1
+                fasta_index += 1
 
     if contaminants_path:
         fasta_generator = read_fasta_file(contaminants_path)
@@ -568,7 +568,7 @@ def generate_fasta_list(fasta_files, callback = None, contaminants_path = None, 
             if check_sequence(element, constants.AAs):
                 fasta_list.append(element)
                 fasta_dict[fasta_index] = element
-            fasta_index += 1
+                fasta_index += 1
 
     return fasta_list, fasta_dict
 
