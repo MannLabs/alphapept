@@ -12,7 +12,6 @@ from tqdm import tqdm
 import numpy as np
 from numba.typed import List
 from numba import njit
-from pyteomics import mzml, mzxml
 import gzip
 import sys
 import os
@@ -305,6 +304,7 @@ def read_mzML(filename, most_abundant):
     """
     Read spectral data from an mzML file and return various lists separately for ms1 and ms2 data.
     """
+    from pyteomics import mzml, mzxml
 
     try:
         if os.path.splitext(filename)[1] == '.gz':
