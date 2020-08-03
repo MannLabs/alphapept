@@ -167,13 +167,12 @@ def run_alphapept(settings, callback=None):
 
     if field in df.keys(): #Check if the quantification information exists.
         # We could include another protein fdr in here..
-        if 'fraction' in df.keys():
-            logging.info('Normalizing fractions.')
-            df, normalization = delayed_normalization(df)
-            df.to_hdf(settings['experiment']['evidence'], 'combined_protein_fdr_dn')
-            pd.DataFrame(normalization).to_hdf(settings['experiment']['evidence'], 'fraction_normalization')
-            df = df.groupby(['experiment', 'precursor', 'protein', 'filename'])[['{}_dn'.format(field)]].sum().reset_index()
-            logging.info('Complete. ')
+        logging.info('Delayed Normalization.')
+        df, normalization = delayed_normalization(df, field)
+        df.to_hdf(settings['experiment']['evidence'], 'combined_protein_fdr_dn')
+        pd.DataFrame(normalization).to_hdf(settings['experiment']['evidence'], 'fraction_normalization')
+        df = df.groupby(['experiment', 'precursor', 'protein', 'filename'])[['{}_dn'.format(field)]].sum().reset_index()
+        logging.info('Complete. ')
 
         logging.info('Starting profile extraction.')
         protein_table = protein_profile_parallel(settings, df, callback=partial(tqdm_wrapper, tqdm(total=1)))
