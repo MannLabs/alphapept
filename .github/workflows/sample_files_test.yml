@@ -26,7 +26,7 @@ jobs:
         python setup.py install
     - name: Run Alphapept on Bruker
       run: |
-        python alphapept -workflow C:\benchmark\hela_testrun_bruker.yaml
+        python alphapept workflow C:\benchmark\hela_testrun_bruker.yaml
     - name: Run Alphapept on Thermo
       run: |
-        python alphapept -workflow C:\benchmark\hela_testrun_thermo.yaml
+        python alphapept workflow C:\benchmark\hela_testrun_thermo.yaml
