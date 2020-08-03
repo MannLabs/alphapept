@@ -1,3 +1,7 @@
+DEL /F/Q/S build > NUL
+DEL /F/Q/S dist > NUL
+RMDIR /Q/S build
+RMDIR /Q/S dist
 cd %~dp0\..
 python setup.py install
 cd %~dp0
