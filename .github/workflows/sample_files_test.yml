@@ -1,0 +1,32 @@
+# GitHub Actions to automatically test on sample files 
+name: Sample File Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build_and_run:
+
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install package
+      run: |
+        python setup.py install
+    - name: Run Alphapept on Bruker
+      run: |
+        python alphapept workflow C:\benchmark\hela_testrun_bruker.yaml
+    - name: Run Alphapept on Thermo
+      run: |
+        python alphapept workflow C:\benchmark\hela_testrun_thermo.yaml
