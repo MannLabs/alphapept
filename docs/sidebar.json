@@ -1,6 +1,7 @@
 {
   "alphapept": {
     "Overview": "/",
+    "AlphaPept": "/.~index",
     "Settings": "/settings",
     "Chem": "/chem",
     "Input / Output": "/io",
