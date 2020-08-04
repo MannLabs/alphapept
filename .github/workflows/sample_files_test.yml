@@ -1,4 +1,4 @@
-# GitHub Actions to automatically test on sample files 
+# GitHub Actions to automatically test on sample files
 name: Sample File Test
 
 on:
@@ -23,7 +23,6 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install package
       run: |
-        pip install -r requirements.txt
         python setup.py install
     - name: Run Alphapept on Bruker
       run: |
