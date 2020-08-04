@@ -65,7 +65,7 @@ description: "Functions related to the search"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="compare_frags" class="doc_header"><code>compare_frags</code><a href="__main__.py#L7" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_frags</code>(<strong><code>query_frag</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>mtol</code></strong>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="compare_frags" class="doc_header"><code>compare_frags</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L15" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_frags</code>(<strong><code>query_frag</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>mtol</code></strong>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Compare query and database frags and find hits</p>
 
@@ -192,7 +192,7 @@ Encountered the use of a type that is scheduled for deprecation: type &#39;refle
 
 For more information visit http://numba.pydata.org/numba-doc/latest/reference/deprecation.html#deprecation-of-reflection-for-list-and-set-types
 </span><span class="ansi-bold">
-File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
+File &#34;alphapept\search.py&#34;, line 16:</span>
 <span class="ansi-bold">@njit(nogil=True)
 </span><span class="ansi-bold">def compare_frags(query_frag, db_frag, mtol, ppm=False):
 </span><span class="ansi-bold">^</span>
@@ -247,7 +247,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="ppm_to_dalton" class="doc_header"><code>ppm_to_dalton</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L49" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>ppm_to_dalton</code>(<strong><code>mass</code></strong>, <strong><code>m_offset</code></strong>)</p>
+<h4 id="ppm_to_dalton" class="doc_header"><code>ppm_to_dalton</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L48" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>ppm_to_dalton</code>(<strong><code>mass</code></strong>, <strong><code>m_offset</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -271,7 +271,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_idxs" class="doc_header"><code>get_idxs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L57" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_idxs</code>(<strong><code>db_masses</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>m_offset</code></strong>, <strong><code>ppm</code></strong>)</p>
+<h4 id="get_idxs" class="doc_header"><code>get_idxs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L56" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_idxs</code>(<strong><code>db_masses</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>m_offset</code></strong>, <strong><code>ppm</code></strong>)</p>
 </blockquote>
 <p>Function to get upper and lower limits to define search range.</p>
 
@@ -296,7 +296,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="compare_specs_parallel" class="doc_header"><code>compare_specs_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L72" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_specs_parallel</code>(<strong><code>frag_hits</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>idxs_lower</code></strong>, <strong><code>idxs_higher</code></strong>, <strong><code>mtol</code></strong>, <strong><code>query_bounds</code></strong>, <strong><code>db_bounds</code></strong>, <strong><code>chunk</code></strong>=<em><code>(0, 1)</code></em>, <strong><code>offset</code></strong>=<em><code>False</code></em>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="compare_specs_parallel" class="doc_header"><code>compare_specs_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L71" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_specs_parallel</code>(<strong><code>frag_hits</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>idxs_lower</code></strong>, <strong><code>idxs_higher</code></strong>, <strong><code>mtol</code></strong>, <strong><code>query_bounds</code></strong>, <strong><code>db_bounds</code></strong>, <strong><code>chunk</code></strong>=<em><code>(0, 1)</code></em>, <strong><code>offset</code></strong>=<em><code>False</code></em>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Compare spectra, parallelized version</p>
 
@@ -321,7 +321,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="compare_specs_single" class="doc_header"><code>compare_specs_single</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L124" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_specs_single</code>(<strong><code>frag_hits</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>idxs_lower</code></strong>, <strong><code>idxs_higher</code></strong>, <strong><code>mtol</code></strong>, <strong><code>query_bounds</code></strong>, <strong><code>db_bounds</code></strong>, <strong><code>chunk</code></strong>=<em><code>(0, 1)</code></em>, <strong><code>offset</code></strong>=<em><code>False</code></em>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="compare_specs_single" class="doc_header"><code>compare_specs_single</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L123" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_specs_single</code>(<strong><code>frag_hits</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>idxs_lower</code></strong>, <strong><code>idxs_higher</code></strong>, <strong><code>mtol</code></strong>, <strong><code>query_bounds</code></strong>, <strong><code>db_bounds</code></strong>, <strong><code>chunk</code></strong>=<em><code>(0, 1)</code></em>, <strong><code>offset</code></strong>=<em><code>False</code></em>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Compare spectra, single core version</p>
 
@@ -359,7 +359,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="query_data_to_features" class="doc_header"><code>query_data_to_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L183" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>query_data_to_features</code>(<strong><code>query_data</code></strong>)</p>
+<h4 id="query_data_to_features" class="doc_header"><code>query_data_to_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L182" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>query_data_to_features</code>(<strong><code>query_data</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -383,8 +383,19 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="log_me.<locals>.wrapper" class="doc_header"><code>log_me.<locals>.wrapper</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/utils.py#L10" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>log_me.<locals>.wrapper</code>(<strong>*<code>args</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_psms" class="doc_header"><code>get_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L199" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_psms</code>(<strong><code>query_data</code></strong>, <strong><code>db_data</code></strong>, <strong><code>features</code></strong>, <strong><code>parallel</code></strong>, <strong><code>m_tol</code></strong>, <strong><code>m_offset</code></strong>, <strong><code>ppm</code></strong>, <strong><code>min_frag_hits</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>m_offset_calibrated</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
+<p>Wrapper function to extract psms from dataset</p>
+<p>Args:
+    db_masses: database precursor masses
+    query_masses: query precursor masses
+    m_offset: mass offset in dalton or ppm
+    ppm: flag for ppm or dalton
+    callback: Callback function, e.g. for progress bar
+Returns:
+    idxs_lower: lower search range
+    idxs_higher: upper search range
+Raises:</p>
 
 </div>
 
@@ -426,7 +437,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="frag_delta" class="doc_header"><code>frag_delta</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L351" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>frag_delta</code>(<strong><code>query_frag</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>hits</code></strong>)</p>
+<h4 id="frag_delta" class="doc_header"><code>frag_delta</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L350" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>frag_delta</code>(<strong><code>query_frag</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>hits</code></strong>)</p>
 </blockquote>
 <p>Calculate the mass difference for a given array of hits in Dalton and ppm</p>
 
@@ -464,7 +475,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="intensity_fraction" class="doc_header"><code>intensity_fraction</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L365" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_fraction</code>(<strong><code>query_int</code></strong>, <strong><code>hits</code></strong>)</p>
+<h4 id="intensity_fraction" class="doc_header"><code>intensity_fraction</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L364" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_fraction</code>(<strong><code>query_int</code></strong>, <strong><code>hits</code></strong>)</p>
 </blockquote>
 <p>Calculate the fraction of matched intensity</p>
 
@@ -502,7 +513,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="intensity_product" class="doc_header"><code>intensity_product</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L380" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_product</code>(<strong><code>query_int</code></strong>, <strong><code>hits</code></strong>, <strong><code>db_int</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="intensity_product" class="doc_header"><code>intensity_product</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L379" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_product</code>(<strong><code>query_int</code></strong>, <strong><code>hits</code></strong>, <strong><code>db_int</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Calculate the dot product of matched query intensity to db intensity</p>
 
@@ -518,7 +529,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Mass-desnity-scores">Mass desnity scores<a class="anchor-link" href="#Mass-desnity-scores"> </a></h3>
+<h3 id="Mass-density-scores">Mass density scores<a class="anchor-link" href="#Mass-density-scores"> </a></h3>
 </div>
 </div>
 </div>
@@ -550,7 +561,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_frag_mass_density_norm" class="doc_header"><code>get_frag_mass_density_norm</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L396" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_frag_mass_density_norm</code>(<strong><code>frags</code></strong>, <strong><code>mz_factor</code></strong>=<em><code>0.05</code></em>)</p>
+<h4 id="get_frag_mass_density_norm" class="doc_header"><code>get_frag_mass_density_norm</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L395" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_frag_mass_density_norm</code>(<strong><code>frags</code></strong>, <strong><code>mz_factor</code></strong>=<em><code>0.05</code></em>)</p>
 </blockquote>
 
 </div>
@@ -574,7 +585,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="mass_density_weighted_fragment_sum" class="doc_header"><code>mass_density_weighted_fragment_sum</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L430" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>mass_density_weighted_fragment_sum</code>(<strong><code>query_frag</code></strong>, <strong><code>hits</code></strong>, <strong><code>mz_space</code></strong>, <strong><code>mz_density</code></strong>, <strong><code>mz_factor</code></strong>=<em><code>0.05</code></em>)</p>
+<h4 id="mass_density_weighted_fragment_sum" class="doc_header"><code>mass_density_weighted_fragment_sum</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L429" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>mass_density_weighted_fragment_sum</code>(<strong><code>query_frag</code></strong>, <strong><code>hits</code></strong>, <strong><code>mz_space</code></strong>, <strong><code>mz_density</code></strong>, <strong><code>mz_factor</code></strong>=<em><code>0.05</code></em>)</p>
 </blockquote>
 
 </div>
@@ -598,7 +609,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="mass_density_weighted_intensity_sum" class="doc_header"><code>mass_density_weighted_intensity_sum</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L440" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>mass_density_weighted_intensity_sum</code>(<strong><code>query_int</code></strong>, <strong><code>query_frag</code></strong>, <strong><code>hits</code></strong>, <strong><code>mz_space</code></strong>, <strong><code>mz_density</code></strong>, <strong><code>mz_factor</code></strong>=<em><code>0.05</code></em>)</p>
+<h4 id="mass_density_weighted_intensity_sum" class="doc_header"><code>mass_density_weighted_intensity_sum</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L439" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>mass_density_weighted_intensity_sum</code>(<strong><code>query_int</code></strong>, <strong><code>query_frag</code></strong>, <strong><code>hits</code></strong>, <strong><code>mz_space</code></strong>, <strong><code>mz_density</code></strong>, <strong><code>mz_factor</code></strong>=<em><code>0.05</code></em>)</p>
 </blockquote>
 
 </div>
@@ -635,7 +646,7 @@ File &#34;&lt;ipython-input-2-cbbf95b3f48a&gt;&#34;, line 8:</span>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="b_y_hits" class="doc_header"><code>b_y_hits</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L463" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>b_y_hits</code>(<strong><code>frag_type</code></strong>, <strong><code>hits</code></strong>)</p>
+<h4 id="b_y_hits" class="doc_header"><code>b_y_hits</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L462" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>b_y_hits</code>(<strong><code>frag_type</code></strong>, <strong><code>hits</code></strong>)</p>
 </blockquote>
 <p>Count the number of b and y hits
 hits usually start with b-ions (0), then y-ions (1)</p>
@@ -668,7 +679,7 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="score_parallel" class="doc_header"><code>score_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L479" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score_parallel</code>(<strong><code>psms</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>mtol</code></strong>, <strong><code>query_bounds</code></strong>, <strong><code>db_bounds</code></strong>, <strong><code>ppm</code></strong>, <strong><code>db_ints</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="score_parallel" class="doc_header"><code>score_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L478" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score_parallel</code>(<strong><code>psms</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>mtol</code></strong>, <strong><code>query_bounds</code></strong>, <strong><code>db_bounds</code></strong>, <strong><code>ppm</code></strong>, <strong><code>db_ints</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Extract values to calculate a score. Parallel version.</p>
 
@@ -693,7 +704,7 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="score_single" class="doc_header"><code>score_single</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L566" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score_single</code>(<strong><code>psms</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>mtol</code></strong>, <strong><code>query_bounds</code></strong>, <strong><code>db_bounds</code></strong>, <strong><code>ppm</code></strong>, <strong><code>db_ints</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="score_single" class="doc_header"><code>score_single</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L565" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score_single</code>(<strong><code>psms</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>mtol</code></strong>, <strong><code>query_bounds</code></strong>, <strong><code>db_bounds</code></strong>, <strong><code>ppm</code></strong>, <strong><code>db_ints</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Extract values to calculate a score. Single core version.</p>
 
@@ -742,7 +753,7 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_column" class="doc_header"><code>add_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L653" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_column</code>(<strong><code>recarray</code></strong>, <strong><code>column</code></strong>, <strong><code>name</code></strong>)</p>
+<h4 id="add_column" class="doc_header"><code>add_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L652" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_column</code>(<strong><code>recarray</code></strong>, <strong><code>column</code></strong>, <strong><code>name</code></strong>)</p>
 </blockquote>
 <p>Function to add a column with given name to recarray</p>
 
@@ -767,7 +778,7 @@ hits usually start with b-ions (0), then y-ions (1)</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="remove_column" class="doc_header"><code>remove_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L665" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>remove_column</code>(<strong><code>recarray</code></strong>, <strong><code>name</code></strong>)</p>
+<h4 id="remove_column" class="doc_header"><code>remove_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L664" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>remove_column</code>(<strong><code>recarray</code></strong>, <strong><code>name</code></strong>)</p>
 </blockquote>
 <p>Function to remove a column from recarray</p>
 
@@ -815,7 +826,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_sequences" class="doc_header"><code>get_sequences</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L674" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_sequences</code>(<strong><code>psms</code></strong>, <strong><code>db_seqs</code></strong>)</p>
+<h4 id="get_sequences" class="doc_header"><code>get_sequences</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L673" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_sequences</code>(<strong><code>psms</code></strong>, <strong><code>db_seqs</code></strong>)</p>
 </blockquote>
 <p>Get sequences to add them to a recarray</p>
 
@@ -840,7 +851,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_score_columns" class="doc_header"><code>get_score_columns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L683" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_score_columns</code>(<strong><code>psms</code></strong>, <strong><code>query_data</code></strong>, <strong><code>db_data</code></strong>, <strong><code>features</code></strong>, <strong><code>parallel</code></strong>, <strong><code>m_tol</code></strong>, <strong><code>m_offset</code></strong>, <strong><code>ppm</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_score_columns" class="doc_header"><code>get_score_columns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L682" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_score_columns</code>(<strong><code>psms</code></strong>, <strong><code>query_data</code></strong>, <strong><code>db_data</code></strong>, <strong><code>features</code></strong>, <strong><code>parallel</code></strong>, <strong><code>m_tol</code></strong>, <strong><code>m_offset</code></strong>, <strong><code>ppm</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -939,7 +950,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="perform_search" class="doc_header"><code>perform_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L958" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>perform_search</code>(<strong><code>query_files</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>db_bounds</code></strong>, <strong><code>db_seqs</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>plot</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="perform_search" class="doc_header"><code>perform_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L957" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>perform_search</code>(<strong><code>query_files</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>db_bounds</code></strong>, <strong><code>db_seqs</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>plot</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to search and score one or multiple MS runs by the X!Tandem approach.</p>
 
@@ -978,7 +989,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="store_hdf" class="doc_header"><code>store_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L984" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>store_hdf</code>(<strong><code>df</code></strong>, <strong><code>path</code></strong>, <strong><code>key</code></strong>, <strong><code>replace</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="store_hdf" class="doc_header"><code>store_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L983" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>store_hdf</code>(<strong><code>df</code></strong>, <strong><code>path</code></strong>, <strong><code>key</code></strong>, <strong><code>replace</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Stores in hdf</p>
 
@@ -1003,7 +1014,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="search_db" class="doc_header"><code>search_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L998" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_db</code>(<strong><code>to_process</code></strong>)</p>
+<h4 id="search_db" class="doc_header"><code>search_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L997" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_db</code>(<strong><code>to_process</code></strong>)</p>
 </blockquote>
 <p>Perform a databse search. One file at a time.</p>
 
@@ -1028,7 +1039,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="search_parallel_db" class="doc_header"><code>search_parallel_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1034" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_parallel_db</code>(<strong><code>settings</code></strong>, <strong><code>calibration</code></strong>=<em><code>None</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="search_parallel_db" class="doc_header"><code>search_parallel_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1037" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_parallel_db</code>(<strong><code>settings</code></strong>, <strong><code>calibration</code></strong>=<em><code>None</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Function to generate a database from a fasta file</p>
 
