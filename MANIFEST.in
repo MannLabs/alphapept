@@ -2,4 +2,8 @@ include settings.ini
 include LICENSE
 include CONTRIBUTING.md
 include README.md
+include alphapept/settings_template.yaml
+include alphapept/img/busy_indicator.gif
+include alphapept/img/logo_200px.png
+recursive-include alphapept/ext *
 recursive-exclude * __pycache__
