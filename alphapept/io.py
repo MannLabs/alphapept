@@ -184,10 +184,8 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
     """
     import sqlalchemy as db
     import pandas as pd
-    import sys
 
-    sys.path.append('../ext')
-    from bruker import timsdata
+    from .ext.bruker import timsdata
 
     tdf = os.path.join(raw_file, 'analysis.tdf')
     engine = db.create_engine('sqlite:///{}'.format(tdf))
@@ -249,10 +247,7 @@ def one_over_k0_to_CCS(one_over_k0s, charges, mzs):
     """
     convert one_over_k0 to CCS
     """
-    import sys
-
-    sys.path.append('../ext')
-    from bruker import timsdata
+    from .ext.bruker import timsdata
 
     ccs = np.empty(len(one_over_k0s))
     ccs[:] = np.nan
@@ -263,6 +258,7 @@ def one_over_k0_to_CCS(one_over_k0s, charges, mzs):
         except ValueError:
             pass
     return ccs
+
 
 # Cell
 
