@@ -51,13 +51,13 @@ URL_CONTRIBUTE = "https://en.wikipedia.org/wiki/Contribution"
 
 
 
-if not os.path.isfile(ICON_PATH):
-    print(ICON_PATH)
-    raise FileNotFoundError('Logo not found')
+#if not os.path.isfile(ICON_PATH):
+#    print(ICON_PATH)
+#    raise FileNotFoundError('Logo not found')
 
-if not os.path.isfile(BUSY_INDICATOR_PATH):
-    print(BUSY_INDICATOR_PATH)
-    raise FileNotFoundError('Busy Indicator')
+#if not os.path.isfile(BUSY_INDICATOR_PATH):
+#    print(BUSY_INDICATOR_PATH)
+#    raise FileNotFoundError('Busy Indicator')
 
 def cancel_dialogs():
     dialogs = [_ for _ in _dialogs]
