@@ -8,6 +8,7 @@ __all__ = ['gaussian', 'return_elution_profile', 'simulate_sample_profiles', 'ge
 # Cell
 import random
 import numpy as np
+import logging
 
 def gaussian(mu, sigma, grid):
     """
@@ -143,10 +144,13 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
     Returns normalization for given peptide intensities
     """
     experiments = np.sort(df['experiment'].unique()).tolist()
-    fractions = np.sort(df['fraction'].unique()).tolist()
-
-    n_fractions = len(fractions)
     n_experiments = len(experiments)
+
+    if 'fraction' not in df.keys():
+        df['fraction'] = 0
+
+    fractions = np.sort(df['fraction'].unique()).tolist()
+    n_fractions = len(fractions)
 
     df_max = df.groupby(['precursor','fraction','experiment'])[field].max() #Maximum per fraction
 
@@ -262,7 +266,6 @@ def solve_profile_trf(ratios):
 # Cell
 from numba.typed import List
 from itertools import combinations
-import logging
 
 def get_protein_table(df, field = 'int_sum', callback = None):
     unique_proteins = df['protein'].unique()
