@@ -1326,7 +1326,7 @@ def plot_isotope_pattern(index, df, sorted_stats, centroids, scan_range=100, mz_
 import subprocess
 import os
 
-def extract_bruker(file, ff_dir = "./ext/bruker/FF/", config = "default.config"):
+def extract_bruker(file, ff_dir = "ext/bruker/FF/", config = "default.config"):
     """
     Call Bruker Feautre Finder via subprocess
     """
