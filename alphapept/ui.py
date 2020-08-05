@@ -19,7 +19,7 @@ from .stylesheets import (
     progress_style_4,
 )
 
-from .runner import run_alphapept
+from alphapept.runner import run_alphapept
 
 import yaml
 import numpy as np
@@ -36,28 +36,25 @@ dark_stylesheet = qdarkstyle.load_stylesheet_pyqt5()
 
 _this_file = os.path.abspath(__file__)
 _this_directory = os.path.dirname(_this_file)
-SETTINGS_TEMPLATE_PATH = os.path.join(_this_directory,  "settings_template.yaml")
 
-ICON_PATH = os.path.join(_this_directory, "img", "logo_200px.png")
+SETTINGS_TEMPLATE_PATH = os.path.join(_this_directory,  "settings_template.yaml")
+LOGO_PATH = os.path.join(_this_directory, "img", "logo_200px.png")
+ICON_PATH = os.path.join(_this_directory, "img", "logo.ico")
 BUSY_INDICATOR_PATH = os.path.join(_this_directory, "img", "busy_indicator.gif")
 
 # Get Version
 
 VERSION_NO = "0.2.3-dev0"
 
-URL_DOCUMENTATION = "https://en.wikipedia.org/wiki/Documentation"
-URL_ISSUE = "https://en.wikipedia.org/wiki/Issue"
-URL_CONTRIBUTE = "https://en.wikipedia.org/wiki/Contribution"
+URL_DOCUMENTATION = "https://mannlabs.github.io/alphapept/"
+URL_ISSUE = "https://github.com/MannLabs/alphapept/issues"
+URL_CONTRIBUTE = "https://github.com/MannLabs/alphapept/blob/master/CONTRIBUTING.md"
 
+if not os.path.isfile(ICON_PATH):
+    raise FileNotFoundError('Logo not found - Path {}'.format(ICON_PATH))
 
-
-#if not os.path.isfile(ICON_PATH):
-#    print(ICON_PATH)
-#    raise FileNotFoundError('Logo not found')
-
-#if not os.path.isfile(BUSY_INDICATOR_PATH):
-#    print(BUSY_INDICATOR_PATH)
-#    raise FileNotFoundError('Busy Indicator')
+if not os.path.isfile(BUSY_INDICATOR_PATH):
+    raise FileNotFoundError('Busy Indicator - Path {}'.format(BUSY_INDICATOR_PATH))
 
 def cancel_dialogs():
     dialogs = [_ for _ in _dialogs]
@@ -159,7 +156,7 @@ class External(QThread):
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
-        self.setWindowIcon(QIcon("ICON_PATH"))
+        self.setWindowIcon(QIcon(ICON_PATH))
         self.title = "AlphaPept " + VERSION_NO
         self.setStyleSheet("font-size: 12pt;")
 
@@ -371,7 +368,7 @@ class MainWindow(QMainWindow):
         self.verticalLayout = QVBoxLayout()
 
         self.logo_main = QLabel(self)
-        self.logo_main.setPixmap(QPixmap("logo_200px.png"))
+        self.logo_main.setPixmap(QPixmap(LOGO_PATH))
 
         self.verticalLayout.addWidget(self.logo_main)
 
