@@ -15,4 +15,4 @@ jobs:
     - name: Creating installer
       run: |
         cd distribution
-        create_installer.bat
+        .\create_installer.bat
