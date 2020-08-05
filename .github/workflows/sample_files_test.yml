@@ -24,6 +24,7 @@ jobs:
     - name: Install package
       run: |
         python setup.py install
+        conda install pytables
     - name: Run Alphapept on Bruker
       run: |
         python alphapept workflow C:\benchmark\hela_testrun_bruker.yaml
