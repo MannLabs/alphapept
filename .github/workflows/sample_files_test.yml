@@ -16,11 +16,17 @@ jobs:
         python-version: [3.8]
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup conda
-        uses: s-weigand/setup-conda@v1
-        with:
-          update-conda: true
-          python-version: ${{ matrix.python-version }}
-          conda-channels: anaconda, conda-forge
-      - run: conda --version
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install package
+      run: |
+        python setup.py install
+    - name: Run Alphapept on Bruker
+      run: |
+        python alphapept workflow C:\benchmark\hela_testrun_bruker.yaml
+    - name: Run Alphapept on Thermo
+      run: |
+        python alphapept workflow C:\benchmark\hela_testrun_thermo.yaml
