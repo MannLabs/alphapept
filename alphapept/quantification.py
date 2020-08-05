@@ -272,6 +272,9 @@ def get_protein_table(df, field = 'int_sum', callback = None):
     experiments = df['experiment'].unique().tolist()
     experiments.sort()
 
+    if len(experiments) == 1:
+        raise ValueError('Only one experiment present.')
+
     column_combinations = List()
     [column_combinations.append(_) for _ in combinations(range(len(experiments)), 2)]
 
@@ -376,7 +379,7 @@ def protein_profile_parallel(settings, df, callback=None):
 
     results = []
 
-    if len(files) > 1:
+    if (len(files) > 1) and (len(experiments) > 1):
         with Pool(n_processes) as p:
             max_ = len(unique_proteins)
             for i, _ in enumerate(p.imap_unordered(partial(protein_profile, df, experiments, field_), unique_proteins)):
