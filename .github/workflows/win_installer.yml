@@ -1,5 +1,5 @@
 # GitHub Actions to automatically create an installer
-name: WindowsInstaller
+name: Windows Installer
 
 on:
   push:
