@@ -92,11 +92,6 @@ class pandasModel(QAbstractTableModel):
             return self._data.columns[col]
         return None
 
-
-
-
-
-
 class QTextEditLogger(logging.Handler):
     def __init__(self, parent):
         super().__init__()
