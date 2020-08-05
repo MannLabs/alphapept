@@ -16,5 +16,5 @@ qroundprogressbar==1.0.0
 scikit-learn==0.22.2
 scipy==1.4.1
 seaborn==0.10.0
-tables
+tables==3.6.1
 tqdm==4.46.1
