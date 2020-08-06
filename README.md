@@ -3,6 +3,7 @@
 
 
 ![](nbs\images\alphapept_logo.png)
+![CI](https://github.com/MannLabs/alphapept/workflows/CI/badge.svg)
 
 ## Documentation
 
@@ -22,10 +23,10 @@ It is strongly recommended to install AlphaPept in its own environment.
 1. Open the console and create a new conda environment: conda create --name alphapept python
 2. Activate the environment: `source activate alphapept` for Linux / Mac Os X or `activate alphapept` for Windows
 2. Redirect to the folder of choice and clone the repository: `git clone https://github.com/MannLabs/alphapept.git`
-3. Install the package with `python setup.py install`
-
-    Note: If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`
-
+3. Install the packages with `pip install -r requirements.txt`
+4. Install the package with `python setup.py install`
+5. Install pytables with `conda install pytables`
+{% include note.html content='If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`' %}
 If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment, see below.
 
 ## How to use
@@ -143,3 +144,5 @@ Having access to intermediate results is very beneficial if individual modules n
 
 ### Imports
 TODO: Write about how imports need to be made so that they work with the installer.
+
+Include in manifest -> 
