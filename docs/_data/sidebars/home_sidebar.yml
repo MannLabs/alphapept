@@ -10,9 +10,6 @@ entries:
       title: Overview
       url: /
     - output: web,pdf
-      title: AlphaPept
-      url: /.~index
-    - output: web,pdf
       title: Settings
       url: /settings
     - output: web,pdf

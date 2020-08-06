@@ -29,7 +29,8 @@ description: "A modular, python-based framework for mass spectrometry. Powered b
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><img src="/alphapept/images/alphapept_logo.png" alt=""></p>
+<p><img src="/alphapept/images/alphapept_logo.png" alt="">
+<img src="https://github.com/MannLabs/alphapept/workflows/CI/badge.svg" alt="CI"></p>
 
 </div>
 </div>
@@ -43,7 +44,7 @@ description: "A modular, python-based framework for mass spectrometry. Powered b
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Installation-Instructions">Installation Instructions<a class="anchor-link" href="#Installation-Instructions"> </a></h2><blockquote><p>To access Thermo files, we rely on <a href="https://github.com/frallain/pymsfilereader">pymsfilereader</a>, which requires to have <code>MSFileReader</code> installed. You can find installation instructions in the GitHub repository.&gt; To access Bruker files, we rely on the <code>timsdata</code>-library. Currently only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the <code>ext</code> folder of this repository.</p>
+<h2 id="Installation-Instructions">Installation Instructions<a class="anchor-link" href="#Installation-Instructions"> </a></h2><blockquote><p>To access Thermo files, we rely on <a href="https://github.com/frallain/pymsfilereader">pymsfilereader</a>, which requires to have <code>MSFileReader</code> installed. You can find installation instructions in the GitHub repository.&gt; To access Bruker files, we rely on the <code>timsdata</code>-library. Currently only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the <a href="/alphapept/ext"><code>ext</code></a> folder of this repository.</p>
 </blockquote>
 <h3 id="Standalone-Windows-Installer">Standalone Windows Installer<a class="anchor-link" href="#Standalone-Windows-Installer"> </a></h3><blockquote><p>TODO. Here you will find a link to a windows installer for one-click installation.</p>
 </blockquote>
@@ -53,11 +54,12 @@ It is strongly recommended to install AlphaPept in its own environment.</p>
 <li>Open the console and create a new conda environment: conda create --name alphapept python</li>
 <li>Activate the environment: <code>source activate alphapept</code> for Linux / Mac Os X or <code>activate alphapept</code> for Windows</li>
 <li>Redirect to the folder of choice and clone the repository: <code>git clone https://github.com/MannLabs/alphapept.git</code></li>
-<li><p>Install the package with <code>python setup.py install</code></p>
-<p>Note: If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: <code>conda install nb_conda</code></p>
-</li>
+<li>Install the packages with <code>pip install -r requirements.txt</code></li>
+<li>Install the package with <code>python setup.py install</code></li>
+<li>Install pytables with <code>conda install pytables</code>
+{% include note.html content='If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: <code>conda install nb_conda</code>' %}
+If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment, see below.</li>
 </ol>
-<p>If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment, see below.</p>
 
 </div>
 </div>
@@ -171,6 +173,7 @@ Object-oriented programming for simplicity. Here, adding the decorator <code>@nj
 </ul>
 <h3 id="Data-flow">Data flow<a class="anchor-link" href="#Data-flow"> </a></h3><p>Having access to intermediate results is very beneficial if individual modules need to be optimized. To achieve this, we rely on <em>.hdf containers and save intermediate results here. For each file that gets processed, we create a </em>.hdf file with the same name and add the results of each processing step as groups in the container.</p>
 <h3 id="Imports">Imports<a class="anchor-link" href="#Imports"> </a></h3><p>TODO: Write about how imports need to be made so that they work with the installer.</p>
+<p>Include in manifest -&gt;</p>
 
 </div>
 </div>
