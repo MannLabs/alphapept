@@ -19,7 +19,7 @@ jobs:
         conda create --name alphapept python=3.8 
     - name: Install package
       run: |
-        activate alphapept 
+        conda activate alphapept 
         pip install -r requirements.txt
         python setup.py install
         conda install pytables
