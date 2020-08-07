@@ -146,50 +146,50 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
     experiments = np.sort(df['experiment'].unique()).tolist()
     n_experiments = len(experiments)
 
-    if 'fraction' not in df.keys():
-        df['fraction'] = 0
+    if 'fraction' in df.keys():
+        fractions = np.sort(df['fraction'].unique()).tolist()
+        n_fractions = len(fractions)
 
-    fractions = np.sort(df['fraction'].unique()).tolist()
-    n_fractions = len(fractions)
+        df_max = df.groupby(['precursor','fraction','experiment'])[field].max() #Maximum per fraction
 
-    df_max = df.groupby(['precursor','fraction','experiment'])[field].max() #Maximum per fraction
+        prec_count = df_max.index.get_level_values('precursor').value_counts()
 
-    prec_count = df_max.index.get_level_values('precursor').value_counts()
+        if not minimum_occurence:
+            minimum_occurence = np.percentile(prec_count[prec_count>1].values, 75) #Take the 25% best datapoints
+            logging.info('Setting minimum occurence to {}'.format(minimum_occurence))
 
-    if not minimum_occurence:
-        minimum_occurence = np.percentile(prec_count[prec_count>1].values, 75) #Take the 25% best datapoints
-        logging.info('Setting minimum occurence to {}'.format(minimum_occurence))
+        shared_precs = prec_count[prec_count >= minimum_occurence]
+        precs = prec_count[prec_count > minimum_occurence].index.tolist()
 
-    shared_precs = prec_count[prec_count >= minimum_occurence]
-    precs = prec_count[prec_count > minimum_occurence].index.tolist()
+        n_profiles = len(precs)
 
-    n_profiles = len(precs)
+        selected_precs = df_max.loc[precs]
+        selected_precs = selected_precs.reset_index()
 
-    selected_precs = df_max.loc[precs]
-    selected_precs = selected_precs.reset_index()
+        profiles = np.empty((n_fractions, n_experiments, n_profiles))
+        profiles[:] = np.nan
 
-    profiles = np.empty((n_fractions, n_experiments, n_profiles))
-    profiles[:] = np.nan
+        #get dictionaries
+        fraction_dict = {_:i for i,_ in enumerate(fractions)}
+        experiment_dict = {_:i for i,_ in enumerate(experiments)}
+        precursor_dict = {_:i for i,_ in enumerate(precs)}
 
-    #get dictionaries
-    fraction_dict = {_:i for i,_ in enumerate(fractions)}
-    experiment_dict = {_:i for i,_ in enumerate(experiments)}
-    precursor_dict = {_:i for i,_ in enumerate(precs)}
+        prec_id = [precursor_dict[_] for _ in selected_precs['precursor']]
+        frac_id = [fraction_dict[_] for _ in selected_precs['fraction']]
+        ex_id = [experiment_dict[_] for _ in selected_precs['experiment']]
 
-    prec_id = [precursor_dict[_] for _ in selected_precs['precursor']]
-    frac_id = [fraction_dict[_] for _ in selected_precs['fraction']]
-    ex_id = [experiment_dict[_] for _ in selected_precs['experiment']]
+        profiles[frac_id,ex_id, prec_id] = selected_precs[field]
 
-    profiles[frac_id,ex_id, prec_id] = selected_precs[field]
+        normalization = normalize_experiment_SLSQP(profiles)
 
-    normalization = normalize_experiment_SLSQP(profiles)
+        #intensity normalization: total intensity to remain unchanged
 
-    #intensity normalization: total intensity to remain unchanged
+        df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [experiment_dict[_] for _ in df['experiment']]]
+        df[field+'_dn'] *= df[field].sum()/df[field+'_dn'].sum()
 
-
-    df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [experiment_dict[_] for _ in df['experiment']]]
-
-    df[field+'_dn'] *= df[field].sum()/df[field+'_dn'].sum()
+    else:
+        logging.info('No fractions present. Skipping delayed normalization.')
+        normalization = None
 
     return df, normalization
 
@@ -286,6 +286,11 @@ def get_protein_table(df, field = 'int_sum', callback = None):
     else:
         field_ = field
 
+    # Median normalization
+    median = df.groupby('experiment')[field_].median()
+    df[field_] -= df['experiment'].apply(lambda x: median.loc[x])
+
+
     for idx, protein in enumerate(unique_proteins):
         subset = df[df['protein'] == protein].copy()
         per_protein = subset.groupby(['experiment','precursor'])[field_].sum().unstack().T
@@ -376,6 +381,10 @@ def protein_profile_parallel(settings, df, callback=None):
         field_ = field+'_dn'
     else:
         field_ = field
+
+    # Median normalization
+    median = df.groupby('experiment')[field_].median()
+    df[field_] -= df['experiment'].apply(lambda x: median.loc[x])
 
     results = []
 
