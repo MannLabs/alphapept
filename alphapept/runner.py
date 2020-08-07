@@ -18,6 +18,7 @@ from alphapept.feature_finding import find_and_save_features_parallel
 from alphapept.fasta import pept_dict_from_search, generate_database, generate_spectra, save_database, generate_database_parallel
 from alphapept.quantification import protein_profile_parallel, protein_profile, delayed_normalization
 
+import yaml
 
 def tqdm_wrapper(pbar, update):
     current_value = pbar.n
@@ -171,17 +172,17 @@ def run_alphapept(settings, callback=None):
             logging.info('Delayed Normalization.')
             df, normalization = delayed_normalization(df, field)
             pd.DataFrame(normalization).to_hdf(settings['experiment']['evidence'], 'fraction_normalization')
+            df_grouped = df.groupby(['experiment', 'precursor', 'protein', 'filename'])[['{}_dn'.format(field)]].sum().reset_index()
+        else:
+            df_grouped = df.groupby(['experiment', 'precursor', 'protein', 'filename'])[field].sum().reset_index()
 
         df.to_hdf(settings['experiment']['evidence'], 'combined_protein_fdr_dn')
-        df = df.groupby(['experiment', 'precursor', 'protein', 'filename'])[['{}_dn'.format(field)]].sum().reset_index()
-        logging.info('Complete. ')
 
+        logging.info('Complete. ')
         logging.info('Starting profile extraction.')
-        protein_table = protein_profile_parallel(settings, df, callback=partial(tqdm_wrapper, tqdm(total=1)))
+        protein_table = protein_profile_parallel(settings, df_grouped, callback=partial(tqdm_wrapper, tqdm(total=1)))
         protein_table.to_hdf(settings['experiment']['evidence'], 'protein_table')
         logging.info('LFQ complete.')
-        
-    import yaml
 
     base, ext = os.path.splitext(settings['experiment']['evidence'])
     out_path_settings = base+'.yaml'
