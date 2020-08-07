@@ -1,6 +1,7 @@
 from PyQt5.QtCore import QUrl, QSize, QThread, pyqtSignal, Qt, QAbstractTableModel, QCoreApplication
-from PyQt5.QtWidgets import *
-from PyQt5.QtGui import *
+from PyQt5.QtWidgets import QTableView, QTabWidget, QPlainTextEdit, QProgressBar, QSpinBox, QGroupBox, QCheckBox, QDoubleSpinBox, QTreeWidget, QTreeWidgetItem, QComboBox, QAbstractScrollArea, QPushButton, QTableWidget, QStackedWidget, QWidget, QMainWindow, QApplication, QStyleFactory, QHBoxLayout, QVBoxLayout, QLabel, QSpacerItem, QSizePolicy
+from PyQt5.QtGui import QIcon, QPixmap, QMovie
+from PyQt5.QtCore import pyqtSlot
 
 import sys
 import os
@@ -64,6 +65,120 @@ def cancel_dialogs():
         else:
             dialog.close()
     QCoreApplication.instance().processEvents()  # just in case...
+
+class FileSelector(QWidget):
+
+	def __init__(self):
+		super().__init__()
+		self.title = 'FileSelection'
+		self.left = 0
+		self.top = 0
+		self.width = 600
+		self.height = 200
+		self.setAcceptDrops(True)
+		self.initUI()
+		self.files = []
+
+	def initUI(self):
+		self.setWindowTitle(self.title)
+		self.setGeometry(self.left, self.top, self.width, self.height)
+		self.createTable()
+
+		# Add box layout, add table to box layout and add box layout to widget
+		self.layout = QVBoxLayout()
+		self.layout.setContentsMargins(0,0,0,0)
+		self.layout.setSpacing(0)
+
+		self.layout.addWidget(self.tableWidget)
+		self.setLayout(self.layout)
+
+		# Show widget
+		self.show()
+
+	def createTable(self):
+	   # Create table
+		HEADER_LABELS = ["Filename","Experiment","Fraction","Remove"]
+
+		self.tableWidget = QTableWidget()
+		self.tableWidget.setRowCount(0)
+		self.tableWidget.setColumnCount(len(HEADER_LABELS))
+		self.tableWidget.setHorizontalHeaderLabels(HEADER_LABELS)
+
+		self.tableWidget.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+
+		self.tableWidget.doubleClicked.connect(self.on_click)
+
+	@pyqtSlot()
+	def on_click(self):
+		for currentQTableWidgetItem in self.tableWidget.selectedItems():
+			print(currentQTableWidgetItem.row(), currentQTableWidgetItem.column(), currentQTableWidgetItem.text())
+
+	def dragMoveEvent(self, event):
+		event.accept()
+
+	def path_from_drop(self, event):
+		url = event.mimeData().urls()[0]
+		path = url.toLocalFile()
+		return path
+
+	def drop_has_valid_url(self, event):
+		if not event.mimeData().hasUrls():
+			return False
+		path = self.path_from_drop(event)
+		if os.path.isdir(path):
+			return True
+		else:
+			return False
+
+	def dragEnterEvent(self, event):
+		if self.drop_has_valid_url(event):
+			event.accept()
+		else:
+			event.ignore()
+
+	def dropEvent(self, event):
+		""" Loads  when dropped into the scene """
+
+		path = self.path_from_drop(event)
+		self.open(path)
+
+	def open(self, path):
+		print(path)
+		files = self.files
+		for dirpath, dirnames, filenames in os.walk(path):
+			for dirname in [d for d in dirnames if d.endswith('.d')]: #Bruker
+				new_file = os.path.join(dirpath, dirname)
+				if new_file not in files:
+					files.append(new_file)
+
+			for filename in [f for f in filenames if f.lower().endswith('.raw')]: #Thermo
+				new_file = os.path.join(dirpath, filename)
+				if new_file not in files:
+					files.append(new_file)
+
+		files.sort()
+		self.files = files
+		self.set_files()
+
+	def set_files(self):
+		n_files = len(self.files)
+		self.tableWidget.setRowCount(n_files)
+		self.remove_btns = []
+		for i in range(n_files):
+			self.tableWidget.setItem(i, 0, QTableWidgetItem(self.files[i]))
+			btn = QPushButton('X')
+			self.remove_btns.append(btn)
+			self.tableWidget.setCellWidget(i, 3, btn)
+			btn.clicked.connect(self.remove_file)
+
+		self.tableWidget.resizeColumnsToContents()
+
+	def remove_file(self):
+		sending_button = self.sender()
+		index = self.remove_btns.index(sending_button)
+		del self.files[index]
+		self.set_files()
+
 
 class pandasModel(QAbstractTableModel):
 
@@ -430,6 +545,8 @@ class MainWindow(QMainWindow):
         self.label_files = QLabel("Files")
         self.label_files.setStyleSheet(logo_font)
         self.files_layout.addWidget(self.label_files)
+        self.file_selector = FileSelector()
+        self.files_layout.addWidget(self.file_selector)
         self.files_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
         self.files_layout_.addLayout(self.files_layout)
