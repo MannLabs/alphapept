@@ -35,8 +35,8 @@ busy_style = (
 
 progress_style = (
     "QProgressBar{\n"
-    "    border: 0px solid white;\n"
-    "    border-radius: 0px;\n"
+    "    border: 1px solid rgb(89, 91, 93);\n"
+    "    border-radius: 2px;\n"
     "    text-align: center;\n"
     "	color:rgb(255, 255, 255);\n"
     "}\n"
@@ -50,8 +50,8 @@ progress_style = (
 
 progress_style_1 = (
     "QProgressBar{\n"
-    "    border: 0px solid white;\n"
-    "    border-radius: 0px;\n"
+    "    border: 1px solid rgb(89, 91, 93);\n"
+    "    border-radius: 2px;\n"
     "    text-align: center;\n"
     "	color:rgb(255, 255, 255);\n"
     "}\n"
@@ -65,8 +65,8 @@ progress_style_1 = (
 
 progress_style_2 = (
     "QProgressBar{\n"
-    "    border: 0px solid white;\n"
-    "    border-radius: 0px;\n"
+    "    border: 1px solid rgb(89, 91, 93);\n"
+    "    border-radius: 2px;\n"
     "    text-align: center;\n"
     "	color:rgb(255, 255, 255);\n"
     "}\n"
@@ -80,8 +80,8 @@ progress_style_2 = (
 
 progress_style_3 = (
     "QProgressBar{\n"
-    "    border: 0px solid white;\n"
-    "    border-radius: 0px;\n"
+    "    border: 1px solid rgb(89, 91, 93);\n"
+    "    border-radius: 2px;\n"
     "    text-align: center;\n"
     "	color:rgb(255, 255, 255);\n"
     "}\n"
@@ -95,8 +95,8 @@ progress_style_3 = (
 
 progress_style_4 = (
     "QProgressBar{\n"
-    "    border: 0px solid white;\n"
-    "    border-radius: 0px;\n"
+    "    border: 1px solid rgb(89, 91, 93);\n"
+    "    border-radius: 2px;\n"
     "    text-align: center;\n"
     "	 color:rgb(255, 255, 255);\n"
     "}\n"
