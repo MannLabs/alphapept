@@ -66,7 +66,7 @@ def cancel_dialogs():
 			dialog.close()
 	QCoreApplication.instance().processEvents()  # just in case...
 
-from .ui_classes import FastaFileSelector, pandasModel, QTextEditLogger, searchThread, External, RawFileSelector, SettingsEdit
+from .ui_classes import FastaFileSelector, pandasModel, QTextEditLogger, searchThread, External, RawFileSelector, SettingsEdit, pandasModel
 
 
 class MainWindow(QMainWindow):
@@ -363,42 +363,14 @@ class MainWindow(QMainWindow):
 		self.button_layout_explore = QHBoxLayout()
 		self.verticalLayout_3 = QVBoxLayout()
 		self.tabWidget = QTabWidget(self.explore)
-		self.tab_features = QWidget()
-		self.verticalLayout_4 = QVBoxLayout(self.tab_features)
-		self.table_features = QTableView(self.tab_features)
-		self.table_features.show()
-		self.verticalLayout_4.addWidget(self.table_features)
-		self.tabWidget.addTab(self.tab_features, "Features")
-		self.tab_peptides = QWidget()
-		self.horizontalLayout_4 = QHBoxLayout(self.tab_peptides)
-		self.table_peptides = QTableView(self.tab_peptides)
-		self.horizontalLayout_4.addWidget(self.table_peptides)
-		self.tabWidget.addTab(self.tab_peptides, "Peptides")
-		self.tab_plot = QWidget()
 
-		self.horizontalLayout_6 = QHBoxLayout(self.tab_plot)
-		self.verticalLayout_6 = QVBoxLayout()
-		self.horizontalLayout_8 = QHBoxLayout()
-		self.combo_plot = QComboBox(self.tab_plot)
-
-		self.combo_plot.addItem("1")
-		self.combo_plot.addItem("2")
-		self.combo_plot.addItem("3")
-		self.horizontalLayout_8.addWidget(self.combo_plot)
-		self.btn_plot = QPushButton("Plot")
-		self.btn_plot.setStyleSheet(big_font)
-
-		self.horizontalLayout_8.addWidget(self.btn_plot)
-		self.verticalLayout_6.addLayout(self.horizontalLayout_8)
-		self.widget_plot = QWidget(self.tab_plot)
-
-		self.verticalLayout_6.addWidget(self.widget_plot)
-		self.horizontalLayout_6.addLayout(self.verticalLayout_6)
-		self.tabWidget.addTab(self.tab_plot, "Plot")
 		#Add files here.. select with dropdown columns
 		self.explore_files = QComboBox()
-		self.explore_files.addItem("default")
 		self.verticalLayout_3.addWidget(self.explore_files)
+
+		self.explore_files.currentIndexChanged.connect(
+			self.explore_file_selected
+		)
 
 		self.verticalLayout_3.addWidget(self.tabWidget)
 
@@ -481,6 +453,23 @@ class MainWindow(QMainWindow):
 
 	def page_explore(self):
 		self.stackedWidget.setCurrentIndex(3)
+		#Load files again
+		settings = self.read_settings()
+		#Check which hdf files exist already and display them
+		selectable = ['Select file..']
+		for _ in settings['experiment']['files']:
+			base, ext = os.path.splitext(_)
+			hdf_path = base+'.hdf'
+
+			if os.path.isfile(hdf_path):
+				selectable.append(hdf_path)
+
+		evidence_path = settings['experiment']['evidence']
+		if os.path.isfile(evidence_path):
+			selectable.append(evidence_path)
+
+		self.explore_files.clear()
+		self.explore_files.addItems(selectable)
 
 	def page_help(self):
 		self.stackedWidget.setCurrentIndex(4)
@@ -534,6 +523,24 @@ class MainWindow(QMainWindow):
 		self.settings = settings
 
 		return settings
+
+	def explore_file_selected(self):
+		file = self.explore_files.currentText()
+
+		if file != 'Select file..':
+			with pd.HDFStore(file) as hdf:
+				groups = hdf.keys()
+
+			groups = [_[1:] for _ in groups]
+
+			#Reset tab index
+			self.tabWidget.clear()
+			for group in groups:
+				view = QTableView()
+				model = pandasModel(pd.read_hdf(file, key=group))
+				self.tabWidget.addTab(view, group)
+				view.setModel(model)
+				view.show()
 
 
 	def load_settings(self):
