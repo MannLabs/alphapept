@@ -45,7 +45,7 @@ BUSY_INDICATOR_PATH = os.path.join(_this_directory, "img", "busy_indicator.gif")
 
 # Get Version
 
-VERSION_NO = "0.2.4-dev0"
+VERSION_NO = "0.2.5-dev0"
 
 URL_DOCUMENTATION = "https://mannlabs.github.io/alphapept/"
 URL_ISSUE = "https://github.com/MannLabs/alphapept/issues"
