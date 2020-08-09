@@ -19,6 +19,7 @@ fasta:
   mods_variable_terminal_prot: []
   num_missed_cleavages: 2
   protease: trypsin
+  save_db: true
   spectra_block: 100000
 features:
   mass_importance: 100
