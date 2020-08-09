@@ -166,6 +166,10 @@ fasta:
     - trypsin_exception
     - non-specific
     - trypsin
+  save_db:
+    default: true
+    description: Save DB or create on the fly.
+    type: checkbox
   spectra_block:
     default: 100000
     description: Maximum number of sequences to be collected before theoretical spectra

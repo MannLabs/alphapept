@@ -185,7 +185,7 @@ class MainWindow(QMainWindow):
 		self.label_files.setStyleSheet(logo_font)
 		self.files_layout.addWidget(self.label_files)
 
-		self.experiment_file = QPushButton("Set filename")
+		self.experiment_file = QPushButton("Set experiment filename")
 		self.files_layout.addWidget(self.experiment_file)
 
 		self.experiment_file.clicked.connect(self.set_experiment_file)
@@ -199,6 +199,11 @@ class MainWindow(QMainWindow):
 		self.files_layout.addWidget(QLabel("FASTA files"))
 		self.fasta_selector = FastaFileSelector(["Filename"])
 		self.files_layout.addWidget(self.fasta_selector)
+
+		self.database_file = QPushButton("Select database file")
+		self.files_layout.addWidget(self.database_file)
+
+		self.database_file.clicked.connect(self.set_database_file)
 
 
 		self.files_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
@@ -436,6 +441,12 @@ class MainWindow(QMainWindow):
 		if path:
 			self.experiment_file.setText(path + ext)
 
+	def set_database_file(self):
+		path, ext = QFileDialog.getSaveFileName(self, "Set databse file", "", '.npz')
+		if path:
+			self.database_file.setText(path + ext)
+
+
 	def onCountChanged(self, value):
 		cpu = psutil.cpu_percent()
 		self.progress_cpu.setValue(int(cpu))
@@ -456,7 +467,7 @@ class MainWindow(QMainWindow):
 		#Load files again
 		settings = self.read_settings()
 		#Check which hdf files exist already and display them
-		selectable = ['Select file..']
+		selectable = ["Select file.."]
 		for _ in settings['experiment']['files']:
 			base, ext = os.path.splitext(_)
 			hdf_path = base+'.hdf'
@@ -492,6 +503,7 @@ class MainWindow(QMainWindow):
 		experiments = files['Experiment'].values.tolist()
 
 		settings['experiment']['evidence'] = self.experiment_file.text()
+		settings['fasta']['database_path'] = self.database_file.text()
 
 		if None in experiments:
 			logging.info('Undefined experiment names found. Replacing with filename.')
@@ -516,7 +528,7 @@ class MainWindow(QMainWindow):
 
 		fasta_files = [_.replace("\\", "/") for _ in fasta_files]
 
-		settings['experiment']['fasta_files'] = fasta_files
+		settings['fasta']['fasta_files'] = fasta_files
 
 		settings['experiment']['alphapept_version'] = VERSION_NO
 
@@ -527,7 +539,7 @@ class MainWindow(QMainWindow):
 	def explore_file_selected(self):
 		file = self.explore_files.currentText()
 
-		if file != 'Select file..':
+		if os.path.isfile(file):
 			with pd.HDFStore(file) as hdf:
 				groups = hdf.keys()
 
@@ -553,10 +565,13 @@ class MainWindow(QMainWindow):
 					settings = yaml.load(settings_file, Loader=yaml.FullLoader)
 					self.settingsWidget.set_settings(settings)
 					ex_settings = settings['experiment']
-					self.fasta_selector.set_table(pd.DataFrame([ex_settings['fasta_files']]).T)
+					fasta_settings = settings['fasta']
+					print(fasta_settings)
+					self.fasta_selector.set_table(pd.DataFrame([fasta_settings['fasta_files']]).T)
 					self.file_selector.set_table(pd.DataFrame([ex_settings['files'], ex_settings['experiment'], ex_settings['fractions']]).T)
 
 					self.experiment_file.setText(ex_settings['evidence'])
+					self.database_file.setText(fasta_settings['database_path'])
 
 					logging.info('Loaded settings from {}.'.format(path))
 				except Exception as e:
@@ -595,37 +610,28 @@ class MainWindow(QMainWindow):
 
 		self.read_settings()
 
-		if False:
-			self.disable_settings()
-			self.btn_start.setText('Running..')
-			self.btn_start.setEnabled(False)
+		self.settingsWidget.disable_settings()
 
-			settings = self.read_settings()
+		self.btn_start.setText('Running..')
+		self.btn_start.setEnabled(False)
+
+		settings = self.read_settings()
 
 
-			self.searchthread = searchThread(settings)
+		self.searchthread = searchThread(settings)
 
-			self.searchthread.current_progress_update.connect(self.progress_current_changed)
-			self.searchthread.global_progress_update.connect(self.progress_overall_changed)
-			self.searchthread.task_update.connect(self.current_step_changed)
+		self.searchthread.current_progress_update.connect(self.progress_current_changed)
+		self.searchthread.global_progress_update.connect(self.progress_overall_changed)
+		#self.searchthread.task_update.connect(self.current_step_changed)
 
-			self.searchthread.start()
+		self.searchthread.start()
 
-			self.searchthread.finished.connect(self.complete)
+		self.searchthread.finished.connect(self.complete)
 
 	def complete(self):
 
 		self.btn_start.setText('Start')
 		self.btn_start.setEnabled(True)
-
-		self.df = self.searchthread.df
-		self.features = self.searchthread.features
-
-		model = pandasModel(self.df)
-		self.table_peptides.setModel(model)
-
-		model = pandasModel(self.features)
-		self.table_features.setModel(model)
 
 		self.movie.stop()
 		#self.movie.setVisible(False)
