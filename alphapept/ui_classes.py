@@ -307,10 +307,13 @@ class searchThread(QThread):
 		self.task_update.emit(task)
 
 	def run(self):
-		features, df_calib = run_alphapept(self.settings, self.update_global_progress, self.update_current_progress, self.update_task)
-
-		self.features = features
-		self.df = df_calib
+		logging.info('Starting SearchThread')
+		print(yaml.dump(self.settings, default_flow_style=False))
+		run_alphapept(self.settings, callback=self.update_current_progress)
+		try:
+			run_alphapept(self.settings, callback=self.update_current_progress)
+		except Exception as e:
+			logging.error('Error occured. {}'.format(e))
 
 
 class External(QThread):
@@ -584,31 +587,32 @@ class SettingsEdit(QWidget):
 		for category in settings.keys():
 			if category != 'experiment':
 				for subcategory in settings[category].keys():
-					value = settings[category][subcategory]
-					widget = self.categories[category]["widgets"][subcategory]
-					if isinstance(widget, QSpinBox):
-						widget.setValue(value)
-					elif isinstance(widget, QDoubleSpinBox):
-						widget.setValue(value)
-					elif isinstance(widget, QPushButton):
-						widget.setText(value)
-					elif isinstance(widget, QComboBox):
-						# Find and set
-						idx = widget.findText(value)
-						widget.setCurrentIndex(idx)
-					elif isinstance(widget, QCheckBox):
-						if value:
-							widget.setCheckState(2)
-						else:
-							widget.setState(False)
-					elif isinstance(widget, dict):
-						checked = []
-						for _ in widget.keys():
-							widget[_].setCheckState(1, Qt.Unchecked)
-						if value:
-							for _ in value:
-								widget[_].setCheckState(1, Qt.Checked)
+					if (subcategory != 'fasta_files') and (subcategory != 'database_path'):
+						value = settings[category][subcategory]
+						widget = self.categories[category]["widgets"][subcategory]
+						if isinstance(widget, QSpinBox):
+							widget.setValue(value)
+						elif isinstance(widget, QDoubleSpinBox):
+							widget.setValue(value)
+						elif isinstance(widget, QPushButton):
+							widget.setText(value)
+						elif isinstance(widget, QComboBox):
+							# Find and set
+							idx = widget.findText(value)
+							widget.setCurrentIndex(idx)
+						elif isinstance(widget, QCheckBox):
+							if value:
+								widget.setCheckState(2)
+							else:
+								widget.setState(False)
+						elif isinstance(widget, dict):
+							checked = []
+							for _ in widget.keys():
+								widget[_].setCheckState(1, Qt.Unchecked)
+							if value:
+								for _ in value:
+									widget[_].setCheckState(1, Qt.Checked)
 
-					else:
-						print("Error")
-						raise NotImplementedError
+						else:
+							print("Error")
+							raise NotImplementedError

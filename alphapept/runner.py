@@ -42,7 +42,10 @@ def run_alphapept(settings, callback=None):
     check_python_env()
     settings = check_settings(settings)
 
-    database_path = settings['fasta']['database_path']
+    if 'database_path' not in settings['fasta']:
+        database_path = ''
+    else:
+        database_path = settings['fasta']['database_path']
 
     # Database Creation
     if settings['fasta']['save_db']:
@@ -56,8 +59,16 @@ def run_alphapept(settings, callback=None):
                 else:
                     raise FileNotFoundError('File {} not found'.format(fasta_file))
 
+            settings['fasta']['database_path']
+
             logging.info('Creating a new database from FASTA.')
-            spectra, pept_dict, fasta_dict = generate_database_parallel(settings, callback = partial(tqdm_wrapper, tqdm(total=1)))
+
+            if not callback:
+                cb = partial(tqdm_wrapper, tqdm(total=1))
+            else:
+                cb = callback
+
+            spectra, pept_dict, fasta_dict = generate_database_parallel(settings, callback = cb)
             logging.info('Digested {:,} proteins and generated {:,} spectra'.format(len(fasta_dict), len(spectra)))
 
             save_database(spectra, pept_dict, fasta_dict, **settings['fasta'])
@@ -85,7 +96,11 @@ def run_alphapept(settings, callback=None):
 
     if len(to_convert) > 0:
         logging.info('Starting file conversion.')
-        raw_to_npz_parallel(to_convert, settings, callback=partial(tqdm_wrapper, tqdm(total=1)))
+        if not callback:
+            cb = partial(tqdm_wrapper, tqdm(total=1))
+        else:
+            cb = callback
+        raw_to_npz_parallel(to_convert, settings, callback=cb)
         logging.info('File conversion complete.')
 
     settings['experiment']['files_npz'] = files_npz
@@ -112,16 +127,33 @@ def run_alphapept(settings, callback=None):
 
     if len(to_convert) > 0:
         logging.info('Feature extraction for {} file(s).'.format(len(to_convert)))
-        find_and_save_features_parallel(to_convert, settings, callback=partial(tqdm_wrapper, tqdm(total=1)))
+        if not callback:
+            cb = partial(tqdm_wrapper, tqdm(total=1))
+        else:
+            cb = callback
+
+        find_and_save_features_parallel(to_convert, settings, callback=cb)
 
     # First Search
     if settings['fasta']['save_db']:
         logging.info('Starting first search with DB.')
-        fasta_dict, pept_dict = search_parallel_db(settings, callback=partial(tqdm_wrapper, tqdm(total=1)))
+
+        if not callback:
+            cb = partial(tqdm_wrapper, tqdm(total=1))
+        else:
+            cb = callback
+
+        fasta_dict, pept_dict = search_parallel_db(settings, callback=cb)
 
     else:
         logging.info('Starting first search.')
-        fasta_dict = search_parallel(settings, callback=partial(tqdm_wrapper, tqdm(total=1)))
+
+        if not callback:
+            cb = partial(tqdm_wrapper, tqdm(total=1))
+        else:
+            cb = callback
+
+        fasta_dict = search_parallel(settings, callback=cb)
         pept_dict = None
 
     logging.info('First search complete.')
@@ -131,23 +163,46 @@ def run_alphapept(settings, callback=None):
     if settings['search']['calibrate']:
         logging.info('Performing recalibration.')
 
-        offsets = calibrate_hdf_parallel(settings, callback=partial(tqdm_wrapper, tqdm(total=1)))
+        if not callback:
+            cb = partial(tqdm_wrapper, tqdm(total=1))
+        else:
+            cb = callback
+
+        offsets = calibrate_hdf_parallel(settings, callback=cb)
 
         logging.info('Recalibration complete.')
 
         if settings['fasta']['save_db']:
             logging.info('Starting second search with DB.')
-            fasta_dict, pept_dict = search_parallel_db(settings, calibration=offsets, callback=partial(tqdm_wrapper, tqdm(total=1)))
+
+            if not callback:
+                cb = partial(tqdm_wrapper, tqdm(total=1))
+            else:
+                cb = callback
+
+            fasta_dict, pept_dict = search_parallel_db(settings, calibration=offsets, callback=cb)
 
         else:
             logging.info('Starting second search.')
-            fasta_dict = search_parallel(settings, calibration=offsets, callback=partial(tqdm_wrapper, tqdm(total=1)))
+
+            if not callback:
+                cb = partial(tqdm_wrapper, tqdm(total=1))
+            else:
+                cb = callback
+
+            fasta_dict = search_parallel(settings, calibration=offsets, callback=cb)
             pept_dict = None
 
         logging.info('Second search complete.')
 
     # Scoring
-    score_hdf_parallel(settings, callback=partial(tqdm_wrapper, tqdm(total=1)))
+
+    if not callback:
+        cb = partial(tqdm_wrapper, tqdm(total=1))
+    else:
+        cb = callback
+
+    score_hdf_parallel(settings, callback=cb)
     logging.info('Scoring complete.')
 
     if not settings['fasta']['save_db']:
@@ -155,8 +210,14 @@ def run_alphapept(settings, callback=None):
 
     # Protein groups
     logging.info('Extracting protein groups.')
+
+    if not callback:
+        cb = partial(tqdm_wrapper, tqdm(total=1))
+    else:
+        cb = callback
+
     # This is on each file individually -> when having repeats maybe use differently (if this matter at all )
-    protein_groups_hdf_parallel(settings, pept_dict, fasta_dict, callback=partial(tqdm_wrapper, tqdm(total=1)))
+    protein_groups_hdf_parallel(settings, pept_dict, fasta_dict, callback=cb)
     logging.info('Protein groups complete')
 
     logging.info('Assembling dataframe.')
@@ -180,7 +241,13 @@ def run_alphapept(settings, callback=None):
 
         logging.info('Complete. ')
         logging.info('Starting profile extraction.')
-        protein_table = protein_profile_parallel(settings, df_grouped, callback=partial(tqdm_wrapper, tqdm(total=1)))
+
+        if not callback:
+            cb = partial(tqdm_wrapper, tqdm(total=1))
+        else:
+            cb = callback
+
+        protein_table = protein_profile_parallel(settings, df_grouped, callback=cb)
         protein_table.to_hdf(settings['experiment']['evidence'], 'protein_table')
         logging.info('LFQ complete.')
 
