@@ -88,12 +88,14 @@ def main():
     print(r"     ___    __      __          ____             __ ")
     print(r"    /   |  / /___  / /_  ____  / __ \___  ____  / /_")
     print(r"   / /| | / / __ \/ __ \/ __ \/ /_/ / _ \/ __ \/ __/")
-    print(r"  / ___ |/ / /_/ / / / / /_/ / ____/  __/ /_/ / /_  ")
+    print(r"  / ___ |/ / /_/ / / / / /_/ / ____/ ___/ /_/ / /_  ")
     print(r" /_/  |_/_/ .___/_/ /_/\__,_/_/    \___/ .___/\__/  ")
     print(r"         /_/                          /_/           ")
-    print("\n")
-    print(URL)
-    print('{} \t {}'.format(COPYRIGHT, VERSION_NO))
+    print('.'*52)
+    print('.{}.'.format(URL.center(50)))
+    print('.{}.'.format(COPYRIGHT.center(50)))
+    print('.{}.'.format(VERSION_NO.center(50)))
+    print('.'*52)
 
     args = parser.parse_args()
     if args.command:
