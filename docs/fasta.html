@@ -1910,7 +1910,7 @@ The function <a href="/alphapept/fasta#generate_spectra"><code>generate_spectra<
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_fasta_list" class="doc_header"><code>generate_fasta_list</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L536" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_fasta_list</code>(<strong><code>fasta_files</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>contaminants_path</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="generate_fasta_list" class="doc_header"><code>generate_fasta_list</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L536" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_fasta_list</code>(<strong><code>fasta_paths</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to generate a database from a fasta file</p>
 
@@ -1935,7 +1935,7 @@ The function <a href="/alphapept/fasta#generate_spectra"><code>generate_spectra<
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_database" class="doc_header"><code>generate_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L576" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database</code>(<strong><code>mass_dict</code></strong>, <strong><code>fasta_files</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>contaminants_path</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="generate_database" class="doc_header"><code>generate_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L567" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database</code>(<strong><code>mass_dict</code></strong>, <strong><code>fasta_paths</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to generate a database from a fasta file</p>
 
@@ -1960,7 +1960,7 @@ The function <a href="/alphapept/fasta#generate_spectra"><code>generate_spectra<
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_spectra" class="doc_header"><code>generate_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L627" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_spectra</code>(<strong><code>to_add</code></strong>, <strong><code>mass_dict</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="generate_spectra" class="doc_header"><code>generate_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L605" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_spectra</code>(<strong><code>to_add</code></strong>, <strong><code>mass_dict</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Function to generate a database from a fasta file</p>
 
@@ -1999,7 +1999,7 @@ The function <a href="/alphapept/fasta#generate_spectra"><code>generate_spectra<
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="block_idx" class="doc_header"><code>block_idx</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L656" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>block_idx</code>(<strong><code>len_list</code></strong>, <strong><code>block_size</code></strong>=<em><code>1000</code></em>)</p>
+<h4 id="block_idx" class="doc_header"><code>block_idx</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L634" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>block_idx</code>(<strong><code>len_list</code></strong>, <strong><code>block_size</code></strong>=<em><code>1000</code></em>)</p>
 </blockquote>
 <p>Create indices for a list of length len_list</p>
 
@@ -2024,7 +2024,7 @@ The function <a href="/alphapept/fasta#generate_spectra"><code>generate_spectra<
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="blocks" class="doc_header"><code>blocks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L671" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>blocks</code>(<strong><code>l</code></strong>, <strong><code>n</code></strong>)</p>
+<h4 id="blocks" class="doc_header"><code>blocks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L649" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>blocks</code>(<strong><code>l</code></strong>, <strong><code>n</code></strong>)</p>
 </blockquote>
 <p>Create blocks from a given list</p>
 
@@ -2049,7 +2049,7 @@ The function <a href="/alphapept/fasta#generate_spectra"><code>generate_spectra<
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="digest_fasta_block" class="doc_header"><code>digest_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L678" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>digest_fasta_block</code>(<strong><code>to_process</code></strong>)</p>
+<h4 id="digest_fasta_block" class="doc_header"><code>digest_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L656" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>digest_fasta_block</code>(<strong><code>to_process</code></strong>)</p>
 </blockquote>
 <p>Digest and create spectra for a whole fasta_block</p>
 
@@ -2074,7 +2074,7 @@ The function <a href="/alphapept/fasta#generate_spectra"><code>generate_spectra<
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_database_parallel" class="doc_header"><code>generate_database_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L706" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database_parallel</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="generate_database_parallel" class="doc_header"><code>generate_database_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L684" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database_parallel</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Function to generate a database from a fasta file</p>
 
@@ -2115,7 +2115,7 @@ The function <a href="/alphapept/fasta#generate_spectra"><code>generate_spectra<
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="pept_dict_from_search" class="doc_header"><code>pept_dict_from_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L737" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pept_dict_from_search</code>(<strong><code>settings</code></strong>)</p>
+<h4 id="pept_dict_from_search" class="doc_header"><code>pept_dict_from_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L715" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pept_dict_from_search</code>(<strong><code>settings</code></strong>)</p>
 </blockquote>
 <p>Generates a peptide dict from a large search</p>
 

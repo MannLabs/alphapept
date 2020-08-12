@@ -314,30 +314,30 @@ We employ different solvers to recover the normalization parameters.</p>
     <tr>
       <th>0</th>
       <td>L-BFGS-B</td>
-      <td>0.035874</td>
-      <td>0.606441</td>
-      <td>0.379871</td>
+      <td>0.043291</td>
+      <td>0.621706</td>
+      <td>0.361127</td>
     </tr>
     <tr>
       <th>1</th>
       <td>TNC</td>
-      <td>0.027978</td>
-      <td>0.658274</td>
-      <td>0.412339</td>
+      <td>0.028107</td>
+      <td>0.640497</td>
+      <td>0.372043</td>
     </tr>
     <tr>
       <th>2</th>
       <td>SLSQP</td>
-      <td>0.003525</td>
-      <td>0.606441</td>
-      <td>0.379871</td>
+      <td>0.003574</td>
+      <td>0.621706</td>
+      <td>0.361127</td>
     </tr>
     <tr>
       <th>3</th>
       <td>trf</td>
-      <td>0.268478</td>
-      <td>0.606709</td>
-      <td>0.380039</td>
+      <td>0.267972</td>
+      <td>0.622774</td>
+      <td>0.361748</td>
     </tr>
   </tbody>
 </table>
@@ -426,7 +426,7 @@ We employ different solvers to recover the normalization parameters.</p>
 
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;fraction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">6</span>
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;experiment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;shortname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
 
 <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
@@ -516,7 +516,7 @@ We employ different solvers to recover the normalization parameters.</p>
       <th></th>
       <th>precursor</th>
       <th>fraction</th>
-      <th>experiment</th>
+      <th>shortname</th>
       <th>int_sum</th>
       <th>int_sum_dn</th>
     </tr>
@@ -926,22 +926,22 @@ We employ different solvers to recover the normalization parameters.</p>
   <tbody>
     <tr>
       <th>L-FBGS-B</th>
-      <td>0.040392</td>
-      <td>0.346978</td>
+      <td>0.069273</td>
+      <td>0.122071</td>
       <td>0.0</td>
       <td>0.9</td>
     </tr>
     <tr>
       <th>SLSQP</th>
-      <td>0.002092</td>
-      <td>0.102778</td>
+      <td>0.002587</td>
+      <td>0.013742</td>
       <td>0.0</td>
       <td>1.0</td>
     </tr>
     <tr>
       <th>trf</th>
-      <td>0.029278</td>
-      <td>0.102783</td>
+      <td>0.031075</td>
+      <td>0.013742</td>
       <td>0.1</td>
       <td>1.0</td>
     </tr>
@@ -1070,7 +1070,7 @@ We employ different solvers to recover the normalization parameters.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile" class="doc_header"><code>protein_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L324" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile</code>(<strong><code>df</code></strong>, <strong><code>experiments</code></strong>, <strong><code>field_</code></strong>, <strong><code>protein</code></strong>)</p>
+<h4 id="protein_profile" class="doc_header"><code>protein_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L329" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile</code>(<strong><code>df</code></strong>, <strong><code>files</code></strong>, <strong><code>field_</code></strong>, <strong><code>protein</code></strong>)</p>
 </blockquote>
 <p>Calculate the protein profile for a a df based on a dateframe</p>
 
@@ -1095,7 +1095,7 @@ We employ different solvers to recover the normalization parameters.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile_parallel" class="doc_header"><code>protein_profile_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L361" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel</code>(<strong><code>settings</code></strong>, <strong><code>df</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="protein_profile_parallel" class="doc_header"><code>protein_profile_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L366" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel</code>(<strong><code>settings</code></strong>, <strong><code>df</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 
 </div>
@@ -1117,142 +1117,8 @@ We employ different solvers to recover the normalization parameters.</p>
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
 
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;fraction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">6</span>
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;experiment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">18</span>
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
-
-<span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
-
-<span class="n">display</span><span class="p">(</span><span class="n">test_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
-
-<span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
-
-<span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">experiment_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">pre_lfq</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_html rendered_html output_subarea ">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>precursor</th>
-      <th>fraction</th>
-      <th>experiment</th>
-      <th>protein</th>
-      <th>int_sum</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Prec_1</td>
-      <td>1</td>
-      <td>A</td>
-      <td>X</td>
-      <td>0.6</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Prec_1</td>
-      <td>2</td>
-      <td>A</td>
-      <td>X</td>
-      <td>0.8</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Prec_1</td>
-      <td>3</td>
-      <td>A</td>
-      <td>X</td>
-      <td>0.6</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Prec_1</td>
-      <td>1</td>
-      <td>B</td>
-      <td>X</td>
-      <td>1.2</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Prec_1</td>
-      <td>2</td>
-      <td>B</td>
-      <td>X</td>
-      <td>1.6</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>Prec_1</td>
-      <td>3</td>
-      <td>B</td>
-      <td>X</td>
-      <td>1.2</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[ 5.99799033 12.00200967]
-[ 6. 12.]
-</pre>
-</div>
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
-
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;experiment&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;shortname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span>
 
@@ -1262,7 +1128,7 @@ We employ different solvers to recover the normalization parameters.</p>
 
 <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
 
-<span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">experiment_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+<span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">pre_lfq</span><span class="p">)</span>
@@ -1298,7 +1164,7 @@ We employ different solvers to recover the normalization parameters.</p>
     <tr style="text-align: right;">
       <th></th>
       <th>precursor</th>
-      <th>experiment</th>
+      <th>shortname</th>
       <th>protein</th>
       <th>int_sum</th>
     </tr>
@@ -1362,6 +1228,58 @@ We employ different solvers to recover the normalization parameters.</p>
 </div>
 </div>
 
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">test_protein_profile</span><span class="p">():</span>
+    
+    <span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;fraction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">6</span>
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;shortname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">18</span>
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+
+    <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
+
+    <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+
+    <span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+    
+    <span class="c1"># total intensity should be preserved</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">pre_lfq</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+    
+    <span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;shortname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span>
+
+    <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
+
+    <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+
+    <span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">pre_lfq</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+    
+<span class="n">test_protein_profile</span><span class="p">()</span>
+                       
+</pre></div>
+
+    </div>
 </div>
 </div>
 
