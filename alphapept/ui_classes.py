@@ -449,7 +449,11 @@ class SettingsEdit(QWidget):
 			dialog.setFileMode(QFileDialog.AnyFile)
 
 			if dialog.exec_() == QDialog.Accepted:
-				path = str(dialog.selectedFiles()[0]) + filetype_str
+				path = dialog.selectedFiles()[0]
+				path, ext = os.path.splitext(path)
+				if not ext:
+					ext = filetype[0]
+					path = path+'.'+ext
 			else:
 				path = None
 		if path:
