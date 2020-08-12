@@ -15,15 +15,15 @@ COPYRIGHT = "2020 Mann Labs"
 URL = "https://github.com/MannLabs/alphapept"
 
 def _run_alphapept(args):
-    from runner import run_alphapept
-    from settings import load_settings
+    from .runner import run_alphapept
+    from .settings import load_settings
 
     if os.path.isfile(args.settings_path):
         _settings = load_settings(args.settings_path)
         run_alphapept(_settings)
 
 def _convert(args):
-    from io import raw_to_npz
+    from .io import raw_to_npz
     if os.path.isfile(args.rawfile):
         abundant = args.abundant
         settings = {}
