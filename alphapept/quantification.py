@@ -143,14 +143,14 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
     """
     Returns normalization for given peptide intensities
     """
-    experiments = np.sort(df['experiment'].unique()).tolist()
-    n_experiments = len(experiments)
+    files = np.sort(df['shortname'].unique()).tolist()
+    n_files = len(files)
 
     if 'fraction' in df.keys():
         fractions = np.sort(df['fraction'].unique()).tolist()
         n_fractions = len(fractions)
 
-        df_max = df.groupby(['precursor','fraction','experiment'])[field].max() #Maximum per fraction
+        df_max = df.groupby(['precursor','fraction','shortname'])[field].max() #Maximum per fraction
 
         prec_count = df_max.index.get_level_values('precursor').value_counts()
 
@@ -166,25 +166,25 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
         selected_precs = df_max.loc[precs]
         selected_precs = selected_precs.reset_index()
 
-        profiles = np.empty((n_fractions, n_experiments, n_profiles))
+        profiles = np.empty((n_fractions, n_files, n_profiles))
         profiles[:] = np.nan
 
         #get dictionaries
         fraction_dict = {_:i for i,_ in enumerate(fractions)}
-        experiment_dict = {_:i for i,_ in enumerate(experiments)}
+        filename_dict = {_:i for i,_ in enumerate(files)}
         precursor_dict = {_:i for i,_ in enumerate(precs)}
 
         prec_id = [precursor_dict[_] for _ in selected_precs['precursor']]
         frac_id = [fraction_dict[_] for _ in selected_precs['fraction']]
-        ex_id = [experiment_dict[_] for _ in selected_precs['experiment']]
+        file_id = [filename_dict[_] for _ in selected_precs['shortname']]
 
-        profiles[frac_id,ex_id, prec_id] = selected_precs[field]
+        profiles[frac_id,file_id, prec_id] = selected_precs[field]
 
         normalization = normalize_experiment_SLSQP(profiles)
 
         #intensity normalization: total intensity to remain unchanged
 
-        df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [experiment_dict[_] for _ in df['experiment']]]
+        df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [filename_dict[_] for _ in df['shortname']]]
         df[field+'_dn'] *= df[field].sum()/df[field+'_dn'].sum()
 
     else:
@@ -269,17 +269,17 @@ from itertools import combinations
 
 def get_protein_table(df, field = 'int_sum', callback = None):
     unique_proteins = df['protein'].unique()
-    experiments = df['experiment'].unique().tolist()
-    experiments.sort()
+    files = df['shortname'].unique().tolist()
+    files.sort()
 
-    if len(experiments) == 1:
-        raise ValueError('Only one experiment present.')
+    if len(files) == 1:
+        raise ValueError('Only one file present.')
 
     column_combinations = List()
-    [column_combinations.append(_) for _ in combinations(range(len(experiments)), 2)]
+    [column_combinations.append(_) for _ in combinations(range(len(files)), 2)]
 
-    columnes_ext = [_+'_LFQ' for _ in experiments]
-    protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + experiments)
+    columnes_ext = [_+'_LFQ' for _ in files]
+    protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + files)
 
     if field+'_dn' in df.columns:
         field_ = field+'_dn'
@@ -287,24 +287,24 @@ def get_protein_table(df, field = 'int_sum', callback = None):
         field_ = field
 
     # Median normalization
-    median = df.groupby('experiment')[field_].median()
-    df[field_] -= df['experiment'].apply(lambda x: median.loc[x])
+    median = df.groupby('shortname')[field_].median()
+    df[field_] -= df['shortname'].apply(lambda x: median.loc[x])
 
 
     for idx, protein in enumerate(unique_proteins):
         subset = df[df['protein'] == protein].copy()
-        per_protein = subset.groupby(['experiment','precursor'])[field_].sum().unstack().T
+        per_protein = subset.groupby(['shortname','precursor'])[field_].sum().unstack().T
 
-        for _ in experiments:
+        for _ in files:
             if _ not in per_protein.columns:
                 per_protein[_] = np.nan
 
-        per_protein = per_protein[experiments]
+        per_protein = per_protein[files]
 
         ratios = get_protein_ratios(per_protein.values, column_combinations)
         solution, success = solve_profile_SLSQP(ratios)
 
-        experiment_ids = per_protein.columns.tolist()
+        file_ids = per_protein.columns.tolist()
 
         pre_lfq = per_protein.sum().values
 
@@ -315,8 +315,8 @@ def get_protein_table(df, field = 'int_sum', callback = None):
             profile = total_int * subset[field_].sum().sum() / np.sum(total_int) #Normalize inensity again
 
 
-        protein_table.loc[protein, [_+'_LFQ' for _ in experiment_ids]] = profile
-        protein_table.loc[protein, experiment_ids] = pre_lfq
+        protein_table.loc[protein, [_+'_LFQ' for _ in file_ids]] = profile
+        protein_table.loc[protein, file_ids] = pre_lfq
 
         if callback:
             callback((idx+1)/len(unique_proteins))
@@ -326,27 +326,27 @@ def get_protein_table(df, field = 'int_sum', callback = None):
 
     return protein_table
 
-def protein_profile(df, experiments, field_, protein):
+def protein_profile(df, files, field_, protein):
     """
     Calculate the protein profile for a a df based on a dateframe
 
     """
     column_combinations = List()
-    [column_combinations.append(_) for _ in combinations(range(len(experiments)), 2)]
+    [column_combinations.append(_) for _ in combinations(range(len(files)), 2)]
 
     subset = df[df['protein'] == protein].copy()
-    per_protein = subset.groupby(['experiment','precursor'])[field_].sum().unstack().T
+    per_protein = subset.groupby(['shortname','precursor'])[field_].sum().unstack().T
 
-    for _ in experiments:
+    for _ in files:
         if _ not in per_protein.columns:
             per_protein[_] = np.nan
 
-    per_protein = per_protein[experiments]
+    per_protein = per_protein[files]
 
     ratios = get_protein_ratios(per_protein.values, column_combinations)
     solution, success = solve_profile_SLSQP(ratios)
 
-    experiment_ids = per_protein.columns.tolist()
+    file_ids = per_protein.columns.tolist()
     pre_lfq = per_protein.sum().values
 
     if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
@@ -355,7 +355,7 @@ def protein_profile(df, experiments, field_, protein):
         total_int = subset[field_].sum() * solution
         profile = total_int * subset[field_].sum().sum() / np.sum(total_int) #Normalize inensity again
 
-    return profile, pre_lfq, experiment_ids, protein
+    return profile, pre_lfq, file_ids, protein
 
 
 import os
@@ -369,13 +369,13 @@ def protein_profile_parallel(settings, df, callback=None):
     field = settings['quantification']['mode']
 
     unique_proteins = df['protein'].unique().tolist()
-    experiments = df['experiment'].unique().tolist()
-    files = df['filename'].unique().tolist()
 
-    experiments.sort()
+    files = df['shortname'].unique().tolist()
 
-    columnes_ext = [_+'_LFQ' for _ in experiments]
-    protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + experiments)
+    files.sort()
+
+    columnes_ext = [_+'_LFQ' for _ in files]
+    protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + files)
 
     if field+'_dn' in df.columns:
         field_ = field+'_dn'
@@ -383,24 +383,24 @@ def protein_profile_parallel(settings, df, callback=None):
         field_ = field
 
     # Median normalization
-    median = df.groupby('experiment')[field_].median()
-    df[field_] -= df['experiment'].apply(lambda x: median.loc[x])
+    median = df.groupby('shortname')[field_].median()
+    df[field_] -= df['shortname'].apply(lambda x: median.loc[x])
 
     results = []
 
-    if (len(files) > 1) and (len(experiments) > 1):
+    if len(files) > 1:
         with Pool(n_processes) as p:
             max_ = len(unique_proteins)
-            for i, _ in enumerate(p.imap_unordered(partial(protein_profile, df, experiments, field_), unique_proteins)):
+            for i, _ in enumerate(p.imap_unordered(partial(protein_profile, df, files, field_), unique_proteins)):
                 results.append(_)
                 if callback:
                     callback((i+1)/max_)
 
         for result in results:
 
-            profile, pre_lfq, experiment_ids, protein = result
-            protein_table.loc[protein, [_+'_LFQ' for _ in experiment_ids]] = profile
-            protein_table.loc[protein, experiment_ids] = pre_lfq
+            profile, pre_lfq, file_ids, protein = result
+            protein_table.loc[protein, [_+'_LFQ' for _ in file_ids]] = profile
+            protein_table.loc[protein, file_ids] = pre_lfq
 
         protein_table[protein_table == 0] = np.nan
         protein_table = protein_table.astype('float')
@@ -408,7 +408,7 @@ def protein_profile_parallel(settings, df, callback=None):
         protein_table = df.groupby(['protein'])[field_].sum().to_frame().reset_index()
         protein_table = protein_table.set_index('protein')
         protein_table.index.name = None
-        protein_table.columns=[experiments[0]]
+        protein_table.columns=[files[0]]
 
         if callback:
             callback(1)

@@ -1,4 +1,8 @@
-
+small_font = (
+    "    font-family: Roboto Thin;\n"
+    "    color: white;\n"
+    "    font-size: 14pt; \n"
+    )
 
 big_font = (
     "    font-family: Roboto Thin;\n"

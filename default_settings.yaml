@@ -4,8 +4,15 @@ calibration:
   min_rt_step: 50
   minimum_score: 20
   outlier_std: 3
+experiment:
+  file_paths: []
+  fractions: []
+  results_path: null
+  shortnames: []
 fasta:
+  database_path: null
   fasta_block: 1000
+  fasta_paths: []
   max_isoforms: 1024
   max_length: 27
   min_length: 6
@@ -30,8 +37,6 @@ features:
   ppm_tol: 8
   smoothing: 1
 general:
-  convert_raw: true
-  create_library: true
   find_features: true
   n_processes: 128
   ppm: true

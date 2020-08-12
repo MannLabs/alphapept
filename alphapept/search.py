@@ -1038,8 +1038,12 @@ def search_parallel_db(settings, calibration = None, callback = None):
     """
     Function to generate a database from a fasta file
     """
+    files_npz = []
 
-    files_npz = settings['experiment']['files_npz']
+    for _ in settings['experiment']['file_paths']:
+        base, ext = os.path.splitext(_)
+        npz_path = base+'.npz'
+        files_npz.append(npz_path)
 
     if calibration:
         custom_settings = []
@@ -1156,7 +1160,12 @@ def search_parallel(settings, calibration = None, callback = None):
     fasta_list, fasta_dict = generate_fasta_list(**settings['fasta'])
 
     fasta_block = settings['fasta']['fasta_block']
-    files_npz = settings['experiment']['files_npz']
+    files_npz = []
+
+    for _ in settings['experiment']['file_paths']:
+        base, ext = os.path.splitext(_)
+        npz_path = base+'.npz'
+        files_npz.append(npz_path)
 
     if calibration:
         custom_settings = []

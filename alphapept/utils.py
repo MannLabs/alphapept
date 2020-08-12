@@ -3,6 +3,14 @@ import logging
 import pandas as pd
 import os
 
+def check_file(file):
+    if not os.path.isfile(file):
+        raise FileNotFoundError(file)
+
+def check_dir(dir):
+    if not os.path.isdir(dir):
+        raise FileNotFoundError(dir)
+
 def log_me(given_function):
     """
     Decorator to track function execution
@@ -36,24 +44,44 @@ def check_python_env():
         raise RuntimeError('Numba version {} not sufficient'.format(numba.__version__))
 
 def check_settings(settings):
+    #_this_file = os.path.abspath(__file__)
+    #_this_directory = os.path.dirname(_this_file)
     import multiprocessing
     logging.info('Check for settings not completely implemented yet.')
 
     n_set = settings['general']['n_processes']
     n_actual = multiprocessing.cpu_count()
 
+    logging.info('Checking CPU settings.')
     if n_set > n_actual:
         settings['general']['n_processes'] = n_actual
         logging.info('Setting number of processes to {}.'.format(n_actual))
 
-    for file in settings['experiment']['files']:
+    logging.info('Checking if files exist.')
+    for file in settings['experiment']['file_paths']:
         if file.endswith('.d'):
-            if not os.path.isdir(file):
-                raise FileNotFoundError(file)
+            check_dir(file)
         else:
-            if not os.path.isfile(file):
-                raise FileNotFoundError(file)
+            check_file(file)
 
+    for file in settings['fasta']['fasta_paths']:
+        check_file(file)
+
+    if not settings['experiment']['results_path']:
+        file_dir = os.path.dirname(settings['experiment']['file_paths'][0])
+        settings['experiment']['results_path'] = os.path.normpath(os.path.join(file_dir, 'results.hdf'))
+        logging.info('Results path was not set. Setting to {}'.format(settings['experiment']['results_path']))
+
+    if settings['experiment']['shortnames'] == []:
+        logging.info('Shortnames not set. Setting to filename.')
+        shortnames = [os.path.splitext(os.path.split(_)[1])[0] for _ in settings['experiment']['file_paths']]
+        settings['experiment']['shortnames'] = shortnames
+
+    if settings['fasta']['save_db']:
+        if not settings['fasta']['database_path']:
+            file_dir = os.path.dirname(settings['experiment']['file_paths'][0])
+            settings['fasta']['database_path'] = os.path.normpath(os.path.join(file_dir, 'database.npz'))
+            logging.info('No database path set and save_db option checked. Using default path {}'.format(settings['fasta']['database_path']))
 
     return settings
 
@@ -62,23 +90,18 @@ def assemble_df(settings, callback = None):
     Todo we could save this to disk
     include callback
     """
-    files_npz = settings['experiment']['files_npz']
-
-    paths = [os.path.splitext(_)[0]+'.hdf' for _ in files_npz]
-
+    paths = [os.path.splitext(_)[0]+'.hdf' for _ in settings['experiment']['file_paths']]
+    shortnames = settings['experiment']['shortnames']
     all_dfs = []
     for idx, _ in enumerate(paths):
 
         df = pd.read_hdf(_,'protein_fdr')
         df['filename'] = _
+        df['shortname'] = shortnames[idx]
 
         if 'fraction' in settings['experiment'].keys():
             if settings['experiment']['fraction'] != []:
                 df['fraction'] = settings['experiment']['fraction'][idx]
-        if 'experiment' in settings['experiment'].keys():
-            if settings['experiment']['experiment'] != []:
-                df['experiment'] = settings['experiment']['experiment'][idx]
-
         all_dfs.append(df)
 
         if callback:
@@ -88,7 +111,7 @@ def assemble_df(settings, callback = None):
 
     # Here we could save things
 
-    xx.to_hdf(settings['experiment']['evidence'], 'combined_protein_fdr')
+    xx.to_hdf(settings['experiment']['results_path'], 'combined_protein_fdr')
 
     return xx
 

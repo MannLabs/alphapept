@@ -1,14 +1,17 @@
 from PyQt5.QtCore import QUrl, QSize, QThread, pyqtSignal, Qt, QAbstractTableModel, QCoreApplication
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTableView, QTabWidget, QPlainTextEdit, QProgressBar, QSpinBox, QGroupBox, QCheckBox, QDoubleSpinBox, QTreeWidget, QTreeWidgetItem, QComboBox, QAbstractScrollArea, QPushButton, QTableWidget, QStackedWidget, QWidget, QMainWindow, QApplication, QStyleFactory, QHBoxLayout, QVBoxLayout, QLabel, QSpacerItem, QSizePolicy
+from PyQt5.QtWidgets import QLineEdit, QFileDialog, QMessageBox, QTableView, QTabWidget, QPlainTextEdit, QProgressBar, QSpinBox, QGroupBox, QCheckBox, QDoubleSpinBox, QTreeWidget, QTreeWidgetItem, QComboBox, QAbstractScrollArea, QPushButton, QTableWidget, QStackedWidget, QWidget, QMainWindow, QApplication, QStyleFactory, QHBoxLayout, QVBoxLayout, QLabel, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QIcon, QPixmap, QMovie, QDesktopServices
 from PyQt5.QtCore import pyqtSlot
 
 import sys
 import os
 
+import traceback
+
 from functools import partial
 
 from .stylesheets import (
+	small_font,
 	big_font,
 	version_font,
 	logo_font,
@@ -185,26 +188,14 @@ class MainWindow(QMainWindow):
 		self.label_files.setStyleSheet(logo_font)
 		self.files_layout.addWidget(self.label_files)
 
-		self.experiment_file = QPushButton("Set experiment filename")
-		self.files_layout.addWidget(self.experiment_file)
-
-		self.experiment_file.clicked.connect(self.set_experiment_file)
-
-		self.file_selector = RawFileSelector(["Filename","Experiment","Fraction"])
+		self.file_selector = RawFileSelector(["Filename","Shortname","Fraction"])
 		self.files_layout.addWidget(QLabel("Experimental files"))
-
 
 		self.files_layout.addWidget(self.file_selector)
 
 		self.files_layout.addWidget(QLabel("FASTA files"))
 		self.fasta_selector = FastaFileSelector(["Filename"])
 		self.files_layout.addWidget(self.fasta_selector)
-
-		self.database_file = QPushButton("Select database file")
-		self.files_layout.addWidget(self.database_file)
-
-		self.database_file.clicked.connect(self.set_database_file)
-
 
 		self.files_layout.addItem(QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding))
 
@@ -221,6 +212,7 @@ class MainWindow(QMainWindow):
 		self.label_settings.setStyleSheet(logo_font)
 		self.settings_layout.addWidget(self.label_settings)
 		self.combo_settings = QComboBox()
+		self.combo_settings.setStyleSheet("QListView::item {height:20px;}")
 		self.combo_settings.addItem("default")
 		self.settings_layout.addWidget(self.combo_settings)
 
@@ -371,6 +363,7 @@ class MainWindow(QMainWindow):
 
 		#Add files here.. select with dropdown columns
 		self.explore_files = QComboBox()
+		self.explore_files.setStyleSheet("QListView::item {height:20px;}")
 		self.verticalLayout_3.addWidget(self.explore_files)
 
 		self.explore_files.currentIndexChanged.connect(
@@ -433,19 +426,8 @@ class MainWindow(QMainWindow):
 
 		logging.info("AlphaPept version {} started.".format(VERSION_NO))
 
-		# Start with Run page
-		self.stackedWidget.setCurrentIndex(2)
-
-	def set_experiment_file(self):
-		path, ext = QFileDialog.getSaveFileName(self, "Save file to", "", '.hdf')
-		if path:
-			self.experiment_file.setText(path + ext)
-
-	def set_database_file(self):
-		path, ext = QFileDialog.getSaveFileName(self, "Set databse file", "", '.npz')
-		if path:
-			self.database_file.setText(path + ext)
-
+		# Start with Experiment page
+		self.stackedWidget.setCurrentIndex(0)
 
 	def onCountChanged(self, value):
 		cpu = psutil.cpu_percent()
@@ -468,14 +450,14 @@ class MainWindow(QMainWindow):
 		settings = self.read_settings()
 		#Check which hdf files exist already and display them
 		selectable = ["Select file.."]
-		for _ in settings['experiment']['files']:
+		for _ in settings['experiment']['file_paths']:
 			base, ext = os.path.splitext(_)
 			hdf_path = base+'.hdf'
 
 			if os.path.isfile(hdf_path):
 				selectable.append(hdf_path)
 
-		evidence_path = settings['experiment']['evidence']
+		evidence_path = settings['experiment']['results_path']
 		if os.path.isfile(evidence_path):
 			selectable.append(evidence_path)
 
@@ -484,6 +466,11 @@ class MainWindow(QMainWindow):
 
 	def page_help(self):
 		self.stackedWidget.setCurrentIndex(4)
+
+
+	def main_method_test(self):
+
+		print('Calling main method')
 
 	def read_settings(self):
 		settings = self.settingsWidget.read_settings()
@@ -498,38 +485,32 @@ class MainWindow(QMainWindow):
 
 		paths = [_.replace("\\", "/") for _ in paths]
 
-		settings['experiment']['files'] = paths
+		settings['experiment']['file_paths'] = paths
 
-		experiments = files['Experiment'].values.tolist()
+		shortnames = files['Shortname'].values.tolist()
 
-		settings['experiment']['evidence'] = self.experiment_file.text()
-		settings['fasta']['database_path'] = self.database_file.text()
-
-		if None in experiments:
-			logging.info('Undefined experiment names found. Replacing with filename.')
+		if None in shortnames:
+			logging.info('Undefined shortnames found. Replacing with filename.')
 
 			for idx, _ in enumerate(paths):
-				if not experiments[idx]:
+				if not shortnames[idx]:
 					base, filename = os.path.split(paths[idx])
-					experiments[idx] = filename
+					shortnames[idx] = filename
 
-		settings['experiment']['experiment'] = experiments
+		settings['experiment']['shortnames'] = shortnames
 
 		fractions = files['Fraction'].values.tolist()
 
 		if None in fractions:
 			logging.info('None values in fractions found or fractions undefined. Ignoring fractions.')
-
 			fractions = []
 
 		settings['experiment']['fractions'] = fractions
 
-		fasta_files = fasta_table['Filename'].values.tolist()
+		fasta_paths = fasta_table['Filename'].values.tolist()
 
-		fasta_files = [_.replace("\\", "/") for _ in fasta_files]
-
-		settings['fasta']['fasta_files'] = fasta_files
-
+		fasta_paths = [_.replace("\\", "/") for _ in fasta_paths]
+		settings['fasta']['fasta_paths'] = fasta_paths
 		settings['experiment']['alphapept_version'] = VERSION_NO
 
 		self.settings = settings
@@ -561,21 +542,18 @@ class MainWindow(QMainWindow):
 		)
 		if path:
 			with open(path, "r") as settings_file:
-				try:
-					settings = yaml.load(settings_file, Loader=yaml.FullLoader)
-					self.settingsWidget.set_settings(settings)
-					ex_settings = settings['experiment']
-					fasta_settings = settings['fasta']
-					print(fasta_settings)
-					self.fasta_selector.set_table(pd.DataFrame([fasta_settings['fasta_files']]).T)
-					self.file_selector.set_table(pd.DataFrame([ex_settings['files'], ex_settings['experiment'], ex_settings['fractions']]).T)
+				#try:
+				settings = yaml.load(settings_file, Loader=yaml.FullLoader)
+				self.settingsWidget.set_settings(settings)
+				ex_settings = settings['experiment']
+				fasta_settings = settings['fasta']
 
-					self.experiment_file.setText(ex_settings['evidence'])
-					self.database_file.setText(fasta_settings['database_path'])
+				self.fasta_selector.set_table(pd.DataFrame([fasta_settings['fasta_paths']]).T)
+				self.file_selector.set_table(pd.DataFrame([ex_settings['file_paths'], ex_settings['shortnames'], ex_settings['fractions']]).T)
 
-					logging.info('Loaded settings from {}.'.format(path))
-				except Exception as e:
-					logging.error('The following error occured loading the settings field: {}'.format(e))
+				logging.info('Loaded settings from {}.'.format(path))
+				#except Exception as e:
+					#logging.error('The following error occured loading the settings field: {}'.format(e))
 
 
 	def save_settings(self):

@@ -53,13 +53,11 @@ def run_alphapept(settings, callback=None):
             logging.info('Database path set and exists. Using {} as database.'.format(database_path))
         else:
             logging.info('Database path {} is not a file.'.format(database_path))
-            for fasta_file in settings['fasta']['fasta_files']:
+            for fasta_file in settings['fasta']['fasta_paths']:
                 if os.path.isfile(fasta_file):
                     logging.info('Found FASTA file {} with size {:.2f} Mb.'.format(fasta_file, os.stat(fasta_file).st_size/(1024**2)))
                 else:
                     raise FileNotFoundError('File {} not found'.format(fasta_file))
-
-            settings['fasta']['database_path']
 
             logging.info('Creating a new database from FASTA.')
 
@@ -83,7 +81,7 @@ def run_alphapept(settings, callback=None):
     files_npz = []
     to_convert = []
 
-    for _ in settings['experiment']['files']:
+    for _ in settings['experiment']['file_paths']:
         base, ext = os.path.splitext(_)
         npz_path = base+'.npz'
         files_npz.append(npz_path)
@@ -103,11 +101,9 @@ def run_alphapept(settings, callback=None):
         raw_to_npz_parallel(to_convert, settings, callback=cb)
         logging.info('File conversion complete.')
 
-    settings['experiment']['files_npz'] = files_npz
-
     # Feature Finding
     to_convert = []
-    for _ in settings['experiment']['files']:
+    for _ in settings['experiment']['file_paths']:
         base, ext = os.path.splitext(_)
         hdf_path = base+'.hdf'
 
@@ -224,7 +220,6 @@ def run_alphapept(settings, callback=None):
     df = assemble_df(settings)
     logging.info('Assembly complete.')
 
-
     field = settings['quantification']['mode']
 
     if field in df.keys(): #Check if the quantification information exists.
@@ -232,12 +227,12 @@ def run_alphapept(settings, callback=None):
         if 'fraction' in df.keys():
             logging.info('Delayed Normalization.')
             df, normalization = delayed_normalization(df, field)
-            pd.DataFrame(normalization).to_hdf(settings['experiment']['evidence'], 'fraction_normalization')
-            df_grouped = df.groupby(['experiment', 'precursor', 'protein', 'filename'])[['{}_dn'.format(field)]].sum().reset_index()
+            pd.DataFrame(normalization).to_hdf(settings['experiment']['results_path'], 'fraction_normalization')
+            df_grouped = df.groupby(['shortname', 'precursor', 'protein', 'filename'])[['{}_dn'.format(field)]].sum().reset_index()
         else:
-            df_grouped = df.groupby(['experiment', 'precursor', 'protein', 'filename'])[field].sum().reset_index()
+            df_grouped = df.groupby(['shortname', 'precursor', 'protein', 'filename'])[field].sum().reset_index()
 
-        df.to_hdf(settings['experiment']['evidence'], 'combined_protein_fdr_dn')
+        df.to_hdf(settings['experiment']['results_path'], 'combined_protein_fdr_dn')
 
         logging.info('Complete. ')
         logging.info('Starting profile extraction.')
@@ -248,10 +243,10 @@ def run_alphapept(settings, callback=None):
             cb = callback
 
         protein_table = protein_profile_parallel(settings, df_grouped, callback=cb)
-        protein_table.to_hdf(settings['experiment']['evidence'], 'protein_table')
+        protein_table.to_hdf(settings['experiment']['results_path'], 'protein_table')
         logging.info('LFQ complete.')
 
-    base, ext = os.path.splitext(settings['experiment']['evidence'])
+    base, ext = os.path.splitext(settings['experiment']['results_path'])
     out_path_settings = base+'.yaml'
 
     with open(out_path_settings, 'w') as file:

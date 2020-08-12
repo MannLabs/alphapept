@@ -60,7 +60,7 @@ def cleave_sequence(
 import re
 from alphapept import constants
 
-def count_missed_cleavages(sequence="", protease="trypsin",**kwargs):
+def count_missed_cleavages(sequence="", protease="trypsin", **kwargs):
     """
     Counts the number of missed cleavages for a given sequence and protease
     """
@@ -70,7 +70,7 @@ def count_missed_cleavages(sequence="", protease="trypsin",**kwargs):
     n_missed = len(p.findall(sequence))
     return n_missed
 
-def count_internal_cleavages(sequence="", protease="trypsin",**kwargs):
+def count_internal_cleavages(sequence="", protease="trypsin", **kwargs):
     """
     Counts the number of internal cleavage sites for a given sequence and protease
     """
@@ -533,7 +533,7 @@ def merge_pept_dicts(list_of_pept_dicts):
 # Cell
 from collections import OrderedDict
 
-def generate_fasta_list(fasta_files, callback = None, contaminants_path = None, **kwargs):
+def generate_fasta_list(fasta_paths, callback = None, **kwargs):
     """
     Function to generate a database from a fasta file
     """
@@ -543,14 +543,14 @@ def generate_fasta_list(fasta_files, callback = None, contaminants_path = None, 
 
     fasta_index = 0
 
-    if type(fasta_files) is str:
-        fasta_files = [fasta_files]
+    if type(fasta_paths) is str:
+        fasta_paths = [fasta_paths]
         n_fastas = 1
 
-    elif type(fasta_files) is list:
-        n_fastas = len(fasta_files)
+    elif type(fasta_paths) is list:
+        n_fastas = len(fasta_paths)
 
-    for f_id, fasta_file in enumerate(fasta_files):
+    for f_id, fasta_file in enumerate(fasta_paths):
         n_entries = read_fasta_file_entries(fasta_file)
 
         fasta_generator = read_fasta_file(fasta_file)
@@ -561,19 +561,10 @@ def generate_fasta_list(fasta_files, callback = None, contaminants_path = None, 
                 fasta_dict[fasta_index] = element
                 fasta_index += 1
 
-    if contaminants_path:
-        fasta_generator = read_fasta_file(contaminants_path)
-
-        for element in fasta_generator:
-            if check_sequence(element, constants.AAs):
-                fasta_list.append(element)
-                fasta_dict[fasta_index] = element
-                fasta_index += 1
-
     return fasta_list, fasta_dict
 
 
-def generate_database(mass_dict, fasta_files, callback = None, contaminants_path = None, **kwargs):
+def generate_database(mass_dict, fasta_paths, callback = None, **kwargs):
     """
     Function to generate a database from a fasta file
     """
@@ -583,14 +574,14 @@ def generate_database(mass_dict, fasta_files, callback = None, contaminants_path
 
     pept_dict = {}
 
-    if type(fasta_files) is str:
-        fasta_files = [fasta_files]
+    if type(fasta_paths) is str:
+        fasta_paths = [fasta_paths]
         n_fastas = 1
 
-    elif type(fasta_files) is list:
-        n_fastas = len(fasta_files)
+    elif type(fasta_paths) is list:
+        n_fastas = len(fasta_paths)
 
-    for f_id, fasta_file in enumerate(fasta_files):
+    for f_id, fasta_file in enumerate(fasta_paths):
         n_entries = read_fasta_file_entries(fasta_file)
 
         fasta_generator = read_fasta_file(fasta_file)
@@ -607,19 +598,6 @@ def generate_database(mass_dict, fasta_files, callback = None, contaminants_path
 
             if callback:
                 callback(fasta_index/n_entries/n_fastas+f_id)
-
-    if contaminants_path:
-        fasta_generator = read_fasta_file(contaminants_path)
-
-        for element in fasta_generator:
-            if check_sequence(element, constants.AAs):
-                fasta_dict[fasta_index] = element
-                mod_peptides = generate_peptides(element["sequence"], **kwargs)
-                pept_dict, added_seqs = add_to_pept_dict(pept_dict, mod_peptides, fasta_index)
-                if len(added_seqs) > 0:
-                    to_add.extend(added_seqs)
-
-            fasta_index += 1
 
     return to_add, pept_dict, fasta_dict
 
