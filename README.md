@@ -45,7 +45,7 @@ For the windows installation, simply click on the shortcut after installation. T
 
 Once AlphaPept is correctly installed you can use it like any other python module.
 
-```python
+```
 from alphapept.fasta import get_frag_dict, parse
 from alphapept import constants
 
