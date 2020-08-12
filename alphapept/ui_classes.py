@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QUrl, QSize, QThread, pyqtSignal, Qt, QAbstractTableModel, QCoreApplication
-from PyQt5.QtWidgets import QTableWidgetItem, QTableView, QTabWidget, QPlainTextEdit, QProgressBar, QSpinBox, QGroupBox, QCheckBox, QDoubleSpinBox, QTreeWidget, QTreeWidgetItem, QComboBox, QAbstractScrollArea, QPushButton, QTableWidget, QStackedWidget, QWidget, QMainWindow, QApplication, QStyleFactory, QHBoxLayout, QVBoxLayout, QLabel, QSpacerItem, QSizePolicy
+from PyQt5.QtCore import QDir, QUrl, QSize, QThread, pyqtSignal, Qt, QAbstractTableModel, QCoreApplication
+from PyQt5.QtWidgets import QListWidget, QDialog, QFileDialog, QTableWidgetItem, QTableView, QTabWidget, QPlainTextEdit, QProgressBar, QSpinBox, QGroupBox, QCheckBox, QDoubleSpinBox, QTreeWidget, QTreeWidgetItem, QComboBox, QAbstractScrollArea, QPushButton, QTableWidget, QStackedWidget, QWidget, QMainWindow, QApplication, QStyleFactory, QHBoxLayout, QVBoxLayout, QLabel, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QIcon, QPixmap, QMovie
 from PyQt5.QtCore import pyqtSlot
 
@@ -405,9 +405,15 @@ class SettingsEdit(QWidget):
 				elif isinstance(widget, QDoubleSpinBox):
 					settings[category][widget_name] = widget.value()
 				elif isinstance(widget, QPushButton):
-					settings[category][widget_name] = widget.text()
+					text = widget.text()
+					if text == '':
+						text = None
+					settings[category][widget_name] = text
 				elif isinstance(widget, QComboBox):
 					settings[category][widget_name] = widget.currentText()
+				elif isinstance(widget, QListWidget):
+					item_list =  [str(widget.item(i).text()) for i in range(widget.count())]
+					settings[category][widget_name] = item_list
 				elif isinstance(widget, QCheckBox):
 					state = widget.checkState()
 					if state == 2:
@@ -415,6 +421,7 @@ class SettingsEdit(QWidget):
 					else:
 						state = False
 					settings[category][widget_name] = state
+				#elif isinstance(widget, QLabel):
 				elif isinstance(widget, dict):
 					checked = []
 					for _ in widget.keys():
@@ -422,11 +429,31 @@ class SettingsEdit(QWidget):
 							checked.append(_)
 					settings[category][widget_name] = checked
 				else:
-					print(widget.__class__)
-					print("This should never happen..")
-					raise NotImplementedError
+					raise NotImplementedError("Widget class {} not supported.".format(widget.__class__))
 
 		return settings
+
+	def set_path(self, category, subcategory):
+		filetype = self.settings_template[category][subcategory]["filetype"]
+
+		filetype_str = "".join(["*." + _ + ", " for _ in filetype])[:-2]
+		folder = self.settings_template[category][subcategory]["folder"]
+
+		if folder:
+			path = QFileDialog.getExistingDirectory(self, "Select directory")
+		else:
+			dialog = QFileDialog(self)
+			dialog.setWindowTitle('Select path')
+			dialog.setNameFilter(filetype_str)
+			dialog.setDirectory(QDir.currentPath())
+			dialog.setFileMode(QFileDialog.AnyFile)
+
+			if dialog.exec_() == QDialog.Accepted:
+				path = str(dialog.selectedFiles()[0]) + filetype_str
+			else:
+				path = None
+		if path:
+			self.categories[category]["widgets"][subcategory].setText(path)
 
 	def init_tree(self):
 
@@ -511,14 +538,33 @@ class SettingsEdit(QWidget):
 
 				elif type == "path":
 					# Make path clickable
-					pass
+					default = self.settings_template[category][subcategory]["default"]
+					widgets[subcategory] = QPushButton(default)
+					widgets[subcategory].clicked.connect(
+						partial(self.set_path, category, subcategory)
+					)
 
 				elif type == "checkgroup":
 					pass
 
+				elif type == "placeholder":
+					default_state = self.settings_template[category][subcategory][
+						"default"
+					]
+					widgets[subcategory] = QLabel(default_state)
+
+				elif type == "list":
+					default_state = self.settings_template[category][subcategory][
+						"default"
+					]
+					widgets[subcategory] = QListWidget()
+					widgets[subcategory].setMaximumHeight(40)
+
+					for _ in default_state:
+						widgets[subcategory].addItem(_)
+
 				else:
-					print(category, subcategory)
-					raise NotImplementedError
+					raise NotImplementedError('Category not implemented {} - {}'.format(category, subcategory))
 
 				if subcategory in widgets.keys():
 					self.treeWidget.setItemWidget(
@@ -574,20 +620,20 @@ class SettingsEdit(QWidget):
 					widget.setEnabled(False)
 				elif isinstance(widget, QCheckBox):
 					widget.setEnabled(False)
+				elif isinstance(widget, QListWidget):
+					widget.setEnabled(False)
 				elif isinstance(widget, dict):
 					for _ in widget.keys():
 						widget[_].setFlags(Qt.NoItemFlags)
 				else:
-					print(widget.__class__)
-					print("This should never happen..")
-					raise NotImplementedError
+					raise NotImplementedError("Widget class {} not supported.".format(widget.__class__))
 	#def enable_settings(self):
 
 	def set_settings(self, settings):
 		for category in settings.keys():
 			if category != 'experiment':
 				for subcategory in settings[category].keys():
-					if (subcategory != 'fasta_files') and (subcategory != 'database_path'):
+					if subcategory != 'fasta_paths':
 						value = settings[category][subcategory]
 						widget = self.categories[category]["widgets"][subcategory]
 						if isinstance(widget, QSpinBox):
@@ -596,6 +642,9 @@ class SettingsEdit(QWidget):
 							widget.setValue(value)
 						elif isinstance(widget, QPushButton):
 							widget.setText(value)
+						elif isinstance(widget, QListWidget):
+							for _ in value:
+								widget.addItem(_)
 						elif isinstance(widget, QComboBox):
 							# Find and set
 							idx = widget.findText(value)
@@ -614,5 +663,4 @@ class SettingsEdit(QWidget):
 									widget[_].setCheckState(1, Qt.Checked)
 
 						else:
-							print("Error")
-							raise NotImplementedError
+							raise NotImplementedError("Cannot set widget class {}.".format(widget.__class__))

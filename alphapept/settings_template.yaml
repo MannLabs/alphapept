@@ -31,13 +31,44 @@ calibration:
     max: 5
     min: 1
     type: spinbox
+experiment:
+  file_paths:
+    default: []
+    description: Filepaths of the experiments.
+    type: list
+  fractions:
+    default: []
+    description: List of fractions for the raw files.
+    type: list
+  results_path:
+    default: null
+    description: Path where the results should be stored.
+    filetype:
+    - hdf
+    folder: false
+    type: path
+  shortnames:
+    default: []
+    description: List of shortnames for the raw files.
+    type: list
 fasta:
+  database_path:
+    default: null
+    description: Path to library file (.npz).
+    filetype:
+    - npz
+    folder: false
+    type: path
   fasta_block:
     default: 1000
     description: Number of fasta entries to be processed in one block.
     max: 10000
     min: 100
     type: spinbox
+  fasta_paths:
+    default: []
+    description: List of paths for FASTA files.
+    type: list
   max_isoforms:
     default: 1024
     description: Maximum number of isoforms per peptide.
@@ -214,14 +245,6 @@ features:
     min: 1
     type: spinbox
 general:
-  convert_raw:
-    default: true
-    description: Flag to re-create the npz container from raw.
-    type: checkbox
-  create_library:
-    default: true
-    description: Flag to re-create the database from fasta.
-    type: checkbox
   find_features:
     default: true
     description: Flag to perform feature finding.

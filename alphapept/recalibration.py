@@ -124,7 +124,12 @@ def calibrate_hdf(to_process):
 
 def calibrate_hdf_parallel(settings, callback=None):
 
-    files_npz = settings['experiment']['files_npz']
+    files_npz = []
+
+    for _ in settings['experiment']['file_paths']:
+        base, ext = os.path.splitext(_)
+        npz_path = base+'.npz'
+        files_npz.append(npz_path)
 
     paths = [os.path.splitext(_)[0]+'.hdf' for _ in files_npz]
 
