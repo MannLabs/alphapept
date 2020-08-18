@@ -31,6 +31,97 @@ def get_most_abundant(mass, intensity, n_max):
     return mass[sortindex], intensity[sortindex]
 
 # Cell
+def load_thermo_raw_pyRawFileReader(raw_file, most_abundant, callback=None, **kwargs):
+    """
+    Load thermo raw file and extract spectra
+    """
+
+    from .pyrawfilereader import RawFileReader
+    rawfile = RawFileReader(raw_file)
+
+    spec_indices = np.array(
+        range(rawfile.FirstSpectrumNumber, rawfile.LastSpectrumNumber + 1)
+    )
+
+    scan_list = []
+    rt_list = []
+    mass_list = []
+    int_list = []
+    ms_list = []
+    prec_mzs_list = []
+    mono_mzs_list = []
+    charge_list = []
+
+    for idx, i in enumerate(spec_indices):
+        ms_order = rawfile.GetMSOrderForScanNum(i)
+        rt = rawfile.RTFromScanNum(i)
+
+        prec_mz = rawfile.GetPrecursorMassForScanNum(i, 0)
+
+        trailer_extra = rawfile.GetTrailerExtraForScanNum(i)
+        # **Notice Here**: does pymsfilereader gives a different mz for mono and prec?
+        mono_mz = prec_mz 
+        charge = int(trailer_extra["Charge State:"])
+
+        masses, intensity = rawfile.GetCentroidMassListFromScanNum(i)
+
+        if ms_order == 2:
+            masses, intensity = get_most_abundant(masses, intensity, most_abundant)
+
+        scan_list.append(i)
+        rt_list.append(rt)
+        mass_list.append(np.array(masses))
+        int_list.append(np.array(intensity, dtype=np.int64))
+        ms_list.append(ms_order)
+        prec_mzs_list.append(prec_mz)
+        mono_mzs_list.append(mono_mz)
+        charge_list.append(charge)
+
+        if callback:
+            callback((idx+1)/len(spec_indices))
+
+    scan_list_ms1 = [scan_list[i] for i, _ in enumerate(ms_list) if _ == 1]
+    rt_list_ms1 = [rt_list[i] for i, _ in enumerate(ms_list) if _ == 1]
+    mass_list_ms1 = [mass_list[i] for i, _ in enumerate(ms_list) if _ == 1]
+    int_list_ms1 = [int_list[i] for i, _ in enumerate(ms_list) if _ == 1]
+    ms_list_ms1 = [ms_list[i] for i, _ in enumerate(ms_list) if _ == 1]
+
+    scan_list_ms2 = [scan_list[i] for i, _ in enumerate(ms_list) if _ == 2]
+    rt_list_ms2 = [rt_list[i] for i, _ in enumerate(ms_list) if _ == 2]
+    mass_list_ms2 = [mass_list[i] for i, _ in enumerate(ms_list) if _ == 2]
+    int_list_ms2 = [int_list[i] for i, _ in enumerate(ms_list) if _ == 2]
+    ms_list_ms2 = [ms_list[i] for i, _ in enumerate(ms_list) if _ == 2]
+    mono_mzs2 = [mono_mzs_list[i] for i, _ in enumerate(ms_list) if _ == 2]
+    charge2 = [charge_list[i] for i, _ in enumerate(ms_list) if _ == 2]
+
+    prec_mass_list2 = [
+        calculate_mass(mono_mzs_list[i], charge_list[i])
+        for i, _ in enumerate(ms_list)
+        if _ == 2
+    ]
+
+    check_sanity(mass_list)
+
+    query_data = {}
+
+    query_data["scan_list_ms1"] = np.array(scan_list_ms1)
+    query_data["rt_list_ms1"] = np.array(rt_list_ms1)
+    query_data["mass_list_ms1"] = np.array(mass_list_ms1)
+    query_data["int_list_ms1"] = np.array(int_list_ms1)
+    query_data["ms_list_ms1"] = np.array(ms_list_ms1)
+
+    query_data["scan_list_ms2"] = np.array(scan_list_ms2)
+    query_data["rt_list_ms2"] = np.array(rt_list_ms2)
+    query_data["mass_list_ms2"] = mass_list_ms2
+    query_data["int_list_ms2"] = int_list_ms2
+    query_data["ms_list_ms2"] = np.array(ms_list_ms2)
+    query_data["prec_mass_list2"] = np.array(prec_mass_list2)
+    query_data["mono_mzs2"] = np.array(mono_mzs2)
+    query_data["charge2"] = np.array(charge2)
+
+    return query_data
+
+# Cell
 def load_thermo_raw(raw_file, most_abundant, callback=None, **kwargs):
     """
     Load thermo raw file and extract spectra
@@ -145,7 +236,7 @@ def raw_to_npz(to_process, callback = None):
 
     if ext.lower() == '.raw':
         logging.info('File {} has extension {} - converting from Thermo.'.format(base, ext))
-        query_data = load_thermo_raw(path, callback=callback, **settings['raw'])
+        query_data = load_thermo_raw_pyRawFileReader(path, callback=callback, **settings['raw'])
     elif ext.lower() == '.d':
         logging.info('File {} has extension {} - converting from Bruker.'.format(base, ext))
         query_data = load_bruker_raw(path, callback=callback, **settings['raw'])
