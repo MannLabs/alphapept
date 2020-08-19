@@ -26,9 +26,15 @@ jobs:
         python setup.py install
     - name: Run Alphapept on Bruker
       run: |
-        del C:\benchmark\HeLa_200ng_1428.npz
+        $FileName = "C:\benchmark\HeLa_200ng_1428.npz"
+        if (Test-Path $FileName) {
+        Remove-Item $FileName
+        }
         python -m alphapept workflow C:\benchmark\hela_testrun_bruker.yaml
     - name: Run Alphapept on Thermo
       run: |
-        del C:\benchmark\HeLa_500ng.npz
+        $FileName = "C:\benchmark\HeLa_500ng.npz"
+        if (Test-Path $FileName) {
+        Remove-Item $FileName
+        }
         python -m alphapept workflow C:\benchmark\hela_testrun_thermo.yaml
