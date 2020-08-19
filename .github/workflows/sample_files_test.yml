@@ -27,8 +27,8 @@ jobs:
     - name: Run Alphapept on Bruker
       run: |
         del C:\benchmark\HeLa_200ng_1428.npz
-        python alphapept workflow C:\benchmark\hela_testrun_bruker.yaml
+        python -m alphapept workflow C:\benchmark\hela_testrun_bruker.yaml
     - name: Run Alphapept on Thermo
       run: |
         del C:\benchmark\HeLa_500ng.npz
-        python alphapept workflow C:\benchmark\hela_testrun_thermo.yaml
+        python -m alphapept workflow C:\benchmark\hela_testrun_thermo.yaml
