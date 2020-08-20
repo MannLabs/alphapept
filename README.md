@@ -1,11 +1,11 @@
-# AlphaPept
-> A modular, python-based framework for mass spectrometry. Powered by nbdev. Supercharged with numba.
-
-![](nbs/images/alphapept_logo.png)
-
 ![CI](https://github.com/MannLabs/alphapept/workflows/CI/badge.svg)
 ![Sample File Test](https://github.com/MannLabs/alphapept/workflows/Sample%20File%20Test/badge.svg)
 ![Windows Installer](https://github.com/MannLabs/alphapept/workflows/Windows%20Installer/badge.svg)
+
+# AlphaPept
+![](nbs/images/alphapept_logo.png)
+> A modular, python-based framework for mass spectrometry. Powered by nbdev. Supercharged with numba.
+
 
 ## Documentation
 
