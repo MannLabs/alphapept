@@ -28,7 +28,7 @@ It is strongly recommended to install AlphaPept in its own environment.
 3. Install the packages with `pip install -r requirements.txt`
 4. Install the package with `python setup.py install`
 5. Install pytables with `conda install pytables`
-{% include note.html content='If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`. This also installs the juper notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`. For navigating the notebooks, the exension `collapsible headings` and `toc2` are very beneficial. For developing with the notebooks see the `nbev` section below.' %}
+> If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`. This also installs the juper notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`. For navigating the notebooks, the exension `collapsible headings` and `toc2` are very beneficial. For developing with the notebooks see the `nbev` section below.
 If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.
 
 ## How to use
