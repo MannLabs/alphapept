@@ -1,21 +1,19 @@
+# Inspired by pyRawFileReader in [pDeep3](https://github.com/pFindStudio/pDeep3)@Zeng,Wen-Feng
 import os
 import sys
 import numpy as np
 
-# require pythonnet, pip install pythonnet
+# require pythonnet, pip install pythonnet on Windows
 import clr
-### installing pythonnet on MacOS
-# 1. "brew install pkg-config"
-# 2. Intall mono from mono project website;
-# 3. "export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/pkgconfig:$PKG_CONFIG_PATH" or add these PKG_CONFIG_PATH into ~./bash_profile. 6.12.0 is my mono version
-# 4. pip install pythonnet
 from System import String
+
 path = os.path.dirname(os.path.abspath(__file__))
 clr.AddReference(os.path.join(path, "ext/thermo_fisher/ThermoFisher.CommonCore.Data.dll"))
 clr.AddReference(os.path.join(path, "ext/thermo_fisher/ThermoFisher.CommonCore.RawFileReader.dll"))
 import ThermoFisher
 from ThermoFisher.CommonCore.Data.Interfaces import IScanEventBase, IScanEvent
-'''
+
+'''C# code to read Raw data
 rawFile = ThermoFisher.CommonCore.RawFileReader.RawFileReaderAdapter.FileFactory(raw_filename)
 var scanStatistics = rawFile.GetScanStatsForScanNumber(1);
 var seg = rawFile.GetSegmentedScanFromScanNumber(1, scanStatistics);
@@ -23,11 +21,28 @@ var scanEvent = rawFile.GetScanEventForScanNumber(1);
 var trailerData = rawFile.GetTrailerExtraInformation(1);
 '''
 
+'''
+APIs to access Thermo's Raw Files
+> This implementation is based on [pythonnet](http://pythonnet.github.io) and ThermoFisher's `RawFileReader` project.
+
+> #### Installing pythonnet on Ubuntu (Linux)
+> 1. sudo apt-get install build-essential
+> 2. Intall mono from mono project website [install mono on Linux](https://www.mono-project.com/download/stable/#download-lin)
+> 3. pip install pythonnet
+
+> #### Installing pythonnet on MacOS
+> 1. brew install pkg-config
+> 2. Intall mono from mono project website;
+> 3. "export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/pkgconfig:$PKG_CONFIG_PATH"; 
+>   `or` add these PKG_CONFIG_PATH into ~./bash_profile, and run "source ~/bash_profile". 6.12.0 is my mono version
+> 4. pip install pythonnet
+'''
+
 def DotNetArrayToNPArray(arr, dtype):
     return np.array(list(arr), dtype=dtype)
 
 '''
-APIs are similar to pymsfilereader(https://github.com/frallain/pymsfilereader), but some APIs have not be implemented yet."
+APIs are similar to [pymsfilereader](https://github.com/frallain/pymsfilereader), but some APIs have not be implemented yet."
 '''
 class RawFileReader(object):
     # static class members
@@ -102,7 +117,7 @@ class RawFileReader(object):
                     1: 'Any',
                     2: 'NotValid',
                    }
-                   
+
     scanDataType = {'Centroid': 0,
                     'Profile': 1,
                     'Any': 2,
@@ -130,9 +145,10 @@ class RawFileReader(object):
                }
 
     def __init__(self, filename, **kwargs):
+
         self.filename = os.path.abspath(filename)
         self.filename = os.path.normpath(self.filename)
-        
+
         self.source = ThermoFisher.CommonCore.RawFileReader.RawFileReaderAdapter.FileFactory(self.filename)
 
         if not self.source.IsOpen:
@@ -140,7 +156,7 @@ class RawFileReader(object):
                 "RAWfile '{0}' could not be opened, is the file accessible ?".format(
                     self.filename))
         self.source.SelectInstrument(ThermoFisher.CommonCore.Data.Business.Device.MS, 1)
-                    
+
         self.StartTime = self.GetStartTime()
         self.EndTime = self.GetEndTime()
         self.FirstSpectrumNumber = self.GetFirstSpectrumNumber()
@@ -424,7 +440,7 @@ class RawFileReader(object):
         firstMass = scanEvent.GetFirstPrecursorMass(MSOrder)
         lastMass = scanEvent.GetLastPrecursorMass(MSOrder)
         return firstMass, lastMass
-        
+
     def GetBasePeakForScanNum(self, scanNumber):
         """This function returns the base peak mass and intensity of mass spectrum."""
         stat = self.source.GetScanStatsForScanNumber(scanNumber)
@@ -458,49 +474,3 @@ class RawFileReader(object):
             segmentedScan = self.source.GetSegmentedScanFromScanNumber(scanNumber, scanStatistics)
             return np.array([DotNetArrayToNPArray(segmentedScan.Positions, float), DotNetArrayToNPArray(segmentedScan.Intensities, float)])
 
-if __name__ == '__main__':
-    scanNumber = 10000
-    rawFile = RawFileReader(sys.argv[1])
-    print("GetFileName: ", rawFile.GetFileName())
-    print("GetCreatorID: ", rawFile.GetCreatorID())
-    print("GetCreationDate: ", rawFile.GetCreationDate())
-    print("GetMaxIntensity: ", rawFile.GetMaxIntensity())
-    print("GetComment1: ", rawFile.GetComment1())
-    print("GetComment2: ", rawFile.GetComment2())
-    print("GetInstName: ", rawFile.GetInstName())
-    
-    print("GetMSOrderForScanNum: ", rawFile.GetMSOrderForScanNum(scanNumber))
-    print("GetScanEventForScanNum: ", rawFile.GetScanEventStringForScanNum(scanNumber))
-    print("GetNumberOfSourceFragmentsFromScanNum: ", rawFile.GetNumberOfSourceFragmentsFromScanNum(scanNumber))
-    if rawFile.GetNumberOfSourceFragmentsFromScanNum(scanNumber) > 0:
-        print("GetSourceFragmentValueFromScanNum: ", rawFile.GetSourceFragmentValueFromScanNum(scanNumber, 0))
-    if rawFile.GetMSOrderForScanNum(scanNumber) > 1:
-        print("GetIsolationWidthForScanNum: ", rawFile.GetIsolationWidthForScanNum(scanNumber))
-        print("GetCollisionEnergyForScanNum: ", rawFile.GetCollisionEnergyForScanNum(scanNumber))
-        print("GetActivationTypeForScanNum: ", rawFile.GetActivationTypeForScanNum(scanNumber))
-        print("GetPrecursorMassForScanNum: ", rawFile.GetPrecursorMassForScanNum(scanNumber))
-        print("GetPrecursorRangeForScanNum: ", rawFile.GetPrecursorRangeForScanNum(scanNumber))
-    print("GetMassAnalyzerTypeForScanNum: ", rawFile.GetMassAnalyzerTypeForScanNum(scanNumber))
-    print("GetNumberOfMassCalibratorsFromScanNum: ", rawFile.GetNumberOfMassCalibratorsFromScanNum(scanNumber))
-    print("GetMassCalibrationValueFromScanNum: ", rawFile.GetMassCalibrationValueFromScanNum(scanNumber, 0))
-    print("GetMassResolution: ", rawFile.GetMassResolution())
-    print("GetLowMass: ", rawFile.GetLowMass())
-    print("GetHighMass: ", rawFile.GetHighMass())
-    print("GetStartTime: ", rawFile.GetStartTime())
-    print("GetEndTime: ", rawFile.GetEndTime())
-    print("GetFirstSpectrumNumber: ", rawFile.GetFirstSpectrumNumber())
-    print("GetLastSpectrumNumber: ", rawFile.GetLastSpectrumNumber())
-    print("IsProfileScanForScanNum: ", rawFile.IsProfileScanForScanNum(scanNumber))
-    print("IsCentroidScanForScanNum: ", rawFile.IsCentroidScanForScanNum(scanNumber))
-    
-    print("RTFromScanNum: ", rawFile.RTFromScanNum(scanNumber))
-    print("ScanNumFromRT: ", rawFile.ScanNumFromRT(30))
-    print("RTInSecondsFromScanNum: ", rawFile.RTInSecondsFromScanNum(scanNumber))
-    print("ScanNumFromRTInSeconds: ", rawFile.ScanNumFromRTInSeconds(30))
-    
-    print("GetNumberOfMSOrdersFromScanNum: ", rawFile.GetNumberOfMSOrdersFromScanNum(scanNumber))
-    print("GetBasePeakForScanNum: ", rawFile.GetBasePeakForScanNum(scanNumber))
-    print("GetTrailerExtraForScanNum: ", rawFile.GetTrailerExtraForScanNum(scanNumber))
-    print("GetCentroidMassListFromScanNum: ", rawFile.GetCentroidMassListFromScanNum(scanNumber))
-    rawFile.Close()
-        
