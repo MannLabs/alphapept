@@ -8,7 +8,7 @@ on:
     branches: [ master ]
 
 jobs:
-  build_and_run:
+  build_installer_windows:
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
