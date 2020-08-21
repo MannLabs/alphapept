@@ -1,10 +1,14 @@
+# Title
+
+
+
 ![CI](https://github.com/MannLabs/alphapept/workflows/CI/badge.svg)
 ![Sample File Test](https://github.com/MannLabs/alphapept/workflows/Sample%20File%20Test/badge.svg)
 ![Windows Installer](https://github.com/MannLabs/alphapept/workflows/Windows%20Installer/badge.svg)
 
 # AlphaPept
-![](nbs/images/alphapept_logo.png)
-> A modular, python-based framework for mass spectrometry. Powered by nbdev. Supercharged with numba.
+<img src="nbs/images/alphapept_logo.png" align="center">
+> A modular, python-based framework to analyze mass spectrometry data. Powered by nbdev. Supercharged with numba.
 
 
 ## Documentation
@@ -28,7 +32,7 @@ It is strongly recommended to install AlphaPept in its own environment.
 3. Install the packages with `pip install -r requirements.txt`
 4. Install the package with `python setup.py install`
 5. Install pytables with `conda install pytables`
-> If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`. This also installs the juper notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`. For navigating the notebooks, the exension `collapsible headings` and `toc2` are very beneficial. For developing with the notebooks see the `nbev` section below.
+{% include note.html content='If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`. This also installs the juper notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`. For navigating the notebooks, the exension `collapsible headings` and `toc2` are very beneficial. For developing with the notebooks see the `nbev` section below.' %}
 If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.
 
 ## How to use
@@ -37,7 +41,7 @@ AlphaPept is meant to be a framework to implement and test new ideas quickly but
 
 * GUI: Use the graphical user interface to select settings and process files manually.
 * CMD: Use the command-line interface to process files. Useful when building automatic pipelines.
-* Python: Use python modules to build individual workflows. Useful when building customized pipelines and using Python as a scripting language or when implementing new ideas. 
+* Python: Use python modules to build individual workflows. Useful when building customized pipelines and using Python as a scripting language or when implementing new ideas.
 
 ### Windows Installation
 
@@ -93,12 +97,12 @@ This describes the minimal steps to analyze an experiment.
 
 ### GUI
 
-1. Open the GUI. Drag and drop experimental files and at least one fasta in the `Experiment` tab. 
+1. Open the GUI. Drag and drop experimental files and at least one fasta in the `Experiment` tab.
 2. Default settings are loaded and can be changed or saved in the `Settings` tab
 3. Navigate to the Run panel and click `Start`
 
 ### Investigating the result files
-The experimental results will be stored in the corresponding *.hdf-files and loaded with pandas. 
+The experimental results will be stored in the corresponding *.hdf-files and loaded with pandas.
 
 ### CMD / Python
 1. Create a settings-file. This can be done by changing the `default_settings.yaml` in the repository or using the GUI.
