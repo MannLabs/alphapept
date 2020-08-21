@@ -67,7 +67,7 @@ def load_thermo_raw(raw_file, most_abundant, callback=None, **kwargs):
         #    print(f'MSn={ms_order}, mono_mz={mono_mz}, perc_mz={prec_mz}, charge={charge}')
 
         # may be centroid for MS2 and profile for MS1 is better？
-        masses, intensity = rawfile.GetProfileMassListFromScanNum(i)
+        masses, intensity = rawfile.GetCentroidMassListFromScanNum(i)
 
         if ms_order == 2:
             masses, intensity = get_most_abundant(masses, intensity, most_abundant)

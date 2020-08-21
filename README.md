@@ -24,7 +24,7 @@ The documentation is automatically build based the jupyter notebooks and can be 
 > 1. `brew install pkg-config`
 > 2. Intall Mono from mono-project website [Mono Mac](https://www.mono-project.com/download/stable/)
 > 3. `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/pkgconfig:$PKG_CONFIG_PATH`
->   `or` add above `PKG_CONFIG_PATH=/usr/......:$PKG_CONFIG_PATH` into ~./bash_profile, and run `source ~/bash_profile`. Here 6.12.0 is developers' Mono version
+>   (`or` add above `PKG_CONFIG_PATH=/usr/......:$PKG_CONFIG_PATH` into ~./bash_profile, and run `source ~/bash_profile`.) Here 6.12.0 is developers' Mono version
 > 4. `pip install alphapept` 
 >  `or` `pip install .` in downloaded local AlphaPept repository
 
