@@ -1,5 +1,5 @@
 # GitHub Actions to automatically test on sample files
-name: Sample File Test
+name: HeLa Thermo Win
 
 on:
   push:
@@ -8,8 +8,7 @@ on:
     branches: [ master ]
 
 jobs:
-  install_and_run_windows:
-
+  HeLa_Thermo_Win:
     runs-on: self-hosted
     strategy:
       matrix:
@@ -25,13 +24,6 @@ jobs:
       run: |
         pip install -r requirements.txt
         python setup.py install
-    - name: Run Alphapept on Bruker
-      run: |
-        $FileName = "C:\benchmark\HeLa_200ng_1428.npz"
-        if (Test-Path $FileName) {
-        Remove-Item $FileName
-        }
-        python -m alphapept workflow C:\benchmark\hela_testrun_bruker.yaml
     - name: Run Alphapept on Thermo
       run: |
         $FileName = "C:\benchmark\HeLa_500ng.npz"
