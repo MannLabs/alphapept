@@ -10,6 +10,7 @@ from System.Globalization import CultureInfo
 
 de_fr = CultureInfo('fr-FR')
 other = CultureInfo('en-US')
+
 def get_culture_float(s):
     try:
         return Convert.ToDouble(s, other)
