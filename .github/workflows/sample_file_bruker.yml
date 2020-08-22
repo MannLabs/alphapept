@@ -1,5 +1,5 @@
 # GitHub Actions to automatically test on sample files
-name: Sample File Test
+name: HeLa Bruker Win
 
 on:
   push:
@@ -8,8 +8,7 @@ on:
     branches: [ master ]
 
 jobs:
-  install_and_run_windows:
-
+  HeLa_Bruker_Win:
     runs-on: self-hosted
     strategy:
       matrix:
@@ -32,10 +31,3 @@ jobs:
         Remove-Item $FileName
         }
         python -m alphapept workflow C:\benchmark\hela_testrun_bruker.yaml
-    - name: Run Alphapept on Thermo
-      run: |
-        $FileName = "C:\benchmark\HeLa_500ng.npz"
-        if (Test-Path $FileName) {
-        Remove-Item $FileName
-        }
-        python -m alphapept workflow C:\benchmark\hela_testrun_thermo.yaml
