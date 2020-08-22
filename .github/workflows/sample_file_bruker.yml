@@ -1,5 +1,5 @@
 # GitHub Actions to automatically test on sample files
-name: HeLa Test Bruker
+name: HeLa Bruker Win
 
 on:
   push:
@@ -8,8 +8,7 @@ on:
     branches: [ master ]
 
 jobs:
-  install_and_run_windows:
-
+  HeLa_Bruker_Win
     runs-on: self-hosted
     strategy:
       matrix:
