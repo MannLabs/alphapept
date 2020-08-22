@@ -1,4 +1,4 @@
-# Inspired by pyRawFileReader in [pDeep3](https://github.com/pFindStudio/pDeep3)@Zeng,Wen-Feng
+# Inspired by pyRawFileReader in [pDeep3](https://github.com/pFindStudio/pDeep3)
 import os
 import sys
 import numpy as np
