@@ -1,0 +1,34 @@
+# GitHub Actions to automatically test on sample files
+name: HeLa Test Bruker
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  install_and_run_windows:
+
+    runs-on: self-hosted
+    strategy:
+      matrix:
+        python-version: [3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install package
+      run: |
+        pip install -r requirements.txt
+        python setup.py install
+    - name: Run Alphapept on Bruker
+      run: |
+        $FileName = "C:\benchmark\HeLa_200ng_1428.npz"
+        if (Test-Path $FileName) {
+        Remove-Item $FileName
+        }
+        python -m alphapept workflow C:\benchmark\hela_testrun_bruker.yaml
