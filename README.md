@@ -16,7 +16,24 @@
 The documentation is automatically built based on the jupyter notebooks and can be found [here](https://mannlabs.github.io/alphapept/):
 
 ## Installation Instructions
-> To access Thermo files, we rely on [pymsfilereader](https://github.com/frallain/pymsfilereader), which requires to have the `MSFileReader` installed. You can find installation instructions in the GitHub repository.> To access Bruker files, we rely on the `timsdata`-library. Currently, only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the `ext` folder of this repository.
+
+> To access Thermo files, we have integrated [RawFileReader](https://planetorbitrap.com/rawfilereader) into AlphaPept. We rely on [Mono](https://www.mono-project.com/) for Linux/Mac systems.
+> To access Bruker files, we rely on the `timsdata`-library. Currently only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the `ext` folder of this repository.
+> ### Installation on Windows 10
+> `pip install alphapept` 
+>  `or` `pip install .` in downloaded local AlphaPept repository
+> ### Installation on Ubuntu for RawFileReader (Other Linux systems should be similar)
+> 1. `sudo apt-get install build-essential`
+> 2. Intall Mono from mono-project website [Mono Linux](https://www.mono-project.com/download/stable/#download-lin)
+> 3. `pip install alphapept` 
+>  `or` `pip install .` from downloaded local AlphaPept repository
+> ### Installation on Mac for RawFileReader
+> 1. `brew install pkg-config`
+> 2. Intall Mono from mono-project website [Mono Mac](https://www.mono-project.com/download/stable/)
+> 3. `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/pkgconfig:$PKG_CONFIG_PATH`
+>   (`or` add above `PKG_CONFIG_PATH=/usr/......:$PKG_CONFIG_PATH` into ~./bash_profile, and run `source ~/bash_profile`.) Here 6.12.0 is developers' Mono version
+> 4. `pip install alphapept` 
+>  `or` `pip install .` in downloaded local AlphaPept repository
 
 ### Standalone Windows Installer
 To use AlphaPept as a stand-alone program for end-users, it can be installed on Windows machines via a one-click installer. Download the latest version [here](http://alphapept.org).
