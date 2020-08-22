@@ -37,7 +37,7 @@ def load_thermo_raw(raw_file, most_abundant, callback=None, **kwargs):
     Load thermo raw file and extract spectra
     """
 
-    from .pyrawfilereader import RawFileReader
+    from .pyrawfilereader import RawFileReader, get_culture_float
     rawfile = RawFileReader(raw_file)
 
     spec_indices = np.array(
@@ -60,7 +60,7 @@ def load_thermo_raw(raw_file, most_abundant, callback=None, **kwargs):
         prec_mz = rawfile.GetPrecursorMassForScanNum(i, 0)
 
         trailer_extra = rawfile.GetTrailerExtraForScanNum(i)
-        mono_mz = float(trailer_extra["Monoisotopic M/Z:"])
+        mono_mz = get_culture_float(trailer_extra["Monoisotopic M/Z:"])
         charge = int(trailer_extra["Charge State:"])
         # if mono_mz == 0: mono_mz = prec_mz
         # if mono_mz != 0 and abs(mono_mz - prec_mz) > 0.1:

@@ -5,7 +5,16 @@ import numpy as np
 
 # require pythonnet, pip install pythonnet on Windows
 import clr
-from System import String
+from System import String, Convert
+from System.Globalization import CultureInfo
+
+de_fr = CultureInfo('fr-FR')
+other = CultureInfo('en-US')
+def get_culture_float(s):
+    try:
+        return Convert.ToDouble(s, other)
+    except:
+        return Convert.ToDouble(s, de_fr)
 
 path = os.path.dirname(os.path.abspath(__file__))
 clr.AddReference(os.path.join(path, "ext/thermo_fisher/ThermoFisher.CommonCore.Data.dll"))
