@@ -1,9 +1,6 @@
-# Title
-
-
-
 ![CI](https://github.com/MannLabs/alphapept/workflows/CI/badge.svg)
-![Sample File Test](https://github.com/MannLabs/alphapept/workflows/Sample%20File%20Test/badge.svg)
+![HeLa Thermo Win](https://github.com/MannLabs/alphapept/workflows/HeLa%20Thermo%20Win/badge.svg)
+![HeLa Bruker Win](https://github.com/MannLabs/alphapept/workflows/HeLa%20Bruker%20Win/badge.svg)
 ![Windows Installer](https://github.com/MannLabs/alphapept/workflows/Windows%20Installer/badge.svg)
 
 # AlphaPept
