@@ -8,7 +8,6 @@ numba==0.48.0
 numpy==1.19.0
 pandas==1.0.1
 psutil==5.7.0
-pymsfilereader==1.0.1
 PyQt5==5.15.0
 pyyaml==5.3.1
 qdarkstyle==2.8.1
@@ -18,3 +17,4 @@ scipy==1.4.1
 seaborn==0.10.0
 tables==3.6.1
 tqdm==4.46.1
+pythonnet==2.5.1
