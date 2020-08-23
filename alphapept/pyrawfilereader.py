@@ -5,6 +5,7 @@ import numpy as np
 
 # require pythonnet, pip install pythonnet on Windows
 import clr
+clr.AddReference('System')
 from System import String, Convert
 from System.Threading import Thread
 from System.Globalization import CultureInfo
