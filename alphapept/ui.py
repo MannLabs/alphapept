@@ -48,7 +48,7 @@ BUSY_INDICATOR_PATH = os.path.join(_this_directory, "img", "busy_indicator.gif")
 
 # Get Version
 
-VERSION_NO = "0.2.7-dev0"
+VERSION_NO = "0.2.8-dev0"
 
 URL_DOCUMENTATION = "https://mannlabs.github.io/alphapept/"
 URL_ISSUE = "https://github.com/MannLabs/alphapept/issues"
@@ -78,6 +78,7 @@ class MainWindow(QMainWindow):
 		self.setWindowIcon(QIcon(ICON_PATH))
 		self.title = "AlphaPept " + VERSION_NO
 		self.setStyleSheet("font-size: 12pt;")
+		self.setWindowTitle(self.title)
 
 		self.initUI()
 
@@ -450,19 +451,24 @@ class MainWindow(QMainWindow):
 		settings = self.read_settings()
 		#Check which hdf files exist already and display them
 		selectable = ["Select file.."]
-		for _ in settings['experiment']['file_paths']:
-			base, ext = os.path.splitext(_)
-			hdf_path = base+'.hdf'
 
-			if os.path.isfile(hdf_path):
-				selectable.append(hdf_path)
+		if 'file_paths' in settings['experiment'].keys():
+			for _ in settings['experiment']['file_paths']:
+				if _:
+					base, ext = os.path.splitext(_)
+					hdf_path = base+'.hdf'
 
-		evidence_path = settings['experiment']['results_path']
-		if os.path.isfile(evidence_path):
-			selectable.append(evidence_path)
+					if os.path.isfile(hdf_path):
+						selectable.append(hdf_path)
 
-		self.explore_files.clear()
-		self.explore_files.addItems(selectable)
+		if 'results_path' in settings['experiment'].keys():
+			evidence_path = settings['experiment']['results_path']
+			if evidence_path:
+				if os.path.isfile(evidence_path):
+					selectable.append(evidence_path)
+
+				self.explore_files.clear()
+				self.explore_files.addItems(selectable)
 
 	def page_help(self):
 		self.stackedWidget.setCurrentIndex(4)
