@@ -3,10 +3,14 @@ DEL /F/Q/S dist > NUL
 RMDIR /Q/S build
 RMDIR /Q/S dist
 cd %~dp0\..
+call conda create --name alpha_install python=3.8 -y
+call conda activate alpha_install
+pip install -r requirements.txt
+pip install pyinstaller
 python setup.py install
 cd %~dp0
-pyinstaller -y --hidden-import=clr --hidden-import="sklearn.utils._cython_blas" --hidden-import="sklearn.neighbors.typedefs" --hidden-import="sklearn.neighbors.quad_tree" --hidden-import="sklearn.tree._utils" -n alphapept alphapept-script.py
-pyinstaller -y --hidden-import=clr --hidden-import="sklearn.utils._cython_blas" --hidden-import="sklearn.neighbors.typedefs" --hidden-import="sklearn.neighbors.quad_tree" --hidden-import="sklearn.tree._utils" --noconsole -n alphapeptw alphapept-script.py
+pyinstaller -y --hidden-import="clr" --hidden-import="sklearn.utils._cython_blas" --hidden-import="sklearn.neighbors.typedefs" --hidden-import="sklearn.neighbors.quad_tree" --hidden-import="sklearn.tree._utils" -n alphapept alphapept-script.py
+pyinstaller -y --hidden-import="clr" --hidden-import="sklearn.utils._cython_blas" --hidden-import="sklearn.neighbors.typedefs" --hidden-import="sklearn.neighbors.quad_tree" --hidden-import="sklearn.tree._utils" --noconsole -n alphapeptw alphapept-script.py
 copy dist\alphapeptw\alphapeptw.exe dist\alphapept\alphapeptw.exe
 copy dist\alphapeptw\alphapeptw.exe.manifest dist\alphapept\alphapeptw.exe.manifest
 "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" alphapept.iss
