@@ -15,6 +15,12 @@ jobs:
     - name: Creating installer for Windows
       run: |
         conda activate alphapept
-        pip install PyInstaller 
+        pip install PyInstaller
         cd distribution
         .\create_installer.bat
+    - name: Test compiled version - cmd
+      run: |
+        .\dist\alphapept\alphapept.exe
+    - name: Test compiled version - gui
+      run: |
+        .\dist\alphapept\alphapept.exe gui
