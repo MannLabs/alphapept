@@ -18,7 +18,7 @@ The documentation is automatically built based on the jupyter notebooks and can 
 > To access Bruker files, we rely on the `timsdata`-library. Currently only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the `ext` folder of this repository.
 > ### Installation on Windows 10
 > `pip install alphapept`
->  `or` `pip install .` in downloaded local AlphaPept repository
+>  `or` `pip install .` in downloaded local AlphaPept repository. Developers should use `pip install -e alphapept`, so that developers mode is enabled and all changes to the source code are directly incorporated.
 > ### Installation on Ubuntu for RawFileReader (Other Linux systems should be similar)
 > 1. `sudo apt-get install build-essential`
 > 2. Intall Mono from mono-project website [Mono Linux](https://www.mono-project.com/download/stable/#download-lin)
@@ -43,9 +43,8 @@ It is strongly recommended to install AlphaPept in its own environment.
 1. Open the console and create a new conda environment: `conda create --name alphapept python`
 2. Activate the environment: `source activate alphapept` for Linux / Mac Os X or `activate alphapept` for Windows
 2. Redirect to the folder of choice and clone the repository: `git clone https://github.com/MannLabs/alphapept.git`
-3. Install the packages with `pip install -r requirements.txt`
-4. Install the package with `python setup.py install`
-5. Install pytables with `conda install pytables`
+3. Install the package with `pip install alphapept` or `pip install -e alphapept` for developers mode.
+4. Install pytables with `conda install pytables`
 {% include note.html content='If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`. This also installs the juper notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`. For navigating the notebooks, the exension `collapsible headings` and `toc2` are very beneficial. For developing with the notebooks see the `nbev` section below.' %}
 If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.
 
@@ -88,16 +87,17 @@ get_frag_dict(parse(peptide), constants.mass_dict)
 
 ### Using as a tool
 
+If alphapept is installed an a conda or virtual environment, launch this environment first.
+
 To launch the command line interface use:
-* `python alphapept`
+* `alphapept`
 
 This allows us to select different modules. To start the GUI use:
-* `python alphapept gui`
+* `alphapept gui`
 
 Likewise, to start the watcher use:
-* `python alphapept watcher`
+* `alphapept watcher`
 
-Note that when working on the GitHub repository, you might want to launch the codebase you are working on and not the installed version. Here, call AlphaPept as a module: `python -m alphapept`, `python -m alphapept gui` and `python -m alphapept watcher`
 
 ### Watcher
 AlphaPept has a watcher module that continuously monitors a target folder and automatically performs file conversion and feature finding on new files.
