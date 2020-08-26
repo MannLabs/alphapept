@@ -17,19 +17,19 @@ The documentation is automatically built based on the jupyter notebooks and can 
 > To access Thermo files, we have integrated [RawFileReader](https://planetorbitrap.com/rawfilereader) into AlphaPept. We rely on [Mono](https://www.mono-project.com/) for Linux/Mac systems.
 > To access Bruker files, we rely on the `timsdata`-library. Currently only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the `ext` folder of this repository.
 > ### Installation on Windows 10
-> `pip install alphapept` 
+> `pip install alphapept`
 >  `or` `pip install .` in downloaded local AlphaPept repository
 > ### Installation on Ubuntu for RawFileReader (Other Linux systems should be similar)
 > 1. `sudo apt-get install build-essential`
 > 2. Intall Mono from mono-project website [Mono Linux](https://www.mono-project.com/download/stable/#download-lin)
-> 3. `pip install alphapept` 
+> 3. `pip install alphapept`
 >  `or` `pip install .` from downloaded local AlphaPept repository
 > ### Installation on Mac for RawFileReader
 > 1. `brew install pkg-config`
 > 2. Intall Mono from mono-project website [Mono Mac](https://www.mono-project.com/download/stable/)
 > 3. `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/pkgconfig:$PKG_CONFIG_PATH`
 >   (`or` add above `PKG_CONFIG_PATH=/usr/......:$PKG_CONFIG_PATH` into ~./bash_profile, and run `source ~/bash_profile`.) Here 6.12.0 is developers' Mono version
-> 4. `pip install alphapept` 
+> 4. `pip install alphapept`
 >  `or` `pip install .` in downloaded local AlphaPept repository
 
 ### Standalone Windows Installer
