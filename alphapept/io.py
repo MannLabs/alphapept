@@ -891,7 +891,7 @@ class MS_Data_File(HDF_File): pass
 
 @patch
 def import_raw_DDA_data(
-    self:HDF_File,
+    self:MS_Data_File,
     file_name:str,
     most_abundant:int=-1,
     callback=None,
@@ -951,7 +951,7 @@ def _read_DDA_query_data(
 
 @patch
 def _save_DDA_query_data(
-    self:HDF_File,
+    self:MS_Data_File,
     query_data:dict,
     vendor:str,
     file_name:str,
@@ -1022,7 +1022,7 @@ def _save_DDA_query_data(
 
 @patch
 def read_DDA_query_data(
-    self:HDF_File,
+    self:MS_Data_File,
 ):
     query_data = {}
     samples = self.read(group_name="Raw")
