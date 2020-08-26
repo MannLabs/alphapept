@@ -99,19 +99,21 @@ def main():
         ),
     )
 
-    feature_finder_parser = subparsers.add_parser(
-        'features',
-        help='Find features on a specific file.'
-    )
-    search_parser = subparsers.add_parser(
-        'search',
-        help='Search a converted raw file against a AlphaPept compatible database.'
-    )
-    watcher_parser = subparsers.add_parser(
-        'watcher',
-        help='Continuously monitor a folder and perform file conversion and feature finding.'
-    )
-# link parser
+    # feature_finder_parser = subparsers.add_parser(
+    #     'features',
+    #     help='Find features on a specific file.'
+    # )
+    # search_parser = subparsers.add_parser(
+    #     'search',
+    #     help=   'Search a converted raw file against a AlphaPept compatible '
+    #             'database.'
+    # )
+    # watcher_parser = subparsers.add_parser(
+    #     'watcher',
+    #     help=   'Continuously monitor a folder and perform file conversion '
+    #             'and feature finding.'
+    # )
+    # link parser
 
     print("\n")
     print(r"     ___    __      __          ____             __ ")
