@@ -621,15 +621,13 @@ class MainWindow(QMainWindow):
 		#self.movie.setVisible(False)
 
 
-def main():
+def main(close = False):
 	app = QApplication(sys.argv)
 	app.setStyle(QStyleFactory.create("Fusion"))
-	form = MainWindow()
-	form.show()
 
+	main_window = MainWindow()
+	main_window.show()
 	app.processEvents()
-
-	sys.exit(app.exec_())
 
 	def excepthook(type, value, tback):
 		cancel_dialogs()
@@ -642,8 +640,10 @@ def main():
 
 	sys.excepthook = excepthook
 
-	sys.exit(app.exec_())
-
+	if close:
+		sys.exit()
+	else:
+		sys.exit(app.exec_())
 
 if __name__ == "__main__":
 

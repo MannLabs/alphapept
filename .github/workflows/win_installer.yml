@@ -23,4 +23,4 @@ jobs:
         C:\actions-runner\_work\alphapept\alphapept\distribution\dist\alphapept\alphapept.exe
     - name: Test compiled version - gui
       run: |
-        C:\actions-runner\_work\alphapept\alphapept\distribution\dist\alphapept\alphapept.exe gui
+        C:\actions-runner\_work\alphapept\alphapept\distribution\dist\alphapept\alphapept.exe gui --test True
