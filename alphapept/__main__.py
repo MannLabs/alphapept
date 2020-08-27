@@ -10,9 +10,9 @@
 import os
 
 
-VERSION_NO = "0.2.8-dev0"
-COPYRIGHT = "2020 Mann Labs"
-URL = "https://github.com/MannLabs/alphapept"
+from alphapept.__version__ import VERSION_NO
+from alphapept.__version__ import COPYRIGHT
+from alphapept.__version__ import URL
 
 
 def _run_alphapept(args):
