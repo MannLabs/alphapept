@@ -14,6 +14,9 @@ index = {"print_settings": "00_settings.ipynb",
          "mass_to_dist": "01_chem.ipynb",
          "calculate_mass": "01_chem.ipynb",
          "M_PROTON": "04_feature_finding.ipynb",
+         "HDF_File": "02_io.ipynb",
+         "HDF_File.read": "02_io.ipynb",
+         "HDF_File.write": "02_io.ipynb",
          "get_most_abundant": "02_io.ipynb",
          "load_thermo_raw": "02_io.ipynb",
          "load_thermo_raw_MSFileReader": "02_io.ipynb",
@@ -28,6 +31,10 @@ index = {"print_settings": "00_settings.ipynb",
          "read_mzXML": "02_io.ipynb",
          "list_to_numpy_f32": "02_io.ipynb",
          "save_query_as_npz": "02_io.ipynb",
+         "MS_Data_File": "02_io.ipynb",
+         "MS_Data_File.import_raw_DDA_data": "02_io.ipynb",
+         "MS_Data_File.read_DDA_query_data": "02_io.ipynb",
+         "raw_to_ms_data_file": "02_io.ipynb",
          "extract_nested": "02_io.ipynb",
          "extract_mq_settings": "02_io.ipynb",
          "parse_mq_seq": "02_io.ipynb",
@@ -199,10 +206,7 @@ index = {"print_settings": "00_settings.ipynb",
          "isotopes": "10_constants.ipynb",
          "averagine_aa": "10_constants.ipynb",
          "averagine_avg": "10_constants.ipynb",
-         "protease_dict": "10_constants.ipynb",
-         "HDF_File": "io_utils.ipynb",
-         "HDF_File.read": "io_utils.ipynb",
-         "HDF_File.write": "io_utils.ipynb"}
+         "protease_dict": "10_constants.ipynb"}
 
 modules = ["settings.py",
            "chem.py",
@@ -213,8 +217,7 @@ modules = ["settings.py",
            "score.py",
            "recalibration.py",
            "quantification.py",
-           "constants.py",
-           "io_utils.py"]
+           "constants.py"]
 
 doc_url = "https://mannlabs.github.io/alphapept/"
 
