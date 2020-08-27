@@ -53,6 +53,7 @@ def main():
     workflow_parser.add_argument("settings_path", help=("Path to settings file"))
 
     gui_parser = subparsers.add_parser("gui", help="Open the AlphaPept GUI.")
+    gui_parser.add_argument("--test", required=False, help=("Flag to open and close gui for testing purposes."))
 
     convert_parser = subparsers.add_parser('convert', help='Perform file conversion on a raw file for AlphaPept.')
     convert_parser.add_argument("rawfile", help=("Path to rawfile"))
@@ -107,7 +108,10 @@ def main():
         if args.command == "gui":
             print('Launching GUI')
             from . import ui as _ui
-            _ui.main()
+            if args.test:
+                _ui.main(close=True)
+            else:
+                _ui.main()
 
         if args.command == "convert":
             print('Convert')
