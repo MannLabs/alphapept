@@ -1,6 +1,7 @@
-from PyQt5.QtCore import QUrl, QSize, QCoreApplication
+from PyQt5.QtCore import QUrl, QSize, QCoreApplication, Qt
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTableView, QTabWidget, QProgressBar, QGroupBox, QComboBox, QPushButton, QStackedWidget, QWidget, QMainWindow, QApplication, QStyleFactory, QHBoxLayout, QVBoxLayout, QLabel, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QIcon, QPixmap, QMovie, QDesktopServices
+
 
 import sys
 import os
