@@ -29,8 +29,9 @@ def check_hardware():
 
     logging.info('Currently {:.2f} GB of memory available.'.format(memory_available))
 
-    if memory_available < 16:
-        raise MemoryError('Only {:.2f} GB memory available. Make sure that at least 16 GB are available.'.format(memory_available))
+    MIN_MEMORY = 8
+    if memory_available < MIN_MEMORY:
+        raise MemoryError(f'Only {memory_available:.2f} GB memory available. Make sure that at least {MIN_MEMORY} GB are available.')
     import platform
     sysinfo = platform.uname()
 

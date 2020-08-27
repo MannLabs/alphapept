@@ -12,11 +12,12 @@ from alphapept.constants import mass_dict
 from alphapept.search import search_parallel_db, search_parallel
 from alphapept.utils import check_hardware, check_python_env, check_settings, assemble_df, resave_hdf, reset_hdf
 from alphapept.recalibration import calibrate_hdf_parallel
-from alphapept.io import raw_to_npz_parallel
+# from alphapept.io import raw_to_npz_parallel
 from alphapept.score import score_hdf_parallel, protein_groups_hdf_parallel
 from alphapept.feature_finding import find_and_save_features_parallel
 from alphapept.fasta import pept_dict_from_search, generate_database, generate_spectra, save_database, generate_database_parallel
 from alphapept.quantification import protein_profile_parallel, protein_profile, delayed_normalization
+import alphapept.io
 
 import yaml
 
@@ -78,19 +79,19 @@ def run_alphapept(settings, callback=None):
         logging.info('Not using a stored database. Create database on the fly.')
 
     # File Conversion
-    files_npz = []
+    files_ms_data_hdf = []
     to_convert = []
 
-    for _ in settings['experiment']['file_paths']:
-        base, ext = os.path.splitext(_)
-        npz_path = base+'.npz'
-        files_npz.append(npz_path)
-        if os.path.isfile(npz_path):
-            logging.info('Found *.npz file or {}'.format(_))
+    for file_name in settings['experiment']['file_paths']:
+        base, ext = os.path.splitext(file_name)
+        ms_data_file_path = f'{base}.ms_data.hdf'
+        files_ms_data_hdf.append(ms_data_file_path)
+        if os.path.isfile(ms_data_file_path):
+            logging.info(f'Found *.ms_data.hdf file for {file_name}')
         else:
-            to_convert.append(_)
-            logging.info('No *.npz file found for {}. Adding to conversion list.'.format(_))
-    files_npz.sort()
+            to_convert.append(file_name)
+            logging.info(f'No *.ms_data.hdf file found for {file_name}. Adding to conversion list.')
+    files_ms_data_hdf.sort()
 
     if len(to_convert) > 0:
         logging.info('Starting file conversion.')
@@ -98,8 +99,11 @@ def run_alphapept(settings, callback=None):
             cb = partial(tqdm_wrapper, tqdm(total=1))
         else:
             cb = callback
-        raw_to_npz_parallel(to_convert, settings, callback=cb)
-        logging.info('File conversion complete.')
+        # raw_to_npz_parallel(to_convert, settings, callback=cb)
+        for file_name in to_convert:
+            to_process = (file_name, settings)
+            alphapept.io.raw_to_ms_data_file(to_process, callback=None)
+            logging.info('File conversion complete.')
 
     # Feature Finding
     to_convert = []
@@ -111,9 +115,12 @@ def run_alphapept(settings, callback=None):
             try:
                 pd.read_hdf(hdf_path, 'features')
                 logging.info('Found *.hdf with features for {}'.format(_))
-                reset_hdf(hdf_path)
-                resave_hdf(hdf_path)
-
+                # reset_hdf(hdf_path)
+                # resave_hdf(hdf_path)
+                # TODO: Caching is not done properly.
+                # Assumes 'features_calib' is present.
+                # This seems to be from search though, not feature finding
+                # As a result a non-passed search retriggers feature finding
             except KeyError:
                 to_convert.append(_)
                 logging.info('No *.hdf file with features found for {}. Adding to feature finding list.'.format(_))
