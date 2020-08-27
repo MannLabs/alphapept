@@ -26,6 +26,12 @@ import pandas as pd
 import qdarkstyle
 
 
+from alphapept.__version__ import VERSION_NO
+from alphapept.__version__ import URL_DOCUMENTATION
+from alphapept.__version__ import URL_ISSUE
+from alphapept.__version__ import URL_CONTRIBUTE
+
+
 dark_stylesheet = qdarkstyle.load_stylesheet_pyqt5()
 
 _this_file = os.path.abspath(__file__)
@@ -42,14 +48,6 @@ BUSY_INDICATOR_PATH = os.path.join(
     "img",
     "busy_indicator.gif"
 )
-
-# Get Version
-
-VERSION_NO = "0.2.8-dev0"
-
-URL_DOCUMENTATION = "https://mannlabs.github.io/alphapept/"
-URL_ISSUE = "https://github.com/MannLabs/alphapept/issues"
-URL_CONTRIBUTE = "https://github.com/MannLabs/alphapept/blob/master/CONTRIBUTING.md"
 
 if not os.path.isfile(ICON_PATH):
     raise FileNotFoundError('Logo not found - Path {}'.format(ICON_PATH))
