@@ -85,7 +85,7 @@ def main():
 
     database_parser = subparsers.add_parser(
         'database',
-        help='Create a AlphaPept compatible databse from a FASTA file.'
+        help='Create a AlphaPept compatible database from a FASTA file.'
     )
 
     database_parser.add_argument("fastafile", help=("Path to FASTA file."))
