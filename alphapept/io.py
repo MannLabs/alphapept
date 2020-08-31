@@ -1051,7 +1051,7 @@ def read_DDA_query_data(
 #         [int_ms2[s:e] for s,e in zip(indices_ms2[:-1], indices_ms2[1:])]
 #     )
     query_data["bounds"] = np.diff(indices_ms2)
-    if self.read(attr_name="Bruker", group_name=f"Raw/{samples[0]}") == "Bruker":
+    if self.read(attr_name="vendor", group_name=f"Raw/{samples[0]}") == "Bruker":
         query_data["mobility"] = query_data["mobility2"]
         query_data["prec_id"] = query_data["prec_id2"]
     return query_data
