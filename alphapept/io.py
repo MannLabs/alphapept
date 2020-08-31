@@ -628,12 +628,12 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
     query_data = {}
 
     query_data['prec_mass_list2'] = prec_data['Mass'].values
-    query_data['prec_id'] = prec_data['Id'].values
+    query_data['prec_id2'] = prec_data['Id'].values
     query_data['mono_mzs2'] = prec_data['MonoisotopicMz'].values
     query_data['rt_list_ms2'] = frame_data.loc[prec_data['Parent'].values]['Time'].values / 60 #convert to minutes
     query_data['scan_list_ms2'] = prec_data['Parent'].values
     query_data['charge2'] = prec_data['Charge'].values
-    query_data['mobility'] = tdf.scanNumToOneOverK0(1, prec_data['ScanNumber'].to_list()) #check if its okay to always use first frame
+    query_data['mobility2'] = tdf.scanNumToOneOverK0(1, prec_data['ScanNumber'].to_list()) #check if its okay to always use first frame
     query_data["mass_list_ms2"] = mass_list_ms2
     query_data["int_list_ms2"] = int_list_ms2
 
@@ -958,8 +958,8 @@ def _save_DDA_query_data(
     overwrite=False
 ):
     sample = os.path.basename(file_name)
-    if vendor == "Bruker":
-        raise NotImplementedError("Unclear what are ms1 and ms2 attributes for bruker")
+#     if vendor == "Bruker":
+#         raise NotImplementedError("Unclear what are ms1 and ms2 attributes for bruker")
     if "Raw" not in self.read():
         self.write("Raw")
     if sample not in self.read(group_name="Raw"):
@@ -1051,6 +1051,8 @@ def read_DDA_query_data(
 #         [int_ms2[s:e] for s,e in zip(indices_ms2[:-1], indices_ms2[1:])]
 #     )
     query_data["bounds"] = np.diff(indices_ms2)
+    query_data["mobility"] = query_data["mobility2"]
+    query_data["prec_id"] = query_data["prec_id2"]
     return query_data
 
 # Cell
