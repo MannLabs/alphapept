@@ -15,7 +15,7 @@ else:
 
 
 path = os.path.dirname(os.path.abspath(__file__))
-libname = os.path.join(path,'timsdata.dll')
+libname = os.path.join(path, libname)
 
 dll = cdll.LoadLibrary(libname)
 dll.tims_open.argtypes = [ c_char_p, c_uint32 ]
@@ -34,10 +34,11 @@ dll.tims_read_pasef_msms.restype = c_uint32
 dll.tims_read_pasef_msms_for_frame.argtypes = [ c_uint64, c_int64, MSMS_SPECTRUM_FUNCTOR ]
 dll.tims_read_pasef_msms_for_frame.restype = c_uint32
 MSMS_PROFILE_SPECTRUM_FUNCTOR = CFUNCTYPE(None, c_int64, c_uint32, POINTER(c_int32))
-dll.tims_read_pasef_profile_msms.argtypes = [ c_uint64, POINTER(c_int64), c_uint32, MSMS_PROFILE_SPECTRUM_FUNCTOR ]
-dll.tims_read_pasef_profile_msms.restype = c_uint32
-dll.tims_read_pasef_profile_msms_for_frame.argtypes = [ c_uint64, c_int64, MSMS_PROFILE_SPECTRUM_FUNCTOR ]
-dll.tims_read_pasef_profile_msms_for_frame.restype = c_uint32
+if sys.platform[:5] == "win32":
+    dll.tims_read_pasef_profile_msms.argtypes = [ c_uint64, POINTER(c_int64), c_uint32, MSMS_PROFILE_SPECTRUM_FUNCTOR ]
+    dll.tims_read_pasef_profile_msms.restype = c_uint32
+    dll.tims_read_pasef_profile_msms_for_frame.argtypes = [ c_uint64, c_int64, MSMS_PROFILE_SPECTRUM_FUNCTOR ]
+    dll.tims_read_pasef_profile_msms_for_frame.restype = c_uint32
 
 convfunc_argtypes = [ c_uint64, c_int64, POINTER(c_double), POINTER(c_double), c_uint32 ]
 
@@ -56,11 +57,12 @@ dll.tims_scannum_to_voltage.restype = c_uint32
 dll.tims_voltage_to_scannum.argtypes = convfunc_argtypes
 dll.tims_voltage_to_scannum.restype = c_uint32
 
-dll.tims_oneoverk0_to_ccs_for_mz.argtypes = [c_double, c_int32, c_double]
-dll.tims_oneoverk0_to_ccs_for_mz.restype = c_double
+if sys.platform[:5] == "win32":
+    dll.tims_oneoverk0_to_ccs_for_mz.argtypes = [c_double, c_int32, c_double]
+    dll.tims_oneoverk0_to_ccs_for_mz.restype = c_double
 
-dll.tims_ccs_to_oneoverk0_for_mz.argtypes = [c_double, c_int32, c_double]
-dll.tims_ccs_to_oneoverk0_for_mz.restype = c_double
+    dll.tims_ccs_to_oneoverk0_for_mz.argtypes = [c_double, c_int32, c_double]
+    dll.tims_ccs_to_oneoverk0_for_mz.restype = c_double
 
 def throwLastTimsDataError (dll_handle):
     """Throw last TimsData error string as an exception."""
