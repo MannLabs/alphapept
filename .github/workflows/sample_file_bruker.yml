@@ -21,9 +21,7 @@ jobs:
     - name: Preparing Files
       run: |
         $FileName = "C:\testfolder"
-        if (Test-Path $FileName) {
-        Remove-Item $FileName
-        }
+        if (Test-Path $FileName) {Remove-Item  -Recurse -Force $FileName}
         New-Item -Path "C:\" -Name "testfolder" -ItemType "directory"
         Copy-Item "C:\benchmark\HeLa_200ng_1428.d" -Destination "C:\testfolder\" –recurse
         Copy-Item "C:\benchmark\human.fasta" -Destination "C:\testfolder\"
