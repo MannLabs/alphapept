@@ -22,7 +22,7 @@ jobs:
       run: |
         $FileName = "C:\testfolder"
         if (Test-Path $FileName) {
-        Remove-Item $FileName –recurse
+        Remove-Item $FileName
         }
         New-Item -Path "C:\" -Name "testfolder" -ItemType "directory"
         Copy-Item "C:\benchmark\HeLa_500ng.raw" -Destination "C:\testfolder\"
