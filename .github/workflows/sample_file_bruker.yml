@@ -22,13 +22,12 @@ jobs:
       run: |
         $FileName = "C:\testfolder"
         if (Test-Path $FileName) {
-        Remove-Item $FileName –recurse
+        Remove-Item $FileName
         }
         New-Item -Path "C:\" -Name "testfolder" -ItemType "directory"
         Copy-Item "C:\benchmark\HeLa_200ng_1428.d" -Destination "C:\testfolder\" –recurse
         Copy-Item "C:\benchmark\human.fasta" -Destination "C:\testfolder\"
         Copy-Item "C:\benchmark\contaminants.fasta" -Destination "C:\testfolder\"
-
     - name: Run Alphapept on Bruker
       run: |
         python -m alphapept workflow C:\benchmark\hela_test_bruker.yaml
