@@ -73,6 +73,7 @@ def compare_specs_parallel(
     frag_hits,
     query_masses,
     query_frags,
+    query_indices,
     db_masses,
     db_frags,
     idxs_lower,
@@ -92,7 +93,9 @@ def compare_specs_parallel(
         for query_idx in prange(len(query_masses)):
             for db_idx in range(idxs_lower[query_idx] , idxs_higher[query_idx] ):
                 num_specs_compared += 1
-                query_frag = query_frags[:, query_idx] [: query_bounds[query_idx] ]
+                query_idx_start = query_indices[query_idx]
+                query_idx_end = query_indices[query_idx + 1]
+                query_frag = query_frags[query_idx_start:query_idx_end]
                 db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
                 o_mass = query_masses[query_idx]  - db_masses[db_idx]
                 hits = compare_frags(query_frag, db_frag, mtol, ppm)
@@ -109,7 +112,9 @@ def compare_specs_parallel(
             query_idx = m_subset[index]
             for db_idx in range(idxs_lower[query_idx] , idxs_higher[query_idx] ):
                 num_specs_compared += 1
-                query_frag = query_frags[:, query_idx] [: query_bounds[query_idx] ]
+                query_idx_start = query_indices[query_idx]
+                query_idx_end = query_indices[query_idx + 1]
+                query_frag = query_frags[query_idx_start:query_idx_end]
                 db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
                 o_mass = query_masses[query_idx]  - db_masses[db_idx]
                 hits = compare_frags(query_frag, db_frag, mtol, ppm)
@@ -125,6 +130,7 @@ def compare_specs_single(
     frag_hits,
     query_masses,
     query_frags,
+    query_indices,
     db_masses,
     db_frags,
     idxs_lower,
@@ -146,7 +152,9 @@ def compare_specs_single(
         for query_idx in range(len(query_masses)):
             for db_idx in range(idxs_lower[query_idx] , idxs_higher[query_idx] ):
                 num_specs_compared += 1
-                query_frag = query_frags[:, query_idx] [: query_bounds[query_idx] ]
+                query_idx_start = query_indices[query_idx]
+                query_idx_end = query_indices[query_idx + 1]
+                query_frag = query_frags[query_idx_start:query_idx_end]
                 db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
                 o_mass = query_masses[query_idx]  - db_masses[db_idx]
                 hits = compare_frags(query_frag, db_frag, mtol, ppm)
@@ -164,7 +172,9 @@ def compare_specs_single(
             query_idx = m_subset[index]
             for db_idx in range(idxs_lower[query_idx] , idxs_higher[query_idx] ):
                 num_specs_compared += 1
-                query_frag = query_frags[:, query_idx] [: query_bounds[query_idx] ]
+                query_idx_start = query_indices[query_idx]
+                query_idx_end = query_indices[query_idx + 1]
+                query_frag = query_frags[query_idx_start:query_idx_end]
                 db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
                 o_mass = query_masses[query_idx]  - db_masses[db_idx]
                 hits = compare_frags(query_frag, db_frag, mtol, ppm)
@@ -231,6 +241,7 @@ def get_psms(
     query_mz = query_data['mono_mzs2']
     query_frags = query_data['mass_list_ms2']
     query_bounds = query_data['bounds']
+    query_indices = query_data["indices_ms2"]
     query_rt = query_data['rt_list_ms2']
     db_masses = db_data['precursors']
     db_frags = db_data['fragmasses']
@@ -241,8 +252,19 @@ def get_psms(
         query_masses = features['mass_matched'].values
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
-        query_frags = query_frags[:, features['query_idx'].values]
         query_bounds = query_bounds[features['query_idx'].values]
+        query_selection = features['query_idx'].values
+        indices = np.zeros(len(query_selection) + 1, np.int64)
+        indices[1:] = np.diff(query_indices)[query_selection]
+        indices = np.cumsum(indices)
+        query_frags = np.concatenate(
+            [
+                query_frags[s: e] for s, e in zip(
+                    query_indices[query_selection], query_indices[query_selection + 1]
+                )
+            ]
+        )
+        query_indices = indices
     else:
         pass
 
@@ -262,6 +284,7 @@ def get_psms(
                 frag_hits,
                 query_masses,
                 query_frags,
+                query_indices,
                 db_masses,
                 db_frags,
                 idxs_lower,
@@ -278,6 +301,7 @@ def get_psms(
                 frag_hits,
                 query_masses,
                 query_frags,
+                query_indices,
                 db_masses,
                 db_frags,
                 idxs_lower,
@@ -302,6 +326,7 @@ def get_psms(
                     frag_hits,
                     query_masses,
                     query_frags,
+                    query_indices,
                     db_masses,
                     db_frags,
                     idxs_lower,
@@ -318,6 +343,7 @@ def get_psms(
                     frag_hits,
                     query_masses,
                     query_frags,
+                    query_indices,
                     db_masses,
                     db_frags,
                     idxs_lower,
@@ -481,6 +507,7 @@ def score_parallel(
     query_masses,
     query_frags,
     query_ints,
+    query_indices,
     db_masses,
     db_frags,
     frag_types,
@@ -516,8 +543,10 @@ def score_parallel(
     for i in prange(len(psms)):
         query_idx = psms[i]["query_idx"]
         db_idx = psms[i]["db_idx"]
-        query_frag = query_frags[:, query_idx] [: query_bounds[query_idx] ]
-        query_int = query_ints[:, query_idx] [: query_bounds[query_idx] ]
+        query_idx_start = query_indices[query_idx]
+        query_idx_end = query_indices[query_idx + 1]
+        query_frag = query_frags[query_idx_start:query_idx_end]
+        query_int = query_ints[query_idx_start:query_idx_end]
         db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
         frag_type = frag_types[:, db_idx] [: db_bounds[db_idx] ]
         o_mass[i] = query_masses[query_idx]  - db_masses[db_idx]
@@ -568,6 +597,7 @@ def score_single(
     query_masses,
     query_frags,
     query_ints,
+    query_indices,
     db_masses,
     db_frags,
     frag_types,
@@ -601,8 +631,10 @@ def score_single(
     for i in range(len(psms)):
         query_idx = psms[i]["query_idx"]
         db_idx = psms[i]["db_idx"]
-        query_frag = query_frags[:, query_idx] [: query_bounds[query_idx] ]
-        query_int = query_ints[:, query_idx] [: query_bounds[query_idx] ]
+        query_idx_start = query_indices[query_idx]
+        query_idx_end = query_indices[query_idx + 1]
+        query_frag = query_frags[query_idx_start:query_idx_end]
+        query_int = query_ints[query_idx_start:query_idx_end]
         db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
         frag_type = frag_types[:, db_idx] [: db_bounds[db_idx] ]
         o_mass[i] = query_masses[query_idx]  - db_masses[db_idx]
@@ -694,6 +726,7 @@ def get_score_columns(
     query_masses = query_data['prec_mass_list2']
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
+    query_indices = query_data["indices_ms2"]
 
     query_mz = query_data['mono_mzs2']
     query_charges = query_data['charge2']
@@ -717,10 +750,27 @@ def get_score_columns(
         query_masses = features['mass_matched'].values
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
-        query_frags = query_frags[:, features['query_idx'].values]
         query_bounds = query_bounds[features['query_idx'].values]
         query_charges = query_charges[features['query_idx'].values]
-        query_ints = query_ints[:, features['query_idx'].values]
+        query_selection = features['query_idx'].values
+        indices = np.zeros(len(query_selection) + 1, np.int64)
+        indices[1:] = np.diff(query_indices)[query_selection]
+        indices = np.cumsum(indices)
+        query_frags = np.concatenate(
+            [
+                query_frags[s: e] for s, e in zip(
+                    query_indices[query_selection], query_indices[query_selection + 1]
+                )
+            ]
+        )
+        query_ints = np.concatenate(
+            [
+                query_ints[s: e] for s, e in zip(
+                    query_indices[query_selection], query_indices[query_selection + 1]
+                )
+            ]
+        )
+        query_indices = indices
     else:
         pass
 
@@ -730,6 +780,7 @@ def get_score_columns(
             query_masses,
             query_frags,
             query_ints,
+            query_indices,
             db_masses,
             db_frags,
             frag_types,
@@ -745,6 +796,7 @@ def get_score_columns(
             query_masses,
             query_frags,
             query_ints,
+            query_indices,
             db_masses,
             db_frags,
             frag_types,
@@ -808,6 +860,7 @@ def plot_hit(
     query_bounds,
     query_frags,
     query_ints,
+    query_indices,
     ppm,
     m_tol,
     db_ints = None,
@@ -834,8 +887,10 @@ def plot_hit(
     frag_type = frag_types[:, db_idx] [:db_bound]
 
     query_bound = query_bounds[query_idx]
-    query_frag = query_frags[:, query_idx] [:query_bound]
-    query_int = query_ints[:, query_idx] [:query_bound]
+    query_idx_start = query_indices[query_idx]
+    query_idx_end = query_indices[query_idx + 1]
+    query_frag = query_frags[query_idx_start:query_idx_end]
+    query_int = query_ints[query_idx_start:query_idx_end]
 
     query_int = query_int / np.max(query_int) * 100
 
@@ -901,8 +956,10 @@ def plot_psms(query_data, df, index, mass_dict, ppm=True, m_tol=20):
     query_ints = query_data['int_list_ms2']
 
     query_bound = query_bounds[query_idx]
-    query_frag = query_frags[:, query_idx] [:query_bound]
-    query_int = query_ints[:, query_idx] [:query_bound]
+    query_idx_start = query_indices[query_idx]
+    query_idx_end = query_indices[query_idx + 1]
+    query_frag = query_frags[query_idx_start:query_idx_end]
+    query_int = query_ints[query_idx_start:query_idx_end]
 
     query_int = query_int / np.max(query_int) * 100
 
@@ -979,6 +1036,7 @@ def perform_search(query_files, db_masses, db_frags, db_bounds, db_seqs, frag_ty
 import os
 import pandas as pd
 import copy
+import alphapept.io
 
 def store_hdf(df, path, key, replace=False):
     """
@@ -1012,7 +1070,10 @@ def search_db(to_process):
 
     if not skip:
         db_data = np.load(settings['fasta']['database_path'], allow_pickle=True)
-        query_data = np.load(file_npz, allow_pickle=True)
+#         query_data = np.load(file_npz, allow_pickle=True)
+        query_data = alphapept.io.MS_Data_File(
+            f"{file_npz[:-4]}.ms_data.hdf"
+        ).read_DDA_query_data()
 
         base, ext = os.path.splitext(file_npz)
 
@@ -1122,7 +1183,10 @@ def search_fasta_block(to_process):
             db_data['bounds'] = np.sum(db_data['fragmasses']>=0,axis=0).astype(np.int64)
 
             for file_idx, file_npz in enumerate(files_npz):
-                query_data = np.load(file_npz, allow_pickle=True)
+#                 query_data = np.load(file_npz, allow_pickle=True)
+                query_data = alphapept.io.MS_Data_File(
+                    f"{file_npz[:-4]}.ms_data.hdf"
+                ).read_DDA_query_data()
 
                 base, ext = os.path.splitext(file_npz)
 
