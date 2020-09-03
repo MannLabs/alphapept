@@ -1066,11 +1066,8 @@ def raw_to_ms_data_file(to_process, callback = None):
     file_name, settings = to_process
     local_file_name = os.path.basename(file_name)
     output_path = os.path.dirname(file_name)
-    output_file_name = os.path.join(
-        output_path,
-        f"{local_file_name[:-4]}.ms_data.hdf"
-        # TODO: This assumes a .raw or .npz extension
-    )
+    base_file_name, ext = os.path.splitext(local_file_name)
+    output_file_name = os.path.join(output_path, base_file_name+".ms_data.hdf")
     ms_data_file = MS_Data_File(
         output_file_name,
         is_new_file=True
