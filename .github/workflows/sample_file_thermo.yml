@@ -26,7 +26,7 @@ jobs:
         python setup.py install
     - name: Run Alphapept on Thermo
       run: |
-        $FileName = "C:\benchmark\HeLa_500ng.npz"
+        $FileName = "C:\benchmark\HeLa_500ng.ms_data.hdf"
         if (Test-Path $FileName) {
         Remove-Item $FileName
         }

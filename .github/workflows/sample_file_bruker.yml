@@ -26,7 +26,7 @@ jobs:
         python setup.py install
     - name: Run Alphapept on Bruker
       run: |
-        $FileName = "C:\benchmark\HeLa_200ng_1428.npz"
+        $FileName = "C:\benchmark\HeLa_200ng_1428.ms_data.hdf"
         if (Test-Path $FileName) {
         Remove-Item $FileName
         }
