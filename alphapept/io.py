@@ -1074,6 +1074,7 @@ def raw_to_ms_data_file(to_process, callback = None):
     )
     ms_data_file.import_raw_DDA_data(
         file_name,
+        most_abundant = settings["raw"]["most_abundant"]
     )
 
 # Cell
