@@ -4,7 +4,7 @@ h5py==2.10.0
 lxml==4.5.2
 matplotlib==3.2.2
 networkx==2.4
-numba==0.48.0
+numba==0.51.1
 numpy==1.19.1
 pandas==1.1.1
 psutil==5.7.2
