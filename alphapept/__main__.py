@@ -32,8 +32,7 @@ def _convert(args):
         settings['raw'] = {}
         settings['raw']['most_abundant'] = abundant
         to_process = (args.rawfile, settings)
-        alphapept.io.raw_to_npz(to_process)
-
+        alphapept.io.raw_to_ms_data_file(to_process)
 
 def _database(args):
     raise NotImplementedError

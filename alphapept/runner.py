@@ -117,21 +117,19 @@ def run_alphapept(settings, callback=None):
         )
 
     # File Conversion
-    files_npz = []
+    files_ms_data_hdf = []
     to_convert = []
 
     for file_name in settings['experiment']['file_paths']:
         base, ext = os.path.splitext(file_name)
-        npz_path = base+'.npz'
-        files_npz.append(npz_path)
-        if os.path.isfile(npz_path):
-            logging.info('Found *.npz file or {}'.format(file_name))
+        ms_data_file_path = f'{base}.ms_data.hdf'
+        files_ms_data_hdf.append(ms_data_file_path)
+        if os.path.isfile(ms_data_file_path):
+            logging.info(f'Found *.ms_data.hdf file for {file_name}')
         else:
             to_convert.append(file_name)
-            logging.info(
-                'No *.npz file found for {}. Adding to conversion list.'.format(file_name)
-            )
-    files_npz.sort()
+            logging.info(f'No *.ms_data.hdf file found for {file_name}. Adding to conversion list.')
+    files_ms_data_hdf.sort()
 
     if len(to_convert) > 0:
         logging.info('Starting file conversion.')
@@ -139,8 +137,11 @@ def run_alphapept(settings, callback=None):
             cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
         else:
             cb = callback
-        alphapept.io.raw_to_npz_parallel(to_convert, settings, callback=cb)
-        logging.info('File conversion complete.')
+        # raw_to_npz_parallel(to_convert, settings, callback=cb)
+        for file_name in to_convert:
+            to_process = (file_name, settings)
+            alphapept.io.raw_to_ms_data_file(to_process, callback=None)
+            logging.info('File conversion complete.')
 
     # Feature Finding
     to_convert = []
@@ -151,12 +152,13 @@ def run_alphapept(settings, callback=None):
         if os.path.isfile(hdf_path):
             try:
                 pd.read_hdf(hdf_path, 'features')
-                logging.info(
-                    'Found *.hdf with features for {}'.format(file_name)
-                )
-                alphapept.utils.reset_hdf(hdf_path)
-                alphapept.utils.resave_hdf(hdf_path)
-
+                logging.info('Found *.hdf with features for {}'.format(_))
+                # reset_hdf(hdf_path)
+                # resave_hdf(hdf_path)
+                # TODO: Caching is not done properly.
+                # Assumes 'features_calib' is present.
+                # This seems to be from search though, not feature finding
+                # As a result a non-passed search retriggers feature finding
             except KeyError:
                 to_convert.append(file_name)
                 logging.info(
