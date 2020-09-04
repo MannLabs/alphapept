@@ -112,30 +112,31 @@ def raw_to_centroid(query_data, callback=None):
     rts = query_data['rt_list_ms1']
     masses = query_data['mass_list_ms1']
     intensities = query_data['int_list_ms1']
+    indices = query_data['indices_ms1']
 
     centroid_dtype = [("mz", float), ("int", np.int64), ("scan_no", int), ("rt", float)]
     centroids_pre = []
 
 
-    for i in range(len(masses)):
+    for i, (s, e) in enumerate(zip(indices[:-1], indices[1:])):
         scan_no = scans[i]
         rt = rts[i]
-        mass_arr = masses[i]
-        ints_arr = intensities[i]
+        mass_arr = masses[s:e]
+        ints_arr = intensities[s:e]
 
         centroids_pre.append(
             [(mz, intensity, scan_no, rt) for mz, intensity in zip(mass_arr, ints_arr)]
         )
 
         if callback:
-            callback((i+1)/len(masses)/2)
+            callback((i+1)/len(scans)/2)
 
     centroids = []
 
     for i, _ in enumerate(centroids_pre):
         centroids.append(np.array(_, dtype=centroid_dtype))
         if callback:
-            callback((len(masses)+i+1)/len(masses)/2)
+            callback((len(scans)+i+1)/len(scans)/2)
 
     return centroids
 
@@ -1430,6 +1431,7 @@ from .constants import averagine_aa, isotopes
 import logging
 import os
 from .search import query_data_to_features
+import alphapept.io
 
 def find_and_save_features(to_process):
     """
@@ -1452,7 +1454,10 @@ def find_and_save_features(to_process):
     base, ext = os.path.splitext(file)
     out_file = base+'.hdf'
 
-    query_data = np.load(file, allow_pickle=True)
+#     query_data = np.load(file, allow_pickle=True)
+    query_data = alphapept.io.MS_Data_File(
+        f"{base}.ms_data.hdf"
+    ).read_DDA_query_data()
 
     if not settings['general']["find_features"]:
         features = query_data_to_features(query_data)

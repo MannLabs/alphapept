@@ -10,24 +10,22 @@ on:
 jobs:
   HeLa_Bruker_Win:
     runs-on: self-hosted
-    strategy:
-      matrix:
-        python-version: [3.8]
-
     steps:
     - uses: actions/checkout@v2
-    - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v2
-      with:
-        python-version: ${{ matrix.python-version }}
     - name: Install package
       run: |
+        conda create --name alphapept python=3.8 -y
+        conda activate alphapept
         pip install -r requirements.txt
         python setup.py install
+    - name: Preparing Files
+      run: |
+        $FileName = "C:\testfolder"
+        if (Test-Path $FileName) {Remove-Item -Recurse -Force $FileName}
+        New-Item -Path "C:\" -Name "testfolder" -ItemType "directory"
+        Copy-Item -Recurse "C:\benchmark\HeLa_200ng_1428.d" -Destination "C:\testfolder\"
+        Copy-Item "C:\benchmark\human.fasta" -Destination "C:\testfolder\"
+        Copy-Item "C:\benchmark\contaminants.fasta" -Destination "C:\testfolder\"
     - name: Run Alphapept on Bruker
       run: |
-        $FileName = "C:\benchmark\HeLa_200ng_1428.npz"
-        if (Test-Path $FileName) {
-        Remove-Item $FileName
-        }
-        python -m alphapept workflow C:\benchmark\hela_testrun_bruker.yaml
+        python -m alphapept workflow C:\benchmark\hela_test_bruker.yaml
