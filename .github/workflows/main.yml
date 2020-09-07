@@ -11,6 +11,8 @@ jobs:
         architecture: 'x64'
     - name: Install the library
       run: |
+        pip install -U setuptools
+        pip install -U wheel
         pip install nbdev jupyter
         pip install -e .
     - name: Read all notebooks
