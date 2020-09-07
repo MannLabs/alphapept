@@ -18,4 +18,4 @@ seaborn==0.10.1
 tables==3.6.1
 tqdm==4.48.2
 pythonnet==2.5.1
-fastcore==1.0.0
+fastcore==1.0.4
