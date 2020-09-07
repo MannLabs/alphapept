@@ -1,7 +1,14 @@
 from configparser import ConfigParser
+import os
 
 config = ConfigParser(delimiters=['='])
-config.read('settings.ini')
+config.read(
+    os.path.join(
+        os.path.dirname(__file__),
+        '..',
+        'settings.ini'
+    )
+)
 cfg = config['DEFAULT']
 
 LIB_NAME = cfg["lib_name"]
