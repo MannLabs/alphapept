@@ -513,8 +513,8 @@ def add_to_pept_dict(pept_dict, new_peptides, i):
 
 def merge_pept_dicts(list_of_pept_dicts):
 
-    if len(list_of_pept_dicts) < 2:
-        raise ValueError('Need to pass at least two elements to merge.')
+    if len(list_of_pept_dicts) == 0:
+        raise ValueError('Need to pass at least 1 element.')
 
     new_pept_dict = list_of_pept_dicts[0]
 
