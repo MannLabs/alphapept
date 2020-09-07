@@ -15,8 +15,6 @@ jobs:
     - name: Creating installer for Windows
       run: |
         conda activate alphapept
-        pip install -U setuptools
-        pip install -U wheel
         pip install PyInstaller
         cd distribution
         .\create_installer.bat
