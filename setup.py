@@ -59,7 +59,7 @@ setuptools.setup(
             maximum_python3_available + 1
         )
     ],
-    version=cfg["version_no"],
+    version=cfg["version"],
     description=cfg["description"],
     keywords=cfg["keywords"],
     author=cfg["author"],
