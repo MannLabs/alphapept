@@ -1,7 +1,11 @@
 import setuptools
-import alphapept.__version__
+from configparser import ConfigParser
 from pkg_resources import parse_version
 assert parse_version(setuptools.__version__) >= parse_version('36.2')
+
+config = ConfigParser(delimiters=['='])
+config.read('settings.ini')
+cfg = config['DEFAULT']
 
 license_options = {
     'apache2': (
@@ -42,30 +46,30 @@ with open("requirements.txt") as requirements_file:
             requirements.append(strict_requirements[requirement])
 
 setuptools.setup(
-    name=alphapept.__version__.LIB_NAME,
-    license=license_options[alphapept.__version__.LICENSE][0],
+    name=cfg["lib_name"],
+    license=license_options[cfg["license"]][0],
     classifiers=[
-        f'Development Status :: {alphapept.__version__.STATUS} - {status_options[alphapept.__version__.STATUS]}',
-        f'Intended Audience :: {alphapept.__version__.AUDIENCE}',
-        f'License :: {license_options[alphapept.__version__.LICENSE][1]}',
-        f'Natural Language :: {alphapept.__version__.LANGUAGE}',
+        f'Development Status :: {cfg["status"]} - {status_options[cfg["status"]]}',
+        f'Intended Audience :: {cfg["audience"]}',
+        f'License :: {license_options[cfg["license"]][1]}',
+        f'Natural Language :: {cfg["language"]}',
     ] + [
         f'Programming Language :: Python :: 3.{i}' for i in range(
-            int(alphapept.__version__.MIN_PYTHON.split(".")[1]),
+            int(cfg["min_python"].split(".")[1]),
             maximum_python3_available + 1
         )
     ],
-    version=alphapept.__version__.VERSION_NO,
-    description=alphapept.__version__.DESCRIPTION,
-    keywords=alphapept.__version__.KEYWORDS,
-    author=alphapept.__version__.AUTHOR,
-    author_email=alphapept.__version__.AUTHOR_EMAIL,
-    url=alphapept.__version__.URL,
+    version=cfg["version_no"],
+    description=cfg["description"],
+    keywords=cfg["keywords"],
+    author=cfg["author"],
+    author_email=cfg["author_email"],
+    url=cfg["url"],
     packages=setuptools.find_packages(),
     # TODO: Modifying this should allow to remove the MAINFEST.in
     include_package_data=True,
     install_requires=requirements,
-    python_requires=f'>={alphapept.__version__.MIN_PYTHON},<{alphapept.__version__.MAX_PYTHON}',
+    python_requires=f'>={cfg["min_python"]},<{cfg["max_python"]}',
     long_description=long_description,
     long_description_content_type='text/markdown',
     zip_safe=False,
