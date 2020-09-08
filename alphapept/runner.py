@@ -152,7 +152,9 @@ def run_alphapept(settings, callback=None):
         if os.path.isfile(hdf_path):
             try:
                 pd.read_hdf(hdf_path, 'features')
-                logging.info('Found *.hdf with features for {}'.format(_))
+                logging.info(
+                    'Found *.hdf with features for {}'.format(file_name)
+                )
                 # reset_hdf(hdf_path)
                 # resave_hdf(hdf_path)
                 # TODO: Caching is not done properly.
