@@ -11,37 +11,37 @@ entries:
       url: /
     - output: web,pdf
       title: Settings
-      url: /settings
+      url: settings.html
     - output: web,pdf
       title: Chem
-      url: /chem
+      url: chem.html
     - output: web,pdf
       title: Input / Output
-      url: /io
+      url: io.html
     - output: web,pdf
       title: FASTA
-      url: /fasta
+      url: fasta.html
     - output: web,pdf
       title: Feature Finding
-      url: /feature_finding
+      url: feature_finding.html
     - output: web,pdf
       title: Search
-      url: /search
+      url: search.html
     - output: web,pdf
       title: Score
-      url: /score
+      url: score.html
     - output: web,pdf
       title: Recalibration
-      url: /recalibration
+      url: recalibration.html
     - output: web,pdf
       title: Quantification
-      url: /quantification
+      url: quantification.html
     - output: web,pdf
       title: Matching
-      url: /matching
+      url: matching.html
     - output: web,pdf
       title: Constants
-      url: /constants
+      url: constants.html
     output: web
     title: alphapept
   output: web
