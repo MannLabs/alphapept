@@ -11,6 +11,11 @@
 # )
 # cfg = config['DEFAULT']
 
+# import importlib.metadata
+# 
+# metadata = importlib.metadata.metadata("alphapept")
+# VERSION_NO = metadata["Version"]
+
 LIB_NAME = "alphapept"
 USER = "mannlabs"
 DESCRIPTION = "A modular, python-based framework for mass spectrometry."
