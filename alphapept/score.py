@@ -611,9 +611,6 @@ def score_hdf_parallel(settings, callback=None):
                 if callback:
                     callback((i+1)/max_)
 
-
-
-
 # Cell
 def protein_groups_hdf(to_process):
 

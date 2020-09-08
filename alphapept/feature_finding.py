@@ -1333,9 +1333,9 @@ def extract_bruker(file, ff_dir = "ext/bruker/FF/", config = "default.config"):
     """
 
     feature_path = file + '/'+ os.path.split(file)[-1] + '.features'
-    
+
     ff_dir = os.path.join(os.path.dirname(__file__), ff_dir)
-    
+
     if os.path.exists(feature_path):
         return feature_path
     else:

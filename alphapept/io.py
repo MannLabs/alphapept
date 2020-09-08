@@ -337,8 +337,8 @@ def load_thermo_raw(raw_file, most_abundant, callback=None, **kwargs):
     """
     Load thermo raw file and extract spectra
     """
-    from .pyrawfilereader import RawFileReader
 
+    from .pyrawfilereader import RawFileReader
     rawfile = RawFileReader(raw_file)
 
     spec_indices = np.array(

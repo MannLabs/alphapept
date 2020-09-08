@@ -1009,7 +1009,6 @@ def plot_psms(query_data, df, index, mass_dict, ppm=True, m_tol=20):
     plt.legend(loc='lower right')
     plt.show()
 
-
 # Cell
 def perform_search(query_files, db_masses, db_frags, db_bounds, db_seqs, frag_types, plot, **kwargs):
     """
