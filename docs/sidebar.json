@@ -1,16 +1,16 @@
 {
   "alphapept": {
     "Overview": "/",
-    "Settings": "/settings",
-    "Chem": "/chem",
-    "Input / Output": "/io",
-    "FASTA": "/fasta",
-    "Feature Finding": "/feature_finding",
-    "Search": "/search",
-    "Score": "/score",
-    "Recalibration": "/recalibration",
-    "Quantification": "/quantification",
-    "Matching": "/matching",
-    "Constants": "/constants"
+    "Settings": "settings.html",
+    "Chem": "chem.html",
+    "Input / Output": "io.html",
+    "FASTA": "fasta.html",
+    "Feature Finding": "feature_finding.html",
+    "Search": "search.html",
+    "Score": "score.html",
+    "Recalibration": "recalibration.html",
+    "Quantification": "quantification.html",
+    "Matching": "matching.html",
+    "Constants": "constants.html"
   }
 }
