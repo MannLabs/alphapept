@@ -11,10 +11,18 @@
 # )
 # cfg = config['DEFAULT']
 
-import importlib.metadata
-
-metadata = importlib.metadata.metadata("alphapept")
-VERSION_NO = metadata["Version"]
+import sys
+if sys.version_info.minor == 6:
+    import importlib_metadata
+    metadata = importlib_metadata.metadata("alphapept")
+    VERSION_NO = metadata["Version"]
+if sys.version_info.minor == 7:
+    import pkg_resources
+    VERSION_NO = pkg_resources.get_distribution("alphapept").version
+elif sys.version_info.minor == 8:
+    import importlib.metadata
+    metadata = importlib.metadata.metadata("alphapept")
+    VERSION_NO = metadata["Version"]
 
 LIB_NAME = "alphapept"
 USER = "mannlabs"
