@@ -1,26 +1,28 @@
 #!/usr/bin/env python
 """
-    ..__main__.py
+    alphapept.__main__.py
     ~~~~~~~~~~~~~~~~
     AlphaPept command line interface
     :authors: Maximilian Thomas Strauss
     :copyright: Copyright (c) 2020 Mann Labs
 """
-import sys
+
 import os
 
-VERSION_NO = "0.2.8-dev0"
 
-COPYRIGHT = "2020 Mann Labs"
-URL = "https://github.com/MannLabs/alphapept"
+from alphapept.__version__ import VERSION_NO
+from alphapept.__version__ import COPYRIGHT
+from alphapept.__version__ import URL
+
 
 def _run_alphapept(args):
-    from .runner import run_alphapept
-    from .settings import load_settings
+    import alphapept.runner
+    import alphapept.settings
 
     if os.path.isfile(args.settings_path):
-        _settings = load_settings(args.settings_path)
-        run_alphapept(_settings)
+        _settings = alphapept.settings.load_settings(args.settings_path)
+        alphapept.runner.run_alphapept(_settings)
+
 
 def _convert(args):
     import alphapept.io
@@ -35,27 +37,40 @@ def _convert(args):
 def _database(args):
     raise NotImplementedError
 
+
 def _features(args):
     raise NotImplementedError
+
 
 def _search(args):
     raise NotImplementedError
 
+
 def main():
-
     import argparse
-
     # Main parser
     parser = argparse.ArgumentParser("alphapept")
+
     subparsers = parser.add_subparsers(dest="command")
 
-    workflow_parser = subparsers.add_parser("workflow", help="Process files with alphapept using a settings file.")
-    workflow_parser.add_argument("settings_path", help=("Path to settings file"))
+    workflow_parser = subparsers.add_parser(
+        "workflow", help="Process files with alphapept using a settings file."
+    )
+    workflow_parser.add_argument(
+        "settings_path", help=("Path to settings file")
+    )
 
     gui_parser = subparsers.add_parser("gui", help="Open the AlphaPept GUI.")
-    gui_parser.add_argument("--test", required=False, help=("Flag to open and close gui for testing purposes."))
+    gui_parser.add_argument(
+        "--test",
+        required=False,
+        help=("Flag to open and close gui for testing purposes.")
+    )
 
-    convert_parser = subparsers.add_parser('convert', help='Perform file conversion on a raw file for AlphaPept.')
+    convert_parser = subparsers.add_parser(
+        'convert',
+        help='Perform file conversion on a raw file for AlphaPept.'
+    )
     convert_parser.add_argument("rawfile", help=("Path to rawfile"))
     convert_parser.add_argument(
         "-a",
@@ -67,7 +82,10 @@ def main():
         ),
     )
 
-    database_parser = subparsers.add_parser('database', help='Create a AlphaPept compatible databse from a FASTA file.')
+    database_parser = subparsers.add_parser(
+        'database',
+        help='Create a AlphaPept compatible database from a FASTA file.'
+    )
 
     database_parser.add_argument("fastafile", help=("Path to FASTA file."))
     database_parser.add_argument(
@@ -80,10 +98,21 @@ def main():
         ),
     )
 
-    feature_finder_parser = subparsers.add_parser('features', help='Find features on a specific file.')
-    search_parser = subparsers.add_parser('search', help='Search a converted raw file against a AlphaPept compatible database.')
-    watcher_parser = subparsers.add_parser('watcher', help='Continuously monitor a folder and perform file conversion and feature finding.')
-# link parser
+    # feature_finder_parser = subparsers.add_parser(
+    #     'features',
+    #     help='Find features on a specific file.'
+    # )
+    # search_parser = subparsers.add_parser(
+    #     'search',
+    #     help=   'Search a converted raw file against a AlphaPept compatible '
+    #             'database.'
+    # )
+    # watcher_parser = subparsers.add_parser(
+    #     'watcher',
+    #     help=   'Continuously monitor a folder and perform file conversion '
+    #             'and feature finding.'
+    # )
+    # link parser
 
     print("\n")
     print(r"     ___    __      __          ____             __ ")
