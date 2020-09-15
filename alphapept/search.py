@@ -247,6 +247,25 @@ def get_psms(
     db_frags = db_data['fragmasses']
     db_bounds = db_data['bounds']
 
+    # TODO include in settings file
+    calculate_db_mzs_offsets = True
+    if calculate_db_mzs_offsets:
+        import alphapept.recalibration
+        precursor_ppm_offsets = alphapept.recalibration.calculate_db_mzs_offsets(
+            query_masses.copy(),
+            db_masses.copy(),
+            ppm=10,
+            mass_defect=0.9
+        )
+        query_masses *= (1 + precursor_ppm_offsets / 10**6)
+        fragment_ppm_offsets = alphapept.recalibration.calculate_db_mzs_offsets(
+            query_frags.copy(),
+            db_frags[db_frags != -1].ravel(),
+            ppm=10,
+            mass_defect=0.9
+        )
+        query_frags *= (1 + fragment_ppm_offsets / 10**6)
+
 
     if features is not None:
         query_masses = features['mass_matched'].values
