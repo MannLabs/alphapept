@@ -155,12 +155,16 @@ def calibrate_hdf_parallel(settings, callback=None):
 import numba
 
 def calculate_db_mzs_offsets(
-    self_mzs_,
-    other_mzs_,
+    query_mzs,
+    target_mzs,
     ppm,
     mass_defect,
 ):
-    self_mzs = np.sort(self_mzs_)
+    self_mzs = np.sort(
+        query_mzs[
+            np.isfinite(query_mzs) & (query_mzs > 0)
+        ].flatten()
+    )
     self_lower = np.searchsorted(
         self_mzs,
         self_mzs * (1 - ppm / 10**6),
@@ -176,7 +180,11 @@ def calculate_db_mzs_offsets(
         self_upper - self_lower,
         mass_defect
     )
-    other_mzs = np.sort(other_mzs_)
+    other_mzs = np.sort(
+        target_mzs[
+            np.isfinite(target_mzs) & (target_mzs > 0)
+        ].flatten()
+    )
     other_lower = np.searchsorted(
         other_mzs,
         other_mzs * (1 - ppm / 10**6),
@@ -192,6 +200,22 @@ def calculate_db_mzs_offsets(
         other_upper - other_lower,
         mass_defect
     )
+    # TODO  plot upon request
+    if False:
+        from matplotlib import pyplot as plt
+        plt.plot(self_mzs, (self_upper - self_lower)/np.max(self_upper - self_lower), c="b")
+        plt.plot(other_mzs, (other_upper - other_lower)/np.max(other_upper - other_lower), c="r")
+        plt.scatter(
+            self_mzs[self_peaks],
+            (self_upper - self_lower)[self_peaks]/np.max(self_upper - self_lower),
+            c="b"
+        )
+        plt.scatter(
+            other_mzs[other_peaks],
+            (other_upper - other_lower)[other_peaks]/np.max(other_upper - other_lower),
+            c="r"
+        )
+        plt.show()
     if self_peaks.shape[0] > other_peaks.shape[0]:
         self_peaks = self_peaks[:other_peaks.shape[0]]
     elif other_peaks.shape[0] > self_peaks.shape[0]:
