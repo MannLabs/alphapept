@@ -247,26 +247,6 @@ def get_psms(
     db_frags = db_data['fragmasses']
     db_bounds = db_data['bounds']
 
-    # TODO include in settings file
-    calculate_db_mzs_offsets = True
-    if calculate_db_mzs_offsets:
-        import alphapept.recalibration
-        precursor_ppm_offsets = alphapept.recalibration.calculate_db_mzs_offsets(
-            query_masses.copy(),
-            db_masses.copy(),
-            ppm=10,
-            mass_defect=0.9
-        )
-        query_masses *= (1 + precursor_ppm_offsets / 10**6)
-        fragment_ppm_offsets = alphapept.recalibration.calculate_db_mzs_offsets(
-            query_frags.copy(),
-            db_frags[db_frags != -1].ravel(),
-            ppm=10,
-            mass_defect=0.9
-        )
-        query_frags *= (1 + fragment_ppm_offsets / 10**6)
-
-
     if features is not None:
         query_masses = features['mass_matched'].values
         query_mz = features['mz_matched'].values
@@ -287,7 +267,42 @@ def get_psms(
     else:
         pass
 
-    idxs_lower, idxs_higher = get_idxs(db_masses, query_masses, m_offset, ppm)
+    # TODO include in settings file
+    calculate_db_mzs_offsets = False
+    if calculate_db_mzs_offsets:
+        import alphapept.recalibration
+        precursor_ppm_offsets = alphapept.recalibration.calculate_db_mzs_offsets(
+            query_masses,
+            db_masses,
+            ppm=m_tol,
+            mass_defect=0.9
+        )
+        logging.info(
+            f"Precursors have a {precursor_ppm_offsets} ppm offset to db"
+        )
+        query_masses_corrected = query_masses * (1 - precursor_ppm_offsets / 10**6)
+        fragment_ppm_offsets = alphapept.recalibration.calculate_db_mzs_offsets(
+            query_frags,
+            db_frags,
+            ppm=m_tol,
+            mass_defect=0.9
+        )
+        logging.info(
+            f"Fragments have a {fragment_ppm_offsets} ppm offset to db"
+        )
+        query_frags_corrected = query_frags * (1 - fragment_ppm_offsets / 10**6)
+    else:
+        query_masses_corrected = query_masses
+        query_frags_corrected = query_frags
+
+#     idxs_lower, idxs_higher = get_idxs(db_masses, query_masses, m_offset, ppm)
+    idxs_lower, idxs_higher = get_idxs(
+        db_masses,
+        query_masses_corrected,
+        m_tol,
+        ppm
+    )
+    print(f"{np.sum(idxs_higher - idxs_lower):,}")
     frag_hits = np.zeros(
         (len(query_masses), np.max(idxs_higher - idxs_lower)), dtype=int
     )
@@ -301,8 +316,10 @@ def get_psms(
         if parallel:
             frag_hits, num_specs_compared = compare_specs_parallel(
                 frag_hits,
-                query_masses,
-                query_frags,
+#                 query_masses,
+                query_masses_corrected,
+#                 query_frags,
+                query_frags_corrected,
                 query_indices,
                 db_masses,
                 db_frags,
@@ -318,8 +335,10 @@ def get_psms(
         else:
             frag_hits, num_specs_compared = compare_specs_single(
                 frag_hits,
-                query_masses,
-                query_frags,
+#                 query_masses,
+                query_masses_corrected,
+#                 query_frags,
+                query_frags_corrected,
                 query_indices,
                 db_masses,
                 db_frags,
@@ -343,8 +362,10 @@ def get_psms(
             if parallel:
                 frag_hits, num_specs_compared_chunk = compare_specs_parallel(
                     frag_hits,
-                    query_masses,
-                    query_frags,
+#                     query_masses,
+                    query_masses_corrected,
+#                     query_frags,
+                    query_frags_corrected,
                     query_indices,
                     db_masses,
                     db_frags,
@@ -360,8 +381,10 @@ def get_psms(
             else:
                 frag_hits, num_specs_compared_chunk = compare_specs_single(
                     frag_hits,
-                    query_masses,
-                    query_frags,
+#                     query_masses,
+                    query_masses_corrected,
+#                     query_frags,
+                    query_frags_corrected,
                     query_indices,
                     db_masses,
                     db_frags,
@@ -793,11 +816,41 @@ def get_score_columns(
     else:
         pass
 
+    # TODO include in settings file
+    calculate_db_mzs_offsets = False
+    if calculate_db_mzs_offsets:
+        import alphapept.recalibration
+        precursor_ppm_offsets = alphapept.recalibration.calculate_db_mzs_offsets(
+            query_masses,
+            db_masses,
+            ppm=m_tol,
+            mass_defect=0.9
+        )
+        logging.info(
+            f"Precursors have a {precursor_ppm_offsets} ppm offset to db"
+        )
+        query_masses_corrected = query_masses * (1 - precursor_ppm_offsets / 10**6)
+        fragment_ppm_offsets = alphapept.recalibration.calculate_db_mzs_offsets(
+            query_frags,
+            db_frags,
+            ppm=m_tol,
+            mass_defect=0.9
+        )
+        logging.info(
+            f"Fragments have a {fragment_ppm_offsets} ppm offset to db"
+        )
+        query_frags_corrected = query_frags * (1 - fragment_ppm_offsets / 10**6)
+    else:
+        query_masses_corrected = query_masses
+        query_frags_corrected = query_frags
+
     if parallel:
         delta_m, delta_m_ppm, o_mass, o_mass_ppm, total_int, matched_int, b_hits, y_hits, num_specs_scored, db_mass_density, db_weighted_mass_density, db_mass_density_digit, db_weighted_mass_density_digit = score_parallel(
             psms,
-            query_masses,
-            query_frags,
+#             query_masses,
+            query_masses_corrected,
+#             query_frags,
+            query_frags_corrected,
             query_ints,
             query_indices,
             db_masses,
@@ -812,8 +865,10 @@ def get_score_columns(
     else:
         delta_m, delta_m_ppm, o_mass, o_mass_ppm, total_int, matched_int, b_hits, y_hits, num_specs_scored, db_mass_density, db_weighted_mass_density, db_mass_density_digit, db_weighted_mass_density_digit = score_single(
             psms,
-            query_masses,
-            query_frags,
+#             query_masses,
+            query_masses_corrected,
+#             query_frags,
+            query_frags_corrected,
             query_ints,
             query_indices,
             db_masses,
@@ -846,7 +901,8 @@ def get_score_columns(
     seqs = get_sequences(psms, db_seqs)
     psms = add_column(psms, seqs, "sequence")
 
-    mass = np.array(query_masses)[psms["query_idx"]]
+#     mass = np.array(query_masses)[psms["query_idx"]]
+    mass = np.array(query_masses_corrected)[psms["query_idx"]]
     mz = np.array(query_mz)[psms["query_idx"]]
     charge = np.array(query_charges)[psms["query_idx"]]
 
@@ -1078,10 +1134,12 @@ def search_db(to_process):
     file_npz, settings = to_process
 
     skip = False
+    feature_calibration = False
 
     if 'm_offset_calibrated' in settings["search"]:
         calibration = settings['search']['m_offset_calibrated']
         logging.info('Found calibrated m_offset with value {}'.format(calibration))
+        feature_calibration = True
         if calibration == 0:
             logging.info('Calibration is 0, skipping second database search.')
             skip = True
@@ -1095,10 +1153,13 @@ def search_db(to_process):
 
         base, ext = os.path.splitext(file_npz)
 
-        try:
-            features = pd.read_hdf(base+'.hdf', 'features_calib')
-        except KeyError:
+        if not feature_calibration:
             features = pd.read_hdf(base+'.hdf', 'features')
+        else:
+            try:
+                features = pd.read_hdf(base+'.hdf', 'features_calib')
+            except KeyError:
+                features = pd.read_hdf(base+'.hdf', 'features')
 
         psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
         if len(psms) > 0:
