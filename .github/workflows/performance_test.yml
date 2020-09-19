@@ -26,5 +26,7 @@ jobs:
         Copy-Item "C:\benchmark\human.fasta" -Destination "C:\testfolder\"
         Copy-Item "C:\benchmark\contaminants.fasta" -Destination "C:\testfolder\"
     - name: Run Alphapept on Thermo
+      env:
+        MONGODB_PW: ${{ secrets.MONGODB_PW }}
       run: |
-        python test_ci.py $secrets.MONGODB_PW "C:/benchmark/hela_test_thermo.yaml" $GITHUB_SHA ${GITHUB_REF##*/}
+        python test_ci.py $MONGODB_PW "C:/benchmark/hela_test_thermo.yaml" $GITHUB_SHA ${GITHUB_REF##*/}
