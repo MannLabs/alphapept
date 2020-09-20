@@ -9,6 +9,8 @@ from alphapept.runner import run_alphapept
 from alphapept.settings import load_settings
 import alphapept
 
+import platform
+
 
 def main():
 	print(sys.argv, len(sys.argv))
@@ -16,7 +18,7 @@ def main():
 	password = sys.argv[1]
 	settings_path = sys.argv[2]
 
-	if len(sys.argv) > 2:
+	if len(sys.argv) > 3:
 		commit = sys.argv[3]
 		branch = sys.argv[4]
 	else:
@@ -40,6 +42,8 @@ def main():
 	report['commit'] = commit
 
 	report['version'] = alphapept.__version__
+
+	report['sysinfo'] = platform.uname()
 
 	#File Sizes:
 	report['file_sizes'] = {}
