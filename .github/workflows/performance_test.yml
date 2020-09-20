@@ -26,7 +26,8 @@ jobs:
         Copy-Item "C:\benchmark\contaminants.fasta" -Destination "C:\testfolder\"
     - name: Run Alphapept on Thermo
       run: |
-        python test_ci.py "${{ secrets.MONGODB_PW }}" "C:\benchmark\hela_test_thermo.yaml" $GITHUB_SHA ${GITHUB_REF##*/}
+        python test_ci.py "${{ secrets.MONGODB_PW }}" "C:\benchmark\hela_test_thermo.yaml" $GITHUB_SHA "${GITHUB_REF##*/}
+
   HeLa_Bruker_Win:
     runs-on: self-hosted
     steps:
