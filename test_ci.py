@@ -11,7 +11,7 @@ import alphapept
 
 
 def main():
-	print(sys.argv)
+	print(sys.argv, len(sys.argv))
 
 	password = sys.argv[1]
 	settings_path = sys.argv[2]
