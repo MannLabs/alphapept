@@ -1,5 +1,5 @@
 # GitHub Actions to automatically test on sample files
-name: IRT Bruker Win
+name: QuickTest
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
     branches: [ master ]
 
 jobs:
-  HeLa_Bruker_Win:
+  IRT_Bruker:
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
@@ -30,4 +30,4 @@ jobs:
         Copy-Item "C:\benchmark\contaminants.fasta" -Destination "C:\testfolder\"
     - name: Run Alphapept on Bruker
       run: |
-        python test_ci.py "${{ secrets.MONGODB_PW }}" "C:\benchmark\irt_test_bruker.yaml" $GITHUB_SHA ${GITHUB_REF##*/}
+        python test_ci.py "${{ secrets.MONGODB_PW }}" "C:\benchmark\irt_test_bruker.yaml" $(git rev-parse --short "$GITHUB_SHA") ${GITHUB_REF##*/}
