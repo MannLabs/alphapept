@@ -1456,12 +1456,16 @@ def find_and_save_features(to_process):
     file = base + '.npz'
 
     base, ext = os.path.splitext(file)
-    out_file = base+'.hdf'
+    out_file = f"{base}.ms_data.hdf"
 
 #     query_data = np.load(file, allow_pickle=True)
-    query_data = alphapept.io.MS_Data_File(
-        f"{base}.ms_data.hdf"
-    ).read_DDA_query_data()
+
+#     ms_data_file
+
+
+    ms_file = alphapept.io.MS_Data_File(out_file)
+
+    query_data = ms_file.read_DDA_query_data()
 
     if not settings['general']["find_features"]:
         features = query_data_to_features(query_data)
@@ -1496,12 +1500,12 @@ def find_and_save_features(to_process):
         features = map_ms2(feature_table, query_data)
 
         logging.info('Saving feature table.')
-        feature_table.to_hdf(out_file, key='feature_table')
+        ms_file.write(feature_table, dataset_name="feature_table")
         logging.info('Feature table saved to {}'.format(out_file))
 
 
     logging.info('Saving features.')
-    features.to_hdf(out_file, key='features')
+    ms_file.write(features, dataset_name="features")
     logging.info('Feature file saved to {}'.format(out_file))
 
 
