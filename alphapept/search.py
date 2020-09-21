@@ -1094,12 +1094,12 @@ def search_db(to_process):
             psms, num_specs_scored = get_score_columns(psms, query_data, db_data, features, **settings["search"])
 
         if 'm_offset_calibrated' in settings["search"]:
-            logging.info('Saving second_search results to {}'.format(base+'.hdf'))
-            store_hdf(pd.DataFrame(psms), base +'.hdf', 'second_search', replace=True)
+            logging.info('Saving second_search results to {}'.format(base+'.ms_data.hdf'))
+            store_hdf(pd.DataFrame(psms), base +'.ms_data.hdf', 'second_search', replace=True)
 
         else:
-            logging.info('Saving first_search results to {}'.format(base+'.hdf'))
-            store_hdf(pd.DataFrame(psms), base +'.hdf', 'first_search', replace=True)
+            logging.info('Saving first_search results to {}'.format(base+'.ms_data.hdf'))
+            store_hdf(pd.DataFrame(psms), base +'.ms_data.hdf', 'first_search', replace=True)
 
 
 def search_parallel_db(settings, calibration = None, callback = None):
@@ -1263,9 +1263,9 @@ def search_parallel(settings, calibration = None, callback = None):
                 output = [_ for _ in _[j]]
                 if len(output) > 0:
                     if calibration:
-                        store_hdf(pd.concat(output), base+'.hdf', 'second_search')
+                        store_hdf(pd.concat(output), base+'.ms_data.hdf', 'second_search')
                     else:
-                        store_hdf(pd.concat(output), base+'.hdf', 'first_search')
+                        store_hdf(pd.concat(output), base+'.ms_data.hdf', 'first_search')
 
             if callback:
                 callback((i+1)/max_)
