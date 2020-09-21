@@ -599,7 +599,7 @@ def score_hdf_parallel(settings, callback=None):
 
     for _ in settings['experiment']['file_paths']:
         base, ext = os.path.splitext(_)
-        hdf_path = base+'.hdf'
+        hdf_path = base+'.ms_data.hdf'
         paths.append(hdf_path)
 
     to_process = [(path, settings) for path in paths]
@@ -644,7 +644,7 @@ def protein_groups_hdf_parallel(settings, pept_dict, fasta_dict, callback=None):
 
     for _ in settings['experiment']['file_paths']:
         base, ext = os.path.splitext(_)
-        hdf_path = base+'.hdf'
+        hdf_path = base+'.ms_data.hdf'
         paths.append(hdf_path)
 
     to_process = [(path, pept_dict.copy(), fasta_dict.copy(), settings) for path in paths]
