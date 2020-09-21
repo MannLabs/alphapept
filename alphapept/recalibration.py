@@ -8,6 +8,7 @@ import pandas as pd
 import numpy as np
 import os
 from .score import score_x_tandem
+import alphapept.io
 from multiprocessing import Pool
 
 
@@ -106,17 +107,19 @@ def calibrate_hdf(to_process):
 
     path, settings = to_process
 
-    features = pd.read_hdf(path, 'features')
+    ms_file = alphapept.io.MS_Data_File(path, is_read_only=False)
+
+    features = ms_file.read(dataset_name='features')
 
     try:
-        psms = pd.read_hdf(path, 'first_search')
+        psms =  ms_file.read(dataset_name='first_search')
     except KeyError: #no elements in search
         psms = pd.DataFrame()
 
     if len(psms) > 0 :
         df = score_x_tandem(psms, fdr_level = settings["search"]["peptide_fdr"], plot=False, verbose=False, **settings["search"])
         features_calib, o_mass_ppm_std = get_calibration(df, features, **settings["calibration"])
-        features_calib.to_hdf(path, key = 'features_calib', append=False)
+        ms_file.write(features_calib, dataset_name="features_calib")
     else:
         o_mass_ppm_std = 0
 
