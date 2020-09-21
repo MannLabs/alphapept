@@ -140,6 +140,8 @@ def read(
     The options `return_dataset_shape`, `return_dataset_dtype` and
     `return_dataset_slice` allow to minimize IO and RAM usage by reading
     datasets only partially.
+    If the `dataset_name` refers to a group, it is assumed to be
+    pd.DataFrame and returned as such.
     '''
     with h5py.File(self.file_name, "r") as hdf_file:
         if group_name is None:
@@ -182,8 +184,12 @@ def read(
                     else:
                         return dataset[return_dataset_slice]
                 else:
-                    raise NotImplementedError(
-                        "Use group as pandas dataframe container?"
+                    return pd.DataFrame(
+                        {
+                            column: dataset[column][
+                                return_dataset_slice
+                            ] for column in dataset
+                        }
                     )
             elif attr_name != "":
                 try:
@@ -215,6 +221,7 @@ def write(
     If no `dataset_name` is provided, create a new group with `value`
     as name. If a 'dataset_name' is provided, a 'dataset_compression`
     can be defined to minimize disk usage, at the cost of slower IO.
+    If the `value` is pd.DataFrame, a `dataset_name` must be provided.
     If the `overwrite` flag is True, overwrite the given attribute
     or dataset and truncate groups.
     '''
@@ -265,12 +272,23 @@ def write(
                             f"{group_name} of {self}."
                         )
                 if isinstance(value, pd.core.frame.DataFrame):
-                    raise NotImplementedError(
-                        "Use group as pandas dataframe container?"
+                    new_group_name = f"{group_name}/{dataset_name}"
+                    self.write(
+                        new_group_name,
+                        group_name=group_name,
+                        overwrite=overwrite,
                     )
-                if value.dtype.type == np.str_:
+                    for column in value.columns:
+                        self.write(
+                            value[column].values,
+                            group_name=new_group_name,
+                            dataset_name=column,
+                            overwrite=overwrite,
+                            dataset_compression=dataset_compression,
+                        )
+                elif value.dtype.type == np.str_:
                     value = value.astype(np.dtype('O'))
-                if value.dtype == np.dtype('O'):
+                elif value.dtype == np.dtype('O'):
                     hdf_dataset = group.create_dataset(
                         dataset_name,
                         data=value,
