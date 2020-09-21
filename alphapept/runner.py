@@ -351,6 +351,8 @@ def run_alphapept(settings, callback=None):
     logging.info('Settings saved to {}'.format(out_path_settings))
     logging.info('Complete')
 
+    return settings
+
 
 if __name__ == "__main__":
 
