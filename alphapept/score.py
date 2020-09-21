@@ -9,6 +9,7 @@ __all__ = ['filter_score', 'filter_precursor', 'get_q_values', 'cut_fdr', 'cut_g
 import numpy as np
 import pandas as pd
 import logging
+import alphapept.io
 
 def filter_score(df, mode='multiple'):
     """

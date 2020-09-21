@@ -1463,7 +1463,7 @@ def find_and_save_features(to_process):
 #     ms_data_file
 
 
-    ms_file = alphapept.io.MS_Data_File(out_file)
+    ms_file = alphapept.io.MS_Data_File(out_file, is_read_only=False)
 
     query_data = ms_file.read_DDA_query_data()
 
