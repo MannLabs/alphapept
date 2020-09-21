@@ -1041,15 +1041,18 @@ def store_hdf(df, path, key, replace=False):
     """
     Stores in hdf
     """
+    ms_file = alphapept.io.MS_Data_File(path, is_read_only=False)
+
     if replace:
-        df.to_hdf(path, key=key, append=False)
+        ms_file.write(df, dataset_name=key)
     else:
         try:
             df.to_hdf(path, key=key, append=True)
+            #TODO, append is not implemented yet
         except ValueError:
-            old_df = pd.read_hdf(path, key= key)
+            old_df = ms_file.read(dataset_name=key)
             new_df = pd.concat([old_df, df])
-            new_df.to_hdf(path, key = key, append=False)
+            ms_file.write(new_df, dataset_name=key)
 
 def search_db(to_process):
     """
