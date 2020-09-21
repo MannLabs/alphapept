@@ -1,6 +1,7 @@
 import sys
 import logging
 import pandas as pd
+import alphapept.io
 import os
 
 
@@ -124,7 +125,9 @@ def assemble_df(settings, callback=None):
     all_dfs = []
     for idx, file_name in enumerate(paths):
 
-        df = pd.read_hdf(file_name, 'protein_fdr')
+        df = alphapept.io.MS_Data_File(
+            file_name
+        ).read("protein_fdr")
         df['filename'] = file_name
         df['shortname'] = shortnames[idx]
 
