@@ -119,7 +119,7 @@ def assemble_df(settings, callback=None):
     paths = [
         os.path.splitext(
             file_name
-        )[0]+'.hdf' for file_name in settings['experiment']['file_paths']
+        )[0]+'.ms_data.hdf' for file_name in settings['experiment']['file_paths']
     ]
     shortnames = settings['experiment']['shortnames']
     all_dfs = []
