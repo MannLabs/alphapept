@@ -274,8 +274,14 @@ def write(
                 if isinstance(value, pd.core.frame.DataFrame):
                     new_group_name = f"{group_name}/{dataset_name}"
                     self.write(
-                        new_group_name,
+                        dataset_name,
                         group_name=group_name,
+                        overwrite=overwrite,
+                    )
+                    self.write(
+                        True,
+                        group_name=new_group_name,
+                        attr_name="is_pd_dataframe",
                         overwrite=overwrite,
                     )
                     for column in value.columns:
