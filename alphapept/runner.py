@@ -147,7 +147,7 @@ def run_alphapept(settings, callback=None):
     to_convert = []
     for file_name in settings['experiment']['file_paths']:
         base, ext = os.path.splitext(file_name)
-        hdf_path = base+'.hdf'
+        hdf_path = base+'.ms_data.hdf'
 
         if os.path.isfile(hdf_path):
             try:
