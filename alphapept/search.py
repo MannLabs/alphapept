@@ -1073,16 +1073,21 @@ def search_db(to_process):
     if not skip:
         db_data = np.load(settings['fasta']['database_path'], allow_pickle=True)
 #         query_data = np.load(file_npz, allow_pickle=True)
-        query_data = alphapept.io.MS_Data_File(
+
+
+        ms_file = alphapept.io.MS_Data_File(
             f"{file_npz[:-4]}.ms_data.hdf"
-        ).read_DDA_query_data()
+        )
+
+        query_data = ms_file.read_DDA_query_data()
 
         base, ext = os.path.splitext(file_npz)
 
+
         try:
-            features = pd.read_hdf(base+'.hdf', 'features_calib')
+            features = ms_file.read(dataset_name="features_calib")
         except KeyError:
-            features = pd.read_hdf(base+'.hdf', 'features')
+            features = ms_file.read(dataset_name="features")
 
         psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
         if len(psms) > 0:
@@ -1194,7 +1199,9 @@ def search_fasta_block(to_process):
 
                 if settings_['search']["use_features"]:
                     try:
-                        features = pd.read_hdf(base+'.hdf', 'features')
+                        features = alphapept.io.MS_Data_File(
+                            base+'.ms_data.hdf'
+                        ).read(dataset_name="features")
                     except FileNotFoundError:
                         features = None
                     except KeyError:
