@@ -151,7 +151,9 @@ def run_alphapept(settings, callback=None):
 
         if os.path.isfile(hdf_path):
             try:
-                pd.read_hdf(hdf_path, 'features')
+                alphapept.io.MS_Data_File(
+                    hdf_path
+                ).read(dataset_name="features")
                 logging.info(
                     'Found *.hdf with features for {}'.format(file_name)
                 )
