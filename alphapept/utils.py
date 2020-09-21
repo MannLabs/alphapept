@@ -166,6 +166,7 @@ def resave_hdf(hdf_path):
     When overwriting hdf files HDF does not adjust size after removal
     This function reads the hdf and overwrites it.
     """
+    # TODO update to hdf or deprecate function?
     logging.info('Re-saving hdf file.')
     new_hdf = {}
     with pd.HDFStore(hdf_path) as hdf:
