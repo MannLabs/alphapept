@@ -127,7 +127,7 @@ def assemble_df(settings, callback=None):
 
         df = alphapept.io.MS_Data_File(
             file_name
-        ).read("protein_fdr")
+        ).read(dataset_name="protein_fdr")
         df['filename'] = file_name
         df['shortname'] = shortnames[idx]
 
