@@ -161,7 +161,7 @@ def read(
                 try:
                     return group.attrs[attr_name]
                 except KeyError:
-                    raise keyError(
+                    raise KeyError(
                         f"Attribute {attr_name} does not exist for "
                         f"group {group_name} of {self}."
                     )
