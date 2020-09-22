@@ -1,5 +1,5 @@
 # GitHub Actions to automatically test on sample files
-name: HeLa Bruker Win
+name: QuickTest
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
     branches: [ master ]
 
 jobs:
-  HeLa_Bruker_Win:
+  IRT_Bruker:
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
@@ -18,14 +18,16 @@ jobs:
         conda activate alphapept
         pip install -r requirements.txt
         python setup.py install
+        pip install pymongo
+        pip install dnspython
     - name: Preparing Files
       run: |
         $FileName = "C:\testfolder"
         if (Test-Path $FileName) {Remove-Item -Recurse -Force $FileName}
         New-Item -Path "C:\" -Name "testfolder" -ItemType "directory"
-        Copy-Item -Recurse "C:\benchmark\HeLa_200ng_1428.d" -Destination "C:\testfolder\"
+        Copy-Item -Recurse "C:\benchmark\IRT_20652.d" -Destination "C:\testfolder\"
         Copy-Item "C:\benchmark\human.fasta" -Destination "C:\testfolder\"
         Copy-Item "C:\benchmark\contaminants.fasta" -Destination "C:\testfolder\"
     - name: Run Alphapept on Bruker
       run: |
-        python -m alphapept workflow C:\benchmark\hela_test_bruker.yaml
+        python test_ci.py "${{ secrets.MONGODB_PW }}" "C:\benchmark\irt_test_bruker.yaml" $GITHUB_SHA ${GITHUB_REF##*/}

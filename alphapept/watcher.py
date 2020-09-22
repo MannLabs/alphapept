@@ -35,7 +35,7 @@ def check_new_files(path):
             new_file = os.path.join(dirpath, dirname)
             base, ext = os.path.splitext(dirname)
             npz_path = os.path.join(dirpath, base+'.npz')
-            hdf_path = os.path.join(dirpath, base+'.hdf')
+            hdf_path = os.path.join(dirpath, base+'.ms_data.hdf')
 
             if (not os.path.exists(npz_path)) | (not os.path.exists(hdf_path)):
                 new_files.append(new_file)
@@ -44,7 +44,7 @@ def check_new_files(path):
             new_file = os.path.join(dirpath, filename)
             base, ext = os.path.splitext(filename)
             npz_path = os.path.join(dirpath, base+'.npz')
-            hdf_path = os.path.join(dirpath, base+'.hdf')
+            hdf_path = os.path.join(dirpath, base+'.ms_data.hdf')
 
             if (not os.path.exists(npz_path)) | (not os.path.exists(hdf_path)):
                 new_files.append(new_file)
@@ -140,7 +140,7 @@ class WatchThread(QThread):
             stats_update('Files processed {} \t GB {:.2f} \t Bruker {} \t Raw {} \t Running time {:.2f} h'.format(self.files_processed, self.gb_processed, self.bruker_files, self.raw_files, (time.time()-self.start_time)/60/60))
 
             if len(new_files) > 0:
-                report('Found file(s) withouth *.npz or *.hdf')
+                report('Found file(s) withouth *.npz or *.ms_data.hdf')
 
                 npz_files = []
                 ff_files = []
@@ -150,7 +150,7 @@ class WatchThread(QThread):
                 for path in new_files:
                     base, ext = os.path.splitext(path)
                     npz_path = base +'.npz'
-                    hdf_path = base +'.hdf'
+                    hdf_path = base +'.ms_data.hdf'
 
                     filesize = os.path.getsize(path)
 
