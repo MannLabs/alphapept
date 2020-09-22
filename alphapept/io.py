@@ -57,14 +57,14 @@ class HDF_File(object):
 
     @property
     def is_overwritable(self):
-        return self.is_overwritable
+        return self.__is_overwritable
 
     def __init__(
         self,
         file_name:str,
         is_read_only:bool=True,
         is_new_file:bool=False,
-        is_overwritable:bool:False
+        is_overwritable:bool=False,
     ):
         self.__file_name = os.path.abspath(file_name)
         if is_new_file:
@@ -224,8 +224,8 @@ def write(
     group_name:str=None,
     dataset_name:str=None,
     attr_name:str=None,
-    overwrite:bool=False,
-    dataset_compression=None
+    overwrite:bool=None,
+    dataset_compression=None,
 ):
     '''
     Write a `value` to an HDF_File. If an 'attr_name' is provided,
@@ -236,13 +236,15 @@ def write(
     can be defined to minimize disk usage, at the cost of slower IO.
     If the `value` is pd.DataFrame, a `dataset_name` must be provided.
     If the `overwrite` flag is True, overwrite the given attribute
-    or dataset and truncate groups.
+    or dataset and truncate groups. If the `overwrite` flag is False,
+    ignore the is_overwritable flag of this HDF_File.
     '''
     if self.is_read_only:
         raise IOError(
             f"Trying to write to {self}, which is read_only."
         )
-    overwrite = overwrite or self.is_overwritable
+    if overwrite is None:
+        overwrite = self.is_overwritable
     with h5py.File(self.file_name, "a") as hdf_file:
         if group_name is None:
             group = hdf_file
