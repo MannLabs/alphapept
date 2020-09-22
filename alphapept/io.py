@@ -55,11 +55,16 @@ class HDF_File(object):
     def is_read_only(self):
         return self.__is_read_only
 
+    @property
+    def is_overwritable(self):
+        return self.is_overwritable
+
     def __init__(
         self,
         file_name:str,
         is_read_only:bool=True,
         is_new_file:bool=False,
+        is_overwritable:bool:False
     ):
         self.__file_name = os.path.abspath(file_name)
         if is_new_file:
@@ -76,6 +81,7 @@ class HDF_File(object):
             with h5py.File(self.file_name, "r") as hdf_file:
                 self.check()
         self.__is_read_only = is_read_only
+        self.__is_overwritable = is_overwritable
 
     def __eq__(self, other):
         return self.file_name == other.file_name
@@ -184,13 +190,20 @@ def read(
                     else:
                         return dataset[return_dataset_slice]
                 else:
-                    return pd.DataFrame(
-                        {
-                            column: dataset[column][
-                                return_dataset_slice
-                            ] for column in dataset
-                        }
-                    )
+                    if return_dataset_shape:
+                        return dataset.attrs["shape"]
+                    elif return_dataset_dtype:
+                        return [
+                            dataset[column].dtype for column in dataset
+                        ]
+                    else:
+                        return pd.DataFrame(
+                            {
+                                column: dataset[column][
+                                    return_dataset_slice
+                                ] for column in dataset
+                            }
+                        )
             elif attr_name != "":
                 try:
                     return dataset.attrs[attr_name]
@@ -229,6 +242,7 @@ def write(
         raise IOError(
             f"Trying to write to {self}, which is read_only."
         )
+    overwrite = overwrite or self.is_overwritable
     with h5py.File(self.file_name, "a") as hdf_file:
         if group_name is None:
             group = hdf_file
@@ -282,6 +296,12 @@ def write(
                         True,
                         group_name=new_group_name,
                         attr_name="is_pd_dataframe",
+                        overwrite=overwrite,
+                    )
+                    self.write(
+                        value.shape,
+                        group_name=new_group_name,
+                        attr_name="shape",
                         overwrite=overwrite,
                     )
                     for column in value.columns:
