@@ -54,7 +54,8 @@ def main():
 
         base, ext = os.path.splitext(_)
         file_sizes[base+"_ms_data"] = os.path.getsize(os.path.splitext(_)[0] + ".ms_data.hdf")/1024**2
-        file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
+        # file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
+        # TODO We might be interested in partial sizes, i.e. raw size, FF size, ...
 
     report['file_sizes']['files'] = file_sizes
     report['file_sizes']['results'] = os.path.getsize(settings['experiment']['results_path'])/1024**2
