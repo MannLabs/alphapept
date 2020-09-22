@@ -8,6 +8,7 @@ import sys
 from alphapept.runner import run_alphapept
 from alphapept.settings import load_settings
 import alphapept
+from alphapept.__version__ import VERSION_NO as alphapept_version
 
 import platform
 
@@ -41,7 +42,7 @@ def main():
     report['branch'] = branch
     report['commit'] = commit
 
-    report['version'] = alphapept.__version__
+    report['version'] = alphapept_version
 
     report['sysinfo'] = platform.uname()
 
