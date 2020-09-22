@@ -1116,15 +1116,18 @@ def store_hdf(df, path, key, replace=False):
     """
     Stores in hdf
     """
+    ms_file = alphapept.io.MS_Data_File(path, is_read_only=False)
+
     if replace:
-        df.to_hdf(path, key=key, append=False)
+        ms_file.write(df, dataset_name=key)
     else:
         try:
             df.to_hdf(path, key=key, append=True)
+            #TODO, append is not implemented yet
         except ValueError:
-            old_df = pd.read_hdf(path, key= key)
+            old_df = ms_file.read(dataset_name=key)
             new_df = pd.concat([old_df, df])
-            new_df.to_hdf(path, key = key, append=False)
+            ms_file.write(new_df, dataset_name=key)
 
 def search_db(to_process):
     """
@@ -1147,31 +1150,35 @@ def search_db(to_process):
     if not skip:
         db_data = np.load(settings['fasta']['database_path'], allow_pickle=True)
 #         query_data = np.load(file_npz, allow_pickle=True)
-        query_data = alphapept.io.MS_Data_File(
+
+
+        ms_file = alphapept.io.MS_Data_File(
             f"{file_npz[:-4]}.ms_data.hdf"
-        ).read_DDA_query_data()
+        )
+
+        query_data = ms_file.read_DDA_query_data()
 
         base, ext = os.path.splitext(file_npz)
 
         if not feature_calibration:
-            features = pd.read_hdf(base+'.hdf', 'features')
+            features = ms_file.read(dataset_name="features")
         else:
             try:
-                features = pd.read_hdf(base+'.hdf', 'features_calib')
+                features = ms_file.read(dataset_name="features_calib")
             except KeyError:
-                features = pd.read_hdf(base+'.hdf', 'features')
+                features = ms_file.read(dataset_name="features")
 
         psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
         if len(psms) > 0:
             psms, num_specs_scored = get_score_columns(psms, query_data, db_data, features, **settings["search"])
 
         if 'm_offset_calibrated' in settings["search"]:
-            logging.info('Saving second_search results to {}'.format(base+'.hdf'))
-            store_hdf(pd.DataFrame(psms), base +'.hdf', 'second_search', replace=True)
+            logging.info('Saving second_search results to {}'.format(base+'.ms_data.hdf'))
+            store_hdf(pd.DataFrame(psms), base +'.ms_data.hdf', 'second_search', replace=True)
 
         else:
-            logging.info('Saving first_search results to {}'.format(base+'.hdf'))
-            store_hdf(pd.DataFrame(psms), base +'.hdf', 'first_search', replace=True)
+            logging.info('Saving first_search results to {}'.format(base+'.ms_data.hdf'))
+            store_hdf(pd.DataFrame(psms), base +'.ms_data.hdf', 'first_search', replace=True)
 
 
 def search_parallel_db(settings, calibration = None, callback = None):
@@ -1271,7 +1278,9 @@ def search_fasta_block(to_process):
 
                 if settings_['search']["use_features"]:
                     try:
-                        features = pd.read_hdf(base+'.hdf', 'features')
+                        features = alphapept.io.MS_Data_File(
+                            base+'.ms_data.hdf'
+                        ).read(dataset_name="features")
                     except FileNotFoundError:
                         features = None
                     except KeyError:
@@ -1333,9 +1342,9 @@ def search_parallel(settings, calibration = None, callback = None):
                 output = [_ for _ in _[j]]
                 if len(output) > 0:
                     if calibration:
-                        store_hdf(pd.concat(output), base+'.hdf', 'second_search')
+                        store_hdf(pd.concat(output), base+'.ms_data.hdf', 'second_search')
                     else:
-                        store_hdf(pd.concat(output), base+'.hdf', 'first_search')
+                        store_hdf(pd.concat(output), base+'.ms_data.hdf', 'first_search')
 
             if callback:
                 callback((i+1)/max_)

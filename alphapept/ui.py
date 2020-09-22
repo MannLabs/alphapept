@@ -485,7 +485,7 @@ class MainWindow(QMainWindow):
             for _ in settings['experiment']['file_paths']:
                 if _:
                     base, ext = os.path.splitext(_)
-                    hdf_path = base+'.hdf'
+                    hdf_path = base+'.ms_data.hdf'
 
                     if os.path.isfile(hdf_path):
                         selectable.append(hdf_path)

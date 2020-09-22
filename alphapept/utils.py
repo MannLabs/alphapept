@@ -1,6 +1,7 @@
 import sys
 import logging
 import pandas as pd
+import alphapept.io
 import os
 
 
@@ -118,13 +119,15 @@ def assemble_df(settings, callback=None):
     paths = [
         os.path.splitext(
             file_name
-        )[0]+'.hdf' for file_name in settings['experiment']['file_paths']
+        )[0]+'.ms_data.hdf' for file_name in settings['experiment']['file_paths']
     ]
     shortnames = settings['experiment']['shortnames']
     all_dfs = []
     for idx, file_name in enumerate(paths):
 
-        df = pd.read_hdf(file_name, 'protein_fdr')
+        df = alphapept.io.MS_Data_File(
+            file_name
+        ).read(dataset_name="protein_fdr")
         df['filename'] = file_name
         df['shortname'] = shortnames[idx]
 
@@ -166,6 +169,7 @@ def resave_hdf(hdf_path):
     When overwriting hdf files HDF does not adjust size after removal
     This function reads the hdf and overwrites it.
     """
+    # TODO update to hdf or deprecate function?
     logging.info('Re-saving hdf file.')
     new_hdf = {}
     with pd.HDFStore(hdf_path) as hdf:
