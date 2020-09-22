@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  HeLa_Thermo_Win:
+  Install_Alphapept:
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
@@ -12,10 +12,15 @@ jobs:
       run: |
         conda create --name alphapept python=3.8 -y
         conda activate alphapept
-        pip install -r requirements.txt
-        python setup.py install
+        pip install -e .
         pip install pymongo
         pip install dnspython
+
+  HeLa_Thermo_Win:
+    needs: Install_Alphapept
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
     - name: Preparing Files
       run: |
         $FileName = "C:\testfolder"
@@ -29,15 +34,10 @@ jobs:
         python test_ci.py "${{ secrets.MONGODB_PW }}" "C:\benchmark\hela_test_thermo.yaml" $GITHUB_SHA ${GITHUB_REF##*/}
 
   HeLa_Bruker_Win:
+    needs: [Install_Alphapept, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
-    - name: Install package
-      run: |
-        conda create --name alphapept python=3.8 -y
-        conda activate alphapept
-        pip install -r requirements.txt
-        python setup.py install
     - name: Preparing Files
       run: |
         $FileName = "C:\testfolder"
