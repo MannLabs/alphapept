@@ -6,7 +6,7 @@ import numpy as np
 # require pythonnet, pip install pythonnet on Windows
 import clr
 clr.AddReference('System')
-from System import String, Convert
+import System
 from System.Threading import Thread
 from System.Globalization import CultureInfo
 
@@ -258,7 +258,7 @@ class RawFileReader(object):
     # INSTRUMENT BEGIN
     def GetInstName(self):
         """Returns the instrument name, if available, for the current controller."""
-        return String.Join(" -> ", self.source.GetAllInstrumentNamesFromInstrumentMethod())
+        return System.String.Join(" -> ", self.source.GetAllInstrumentNamesFromInstrumentMethod())
     # INSTRUMENT END
 
     def GetScanEventStringForScanNum(self, scanNumber):
