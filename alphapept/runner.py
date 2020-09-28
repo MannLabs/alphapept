@@ -157,12 +157,6 @@ def run_alphapept(settings, callback=None):
                 logging.info(
                     'Found *.hdf with features for {}'.format(file_name)
                 )
-                # reset_hdf(hdf_path)
-                # resave_hdf(hdf_path)
-                # TODO: Caching is not done properly.
-                # Assumes 'features_calib' is present.
-                # This seems to be from search though, not feature finding
-                # As a result a non-passed search retriggers feature finding
             except KeyError:
                 to_convert.append(file_name)
                 logging.info(
