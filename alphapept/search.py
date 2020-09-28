@@ -234,21 +234,21 @@ def get_psms(
     Raises:
     """
 
-    if m_offset_calibrated:
-        m_offset = m_offset_calibrated
 
-    query_masses = query_data['prec_mass_list2']
-    query_mz = query_data['mono_mzs2']
-    query_frags = query_data['mass_list_ms2']
-    query_bounds = query_data['bounds']
-    query_indices = query_data["indices_ms2"]
-    query_rt = query_data['rt_list_ms2']
     db_masses = db_data['precursors']
     db_frags = db_data['fragmasses']
     db_bounds = db_data['bounds']
 
+    query_indices = query_data["indices_ms2"]
+    query_bounds = query_data['bounds']
+    query_frags = query_data['mass_list_ms2']
+
     if features is not None:
-        query_masses = features['mass_matched'].values
+        if m_offset_calibrated:
+            m_offset = m_offset_calibrated
+            query_masses = features['corrected_mass'].values
+        else:
+            query_masses = features['mass_matched'].values
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
         query_bounds = query_bounds[features['query_idx'].values]
@@ -265,7 +265,11 @@ def get_psms(
         )
         query_indices = indices
     else:
-        pass
+        if m_offset_calibrated:
+            m_offset = m_offset_calibrated
+        query_masses = query_data['prec_mass_list2']
+        query_mz = query_data['mono_mzs2']
+        query_rt = query_data['rt_list_ms2']
 
     # TODO include in settings file
     calculate_db_mzs_offsets = False
@@ -299,10 +303,9 @@ def get_psms(
     idxs_lower, idxs_higher = get_idxs(
         db_masses,
         query_masses_corrected,
-        m_tol,
+        m_offset,
         ppm
     )
-    print(f"{np.sum(idxs_higher - idxs_lower):,}")
     frag_hits = np.zeros(
         (len(query_masses), np.max(idxs_higher - idxs_lower)), dtype=int
     )
@@ -762,19 +765,15 @@ def get_score_columns(
     m_tol,
     m_offset,
     ppm,
+    m_offset_calibrated=None,
     **kwargs
 ):
     logging.info('Extracting columns for scoring.')
-    query_masses = query_data['prec_mass_list2']
+    query_indices = query_data["indices_ms2"]
+    query_bounds = query_data['bounds']
+    query_charges = query_data['charge2']
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
-    query_indices = query_data["indices_ms2"]
-
-    query_mz = query_data['mono_mzs2']
-    query_charges = query_data['charge2']
-
-    query_rt = query_data['rt_list_ms2']
-    query_bounds = query_data['bounds']
 
     db_masses = db_data['precursors']
     db_frags = db_data['fragmasses']
@@ -789,7 +788,10 @@ def get_score_columns(
         db_ints = None
 
     if features is not None:
-        query_masses = features['mass_matched'].values
+        if m_offset_calibrated:
+            query_masses = features['corrected_mass'].values
+        else:
+            query_masses = features['mass_matched'].values
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
         query_bounds = query_bounds[features['query_idx'].values]
@@ -814,7 +816,9 @@ def get_score_columns(
         )
         query_indices = indices
     else:
-        pass
+        query_masses = query_data['prec_mass_list2']
+        query_mz = query_data['mono_mzs2']
+        query_rt = query_data['rt_list_ms2']
 
     # TODO include in settings file
     calculate_db_mzs_offsets = False
@@ -1116,7 +1120,7 @@ def store_hdf(df, path, key, replace=False):
     """
     Stores in hdf
     """
-    ms_file = alphapept.io.MS_Data_File(path, is_read_only=False)
+    ms_file = alphapept.io.MS_Data_File(path, is_overwritable=True)
 
     if replace:
         ms_file.write(df, dataset_name=key)
@@ -1160,13 +1164,7 @@ def search_db(to_process):
 
         base, ext = os.path.splitext(file_npz)
 
-        if not feature_calibration:
-            features = ms_file.read(dataset_name="features")
-        else:
-            try:
-                features = ms_file.read(dataset_name="features_calib")
-            except KeyError:
-                features = ms_file.read(dataset_name="features")
+        features = ms_file.read(dataset_name="features")
 
         psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
         if len(psms) > 0:

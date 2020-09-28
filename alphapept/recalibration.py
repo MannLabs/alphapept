@@ -71,16 +71,37 @@ def get_calibration(df, features, minimum_score = 20, outlier_std = 3, method='l
 
         xx, yy = np.meshgrid(tx, ty)
 
-        f1 = griddata(df_sub[['mz','rt']].values,  df_sub['o_mass_ppm'].values, (xx, yy) , fill_value = 0, method = method, rescale=True)
+        f1 = griddata(
+            df_sub[['mz','rt']].values,
+            df_sub['o_mass_ppm'].values,
+            (xx, yy),
+            fill_value=0,
+            method=method,
+            rescale=True
+        )
 
-        f2 = griddata(np.vstack([xx.flatten(),yy.flatten()]).T, f1.flatten(), df_sub[['mz','rt']].values, fill_value=0, method = method, rescale=True)
+        f2 = griddata(
+            np.vstack([xx.flatten(),yy.flatten()]).T,
+            f1.flatten(),
+            df_sub[['mz','rt']].values,
+            fill_value=0,
+            method=method,
+            rescale=True
+        )
 
         df_sub['o_mass_ppm_offset'] = f2
         df_sub['o_mass_ppm_calib'] = (df_sub['o_mass_ppm']-df_sub['o_mass_ppm_offset'])
 
         #Apply to features
 
-        offset = griddata(np.vstack([xx.flatten(), yy.flatten()]).T, f1.flatten(), features[['mz_matched','rt_matched']].values, fill_value=0, method = method, rescale=True)/1e6*features['mass_matched']
+        offset = griddata(
+            np.vstack([xx.flatten(), yy.flatten()]).T,
+            f1.flatten(),
+            features[['mz_matched','rt_matched']].values,
+            fill_value=0,
+            method = method,
+            rescale=True
+        ) / 1e6*features['mass_matched']
 
     else:
         offset = 0
@@ -88,12 +109,7 @@ def get_calibration(df, features, minimum_score = 20, outlier_std = 3, method='l
         df_sub['o_mass_ppm_offset'] = 0
         df_sub['o_mass_ppm_calib'] = (df_sub['o_mass_ppm']-df_sub['o_mass_ppm_offset'])
 
-    features_calib = features.copy()
-
-    features_calib['mass_matched'] -= offset
-    features_calib['mass_offset'] = offset
-
-    features_calib = features_calib.sort_values('mass_matched', ascending=True)
+    corrected_mass = features['mass_matched'] - offset
 
     o_mass_ppm_mean = df_sub['o_mass_ppm_calib'].mean()
     o_mass_ppm_std = df_sub['o_mass_ppm_calib'].std()
@@ -101,14 +117,17 @@ def get_calibration(df, features, minimum_score = 20, outlier_std = 3, method='l
     if np.isnan(o_mass_ppm_std):
         o_mass_ppm_std = 0
 
-    return features_calib, o_mass_ppm_std
+    return corrected_mass, o_mass_ppm_std
 
 
 def calibrate_hdf(to_process):
 
+    # TODO Only features are calibrated, not raw MS1 signals.
+    # What if features are not present?
+
     path, settings = to_process
 
-    ms_file = alphapept.io.MS_Data_File(path, is_read_only=False)
+    ms_file = alphapept.io.MS_Data_File(path, is_overwritable=True)
 
     features = ms_file.read(dataset_name='features')
 
@@ -118,9 +137,23 @@ def calibrate_hdf(to_process):
         psms = pd.DataFrame()
 
     if len(psms) > 0 :
-        df = score_x_tandem(psms, fdr_level = settings["search"]["peptide_fdr"], plot=False, verbose=False, **settings["search"])
-        features_calib, o_mass_ppm_std = get_calibration(df, features, **settings["calibration"])
-        ms_file.write(features_calib, dataset_name="features_calib")
+        df = score_x_tandem(
+            psms,
+            fdr_level=settings["search"]["peptide_fdr"],
+            plot=False,
+            verbose=False,
+            **settings["search"]
+        )
+        corrected_mass, o_mass_ppm_std = get_calibration(
+            df,
+            features,
+            **settings["calibration"]
+        )
+        ms_file.write(
+            corrected_mass,
+            dataset_name="corrected_mass",
+            group_name="features"
+        )
     else:
         o_mass_ppm_std = 0
 
