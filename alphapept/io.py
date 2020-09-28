@@ -80,6 +80,8 @@ class HDF_File(object):
         else:
             with h5py.File(self.file_name, "r") as hdf_file:
                 self.check()
+        if is_overwritable:
+            is_read_only = False
         self.__is_read_only = is_read_only
         self.__is_overwritable = is_overwritable
 
@@ -189,21 +191,32 @@ def read(
                         return dataset.dtype
                     else:
                         return dataset[return_dataset_slice]
-                else:
+                elif dataset.attrs["is_pd_dataframe"]:
                     if return_dataset_shape:
-                        return dataset.attrs["shape"]
+                        columns = list(dataset)
+                        return (
+                            len(dataset[columns[0]]),
+                            len(columns)
+                        )
                     elif return_dataset_dtype:
                         return [
-                            dataset[column].dtype for column in dataset
+                            dataset[column].dtype for column in sorted(
+                                dataset
+                            )
                         ]
                     else:
                         return pd.DataFrame(
                             {
                                 column: dataset[column][
                                     return_dataset_slice
-                                ] for column in dataset
+                                ] for column in sorted(dataset)
                             }
                         )
+                else:
+                    raise ValueError(
+                        f"{dataset_name} is not a valid dataset in "
+                        f"group {group_name} of {self}."
+                    )
             elif attr_name != "":
                 try:
                     return dataset.attrs[attr_name]
@@ -298,12 +311,6 @@ def write(
                         True,
                         group_name=new_group_name,
                         attr_name="is_pd_dataframe",
-                        overwrite=overwrite,
-                    )
-                    self.write(
-                        value.shape,
-                        group_name=new_group_name,
-                        attr_name="shape",
                         overwrite=overwrite,
                     )
                     for column in value.columns:
