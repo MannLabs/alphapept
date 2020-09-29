@@ -1092,6 +1092,8 @@ def search_db(to_process):
             f"{file_npz[:-4]}.ms_data.hdf"
         )
 
+
+#         TODO calibrated_fragments should be included in settings
         query_data = ms_file.read_DDA_query_data(
             calibrated_fragments=True,
             database_file_name=settings['fasta']['database_path']
