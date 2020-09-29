@@ -1,7 +1,11 @@
-name: Performance test
+# GitHub Actions to automatically test on sample files
+name: Quick Test
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [ master, develop]
+  pull_request:
+    branches: [ master , develop]
 
 jobs:
   Install_Alphapept:
@@ -16,19 +20,19 @@ jobs:
         pip install pymongo
         pip install dnspython
         pip install wget
-  HeLa_Thermo_Win:
+  IRT_Thermo_Win:
     needs: Install_Alphapept
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
-        python test_ci.py "${{ secrets.MONGODB_PW }}" thermo [thermo_HeLa.raw] [human.fasta,contaminants.fasta]
-  HeLa_Bruker_Win:
-    needs: [Install_Alphapept, HeLa_Thermo_Win]
+        python test_ci.py "${{ secrets.MONGODB_PW }}" thermo [thermo_IRT.raw] [IRT_fasta.fasta,contaminants.fasta]
+  IRT_Bruker_Win:
+    needs: [Install_Alphapept, IRT_Thermo_Win]
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
     - name: Run Alphapept on Bruker
       run: |
-        python test_ci.py "${{ secrets.MONGODB_PW }}" bruker [bruker_HeLa.d] [human.fasta,contaminants.fasta]
+        python test_ci.py "${{ secrets.MONGODB_PW }}" bruker [bruker_IRT.d] [IRT_fasta.fasta,contaminants.fasta]
