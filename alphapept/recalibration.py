@@ -329,6 +329,8 @@ def align_run_to_db(
         rescale=True
     )
 
+    estimated_errors[~np.isfinite(estimated_errors)] = 0
+
     return estimated_errors
 
 # Cell
