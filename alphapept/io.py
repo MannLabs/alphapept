@@ -1072,6 +1072,9 @@ def _save_DDA_query_data(
 @patch
 def read_DDA_query_data(
     self:MS_Data_File,
+    calibrated_fragments=False,
+    force_recalibrate=False,
+    **kwargs
 ):
     query_data = {}
     for dataset_name in self.read(group_name="Raw/MS1_scans"):
@@ -1108,6 +1111,20 @@ def read_DDA_query_data(
     if self.read(attr_name="vendor", group_name="Raw") == "Bruker":
         query_data["mobility"] = query_data["mobility2"]
         query_data["prec_id"] = query_data["prec_id2"]
+    if calibrated_fragments:
+        if ("corrected_fragment_mzs" not in self.read()) or force_recalibrate:
+#         if True:
+            logging.info("Calibrating fragments")
+            import alphapept.recalibration
+            alphapept.recalibration.calibrate_fragments(
+                kwargs["database_file_name"],
+                self.file_name,
+            )
+        query_data["mass_list_ms2"] *= (
+            1 - self.read(
+                dataset_name="corrected_fragment_mzs"
+            ) / 10**6
+        )
     return query_data
 
 # Cell

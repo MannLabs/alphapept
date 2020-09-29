@@ -271,38 +271,10 @@ def get_psms(
         query_mz = query_data['mono_mzs2']
         query_rt = query_data['rt_list_ms2']
 
-    # TODO include in settings file
-    calculate_db_mzs_offsets = False
-    if calculate_db_mzs_offsets:
-        import alphapept.recalibration
-        precursor_ppm_offsets = alphapept.recalibration.calculate_db_mzs_offsets(
-            query_masses,
-            db_masses,
-            ppm=m_tol,
-            mass_defect=0.9
-        )
-        logging.info(
-            f"Precursors have a {precursor_ppm_offsets} ppm offset to db"
-        )
-        query_masses_corrected = query_masses * (1 - precursor_ppm_offsets / 10**6)
-        fragment_ppm_offsets = alphapept.recalibration.calculate_db_mzs_offsets(
-            query_frags,
-            db_frags,
-            ppm=m_tol,
-            mass_defect=0.9
-        )
-        logging.info(
-            f"Fragments have a {fragment_ppm_offsets} ppm offset to db"
-        )
-        query_frags_corrected = query_frags * (1 - fragment_ppm_offsets / 10**6)
-    else:
-        query_masses_corrected = query_masses
-        query_frags_corrected = query_frags
-
 #     idxs_lower, idxs_higher = get_idxs(db_masses, query_masses, m_offset, ppm)
     idxs_lower, idxs_higher = get_idxs(
         db_masses,
-        query_masses_corrected,
+        query_masses,
         m_offset,
         ppm
     )
@@ -319,10 +291,8 @@ def get_psms(
         if parallel:
             frag_hits, num_specs_compared = compare_specs_parallel(
                 frag_hits,
-#                 query_masses,
-                query_masses_corrected,
-#                 query_frags,
-                query_frags_corrected,
+                query_masses,
+                query_frags,
                 query_indices,
                 db_masses,
                 db_frags,
@@ -338,10 +308,8 @@ def get_psms(
         else:
             frag_hits, num_specs_compared = compare_specs_single(
                 frag_hits,
-#                 query_masses,
-                query_masses_corrected,
-#                 query_frags,
-                query_frags_corrected,
+                query_masses,
+                query_frags,
                 query_indices,
                 db_masses,
                 db_frags,
@@ -365,10 +333,8 @@ def get_psms(
             if parallel:
                 frag_hits, num_specs_compared_chunk = compare_specs_parallel(
                     frag_hits,
-#                     query_masses,
-                    query_masses_corrected,
-#                     query_frags,
-                    query_frags_corrected,
+                    query_masses,
+                    query_frags,
                     query_indices,
                     db_masses,
                     db_frags,
@@ -384,10 +350,8 @@ def get_psms(
             else:
                 frag_hits, num_specs_compared_chunk = compare_specs_single(
                     frag_hits,
-#                     query_masses,
-                    query_masses_corrected,
-#                     query_frags,
-                    query_frags_corrected,
+                    query_masses,
+                    query_frags,
                     query_indices,
                     db_masses,
                     db_frags,
@@ -820,41 +784,11 @@ def get_score_columns(
         query_mz = query_data['mono_mzs2']
         query_rt = query_data['rt_list_ms2']
 
-    # TODO include in settings file
-    calculate_db_mzs_offsets = False
-    if calculate_db_mzs_offsets:
-        import alphapept.recalibration
-        precursor_ppm_offsets = alphapept.recalibration.calculate_db_mzs_offsets(
-            query_masses,
-            db_masses,
-            ppm=m_tol,
-            mass_defect=0.9
-        )
-        logging.info(
-            f"Precursors have a {precursor_ppm_offsets} ppm offset to db"
-        )
-        query_masses_corrected = query_masses * (1 - precursor_ppm_offsets / 10**6)
-        fragment_ppm_offsets = alphapept.recalibration.calculate_db_mzs_offsets(
-            query_frags,
-            db_frags,
-            ppm=m_tol,
-            mass_defect=0.9
-        )
-        logging.info(
-            f"Fragments have a {fragment_ppm_offsets} ppm offset to db"
-        )
-        query_frags_corrected = query_frags * (1 - fragment_ppm_offsets / 10**6)
-    else:
-        query_masses_corrected = query_masses
-        query_frags_corrected = query_frags
-
     if parallel:
         delta_m, delta_m_ppm, o_mass, o_mass_ppm, total_int, matched_int, b_hits, y_hits, num_specs_scored, db_mass_density, db_weighted_mass_density, db_mass_density_digit, db_weighted_mass_density_digit = score_parallel(
             psms,
-#             query_masses,
-            query_masses_corrected,
-#             query_frags,
-            query_frags_corrected,
+            query_masses,
+            query_frags,
             query_ints,
             query_indices,
             db_masses,
@@ -869,10 +803,8 @@ def get_score_columns(
     else:
         delta_m, delta_m_ppm, o_mass, o_mass_ppm, total_int, matched_int, b_hits, y_hits, num_specs_scored, db_mass_density, db_weighted_mass_density, db_mass_density_digit, db_weighted_mass_density_digit = score_single(
             psms,
-#             query_masses,
-            query_masses_corrected,
-#             query_frags,
-            query_frags_corrected,
+            query_masses,
+            query_frags,
             query_ints,
             query_indices,
             db_masses,
@@ -906,7 +838,7 @@ def get_score_columns(
     psms = add_column(psms, seqs, "sequence")
 
 #     mass = np.array(query_masses)[psms["query_idx"]]
-    mass = np.array(query_masses_corrected)[psms["query_idx"]]
+    mass = np.array(query_masses)[psms["query_idx"]]
     mz = np.array(query_mz)[psms["query_idx"]]
     charge = np.array(query_charges)[psms["query_idx"]]
 
@@ -1160,7 +1092,10 @@ def search_db(to_process):
             f"{file_npz[:-4]}.ms_data.hdf"
         )
 
-        query_data = ms_file.read_DDA_query_data()
+        query_data = ms_file.read_DDA_query_data(
+            calibrated_fragments=True,
+            database_file_name=settings['fasta']['database_path']
+        )
 
         base, ext = os.path.splitext(file_npz)
 
