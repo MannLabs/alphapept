@@ -131,7 +131,7 @@ class TestRun():
         report['branch'] = subprocess.check_output("git branch --show-current").decode("utf-8").rstrip('\n')
         report['commit'] = subprocess.check_output("git rev-parse --verify HEAD").decode("utf-8").rstrip('\n')
 
-        report['version'] = alphapept.__version__
+        report['version'] = alphapept_version
 
         report['sysinfo'] = platform.uname()
 
