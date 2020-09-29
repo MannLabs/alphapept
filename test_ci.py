@@ -35,14 +35,17 @@ TEST_DIR = 'C:/test_temp/'
 MONGODB_USER = 'github_actions'
 MONGODB_URL = 'ci.yue0n.mongodb.net/'
 
+
 def delete_folder(dir_name):
     if os.path.exists(dir_name):
         shutil.rmtree(dir_name)
+
 
 def create_folder(dir_name):
     if not os.path.exists(dir_name):
         logging.info(f'Creating dir {dir_name}.')
         os.makedirs(dir_name)
+
 
 class TestRun():
     """
@@ -78,7 +81,6 @@ class TestRun():
             else:
                 wget.download(link, filename)
 
-
     def prepare_files(self):
         """
         Downloads files to base_dir and copies to test folder for a test run
@@ -98,7 +100,6 @@ class TestRun():
             else:
                 shutil.copyfile(BASE_DIR+file, TEST_DIR+file)
 
-
     def prepare_settings(self):
         """
         Prepares the settings according to the test run
@@ -111,7 +112,6 @@ class TestRun():
 
         self.settings['search']['m_offset'] =  self.m_offset
         self.settings['search']['m_tol'] =  self.m_tol
-
 
     def run(self, password=None):
         self.prepare_files()
@@ -179,6 +179,7 @@ class BrukerTestRun(TestRun):
         self.m_tol = 30
         self.m_offset = 30
 
+
 class ThermoTestRun(TestRun):
     def __init__(self, *args):
         TestRun.__init__(self, *args)
@@ -187,19 +188,20 @@ class ThermoTestRun(TestRun):
 
 
 def main():
-	print(sys.argv, len(sys.argv))
+    print(sys.argv, len(sys.argv))
 
-	password = sys.argv[1]
-	runtype = sys.argv[2]
-	files = sys.argv[3].strip('[]').split(',')
-	fasta_files = sys.argv[4].strip('[]').split(',')
+    password = sys.argv[1]
+    runtype = sys.argv[2]
+    files = sys.argv[3].strip('[]').split(',')
+    fasta_files = sys.argv[4].strip('[]').split(',')
 
-	if runtype == 'bruker':
-		BrukerTestRun(files, fasta_files).run(password = password)
-	elif runtype == 'thermo':
-		ThermoTestRun(files, fasta_files).run(password = password)
-	else:
-		raise NotImplementedError(runtype)
+    if runtype == 'bruker':
+        BrukerTestRun(files, fasta_files).run(password=password)
+    elif runtype == 'thermo':
+        ThermoTestRun(files, fasta_files).run(password=password)
+    else:
+        raise NotImplementedError(runtype)
+
 
 if __name__ == "__main__":
    main()
