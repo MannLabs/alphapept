@@ -14,6 +14,7 @@ import subprocess
 from alphapept.runner import run_alphapept
 from alphapept.settings import load_settings
 import alphapept
+import alphapept.io
 from alphapept.__version__ import VERSION_NO as alphapept_version
 
 
@@ -146,11 +147,20 @@ class TestRun():
             base, ext = os.path.splitext(_)
             filename = os.path.split(base)[1]
             file_sizes[base+"_ms_data"] = os.path.getsize(os.path.splitext(_)[0] + ".ms_data.hdf")/1024**2
-            file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
+            # file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
 
-            with pd.HDFStore(os.path.splitext(_)[0] + ".hdf") as x:
-                for key in x.keys():
-                    summary[filename+'_'+key.lstrip('/')] = len(x[key])
+            ms_data = alphapept.io.MS_Data_File(os.path.splitext(_)[0] + ".ms_data.hdf")
+            for key in ms_data.read():
+                if "is_pd_dataframe" in ms_data.read(
+                    attr_name="",
+                    group_name=key
+                ):
+                    summary[filename+'_'+key.lstrip('/')] = len(
+                        ms_data.read(
+                            dataset_name=key,
+                        )
+                    )
+
 
         report['file_sizes']['files'] = file_sizes
         report['file_sizes']['results'] = os.path.getsize(settings['experiment']['results_path'])/1024**2
