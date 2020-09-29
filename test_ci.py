@@ -146,7 +146,7 @@ class TestRun():
             base, ext = os.path.splitext(_)
             filename = os.path.split(base)[1]
             file_sizes[base+"_ms_data"] = os.path.getsize(os.path.splitext(_)[0] + ".ms_data.hdf")/1024**2
-            file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
+            # file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
 
             with pd.HDFStore(os.path.splitext(_)[0] + ".hdf") as x:
                 for key in x.keys():
