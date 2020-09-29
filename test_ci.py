@@ -130,7 +130,7 @@ class TestRun():
         report['branch'] = subprocess.check_output("git branch --show-current").decode("utf-8").rstrip('\n')
         report['commit'] = subprocess.check_output("git rev-parse --verify HEAD").decode("utf-8").rstrip('\n')
 
-        report['version'] = alphapept.__version__
+        report['version'] = alphapept_version
 
         report['sysinfo'] = platform.uname()
 
@@ -176,8 +176,8 @@ class BrukerTestRun(TestRun):
     def __init__(self, *args):
         TestRun.__init__(self, *args)
 
-        self.m_tol = 50
-        self.m_offset = 50
+        self.m_tol = 30
+        self.m_offset = 30
 
 class ThermoTestRun(TestRun):
     def __init__(self, *args):
