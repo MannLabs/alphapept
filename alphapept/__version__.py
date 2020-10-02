@@ -11,18 +11,19 @@
 # )
 # cfg = config['DEFAULT']
 
-import sys
-if sys.version_info.minor == 6:
-    import importlib_metadata
-    metadata = importlib_metadata.metadata("alphapept")
-    VERSION_NO = metadata["Version"]
-if sys.version_info.minor == 7:
-    import pkg_resources
-    VERSION_NO = pkg_resources.get_distribution("alphapept").version
-elif sys.version_info.minor == 8:
-    import importlib.metadata
-    metadata = importlib.metadata.metadata("alphapept")
-    VERSION_NO = metadata["Version"]
+# This was causing problems when library is not yet installed
+#import sys
+#if sys.version_info.minor == 6:
+#    import importlib_metadata
+#    metadata = importlib_metadata.metadata("alphapept")
+#    VERSION_NO = metadata["Version"]
+#if sys.version_info.minor == 7:
+#    import pkg_resources
+#    VERSION_NO = pkg_resources.get_distribution("alphapept").version
+#elif sys.version_info.minor == 8:
+#    import importlib.metadata
+#    metadata = importlib.metadata.metadata("alphapept")
+#    VERSION_NO = metadata["Version"]
 
 LIB_NAME = "alphapept"
 USER = "mannlabs"
@@ -32,7 +33,7 @@ AUTHOR = "Maximilian T. Strauss"
 AUTHOR_EMAIL = "straussmaximilian@gmail.com"
 COPYRIGHT = "Mann Labs"
 BRANCH = "master"
-# VERSION_NO = "0.2.9-dev0"
+VERSION_NO = "0.2.9-dev0"
 MIN_PYTHON = "3.6"
 MAX_PYTHON = "4"
 AUDIENCE = "Developers"

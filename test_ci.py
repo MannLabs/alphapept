@@ -15,7 +15,7 @@ from alphapept.runner import run_alphapept
 from alphapept.settings import load_settings
 import alphapept
 import alphapept.io
-
+from alphapept.__version__ import VERSION_NO as alphapept_version
 
 
 # Global dictionary to store links to the files
@@ -131,7 +131,7 @@ class TestRun():
         report['branch'] = subprocess.check_output("git branch --show-current").decode("utf-8").rstrip('\n')
         report['commit'] = subprocess.check_output("git rev-parse --verify HEAD").decode("utf-8").rstrip('\n')
 
-        report['version'] = str(alphapept.__version__)
+        report['version'] = alphapept_version
 
         report['sysinfo'] = platform.uname()
 
