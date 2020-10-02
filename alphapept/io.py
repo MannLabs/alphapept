@@ -55,11 +55,16 @@ class HDF_File(object):
     def is_read_only(self):
         return self.__is_read_only
 
+    @property
+    def is_overwritable(self):
+        return self.__is_overwritable
+
     def __init__(
         self,
         file_name:str,
         is_read_only:bool=True,
         is_new_file:bool=False,
+        is_overwritable:bool=False,
     ):
         self.__file_name = os.path.abspath(file_name)
         if is_new_file:
@@ -75,7 +80,10 @@ class HDF_File(object):
         else:
             with h5py.File(self.file_name, "r") as hdf_file:
                 self.check()
+        if is_overwritable:
+            is_read_only = False
         self.__is_read_only = is_read_only
+        self.__is_overwritable = is_overwritable
 
     def __eq__(self, other):
         return self.file_name == other.file_name
@@ -183,13 +191,31 @@ def read(
                         return dataset.dtype
                     else:
                         return dataset[return_dataset_slice]
+                elif dataset.attrs["is_pd_dataframe"]:
+                    if return_dataset_shape:
+                        columns = list(dataset)
+                        return (
+                            len(dataset[columns[0]]),
+                            len(columns)
+                        )
+                    elif return_dataset_dtype:
+                        return [
+                            dataset[column].dtype for column in sorted(
+                                dataset
+                            )
+                        ]
+                    else:
+                        return pd.DataFrame(
+                            {
+                                column: dataset[column][
+                                    return_dataset_slice
+                                ] for column in sorted(dataset)
+                            }
+                        )
                 else:
-                    return pd.DataFrame(
-                        {
-                            column: dataset[column][
-                                return_dataset_slice
-                            ] for column in dataset
-                        }
+                    raise ValueError(
+                        f"{dataset_name} is not a valid dataset in "
+                        f"group {group_name} of {self}."
                     )
             elif attr_name != "":
                 try:
@@ -211,8 +237,8 @@ def write(
     group_name:str=None,
     dataset_name:str=None,
     attr_name:str=None,
-    overwrite:bool=False,
-    dataset_compression=None
+    overwrite:bool=None,
+    dataset_compression=None,
 ):
     '''
     Write a `value` to an HDF_File. If an 'attr_name' is provided,
@@ -223,12 +249,15 @@ def write(
     can be defined to minimize disk usage, at the cost of slower IO.
     If the `value` is pd.DataFrame, a `dataset_name` must be provided.
     If the `overwrite` flag is True, overwrite the given attribute
-    or dataset and truncate groups.
+    or dataset and truncate groups. If the `overwrite` flag is False,
+    ignore the is_overwritable flag of this HDF_File.
     '''
     if self.is_read_only:
         raise IOError(
             f"Trying to write to {self}, which is read_only."
         )
+    if overwrite is None:
+        overwrite = self.is_overwritable
     with h5py.File(self.file_name, "a") as hdf_file:
         if group_name is None:
             group = hdf_file
@@ -1043,6 +1072,9 @@ def _save_DDA_query_data(
 @patch
 def read_DDA_query_data(
     self:MS_Data_File,
+    calibrated_fragments=False,
+    force_recalibrate=False,
+    **kwargs
 ):
     query_data = {}
     for dataset_name in self.read(group_name="Raw/MS1_scans"):
@@ -1079,6 +1111,20 @@ def read_DDA_query_data(
     if self.read(attr_name="vendor", group_name="Raw") == "Bruker":
         query_data["mobility"] = query_data["mobility2"]
         query_data["prec_id"] = query_data["prec_id2"]
+    if calibrated_fragments:
+        if ("corrected_fragment_mzs" not in self.read()) or force_recalibrate:
+#         if True:
+            logging.info("Calibrating fragments")
+            import alphapept.recalibration
+            alphapept.recalibration.calibrate_fragments(
+                kwargs["database_file_name"],
+                self.file_name,
+            )
+        query_data["mass_list_ms2"] *= (
+            1 - self.read(
+                dataset_name="corrected_fragment_mzs"
+            ) / 10**6
+        )
     return query_data
 
 # Cell

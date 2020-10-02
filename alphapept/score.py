@@ -561,13 +561,13 @@ def score_hdf(to_process):
 
     skip = False
 
+    ms_file = alphapept.io.MS_Data_File(path, is_overwritable=True)
+
     try:
-        ms_file = alphapept.io.MS_Data_File(path, is_read_only=False)
         df = ms_file.read(dataset_name='second_search')
 
         logging.info('Found second search psms for scoring.')
     except KeyError:
-        ms_file = alphapept.io.MS_Data_File(path, is_read_only=False)
         df = ms_file.read(dataset_name='first_search')
         logging.info('No second search psms for scoring found. Using first search.')
 
@@ -588,7 +588,6 @@ def score_hdf(to_process):
 
         df = cut_global_fdr(df, analyte_level='precursor',  plot=False, **settings['search'])
 
-        ms_file = alphapept.io.MS_Data_File(path, is_read_only=False)
         ms_file.write(df, dataset_name="peptide_fdr")
 
         logging.info('FDR on peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
@@ -622,8 +621,8 @@ def protein_groups_hdf(to_process):
 
     skip = False
     path, pept_dict, fasta_dict, settings = to_process
+    ms_file = alphapept.io.MS_Data_File(path, is_overwritable=True)
     try:
-        ms_file = alphapept.io.MS_Data_File(path, is_read_only=False)
         df = ms_file.read(dataset_name='peptide_fdr')
     except KeyError:
         skip = True
@@ -633,7 +632,6 @@ def protein_groups_hdf(to_process):
 
         df_pg = cut_global_fdr(df_pg, analyte_level='protein',  plot=False, **settings['search'])
 
-        ms_file = alphapept.io.MS_Data_File(path, is_read_only=False)
         ms_file.write(df_pg, dataset_name="protein_fdr")
 
         logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
