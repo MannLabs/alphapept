@@ -98,9 +98,7 @@ class MainWindow(QMainWindow):
         n_cpu = psutil.cpu_count()
         memory = psutil.virtual_memory()
         ram = memory.total / 1024 / 1024 / 1024
-        system_info = "CPU {} - Cores\nRAM {:.2f} GB ".format(n_cpu, ram)
         self.cpu_utilization = 0
-        self.hardware = system_info
         self.ram_utilization = 0
         self.overall_progress = 0
         self.resize(1024, 800)
@@ -300,11 +298,11 @@ class MainWindow(QMainWindow):
         self.progress_current.setValue(0)
         self.progress_current.setStyleSheet(progress_style_2)
 
-        self.current_task_label = QLabel("")
+        self.current_task_label = QLabel("Current Task")
         self.performance_layout_right.addWidget(self.current_task_label)
         self.performance_layout_right.addWidget(self.progress_current)
 
-        self.performance_layout_right.addWidget(QLabel("CPU"))
+        self.performance_layout_right.addWidget(QLabel(f"CPU {n_cpu} Cores"))
         self.performance_layout_right.addWidget(self.progress_cpu)
 
         self.performance_layout_right.addWidget(

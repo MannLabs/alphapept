@@ -286,7 +286,7 @@ def run_alphapept(settings, callback=None):
         fasta_dict,
         callback=cb
     )
-    logging.info('Protein groups complete')
+    logging.info('Protein groups complete.')
 
     logging.info('Assembling dataframe.')
     df = alphapept.utils.assemble_df(settings)
@@ -345,7 +345,7 @@ def run_alphapept(settings, callback=None):
         yaml.dump(settings, file)
 
     logging.info('Settings saved to {}'.format(out_path_settings))
-    logging.info('Complete')
+    logging.info('Analysis complete.')
 
     return settings
 
