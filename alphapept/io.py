@@ -464,8 +464,8 @@ def load_thermo_raw(raw_file, most_abundant, callback=None, **kwargs):
 
     query_data["scan_list_ms1"] = np.array(scan_list_ms1)
     query_data["rt_list_ms1"] = np.array(rt_list_ms1)
-    query_data["mass_list_ms1"] = np.array(mass_list_ms1)
-    query_data["int_list_ms1"] = np.array(int_list_ms1)
+    query_data["mass_list_ms1"] = np.array(mass_list_ms1, dtype=object)
+    query_data["int_list_ms1"] = np.array(int_list_ms1, dtype=object)
     query_data["ms_list_ms1"] = np.array(ms_list_ms1)
 
     query_data["scan_list_ms2"] = np.array(scan_list_ms2)

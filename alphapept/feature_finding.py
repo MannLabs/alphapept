@@ -131,7 +131,7 @@ def raw_to_centroid(query_data, callback=None):
         if callback:
             callback((i+1)/len(scans)/2)
 
-    centroids = []
+    centroids = List()
 
     for i, _ in enumerate(centroids_pre):
         centroids.append(np.array(_, dtype=centroid_dtype))
@@ -367,7 +367,7 @@ def plot_hill(hill, centroids):
     Helper function to plot the hill
     """
 
-    hill_data = np.array([centroids[_[0]][_[1]] for _ in hill])
+    hill_data = np.array([centroids[_[0]][_[1]] for _ in hill], dtype=object)
 
     f, (ax1, ax2) = plt.subplots(2, 1, sharex=True, figsize=(10,10))
     ax1.plot(hill_data["rt"], hill_data["int"])
@@ -444,9 +444,10 @@ def split_hills(hills, centroids, smoothing = 1, split_level=1.3, callback=None)
     """
     Wrapper to split list of hills
     """
+    centroid_dtype = [("mz", float), ("int", np.int64), ("scan_no", int), ("rt", float)]
     split_hills = []
     for index, current_hill in enumerate(hills):
-        hill_data = np.array([centroids[_[0]][_[1]] for _ in current_hill])
+        hill_data = np.array([centroids[_[0]][_[1]] for _ in current_hill], dtype=centroid_dtype)
 
         split_hills.extend(split_hill(hill_data, current_hill, smoothing, split_level))
 
@@ -513,13 +514,14 @@ def filter_hills(hills, centroids, hill_min_length=2, hill_peak_factor=2, hill_p
     """
     Wrapper function to perform filtering on lists of hills
     """
+    centroid_dtype = [("mz", float), ("int", np.int64), ("scan_no", int), ("rt", float)]
     filtered_hills = []
     for idx, current_hill in enumerate(hills):
         if len(current_hill) > hill_min_length:
             if len(current_hill) < hill_peak_min_length:
                 filtered_hills.append(current_hill)
             else:
-                hill_data = np.array([centroids[_[0]][_[1]] for _ in current_hill])
+                hill_data = np.array([centroids[_[0]][_[1]] for _ in current_hill], dtype=centroid_dtype)
                 int_profile = hill_data["int"]
                 maximum = np.max(int_profile)
                 y_smooth = smooth(int_profile, smoothing)
@@ -601,7 +603,7 @@ def get_hill_data(hills, centroids, callback=None):
 
     centroid_dtype = [("mz", float), ("int", np.int64), ("scan_no", int), ("rt", float)]
 
-    hill_data = []
+    hill_data = List()
 
     for idx, hill in enumerate(hills):
         hill_data.append(np.array([centroids[_[0]][_[1]] for _ in hill], dtype=centroid_dtype))
@@ -623,8 +625,8 @@ def get_hill_data(hills, centroids, callback=None):
 
     sortindex = np.argsort(hill_stats[:, 2])
     sorted_stats = hill_stats[sortindex]
-    sorted_hills = np.array(hills)[sortindex]
-    sorted_data = np.array(hill_data)[sortindex]
+    sorted_hills = np.array(hills, dtype=object)[sortindex]
+    sorted_data = np.array(hill_data, dtype=object)[sortindex]
 
     sorted_stats = np.core.records.fromarrays(sorted_stats.T, dtype=stats_dtype)
 
@@ -795,7 +797,7 @@ def plot_pattern(pattern, sorted_hills, centroids, hill_data):
     ints = []
     for entry in pattern:
         hill = sorted_hills[entry]
-        hill_data = np.array([centroids[_[0]][_[1]] for _ in hill])
+        hill_data = np.array([centroids[_[0]][_[1]] for _ in hill], dtype=object)
 
         int_profile = hill_data["int"]
         ax1.plot(hill_data["rt"], hill_data["int"])

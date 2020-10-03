@@ -329,7 +329,6 @@ class searchThread(QThread):
     def run(self):
         logging.info('Starting SearchThread')
         print(yaml.dump(self.settings, default_flow_style=False))
-        run_alphapept(self.settings, callback=self.update_current_progress)
         try:
             run_alphapept(self.settings, callback=self.update_current_progress)
         except Exception as e:
