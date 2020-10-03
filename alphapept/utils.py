@@ -3,6 +3,7 @@ import logging
 import pandas as pd
 import alphapept.io
 import os
+import psutil
 
 
 def check_file(file):
@@ -61,7 +62,7 @@ def check_settings(settings):
     logging.info('Check for settings not completely implemented yet.')
 
     n_set = settings['general']['n_processes']
-    n_actual = multiprocessing.cpu_count()
+    n_actual = psutil.cpu_count()
 
     logging.info('Checking CPU settings.')
     if n_set > n_actual:

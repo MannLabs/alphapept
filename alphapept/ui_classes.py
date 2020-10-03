@@ -14,6 +14,9 @@ import logging
 import pandas as pd
 import qdarkstyle
 
+import threading, queue
+from time import time
+
 
 dark_stylesheet = qdarkstyle.load_stylesheet_pyqt5()
 
@@ -273,13 +276,32 @@ class QTextEditLogger(logging.Handler):
         super().__init__()
         self.widget = QPlainTextEdit(parent)
         self.widget.setReadOnly(True)
+        self.buffer = []
+        self.worker = threading.Thread(target=self.write_log, daemon=True).start()
+
+    def write_log(self):
+        """
+        PyQt does not display logs correctly when sending them too quickly.
+        Collect multiple and update every time interval.
+        """
+        TIME = 0.1
+        last = time()
+        while True:
+            now = time()
+            if (now-last) > TIME:
+                if len(self.buffer) > 0:
+                    msg = [self.format(_) for _ in self.buffer]
+                    self.buffer = []
+                    msg = '\n'.join(msg)
+                    self.widget.appendPlainText(msg)
+                    self.widget.verticalScrollBar().setValue(
+                        self.widget.verticalScrollBar().maximum()
+                    )
+                    last = now
 
     def emit(self, record):
-        msg = self.format(record)
-        self.widget.appendPlainText(msg)
-        self.widget.verticalScrollBar().setValue(
-            self.widget.verticalScrollBar().maximum()
-        )
+        self.buffer.append(record)
+
 
 
 class searchThread(QThread):
