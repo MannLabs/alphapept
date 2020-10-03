@@ -456,7 +456,7 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
 
     logging.info('A total of {:,} proteins with unique PSMs found'.format(len(found_proteins)))
 
-    connected_groups = np.array([list(c) for c in sorted(nx.connected_components(G), key=len, reverse=True)])
+    connected_groups = np.array([list(c) for c in sorted(nx.connected_components(G), key=len, reverse=True)], dtype=object)
     n_groups = len(connected_groups)
 
 
