@@ -185,7 +185,8 @@ def get_mass_dict(modfile="modifications.tsv", aasfile="amino_acids.tsv"):
 
 # Cell
 import numpy as np
-from numba import int32, float32, float64, jitclass, njit, types
+from numba import int32, float32, float64, njit, types
+from numba.experimental import jitclass
 from numba.typed import Dict
 
 spec = [
