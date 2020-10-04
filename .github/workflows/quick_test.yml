@@ -5,7 +5,7 @@ on:
   push:
     branches: [ master, develop]
   pull_request:
-    branches: [ master , develop]
+    branches: [ master, develop]
 
 jobs:
   Install_Alphapept:
@@ -17,6 +17,7 @@ jobs:
         conda create --name alphapept python=3.8 -y
         conda activate alphapept
         pip install -e .
+        pip install -r requirements.txt
         pip install pymongo
         pip install dnspython
         pip install wget
