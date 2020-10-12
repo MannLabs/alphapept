@@ -366,8 +366,8 @@ def plot_hill(hill, centroids):
     """
     Helper function to plot the hill
     """
-
-    hill_data = np.array([centroids[_[0]][_[1]] for _ in hill], dtype=object)
+    centroid_dtype = [("mz", float), ("int", np.int64), ("scan_no", int), ("rt", float)]
+    hill_data = np.array([centroids[_[0]][_[1]] for _ in hill], dtype=centroid_dtype)
 
     f, (ax1, ax2) = plt.subplots(2, 1, sharex=True, figsize=(10,10))
     ax1.plot(hill_data["rt"], hill_data["int"])
@@ -791,13 +791,14 @@ def plot_pattern(pattern, sorted_hills, centroids, hill_data):
     Helper function to plot a pattern
     """
     f, (ax1, ax2) = plt.subplots(2, 1, sharex=True, figsize=(10,10))
+    centroid_dtype = [("mz", float), ("int", np.int64), ("scan_no", int), ("rt", float)]
 
     mzs = []
     rts = []
     ints = []
     for entry in pattern:
         hill = sorted_hills[entry]
-        hill_data = np.array([centroids[_[0]][_[1]] for _ in hill], dtype=object)
+        hill_data = np.array([centroids[_[0]][_[1]] for _ in hill], dtype=centroid_dtype)
 
         int_profile = hill_data["int"]
         ax1.plot(hill_data["rt"], hill_data["int"])
