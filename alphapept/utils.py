@@ -112,18 +112,24 @@ def check_settings(settings):
     return settings
 
 
-def assemble_df(settings, field = 'protein_fdr', callback = None):
+def assemble_df(settings, callback=None):
     """
     Todo we could save this to disk
     include callback
     """
-    paths = [os.path.splitext(_)[0]+'.hdf' for _ in settings['experiment']['file_paths']]
+    paths = [
+        os.path.splitext(
+            file_name
+        )[0]+'.ms_data.hdf' for file_name in settings['experiment']['file_paths']
+    ]
     shortnames = settings['experiment']['shortnames']
     all_dfs = []
-    for idx, _ in enumerate(paths):
+    for idx, file_name in enumerate(paths):
 
-        df = pd.read_hdf(_, field)
-        df['filename'] = _
+        df = alphapept.io.MS_Data_File(
+            file_name
+        ).read(dataset_name="protein_fdr")
+        df['filename'] = file_name
         df['shortname'] = shortnames[idx]
 
         if 'fraction' in settings['experiment'].keys():
@@ -136,10 +142,8 @@ def assemble_df(settings, field = 'protein_fdr', callback = None):
 
     xx = pd.concat(all_dfs)
 
-    out_path = settings['experiment']['results_path']
     # Here we could save things
-    xx.to_hdf(out_path, 'combined_'+field)
 
-    logging.info('Saved assembled df with field {} to {}'.format('combined_'+field, out_path))
+    xx.to_hdf(settings['experiment']['results_path'], 'combined_protein_fdr')
 
     return xx
