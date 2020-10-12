@@ -197,7 +197,7 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
 from numba import njit
 
 @njit
-def get_protein_ratios(signal, column_combinations, minimum_ratios = 2):
+def get_protein_ratios(signal, column_combinations, minimum_ratios = 1):
     n_samples = signal.shape[1]
     ratios = np.empty((n_samples, n_samples))
     ratios[:] = np.nan
@@ -266,7 +266,7 @@ def solve_profile_trf(ratios):
 from numba.typed import List
 from itertools import combinations
 
-def get_protein_table(df, field = 'int_sum', callback = None):
+def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None):
     unique_proteins = df['protein'].unique()
     files = df['shortname'].unique().tolist()
     files.sort()
@@ -285,10 +285,8 @@ def get_protein_table(df, field = 'int_sum', callback = None):
     else:
         field_ = field
 
-    # Median normalization
-    median = df.groupby('shortname')[field_].median()
-    df[field_] -= df['shortname'].apply(lambda x: median.loc[x])
-
+    if df[field_].min() < 0:
+        raise ValueError('Negative intensity values present.')
 
     for idx, protein in enumerate(unique_proteins):
         subset = df[df['protein'] == protein].copy()
@@ -300,7 +298,7 @@ def get_protein_table(df, field = 'int_sum', callback = None):
 
         per_protein = per_protein[files]
 
-        ratios = get_protein_ratios(per_protein.values, column_combinations)
+        ratios = get_protein_ratios(per_protein.values, column_combinations, minimum_ratios)
         solution, success = solve_profile_SLSQP(ratios)
 
         file_ids = per_protein.columns.tolist()
@@ -310,7 +308,9 @@ def get_protein_table(df, field = 'int_sum', callback = None):
         if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
             profile = pre_lfq
         else:
+            invalid = ((np.nansum(ratios, axis=1) == 0) & (np.nansum(ratios, axis=0) == 0))
             total_int = subset[field_].sum() * solution
+            total_int[invalid] = 0
             profile = total_int * subset[field_].sum().sum() / np.sum(total_int) #Normalize inensity again
 
 
@@ -321,7 +321,7 @@ def get_protein_table(df, field = 'int_sum', callback = None):
             callback((idx+1)/len(unique_proteins))
 
     protein_table[protein_table == 0] = np.nan
-    protein_table = protein_table.astype('float')
+    protein_table = protein_table.astype('float64')
 
     return protein_table
 
@@ -381,9 +381,8 @@ def protein_profile_parallel(settings, df, callback=None):
     else:
         field_ = field
 
-    # Median normalization
-    median = df.groupby('shortname')[field_].median()
-    df[field_] -= df['shortname'].apply(lambda x: median.loc[x])
+    if df[field_].min() < 0:
+        raise ValueError('Negative intensity values present.')
 
     results = []
 
