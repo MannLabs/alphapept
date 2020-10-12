@@ -542,7 +542,7 @@ def perform_protein_grouping(data, pept_dict, fasta_dict, **kwargs):
     protein_decoys = get_protein_groups(decoys, pept_dict, fasta_dict, **kwargs)
 
     protein_groups = protein_targets.append(protein_decoys)
-    protein_groups_app = protein_groups[['sequence','decoy','protein','razor']]
+    protein_groups_app = protein_groups[['sequence','decoy','protein','protein_group','razor']]
     protein_report = pd.merge(data,
                                 protein_groups_app,
                                 how = 'inner',
