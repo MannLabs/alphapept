@@ -428,7 +428,7 @@ def get_spectrum(peptide, mass_dict):
 
 @njit
 def get_spectra(peptides, mass_dict):
-    spectra = []
+    spectra = List()
 
     for i in range(len(peptides)):
         spectra.append(get_spectrum(peptides[i], mass_dict))
