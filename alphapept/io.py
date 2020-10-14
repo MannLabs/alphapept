@@ -55,11 +55,16 @@ class HDF_File(object):
     def is_read_only(self):
         return self.__is_read_only
 
+    @property
+    def is_overwritable(self):
+        return self.__is_overwritable
+
     def __init__(
         self,
         file_name:str,
         is_read_only:bool=True,
         is_new_file:bool=False,
+        is_overwritable:bool=False,
     ):
         self.__file_name = os.path.abspath(file_name)
         if is_new_file:
@@ -75,7 +80,10 @@ class HDF_File(object):
         else:
             with h5py.File(self.file_name, "r") as hdf_file:
                 self.check()
+        if is_overwritable:
+            is_read_only = False
         self.__is_read_only = is_read_only
+        self.__is_overwritable = is_overwritable
 
     def __eq__(self, other):
         return self.file_name == other.file_name
@@ -140,6 +148,8 @@ def read(
     The options `return_dataset_shape`, `return_dataset_dtype` and
     `return_dataset_slice` allow to minimize IO and RAM usage by reading
     datasets only partially.
+    If the `dataset_name` refers to a group, it is assumed to be
+    pd.DataFrame and returned as such.
     '''
     with h5py.File(self.file_name, "r") as hdf_file:
         if group_name is None:
@@ -159,7 +169,7 @@ def read(
                 try:
                     return group.attrs[attr_name]
                 except KeyError:
-                    raise keyError(
+                    raise KeyError(
                         f"Attribute {attr_name} does not exist for "
                         f"group {group_name} of {self}."
                     )
@@ -181,9 +191,31 @@ def read(
                         return dataset.dtype
                     else:
                         return dataset[return_dataset_slice]
+                elif dataset.attrs["is_pd_dataframe"]:
+                    if return_dataset_shape:
+                        columns = list(dataset)
+                        return (
+                            len(dataset[columns[0]]),
+                            len(columns)
+                        )
+                    elif return_dataset_dtype:
+                        return [
+                            dataset[column].dtype for column in sorted(
+                                dataset
+                            )
+                        ]
+                    else:
+                        return pd.DataFrame(
+                            {
+                                column: dataset[column][
+                                    return_dataset_slice
+                                ] for column in sorted(dataset)
+                            }
+                        )
                 else:
-                    raise NotImplementedError(
-                        "Use group as pandas dataframe container?"
+                    raise ValueError(
+                        f"{dataset_name} is not a valid dataset in "
+                        f"group {group_name} of {self}."
                     )
             elif attr_name != "":
                 try:
@@ -205,8 +237,8 @@ def write(
     group_name:str=None,
     dataset_name:str=None,
     attr_name:str=None,
-    overwrite:bool=False,
-    dataset_compression=None
+    overwrite:bool=None,
+    dataset_compression=None,
 ):
     '''
     Write a `value` to an HDF_File. If an 'attr_name' is provided,
@@ -215,13 +247,17 @@ def write(
     If no `dataset_name` is provided, create a new group with `value`
     as name. If a 'dataset_name' is provided, a 'dataset_compression`
     can be defined to minimize disk usage, at the cost of slower IO.
+    If the `value` is pd.DataFrame, a `dataset_name` must be provided.
     If the `overwrite` flag is True, overwrite the given attribute
-    or dataset and truncate groups.
+    or dataset and truncate groups. If the `overwrite` flag is False,
+    ignore the is_overwritable flag of this HDF_File.
     '''
     if self.is_read_only:
         raise IOError(
             f"Trying to write to {self}, which is read_only."
         )
+    if overwrite is None:
+        overwrite = self.is_overwritable
     with h5py.File(self.file_name, "a") as hdf_file:
         if group_name is None:
             group = hdf_file
@@ -265,12 +301,29 @@ def write(
                             f"{group_name} of {self}."
                         )
                 if isinstance(value, pd.core.frame.DataFrame):
-                    raise NotImplementedError(
-                        "Use group as pandas dataframe container?"
+                    new_group_name = f"{group_name}/{dataset_name}"
+                    self.write(
+                        dataset_name,
+                        group_name=group_name,
+                        overwrite=overwrite,
                     )
-                if value.dtype.type == np.str_:
+                    self.write(
+                        True,
+                        group_name=new_group_name,
+                        attr_name="is_pd_dataframe",
+                        overwrite=overwrite,
+                    )
+                    for column in value.columns:
+                        self.write(
+                            value[column].values,
+                            group_name=new_group_name,
+                            dataset_name=column,
+                            overwrite=overwrite,
+                            dataset_compression=dataset_compression,
+                        )
+                elif value.dtype.type == np.str_:
                     value = value.astype(np.dtype('O'))
-                if value.dtype == np.dtype('O'):
+                elif value.dtype == np.dtype('O'):
                     hdf_dataset = group.create_dataset(
                         dataset_name,
                         data=value,
@@ -337,8 +390,8 @@ def load_thermo_raw(raw_file, most_abundant, callback=None, **kwargs):
     """
     Load thermo raw file and extract spectra
     """
-    from .pyrawfilereader import RawFileReader
 
+    from .pyrawfilereader import RawFileReader
     rawfile = RawFileReader(raw_file)
 
     spec_indices = np.array(
@@ -411,8 +464,8 @@ def load_thermo_raw(raw_file, most_abundant, callback=None, **kwargs):
 
     query_data["scan_list_ms1"] = np.array(scan_list_ms1)
     query_data["rt_list_ms1"] = np.array(rt_list_ms1)
-    query_data["mass_list_ms1"] = np.array(mass_list_ms1)
-    query_data["int_list_ms1"] = np.array(int_list_ms1)
+    query_data["mass_list_ms1"] = np.array(mass_list_ms1, dtype=object)
+    query_data["int_list_ms1"] = np.array(int_list_ms1, dtype=object)
     query_data["ms_list_ms1"] = np.array(ms_list_ms1)
 
     query_data["scan_list_ms2"] = np.array(scan_list_ms2)
@@ -910,7 +963,7 @@ def import_raw_DDA_data(
             most_abundant=most_abundant,
             callback=callback
         )
-    self._save_DDA_query_data(query_data, vendor, file_name)
+    self._save_DDA_query_data(query_data, vendor)
 
 
 def _read_DDA_query_data(
@@ -954,21 +1007,17 @@ def _save_DDA_query_data(
     self:MS_Data_File,
     query_data:dict,
     vendor:str,
-    file_name:str,
     overwrite=False
 ):
-    sample = os.path.basename(file_name)
 #     if vendor == "Bruker":
 #         raise NotImplementedError("Unclear what are ms1 and ms2 attributes for bruker")
     if "Raw" not in self.read():
         self.write("Raw")
-    if sample not in self.read(group_name="Raw"):
-        self.write(sample, group_name="Raw")
-    self.write(vendor, group_name=f"Raw/{sample}", attr_name="vendor")
-    if "MS1_scans" not in self.read(group_name=f"Raw/{sample}"):
-        self.write("MS1_scans", group_name=f"Raw/{sample}")
-    if "MS2_scans" not in self.read(group_name=f"Raw/{sample}"):
-        self.write("MS2_scans", group_name=f"Raw/{sample}")
+    self.write(vendor, group_name="Raw", attr_name="vendor")
+    if "MS1_scans" not in self.read(group_name="Raw"):
+        self.write("MS1_scans", group_name="Raw")
+    if "MS2_scans" not in self.read(group_name="Raw"):
+        self.write("MS2_scans", group_name="Raw")
     for key, value in query_data.items():
         if key.endswith("1"):
 #             TODO: Weak check for ms2, imporve to _ms1 if consistency in naming is guaranteed
@@ -979,7 +1028,7 @@ def _save_DDA_query_data(
                 self.write(
                     indices,
                     dataset_name="indices_ms1",
-                    group_name=f"Raw/{sample}/MS1_scans"
+                    group_name=f"Raw/MS1_scans"
                 )
                 value = np.concatenate(value)
             elif key == "int_list_ms1":
@@ -988,7 +1037,7 @@ def _save_DDA_query_data(
                 value,
 #                 TODO: key should be trimmed: xxx_ms1 should just be e.g. xxx
                 dataset_name=key,
-                group_name=f"Raw/{sample}/MS1_scans"
+                group_name=f"Raw/MS1_scans"
             )
         elif key.endswith("2"):
 #             TODO: Weak check for ms2, imporve to _ms2 if consistency in naming is guaranteed
@@ -999,7 +1048,7 @@ def _save_DDA_query_data(
                 self.write(
                     indices,
                     dataset_name="indices_ms2",
-                    group_name=f"Raw/{sample}/MS2_scans"
+                    group_name=f"Raw/MS2_scans"
                 )
                 value = np.concatenate(value)
             elif key == "int_list_ms2":
@@ -1008,7 +1057,7 @@ def _save_DDA_query_data(
                 value,
 #                 TODO: key should be trimmed: xxx_ms2 should just be e.g. xxx
                 dataset_name=key,
-                group_name=f"Raw/{sample}/MS2_scans"
+                group_name=f"Raw/MS2_scans"
             )
         else:
             raise KeyError("Unspecified scan type")
@@ -1023,14 +1072,22 @@ def _save_DDA_query_data(
 @patch
 def read_DDA_query_data(
     self:MS_Data_File,
+    calibrated_fragments=False,
+    force_recalibrate=False,
+    **kwargs
 ):
     query_data = {}
-    samples = self.read(group_name="Raw")
-    for dataset_name in self.read(group_name=f"Raw/{samples[0]}/MS1_scans"):
-        values = self.read(dataset_name=dataset_name, group_name=f"Raw/{samples[0]}/MS1_scans")
+    for dataset_name in self.read(group_name="Raw/MS1_scans"):
+        values = self.read(
+            dataset_name=dataset_name,
+            group_name="Raw/MS1_scans"
+        )
         query_data[dataset_name] = values
-    for dataset_name in self.read(group_name=f"Raw/{samples[0]}/MS2_scans"):
-        values = self.read(dataset_name=dataset_name, group_name=f"Raw/{samples[0]}/MS2_scans")
+    for dataset_name in self.read(group_name="Raw/MS2_scans"):
+        values = self.read(
+            dataset_name=dataset_name,
+            group_name="Raw/MS2_scans"
+        )
         query_data[dataset_name] = values
 #     indices_ms1 = query_data["indices_ms1"]
 #     mz_ms1 = query_data["mass_list_ms1"]
@@ -1051,9 +1108,23 @@ def read_DDA_query_data(
 #         [int_ms2[s:e] for s,e in zip(indices_ms2[:-1], indices_ms2[1:])]
 #     )
     query_data["bounds"] = np.diff(indices_ms2)
-    if self.read(attr_name="vendor", group_name=f"Raw/{samples[0]}") == "Bruker":
+    if self.read(attr_name="vendor", group_name="Raw") == "Bruker":
         query_data["mobility"] = query_data["mobility2"]
         query_data["prec_id"] = query_data["prec_id2"]
+    if calibrated_fragments:
+        if ("corrected_fragment_mzs" not in self.read()) or force_recalibrate:
+#         if True:
+            logging.info("Calibrating fragments")
+            import alphapept.recalibration
+            alphapept.recalibration.calibrate_fragments(
+                kwargs["database_file_name"],
+                self.file_name,
+            )
+        query_data["mass_list_ms2"] *= (
+            1 - self.read(
+                dataset_name="corrected_fragment_mzs"
+            ) / 10**6
+        )
     return query_data
 
 # Cell

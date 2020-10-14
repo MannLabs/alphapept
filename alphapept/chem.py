@@ -6,7 +6,8 @@ __all__ = ['IsotopeDistribution', 'fast_add', 'numba_bin', 'dict_to_dist', 'spec
 # Cell
 
 import numpy as np
-from numba import int32, float32, float64, jitclass, njit, types
+from numba import int32, float32, float64, njit, types
+from numba.experimental import jitclass
 from numba.typed import Dict
 
 spec = [
