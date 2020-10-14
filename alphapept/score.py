@@ -634,7 +634,7 @@ def protein_groups_hdf(to_process):
 
         ms_file.write(df_pg, dataset_name="protein_fdr")
 
-        base, ext = os.path.spitext(path)
+        base, ext = os.path.splitext(path)
         df_pg.to_csv(base+'_protein_fdr.csv')
 
         logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
