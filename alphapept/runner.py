@@ -337,7 +337,7 @@ def run_alphapept(settings, callback=None):
             'protein_table'
         )
         results_path = settings['experiment']['results_path']
-        base, ext = os.path.spitext(results_path)
+        base, ext = os.path.splitext(results_path)
         protein_table.to_csv(base+'.csv')
 
         logging.info('LFQ complete.')
