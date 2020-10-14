@@ -3,13 +3,14 @@
 
 
 ![CI](https://github.com/MannLabs/alphapept/workflows/CI/badge.svg)
-![HeLa Thermo Win](https://github.com/MannLabs/alphapept/workflows/HeLa%20Thermo%20Win/badge.svg)	![Sample File Test](https://github.com/MannLabs/alphapept/workflows/Sample%20File%20Test/badge.svg)
-![HeLa Bruker Win](https://github.com/MannLabs/alphapept/workflows/HeLa%20Bruker%20Win/badge.svg)
+![Quick Test](https://github.com/MannLabs/alphapept/workflows/Quick%20Test/badge.svg)
+![Performance test](https://github.com/MannLabs/alphapept/workflows/Performance%20test/badge.svg)
 ![Windows Installer](https://github.com/MannLabs/alphapept/workflows/Windows%20Installer/badge.svg)
 
 # AlphaPept
-<img src="nbs/images/alphapept_logo.png" align="center">
-> A modular, python-based framework to analyze mass spectrometry data. Powered by nbdev. Supercharged with numba.
+<img src="nbs\images\alphapept_logo.png" align="center">
+
+ > A modular, python-based framework to analyze mass spectrometry data. Powered by nbdev. Supercharged with numba.
 
 
 ## Documentation
@@ -17,32 +18,57 @@
 The documentation is automatically built based on the jupyter notebooks (nbs/index.ipynb) and can be found [here](https://mannlabs.github.io/alphapept/):
 
 ## Installation Instructions
-> To access Thermo files, we have integrated [RawFileReader](https://planetorbitrap.com/rawfilereader) into AlphaPept. We rely on [Mono](https://www.mono-project.com/) for Linux/Mac systems.> To access Bruker files, we rely on the `timsdata`-library. Currently only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the `ext` folder of this repository.
-> ### Installation on Windows 10
-> `pip install alphapept`
->  `or` `pip install .` in downloaded local AlphaPept repository. Developers should use `pip install -e alphapept`, so that developers mode is enabled and all changes to the source code are directly incorporated.
-> ### Installation on Ubuntu for RawFileReader (Other Linux systems should be similar)
-> 1. `sudo apt-get install build-essential`
-> 2. Intall Mono from mono-project website [Mono Linux](https://www.mono-project.com/download/stable/#download-lin)> 3. `pip install alphapept`
->  `or` `pip install .` from downloaded local AlphaPept repository
-> ### Installation on Mac for RawFileReader
-> 1. `brew install pkg-config`
-> 2. Intall Mono from mono-project website [Mono Mac](https://www.mono-project.com/download/stable/)> 3. `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/pkgconfig:$PKG_CONFIG_PATH`> (`or` add above `PKG_CONFIG_PATH=/usr/......:$PKG_CONFIG_PATH` into ~./bash_profile, and run `source ~/bash_profile`.) Here 6.12.0 is developers' Mono version> 4. `pip install alphapept``or` `pip install .` in downloaded local AlphaPept repository. Developers should use `pip install -e alphapept`, so that developers mode is enabled and all changes to the source code are directly incorporated.
 
-### Standalone Windows Installer
-To use AlphaPept as a stand-alone program for end-users, it can be installed on Windows machines via a one-click installer. Download the latest version [here](http://alphapept.org).
 
 ### Python
 
-We highly recommend the [Anaconda](https://www.anaconda.com) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) Python distribution which comes with a powerful package manager.
+We highly recommend the [Anaconda](https://www.anaconda.com) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) Python distribution, which comes with a powerful package manager. See below for additional instructions for Linux and Mac as they require additional installation of Mono to use the RawFileReader.
 
 It is strongly recommended to install AlphaPept in its own environment.
 1. Open the console and create a new conda environment: `conda create --name alphapept python=3`
 2. Activate the environment: `conda activate alphapept`
 3. Redirect to the folder of choice and clone the repository: `git clone https://github.com/MannLabs/alphapept.git`
-4. Install the package with `pip install alphapept` (default users) or with `pip install -e alphapept` to enable developers mode.
-{% include note.html content='If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`. This also installs the juper notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`. For navigating the notebooks, the exension `collapsible headings` and `toc2` are very beneficial. For developing with the notebooks see the `nbev` section below.' %}
+4. Navigate to the alphapept folder and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode.
+
 If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.
+
+#### Notes
+* If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`, which also installs the jupyter notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`. 
+* For navigating the notebooks, the exension `collapsible headings` and `toc2` are very beneficial.
+* For developing with the notebooks, see the `nbev` section below.
+
+
+#### Linux
+
+1. Install the build-essentials: `sudo apt-get install build-essential`
+2. Install Mono from mono-project website [Mono Linux](https://www.mono-project.com/download/stable/#download-lin)
+3. Navigate to the alphapept folder and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode.
+
+
+#### Mac
+
+1. Install [brew](https://brew.sh) and pkg-config: `brew install pkg-config`
+2. Intall Mono from mono-project website [Mono Mac](https://www.mono-project.com/download/stable/)
+3. Register the Mono-Path to your system:
+For macOS Catalina, open the configuration of zsh via the terminal:
+* Type in `cd` to navigate to the home directory.
+* Type `nano ~/.zshrc` to open the configuration of the terminal
+* Add the path to your mono installation: `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/pkgconfig:$PKG_CONFIG_PATH`. Make sure that the Path matches to your version (Here 6.12.0)
+* Save everything and execute `. ~/.zshrc` 
+4. Navigate to the alphapept folder and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode.
+
+
+### Standalone Windows Installer
+To use AlphaPept as a stand-alone program for end-users, it can be installed on Windows machines via a one-click installer. Download the latest version [here](http://alphapept.org).
+
+
+### Additional Notes
+> To access Thermo files, we have integrated [RawFileReader](https://planetorbitrap.com/rawfilereader) into AlphaPept. We rely on [Mono](https://www.mono-project.com/) for Linux/Mac systems.
+
+ > To access Bruker files, we rely on the `timsdata`-library. Currently, only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the `ext` folder of this repository.
+
+## Version Performance
+An overview on the performance of different versions can be found [here](https://charts.mongodb.com/charts-alphapept-itfxv/public/dashboards/5f671dcf-bcd6-4d90-8494-8c7f724b727b).
 
 ## How to use
 
@@ -52,7 +78,7 @@ AlphaPept is meant to be a framework to implement and test new ideas quickly but
 * CMD: Use the command-line interface to process files. Useful when building automatic pipelines.
 * Python: Use python modules to build individual workflows. Useful when building customized pipelines and using Python as a scripting language or when implementing new ideas. 
 
-### Windows Installation
+### Windows Standalone Installation
 
 For the windows installation, simply click on the shortcut after installation. The windows installation also installs the command-line tool so that you can call alphapept via `alphapept` in the command line.
 
@@ -93,17 +119,9 @@ This allows us to select different modules. To start the GUI use:
 
 Likewise, to start the watcher use:
 * `alphapept watcher`
+> AlphaPept has a watcher module that continuously monitors a target folder and automatically performs file conversion and feature finding on new files.
 
-To run a workflow, use:
-* `alphapept workflow your_own_workflow.yml`
-* (An example workflow is easily generated by running the GUI once and saving the settings which an be modified on e per-project basis).
-
-### Watcher
-AlphaPept has a watcher module that continuously monitors a target folder and automatically performs file conversion and feature finding on new files.
-
-### Processing experiments
-
-AlphaPept is centered around settings-files. Here you can specify the settings and then use `alphapept workflow your_own_workflow.yml` to perform processing.
+To run a workflow, use:* `alphapept workflow your_own_workflow.yaml`An example workflow is easily generated by running the GUI once and saving the settings which an be modified on e per-project basis.
 
 ## Analyzing an experiment
 This describes the minimal steps to analyze an experiment.
@@ -115,7 +133,7 @@ This describes the minimal steps to analyze an experiment.
 3. Navigate to the Run panel and click `Start`
 
 ### Investigating the result files
-The experimental results will be stored in the corresponding *.hdf-files and loaded with pandas. 
+The experimental results will be stored in the corresponding *.hdf-files.
 
 ### CMD / Python
 1. Create a settings-file. This can be done by changing the `default_settings.yaml` in the repository or using the GUI.
