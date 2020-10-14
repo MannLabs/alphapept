@@ -234,22 +234,21 @@ def get_psms(
     Raises:
     """
 
-    if m_offset_calibrated:
-        m_offset = m_offset_calibrated
 
-    query_masses = query_data['prec_mass_list2']
-    query_mz = query_data['mono_mzs2']
-    query_frags = query_data['mass_list_ms2']
-    query_bounds = query_data['bounds']
-    query_indices = query_data["indices_ms2"]
-    query_rt = query_data['rt_list_ms2']
     db_masses = db_data['precursors']
     db_frags = db_data['fragmasses']
     db_bounds = db_data['bounds']
 
+    query_indices = query_data["indices_ms2"]
+    query_bounds = query_data['bounds']
+    query_frags = query_data['mass_list_ms2']
 
     if features is not None:
-        query_masses = features['mass_matched'].values
+        if m_offset_calibrated:
+            m_offset = m_offset_calibrated
+            query_masses = features['corrected_mass'].values
+        else:
+            query_masses = features['mass_matched'].values
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
         query_bounds = query_bounds[features['query_idx'].values]
@@ -266,9 +265,19 @@ def get_psms(
         )
         query_indices = indices
     else:
-        pass
+        if m_offset_calibrated:
+            m_offset = m_offset_calibrated
+        query_masses = query_data['prec_mass_list2']
+        query_mz = query_data['mono_mzs2']
+        query_rt = query_data['rt_list_ms2']
 
-    idxs_lower, idxs_higher = get_idxs(db_masses, query_masses, m_offset, ppm)
+#     idxs_lower, idxs_higher = get_idxs(db_masses, query_masses, m_offset, ppm)
+    idxs_lower, idxs_higher = get_idxs(
+        db_masses,
+        query_masses,
+        m_offset,
+        ppm
+    )
     frag_hits = np.zeros(
         (len(query_masses), np.max(idxs_higher - idxs_lower)), dtype=int
     )
@@ -720,19 +729,15 @@ def get_score_columns(
     m_tol,
     m_offset,
     ppm,
+    m_offset_calibrated=None,
     **kwargs
 ):
     logging.info('Extracting columns for scoring.')
-    query_masses = query_data['prec_mass_list2']
+    query_indices = query_data["indices_ms2"]
+    query_bounds = query_data['bounds']
+    query_charges = query_data['charge2']
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
-    query_indices = query_data["indices_ms2"]
-
-    query_mz = query_data['mono_mzs2']
-    query_charges = query_data['charge2']
-
-    query_rt = query_data['rt_list_ms2']
-    query_bounds = query_data['bounds']
 
     db_masses = db_data['precursors']
     db_frags = db_data['fragmasses']
@@ -747,7 +752,10 @@ def get_score_columns(
         db_ints = None
 
     if features is not None:
-        query_masses = features['mass_matched'].values
+        if m_offset_calibrated:
+            query_masses = features['corrected_mass'].values
+        else:
+            query_masses = features['mass_matched'].values
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
         query_bounds = query_bounds[features['query_idx'].values]
@@ -772,7 +780,9 @@ def get_score_columns(
         )
         query_indices = indices
     else:
-        pass
+        query_masses = query_data['prec_mass_list2']
+        query_mz = query_data['mono_mzs2']
+        query_rt = query_data['rt_list_ms2']
 
     if parallel:
         delta_m, delta_m_ppm, o_mass, o_mass_ppm, total_int, matched_int, b_hits, y_hits, num_specs_scored, db_mass_density, db_weighted_mass_density, db_mass_density_digit, db_weighted_mass_density_digit = score_parallel(
@@ -827,6 +837,7 @@ def get_score_columns(
     seqs = get_sequences(psms, db_seqs)
     psms = add_column(psms, seqs, "sequence")
 
+#     mass = np.array(query_masses)[psms["query_idx"]]
     mass = np.array(query_masses)[psms["query_idx"]]
     mz = np.array(query_mz)[psms["query_idx"]]
     charge = np.array(query_charges)[psms["query_idx"]]
@@ -1009,7 +1020,6 @@ def plot_psms(query_data, df, index, mass_dict, ppm=True, m_tol=20):
     plt.legend(loc='lower right')
     plt.show()
 
-
 # Cell
 def perform_search(query_files, db_masses, db_frags, db_bounds, db_seqs, frag_types, plot, **kwargs):
     """
@@ -1042,15 +1052,18 @@ def store_hdf(df, path, key, replace=False):
     """
     Stores in hdf
     """
+    ms_file = alphapept.io.MS_Data_File(path, is_overwritable=True)
+
     if replace:
-        df.to_hdf(path, key=key, append=False)
+        ms_file.write(df, dataset_name=key)
     else:
         try:
             df.to_hdf(path, key=key, append=True)
+            #TODO, append is not implemented yet
         except ValueError:
-            old_df = pd.read_hdf(path, key= key)
+            old_df = ms_file.read(dataset_name=key)
             new_df = pd.concat([old_df, df])
-            new_df.to_hdf(path, key = key, append=False)
+            ms_file.write(new_df, dataset_name=key)
 
 def search_db(to_process):
     """
@@ -1060,10 +1073,12 @@ def search_db(to_process):
     file_npz, settings = to_process
 
     skip = False
+    feature_calibration = False
 
     if 'm_offset_calibrated' in settings["search"]:
         calibration = settings['search']['m_offset_calibrated']
         logging.info('Found calibrated m_offset with value {}'.format(calibration))
+        feature_calibration = True
         if calibration == 0:
             logging.info('Calibration is 0, skipping second database search.')
             skip = True
@@ -1071,28 +1086,34 @@ def search_db(to_process):
     if not skip:
         db_data = np.load(settings['fasta']['database_path'], allow_pickle=True)
 #         query_data = np.load(file_npz, allow_pickle=True)
-        query_data = alphapept.io.MS_Data_File(
+
+
+        ms_file = alphapept.io.MS_Data_File(
             f"{file_npz[:-4]}.ms_data.hdf"
-        ).read_DDA_query_data()
+        )
+
+
+#         TODO calibrated_fragments should be included in settings
+        query_data = ms_file.read_DDA_query_data(
+            calibrated_fragments=True,
+            database_file_name=settings['fasta']['database_path']
+        )
 
         base, ext = os.path.splitext(file_npz)
 
-        try:
-            features = pd.read_hdf(base+'.hdf', 'features_calib')
-        except KeyError:
-            features = pd.read_hdf(base+'.hdf', 'features')
+        features = ms_file.read(dataset_name="features")
 
         psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
         if len(psms) > 0:
             psms, num_specs_scored = get_score_columns(psms, query_data, db_data, features, **settings["search"])
 
         if 'm_offset_calibrated' in settings["search"]:
-            logging.info('Saving second_search results to {}'.format(base+'.hdf'))
-            store_hdf(pd.DataFrame(psms), base +'.hdf', 'second_search', replace=True)
+            logging.info('Saving second_search results to {}'.format(base+'.ms_data.hdf'))
+            store_hdf(pd.DataFrame(psms), base +'.ms_data.hdf', 'second_search', replace=True)
 
         else:
-            logging.info('Saving first_search results to {}'.format(base+'.hdf'))
-            store_hdf(pd.DataFrame(psms), base +'.hdf', 'first_search', replace=True)
+            logging.info('Saving first_search results to {}'.format(base+'.ms_data.hdf'))
+            store_hdf(pd.DataFrame(psms), base +'.ms_data.hdf', 'first_search', replace=True)
 
 
 def search_parallel_db(settings, calibration = None, callback = None):
@@ -1192,7 +1213,9 @@ def search_fasta_block(to_process):
 
                 if settings_['search']["use_features"]:
                     try:
-                        features = pd.read_hdf(base+'.hdf', 'features')
+                        features = alphapept.io.MS_Data_File(
+                            base+'.ms_data.hdf'
+                        ).read(dataset_name="features")
                     except FileNotFoundError:
                         features = None
                     except KeyError:
@@ -1254,9 +1277,9 @@ def search_parallel(settings, calibration = None, callback = None):
                 output = [_ for _ in _[j]]
                 if len(output) > 0:
                     if calibration:
-                        store_hdf(pd.concat(output), base+'.hdf', 'second_search')
+                        store_hdf(pd.concat(output), base+'.ms_data.hdf', 'second_search')
                     else:
-                        store_hdf(pd.concat(output), base+'.hdf', 'first_search')
+                        store_hdf(pd.concat(output), base+'.ms_data.hdf', 'first_search')
 
             if callback:
                 callback((i+1)/max_)

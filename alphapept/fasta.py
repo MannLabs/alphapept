@@ -338,6 +338,7 @@ def generate_peptides(peptide, **kwargs):
 
 # Cell
 from numba import njit
+from numba.typed import List
 import numpy as np
 
 @njit
@@ -427,7 +428,7 @@ def get_spectrum(peptide, mass_dict):
 
 @njit
 def get_spectra(peptides, mass_dict):
-    spectra = []
+    spectra = List()
 
     for i in range(len(peptides)):
         spectra.append(get_spectrum(peptides[i], mass_dict))
@@ -528,7 +529,6 @@ def merge_pept_dicts(list_of_pept_dicts):
                 new_pept_dict[key] = pept_dict[key]
 
     return new_pept_dict
-
 
 # Cell
 from collections import OrderedDict
@@ -769,8 +769,8 @@ def save_database(spectra, pept_dict, fasta_dict, database_path, **kwargs):
     to_save["seqs"] = np.array(seqs)[sortindex]
     to_save["pept_dict"] = pept_dict
     to_save["fasta_dict"] = fasta_dict
-    to_save["fragmasses"] = list_to_numpy_f32(np.array(fragmasses)[sortindex])
-    to_save["fragtypes"] = list_to_numpy_f32(np.array(fragtypes)[sortindex])
+    to_save["fragmasses"] = list_to_numpy_f32(np.array(fragmasses, dtype='object')[sortindex])
+    to_save["fragtypes"] = list_to_numpy_f32(np.array(fragtypes, dtype='object')[sortindex])
 
     to_save["bounds"] = np.sum(to_save['fragmasses']>=0,axis=0).astype(np.int64)
 

@@ -10,10 +10,13 @@ import sys
 import platform
 import zipfile
 import subprocess
+import numpy as np
 
 from alphapept.runner import run_alphapept
 from alphapept.settings import load_settings
 import alphapept
+import alphapept.io
+from alphapept.__version__ import VERSION_NO as alphapept_version
 
 
 # Global dictionary to store links to the files
@@ -28,20 +31,35 @@ FILE_DICT['human.fasta'] = 'https://datashare.biochem.mpg.de/s/7KvRKOmMXQTTHOp/d
 FILE_DICT['yeast.fasta'] = 'https://datashare.biochem.mpg.de/s/8zioyWKVHEPeo34/download'
 FILE_DICT['e_coli.fasta'] = 'https://datashare.biochem.mpg.de/s/ZUqqruTOxBbSf1k/download'
 
+#PXD006109
+
+FILE_DICT['PXD006109_HeLa12_1.raw'] = 'https://datashare.biochem.mpg.de/s/8S6i1KObhDKABft/download'
+FILE_DICT['PXD006109_HeLa12_2.raw'] = 'https://datashare.biochem.mpg.de/s/y7uY3Pt6tq5PmFn/download'
+FILE_DICT['PXD006109_HeLa12_3.raw'] = 'https://datashare.biochem.mpg.de/s/wl6Av0BKY2eShsd/download'
+FILE_DICT['PXD006109_HeLa2_1.raw'] = 'https://datashare.biochem.mpg.de/s/QOi7Lsmsbr4NhnF/download'
+FILE_DICT['PXD006109_HeLa2_2.raw'] = 'https://datashare.biochem.mpg.de/s/aZi5xdNQhaypRok/download'
+FILE_DICT['PXD006109_HeLa2_3.raw'] = 'https://datashare.biochem.mpg.de/s/WiymcH8Oz58ASnx/download'
+
+
+
+
 BASE_DIR = 'C:/test_files/' # Storarge location for test files
 TEST_DIR = 'C:/test_temp/'
 
 MONGODB_USER = 'github_actions'
 MONGODB_URL = 'ci.yue0n.mongodb.net/'
 
+
 def delete_folder(dir_name):
     if os.path.exists(dir_name):
         shutil.rmtree(dir_name)
+
 
 def create_folder(dir_name):
     if not os.path.exists(dir_name):
         logging.info(f'Creating dir {dir_name}.')
         os.makedirs(dir_name)
+
 
 class TestRun():
     """
@@ -53,6 +71,9 @@ class TestRun():
         self.fasta_paths = fasta_paths
         self.m_tol = 20
         self.m_offset = 20
+
+        # Flag to run mixed_species_analysis
+        self.run_mixed_analysis = None
 
     def get_file(self, filename, link):
         """
@@ -77,7 +98,6 @@ class TestRun():
             else:
                 wget.download(link, filename)
 
-
     def prepare_files(self):
         """
         Downloads files to base_dir and copies to test folder for a test run
@@ -97,7 +117,6 @@ class TestRun():
             else:
                 shutil.copyfile(BASE_DIR+file, TEST_DIR+file)
 
-
     def prepare_settings(self):
         """
         Prepares the settings according to the test run
@@ -110,7 +129,6 @@ class TestRun():
 
         self.settings['search']['m_offset'] =  self.m_offset
         self.settings['search']['m_tol'] =  self.m_tol
-
 
     def run(self, password=None):
         self.prepare_files()
@@ -129,7 +147,7 @@ class TestRun():
         report['branch'] = subprocess.check_output("git branch --show-current").decode("utf-8").rstrip('\n')
         report['commit'] = subprocess.check_output("git rev-parse --verify HEAD").decode("utf-8").rstrip('\n')
 
-        report['version'] = alphapept.__version__
+        report['version'] = alphapept_version
 
         report['sysinfo'] = platform.uname()
 
@@ -145,16 +163,29 @@ class TestRun():
             base, ext = os.path.splitext(_)
             filename = os.path.split(base)[1]
             file_sizes[base+"_ms_data"] = os.path.getsize(os.path.splitext(_)[0] + ".ms_data.hdf")/1024**2
-            file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
+            # file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
 
-            with pd.HDFStore(os.path.splitext(_)[0] + ".hdf") as x:
-                for key in x.keys():
-                    summary[filename+'_'+key.lstrip('/')] = len(x[key])
+            ms_data = alphapept.io.MS_Data_File(os.path.splitext(_)[0] + ".ms_data.hdf")
+            for key in ms_data.read():
+                if "is_pd_dataframe" in ms_data.read(
+                    attr_name="",
+                    group_name=key
+                ):
+                    summary[filename+'_'+key.lstrip('/')] = len(
+                        ms_data.read(
+                            dataset_name=key,
+                        )
+                    )
+
 
         report['file_sizes']['files'] = file_sizes
         report['file_sizes']['results'] = os.path.getsize(settings['experiment']['results_path'])/1024**2
 
         report['results'] = summary
+
+        if self.run_mixed_analysis:
+            species, groups = self.run_mixed_analysis
+            report['mixed_species'] = self.mixed_species_analysis(self.settings, species, groups)
 
         self.report = report
         if password:
@@ -170,13 +201,54 @@ class TestRun():
 
         logging.info(f"Uploaded {post_id}.")
 
+    def mixed_species_analysis(self, settings, species, groups, min_count = 2):
+        """
+        Mixed species analysis
+        """
+
+        df = pd.read_hdf(settings['experiment']['results_path'], 'protein_table')
+        results = {}
+
+        for i in ['','_LFQ']:
+            res = pd.DataFrame()
+
+            if i == "_LFQ":
+                groups = ([_+i for _ in groups[0]], [_+ i for _ in groups[1]])
+
+            res['ratio'] = df[groups[0]].median(axis=1)
+            res['base'] = df[groups[1]].median(axis=1)
+            res['ratio_count'] = (df[groups[0]] != np.nan).sum(axis=1)
+            res['base_count'] = (df[groups[1]] != np.nan).sum(axis=1)
+
+            res['_ratio'] = np.log2(res['base'] / res['ratio'])
+            res['_sum'] = np.log2(res['ratio'])
+
+            valid = res.query('ratio_count >= @min_count and base_count >= @min_count')
+
+            for s in species:
+                sub = valid.loc[[_ for _ in valid.index if s in _]]['_ratio'].values
+                sub_ratio = np.nanmean(sub[~np.isinf(sub)])
+                sub_std = np.nanstd(sub[~np.isinf(sub)])
+
+                results[s+i+'_mean'] = sub_ratio
+                results[s+i+'_std'] = sub_std
+
+            results['DELTA'+i]  = results[species[1]+i+'_mean'] - results[species[0]+i+'_mean']
+
+            results['STD'+i]  = np.sqrt(results[species[1]+i+'_std']**2 + results[species[0]+i+'_std']**2)
+
+            results['T'+i]  = results['DELTA'+i] / results['STD'+i]
+
+        return results
+
 
 class BrukerTestRun(TestRun):
     def __init__(self, *args):
         TestRun.__init__(self, *args)
 
-        self.m_tol = 50
-        self.m_offset = 50
+        self.m_tol = 30
+        self.m_offset = 30
+
 
 class ThermoTestRun(TestRun):
     def __init__(self, *args):
@@ -186,19 +258,32 @@ class ThermoTestRun(TestRun):
 
 
 def main():
-	print(sys.argv, len(sys.argv))
+    print(sys.argv, len(sys.argv))
 
-	password = sys.argv[1]
-	runtype = sys.argv[2]
-	files = sys.argv[3].strip('[]').split(',')
-	fasta_files = sys.argv[4].strip('[]').split(',')
+    password = sys.argv[1]
+    runtype = sys.argv[2]
+    if len(sys.argv) > 3:
+        files = sys.argv[3].strip('[]').split(',')
+    if len(sys.argv) > 4:
+        fasta_files = sys.argv[4].strip('[]').split(',')
 
-	if runtype == 'bruker':
-		BrukerTestRun(files, fasta_files).run(password = password)
-	elif runtype == 'thermo':
-		ThermoTestRun(files, fasta_files).run(password = password)
-	else:
-		raise NotImplementedError(runtype)
+    if runtype == 'bruker':
+        BrukerTestRun(files, fasta_files).run(password=password)
+    elif runtype == 'thermo':
+        ThermoTestRun(files, fasta_files).run(password=password)
+    elif runtype == 'PXD006109':
+        files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
+        fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
+        #Multi-Species test
+        test_run = ThermoTestRun(files, fasta_files)
+        species = ['HUMAN', 'ECO']
+        groups = (['PXD006109_HeLa12_1', 'PXD006109_HeLa12_2', 'PXD006109_HeLa12_3'], ['PXD006109_HeLa2_1', 'PXD006109_HeLa2_2', 'PXD006109_HeLa2_3'])
+        test_run.run_mixed_analysis = (species, groups)
+        test_run.run(password=password)
+
+    else:
+        raise NotImplementedError(runtype)
+
 
 if __name__ == "__main__":
-   main()
+    main()

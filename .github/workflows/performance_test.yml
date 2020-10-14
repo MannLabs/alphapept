@@ -33,3 +33,11 @@ jobs:
     - name: Run Alphapept on Bruker
       run: |
         python test_ci.py "${{ secrets.MONGODB_PW }}" bruker [bruker_HeLa.d] [human.fasta,contaminants.fasta]
+  PXD006109:
+    needs: [Install_Alphapept, HeLa_Thermo_Win]
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run Alphapept on PXD006109
+      run: |
+        python test_ci.py "${{ secrets.MONGODB_PW }}" PXD006109 
