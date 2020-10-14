@@ -59,8 +59,13 @@ nb_path: "nbs\index.ipynb"
 <li>Redirect to the folder of choice and clone the repository: <code>git clone https://github.com/MannLabs/alphapept.git</code></li>
 <li>Navigate to the alphapept folder and install the package with <code>pip install .</code> (default users) or with <code>pip install -e .</code> to enable developers mode.</li>
 </ol>
-<p>If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.
-{% include note.html content='If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: <code>conda install nb_conda</code>. This also installs the jupyter notebook extensions. They can be called from a running jupyter instance like so: <code>http://localhost:8888/nbextensions</code>. For navigating the notebooks, the exension <code>collapsible headings</code> and <code>toc2</code> are very beneficial. For developing with the notebooks, see the <code>nbev</code> section below.' %}</p>
+<p>If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.</p>
+<p>Notes:</p>
+<ul>
+<li>If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: <code>conda install nb_conda</code>, which also installs the jupyter notebook extensions. They can be called from a running jupyter instance like so: <code>http://localhost:8888/nbextensions</code>. </li>
+<li>For navigating the notebooks, the exension <code>collapsible headings</code> and <code>toc2</code> are very beneficial.</li>
+<li>For developing with the notebooks, see the <code>nbev</code> section below.</li>
+</ul>
 <h4 id="Linux">Linux<a class="anchor-link" href="#Linux"> </a></h4><ol>
 <li>Install the build-essentials: <code>sudo apt-get install build-essential</code></li>
 <li>Install Mono from mono-project website <a href="https://www.mono-project.com/download/stable/#download-lin">Mono Linux</a></li>
@@ -85,6 +90,13 @@ For macOS Catalina, open the configuration of zsh via the terminal:</li>
 <h3 id="Additional-Notes">Additional Notes<a class="anchor-link" href="#Additional-Notes"> </a></h3><blockquote><p>To access Thermo files, we have integrated <a href="https://planetorbitrap.com/rawfilereader">RawFileReader</a> into AlphaPept. We rely on <a href="https://www.mono-project.com/">Mono</a> for Linux/Mac systems.</p>
 <p>To access Bruker files, we rely on the <code>timsdata</code>-library. Currently, only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the <code>ext</code> folder of this repository.</p>
 </blockquote>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Version-Performance">Version Performance<a class="anchor-link" href="#Version-Performance"> </a></h2><p>An overview on the performance of differen tversions can be found <a href="https://charts.mongodb.com/charts-alphapept-itfxv/public/dashboards/5f671dcf-bcd6-4d90-8494-8c7f724b727b">here</a>.</p>
 
 </div>
 </div>
