@@ -10,6 +10,7 @@ import sys
 import platform
 import zipfile
 import subprocess
+import numpy as np
 
 from alphapept.runner import run_alphapept
 from alphapept.settings import load_settings
@@ -29,6 +30,18 @@ FILE_DICT['contaminants.fasta'] = 'https://datashare.biochem.mpg.de/s/aRaFlwxdCH
 FILE_DICT['human.fasta'] = 'https://datashare.biochem.mpg.de/s/7KvRKOmMXQTTHOp/download'
 FILE_DICT['yeast.fasta'] = 'https://datashare.biochem.mpg.de/s/8zioyWKVHEPeo34/download'
 FILE_DICT['e_coli.fasta'] = 'https://datashare.biochem.mpg.de/s/ZUqqruTOxBbSf1k/download'
+
+#PXD006109
+
+FILE_DICT['PXD006109_HeLa12_1.raw'] = 'https://datashare.biochem.mpg.de/s/8S6i1KObhDKABft/download'
+FILE_DICT['PXD006109_HeLa12_2.raw'] = 'https://datashare.biochem.mpg.de/s/y7uY3Pt6tq5PmFn/download'
+FILE_DICT['PXD006109_HeLa12_3.raw'] = 'https://datashare.biochem.mpg.de/s/wl6Av0BKY2eShsd/download'
+FILE_DICT['PXD006109_HeLa2_1.raw'] = 'https://datashare.biochem.mpg.de/s/QOi7Lsmsbr4NhnF/download'
+FILE_DICT['PXD006109_HeLa2_2.raw'] = 'https://datashare.biochem.mpg.de/s/aZi5xdNQhaypRok/download'
+FILE_DICT['PXD006109_HeLa2_3.raw'] = 'https://datashare.biochem.mpg.de/s/WiymcH8Oz58ASnx/download'
+
+
+
 
 BASE_DIR = 'C:/test_files/' # Storarge location for test files
 TEST_DIR = 'C:/test_temp/'
@@ -58,6 +71,9 @@ class TestRun():
         self.fasta_paths = fasta_paths
         self.m_tol = 20
         self.m_offset = 20
+
+        # Flag to run mixed_species_analysis
+        self.run_mixed_analysis = None
 
     def get_file(self, filename, link):
         """
@@ -167,6 +183,10 @@ class TestRun():
 
         report['results'] = summary
 
+        if self.run_mixed_analysis:
+            species, groups = self.run_mixed_analysis
+            report['mixed_species'] = self.mixed_species_analysis(self.settings, species, groups)
+
         self.report = report
         if password:
             self.upload_to_db(password)
@@ -180,6 +200,46 @@ class TestRun():
         post_id = client['github']['performance_runs'].insert_one(self.report).inserted_id
 
         logging.info(f"Uploaded {post_id}.")
+
+    def mixed_species_analysis(self, settings, species, groups, min_count = 2):
+        """
+        Mixed species analysis
+        """
+
+        df = pd.read_hdf(settings['experiment']['results_path'], 'protein_table')
+        results = {}
+
+        for i in ['','_LFQ']:
+            res = pd.DataFrame()
+
+            if i == "_LFQ":
+                groups = ([_+i for _ in groups[0]], [_+ i for _ in groups[1]])
+
+            res['ratio'] = df[groups[0]].median(axis=1)
+            res['base'] = df[groups[1]].median(axis=1)
+            res['ratio_count'] = (df[groups[0]] != np.nan).sum(axis=1)
+            res['base_count'] = (df[groups[1]] != np.nan).sum(axis=1)
+
+            res['_ratio'] = np.log2(res['base'] / res['ratio'])
+            res['_sum'] = np.log2(res['ratio'])
+
+            valid = res.query('ratio_count >= @min_count and base_count >= @min_count')
+
+            for s in species:
+                sub = valid.loc[[_ for _ in valid.index if s in _]]['_ratio'].values
+                sub_ratio = np.nanmean(sub[~np.isinf(sub)])
+                sub_std = np.nanstd(sub[~np.isinf(sub)])
+
+                results[s+i+'_mean'] = sub_ratio
+                results[s+i+'_std'] = sub_std
+
+            results['DELTA'+i]  = results[species[1]+i+'_mean'] - results[species[0]+i+'_mean']
+
+            results['STD'+i]  = np.sqrt(results[species[1]+i+'_std']**2 + results[species[0]+i+'_std']**2)
+
+            results['T'+i]  = results['DELTA'+i] / results['STD'+i]
+
+        return results
 
 
 class BrukerTestRun(TestRun):
@@ -202,13 +262,25 @@ def main():
 
     password = sys.argv[1]
     runtype = sys.argv[2]
-    files = sys.argv[3].strip('[]').split(',')
-    fasta_files = sys.argv[4].strip('[]').split(',')
+    if len(sys.argv) > 3:
+        files = sys.argv[3].strip('[]').split(',')
+    if len(sys.argv) > 4:
+        fasta_files = sys.argv[4].strip('[]').split(',')
 
     if runtype == 'bruker':
         BrukerTestRun(files, fasta_files).run(password=password)
     elif runtype == 'thermo':
         ThermoTestRun(files, fasta_files).run(password=password)
+    elif runtype == 'PXD006109':
+        files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
+        fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
+        #Multi-Species test
+        test_run = ThermoTestRun(files, fasta_files)
+        species = ['HUMAN', 'ECO']
+        groups = (['PXD006109_HeLa12_1', 'PXD006109_HeLa12_2', 'PXD006109_HeLa12_3'], ['PXD006109_HeLa2_1', 'PXD006109_HeLa2_2', 'PXD006109_HeLa2_3'])
+        test_run.run_mixed_analysis = (species, groups)
+        test_run.run(password=password)
+
     else:
         raise NotImplementedError(runtype)
 
