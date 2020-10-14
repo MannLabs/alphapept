@@ -31,7 +31,12 @@ It is strongly recommended to install AlphaPept in its own environment.
 4. Navigate to the alphapept folder and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode.
 
 If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.
-{% include note.html content='If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`. This also installs the jupyter notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`. For navigating the notebooks, the exension `collapsible headings` and `toc2` are very beneficial. For developing with the notebooks, see the `nbev` section below.' %}
+
+Notes:
+* If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`, which also installs the jupyter notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`. 
+* For navigating the notebooks, the exension `collapsible headings` and `toc2` are very beneficial.
+* For developing with the notebooks, see the `nbev` section below.
+
 
 #### Linux
 
@@ -61,6 +66,9 @@ To use AlphaPept as a stand-alone program for end-users, it can be installed on 
 > To access Thermo files, we have integrated [RawFileReader](https://planetorbitrap.com/rawfilereader) into AlphaPept. We rely on [Mono](https://www.mono-project.com/) for Linux/Mac systems.
 
  > To access Bruker files, we rely on the `timsdata`-library. Currently, only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the `ext` folder of this repository.
+
+## Version Performance
+An overview on the performance of differen tversions can be found [here](https://charts.mongodb.com/charts-alphapept-itfxv/public/dashboards/5f671dcf-bcd6-4d90-8494-8c7f724b727b).
 
 ## How to use
 
