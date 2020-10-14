@@ -336,6 +336,10 @@ def run_alphapept(settings, callback=None):
             settings['experiment']['results_path'],
             'protein_table'
         )
+        results_path = settings['experiment']['results_path']
+        base, ext = os.path.spitext(results_path)
+        protein_table.to_csv(base+'.csv')
+
         logging.info('LFQ complete.')
 
     base, ext = os.path.splitext(settings['experiment']['results_path'])

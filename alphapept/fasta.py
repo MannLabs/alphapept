@@ -660,7 +660,7 @@ def digest_fasta_block(to_process):
 
     fasta_index, fasta_block, settings = to_process
 
-    to_add = []
+    to_add = List()
 
     f_index = 0
 
