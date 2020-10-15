@@ -551,6 +551,8 @@ def get_hill_stats(hill_data, hill_nboot = 150, hill_nboot_max = 300):
     Calculate hill statistics with bootstraping and weighted averages
     """
 
+    np.random.seed(42)
+
     min_rt, max_rt = hill_data["rt"].min(), hill_data["rt"].max()
     summed_intensity = hill_data["int"].sum()
     apex_intensity = hill_data["int"].max()
