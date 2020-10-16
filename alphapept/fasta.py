@@ -765,18 +765,9 @@ def save_database(spectra, pept_dict, fasta_dict, database_path, **kwargs):
 
     to_save = {}
 
-    peps = np.array(list(pept_dict), dtype=object)
-    indices = np.empty(len(peps) + 1, dtype=np.int64)
-    indices[0] = 0
-    indices[1:] = np.cumsum([len(pept_dict[i]) for i in peps])
-    proteins = np.concatenate([pept_dict[i] for i in peps])
-
     to_save["precursors"] = np.array(precmasses)[sortindex]
     to_save["seqs"] = np.array(seqs, dtype=object)[sortindex]
-    to_save["peptides"] = np.array(peps, dtype=object)
-    to_save["peptide_protein_indices"] = indices
-    to_save["peptide_protein_values"] = proteins
-    to_save["fasta"] = pd.DataFrame(fasta_dict).T
+    to_save["proteins"] = pd.DataFrame(fasta_dict).T
 
     to_save["fragmasses"] = alphapept.io.list_to_numpy_f32(np.array(fragmasses, dtype='object')[sortindex])
     to_save["fragtypes"] = alphapept.io.list_to_numpy_f32(np.array(fragtypes, dtype='object')[sortindex])
@@ -785,7 +776,30 @@ def save_database(spectra, pept_dict, fasta_dict, database_path, **kwargs):
 
     db_file = alphapept.io.HDF_File(database_path, is_new_file=True)
     for key, value in to_save.items():
-        db_file.write(value, dataset_name = key)
+        db_file.write(value, dataset_name=key)
+
+    peps = np.array(list(pept_dict), dtype=object)
+    indices = np.empty(len(peps) + 1, dtype=np.int64)
+    indices[0] = 0
+    indices[1:] = np.cumsum([len(pept_dict[i]) for i in peps])
+    proteins = np.concatenate([pept_dict[i] for i in peps])
+
+    db_file.write("peptides")
+    db_file.write(
+        peps,
+        dataset_name="sequences",
+        group_name="peptides"
+    )
+    db_file.write(
+        indices,
+        dataset_name="protein_indptr",
+        group_name="peptides"
+    )
+    db_file.write(
+        proteins,
+        dataset_name="protein_indices",
+        group_name="peptides"
+    )
 
 # Cell
 import collections
@@ -794,15 +808,31 @@ def read_database(database_path:str, array_name:str=None):
     db_file = alphapept.io.HDF_File(database_path)
     if array_name is None:
         db_data = {
-            key: db_file.read(dataset_name=key) for key in db_file.read()
+            key: db_file.read(
+                dataset_name=key
+            ) for key in db_file.read() if key not in (
+                "proteins",
+                "peptides"
+            )
         }
-        db_data["fasta_dict"] = np.array(collections.OrderedDict(db_data["fasta"].T))
+        db_data["fasta_dict"] = np.array(
+            collections.OrderedDict(db_file.read(dataset_name="proteins").T)
+        )
+        peps = db_file.read(dataset_name="sequences", group_name="peptides")
+        protein_indptr = db_file.read(
+            dataset_name="protein_indptr",
+            group_name="peptides"
+        )
+        protein_indices = db_file.read(
+            dataset_name="protein_indices",
+            group_name="peptides"
+        )
         db_data["pept_dict"] = np.array(
             {
-                pep: (db_data["peptide_protein_values"][s: e]).tolist() for pep, s, e in zip(
-                    db_data["peptides"],
-                    db_data["peptide_protein_indices"][:-1],
-                    db_data["peptide_protein_indices"][1:],
+                pep: (protein_indices[s: e]).tolist() for pep, s, e in zip(
+                    peps,
+                    protein_indptr[:-1],
+                    protein_indptr[1:],
                 )
             }
         )
