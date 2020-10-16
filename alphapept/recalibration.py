@@ -161,16 +161,13 @@ def calibrate_hdf(to_process):
 
 def calibrate_hdf_parallel(settings, callback=None):
 
-    files_npz = []
+    ms_files = []
 
     for _ in settings['experiment']['file_paths']:
         base, ext = os.path.splitext(_)
-        npz_path = base+'.npz'
-        files_npz.append(npz_path)
+        ms_files.append(base + '.ms_data.hdf')
 
-    paths = [os.path.splitext(_)[0]+'.ms_data.hdf' for _ in files_npz]
-
-    to_process = [(_, settings) for _ in paths]
+    to_process = [(ms_file, settings) for ms_file in ms_files]
 
     calibration_dict = {}
 
@@ -185,7 +182,7 @@ def calibrate_hdf_parallel(settings, callback=None):
                 callback((i+1)/max_)
 
 
-    return [calibration_dict[_]*settings['search']['calibration_std'] for _ in paths]
+    return [calibration_dict[_]*settings['search']['calibration_std'] for _ in ms_files]
 
 # Cell
 
@@ -197,6 +194,7 @@ from matplotlib import pyplot as plt
 import numba
 import scipy.signal
 import scipy.interpolate
+import alphapept.fasta
 
 def get_db_targets(
     db_file_name,
@@ -205,15 +203,9 @@ def get_db_targets(
     ms_level=2,
 ):
     if ms_level == 1:
-        db_mzs_ = np.load(
-            db_file_name,
-            allow_pickle=True
-        )['precursors']
+        db_mzs_ = alphapept.fasta.read_database(db_file_name, 'precursors')
     elif ms_level == 2:
-        db_mzs_ = np.load(
-            db_file_name,
-            allow_pickle=True
-        )['fragmasses']
+        db_mzs_ = alphapept.fasta.read_database(db_file_name, 'fragmasses')
     else:
         raise ValueError(f"{ms_level} is not a valid ms level")
     tmp_result = np.bincount(

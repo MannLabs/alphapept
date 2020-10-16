@@ -55,9 +55,9 @@ fasta:
     type: path
   library_path:
     default: '...'
-    description: Path to library file (.npz).
+    description: Path to library file (.hdf).
     filetype:
-    - npz
+    - hdf
     folder: false
     type: path
   max_isoforms:
@@ -227,7 +227,7 @@ features:
 general:
   convert_raw:
     default: true
-    description: Flag to re-create the npz container from raw.
+    description: Flag to re-create the hdf container from raw.
     type: checkbox
   create_library:
     default: true
@@ -269,11 +269,11 @@ raw:
     - raw
     folder: false
     type: path
-  raw_path_npz:
+  raw_path_hdf:
     default: '...'
-    description: Path to npz file, converted from raw.
+    description: Path to hdf file, converted from raw.
     filetype:
-    - npz
+    - hdf
     folder: false
     type: path
 search:
