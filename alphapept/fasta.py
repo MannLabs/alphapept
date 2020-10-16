@@ -7,7 +7,7 @@ __all__ = ['get_missed_cleavages', 'cleave_sequence', 'count_missed_cleavages', 
            'get_frag_dict', 'get_spectrum', 'get_spectra', 'read_fasta_file', 'read_fasta_file_entries',
            'check_sequence', 'add_to_pept_dict', 'merge_pept_dicts', 'generate_fasta_list', 'generate_database',
            'generate_spectra', 'block_idx', 'blocks', 'digest_fasta_block', 'generate_database_parallel', 'mass_dict',
-           'pept_dict_from_search', 'save_database']
+           'pept_dict_from_search', 'save_database', 'read_database']
 
 # Cell
 from alphapept import constants
@@ -752,12 +752,12 @@ def pept_dict_from_search(settings):
     return pept_dict
 
 # Cell
-from .io import list_to_numpy_f32
-
+import alphapept.io
+import pandas as pd
 
 def save_database(spectra, pept_dict, fasta_dict, database_path, **kwargs):
     """
-    Function to save a database to the *.npz format.
+    Function to save a database to the *.hdf format.
     """
 
     precmasses, seqs, fragmasses, fragtypes = zip(*spectra)
@@ -765,13 +765,48 @@ def save_database(spectra, pept_dict, fasta_dict, database_path, **kwargs):
 
     to_save = {}
 
+    peps = np.array(list(pept_dict), dtype=object)
+    indices = np.empty(len(peps) + 1, dtype=np.int64)
+    indices[0] = 0
+    indices[1:] = np.cumsum([len(pept_dict[i]) for i in peps])
+    proteins = np.concatenate([pept_dict[i] for i in peps])
+
     to_save["precursors"] = np.array(precmasses)[sortindex]
-    to_save["seqs"] = np.array(seqs)[sortindex]
-    to_save["pept_dict"] = pept_dict
-    to_save["fasta_dict"] = fasta_dict
-    to_save["fragmasses"] = list_to_numpy_f32(np.array(fragmasses, dtype='object')[sortindex])
-    to_save["fragtypes"] = list_to_numpy_f32(np.array(fragtypes, dtype='object')[sortindex])
+    to_save["seqs"] = np.array(seqs, dtype=object)[sortindex]
+    to_save["peptides"] = np.array(peps, dtype=object)
+    to_save["peptide_protein_indices"] = indices
+    to_save["peptide_protein_values"] = proteins
+    to_save["fasta"] = pd.DataFrame(fasta_dict).T
+
+    to_save["fragmasses"] = alphapept.io.list_to_numpy_f32(np.array(fragmasses, dtype='object')[sortindex])
+    to_save["fragtypes"] = alphapept.io.list_to_numpy_f32(np.array(fragtypes, dtype='object')[sortindex])
 
     to_save["bounds"] = np.sum(to_save['fragmasses']>=0,axis=0).astype(np.int64)
 
-    np.savez(database_path, **to_save)
+    db_file = alphapept.io.HDF_File(database_path, is_new_file=True)
+    for key, value in to_save.items():
+        db_file.write(value, dataset_name = key)
+
+# Cell
+import collections
+
+def read_database(database_path:str, array_name:str=None):
+    db_file = alphapept.io.HDF_File(database_path)
+    if array_name is None:
+        db_data = {
+            key: db_file.read(dataset_name=key) for key in db_file.read()
+        }
+        db_data["fasta_dict"] = np.array(collections.OrderedDict(db_data["fasta"].T))
+        db_data["pept_dict"] = np.array(
+            {
+                pep: (db_data["peptide_protein_values"][s: e]).tolist() for pep, s, e in zip(
+                    db_data["peptides"],
+                    db_data["peptide_protein_indices"][:-1],
+                    db_data["peptide_protein_indices"][1:],
+                )
+            }
+        )
+        db_data["seqs"] = db_data["seqs"].astype(str)
+    else:
+        db_data = db_file.read(dataset_name=array_name)
+    return db_data

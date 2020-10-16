@@ -3,7 +3,7 @@
 __all__ = ['filter_score', 'filter_precursor', 'get_q_values', 'cut_fdr', 'cut_global_fdr', 'get_x_tandem_score',
            'score_x_tandem', 'filter_with_x_tandem', 'score_psms', 'get_ML_features', 'train_RF', 'score_ML',
            'filter_with_ML', 'get_protein_groups', 'perform_protein_grouping', 'score_hdf', 'score_hdf_parallel',
-           'protein_groups_hdf', 'protein_groups_hdf_parallel', 'save_report_as_npz']
+           'protein_groups_hdf', 'protein_groups_hdf_parallel']
 
 # Cell
 import numpy as np
@@ -662,20 +662,3 @@ def protein_groups_hdf_parallel(settings, pept_dict, fasta_dict, callback=None):
             for i, _ in enumerate(p.imap_unordered(protein_groups_hdf, to_process)):
                 if callback:
                     callback((i+1)/max_)
-
-# Cell
-def save_report_as_npz(
-    df,
-    fasta_dict,
-    pept_dict,
-    report_path_npz
-):
-
-    to_save = {}
-    to_save["df"] = df
-    to_save["fasta_dict"] = fasta_dict
-    to_save["pept_dict"] = np.array(pept_dict)
-
-    np.savez(report_path_npz, **to_save)
-
-    logging.info("Raw File saved to {}".format(report_path_npz))
