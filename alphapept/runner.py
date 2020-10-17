@@ -137,7 +137,6 @@ def run_alphapept(settings, callback=None):
             cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
         else:
             cb = callback
-        # raw_to_npz_parallel(to_convert, settings, callback=cb)
         for file_name in to_convert:
             to_process = (file_name, settings)
             alphapept.io.raw_to_ms_data_file(to_process, callback=None)

@@ -1458,12 +1458,7 @@ def find_and_save_features(to_process):
     else:
         raise NotImplementedError('File extension {} not understood.'.format(ext))
 
-    file = base + '.npz'
-
-    base, ext = os.path.splitext(file)
     out_file = f"{base}.ms_data.hdf"
-
-#     query_data = np.load(file, allow_pickle=True)
 
 #     ms_data_file
 

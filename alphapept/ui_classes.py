@@ -383,7 +383,7 @@ class SettingsEdit(QWidget):
         if not event.mimeData().hasUrls():
             return False
         path, extension = self.path_from_drop(event)
-        if extension.lower() not in [".yaml", ".npz", ".raw", ".fasta"]:
+        if extension.lower() not in [".yaml", ".hdf", ".raw", ".fasta"]:
             return False
         return True
 
