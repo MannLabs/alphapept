@@ -75,7 +75,7 @@ class TestRun():
 
         # Flag to run mixed_species_analysis
         self.run_mixed_analysis = None
-        self.run_mixed_species_fdr = None
+
 
     def get_file(self, filename, link):
         """
@@ -190,7 +190,7 @@ class TestRun():
             report['mixed_species'] = self.mixed_species_analysis(self.settings, species, groups)
 
 
-        report['sample_fdr'] = mixed_species_fdr(self.settings, 'ECO') #ECO for now
+        report['sample_fdr'] = self.mixed_species_fdr(self.settings, 'ECO') #ECO for now
 
         self.report = report
         if password:
