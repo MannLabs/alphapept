@@ -189,8 +189,8 @@ class TestRun():
             species, groups = self.run_mixed_analysis
             report['mixed_species'] = self.mixed_species_analysis(self.settings, species, groups)
 
-        if self.run_mixed_species_fdr:
-            pass
+
+        report['sample_fdr'] = mixed_species_fdr(self.settings, 'ECO') #ECO for now
 
         self.report = report
         if password:
@@ -217,6 +217,7 @@ class TestRun():
         """
 
         df = pd.read_hdf(settings['experiment']['results_path'], 'protein_table')
+        return ((df[[species in _ for _ in df.index]].count())/len(df)).to_dict()
 
 
     def mixed_species_analysis(self, settings, species, groups, min_count = 2):
@@ -292,9 +293,11 @@ def main():
         fasta_files = sys.argv[4].strip('[]').split(',')
 
     if runtype == 'bruker':
-        BrukerTestRun(files, fasta_files).run(password=password)
+        run = BrukerTestRun(files, fasta_files)
+        run.run(password=password)
     elif runtype == 'thermo':
-        ThermoTestRun(files, fasta_files).run(password=password)
+        run = ThermoTestRun(files, fasta_files)
+        run.run(password=password)
     elif runtype == 'PXD006109':
         files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
