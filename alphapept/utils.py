@@ -103,7 +103,7 @@ def check_settings(settings):
         if not settings['fasta']['database_path']:
             file_dir = os.path.dirname(settings['experiment']['file_paths'][0])
             settings['fasta']['database_path'] = os.path.normpath(
-                os.path.join(file_dir, 'database.npz')
+                os.path.join(file_dir, 'database.hdf')
             )
             logging.info(
                 'No database path set and save_db option checked. Using default path {}'.format(settings['fasta']['database_path'])

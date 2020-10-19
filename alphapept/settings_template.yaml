@@ -54,9 +54,9 @@ experiment:
 fasta:
   database_path:
     default: null
-    description: Path to library file (.npz).
+    description: Path to library file (.hdf).
     filetype:
-    - npz
+    - hdf
     folder: false
     type: path
   fasta_block:
