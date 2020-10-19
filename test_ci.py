@@ -53,8 +53,8 @@ FILE_DICT['PXD010012_CT_3_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/
 FILE_DICT['PXD010012_CT_4_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/swO523hdX1aqN3R/download'
 FILE_DICT['PXD010012_CT_5_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/Kbq97G9IzxQ8AHb/download'
 
-BASE_DIR = 'C:/test_files/' # Storarge location for test files
-TEST_DIR = 'C:/test_temp/'
+BASE_DIR = 'E:/test_files/' # Storarge location for test files
+TEST_DIR = 'E:/test_temp/'
 ARCHIVE_DIR = 'E:/test_archive/'
 
 MONGODB_USER = 'github_actions'
