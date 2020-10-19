@@ -40,11 +40,22 @@ FILE_DICT['PXD006109_HeLa2_1.raw'] = 'https://datashare.biochem.mpg.de/s/QOi7Lsm
 FILE_DICT['PXD006109_HeLa2_2.raw'] = 'https://datashare.biochem.mpg.de/s/aZi5xdNQhaypRok/download'
 FILE_DICT['PXD006109_HeLa2_3.raw'] = 'https://datashare.biochem.mpg.de/s/WiymcH8Oz58ASnx/download'
 
+#PXD010012
 
-
+FILE_DICT['PXD010012_CT_1_C1_01_Base.d'] = 'https://datashare.biochem.mpg.de/s/lAWp1NSk4Mvw89r/download'
+FILE_DICT['PXD010012_CT_2_C1_01_Base.d'] = 'https://datashare.biochem.mpg.de/s/SoaccnPn9eaAM41/download'
+FILE_DICT['PXD010012_CT_3_C1_01_Base.d'] = 'https://datashare.biochem.mpg.de/s/kGUNxrIf3AZMWNt/download'
+FILE_DICT['PXD010012_CT_4_C1_01_Base.d'] = 'https://datashare.biochem.mpg.de/s/Rsaw8kj49ujZxBm/download'
+FILE_DICT['PXD010012_CT_5_C1_01_Base.d'] = 'https://datashare.biochem.mpg.de/s/wTgzZ88hwdBLF1Q/download'
+FILE_DICT['PXD010012_CT_1_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/DIwnuYgLPRtUPmF/download'
+FILE_DICT['PXD010012_CT_2_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/ZofHi6wcJlTQD32/download'
+FILE_DICT['PXD010012_CT_3_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/H8HLHxmQG9EFeMA/download'
+FILE_DICT['PXD010012_CT_4_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/swO523hdX1aqN3R/download'
+FILE_DICT['PXD010012_CT_5_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/Kbq97G9IzxQ8AHb/download'
 
 BASE_DIR = 'C:/test_files/' # Storarge location for test files
 TEST_DIR = 'C:/test_temp/'
+ARCHIVE_DIR = 'E:/test_archive/'
 
 MONGODB_USER = 'github_actions'
 MONGODB_URL = 'ci.yue0n.mongodb.net/'
@@ -74,6 +85,7 @@ class TestRun():
 
         # Flag to run mixed_species_analysis
         self.run_mixed_analysis = None
+
 
     def get_file(self, filename, link):
         """
@@ -187,9 +199,15 @@ class TestRun():
             species, groups = self.run_mixed_analysis
             report['mixed_species'] = self.mixed_species_analysis(self.settings, species, groups)
 
+
+        report['sample_fdr'] = self.mixed_species_fdr(self.settings, 'ECO') #ECO for now
+
         self.report = report
         if password:
-            self.upload_to_db(password)
+            post_id = self.upload_to_db(password)
+            # Copy results file to archive location
+            base, ext = os.path.splitext(settings['experiment']['results_path'])
+            shutil.copyfile(settings['experiment']['results_path'], ARCHIVE_DIR+str(post_id)+ext)
 
     def upload_to_db(self, password):
 
@@ -200,6 +218,17 @@ class TestRun():
         post_id = client['github']['performance_runs'].insert_one(self.report).inserted_id
 
         logging.info(f"Uploaded {post_id}.")
+
+        return post_id
+
+    def mixed_species_fdr(self, settings, species):
+        """
+        Estimate FDR by searching against differenft FASTAs
+        """
+
+        df = pd.read_hdf(settings['experiment']['results_path'], 'protein_table')
+        return ((df[[species in _ for _ in df.index]].count())/len(df)).to_dict()
+
 
     def mixed_species_analysis(self, settings, species, groups, min_count = 2):
         """
@@ -224,6 +253,12 @@ class TestRun():
             res['_sum'] = np.log2(res['ratio'])
 
             valid = res.query('ratio_count >= @min_count and base_count >= @min_count')
+
+            results['cv_median_ratio'+i] = np.nanmedian(df[groups[0]].std(axis=1) / df[groups[0]].mean(axis=1))
+            results['cv_std_ratio'+i] = np.nanstd(df[groups[0]].std(axis=1) / df[groups[0]].mean(axis=1))
+
+            results['cv_median_base'+i] = np.nanmedian(df[groups[1]].std(axis=1) / df[groups[1]].mean(axis=1))
+            results['cv_std_base'+i] = np.nanstd(df[groups[1]].std(axis=1) / df[groups[1]].mean(axis=1))
 
             for s in species:
                 sub = valid.loc[[_ for _ in valid.index if s in _]]['_ratio'].values
@@ -268,9 +303,11 @@ def main():
         fasta_files = sys.argv[4].strip('[]').split(',')
 
     if runtype == 'bruker':
-        BrukerTestRun(files, fasta_files).run(password=password)
+        run = BrukerTestRun(files, fasta_files)
+        run.run(password=password)
     elif runtype == 'thermo':
-        ThermoTestRun(files, fasta_files).run(password=password)
+        run = ThermoTestRun(files, fasta_files)
+        run.run(password=password)
     elif runtype == 'PXD006109':
         files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
@@ -278,6 +315,16 @@ def main():
         test_run = ThermoTestRun(files, fasta_files)
         species = ['HUMAN', 'ECO']
         groups = (['PXD006109_HeLa12_1', 'PXD006109_HeLa12_2', 'PXD006109_HeLa12_3'], ['PXD006109_HeLa2_1', 'PXD006109_HeLa2_2', 'PXD006109_HeLa2_3'])
+        test_run.run_mixed_analysis = (species, groups)
+        test_run.run(password=password)
+
+    elif runtype == 'PXD010012':
+        files =  ['PXD010012_CT_1_C1_01_Base.d', 'PXD010012_CT_2_C1_01_Base.d', 'PXD010012_CT_3_C1_01_Base.d', 'PXD010012_CT_4_C1_01_Base.d', 'PXD010012_CT_5_C1_01_Base.d', 'PXD010012_CT_1_C2_01_Ratio.d', 'PXD010012_CT_2_C2_01_Ratio.d', 'PXD010012_CT_3_C2_01_Ratio.d', 'PXD010012_CT_4_C2_01_Ratio.d', 'PXD010012_CT_5_C2_01_Ratio.d']
+        fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
+        #Multi-Species test
+        test_run = BrukerTestRun(files, fasta_files)
+        species = ['HUMAN', 'ECO']
+        groups = (['PXD010012_CT_1_C2_01_Ratio.d', 'PXD010012_CT_2_C2_01_Ratio.d', 'PXD010012_CT_3_C2_01_Ratio.d', 'PXD010012_CT_4_C2_01_Ratio.d', 'PXD010012_CT_5_C2_01_Ratio.d'], ['PXD010012_CT_1_C1_01_Base.d', 'PXD010012_CT_2_C1_01_Base.d', 'PXD010012_CT_3_C1_01_Base.d', 'PXD010012_CT_4_C1_01_Base.d', 'PXD010012_CT_5_C1_01_Base.d'])
         test_run.run_mixed_analysis = (species, groups)
         test_run.run(password=password)
 
