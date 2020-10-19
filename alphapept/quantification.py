@@ -325,7 +325,7 @@ def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None
 
     return protein_table
 
-def protein_profile(df, files, field_, protein):
+def protein_profile(df, files, field_, protein, minimum_ratios=1):
     """
     Calculate the protein profile for a a df based on a dateframe
 
@@ -342,7 +342,7 @@ def protein_profile(df, files, field_, protein):
 
     per_protein = per_protein[files]
 
-    ratios = get_protein_ratios(per_protein.values, column_combinations)
+    ratios = get_protein_ratios(per_protein.values, column_combinations, minimum_ratios)
     solution, success = solve_profile_SLSQP(ratios)
 
     file_ids = per_protein.columns.tolist()
@@ -351,7 +351,9 @@ def protein_profile(df, files, field_, protein):
     if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
         profile = pre_lfq
     else:
+        invalid = ((np.nansum(ratios, axis=1) == 0) & (np.nansum(ratios, axis=0) == 0))
         total_int = subset[field_].sum() * solution
+        total_int[invalid] = 0
         profile = total_int * subset[field_].sum().sum() / np.sum(total_int) #Normalize inensity again
 
     return profile, pre_lfq, file_ids, protein
