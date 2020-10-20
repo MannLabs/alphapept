@@ -3,7 +3,7 @@
 __all__ = ['get_peaks', 'get_centroid', 'gaussian_estimator', 'centroid_data', 'HDF_File', 'get_most_abundant',
            'load_thermo_raw', 'load_bruker_raw', 'one_over_k0_to_CCS', 'check_sanity', 'extract_mzml_info',
            'extract_mzxml_info', 'read_mzML', 'read_mzXML', 'list_to_numpy_f32', 'MS_Data_File', 'raw_to_ms_data_file',
-           'extract_nested', 'extract_mq_settings', 'parse_mq_seq']
+           'raw_to_ms_data_file_parallel', 'extract_nested', 'extract_mq_settings', 'parse_mq_seq']
 
 # Cell
 from numba import njit
@@ -1100,6 +1100,22 @@ def raw_to_ms_data_file(to_process, callback = None):
     )
 
     logging.info(f'File conversion of file {file_name} complete.')
+
+def raw_to_ms_data_file_parallel(path_list, settings, callback=None):
+
+    n_processes = settings['general']['n_processes']
+
+    to_process = [(_, settings) for _ in path_list]
+
+    if len(to_process) == 1:
+        raw_to_ms_data_file(to_process[0], callback=callback)
+
+    else:
+        with Pool(n_processes) as p:
+            max_ = len(to_process)
+            for i, _ in enumerate(p.imap_unordered(raw_to_ms_data_file, to_process)):
+                if callback:
+                    callback((i+1)/max_)
 
 # Cell
 import xml.etree.ElementTree as ET
