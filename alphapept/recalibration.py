@@ -156,7 +156,12 @@ def calibrate_hdf(to_process):
         )
     else:
         o_mass_ppm_std = 0
-
+    ms_file.write(
+        o_mass_ppm_std,
+        dataset_name="corrected_mass",
+        group_name="features",
+        attr_name="estimated_max_precursor_ppm"
+    )
     return (path, o_mass_ppm_std)
 
 def calibrate_hdf_parallel(settings, callback=None):
