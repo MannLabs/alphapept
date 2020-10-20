@@ -137,10 +137,7 @@ def run_alphapept(settings, callback=None):
             cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
         else:
             cb = callback
-        for file_name in to_convert:
-            to_process = (file_name, settings)
-            alphapept.io.raw_to_ms_data_file(to_process, callback=None)
-            logging.info('File conversion complete.')
+        alphapept.io.raw_to_ms_data_file_parallel(to_convert, settings)
 
     # Feature Finding
     to_convert = []
