@@ -48,6 +48,7 @@ quantification:
   mode: int_sum
 raw:
   most_abundant: 400
+  use_profile_ms1: false
 search:
   calibrate: true
   calibration_std: 3
