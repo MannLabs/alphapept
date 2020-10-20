@@ -1099,6 +1099,8 @@ def raw_to_ms_data_file(to_process, callback = None):
         most_abundant = settings["raw"]["most_abundant"]
     )
 
+    logging.info(f'File conversion of file {file_name} complete.')
+
 # Cell
 import xml.etree.ElementTree as ET
 
