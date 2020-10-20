@@ -1400,6 +1400,8 @@ def find_and_save_features_parallel(path_list, settings, callback=None):
         import psutil
         memory_available = psutil.virtual_memory().available/1024**3
         n_processes = int(np.floor(memory_available/16)) #16 Gb per File
+        if n_processes == 0:
+            n_processes = 1
         logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}')
 
     if len(to_process) == 1:
