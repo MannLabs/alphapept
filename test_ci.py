@@ -12,7 +12,7 @@ import zipfile
 import subprocess
 import numpy as np
 
-from alphapept.runner import run_alphapept
+import alphapept.interface
 from alphapept.settings import load_settings
 import alphapept
 import alphapept.io
@@ -150,7 +150,7 @@ class TestRun():
         report['timestamp'] = datetime.now()
 
         start = time()
-        settings = run_alphapept(self.settings)
+        settings = alphapept.interface.run_complete_workflow(self.settings)
         end = time()
 
         report['settings'] = settings

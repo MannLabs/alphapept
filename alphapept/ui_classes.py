@@ -6,7 +6,7 @@ import os
 
 from functools import partial
 
-from alphapept.runner import run_alphapept
+import alphapept.interface
 
 import yaml
 from time import sleep
@@ -330,7 +330,10 @@ class searchThread(QThread):
         logging.info('Starting SearchThread')
         print(yaml.dump(self.settings, default_flow_style=False))
         try:
-            run_alphapept(self.settings, callback=self.update_current_progress)
+            alphapept.interface.run_complete_workflow(
+                self.settings,
+                callback=self.update_current_progress
+            )
         except Exception as e:
             logging.error('Error occured. {}'.format(e))
 
