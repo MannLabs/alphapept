@@ -290,6 +290,10 @@ raw:
     max: 1000
     min: 1
     type: spinbox
+  use_profile_ms1:
+    default: false
+    description: Use profile data for MS1 and perform own centroiding.
+    type: checkbox
 search:
   calibrate:
     default: true
