@@ -1,0 +1,29 @@
+# GitHub Actions to automatically test on sample files
+name: GPU Test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Install_Alphapept:
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install package
+      run: |
+        conda create --name alphapept_gpu python=3.8 -y
+        conda activate alphapept_gpu
+        pip install -e .
+        pip install -r requirements.txt
+        pip install cupy-cuda110
+        pip install pymongo
+        pip install dnspython
+        pip install wget
+  GPU_Test:
+    needs: Install_Alphapept
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run GPU test script
+      run: |
+        python test_gpu.py
