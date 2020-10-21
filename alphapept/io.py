@@ -522,9 +522,10 @@ def load_thermo_raw(raw_file, most_abundant, use_profile_ms1 = False, callback=N
 
         prec_mz = rawfile.GetPrecursorMassForScanNum(i, 0)
 
-        trailer_extra = rawfile.GetTrailerExtraForScanNum(i)
-        mono_mz = float(trailer_extra["Monoisotopic M/Z:"])
-        charge = int(trailer_extra["Charge State:"])
+        mono_mz, charge = rawfile.GetMS2MonoMzAndChargeFromScanNum(i)
+        #trailer_extra = rawfile.GetTrailerExtraForScanNum(i)
+        #mono_mz = float(trailer_extra["Monoisotopic M/Z:"])
+        #charge = int(trailer_extra["Charge State:"])
         # if mono_mz == 0: mono_mz = prec_mz
         # if mono_mz != 0 and abs(mono_mz - prec_mz) > 0.1:
         #    print(f'MSn={ms_order}, mono_mz={mono_mz}, perc_mz={prec_mz}, charge={charge}')
