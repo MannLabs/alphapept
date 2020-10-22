@@ -169,10 +169,8 @@ def import_raw_data(
             cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
         else:
             cb = callback
-        for file_name in to_convert:
-            to_process = (file_name, settings)
-            alphapept.io.raw_to_ms_data_file(to_process, callback=None)
-            logging.info('File conversion complete.')
+        alphapept.io.raw_to_ms_data_file_parallel(to_convert, settings)
+        logging.info('File conversion complete.')
     return settings
 
 # Cell
@@ -560,6 +558,8 @@ def run_complete_workflow(
         logger_set=True,
         settings_parsed=True,
     )
+
+    return settings
 
 # Cell
 
