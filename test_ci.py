@@ -307,28 +307,28 @@ def main():
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']
         fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
-        run = BrukerTestRun(files, fasta_files)
+        run = BrukerTestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'bruker_hela':
         files = ['bruker_HeLa.d']
         fasta_files = ['human.fasta', 'e_coli.fasta', 'contaminants.fasta']
-        run = BrukerTestRun(files, fasta_files)
+        run = BrukerTestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'thermo_irt':
         files = ['thermo_IRT.raw']
         fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
-        run = ThermoTestRun(files, fasta_files)
+        run = ThermoTestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'thermo_hela':
         files = ['thermo_HeLa.raw']
         fasta_files = ['human.fasta', 'e_coli.fasta', 'contaminants.fasta']
-        run = ThermoTestRun(files, fasta_files)
+        run = ThermoTestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'PXD006109':
         files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
         #Multi-Species test
-        test_run = ThermoTestRun(files, fasta_files)
+        test_run = ThermoTestRun(runtype, files, fasta_files)
         species = ['HUMAN', 'ECO']
         groups = (['PXD006109_HeLa12_1', 'PXD006109_HeLa12_2', 'PXD006109_HeLa12_3'], ['PXD006109_HeLa2_1', 'PXD006109_HeLa2_2', 'PXD006109_HeLa2_3'])
         test_run.run_mixed_analysis = (species, groups)
@@ -337,7 +337,7 @@ def main():
         files =  ['PXD010012_CT_1_C1_01_Base.d', 'PXD010012_CT_2_C1_01_Base.d', 'PXD010012_CT_3_C1_01_Base.d', 'PXD010012_CT_4_C1_01_Base.d', 'PXD010012_CT_5_C1_01_Base.d', 'PXD010012_CT_1_C2_01_Ratio.d', 'PXD010012_CT_2_C2_01_Ratio.d', 'PXD010012_CT_3_C2_01_Ratio.d', 'PXD010012_CT_4_C2_01_Ratio.d', 'PXD010012_CT_5_C2_01_Ratio.d']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
         #Multi-Species test
-        test_run = BrukerTestRun(files, fasta_files)
+        test_run = BrukerTestRun(runtype, files, fasta_files)
         species = ['HUMAN', 'ECO']
         groups = (['PXD010012_CT_1_C2_01_Ratio', 'PXD010012_CT_2_C2_01_Ratio', 'PXD010012_CT_3_C2_01_Ratio', 'PXD010012_CT_4_C2_01_Ratio', 'PXD010012_CT_5_C2_01_Ratio'], ['PXD010012_CT_1_C1_01_Base', 'PXD010012_CT_2_C1_01_Base', 'PXD010012_CT_3_C1_01_Base', 'PXD010012_CT_4_C1_01_Base', 'PXD010012_CT_5_C1_01_Base'])
         test_run.run_mixed_analysis = (species, groups)
