@@ -316,7 +316,7 @@ def get_minima(y):
     return minima
 
 # Cell
-def split_hills(hills, centroids, smoothing = 1, split_level=1.3, callback=None):
+def split_hills(hills, centroids, smoothing = 1, split_level=5, callback=None):
     """
     Wrapper to split list of hills
     """
@@ -1465,11 +1465,13 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
 
         ref_points = np.array([query_mz, query_rt]).T
 
-        ref_points[ref_points == -np.inf] = 0
-        ref_points[ref_points == np.inf] = 0
-        ref_points[np.isnan(ref_points)] = 0
+        # ref_points[ref_points == -np.inf] = 0
+        # ref_points[ref_points == np.inf] = 0
+        # ref_points[np.isnan(ref_points)] = 0
 
         dist, idx = matching_tree.query(ref_points, k=n_neighbors)
+
+    ref_matched = np.zeros(ref_points.shape[0], dtype=np.bool_)
 
     all_df = []
     for neighbor in range(n_neighbors):
@@ -1500,11 +1502,47 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
             if field in feature_table.keys():
                 ref_df[field] = feature_table.iloc[idx[:,neighbor]][field].values
 
-        ref_df['dist'] = dist[:,neighbor]
+        # check rt_start <= ms2_rt <= rt_end
+        rt_check = (ref_df['rt_start'] <= ref_df['rt']) & (ref_df['rt'] <= ref_df['rt_end'])
 
-        ref_df = ref_df[ref_df['dist']<1]
+        # check isolation window
+        isolation_window = 3
+        mass_check = np.abs(ref_df['mz_offset'].values) <= isolation_window
+
+        # check charge states (ms2_charge == feature_charge)
+        #charge_check = ref_df['charge_matched'] == ref_df['charge']
+        charge_check = True
+
+        ref_matched |= (rt_check & mass_check & charge_check)
+        ref_df['dist'] = dist[:,neighbor]
+        ref_df = ref_df[rt_check & mass_check & charge_check]
+
+        # this check is not enough, just discard it
+        #ref_df['dist'] = dist[:,neighbor]
+        #ref_matched |= (ref_df['dist']<1)
+        #ref_df = ref_df[ref_df['dist']<1]
 
         all_df.append(ref_df)
+
+    unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'mz', 'charge'])
+    unmatched_ref = unmatched_ref[~ref_matched]
+    unmatched_ref['mass_matched'] = unmatched_ref['mass']
+    unmatched_ref['mass_offset'] = 0
+    unmatched_ref['rt_matched'] = unmatched_ref['rt']
+    unmatched_ref['rt_offset'] = 0
+    unmatched_ref['mz_matched'] = unmatched_ref['mz']
+    unmatched_ref['mz_offset'] = 0
+    unmatched_ref['charge_matched'] = unmatched_ref['charge']
+    unmatched_ref['query_idx'] = unmatched_ref.index
+    unmatched_ref['feature_idx'] = 0
+
+    for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+        if field in feature_table.keys():
+            unmatched_ref[field] = 0
+    unmatched_ref['dist'] = 0
+    print(f"[**DEBUG**] {len(unmatched_ref)} out of {len(ref_matched)} scans were lost")
+
+    all_df.append(unmatched_ref)
 
     features = pd.concat(all_df)
 
