@@ -1,6 +1,6 @@
 biopython==1.78
 comtypes==1.1.7
-h5py==2.10.0
+h5py==3.0.0
 lxml==4.6.1
 matplotlib==3.2.2
 networkx==2.5
