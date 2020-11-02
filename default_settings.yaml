@@ -10,6 +10,8 @@ experiment:
   results_path: null
   shortnames: []
 fasta:
+  AL_swap: false
+  KR_swap: false
   database_path: null
   fasta_block: 1000
   fasta_paths: []
@@ -26,6 +28,7 @@ fasta:
   mods_variable_terminal_prot: []
   num_missed_cleavages: 2
   protease: trypsin
+  pseudo_reverse: false
   save_db: true
   spectra_block: 100000
 features:
