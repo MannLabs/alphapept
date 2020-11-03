@@ -52,6 +52,14 @@ experiment:
     description: List of shortnames for the raw files.
     type: list
 fasta:
+  AL_swap:
+    default: false
+    description: Swap A and L for decoy generation.
+    type: checkbox
+  KR_swap:
+    default: false
+    description: Swap K and R (only if terminal) for decoy generation.
+    type: checkbox
   database_path:
     default: null
     description: Path to library file (.hdf).
@@ -197,6 +205,10 @@ fasta:
     - trypsin_exception
     - non-specific
     - trypsin
+  pseudo_reverse:
+    default: false
+    description: Use pseudo-reverse strategy instead of reverse.
+    type: checkbox
   save_db:
     default: true
     description: Save DB or create on the fly.
@@ -290,6 +302,10 @@ raw:
     max: 1000
     min: 1
     type: spinbox
+  use_profile_ms1:
+    default: false
+    description: Use profile data for MS1 and perform own centroiding.
+    type: checkbox
 search:
   calibrate:
     default: true

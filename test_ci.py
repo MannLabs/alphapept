@@ -76,8 +76,9 @@ class TestRun():
     """
     Class to prepare and download files to make a default test run
     """
-    def __init__(self, experimental_files, fasta_paths):
+    def __init__(self, id, experimental_files, fasta_paths):
 
+        self.id = id
         self.file_paths = experimental_files
         self.fasta_paths = fasta_paths
         self.m_tol = 20
@@ -153,6 +154,7 @@ class TestRun():
         settings = alphapept.interface.run_complete_workflow(self.settings)
         end = time()
 
+        report['test_id'] = self.id
         report['settings'] = settings
         report['time_elapsed_min'] = (end-start)/60
 
@@ -302,29 +304,42 @@ def main():
     if len(sys.argv) > 4:
         fasta_files = sys.argv[4].strip('[]').split(',')
 
-    if runtype == 'bruker':
-        run = BrukerTestRun(files, fasta_files)
+    if runtype == 'bruker_irt':
+        files = ['bruker_IRT.d']
+        fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
+        run = BrukerTestRun(runtype, files, fasta_files)
         run.run(password=password)
-    elif runtype == 'thermo':
-        run = ThermoTestRun(files, fasta_files)
+    elif runtype == 'bruker_hela':
+        files = ['bruker_HeLa.d']
+        fasta_files = ['human.fasta', 'e_coli.fasta', 'contaminants.fasta']
+        run = BrukerTestRun(runtype, files, fasta_files)
+        run.run(password=password)
+    elif runtype == 'thermo_irt':
+        files = ['thermo_IRT.raw']
+        fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
+        run = ThermoTestRun(runtype, files, fasta_files)
+        run.run(password=password)
+    elif runtype == 'thermo_hela':
+        files = ['thermo_HeLa.raw']
+        fasta_files = ['human.fasta', 'e_coli.fasta', 'contaminants.fasta']
+        run = ThermoTestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'PXD006109':
         files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
         #Multi-Species test
-        test_run = ThermoTestRun(files, fasta_files)
+        test_run = ThermoTestRun(runtype, files, fasta_files)
         species = ['HUMAN', 'ECO']
         groups = (['PXD006109_HeLa12_1', 'PXD006109_HeLa12_2', 'PXD006109_HeLa12_3'], ['PXD006109_HeLa2_1', 'PXD006109_HeLa2_2', 'PXD006109_HeLa2_3'])
         test_run.run_mixed_analysis = (species, groups)
         test_run.run(password=password)
-
     elif runtype == 'PXD010012':
         files =  ['PXD010012_CT_1_C1_01_Base.d', 'PXD010012_CT_2_C1_01_Base.d', 'PXD010012_CT_3_C1_01_Base.d', 'PXD010012_CT_4_C1_01_Base.d', 'PXD010012_CT_5_C1_01_Base.d', 'PXD010012_CT_1_C2_01_Ratio.d', 'PXD010012_CT_2_C2_01_Ratio.d', 'PXD010012_CT_3_C2_01_Ratio.d', 'PXD010012_CT_4_C2_01_Ratio.d', 'PXD010012_CT_5_C2_01_Ratio.d']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
         #Multi-Species test
-        test_run = BrukerTestRun(files, fasta_files)
+        test_run = BrukerTestRun(runtype, files, fasta_files)
         species = ['HUMAN', 'ECO']
-        groups = (['PXD010012_CT_1_C2_01_Ratio.d', 'PXD010012_CT_2_C2_01_Ratio.d', 'PXD010012_CT_3_C2_01_Ratio.d', 'PXD010012_CT_4_C2_01_Ratio.d', 'PXD010012_CT_5_C2_01_Ratio.d'], ['PXD010012_CT_1_C1_01_Base.d', 'PXD010012_CT_2_C1_01_Base.d', 'PXD010012_CT_3_C1_01_Base.d', 'PXD010012_CT_4_C1_01_Base.d', 'PXD010012_CT_5_C1_01_Base.d'])
+        groups = (['PXD010012_CT_1_C2_01_Ratio', 'PXD010012_CT_2_C2_01_Ratio', 'PXD010012_CT_3_C2_01_Ratio', 'PXD010012_CT_4_C2_01_Ratio', 'PXD010012_CT_5_C2_01_Ratio'], ['PXD010012_CT_1_C1_01_Base', 'PXD010012_CT_2_C1_01_Base', 'PXD010012_CT_3_C1_01_Base', 'PXD010012_CT_4_C1_01_Base', 'PXD010012_CT_5_C1_01_Base'])
         test_run.run_mixed_analysis = (species, groups)
         test_run.run(password=password)
 

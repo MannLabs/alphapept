@@ -115,7 +115,7 @@ def list_to_numba(a_list):
 
 # Cell
 @njit
-def get_decoy_sequence(peptide, pseudo_reverse=True, AL_swap=False, KR_swap = False):
+def get_decoy_sequence(peptide, pseudo_reverse=False, AL_swap=False, KR_swap = False):
     """
     Reverses a sequence and adds the '_decoy' tag.
 
@@ -170,12 +170,12 @@ def swap_AL(peptide):
 
     return peptide
 
-def get_decoys(peptide_list):
+def get_decoys(peptide_list, pseudo_reverse=False, AL_swap=False, KR_swap = False, **kwargs):
     """
     Wrapper to get decoys for lists of peptides
     """
     decoys = []
-    decoys.extend([get_decoy_sequence(peptide) for peptide in peptide_list])
+    decoys.extend([get_decoy_sequence(peptide, pseudo_reverse, AL_swap, KR_swap) for peptide in peptide_list])
     return decoys
 
 def add_decoy_tag(peptides):
@@ -323,7 +323,7 @@ def generate_peptides(peptide, **kwargs):
     mod_peptides = add_variable_mods(mod_peptides, **kwargs)
 
     #Decoys:
-    decoy_peptides = get_decoys(peptides)
+    decoy_peptides = get_decoys(peptides, **kwargs)
 
     mod_peptides_decoy = add_fixed_mods(decoy_peptides, **kwargs)
     mod_peptides_decoy = add_fixed_mods_terminal(mod_peptides_decoy, **kwargs)
