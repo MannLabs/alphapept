@@ -12,14 +12,8 @@ numba = numba_
 import numpy as np
 from numba import cuda as cuda_
 cuda = cuda_
-try:
-    import cupy
-except ModuleNotFoundError:
-    pass
-else:
-    cupy.cuda.set_allocator(
-        cupy.cuda.MemoryPool(cupy.cuda.memory.malloc_managed).malloc
-    )
+
+import cupy
 
 
 @numba.njit
