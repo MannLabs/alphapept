@@ -316,7 +316,7 @@ def get_minima(y):
     return minima
 
 # Cell
-def split_hills(hills, centroids, smoothing = 1, split_level=1.3, callback=None):
+def split_hills(hills, centroids, smoothing = 1, split_level=5, callback=None):
     """
     Wrapper to split list of hills
     """
@@ -925,7 +925,7 @@ def mz_to_mass(mz, charge):
 
 
 @njit
-def get_minpos(y, split=1.3):
+def get_minpos(y, split=5):
     """
     Function to get a list of minima in a trace.
     A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.
