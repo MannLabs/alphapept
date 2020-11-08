@@ -279,11 +279,23 @@ general:
     value:
     - x_tandem
     - random_forest
-misc:
+matching:
   match_between_runs:
     default: true
     description: Perform match between runs type quantification.
     type: checkbox
+  min_match_d:
+    default: 3
+    description: Minimum distance cutoff for matching
+    max: 10.0
+    min: 0.001
+    type: doublespinbox
+  min_match_p:
+    default: 0.05
+    description: Minimum probability cutoff for matching
+    max: 1.0
+    min: 0.001
+    type: doublespinbox
 quantification:
   max_lfq:
     default: true

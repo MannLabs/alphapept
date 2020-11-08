@@ -112,7 +112,7 @@ def check_settings(settings):
     return settings
 
 
-def assemble_df(settings, callback=None):
+def assemble_df(settings, field = 'protein_fdr', callback=None):
     """
     Todo we could save this to disk
     include callback
@@ -128,7 +128,7 @@ def assemble_df(settings, callback=None):
 
         df = alphapept.io.MS_Data_File(
             file_name
-        ).read(dataset_name="protein_fdr")
+        ).read(dataset_name=field)
         df['filename'] = file_name
         df['shortname'] = shortnames[idx]
 
@@ -144,6 +144,6 @@ def assemble_df(settings, callback=None):
 
     # Here we could save things
 
-    xx.to_hdf(settings['experiment']['results_path'], 'combined_protein_fdr')
+    xx.to_hdf(settings['experiment']['results_path'], 'combined_'+field)
 
     return xx

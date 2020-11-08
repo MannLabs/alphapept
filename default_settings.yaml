@@ -44,8 +44,10 @@ general:
   n_processes: 128
   ppm: true
   score: x_tandem
-misc:
+matching:
   match_between_runs: true
+  min_match_d: 3
+  min_match_p: 0.05
 quantification:
   max_lfq: true
   mode: int_sum
