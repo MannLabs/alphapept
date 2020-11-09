@@ -1420,7 +1420,7 @@ import pandas as pd
 import numpy as np
 
 
-def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=3):
+def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=10):
     """
     Map MS1 features to MS2 based on rt and mz
     if ccs is included also add
@@ -1471,6 +1471,9 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
 
         dist, idx = matching_tree.query(ref_points, k=n_neighbors)
 
+
+    ref_matched = np.zeros(ref_points.shape[0], dtype=np.bool_)
+
     all_df = []
     for neighbor in range(n_neighbors):
         if use_mob:
@@ -1500,11 +1503,45 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
             if field in feature_table.keys():
                 ref_df[field] = feature_table.iloc[idx[:,neighbor]][field].values
 
-        ref_df['dist'] = dist[:,neighbor]
+        if not use_mob:
+            # check rt_start <= ms2_rt <= rt_end
+            rt_check = (ref_df['rt_start'] <= ref_df['rt']) & (ref_df['rt'] <= ref_df['rt_end'])
 
-        ref_df = ref_df[ref_df['dist']<1]
+            # check isolation window
+            isolation_window = 3
+            mass_check = np.abs(ref_df['mz_offset'].values) <= isolation_window
+
+            ref_matched |= (rt_check & mass_check)
+            ref_df['dist'] = dist[:,neighbor]
+            ref_df = ref_df[rt_check & mass_check]
+
+        else:
+            ref_df['dist'] = dist[:,neighbor]
+            ref_matched |= (ref_df['dist']<1)
+            ref_df = ref_df[ref_df['dist']<1]
 
         all_df.append(ref_df)
+
+    if not use_mob:
+        unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'mz', 'charge'])
+        unmatched_ref = unmatched_ref[~ref_matched]
+        unmatched_ref['mass_matched'] = unmatched_ref['mass']
+        unmatched_ref['mass_offset'] = 0
+        unmatched_ref['rt_matched'] = unmatched_ref['rt']
+        unmatched_ref['rt_offset'] = 0
+        unmatched_ref['mz_matched'] = unmatched_ref['mz']
+        unmatched_ref['mz_offset'] = 0
+        unmatched_ref['charge_matched'] = unmatched_ref['charge']
+        unmatched_ref['query_idx'] = unmatched_ref.index
+        unmatched_ref['feature_idx'] = 0
+
+        for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+            if field in feature_table.keys():
+                unmatched_ref[field] = 0
+        unmatched_ref['dist'] = 0
+        print(f"[**DEBUG**] {len(unmatched_ref)} out of {len(ref_matched)} scans were lost")
+
+        all_df.append(unmatched_ref)
 
     features = pd.concat(all_df)
 
