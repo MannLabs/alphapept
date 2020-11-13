@@ -1207,31 +1207,47 @@ def plot_isotope_pattern(index, df, sorted_stats, centroids, scan_range=100, mz_
 # Cell
 import subprocess
 import os
+import platform
 
-def extract_bruker(file, ff_dir = "ext/bruker/FF/", config = "default.config"):
+
+def extract_bruker(file, base_dir = "ext/bruker/FF/", config = "proteomics_4d.config"):
     """
     Call Bruker Feautre Finder via subprocess
     """
 
     feature_path = file + '/'+ os.path.split(file)[-1] + '.features'
 
-    ff_dir = os.path.join(os.path.dirname(__file__), ff_dir)
+    base_dir = os.path.join(os.path.dirname(__file__), base_dir)
 
-    ff_dir = os.path.join(os.path.dirname(__file__), ff_dir)
+    operating_system = platform.system()
+
+    if operating_system == 'Linux':
+        ff_dir = os.path.join(base_dir, 'linux64','uff-cmdline2')
+        logging.info('Using Linux FF')
+    elif operating_system == 'Windows':
+        ff_dir = os.path.join(base_dir, 'win64','uff-cmdline2.exe')
+        logging.info('Using Windows FF')
+    else:
+        raise NotImplementedError(f"System {operating_system} not supported.")
 
     if os.path.exists(feature_path):
         return feature_path
     else:
-        if not os.path.isdir(ff_dir):
-            raise FileNotFoundError('Bruker feature finder cmd not found.')
+        if not os.path.isfile(ff_dir):
+            raise FileNotFoundError(f'Bruker feature finder cmd not found here {ff_dir}.')
 
-        config_path = ff_dir + '/'+ 'default.config'
+        config_path = base_dir + '/'+ config
+
         if not os.path.isfile(config_path):
-            raise FileNotFoundError('Config file not found.')
+            raise FileNotFoundError(f'Config file not found here {config_path}.')
 
-        FF_parameters = [os.path.join(ff_dir, 'uff-cmdline.exe'),'--ff 4d','--readconfig ' + config_path,'--input ' + file]
+        FF_parameters = [ff_dir,'--ff 4d','--readconfig ' + config_path,'--analysisDirectory ' + file]
 
-        subprocess.run(FF_parameters)
+        #subprocess.run(FF_parameters)
+        #subprocess.check_output(' '.join(FF_parameters), shell=True).decode("utf-8")
+        process = subprocess.Popen(' '.join(FF_parameters), stdout=subprocess.PIPE)
+        for line in iter(process.stdout.readline, b''):  # replace '' with b'' for Python 3
+            logging.info(line.decode('utf8'))
 
         if os.path.exists(feature_path):
             return feature_path
