@@ -105,9 +105,11 @@ class FileSelector(QWidget):
         event.accept()
 
     def path_from_drop(self, event):
-        url = event.mimeData().urls()[0]
-        path = url.toLocalFile()
-        return path
+        paths = []
+        for url in event.mimeData().urls():
+            path = url.toLocalFile()
+            paths.append(path)
+        return paths
 
     def drop_has_valid_url(self, event):
         if not event.mimeData().hasUrls():
@@ -123,11 +125,15 @@ class FileSelector(QWidget):
 
     def dropEvent(self, event):
         """ Loads  when dropped into the scene """
-        path = self.path_from_drop(event)
-        logging.info("Dropped file {}.".format(path))
-        self.open(path)
+        paths = self.path_from_drop(event)
+        for path in paths:
+            logging.info("Dropped file {}.".format(path))
+        self.open(paths)
 
     def open(self, path):
+        """
+        Used in subclass
+        """
         pass
 
     def set_files(self):
@@ -186,61 +192,63 @@ class RawFileSelector(FileSelector):
     def __init__(self, header):
         super().__init__(header)
 
-    def open(self, path):
-        path = os.path.normpath(path)
+    def open(self, paths):
+        for path in paths:
+            path = os.path.normpath(path)
 
-        files = self.files
+            files = self.files
 
-        new_files = []
-        if path.endswith('.d'):
-            new_files.append(path)
-        if path.endswith('.raw'):
-            new_files.append(path)
-        for dirpath, dirnames, filenames in os.walk(path):
-            for dirname in [d for d in dirnames if d.endswith('.d')]:  # Bruker
-                new_file = os.path.join(dirpath, dirname)
-                new_files.append(new_file)
-            for filename in [
-                f for f in filenames if f.lower().endswith('.raw')
-            ]:  # Thermo
-                new_file = os.path.join(dirpath, filename)
-                new_files.append(new_file)
-        for new_file in new_files:
-            if new_file not in files:
-                files.append(new_file)
+            new_files = []
+            if path.endswith('.d'):
+                new_files.append(path)
+            if path.endswith('.raw'):
+                new_files.append(path)
+            for dirpath, dirnames, filenames in os.walk(path):
+                for dirname in [d for d in dirnames if d.endswith('.d')]:  # Bruker
+                    new_file = os.path.join(dirpath, dirname)
+                    new_files.append(new_file)
+                for filename in [
+                    f for f in filenames if f.lower().endswith('.raw')
+                ]:  # Thermo
+                    new_file = os.path.join(dirpath, filename)
+                    new_files.append(new_file)
+            for new_file in new_files:
+                if new_file not in files:
+                    files.append(new_file)
 
-        files.sort()
-        self.files = files
-        self.set_files()
+            files.sort()
+            self.files = files
+            self.set_files()
 
 
 class FastaFileSelector(FileSelector):
     def __init__(self, header):
         super().__init__(header)
 
-    def open(self, path):
-        path = os.path.normpath(path)
-        print(path)
+    def open(self, paths):
+        for path in paths:
+            path = os.path.normpath(path)
+            print(path)
 
-        files = self.files
-        new_files = []
-        if path.endswith('.fasta'):
-            new_files.append(path)
+            files = self.files
+            new_files = []
+            if path.endswith('.fasta'):
+                new_files.append(path)
 
-        for dirpath, dirnames, filenames in os.walk(path):
-            for filename in [
-                f for f in filenames if f.lower().endswith('.fasta')
-            ]:  # Thermo
-                new_file = os.path.join(dirpath, filename)
-                new_files.append(new_file)
+            for dirpath, dirnames, filenames in os.walk(path):
+                for filename in [
+                    f for f in filenames if f.lower().endswith('.fasta')
+                ]:  # Thermo
+                    new_file = os.path.join(dirpath, filename)
+                    new_files.append(new_file)
 
-        for new_file in new_files:
-            if new_file not in files:
-                files.append(new_file)
+            for new_file in new_files:
+                if new_file not in files:
+                    files.append(new_file)
 
-        files.sort()
-        self.files = files
-        self.set_files()
+            files.sort()
+            self.files = files
+            self.set_files()
 
 
 class pandasModel(QAbstractTableModel):
