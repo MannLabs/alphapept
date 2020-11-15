@@ -78,6 +78,10 @@ def create_database(
             logging.info(
                 'Database path {} is not a file.'.format(database_path)
             )
+
+            if len(settings['fasta']['fasta_paths']) == 0:
+                raise FileNotFoundError("No FASTA files set.")
+
             for fasta_file in settings['fasta']['fasta_paths']:
                 if os.path.isfile(fasta_file):
                     logging.info(
