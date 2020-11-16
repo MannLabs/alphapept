@@ -1512,7 +1512,7 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
 
         _check = rt_check & mass_check
         if use_mob:
-            mob_check = np.abs(ref_df['mobility_offset'].values) <= 0.1:
+            mob_check = np.abs(ref_df['mobility_offset'].values) <= 0.1
             _check &= mob_check
 
         ref_matched |= _check
