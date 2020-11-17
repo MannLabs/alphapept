@@ -1420,7 +1420,7 @@ import pandas as pd
 import numpy as np
 
 
-def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=10):
+def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=5):
     """
     Map MS1 features to MS2 based on rt and mz
     if ccs is included also add
@@ -1503,12 +1503,13 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
             if field in feature_table.keys():
                 ref_df[field] = feature_table.iloc[idx[:,neighbor]][field].values
 
-        # check rt_start <= ms2_rt <= rt_end
-        rt_check = (ref_df['rt_start'] <= ref_df['rt']) & (ref_df['rt'] <= ref_df['rt_end'])
+        if use_mob:
+            rt_check = np.abs(ref_df['rt_offset'].values) <= 1
+        else: # check rt_start <= ms2_rt <= rt_end
+            rt_check = (ref_df['rt_start'] <= ref_df['rt']) & (ref_df['rt'] <= ref_df['rt_end'])
 
-        # check isolation window
-        isolation_window = 3
-        mass_check = np.abs(ref_df['mz_offset'].values) <= isolation_window
+        # check isolation window (win=3)
+        mass_check = np.abs(ref_df['mz_offset'].values) <= 3
 
         _check = rt_check & mass_check
         if use_mob:
