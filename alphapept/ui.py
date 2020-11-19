@@ -205,7 +205,7 @@ class MainWindow(QMainWindow):
         self.combo_settings.addItem("default")
         self.settings_layout.addWidget(self.combo_settings)
 
-        self.settingsWidget = SettingsEdit()
+        self.settingsWidget = SettingsEdit(fasta_selector = self.fasta_selector, file_selector = self.file_selector)
         self.settings_layout.addWidget(self.settingsWidget)
         self.button_layout = QHBoxLayout()
         self.btn_load_settings = QPushButton("Load")
@@ -565,24 +565,6 @@ class MainWindow(QMainWindow):
                 # try:
                 settings = yaml.load(settings_file, Loader=yaml.FullLoader)
                 self.settingsWidget.set_settings(settings)
-                ex_settings = settings['experiment']
-                fasta_settings = settings['fasta']
-
-                logging.info(f"Experimental settings {ex_settings}")
-
-                self.fasta_selector.set_table(pd.DataFrame(
-                    [fasta_settings['fasta_paths']]).T
-                )
-                self.file_selector.set_table(
-                    pd.DataFrame(
-                        [
-                            ex_settings['file_paths'],
-                            ex_settings['shortnames'],
-                            ex_settings['fractions']
-                        ]
-                    ).T
-                )
-
                 logging.info('Loaded settings from {}.'.format(path))
 
     def save_settings(self):
