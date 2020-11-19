@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QDir, QThread, pyqtSignal, Qt, QAbstractTableModel, QCoreApplication
+from PyQt5.QtCore import QDir, QThread, QProcess, pyqtSignal, Qt, QAbstractTableModel, QCoreApplication
 from PyQt5.QtWidgets import QListWidget, QDialog, QFileDialog, QTableWidgetItem, QPlainTextEdit, QSpinBox, QCheckBox, QDoubleSpinBox, QTreeWidget, QTreeWidgetItem, QComboBox, QAbstractScrollArea, QPushButton, QTableWidget, QWidget, QVBoxLayout, QLabel
 from PyQt5.QtCore import pyqtSlot
 
@@ -36,17 +36,6 @@ if not os.path.isfile(BUSY_INDICATOR_PATH):
     raise FileNotFoundError(
         'Busy Indicator - Path {}'.format(BUSY_INDICATOR_PATH)
     )
-
-
-def cancel_dialogs():
-    dialogs = [_ for _ in _dialogs]
-    for dialog in dialogs:
-        if isinstance(dialog, ProgressDialog):
-            dialog.cancel()
-        else:
-            dialog.close()
-    QCoreApplication.instance().processEvents()  # just in case...
-
 
 class FileSelector(QWidget):
 
@@ -322,7 +311,7 @@ class searchThread(QThread):
     task_update = pyqtSignal(str)
 
     def __init__(self, settings):
-        QThread.__init__(self)
+        QProcess.__init__(self)
         self.settings = settings
 
     def update_current_progress(self, progress):
@@ -336,10 +325,11 @@ class searchThread(QThread):
 
     def run(self):
         logging.info('Starting SearchThread')
-        print(yaml.dump(self.settings, default_flow_style=False))
+
         try:
             alphapept.interface.run_complete_workflow(
                 self.settings,
+                logger_set = True,
                 callback=self.update_current_progress
             )
         except Exception as e:
@@ -417,7 +407,6 @@ class SettingsEdit(QWidget):
                 settings = yaml.load(settings_file, Loader=yaml.FullLoader)
             self.set_settings(settings)
             logging.info("Loaded settings from {}.".format(path))
-            logging.info("THis method is not properly implemented.")
         else:
             print("Extension not found {}".format(extension))
             raise NotImplementedError
@@ -703,7 +692,7 @@ class SettingsEdit(QWidget):
                             if value:
                                 widget.setCheckState(2)
                             else:
-                                widget.setState(False)
+                                widget.setCheckState(0)
                         elif isinstance(widget, dict):
                             for _ in widget.keys():
                                 widget[_].setCheckState(1, Qt.Unchecked)

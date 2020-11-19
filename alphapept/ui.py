@@ -2,11 +2,9 @@ from PyQt5.QtCore import QUrl, QSize, QCoreApplication, Qt
 from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTableView, QTabWidget, QProgressBar, QGroupBox, QComboBox, QPushButton, QStackedWidget, QWidget, QMainWindow, QApplication, QStyleFactory, QHBoxLayout, QVBoxLayout, QLabel, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QIcon, QPixmap, QMovie, QDesktopServices
 
-
 import sys
 import os
 import traceback
-
 
 from alphapept.stylesheets import (
     big_font,
@@ -56,17 +54,6 @@ if not os.path.isfile(BUSY_INDICATOR_PATH):
     raise FileNotFoundError(
         'Busy Indicator - Path {}'.format(BUSY_INDICATOR_PATH)
     )
-
-
-def cancel_dialogs():
-    dialogs = [_ for _ in _dialogs]
-    for dialog in dialogs:
-        if isinstance(dialog, ProgressDialog):
-            dialog.cancel()
-        else:
-            dialog.close()
-    QCoreApplication.instance().processEvents()  # just in case...
-
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -517,7 +504,6 @@ class MainWindow(QMainWindow):
         paths = [_.replace("\\", "/") for _ in paths]
 
         settings['experiment']['file_paths'] = paths
-
         shortnames = files['Shortname'].values.tolist()
 
         if None in shortnames:
@@ -582,6 +568,8 @@ class MainWindow(QMainWindow):
                 ex_settings = settings['experiment']
                 fasta_settings = settings['fasta']
 
+                logging.info(f"Experimental settings {ex_settings}")
+
                 self.fasta_selector.set_table(pd.DataFrame(
                     [fasta_settings['fasta_paths']]).T
                 )
@@ -596,8 +584,6 @@ class MainWindow(QMainWindow):
                 )
 
                 logging.info('Loaded settings from {}.'.format(path))
-                # except Exception as e:
-                    # logging.error('The following error occured loading the settings field: {}'.format(e))
 
     def save_settings(self):
         settings = self.read_settings()
@@ -670,13 +656,13 @@ def main(close=False):
     app.processEvents()
 
     def excepthook(type, value, tback):
-        cancel_dialogs()
         message = "".join(traceback.format_exception(type, value, tback))
         errorbox = QMessageBox.critical(
-            window,
+            main_window,
             "An error occured",
             message
         )
+        #errorbox.set_stylesheet(dark_stylesheet)
         errorbox.exec_()
         sys.__excepthook__(type, value, tback)
 
