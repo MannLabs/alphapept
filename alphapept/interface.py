@@ -37,10 +37,8 @@ def set_logger():
 
 # Cell
 
-import alphapept.utils
-
-
 def check_version_and_hardware(settings):
+    import alphapept.utils
     alphapept.utils.check_hardware()
     alphapept.utils.check_python_env()
     settings = alphapept.utils.check_settings(settings)
@@ -48,7 +46,6 @@ def check_version_and_hardware(settings):
 
 # Cell
 
-import alphapept.fasta
 import os
 import functools
 
@@ -59,6 +56,7 @@ def create_database(
     settings_parsed=False,
     callback=None
 ):
+    import alphapept.fasta
     if not logger_set:
         set_logger()
     if not settings_parsed:
@@ -140,9 +138,6 @@ def create_database(
 
 # Cell
 
-import alphapept.io
-
-
 def import_raw_data(
     settings,
     logger_set=False,
@@ -153,6 +148,9 @@ def import_raw_data(
         set_logger()
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
+
+    import alphapept.io
+
     files_ms_data_hdf = []
     to_convert = []
 
@@ -179,19 +177,22 @@ def import_raw_data(
 
 # Cell
 
-import alphapept.feature_finding
-
-
 def feature_finding(
     settings,
     logger_set=False,
     settings_parsed=False,
     callback=None
 ):
+
     if not logger_set:
         set_logger()
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
+
+    import alphapept.feature_finding
+    import alphapept.io
+
+
     to_convert = []
     for file_name in settings['experiment']['file_paths']:
         base, ext = os.path.splitext(file_name)
@@ -234,10 +235,6 @@ def feature_finding(
 
 # Cell
 
-import alphapept.search
-import alphapept.io
-
-
 def search_data(
     settings,
     recalibrated=False,
@@ -249,6 +246,10 @@ def search_data(
         set_logger()
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
+
+    import alphapept.search
+    import alphapept.io
+
     if not recalibrated:
         if settings['fasta']['save_db']:
             logging.info('Starting first search with DB.')
@@ -323,9 +324,6 @@ def search_data(
 
 # Cell
 
-import alphapept.recalibration
-
-
 def recalibrate_data(
     settings,
     logger_set=False,
@@ -336,6 +334,9 @@ def recalibrate_data(
         set_logger()
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
+
+    import alphapept.recalibration
+
     if settings['search']['calibrate']:
         logging.info('Performing recalibration.')
 
@@ -354,9 +355,6 @@ def recalibrate_data(
 
 # Cell
 
-import alphapept.score
-
-
 def score(
     settings,
     pept_dict=None,
@@ -369,6 +367,10 @@ def score(
         set_logger()
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
+
+    import alphapept.score
+    import alphapept.fasta
+
     if not callback:
         cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
     else:
@@ -408,7 +410,6 @@ def score(
 
 # Cell
 
-import alphapept.matching
 import pandas as pd
 
 
@@ -418,10 +419,13 @@ def align(
     settings_parsed=False,
     callback=None
 ):
+
     if not logger_set:
         set_logger()
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
+
+    import alphapept.matching
 
     alphapept.matching.align_datasets(settings)
 
@@ -438,6 +442,8 @@ def match(
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
 
+    import alphapept.matching
+
     if settings['matching']['match_between_runs']:
         alphapept.matching.match_datasets(settings)
 
@@ -445,7 +451,6 @@ def match(
 
 # Cell
 
-import alphapept.quantification
 import pandas as pd
 
 
@@ -459,6 +464,9 @@ def lfq_quantification(
         set_logger()
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
+
+    import alphapept.quantification
+
     field = settings['quantification']['mode']
 
     logging.info('Assembling dataframe.')
