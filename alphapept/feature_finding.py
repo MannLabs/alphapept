@@ -1253,8 +1253,10 @@ def convert_bruker(feature_path):
 
     M_PROTON = mass_dict['Proton']
     feature_table['Mass'] = feature_table['MZ'].values * feature_table['Charge'].values - feature_table['Charge'].values*M_PROTON
-    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "Mobility": "mobility", "Charge":"charge","Intensity":'int_sum'})
+    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "RT_lower":"rt_start", "RT_upper":"rt_end", "Mobility": "mobility", "Mobility_lower": "mobility_lower", "Mobility_upper": "mobility_upper", "Charge":"charge","Intensity":'int_sum'})
     feature_table['rt_apex'] = feature_table['rt_apex']/60
+    feature_table['rt_start'] = feature_table['rt_start']/60
+    feature_table['rt_end'] = feature_table['rt_end']/60
 
     return feature_table
 
@@ -1503,17 +1505,14 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
             if field in feature_table.keys():
                 ref_df[field] = feature_table.iloc[idx[:,neighbor]][field].values
 
-        if use_mob:
-            rt_check = np.abs(ref_df['rt_offset'].values) <= 1
-        else: # check rt_start <= ms2_rt <= rt_end
-            rt_check = (ref_df['rt_start'] <= ref_df['rt']) & (ref_df['rt'] <= ref_df['rt_end'])
+        rt_check = (ref_df['rt_start'] <= ref_df['rt']) & (ref_df['rt'] <= ref_df['rt_end'])
 
         # check isolation window (win=3)
         mass_check = np.abs(ref_df['mz_offset'].values) <= 3
 
         _check = rt_check & mass_check
         if use_mob:
-            mob_check = np.abs(ref_df['mobility_offset'].values) <= 0.1
+            mob_check = (ref_df['mobility_lower'] <= ref_df['mobility']) & (ref_df['mobility'] <= ref_df['mobility_upper'])
             _check &= mob_check
 
         ref_matched |= _check
@@ -1526,7 +1525,10 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
 
         all_df.append(ref_df)
 
-    unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'mz', 'charge'])
+    if use_mob:
+        unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2'], query_data['mobility']]).T, columns=['rt', 'mass', 'mz', 'charge','mobility'])
+    else:
+        unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'mz', 'charge'])
     unmatched_ref = unmatched_ref[~ref_matched]
     unmatched_ref['mass_matched'] = unmatched_ref['mass']
     unmatched_ref['mass_offset'] = 0
