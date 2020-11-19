@@ -353,11 +353,13 @@ class External(QThread):
 
 
 class SettingsEdit(QWidget):
-    def __init__(self):
+    def __init__(self, fasta_selector = None, file_selector = None):
         super().__init__()
         self.setAcceptDrops(True)
 
         self.initUI()
+        self.fasta_selector = fasta_selector
+        self.file_selector = file_selector
 
     def initUI(self):
         # Add box layout, add table to box layout and add box layout to widget
@@ -706,3 +708,22 @@ class SettingsEdit(QWidget):
                                     widget.__class__
                                 )
                             )
+
+        if 'experiment' in settings:
+            ex_settings = settings['experiment']
+            self.file_selector.set_table(
+                pd.DataFrame(
+                    [
+                        ex_settings['file_paths'],
+                        ex_settings['shortnames'],
+                        ex_settings['fractions']
+                    ]
+                ).T
+            )
+
+        if 'fasta' in settings:
+            fasta_settings = settings['fasta']
+
+            self.fasta_selector.set_table(pd.DataFrame(
+                [fasta_settings['fasta_paths']]).T
+            )
