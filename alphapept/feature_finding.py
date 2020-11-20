@@ -1501,7 +1501,7 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
         ref_df['query_idx'] = ref_df.index
         ref_df['feature_idx'] = idx[:,neighbor]
 
-        for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+        for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm','mobility_lower','mobility_upper']:
             if field in feature_table.keys():
                 ref_df[field] = feature_table.iloc[idx[:,neighbor]][field].values
 
