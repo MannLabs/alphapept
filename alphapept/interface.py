@@ -171,7 +171,7 @@ def import_raw_data(
             cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
         else:
             cb = callback
-        alphapept.io.raw_to_ms_data_file_parallel(to_convert, settings)
+        alphapept.io.raw_to_ms_data_file_parallel(to_convert, settings, callback = cb)
         logging.info('File conversion complete.')
     return settings
 
@@ -427,7 +427,7 @@ def align(
 
     import alphapept.matching
 
-    alphapept.matching.align_datasets(settings)
+    alphapept.matching.align_datasets(settings, callback = callback)
 
     return settings
 
@@ -549,74 +549,72 @@ def export(
 
 # Cell
 
+from time import time
+
 def run_complete_workflow(
     settings,
     logger_set=False,
     settings_parsed=False,
-    callback=None
+    callback=None,
+    callback_overall = None,
+    callback_task = None
 ):
+
     if not logger_set:
         set_logger()
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
-    settings = create_database(
-        settings,
-        logger_set=True,
-        settings_parsed=True,
-    )
-    settings = import_raw_data(
-        settings,
-        logger_set=True,
-        settings_parsed=True,
-    )
-    settings = feature_finding(
-        settings,
-        logger_set=True,
-        settings_parsed=True,
-    )
-    settings, pept_dict, fasta_dict = search_data(
-        settings,
-        logger_set=True,
-        settings_parsed=True,
-    )
-    settings = recalibrate_data(
-        settings,
-        logger_set=True,
-        settings_parsed=True,
-    )
-    settings, pept_dict, fasta_dict = search_data(
-        settings,
-        recalibrated=True,
-        logger_set=True,
-        settings_parsed=True,
-    )
-    settings = score(
-        settings,
-        pept_dict=pept_dict,
-        fasta_dict=fasta_dict,
-        logger_set=True,
-        settings_parsed=True,
-    )
-    settings = align(
-        settings,
-        logger_set=True,
-        settings_parsed=True,
-    )
-    settings = match(
-        settings,
-        logger_set=True,
-        settings_parsed=True,
-    )
-    settings = lfq_quantification(
-        settings,
-        logger_set=True,
-        settings_parsed=True,
-    )
-    settings = export(
-        settings,
-        logger_set=True,
-        settings_parsed=True,
-    )
+
+
+    steps = [create_database, import_raw_data, feature_finding, search_data, recalibrate_data, search_data, score, align, match,
+            lfq_quantification, export]
+
+    n_steps = len(steps)
+
+    def progress_wrapper(step, n_steps, current):
+        if callback:
+            callback(current)
+        if callback_overall:
+            callback_overall(step/n_steps+current/n_steps)
+
+    recalibrated = False
+
+    time_dict = {}
+
+    run_start = time()
+
+    for idx, step in enumerate(steps):
+
+        start = time()
+
+        progress_wrapper(idx, n_steps, 0)
+
+        cb = functools.partial(progress_wrapper, idx, n_steps)
+
+        if step is search_data:
+            settings, pept_dict, fasta_dict = step(settings, recalibrated=recalibrated, logger_set = True, settings_parsed = True, callback = cb)
+
+        elif step is score:
+            settings = step(settings, pept_dict=pept_dict, fasta_dict=fasta_dict, logger_set = True,  settings_parsed = True, callback = cb)
+
+        else:
+            settings = step(settings, logger_set = True,  settings_parsed = True, callback = cb)
+
+        if step is recalibrate_data:
+            recalibrated = True
+
+        progress_wrapper(idx, n_steps, 1)
+
+        end = time()
+
+        time_dict[step.__name__] = (end-start)/60 #minutes
+
+        time_dict['total'] = (end-run_start)/60
+
+        settings['timing_min'] = time_dict
+
+        if callback_task:
+            callback_task(step.__name__)
 
     return settings
 
