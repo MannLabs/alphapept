@@ -540,10 +540,11 @@ class MainWindow(QMainWindow):
         settings['experiment']['alphapept_version'] = VERSION_NO
 
         if (self.results_path.text() == '...') or (self.results_path.text() == ''):
-            base, file = os.path.split(settings['experiment']['file_paths'][0])
-            new_path = os.path.join(base,'results.hdf')
-            new_path = new_path.replace('\\','/')
-            self.results_path.setText(new_path)
+            if len(settings['experiment']['file_paths']) > 0:
+                base, file = os.path.split(settings['experiment']['file_paths'][0])
+                new_path = os.path.join(base,'results.hdf')
+                new_path = new_path.replace('\\','/')
+                self.results_path.setText(new_path)
 
         settings['experiment']['results_path'] = self.results_path.text()
 
@@ -564,10 +565,10 @@ class MainWindow(QMainWindow):
             self.tabWidget.clear()
             for group in groups:
                 view = QTableView()
-                model = pandasModel(pd.read_hdf(file, key=group))
+                #model = pandasModel(pd.read_hdf(file, key=group))
                 self.tabWidget.addTab(view, group)
-                view.setModel(model)
-                view.show()
+                #view.setModel(model)
+                #view.show()
 
     def load_settings(self):
         path, ext = QFileDialog.getOpenFileName(
@@ -619,8 +620,7 @@ class MainWindow(QMainWindow):
         self.progress_overall.setValue(value*100)
 
     def current_step_changed(self, task):
-        logging.info(f" Current Task: {task}")
-        self.current_task_label.setText(f" Current Task: {task}")
+        self.current_task_label.setText(f"Current Task: {task}")
 
     def start(self):
         logging.info("Started processing.")

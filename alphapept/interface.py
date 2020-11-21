@@ -584,6 +584,8 @@ def run_complete_workflow(
     run_start = time()
 
     for idx, step in enumerate(steps):
+        if callback_task:
+            callback_task(step.__name__)
 
         start = time()
 
@@ -612,9 +614,6 @@ def run_complete_workflow(
         time_dict['total'] = (end-run_start)/60
 
         settings['timing_min'] = time_dict
-
-        if callback_task:
-            callback_task(step.__name__)
 
     return settings
 
