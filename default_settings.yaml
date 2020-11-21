@@ -28,7 +28,7 @@ fasta:
   mods_variable_terminal_prot: []
   num_missed_cleavages: 2
   protease: trypsin
-  pseudo_reverse: false
+  pseudo_reverse: true
   save_db: true
   spectra_block: 100000
 features:
@@ -43,7 +43,7 @@ general:
   find_features: true
   n_processes: 128
   ppm: true
-  score: x_tandem
+  score: random_forest
 matching:
   match_between_runs: true
   min_match_d: 3

@@ -206,7 +206,7 @@ fasta:
     - non-specific
     - trypsin
   pseudo_reverse:
-    default: false
+    default: true
     description: Use pseudo-reverse strategy instead of reverse.
     type: checkbox
   save_db:
@@ -273,7 +273,7 @@ general:
     description: Use ppm instead of Dalton.
     type: checkbox
   score:
-    default: x_tandem
+    default: random_forest
     description: Scoring method.
     type: combobox
     value:
