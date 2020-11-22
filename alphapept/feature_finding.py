@@ -481,7 +481,7 @@ def get_hill_data(hills, centroids, callback=None):
 
     centroid_dtype = [("mz", float), ("int", np.int64), ("scan_no", int), ("rt", float)]
 
-    hill_data = []
+    hill_data = List()
 
     for idx, hill in enumerate(hills):
         hill_data.append(np.array([centroids[_[0]][_[1]] for _ in hill], dtype=centroid_dtype))
@@ -503,8 +503,8 @@ def get_hill_data(hills, centroids, callback=None):
 
     sortindex = np.argsort(hill_stats[:, 2])
     sorted_stats = hill_stats[sortindex]
-    sorted_hills = np.array(hills)[sortindex]
-    sorted_data = np.array(hill_data)[sortindex]
+    sorted_hills = np.array(hills, dtype='object')[sortindex]
+    sorted_data = np.array(hill_data, dtype='object')[sortindex]
 
     sorted_stats = np.core.records.fromarrays(sorted_stats.T, dtype=stats_dtype)
 

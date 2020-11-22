@@ -330,13 +330,13 @@ search:
     min: 1
     type: spinbox
   m_offset:
-    default: 10
+    default: 30
     description: Precursor mass offset.
     max: 99
     min: 1
     type: spinbox
   m_tol:
-    default: 20
+    default: 30
     description: MSMS mass offset.
     max: 99
     min: 1

@@ -272,9 +272,7 @@ class TestRun():
                 results[s+i+'_std'] = sub_std
 
             results['DELTA'+i]  = results[species[1]+i+'_mean'] - results[species[0]+i+'_mean']
-
             results['STD'+i]  = np.sqrt(results[species[1]+i+'_std']**2 + results[species[0]+i+'_std']**2)
-
             results['T'+i]  = results['DELTA'+i] / results['STD'+i]
 
         return results
@@ -284,15 +282,10 @@ class BrukerTestRun(TestRun):
     def __init__(self, *args):
         TestRun.__init__(self, *args)
 
-        self.m_tol = 30
-        self.m_offset = 30
-
-
 class ThermoTestRun(TestRun):
     def __init__(self, *args):
         TestRun.__init__(self, *args)
-        self.m_tol = 20
-        self.m_offset = 20
+
 
 
 def main():
