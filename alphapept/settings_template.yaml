@@ -125,10 +125,15 @@ fasta:
     description: Fixed terminal modifications.
     type: checkgroup
     value: &id002
+      arg6A>: Arg 6 on peptide C-terminus
+      arg8A>: Arg 8 on peptide C-terminus
       cmC<: pyro-cmC
       e<^: EASItag 6-plex on peptide N-terminus
       itraq4K<^: iTRAQ 4-plex on peptide N-terminus
       itraq8K<^: iTRAQ 8-plex on peptide N-terminus
+      lys10A>: Lys 10 on peptide C-terminus
+      lys6A>: Lys 6 on peptide C-terminus
+      lys8A>: Lys 8 on peptide C-terminus
       pgE<: pyro-E
       pgQ<: pyro-Q
       tmt0<^: TMT zero on peptide N-terminus
