@@ -32,6 +32,6 @@ EASItag 6-plex on K	amino acid residue	K	266.0838675	266.0838675	0	0	none	999999
 Arg 10 on peptide C-terminus	peptide C-terminus	A	10	10	0	0	none	none	Arg10	none	arg10>A
 Arg 8 on peptide C-terminus	peptide C-terminus	A	8	8	0	0	none	none	Arg8	none	arg8>A
 Arg 6 on peptide C-terminus	peptide C-terminus	A	6	6	0	0	none	none	Arg6	none	arg6>A
-Lys 10 on peptide C-terminus	peptide C-terminus	L	10	10	0	0	none	none	Lys10	none	lys10>A
-Lys 8 on peptide C-terminus	peptide C-terminus	L	8	8	0	0	none	none	Lys8	none	lys8>A
-Lys 6 on peptide C-terminus	peptide C-terminus	L	6	6	0	0	none	none	Lys6	none	lys6>A
+Lys 10 on peptide C-terminus	peptide C-terminus	L	10	10	0	0	none	none	Lys10	none	lys10>L
+Lys 8 on peptide C-terminus	peptide C-terminus	L	8	8	0	0	none	none	Lys8	none	lys8>L
+Lys 6 on peptide C-terminus	peptide C-terminus	L	6	6	0	0	none	none	Lys6	none	lys6>L
