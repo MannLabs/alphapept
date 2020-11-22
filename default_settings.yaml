@@ -57,8 +57,8 @@ raw:
 search:
   calibrate: true
   calibration_std: 3
-  m_offset: 10
-  m_tol: 20
+  m_offset: 30
+  m_tol: 30
   min_frag_hits: 7
   parallel: true
   peptide_fdr: 0.01

@@ -541,13 +541,6 @@ def score_parallel(
     o_mass_ppm = np.zeros(len(psms))
     b_hits = np.zeros(len(psms))
     y_hits = np.zeros(len(psms))
-    db_mass_density = np.zeros(len(psms))
-    db_weighted_mass_density = np.zeros(len(psms))
-    db_mass_density_digit = np.zeros(len(psms))
-    db_weighted_mass_density_digit = np.zeros(len(psms))
-
-    db_mz_density_005, db_mz_space_005 = get_frag_mass_density_norm(db_frags, mz_factor=0.05)
-    db_mz_density_10, db_mz_space_10 = get_frag_mass_density_norm(db_frags, mz_factor=10)
 
     for i in prange(len(psms)):
         query_idx = psms[i]["query_idx"]
@@ -573,11 +566,6 @@ def score_parallel(
 
         matched_int[i] = intensity_product(query_int, hits, db_int)
 
-        db_mass_density[i] = mass_density_weighted_fragment_sum(query_frag, hits, db_mz_space_005, db_mz_density_005, mz_factor=0.05)
-        db_weighted_mass_density[i] = mass_density_weighted_intensity_sum(query_int, query_frag, hits, db_mz_space_005, db_mz_density_005, mz_factor=0.05)
-        db_mass_density_digit[i] = mass_density_weighted_fragment_sum(query_frag, hits, db_mz_space_10, db_mz_density_10, mz_factor=10)
-        db_weighted_mass_density_digit[i] = mass_density_weighted_intensity_sum(query_int, query_frag, hits, db_mz_space_10, db_mz_density_10, mz_factor=10)
-
         b_hit, y_hit = b_y_hits(frag_type, hits)
         y_hits[i] = y_hit
         b_hits[i] = b_hit
@@ -593,10 +581,6 @@ def score_parallel(
         b_hits,
         y_hits,
         num_specs_scored,
-        db_mass_density,
-        db_weighted_mass_density,
-        db_mass_density_digit,
-        db_weighted_mass_density_digit,
     )
 
 
@@ -629,13 +613,6 @@ def score_single(
     o_mass_ppm = np.zeros(len(psms))
     b_hits = np.zeros(len(psms))
     y_hits = np.zeros(len(psms))
-    db_mass_density = np.zeros(len(psms))
-    db_weighted_mass_density = np.zeros(len(psms))
-    db_mass_density_digit = np.zeros(len(psms))
-    db_weighted_mass_density_digit = np.zeros(len(psms))
-
-    db_mz_density_005, db_mz_space_005 = get_frag_mass_density_norm(db_frags, mz_factor=0.05)
-    db_mz_density_10, db_mz_space_10 = get_frag_mass_density_norm(db_frags, mz_factor=10)
 
     for i in range(len(psms)):
         query_idx = psms[i]["query_idx"]
@@ -660,11 +637,6 @@ def score_single(
             db_int = db_ints[i]
         matched_int[i] = intensity_product(query_int, hits, db_int)
 
-        db_mass_density[i] = mass_density_weighted_fragment_sum(query_frag, hits, db_mz_space_005, db_mz_density_005, mz_factor=0.05)
-        db_weighted_mass_density[i] = mass_density_weighted_intensity_sum(query_int, query_frag, hits, db_mz_space_005, db_mz_density_005, mz_factor=0.05)
-        db_mass_density_digit[i] = mass_density_weighted_fragment_sum(query_frag, hits, db_mz_space_10, db_mz_density_10, mz_factor=10)
-        db_weighted_mass_density_digit[i] = mass_density_weighted_intensity_sum(query_int, query_frag, hits, db_mz_space_10, db_mz_density_10, mz_factor=10)
-
         b_hit, y_hit = b_y_hits(frag_type, hits)
         y_hits[i] = y_hit
         b_hits[i] = b_hit
@@ -680,10 +652,6 @@ def score_single(
         b_hits,
         y_hits,
         num_specs_scored,
-        db_mass_density,
-        db_weighted_mass_density,
-        db_mass_density_digit,
-        db_weighted_mass_density_digit,
     )
 
 # Cell
@@ -785,7 +753,7 @@ def get_score_columns(
         query_rt = query_data['rt_list_ms2']
 
     if parallel:
-        delta_m, delta_m_ppm, o_mass, o_mass_ppm, total_int, matched_int, b_hits, y_hits, num_specs_scored, db_mass_density, db_weighted_mass_density, db_mass_density_digit, db_weighted_mass_density_digit = score_parallel(
+        delta_m, delta_m_ppm, o_mass, o_mass_ppm, total_int, matched_int, b_hits, y_hits, num_specs_scored = score_parallel(
             psms,
             query_masses,
             query_frags,
@@ -801,7 +769,7 @@ def get_score_columns(
             db_ints,
         )
     else:
-        delta_m, delta_m_ppm, o_mass, o_mass_ppm, total_int, matched_int, b_hits, y_hits, num_specs_scored, db_mass_density, db_weighted_mass_density, db_mass_density_digit, db_weighted_mass_density_digit = score_single(
+        delta_m, delta_m_ppm, o_mass, o_mass_ppm, total_int, matched_int, b_hits, y_hits, num_specs_scored = score_single(
             psms,
             query_masses,
             query_frags,
@@ -825,11 +793,6 @@ def get_score_columns(
     psms = add_column(psms, matched_int, "matched_int")
     psms = add_column(psms, b_hits, "b_hits")
     psms = add_column(psms, y_hits, "y_hits")
-
-    psms = add_column(psms, db_mass_density, "db_mass_density")
-    psms = add_column(psms, db_weighted_mass_density, "db_weighted_mass_density")
-    psms = add_column(psms, db_mass_density_digit, "db_mass_density_digit")
-    psms = add_column(psms, db_weighted_mass_density_digit, "db_weighted_mass_density_digit")
 
     rts = np.array(query_rt)[psms["query_idx"]]
     psms = add_column(psms, rts, 'rt')
