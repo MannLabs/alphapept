@@ -10,6 +10,7 @@ from itertools import combinations
 import numpy as np
 import os
 import alphapept.io
+import functools
 
 
 def calculate_distance(table_1, table_2, offset_cols, calib = False):
@@ -138,12 +139,17 @@ def align_files(filenames, alignment, offset_cols):
             ms_file.write(df, dataset_name=column)
 
 
-def align_datasets(settings):
+def align_datasets(settings, callback=None):
     filenames = settings['experiment']['file_paths']
+
+    if callback:
+        def progress_wrapper(current, step, n_steps):
+            callback(step+current/n_steps)
+
     if len(filenames) > 1:
         combos = list(combinations(filenames, 2))
 
-        deltas, offset_cols = calculate_deltas(combos)
+        deltas, offset_cols = calculate_deltas(combos, callback=functools.partial(progress_wrapper, 0, 2))
 
         cols = list(offset_cols.keys())
 
@@ -162,7 +168,7 @@ def align_datasets(settings):
 
         align_files(filenames, -alignment, offset_cols)
 
-        deltas, offset_cols = calculate_deltas(combos, calib=True)
+        deltas, offset_cols = calculate_deltas(combos, calib=True, callback=functools.partial(progress_wrapper, 1, 2))
 
         logging.info(f'Total deviation after calibration {deltas.abs().sum().to_dict()}')
         logging.info(f'Mean deviation after calibration {deltas.abs().mean().to_dict()}')
@@ -193,7 +199,7 @@ def get_probability(df, ref, sigma, index):
 
     return _
 
-def match_datasets(settings):
+def match_datasets(settings, callback = None):
 
     if len(settings['experiment']['file_paths']) > 2:
         xx = assemble_df(settings, field='protein_fdr')
@@ -220,7 +226,7 @@ def match_datasets(settings):
 
         lookup_dict = xx.set_index('precursor')[['protein','protein_group','sequence']].to_dict()
 
-        for filename in filenames:
+        for idx, filename in enumerate(filenames):
             file = os.path.splitext(filename)[0] + '.ms_data.hdf'
 
             df = alphapept.io.MS_Data_File(file).read(dataset_name='protein_fdr')
@@ -287,5 +293,8 @@ def match_datasets(settings):
             ms_file = alphapept.io.MS_Data_File(file, is_overwritable=True)
 
             ms_file.write(df_, dataset_name='protein_fdr')
+
+            if callback:
+                callback((i+1)/len(filenames))
     else:
         logging.info('Less than 3 datasets present. Skipping matching.')

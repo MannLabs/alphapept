@@ -1,5 +1,5 @@
-from PyQt5.QtCore import QDir, QThread, pyqtSignal, Qt, QAbstractTableModel, QCoreApplication
-from PyQt5.QtWidgets import QListWidget, QDialog, QFileDialog, QTableWidgetItem, QPlainTextEdit, QSpinBox, QCheckBox, QDoubleSpinBox, QTreeWidget, QTreeWidgetItem, QComboBox, QAbstractScrollArea, QPushButton, QTableWidget, QWidget, QVBoxLayout, QLabel
+from PyQt5.QtCore import QDir, QThread, QProcess, pyqtSignal, Qt, QAbstractTableModel, QCoreApplication
+from PyQt5.QtWidgets import QMessageBox, QListWidget, QDialog, QFileDialog, QTableWidgetItem, QPlainTextEdit, QSpinBox, QCheckBox, QDoubleSpinBox, QTreeWidget, QTreeWidgetItem, QComboBox, QAbstractScrollArea, QPushButton, QTableWidget, QWidget, QVBoxLayout, QLabel
 from PyQt5.QtCore import pyqtSlot
 
 import os
@@ -9,16 +9,13 @@ from functools import partial
 import alphapept.interface
 
 import yaml
-from time import sleep
+from time import sleep, time
 import logging
 import pandas as pd
 import qdarkstyle
 
 import threading, queue
-from time import time
 
-
-dark_stylesheet = qdarkstyle.load_stylesheet_pyqt5()
 
 _this_file = os.path.abspath(__file__)
 _this_directory = os.path.dirname(_this_file)
@@ -36,17 +33,6 @@ if not os.path.isfile(BUSY_INDICATOR_PATH):
     raise FileNotFoundError(
         'Busy Indicator - Path {}'.format(BUSY_INDICATOR_PATH)
     )
-
-
-def cancel_dialogs():
-    dialogs = [_ for _ in _dialogs]
-    for dialog in dialogs:
-        if isinstance(dialog, ProgressDialog):
-            dialog.cancel()
-        else:
-            dialog.close()
-    QCoreApplication.instance().processEvents()  # just in case...
-
 
 class FileSelector(QWidget):
 
@@ -105,9 +91,11 @@ class FileSelector(QWidget):
         event.accept()
 
     def path_from_drop(self, event):
-        url = event.mimeData().urls()[0]
-        path = url.toLocalFile()
-        return path
+        paths = []
+        for url in event.mimeData().urls():
+            path = url.toLocalFile()
+            paths.append(path)
+        return paths
 
     def drop_has_valid_url(self, event):
         if not event.mimeData().hasUrls():
@@ -123,11 +111,15 @@ class FileSelector(QWidget):
 
     def dropEvent(self, event):
         """ Loads  when dropped into the scene """
-        path = self.path_from_drop(event)
-        logging.info("Dropped file {}.".format(path))
-        self.open(path)
+        paths = self.path_from_drop(event)
+        for path in paths:
+            logging.info("Dropped file {}.".format(path))
+        self.open(paths)
 
     def open(self, path):
+        """
+        Used in subclass
+        """
         pass
 
     def set_files(self):
@@ -186,61 +178,63 @@ class RawFileSelector(FileSelector):
     def __init__(self, header):
         super().__init__(header)
 
-    def open(self, path):
-        path = os.path.normpath(path)
+    def open(self, paths):
+        for path in paths:
+            path = os.path.normpath(path)
 
-        files = self.files
+            files = self.files
 
-        new_files = []
-        if path.endswith('.d'):
-            new_files.append(path)
-        if path.endswith('.raw'):
-            new_files.append(path)
-        for dirpath, dirnames, filenames in os.walk(path):
-            for dirname in [d for d in dirnames if d.endswith('.d')]:  # Bruker
-                new_file = os.path.join(dirpath, dirname)
-                new_files.append(new_file)
-            for filename in [
-                f for f in filenames if f.lower().endswith('.raw')
-            ]:  # Thermo
-                new_file = os.path.join(dirpath, filename)
-                new_files.append(new_file)
-        for new_file in new_files:
-            if new_file not in files:
-                files.append(new_file)
+            new_files = []
+            if path.endswith('.d'):
+                new_files.append(path)
+            if path.endswith('.raw'):
+                new_files.append(path)
+            for dirpath, dirnames, filenames in os.walk(path):
+                for dirname in [d for d in dirnames if d.endswith('.d')]:  # Bruker
+                    new_file = os.path.join(dirpath, dirname)
+                    new_files.append(new_file)
+                for filename in [
+                    f for f in filenames if f.lower().endswith('.raw')
+                ]:  # Thermo
+                    new_file = os.path.join(dirpath, filename)
+                    new_files.append(new_file)
+            for new_file in new_files:
+                if new_file not in files:
+                    files.append(new_file)
 
-        files.sort()
-        self.files = files
-        self.set_files()
+            files.sort()
+            self.files = files
+            self.set_files()
 
 
 class FastaFileSelector(FileSelector):
     def __init__(self, header):
         super().__init__(header)
 
-    def open(self, path):
-        path = os.path.normpath(path)
-        print(path)
+    def open(self, paths):
+        for path in paths:
+            path = os.path.normpath(path)
+            print(path)
 
-        files = self.files
-        new_files = []
-        if path.endswith('.fasta'):
-            new_files.append(path)
+            files = self.files
+            new_files = []
+            if path.endswith('.fasta'):
+                new_files.append(path)
 
-        for dirpath, dirnames, filenames in os.walk(path):
-            for filename in [
-                f for f in filenames if f.lower().endswith('.fasta')
-            ]:  # Thermo
-                new_file = os.path.join(dirpath, filename)
-                new_files.append(new_file)
+            for dirpath, dirnames, filenames in os.walk(path):
+                for filename in [
+                    f for f in filenames if f.lower().endswith('.fasta')
+                ]:  # Thermo
+                    new_file = os.path.join(dirpath, filename)
+                    new_files.append(new_file)
 
-        for new_file in new_files:
-            if new_file not in files:
-                files.append(new_file)
+            for new_file in new_files:
+                if new_file not in files:
+                    files.append(new_file)
 
-        files.sort()
-        self.files = files
-        self.set_files()
+            files.sort()
+            self.files = files
+            self.set_files()
 
 
 class pandasModel(QAbstractTableModel):
@@ -302,7 +296,39 @@ class QTextEditLogger(logging.Handler):
     def emit(self, record):
         self.buffer.append(record)
 
+class SmoothProgress(threading.Thread):
+    """
+    Worker to smooth progress output
 
+    """
+    def __init__ (self, callback):
+        super().__init__(daemon=True)
+        self.current_progress = 0
+        self.new_progress = 0
+        self.update_time = 0.5
+        self.splits = 10
+        self.callback = callback
+        self.old_set = 0
+        self.min_change = 0.001 #0.1%
+
+    def run (self):
+        while True:
+            sleep(self.update_time)
+
+            if (self.new_progress == 1) or abs(self.current_progress-self.new_progress)<self.min_change:
+                to_set = self.new_progress
+                self.current_progress = self.new_progress
+            else:
+                delta = (self.new_progress - self.current_progress) / self.splits
+                self.current_progress = self.current_progress+delta
+                to_set = self.current_progress
+
+            if self.old_set != to_set:
+                self.callback(to_set)
+                self.old_set = to_set
+
+    def set_progress(self, progress):
+        self.new_progress = progress
 
 class searchThread(QThread):
     """
@@ -314,8 +340,10 @@ class searchThread(QThread):
     task_update = pyqtSignal(str)
 
     def __init__(self, settings):
-        QThread.__init__(self)
+        QProcess.__init__(self)
         self.settings = settings
+        self.progress = SmoothProgress(callback=self.global_progress_update.emit)
+        self.progress.start()
 
     def update_current_progress(self, progress):
         self.current_progress_update.emit(progress)
@@ -328,11 +356,14 @@ class searchThread(QThread):
 
     def run(self):
         logging.info('Starting SearchThread')
-        print(yaml.dump(self.settings, default_flow_style=False))
+
         try:
             alphapept.interface.run_complete_workflow(
                 self.settings,
-                callback=self.update_current_progress
+                logger_set = True,
+                callback=self.update_current_progress,
+                callback_overall = self.progress.set_progress,
+                callback_task = self.update_task,
             )
         except Exception as e:
             logging.error('Error occured. {}'.format(e))
@@ -355,11 +386,14 @@ class External(QThread):
 
 
 class SettingsEdit(QWidget):
-    def __init__(self):
+    def __init__(self, fasta_selector = None, file_selector = None, results_path = None):
         super().__init__()
         self.setAcceptDrops(True)
 
         self.initUI()
+        self.fasta_selector = fasta_selector
+        self.file_selector = file_selector
+        self.results_path = results_path
 
     def initUI(self):
         # Add box layout, add table to box layout and add box layout to widget
@@ -409,7 +443,6 @@ class SettingsEdit(QWidget):
                 settings = yaml.load(settings_file, Loader=yaml.FullLoader)
             self.set_settings(settings)
             logging.info("Loaded settings from {}.".format(path))
-            logging.info("THis method is not properly implemented.")
         else:
             print("Extension not found {}".format(extension))
             raise NotImplementedError
@@ -512,134 +545,135 @@ class SettingsEdit(QWidget):
         self.categories = {}
 
         for category in self.settings_template.keys():
-            self.categories[category] = {}
-            self.categories[category]["Tree"] = QTreeWidgetItem(
-                self.treeWidget, [category]
-            )
-
-            fields = {}
-            widgets = {}
-
-            self.categories[category]["fields"] = fields
-            self.categories[category]["widgets"] = widgets
-
-            for subcategory in self.settings_template[category]:
-                fields[subcategory] = QTreeWidgetItem(
-                    self.categories[category]["Tree"], [subcategory]
+            if category != 'experiment':
+                self.categories[category] = {}
+                self.categories[category]["Tree"] = QTreeWidgetItem(
+                    self.treeWidget, [category]
                 )
 
-                type = self.settings_template[category][subcategory]["type"]
+                fields = {}
+                widgets = {}
 
-                if type == "spinbox":
-                    widgets[subcategory] = QSpinBox()
-                    widgets[subcategory].setMinimum(
-                        self.settings_template[category][subcategory]["min"]
-                    )
-                    widgets[subcategory].setMaximum(
-                        self.settings_template[category][subcategory]["max"]
-                    )
-                    widgets[subcategory].setValue(
-                        self.settings_template[category][subcategory]["default"]
-                    )
-                    widgets[subcategory].setFocusPolicy(Qt.StrongFocus)
+                self.categories[category]["fields"] = fields
+                self.categories[category]["widgets"] = widgets
 
-                elif type == "doublespinbox":
-                    widgets[subcategory] = QDoubleSpinBox()
-                    widgets[subcategory].setMinimum(
-                        self.settings_template[category][subcategory]["min"]
-                    )
-                    widgets[subcategory].setMaximum(
-                        self.settings_template[category][subcategory]["max"]
-                    )
-                    widgets[subcategory].setValue(
-                        self.settings_template[category][subcategory]["default"]
-                    )
-                    widgets[subcategory].setFocusPolicy(Qt.StrongFocus)
-
-                elif type == "combobox":
-                    widgets[subcategory] = QComboBox()
-                    for _ in self.settings_template[category][subcategory]["value"]:
-                        widgets[subcategory].addItem(_)
-
-                    default_idx = widgets[subcategory].findText(
-                        self.settings_template[category][subcategory]["default"]
-                    )
-                    widgets[subcategory].setCurrentIndex(default_idx)
-                    widgets[subcategory].setFocusPolicy(Qt.StrongFocus)
-
-                elif type == "checkbox":
-                    widgets[subcategory] = QCheckBox()
-                    default_state = self.settings_template[category][subcategory][
-                        "default"
-                    ]
-                    widgets[subcategory].setChecked(default_state)
-
-                elif type == "path":
-                    # Make path clickable
-                    default = self.settings_template[category][subcategory]["default"]
-                    widgets[subcategory] = QPushButton(default)
-                    widgets[subcategory].clicked.connect(
-                        partial(self.set_path, category, subcategory)
+                for subcategory in self.settings_template[category]:
+                    fields[subcategory] = QTreeWidgetItem(
+                        self.categories[category]["Tree"], [subcategory]
                     )
 
-                elif type == "checkgroup":
-                    pass
+                    type = self.settings_template[category][subcategory]["type"]
 
-                elif type == "placeholder":
-                    default_state = self.settings_template[category][subcategory][
-                        "default"
-                    ]
-                    widgets[subcategory] = QLabel(default_state)
+                    if type == "spinbox":
+                        widgets[subcategory] = QSpinBox()
+                        widgets[subcategory].setMinimum(
+                            self.settings_template[category][subcategory]["min"]
+                        )
+                        widgets[subcategory].setMaximum(
+                            self.settings_template[category][subcategory]["max"]
+                        )
+                        widgets[subcategory].setValue(
+                            self.settings_template[category][subcategory]["default"]
+                        )
+                        widgets[subcategory].setFocusPolicy(Qt.StrongFocus)
 
-                elif type == "list":
-                    default_state = self.settings_template[category][subcategory][
-                        "default"
-                    ]
-                    widgets[subcategory] = QListWidget()
-                    widgets[subcategory].setMaximumHeight(40)
+                    elif type == "doublespinbox":
+                        widgets[subcategory] = QDoubleSpinBox()
+                        widgets[subcategory].setMinimum(
+                            self.settings_template[category][subcategory]["min"]
+                        )
+                        widgets[subcategory].setMaximum(
+                            self.settings_template[category][subcategory]["max"]
+                        )
+                        widgets[subcategory].setValue(
+                            self.settings_template[category][subcategory]["default"]
+                        )
+                        widgets[subcategory].setFocusPolicy(Qt.StrongFocus)
 
-                    for _ in default_state:
-                        widgets[subcategory].addItem(_)
+                    elif type == "combobox":
+                        widgets[subcategory] = QComboBox()
+                        for _ in self.settings_template[category][subcategory]["value"]:
+                            widgets[subcategory].addItem(_)
 
-                else:
-                    raise NotImplementedError('Category not implemented {} - {}'.format(category, subcategory))
+                        default_idx = widgets[subcategory].findText(
+                            self.settings_template[category][subcategory]["default"]
+                        )
+                        widgets[subcategory].setCurrentIndex(default_idx)
+                        widgets[subcategory].setFocusPolicy(Qt.StrongFocus)
 
-                if subcategory in widgets.keys():
-                    self.treeWidget.setItemWidget(
-                        fields[subcategory], 1, widgets[subcategory]
-                    )
-                    try:
+                    elif type == "checkbox":
+                        widgets[subcategory] = QCheckBox()
+                        default_state = self.settings_template[category][subcategory][
+                            "default"
+                        ]
+                        widgets[subcategory].setChecked(default_state)
+
+                    elif type == "path":
+                        # Make path clickable
+                        default = self.settings_template[category][subcategory]["default"]
+                        widgets[subcategory] = QPushButton(default)
+                        widgets[subcategory].clicked.connect(
+                            partial(self.set_path, category, subcategory)
+                        )
+
+                    elif type == "checkgroup":
+                        pass
+
+                    elif type == "placeholder":
+                        default_state = self.settings_template[category][subcategory][
+                            "default"
+                        ]
+                        widgets[subcategory] = QLabel(default_state)
+
+                    elif type == "list":
+                        default_state = self.settings_template[category][subcategory][
+                            "default"
+                        ]
+                        widgets[subcategory] = QListWidget()
+                        widgets[subcategory].setMaximumHeight(40)
+
+                        for _ in default_state:
+                            widgets[subcategory].addItem(_)
+
+                    else:
+                        raise NotImplementedError('Category not implemented {} - {}'.format(category, subcategory))
+
+                    if subcategory in widgets.keys():
+                        self.treeWidget.setItemWidget(
+                            fields[subcategory], 1, widgets[subcategory]
+                        )
+                        try:
+                            description = self.settings_template[category][subcategory][
+                                "description"
+                            ]
+                            self.treeWidget.setItemWidget(
+                                fields[subcategory], 2, QLabel(description)
+                            )
+                        except KeyError:
+                            pass
+
+                    if type == "checkgroup":
+                        elements = self.settings_template[category][subcategory]["value"]
+
+                        widgets[subcategory] = {}
+                        # ADD children
+                        for _ in elements.keys():
+                            widgets[subcategory][_] = QTreeWidgetItem(
+                                fields[subcategory], ["", _, elements[_]]
+                            )
+                            widgets[subcategory][_].setCheckState(1, Qt.Unchecked)
+
+                        default = self.settings_template[category][subcategory]["default"]
+
+                        for _ in default:
+                            widgets[subcategory][_].setCheckState(1, Qt.Checked)
+
                         description = self.settings_template[category][subcategory][
                             "description"
                         ]
                         self.treeWidget.setItemWidget(
                             fields[subcategory], 2, QLabel(description)
                         )
-                    except KeyError:
-                        pass
-
-                if type == "checkgroup":
-                    elements = self.settings_template[category][subcategory]["value"]
-
-                    widgets[subcategory] = {}
-                    # ADD children
-                    for _ in elements.keys():
-                        widgets[subcategory][_] = QTreeWidgetItem(
-                            fields[subcategory], ["", _, elements[_]]
-                        )
-                        widgets[subcategory][_].setCheckState(1, Qt.Unchecked)
-
-                    default = self.settings_template[category][subcategory]["default"]
-
-                    for _ in default:
-                        widgets[subcategory][_].setCheckState(1, Qt.Checked)
-
-                    description = self.settings_template[category][subcategory][
-                        "description"
-                    ]
-                    self.treeWidget.setItemWidget(
-                        fields[subcategory], 2, QLabel(description)
-                    )
 
     def disable_settings(self):
         """
@@ -695,7 +729,7 @@ class SettingsEdit(QWidget):
                             if value:
                                 widget.setCheckState(2)
                             else:
-                                widget.setState(False)
+                                widget.setCheckState(0)
                         elif isinstance(widget, dict):
                             for _ in widget.keys():
                                 widget[_].setCheckState(1, Qt.Unchecked)
@@ -709,3 +743,28 @@ class SettingsEdit(QWidget):
                                     widget.__class__
                                 )
                             )
+
+        if 'experiment' in settings:
+            ex_settings = settings['experiment']
+            self.file_selector.set_table(
+                pd.DataFrame(
+                    [
+                        ex_settings['file_paths'],
+                        ex_settings['shortnames'],
+                        ex_settings['fractions']
+                    ]
+                ).T
+            )
+
+            self.results_path.setText(ex_settings['results_path'])
+
+        if 'fasta' in settings:
+            fasta_settings = settings['fasta']
+
+            self.fasta_selector.set_table(pd.DataFrame(
+                [fasta_settings['fasta_paths']]).T
+            )
+
+
+
+        QMessageBox.about(self, "Information", "Settings loaded.")

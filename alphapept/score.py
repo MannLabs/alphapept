@@ -270,46 +270,28 @@ def get_ML_features(df, protease='trypsin', **kwargs):
     df['n_AA']= df['naked_sequence'].str.len()
     df['matched_ion_fraction'] = df['hits']/(2*df['n_AA'])
 
-    #df['decoy_reversed_seq'] = df['naked_sequence']
-    #df.loc[df['decoy'] == True, 'decoy_reversed_seq'] = df['decoy_reversed_seq'].apply(lambda x: x[::-1])
     df['n_missed'] = df['naked_sequence'].apply(lambda x: count_missed_cleavages(x, protease))
     df['n_internal'] = df['naked_sequence'].apply(lambda x: count_internal_cleavages(x, protease))
-    #df = df.drop(columns=['decoy_reversed_seq'])
 
-    mz_bin, mz_count = np.unique(np.floor(df.mz/100), return_counts=True)
-    mz_count = np.log(mz_count)
-    df['ln_mz_range'] = df['mz'].apply(lambda x: mz_count[mz_bin == np.floor(x/100)])
-    df = df.astype({"ln_mz_range": float})
-
-    df['charge_'] = df['charge']
-    df = pd.get_dummies(df, columns=['charge'])
-    df = df.rename(columns={'charge_': 'charge'})
-
-    count_seq = df.groupby('naked_sequence')['naked_sequence'].count()
-    df['ln_sequence'] = np.log(count_seq[df['naked_sequence']].values)
     df['x_tandem'] = get_x_tandem_score(df)
 
     return df
 
 def train_RF(df,
-             features = ['y_hits','b_hits','matched_int',
-                         'delta_m_ppm','abs_delta_m_ppm',
-                        'charge_2','charge_3','charge_4','charge_5',
-                        'n_AA','n_missed','n_internal','ln_sequence','x_tandem',
-                        'db_mass_density','db_weighted_mass_density',
-                        'db_mass_density_digit','db_weighted_mass_density_digit',
-                        'hits','matched_ion_fraction','ln_mz_range'],
+             exclude_features = ['feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence'],
              train_fdr_level = 0.1,
-             ini_score = 'y_hits',
+             ini_score = 'x_tandem',
              min_train = 5000,
              test_size = 0.8,
              max_depth = [5,25,50],
              max_leaf_nodes = [150,200,250],
              n_jobs=3,
              scoring='accuracy',
-             plot = True,
+             plot = False,
              random_state = 42,
              **kwargs):
+
+    features = [_ for _ in df.columns if _ not in exclude_features]
 
     # Setup ML pipeline
     scaler = StandardScaler()
@@ -361,10 +343,17 @@ def train_RF(df,
     logging.info('Testing on {} targets and {} decoys'.format(np.sum(y_test),X_test.shape[0]-np.sum(y_test)))
     logging.info('The test {} was {}'.format(scoring, cv.score(X_test, y_test)))
 
+    feature_importances=cv.best_estimator_.named_steps['clf'].feature_importances_
+    indices = np.argsort(feature_importances)[::-1][:40]
+
+    top_features = X.columns[indices][:40]
+    top_score = feature_importances[indices][:40]
+
+    feature_dict = dict(zip(top_features, top_score))
+    logging.info(f"Top features {feature_dict}")
+
     # Inspect feature importances
     if plot:
-        feature_importances=cv.best_estimator_.named_steps['clf'].feature_importances_
-        indices = np.argsort(feature_importances)[::-1][:40]
         g = sns.barplot(y=X.columns[indices][:40],
                         x = feature_importances[indices][:40],
                         orient='h', palette='RdBu')
@@ -374,20 +363,15 @@ def train_RF(df,
         g.set_title("Feature importance")
         plt.show()
 
-    return cv
+    return cv, features
 
 def score_ML(df,
              trained_classifier,
-             features = ['y_hits','b_hits','matched_int',
-                         'delta_m_ppm','abs_delta_m_ppm',
-                        'charge_2','charge_3','charge_4','charge_5',
-                        'n_AA','n_missed','n_internal','ln_sequence','x_tandem',
-                        'db_mass_density','db_weighted_mass_density',
-                        'db_mass_density_digit','db_weighted_mass_density_digit',
-                        'hits','matched_ion_fraction','ln_mz_range'],
+             features = None,
             fdr_level = 0.01,
             plot=True,
              **kwargs):
+
     logging.info('Scoring using Machine Learning')
     # Apply the classifier to the entire dataset
     df_new = df.copy()
@@ -401,13 +385,7 @@ def score_ML(df,
 
 def filter_with_ML(df,
              trained_classifier,
-             features = ['y_hits','b_hits','matched_int',
-                         'delta_m_ppm','abs_delta_m_ppm',
-                        'charge_2','charge_3','charge_4','charge_5',
-                        'n_AA','n_missed','n_internal','ln_sequence','x_tandem',
-                        'db_mass_density','db_weighted_mass_density',
-                        'db_mass_density_digit','db_weighted_mass_density_digit',
-                        'hits','matched_ion_fraction','ln_mz_range'],
+             features = None,
             fdr_level = 0.01,
             plot=True,
              **kwargs):
@@ -579,8 +557,8 @@ def score_hdf(to_process):
         df = get_ML_features(df, **settings['fasta'])
 
         if settings["general"]["score"] == 'random_forest':
-            cv = train_RF(df)
-            df = filter_with_ML(df, cv)
+            cv, features = train_RF(df)
+            df = filter_with_ML(df, cv, features = features)
         elif settings["general"]["score"] == 'x_tandem':
             df = filter_with_x_tandem(df)
         else:
