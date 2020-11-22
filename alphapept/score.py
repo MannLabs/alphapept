@@ -560,7 +560,7 @@ def score_hdf(to_process):
             cv, features = train_RF(df)
             df = filter_with_ML(df, cv, features = features)
         elif settings["general"]["score"] == 'x_tandem':
-            df = filter_with_x_tandem(df, features = features)
+            df = filter_with_x_tandem(df)
         else:
             raise NotImplementedError('Scoring method {} not implemented.'.format(settings["general"]["score"]))
 
