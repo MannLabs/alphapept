@@ -481,7 +481,7 @@ def get_hill_data(hills, centroids, callback=None):
 
     centroid_dtype = [("mz", float), ("int", np.int64), ("scan_no", int), ("rt", float)]
 
-    hill_data = []
+    hill_data = List()
 
     for idx, hill in enumerate(hills):
         hill_data.append(np.array([centroids[_[0]][_[1]] for _ in hill], dtype=centroid_dtype))
@@ -503,8 +503,8 @@ def get_hill_data(hills, centroids, callback=None):
 
     sortindex = np.argsort(hill_stats[:, 2])
     sorted_stats = hill_stats[sortindex]
-    sorted_hills = np.array(hills)[sortindex]
-    sorted_data = np.array(hill_data)[sortindex]
+    sorted_hills = np.array(hills, dtype='object')[sortindex]
+    sorted_data = np.array(hill_data, dtype='object')[sortindex]
 
     sorted_stats = np.core.records.fromarrays(sorted_stats.T, dtype=stats_dtype)
 
@@ -1335,8 +1335,9 @@ import logging
 import os
 from .search import query_data_to_features
 import alphapept.io
+import functools
 
-def find_and_save_features(to_process):
+def find_and_save_features(to_process, callback = None):
     """
     Wrapper for feature finding
     """
@@ -1366,22 +1367,36 @@ def find_and_save_features(to_process):
     else:
 
         if datatype == 'thermo':
+
+            def progress_wrapper(step, n_steps, current):
+                if callback:
+                    callback(step/n_steps+current/n_steps)
+
+            n_steps = 8
+
             logging.info('Feature finding on {}'.format(path))
-            centroids = raw_to_centroid(query_data)
+            centroids = raw_to_centroid(query_data, callback = functools.partial(progress_wrapper, 0, n_steps))
             logging.info('Loaded {:,} centroids.'.format(len(centroids)))
-            completed_hills = get_hills(centroids, buffer_size=500)
+
+            completed_hills = get_hills(centroids, buffer_size=500, callback = functools.partial(progress_wrapper, 1, n_steps))
             logging.info('A total of {:,} hills extracted. Average hill length {:.2f}'.format(len(completed_hills), np.mean([len(_) for _ in completed_hills])))
-            splitted_hills = split_hills(completed_hills, centroids, smoothing=1)
+
+            splitted_hills = split_hills(completed_hills, centroids, smoothing=1, callback = functools.partial(progress_wrapper, 2, n_steps))
             logging.info('Split {:,} hills into {:,} hills'.format(len(completed_hills), len(splitted_hills)))
-            filtered_hills = filter_hills(splitted_hills, centroids)
+
+            filtered_hills = filter_hills(splitted_hills, centroids, callback = functools.partial(progress_wrapper, 3, n_steps))
             logging.info('Filtered {:,} hills. Remaining {:,} hills'.format(len(splitted_hills), len(filtered_hills)))
-            sorted_hills, sorted_stats, sorted_data = get_hill_data(filtered_hills, centroids)
+
+            sorted_hills, sorted_stats, sorted_data = get_hill_data(filtered_hills, centroids, callback = functools.partial(progress_wrapper, 4, n_steps))
             logging.info('Extracting hill stats complete')
-            pre_isotope_patterns = get_edges(sorted_stats, sorted_data)
+
+            pre_isotope_patterns = get_edges(sorted_stats, sorted_data, callback = functools.partial(progress_wrapper, 5, n_steps))
             logging.info('Found {:,} pre isotope patterns.'.format(len(pre_isotope_patterns)))
-            isotope_patterns, isotope_charges = get_isotope_patterns(pre_isotope_patterns, sorted_stats, sorted_data, averagine_aa, isotopes)
+
+            isotope_patterns, isotope_charges = get_isotope_patterns(pre_isotope_patterns, sorted_stats, sorted_data, averagine_aa, isotopes, callback = functools.partial(progress_wrapper, 6, n_steps))
             logging.info('Extracted {:,} isotope patterns.'.format(len(isotope_patterns)))
-            feature_table = feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorted_data, sorted_hills, query_data)
+
+            feature_table = feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorted_data, sorted_hills, query_data, callback = functools.partial(progress_wrapper, 7, n_steps))
             logging.info('Report complete.')
 
         elif datatype == 'bruker':
@@ -1423,7 +1438,7 @@ def find_and_save_features_parallel(path_list, settings, callback=None):
         logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}')
 
     if len(to_process) == 1:
-        find_and_save_features(to_process[0])
+        find_and_save_features(to_process[0], callback = callback)
     else:
         with Pool(n_processes) as p:
             max_ = len(to_process)

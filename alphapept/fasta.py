@@ -496,7 +496,8 @@ def check_sequence(element, AAs):
     Checks wheter a sequence from a FASTA entry contains valid AAs
     """
     if not set(element['sequence']).issubset(AAs):
-        logging.error('This FASTA entry contains unknown AAs and will be skipped: \n {}\n'.format(element))
+        unknown = set(element['sequence']) - set(AAs)
+        logging.error(f'This FASTA entry contains unknown AAs {unknown} and will be skipped: \n {element}\n')
         return False
     else:
         return True

@@ -1,12 +1,10 @@
-from PyQt5.QtCore import QUrl, QSize, QCoreApplication, Qt
-from PyQt5.QtWidgets import QFileDialog, QMessageBox, QTableView, QTabWidget, QProgressBar, QGroupBox, QComboBox, QPushButton, QStackedWidget, QWidget, QMainWindow, QApplication, QStyleFactory, QHBoxLayout, QVBoxLayout, QLabel, QSpacerItem, QSizePolicy
+from PyQt5.QtCore import QDir, QUrl, QSize, QCoreApplication, Qt
+from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QTableView, QTabWidget, QProgressBar, QGroupBox, QComboBox, QPushButton, QStackedWidget, QWidget, QMainWindow, QApplication, QStyleFactory, QHBoxLayout, QVBoxLayout, QLabel, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QIcon, QPixmap, QMovie, QDesktopServices
-
 
 import sys
 import os
 import traceback
-
 
 from alphapept.stylesheets import (
     big_font,
@@ -32,7 +30,7 @@ from alphapept.__version__ import URL_ISSUE
 from alphapept.__version__ import URL_CONTRIBUTE
 
 
-dark_stylesheet = qdarkstyle.load_stylesheet_pyqt5()
+#dark_stylesheet = qdarkstyle.load_stylesheet_pyqt5()
 
 _this_file = os.path.abspath(__file__)
 _this_directory = os.path.dirname(_this_file)
@@ -56,17 +54,6 @@ if not os.path.isfile(BUSY_INDICATOR_PATH):
     raise FileNotFoundError(
         'Busy Indicator - Path {}'.format(BUSY_INDICATOR_PATH)
     )
-
-
-def cancel_dialogs():
-    dialogs = [_ for _ in _dialogs]
-    for dialog in dialogs:
-        if isinstance(dialog, ProgressDialog):
-            dialog.cancel()
-        else:
-            dialog.close()
-    QCoreApplication.instance().processEvents()  # just in case...
-
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -105,6 +92,7 @@ class MainWindow(QMainWindow):
         self.setMinimumSize(QSize(1024, 800))
 
         self.centralwidget = QWidget(self)
+        dark_stylesheet = qdarkstyle.load_stylesheet_pyqt5()
         self.centralwidget.setStyleSheet(dark_stylesheet)
 
         self.horizontalLayout = QHBoxLayout(self.centralwidget)
@@ -191,12 +179,17 @@ class MainWindow(QMainWindow):
             ["Filename", "Shortname", "Fraction"]
         )
         self.files_layout.addWidget(QLabel("Experimental files"))
-
         self.files_layout.addWidget(self.file_selector)
 
         self.files_layout.addWidget(QLabel("FASTA files"))
         self.fasta_selector = FastaFileSelector(["Filename"])
         self.files_layout.addWidget(self.fasta_selector)
+
+        self.files_layout.addWidget(QLabel("Set path to results"))
+        self.results_path = QPushButton('...')
+        self.results_path.clicked.connect(self.set_results_path)
+        self.files_layout.addWidget(self.results_path)
+
 
         self.files_layout.addItem(
             QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
@@ -218,7 +211,7 @@ class MainWindow(QMainWindow):
         self.combo_settings.addItem("default")
         self.settings_layout.addWidget(self.combo_settings)
 
-        self.settingsWidget = SettingsEdit()
+        self.settingsWidget = SettingsEdit(fasta_selector = self.fasta_selector, file_selector = self.file_selector, results_path = self.results_path)
         self.settings_layout.addWidget(self.settingsWidget)
         self.button_layout = QHBoxLayout()
         self.btn_load_settings = QPushButton("Load")
@@ -381,7 +374,7 @@ class MainWindow(QMainWindow):
 
         # Add files here.. select with dropdown columns
         self.explore_files = QComboBox()
-        self.explore_files.setStyleSheet("QListView::item {height:20px;}")
+
         self.verticalLayout_3.addWidget(self.explore_files)
 
         self.explore_files.currentIndexChanged.connect(
@@ -484,7 +477,6 @@ class MainWindow(QMainWindow):
                 if _:
                     base, ext = os.path.splitext(_)
                     hdf_path = base+'.ms_data.hdf'
-
                     if os.path.isfile(hdf_path):
                         selectable.append(hdf_path)
 
@@ -494,8 +486,8 @@ class MainWindow(QMainWindow):
                 if os.path.isfile(evidence_path):
                     selectable.append(evidence_path)
 
-                self.explore_files.clear()
-                self.explore_files.addItems(selectable)
+        self.explore_files.clear()
+        self.explore_files.addItems(selectable)
 
     def page_help(self):
         self.stackedWidget.setCurrentIndex(4)
@@ -517,7 +509,6 @@ class MainWindow(QMainWindow):
         paths = [_.replace("\\", "/") for _ in paths]
 
         settings['experiment']['file_paths'] = paths
-
         shortnames = files['Shortname'].values.tolist()
 
         if None in shortnames:
@@ -548,6 +539,15 @@ class MainWindow(QMainWindow):
         settings['fasta']['fasta_paths'] = fasta_paths
         settings['experiment']['alphapept_version'] = VERSION_NO
 
+        if (self.results_path.text() == '...') or (self.results_path.text() == ''):
+            if len(settings['experiment']['file_paths']) > 0:
+                base, file = os.path.split(settings['experiment']['file_paths'][0])
+                new_path = os.path.join(base,'results.hdf')
+                new_path = new_path.replace('\\','/')
+                self.results_path.setText(new_path)
+
+        settings['experiment']['results_path'] = self.results_path.text()
+
         self.settings = settings
 
         return settings
@@ -565,10 +565,10 @@ class MainWindow(QMainWindow):
             self.tabWidget.clear()
             for group in groups:
                 view = QTableView()
-                model = pandasModel(pd.read_hdf(file, key=group))
+                #model = pandasModel(pd.read_hdf(file, key=group))
                 self.tabWidget.addTab(view, group)
-                view.setModel(model)
-                view.show()
+                #view.setModel(model)
+                #view.show()
 
     def load_settings(self):
         path, ext = QFileDialog.getOpenFileName(
@@ -579,25 +579,7 @@ class MainWindow(QMainWindow):
                 # try:
                 settings = yaml.load(settings_file, Loader=yaml.FullLoader)
                 self.settingsWidget.set_settings(settings)
-                ex_settings = settings['experiment']
-                fasta_settings = settings['fasta']
-
-                self.fasta_selector.set_table(pd.DataFrame(
-                    [fasta_settings['fasta_paths']]).T
-                )
-                self.file_selector.set_table(
-                    pd.DataFrame(
-                        [
-                            ex_settings['file_paths'],
-                            ex_settings['shortnames'],
-                            ex_settings['fractions']
-                        ]
-                    ).T
-                )
-
                 logging.info('Loaded settings from {}.'.format(path))
-                # except Exception as e:
-                    # logging.error('The following error occured loading the settings field: {}'.format(e))
 
     def save_settings(self):
         settings = self.read_settings()
@@ -609,6 +591,24 @@ class MainWindow(QMainWindow):
             with open(path, "w") as file:
                 yaml.dump(settings, file)
 
+    def set_results_path(self):
+        filetype = '.h'
+        dialog = QFileDialog(self)
+        dialog.setWindowTitle('Select path')
+        dialog.setNameFilter('hdf(*.hdf)')
+        dialog.setDirectory(QDir.currentPath())
+        dialog.setFileMode(QFileDialog.AnyFile)
+
+        if dialog.exec_() == QDialog.Accepted:
+            path = dialog.selectedFiles()[0]
+            path, ext = os.path.splitext(path)
+            if not ext:
+                path = path+'.hdf'
+        else:
+            path = None
+        if path:
+            self.results_path.setText(path)
+
     def check_settings(self):
         # TODO: Sanity check for settings
         print("not implemented yet..")
@@ -617,12 +617,10 @@ class MainWindow(QMainWindow):
         self.progress_current.setValue(int(value*100))
 
     def progress_overall_changed(self, value):
-        self.progress_overall.setValue(value)
+        self.progress_overall.setValue(value*100)
 
     def current_step_changed(self, task):
-        print(task)
-        logging.info(task)
-        self.current_task_label.setText(task)
+        self.current_task_label.setText(f"Current Task: {task}")
 
     def start(self):
         logging.info("Started processing.")
@@ -646,7 +644,7 @@ class MainWindow(QMainWindow):
         self.searchthread.global_progress_update.connect(
             self.progress_overall_changed
         )
-        # self.searchthread.task_update.connect(self.current_step_changed)
+        self.searchthread.task_update.connect(self.current_step_changed)
 
         self.searchthread.start()
 
@@ -670,13 +668,13 @@ def main(close=False):
     app.processEvents()
 
     def excepthook(type, value, tback):
-        cancel_dialogs()
         message = "".join(traceback.format_exception(type, value, tback))
-        errorbox = QMessageBox.critical(
-            window,
+        errorbox = QMessageBox.warning(
+            main_window,
             "An error occured",
             message
         )
+        #errorbox.set_stylesheet(dark_stylesheet)
         errorbox.exec_()
         sys.__excepthook__(type, value, tback)
 

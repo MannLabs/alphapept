@@ -944,7 +944,7 @@ def _read_DDA_query_data(
         query_data = load_bruker_raw(
             file_name,
             most_abundant,
-            callback=None,
+            callback=callback,
         )
     else:
         raise NotImplementedError(f'File extension {ext} not understood.')
