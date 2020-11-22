@@ -158,6 +158,7 @@ class FileSelector(QWidget):
 
     def set_table(self, table):
         self.remove_btns = []
+        self.files = []
         columns = table.columns
         self.tableWidget.setRowCount(len(table))
         for row in range(len(table)):
@@ -169,7 +170,10 @@ class FileSelector(QWidget):
                 )
             btn = QPushButton('X')
             self.remove_btns.append(btn)
+            btn.clicked.connect(self.remove_file)
             self.tableWidget.setCellWidget(row, idx+1, btn)
+
+            self.files.append(table.iloc[row, 0])
 
         self.tableWidget.resizeColumnsToContents()
 
