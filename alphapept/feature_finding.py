@@ -316,7 +316,7 @@ def get_minima(y):
     return minima
 
 # Cell
-def split_hills(hills, centroids, smoothing = 1, split_level=1.3, callback=None):
+def split_hills(hills, centroids, smoothing = 1, split_level=5, callback=None):
     """
     Wrapper to split list of hills
     """
@@ -925,7 +925,7 @@ def mz_to_mass(mz, charge):
 
 
 @njit
-def get_minpos(y, split=1.3):
+def get_minpos(y, split=5):
     """
     Function to get a list of minima in a trace.
     A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.
@@ -1269,8 +1269,10 @@ def convert_bruker(feature_path):
 
     M_PROTON = mass_dict['Proton']
     feature_table['Mass'] = feature_table['MZ'].values * feature_table['Charge'].values - feature_table['Charge'].values*M_PROTON
-    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "Mobility": "mobility", "Charge":"charge","Intensity":'int_sum'})
+    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "RT_lower":"rt_start", "RT_upper":"rt_end", "Mobility": "mobility", "Mobility_lower": "mobility_lower", "Mobility_upper": "mobility_upper", "Charge":"charge","Intensity":'int_sum'})
     feature_table['rt_apex'] = feature_table['rt_apex']/60
+    feature_table['rt_start'] = feature_table['rt_start']/60
+    feature_table['rt_end'] = feature_table['rt_end']/60
 
     return feature_table
 
@@ -1451,7 +1453,7 @@ import pandas as pd
 import numpy as np
 
 
-def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=3):
+def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=5):
     """
     Map MS1 features to MS2 based on rt and mz
     if ccs is included also add
@@ -1502,6 +1504,9 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
 
         dist, idx = matching_tree.query(ref_points, k=n_neighbors)
 
+
+    ref_matched = np.zeros(ref_points.shape[0], dtype=np.bool_)
+
     all_df = []
     for neighbor in range(n_neighbors):
         if use_mob:
@@ -1527,15 +1532,55 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
         ref_df['query_idx'] = ref_df.index
         ref_df['feature_idx'] = idx[:,neighbor]
 
-        for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+        for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm','mobility_lower','mobility_upper']:
             if field in feature_table.keys():
                 ref_df[field] = feature_table.iloc[idx[:,neighbor]][field].values
 
-        ref_df['dist'] = dist[:,neighbor]
+        rt_check = (ref_df['rt_start'] <= ref_df['rt']) & (ref_df['rt'] <= ref_df['rt_end'])
 
-        ref_df = ref_df[ref_df['dist']<1]
+        # check isolation window (win=3)
+        mass_check = np.abs(ref_df['mz_offset'].values) <= 3
+
+        _check = rt_check & mass_check
+        if use_mob:
+            mob_check = (ref_df['mobility_lower'] <= ref_df['mobility']) & (ref_df['mobility'] <= ref_df['mobility_upper'])
+            _check &= mob_check
+
+        ref_matched |= _check
+        ref_df['dist'] = dist[:,neighbor]
+        ref_df = ref_df[_check]
+
+        #ref_df['dist'] = dist[:,neighbor]
+        #ref_matched |= (ref_df['dist']<1)
+        #ref_df = ref_df[ref_df['dist']<1]
 
         all_df.append(ref_df)
+
+    if use_mob:
+        unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2'], query_data['mobility']]).T, columns=['rt', 'mass', 'mz', 'charge','mobility'])
+    else:
+        unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'mz', 'charge'])
+    unmatched_ref = unmatched_ref[~ref_matched]
+    unmatched_ref['mass_matched'] = unmatched_ref['mass']
+    unmatched_ref['mass_offset'] = 0
+    unmatched_ref['rt_matched'] = unmatched_ref['rt']
+    unmatched_ref['rt_offset'] = 0
+    unmatched_ref['mz_matched'] = unmatched_ref['mz']
+    unmatched_ref['mz_offset'] = 0
+    unmatched_ref['charge_matched'] = unmatched_ref['charge']
+    unmatched_ref['query_idx'] = unmatched_ref.index
+    unmatched_ref['feature_idx'] = 0
+
+    if use_mob:
+        ref_df['mobility_matched'] = unmatched_ref['mobility']
+        ref_df['mobility_offset'] = 0
+
+    for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+        if field in feature_table.keys():
+            unmatched_ref[field] = 0
+    unmatched_ref['dist'] = 0
+
+    all_df.append(unmatched_ref)
 
     features = pd.concat(all_df)
 
