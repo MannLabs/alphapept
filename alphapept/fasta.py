@@ -2,7 +2,7 @@
 
 __all__ = ['get_missed_cleavages', 'cleave_sequence', 'count_missed_cleavages', 'count_internal_cleavages', 'parse',
            'list_to_numba', 'get_decoy_sequence', 'swap_KR', 'swap_AL', 'get_decoys', 'add_decoy_tag', 'add_fixed_mods',
-           'get_mod_pos', 'get_isoforms', 'add_variable_mods', 'add_fixed_mod_terminal', 'add_fixed_mods_terminal',
+           'add_variable_mod', 'get_isoforms', 'add_variable_mods', 'add_fixed_mod_terminal', 'add_fixed_mods_terminal',
            'add_variable_mods_terminal', 'get_unique_peptides', 'generate_peptides', 'get_precmass', 'get_fragmass',
            'get_frag_dict', 'get_spectrum', 'get_spectra', 'read_fasta_file', 'read_fasta_file_entries',
            'check_sequence', 'add_to_pept_dict', 'merge_pept_dicts', 'generate_fasta_list', 'generate_database',
@@ -203,44 +203,48 @@ def add_fixed_mods(seqs, mods_fixed, **kwargs):
         return seqs
 
 # Cell
-def get_mod_pos(variable_mods_r, sequence):
-    """
-    Returns a list with of tuples with all possibilities for modified an unmodified AAs.
-    """
-    modvar = []
-    for c in sequence:
-        if c in variable_mods_r.keys():
-            modvar.append((c, variable_mods_r[c]))
-        else:
-            modvar.append((c,))
+def add_variable_mod(peps, mods_variable_dict):
+    peptides = []
+    for pep in peps:
+        for mod in mods_variable_dict:
+            for i in range(len(pep)):
+                c = pep[i]
+                if c in mods_variable_dict:
+                    peptides.append(pep[:i]+[mods_variable_dict[c]]+pep[i+1:])
 
-    return modvar
+    return peptides
 
-# Cell
 
-from itertools import product
-def get_isoforms(variable_mods_r, sequence, max_isoforms):
+def get_isoforms(mods_variable_dict, peptide, max_isoforms):
     """
     Function to generate isoforms for a given peptide - returns a list of isoforms.
     The original sequence is included in the list
     """
-    modvar = get_mod_pos(variable_mods_r, sequence)
-    isoforms = []
-    i = 0
-    for o in product(*modvar):
-        if i < max_isoforms:
-            i += 1
-            isoforms.append("".join(o))
+    pep = list(parse(peptide))
 
-        else:
+    peptides = [pep]
+    new_peps = peptides
+    while len(peptides) < max_isoforms:
+        new_peps = add_variable_mod(new_peps, mods_variable_dict)
+        if len(new_peps) == 0:
             break
+        peptides.extend(new_peps)
 
-    return isoforms
+    peptides = [''.join(_) for _ in peptides]
+
+    return peptides
 
 # Cell
 from itertools import chain
 
 def add_variable_mods(peptide_list, mods_variable, max_isoforms, **kwargs):
+    #the peptide_list originates from one peptide already -> limit isoforms here
+
+    max_ = max_isoforms - len(peptide_list) + 1
+
+    if max_ < 0:
+        max_ = 0
+
     if not mods_variable:
         return peptide_list
     else:
@@ -248,7 +252,7 @@ def add_variable_mods(peptide_list, mods_variable, max_isoforms, **kwargs):
         for _ in mods_variable:
             mods_variable_r[_[-1]] = _
 
-        peptide_list = [get_isoforms(mods_variable_r, peptide, max_isoforms) for peptide in peptide_list]
+        peptide_list = [get_isoforms(mods_variable_r, peptide, max_) for peptide in peptide_list]
         return list(chain.from_iterable(peptide_list))
 
 # Cell
@@ -322,25 +326,30 @@ def generate_peptides(peptide, **kwargs):
     peptides = []
     [peptides.extend(cleave_sequence(_, **kwargs)) for _ in mod_peptide]
 
-    #Regular peptides
-    mod_peptides = add_fixed_mods(peptides, **kwargs)
-    mod_peptides = add_fixed_mods_terminal(mod_peptides, **kwargs)
-    mod_peptides = add_variable_mods_terminal(mod_peptides, **kwargs)
-    mod_peptides = add_variable_mods(mod_peptides, **kwargs)
+    all_peptides = []
+    for peptide in peptides:
+        #Regular peptides
+        mod_peptides = add_fixed_mods([peptide], **kwargs)
+        mod_peptides = add_fixed_mods_terminal(mod_peptides, **kwargs)
+        mod_peptides = add_variable_mods_terminal(mod_peptides, **kwargs)
+        mod_peptides = add_variable_mods(mod_peptides, **kwargs)
 
-    #Decoys:
-    decoy_peptides = get_decoys(peptides, **kwargs)
+        all_peptides.extend(mod_peptides)
 
-    mod_peptides_decoy = add_fixed_mods(decoy_peptides, **kwargs)
-    mod_peptides_decoy = add_fixed_mods_terminal(mod_peptides_decoy, **kwargs)
-    mod_peptides_decoy = add_variable_mods_terminal(mod_peptides_decoy, **kwargs)
-    mod_peptides_decoy = add_variable_mods(mod_peptides_decoy, **kwargs)
+        #Decoys:
+        decoy_peptides = get_decoys([peptide], **kwargs)
 
-    mod_peptides_decoy = add_decoy_tag(mod_peptides_decoy)
+        mod_peptides_decoy = add_fixed_mods(decoy_peptides, **kwargs)
+        mod_peptides_decoy = add_fixed_mods_terminal(mod_peptides_decoy, **kwargs)
+        mod_peptides_decoy = add_variable_mods_terminal(mod_peptides_decoy, **kwargs)
+        mod_peptides_decoy = add_variable_mods(mod_peptides_decoy, **kwargs)
 
-    mod_peptides.extend(mod_peptides_decoy)
+        mod_peptides_decoy = add_decoy_tag(mod_peptides_decoy)
 
-    return mod_peptides
+
+        all_peptides.extend(mod_peptides_decoy)
+
+    return all_peptides
 
 # Cell
 from numba import njit
