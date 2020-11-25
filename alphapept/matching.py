@@ -93,7 +93,7 @@ def align(deltas, filenames, weights=None):
 
     if weights is not None:
         reg = LinearRegression(fit_intercept=False).fit(matrix, deltas_.values, sample_weight = weights)
-        score= reg.score(matrix, deltas_.values, sample_weights = weights)
+        score= reg.score(matrix, deltas_.values, sample_weights = weights[not_nan])
     else:
         reg = LinearRegression(fit_intercept=False).fit(matrix, deltas_.values)
         score= reg.score(matrix, deltas_.values)
