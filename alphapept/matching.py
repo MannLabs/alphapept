@@ -92,8 +92,8 @@ def align(deltas, filenames, weights=None):
         logging.info('Low overlap between datasets detected. Alignment may fail.')
 
     if weights is not None:
-        reg = LinearRegression(fit_intercept=False).fit(matrix, deltas_.values, sample_weight = weights)
-        score= reg.score(matrix, deltas_.values, sample_weights = weights[not_nan])
+        reg = LinearRegression(fit_intercept=False).fit(matrix, deltas_.values, sample_weight = weights[not_nan])
+        score= reg.score(matrix, deltas_.values)
     else:
         reg = LinearRegression(fit_intercept=False).fit(matrix, deltas_.values)
         score= reg.score(matrix, deltas_.values)
