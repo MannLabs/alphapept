@@ -711,7 +711,7 @@ class SettingsEdit(QWidget):
 
     def set_settings(self, settings):
         for category in settings.keys():
-            if category != 'experiment':
+            if category not in ['experiment', 'summary']:
                 for subcategory in settings[category].keys():
                     if subcategory != 'fasta_paths':
                         value = settings[category][subcategory]
