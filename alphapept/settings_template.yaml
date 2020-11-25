@@ -131,7 +131,7 @@ fasta:
       e<^: EASItag 6-plex on peptide N-terminus
       itraq4K<^: iTRAQ 4-plex on peptide N-terminus
       itraq8K<^: iTRAQ 8-plex on peptide N-terminus
-      lys8>L: Lys 8 on peptide C-terminus
+      lys8>K: Lys 8 on peptide C-terminus
       pg<E: pyro-E
       pg<Q: pyro-Q
       tmt0<^: TMT zero on peptide N-terminus

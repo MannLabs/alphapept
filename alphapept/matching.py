@@ -11,11 +11,13 @@ import numpy as np
 import os
 import alphapept.io
 import functools
+from sklearn.linear_model import LinearRegression
 
 
 def calculate_distance(table_1, table_2, offset_cols, calib = False):
     """
     Calculate the distance, either relative or absolute
+    TODO: We could use a weighting factor
     """
 
     shared_precursors = list(set(table_1.index).intersection(set(table_2.index)))
@@ -23,10 +25,11 @@ def calculate_distance(table_1, table_2, offset_cols, calib = False):
     table_1_ = table_1.loc[shared_precursors]
     table_2_ = table_2.loc[shared_precursors]
 
-    table_1_ = table_1_.groupby('precursor').median()
-    table_2_ = table_2_.groupby('precursor').median()
+    table_1_ = table_1_.groupby('precursor').mean()
+    table_2_ = table_2_.groupby('precursor').mean()
 
     deltas = []
+
     for col in list(offset_cols.keys()):
         if calib:
             col_ = col+'_calib'
@@ -34,13 +37,13 @@ def calculate_distance(table_1, table_2, offset_cols, calib = False):
             col_ = col
 
         if offset_cols[col] == 'absolute':
-            deltas.append(np.nanmedian(table_1_[col_] - table_2_[col_]))
+            deltas.append(np.nanmean(table_1_[col_] - table_2_[col_]))
         elif offset_cols[col] == 'relative':
-            deltas.append(np.nanmedian((table_1_[col_] - table_2_[col_]) / (table_1_[col_] + table_2_[col_]) * 2))
+            deltas.append(np.nanmean((table_1_[col_] - table_2_[col_]) / (table_1_[col_] + table_2_[col_]) * 2))
         else:
             raise NotImplementedError(offset_cols[col_])
 
-    return deltas
+    return deltas, len(shared_precursors)
 
 def calib_table(table, delta, offset_cols):
     """
@@ -62,7 +65,7 @@ def calib_table(table, delta, offset_cols):
         else:
             raise NotImplementedError(offset_cols[col])
 
-def align(deltas, filenames):
+def align(deltas, filenames, weights=None):
     """
     Solve equation system
     """
@@ -78,8 +81,28 @@ def align(deltas, filenames):
         lines[start_idx:end_idx] = 1
         matrix.append(lines)
 
+    # Remove nan values
+
+    not_nan = ~deltas.isnull().any(axis=1)
     matrix = np.array(matrix)
-    x = np.linalg.lstsq(matrix, deltas.values, rcond=None)[0]
+    matrix = matrix[not_nan]
+    deltas_ = deltas[not_nan]
+
+    if len(deltas) < matrix.shape[1]:
+        logging.info('Low overlap between datasets detected. Alignment may fail.')
+
+    if weights is not None:
+        reg = LinearRegression(fit_intercept=False).fit(matrix, deltas_.values, sample_weight = weights)
+        score= reg.score(matrix, deltas_.values, sample_weights = weights)
+    else:
+        reg = LinearRegression(fit_intercept=False).fit(matrix, deltas_.values)
+        score= reg.score(matrix, deltas_.values)
+
+    logging.info(f"Regression socre is {score}")
+
+    x= reg.predict(np.eye(len(filenames)-1))
+
+    #x = np.linalg.lstsq(matrix, deltas_.values, rcond=None)[0] #Alternative w/o weights
 
     return x
 
@@ -96,6 +119,7 @@ def calculate_deltas(combos, calib = False, callback=None):
     callback = None
 
     deltas = pd.DataFrame()
+    weights = []
 
     for i, combo in enumerate(combos):
 
@@ -115,13 +139,15 @@ def calculate_deltas(combos, calib = False, callback=None):
         if len(deltas) == 0:
              deltas = pd.DataFrame(columns = cols)
 
-        dists = calculate_distance(df_1, df_2, offset_cols, calib = calib)
+        dists, weight = calculate_distance(df_1, df_2, offset_cols, calib = calib)
         deltas = deltas.append(pd.DataFrame([dists], columns = cols, index=[combo]))
+
+        weights.append(weight)
 
         if callback:
             callback((i+1)/len(combos))
 
-    return deltas, offset_cols
+    return deltas, np.array(weights), offset_cols
 
 
 def align_files(filenames, alignment, offset_cols):
@@ -149,7 +175,7 @@ def align_datasets(settings, callback=None):
     if len(filenames) > 1:
         combos = list(combinations(filenames, 2))
 
-        deltas, offset_cols = calculate_deltas(combos, callback=functools.partial(progress_wrapper, 0, 2))
+        deltas, weights, offset_cols = calculate_deltas(combos, callback=functools.partial(progress_wrapper, 0, 2))
 
         cols = list(offset_cols.keys())
 
@@ -158,7 +184,7 @@ def align_datasets(settings, callback=None):
 
         logging.info(f'Solving equation system')
 
-        alignment = pd.DataFrame(align(deltas, filenames), columns = cols)
+        alignment = pd.DataFrame(align(deltas, filenames, weights), columns = cols)
         alignment = pd.concat([pd.DataFrame(np.zeros((1, alignment.shape[1])), columns= cols), alignment])
         alignment -= alignment.mean()
 
@@ -168,7 +194,7 @@ def align_datasets(settings, callback=None):
 
         align_files(filenames, -alignment, offset_cols)
 
-        deltas, offset_cols = calculate_deltas(combos, calib=True, callback=functools.partial(progress_wrapper, 1, 2))
+        deltas, weights, offset_cols = calculate_deltas(combos, calib=True, callback=functools.partial(progress_wrapper, 1, 2))
 
         logging.info(f'Total deviation after calibration {deltas.abs().sum().to_dict()}')
         logging.info(f'Mean deviation after calibration {deltas.abs().mean().to_dict()}')
