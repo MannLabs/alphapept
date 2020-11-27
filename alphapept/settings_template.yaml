@@ -276,7 +276,7 @@ general:
     description: Use ppm instead of Dalton.
     type: checkbox
   score:
-    default: x_tandem
+    default: random_forest
     description: Scoring method.
     type: combobox
     value:
