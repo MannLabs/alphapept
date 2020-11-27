@@ -544,8 +544,8 @@ def get_hits(query_frag, query_int, db_frag, db_int, frag_type, mtol, ppm, losse
 
     pointer = 0
 
-    ion_range = np.arange(len(query_int))
-    db_range = np.arange(len(query_int))
+    ion_range = np.arange(len(query_frag))
+    db_range = np.arange(len(db_frag))
 
     for idx, off in enumerate(losses):
         hits = compare_frags(query_frag, db_frag-off, mtol, ppm)
