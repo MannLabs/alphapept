@@ -379,51 +379,41 @@ def get_fragmass(parsed_pep, mass_dict):
     frag_masses = np.zeros(n_frags, dtype=np.float64)
     frag_type = np.zeros(n_frags, dtype=np.int8)
 
-    # b-ions -> 0
+    # b-ions > 0
     n_frag = 0
+
     frag_m = mass_dict["Proton"]
-    for _ in parsed_pep[:-1]:
+    for idx, _ in enumerate(parsed_pep[:-1]):
         frag_m += mass_dict[_]
         frag_masses[n_frag] = frag_m
-        frag_type[n_frag] = 0
+        frag_type[n_frag] = (idx+1)
         n_frag += 1
 
-    # y-ions -> 1
+    # y-ions < 0
     frag_m = mass_dict["Proton"] + mass_dict["H2O"]
-    for _ in parsed_pep[::-1][:-1]:
+    for idx, _ in enumerate(parsed_pep[::-1][:-1]):
         frag_m += mass_dict[_]
         frag_masses[n_frag] = frag_m
-        frag_type[n_frag] = 1
+        frag_type[n_frag] = -(idx+1)
         n_frag += 1
 
     return frag_masses, frag_type
 
 # Cell
 def get_frag_dict(parsed_pep, mass_dict):
-    """
-    Calculate the masses of the fragment ions
-    """
-    n_frags = (len(parsed_pep) - 1) * 2
 
     frag_dict = {}
+    frag_masses, frag_type = get_fragmass(parsed_pep, constants.mass_dict)
 
-    # b-ions -> 0
-    n_frag = 0
-    frag_m = mass_dict["Proton"]
+    for idx, _ in enumerate(frag_masses):
 
-    for _ in parsed_pep[:-1]:
-        frag_m += mass_dict[_]
-        n_frag += 1
-
-        frag_dict['b' + str(n_frag)] = frag_m
-
-    # y-ions -> 1
-    n_frag = 0
-    frag_m = mass_dict["Proton"] + mass_dict["H2O"]
-    for _ in parsed_pep[::-1][:-1]:
-        frag_m += mass_dict[_]
-        n_frag += 1
-        frag_dict['y' + str(n_frag)] = frag_m
+        cnt = frag_type[idx]
+        if cnt > 0:
+            identifier = 'b'
+        else:
+            identifier = 'y'
+            cnt = -cnt
+        frag_dict[identifier+str(cnt)] = _
 
     return frag_dict
 
