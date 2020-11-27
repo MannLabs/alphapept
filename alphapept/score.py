@@ -557,8 +557,12 @@ def score_hdf(to_process):
         df = get_ML_features(df, **settings['fasta'])
 
         if settings["general"]["score"] == 'random_forest':
-            cv, features = train_RF(df)
-            df = filter_with_ML(df, cv, features = features)
+            try:
+                cv, features = train_RF(df)
+                df = filter_with_ML(df, cv, features = features)
+            except ValueError:
+                logging.info('ML failed. Defaulting to x_tandem score')
+                df = filter_with_x_tandem(df)
         elif settings["general"]["score"] == 'x_tandem':
             df = filter_with_x_tandem(df)
         else:

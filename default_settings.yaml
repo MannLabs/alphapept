@@ -43,7 +43,7 @@ general:
   find_features: true
   n_processes: 128
   ppm: true
-  score: x_tandem
+  score: random_forest
 matching:
   match_between_runs: true
   min_match_d: 3
