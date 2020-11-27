@@ -3,7 +3,7 @@
 __all__ = ['filter_score', 'filter_precursor', 'get_q_values', 'cut_fdr', 'cut_global_fdr', 'get_x_tandem_score',
            'score_x_tandem', 'filter_with_x_tandem', 'score_psms', 'get_ML_features', 'train_RF', 'score_ML',
            'filter_with_ML', 'get_protein_groups', 'perform_protein_grouping', 'score_hdf', 'score_hdf_parallel',
-           'protein_groups_hdf', 'protein_groups_hdf_parallel']
+           'get_ion', 'protein_groups_hdf', 'protein_groups_hdf_parallel', 'ion_dict']
 
 # Cell
 import numpy as np
@@ -595,6 +595,23 @@ def score_hdf_parallel(settings, callback=None):
                     callback((i+1)/max_)
 
 # Cell
+
+ion_dict = {}
+ion_dict[0] = ''
+ion_dict[1] = '-H20'
+ion_dict[2] = '-NH3'
+
+def get_ion(i, df, ions):
+    start = df['ion_idx'].iloc[i]
+    end = df['n_ions'].iloc[i]+start
+
+    ion = [('b'+str(int(_))).replace('b-','y') for _ in ions.iloc[start:end]['ion_index']]
+    losses = [ion_dict[int(_)] for _ in ions.iloc[start:end]['ion_type']]
+    ion = [a+b for a,b in zip(ion, losses)]
+    ints = ions.iloc[start:end]['ion_int'].astype('int').values
+
+    return ion, ints
+
 def protein_groups_hdf(to_process):
 
     skip = False
@@ -602,6 +619,7 @@ def protein_groups_hdf(to_process):
     ms_file = alphapept.io.MS_Data_File(path, is_overwritable=True)
     try:
         df = ms_file.read(dataset_name='peptide_fdr')
+        ions = ms_file.read(dataset_name='ions')
     except KeyError:
         skip = True
 
@@ -609,13 +627,28 @@ def protein_groups_hdf(to_process):
         df_pg = perform_protein_grouping(df, pept_dict, fasta_dict, callback = None)
 
         df_pg = cut_global_fdr(df_pg, analyte_level='protein',  plot=False, **settings['search'])
+        logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
+
+        logging.info('Extracting ions')
+
+        ion_list = []
+        ion_ints = []
+
+        for i in range(len(df_pg)):
+            ion, ints = get_ion(i, df_pg, ions)
+            ion_list.append(ion)
+            ion_ints.append(ints)
+
+        df_pg['ion_int'] = ion_ints
+        df_pg['ion_types'] = ion_list
+
+        logging.info('Extracting ions complete.')
 
         ms_file.write(df_pg, dataset_name="protein_fdr")
-
         base, ext = os.path.splitext(path)
         df_pg.to_csv(base+'_protein_fdr.csv')
 
-        logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
+        logging.info('Saving complete.')
 
 
 def protein_groups_hdf_parallel(settings, pept_dict, fasta_dict, callback=None):

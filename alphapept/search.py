@@ -3,9 +3,9 @@
 __all__ = ['compare_frags', 'ppm_to_dalton', 'get_idxs', 'compare_specs_parallel', 'compare_specs_single',
            'query_data_to_features', 'get_psms', 'frag_delta', 'intensity_fraction', 'intensity_product',
            'get_frag_mass_density_norm', 'mass_density_weighted_fragment_sum', 'mass_density_weighted_intensity_sum',
-           'b_y_hits', 'score_parallel', 'score_single', 'add_column', 'remove_column', 'get_sequences',
-           'get_score_columns', 'plot_hit', 'plot_psms', 'perform_search', 'store_hdf', 'search_db',
-           'search_parallel_db', 'search_fasta_block', 'search_parallel', 'mass_dict']
+           'b_y_hits', 'add_column', 'remove_column', 'get_hits', 'score', 'get_sequences', 'get_score_columns',
+           'plot_hit', 'plot_psms', 'perform_search', 'store_hdf', 'search_db', 'search_parallel_db',
+           'search_fasta_block', 'search_parallel', 'mass_dict']
 
 # Cell
 import logging
@@ -498,161 +498,16 @@ def mass_density_weighted_intensity_sum(query_int, query_frag, hits, mz_space, m
 def b_y_hits(frag_type, hits):
     """
     Count the number of b and y hits
-    hits usually start with b-ions (0), then y-ions (1)
+    hits usually start with b-ions > 0, then y-ions < 1
     """
     hits_index = hits > 0
 
     hit_types = frag_type[hits_index]
 
-    b_hits = np.sum(hit_types == 0)
-    y_hits = np.sum(hit_types == 1)
+    b_hits = np.sum(hit_types > 0)
+    y_hits = np.sum(hit_types < 0)
 
     return b_hits, y_hits
-
-# Cell
-@njit(parallel=True)
-def score_parallel(
-    psms,
-    query_masses,
-    query_frags,
-    query_ints,
-    query_indices,
-    db_masses,
-    db_frags,
-    frag_types,
-    mtol,
-    query_bounds,
-    db_bounds,
-    ppm,
-    db_ints = None,
-):
-
-    """
-    Extract values to calculate a score. Parallel version.
-
-    """
-    num_specs_scored = 0
-
-    delta_m = np.zeros(len(psms))
-    delta_m_ppm = np.zeros(len(psms))
-    total_int = np.zeros(len(psms))
-    matched_int = np.zeros(len(psms))
-    o_mass = np.zeros(len(psms))
-    o_mass_ppm = np.zeros(len(psms))
-    b_hits = np.zeros(len(psms))
-    y_hits = np.zeros(len(psms))
-
-    for i in prange(len(psms)):
-        query_idx = psms[i]["query_idx"]
-        db_idx = psms[i]["db_idx"]
-        query_idx_start = query_indices[query_idx]
-        query_idx_end = query_indices[query_idx + 1]
-        query_frag = query_frags[query_idx_start:query_idx_end]
-        query_int = query_ints[query_idx_start:query_idx_end]
-        db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
-        frag_type = frag_types[:, db_idx] [: db_bounds[db_idx] ]
-        o_mass[i] = query_masses[query_idx]  - db_masses[db_idx]
-        o_mass_ppm[i] = 2 * o_mass[i] / (query_masses[query_idx]  + db_masses[db_idx] ) * 1e6
-        total_intensity = np.sum(query_int)
-        hits = compare_frags(query_frag, db_frag, mtol, ppm)
-        mass, mass_ppm = frag_delta(query_frag, db_frag, hits)
-        delta_m[i] = np.mean(mass)
-        delta_m_ppm[i] = np.mean(mass_ppm)
-        total_int[i] = np.sum(query_int)
-        if db_ints is None:
-            db_int = None
-        else:
-            db_int = db_ints[i]
-
-        matched_int[i] = intensity_product(query_int, hits, db_int)
-
-        b_hit, y_hit = b_y_hits(frag_type, hits)
-        y_hits[i] = y_hit
-        b_hits[i] = b_hit
-        num_specs_scored += 1
-
-    return (
-        delta_m,
-        delta_m_ppm,
-        o_mass,
-        o_mass_ppm,
-        total_int,
-        matched_int,
-        b_hits,
-        y_hits,
-        num_specs_scored,
-    )
-
-
-@njit
-def score_single(
-    psms,
-    query_masses,
-    query_frags,
-    query_ints,
-    query_indices,
-    db_masses,
-    db_frags,
-    frag_types,
-    mtol,
-    query_bounds,
-    db_bounds,
-    ppm,
-    db_ints = None,
-):
-    """
-    Extract values to calculate a score. Single core version.
-    """
-    num_specs_scored = 0
-
-    delta_m = np.zeros(len(psms))
-    delta_m_ppm = np.zeros(len(psms))
-    total_int = np.zeros(len(psms))
-    matched_int = np.zeros(len(psms))
-    o_mass = np.zeros(len(psms))
-    o_mass_ppm = np.zeros(len(psms))
-    b_hits = np.zeros(len(psms))
-    y_hits = np.zeros(len(psms))
-
-    for i in range(len(psms)):
-        query_idx = psms[i]["query_idx"]
-        db_idx = psms[i]["db_idx"]
-        query_idx_start = query_indices[query_idx]
-        query_idx_end = query_indices[query_idx + 1]
-        query_frag = query_frags[query_idx_start:query_idx_end]
-        query_int = query_ints[query_idx_start:query_idx_end]
-        db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
-        frag_type = frag_types[:, db_idx] [: db_bounds[db_idx] ]
-        o_mass[i] = query_masses[query_idx]  - db_masses[db_idx]
-        o_mass_ppm[i] = 2 * o_mass[i] / (query_masses[query_idx]  + db_masses[db_idx] ) * 1e6
-        total_intensity = np.sum(query_int)
-        hits = compare_frags(query_frag, db_frag, mtol, ppm)
-        mass, mass_ppm = frag_delta(query_frag, db_frag, hits)
-        delta_m[i] = np.mean(mass)
-        delta_m_ppm[i] = np.mean(mass_ppm)
-        total_int[i] = np.sum(query_int)
-        if db_ints is None:
-            db_int = None
-        else:
-            db_int = db_ints[i]
-        matched_int[i] = intensity_product(query_int, hits, db_int)
-
-        b_hit, y_hit = b_y_hits(frag_type, hits)
-        y_hits[i] = y_hit
-        b_hits[i] = b_hit
-        num_specs_scored += 1
-
-    return (
-        delta_m,
-        delta_m_ppm,
-        o_mass,
-        o_mass_ppm,
-        total_int,
-        matched_int,
-        b_hits,
-        y_hits,
-        num_specs_scored,
-    )
 
 # Cell
 from numpy.lib.recfunctions import append_fields, drop_fields
@@ -679,6 +534,114 @@ def remove_column(recarray, name):
     return recarray
 
 # Cell
+from numba.typed import List
+@njit
+def get_hits(query_frag, query_int, db_frag, db_int, frag_type, mtol, ppm, losses):
+
+    max_array_size = len(db_frag)*len(losses)
+
+    ions = np.zeros((max_array_size, 8))
+
+    pointer = 0
+
+    ion_range = np.arange(len(query_int))
+    db_range = np.arange(len(query_int))
+
+    for idx, off in enumerate(losses):
+        hits = compare_frags(query_frag, db_frag-off, mtol, ppm)
+        n_hits = np.sum(hits>0)
+
+        ions[pointer:pointer+n_hits,0] = frag_type[hits>0] #type
+        ions[pointer:pointer+n_hits,1] = idx #ion-index
+
+        ions[pointer:pointer+n_hits,2] = query_int[hits[hits > 0] - 1] #query int
+        ions[pointer:pointer+n_hits,3] = db_int[hits > 0] #db int
+
+        ions[pointer:pointer+n_hits,4] = query_frag[hits[hits > 0] - 1] #query mass
+        ions[pointer:pointer+n_hits,5] = db_frag[hits > 0]-off # db mass
+
+        ions[pointer:pointer+n_hits,6] = ion_range[hits[hits > 0] - 1] # index to db entry
+        ions[pointer:pointer+n_hits,7] = db_range[hits > 0]-off # index to query entry
+
+        pointer += n_hits
+
+    ions = ions[:pointer,:]
+
+    return ions
+
+@njit
+def score(
+    psms,
+    query_masses,
+    query_frags,
+    query_ints,
+    query_indices,
+    db_masses,
+    db_frags,
+    frag_types,
+    mtol,
+    query_bounds,
+    db_bounds,
+    ppm,
+    psms_dtype,
+    db_ints = None,
+    parallel = False
+):
+
+    psms_ = np.zeros(len(psms), dtype=psms_dtype)
+
+    losses = [0, 18.01056468346, 17.03052] #H2O, NH3
+
+    ions_ = List()
+
+    for i in range(len(psms)):
+        query_idx = psms[i]["query_idx"]
+        db_idx = psms[i]["db_idx"]
+        query_idx_start = query_indices[query_idx]
+        query_idx_end = query_indices[query_idx + 1]
+        query_frag = query_frags[query_idx_start:query_idx_end]
+        query_int = query_ints[query_idx_start:query_idx_end]
+        db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
+        frag_type = frag_types[:, db_idx] [: db_bounds[db_idx] ]
+
+        if db_ints is None:
+            db_int = np.zeros(len(db_frag))
+        else:
+            db_int = db_ints[i]
+
+        ions = get_hits(query_frag, query_int, db_frag, db_int, frag_type, mtol, ppm, losses)
+
+        psms_['o_mass'][i] = query_masses[query_idx] - db_masses[db_idx]
+        psms_['o_mass_ppm'][i] = 2 * psms_['o_mass'][i] / (query_masses[query_idx]  + db_masses[db_idx] ) * 1e6
+
+        psms_['delta_m'][i] = np.mean(ions[:,4]-ions[:,5])
+        psms_['delta_m_ppm'][i] = np.mean(2 * psms_['delta_m'][i] / (ions[:,4]  + ions[:,5] ) * 1e6)
+
+        psms_['total_int'][i] = np.sum(query_int)
+        psms_['matched_int'][i] = np.sum(ions[:,2])
+        psms_['matched_int_ratio'][i] = psms_['matched_int'][i] / psms_['total_int'][i]
+        psms_['int_ratio'][i] = np.mean(ions[:,3]/ions[:,2])
+
+        psms_['b_hits'][i] = np.sum(ions[ions[:,1]==0][:,0]>0)
+        psms_['y_hits'][i] = np.sum(ions[ions[:,1]==0][:,0]<0)
+
+        psms_['b-H2O_hits'][i] = np.sum(ions[ions[:,1]==1][:,0]>0)
+        psms_['y-H2O_hits'][i] = np.sum(ions[ions[:,1]==1][:,0]<0)
+
+        psms_['b-NH3_hits'][i] = np.sum(ions[ions[:,1]==2][:,0]>0)
+        psms_['y-NH3_hits'][i] = np.sum(ions[ions[:,1]==2][:,0]<0)
+
+        i_shape = len(ions[:, 0])
+
+        psms_['n_ions'][i] = i_shape
+        ions_.append(ions)
+
+    return psms_, ions_
+
+
+# Cell
+
+from numba.typed import Dict
 def get_sequences(psms, db_seqs):
     """
     Get sequences to add them to a recarray
@@ -752,47 +715,36 @@ def get_score_columns(
         query_mz = query_data['mono_mzs2']
         query_rt = query_data['rt_list_ms2']
 
-    if parallel:
-        delta_m, delta_m_ppm, o_mass, o_mass_ppm, total_int, matched_int, b_hits, y_hits, num_specs_scored = score_parallel(
-            psms,
-            query_masses,
-            query_frags,
-            query_ints,
-            query_indices,
-            db_masses,
-            db_frags,
-            frag_types,
-            m_tol,
-            query_bounds,
-            db_bounds,
-            ppm,
-            db_ints,
-        )
-    else:
-        delta_m, delta_m_ppm, o_mass, o_mass_ppm, total_int, matched_int, b_hits, y_hits, num_specs_scored = score_single(
-            psms,
-            query_masses,
-            query_frags,
-            query_ints,
-            query_indices,
-            db_masses,
-            db_frags,
-            frag_types,
-            m_tol,
-            query_bounds,
-            db_bounds,
-            ppm,
-            db_ints,
-        )
 
-    psms = add_column(psms, delta_m, "delta_m")
-    psms = add_column(psms, delta_m_ppm, "delta_m_ppm")
-    psms = add_column(psms, total_int, "total_int")
-    psms = add_column(psms, o_mass, "o_mass")
-    psms = add_column(psms, o_mass_ppm, "o_mass_ppm")
-    psms = add_column(psms, matched_int, "matched_int")
-    psms = add_column(psms, b_hits, "b_hits")
-    psms = add_column(psms, y_hits, "y_hits")
+    loss_dict = Dict()
+    loss_dict[''] = 0.0
+    loss_dict['-H2O'] = 18.01056468346
+    loss_dict['-NH3'] = 17.03052
+
+    float_fields = ['o_mass', 'o_mass_ppm','delta_m','delta_m_ppm','matched_int_ratio','int_ratio']
+    int_fields = ['total_int','matched_int','n_ions'] + [a+_+'_hits' for _ in loss_dict for a in ['b','y']]
+
+    psms_dtype = np.dtype([(_,np.float32) for _ in float_fields] + [(_,np.int64) for _ in int_fields])
+
+    psms_, ions_,  = score(
+        psms,
+        query_masses,
+        query_frags,
+        query_ints,
+        query_indices,
+        db_masses,
+        db_frags,
+        frag_types,
+        m_tol,
+        query_bounds,
+        db_bounds,
+        ppm,
+        psms_dtype)
+
+    ions_ = np.vstack(ions_)
+
+    for _ in psms_.dtype.names:
+        psms = add_column(psms, psms_[_], _)
 
     rts = np.array(query_rt)[psms["query_idx"]]
     psms = add_column(psms, rts, 'rt')
@@ -800,7 +752,6 @@ def get_score_columns(
     seqs = get_sequences(psms, db_seqs)
     psms = add_column(psms, seqs, "sequence")
 
-#     mass = np.array(query_masses)[psms["query_idx"]]
     mass = np.array(query_masses)[psms["query_idx"]]
     mz = np.array(query_mz)[psms["query_idx"]]
     charge = np.array(query_charges)[psms["query_idx"]]
@@ -808,6 +759,8 @@ def get_score_columns(
     psms = add_column(psms, mass, "mass")
     psms = add_column(psms, mz, "mz")
     psms = add_column(psms, charge, "charge")
+
+    psms = add_column(psms, np.cumsum(psms['n_ions']), "ion_idx")
 
     psms = add_column(psms, np.char.add(np.char.add(psms['sequence'],"_"), psms['charge'].astype(int).astype(str)), 'precursor')
 
@@ -819,9 +772,9 @@ def get_score_columns(
             if key in features.keys():
                 psms = add_column(psms, features.loc[psms['query_idx']][key].values, key)
 
-    logging.info('Extracted columns from {:,} spectra.'.format(num_specs_scored))
+    logging.info(f'Extracted columns from {len(psms):,} spectra.')
 
-    return psms, num_specs_scored
+    return psms, ions_
 
 # Cell
 
@@ -1068,15 +1021,18 @@ def search_db(to_process):
 
         psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
         if len(psms) > 0:
-            psms, num_specs_scored = get_score_columns(psms, query_data, db_data, features, **settings["search"])
+            psms, ions = get_score_columns(psms, query_data, db_data, features, **settings["search"])
 
         if 'm_offset_calibrated' in settings["search"]:
             logging.info('Saving second_search results to {}'.format(ms_file))
-            store_hdf(pd.DataFrame(psms), ms_file, 'second_search', replace=True)
-
+            save_field = 'second_search'
         else:
             logging.info('Saving first_search results to {}'.format(ms_file))
-            store_hdf(pd.DataFrame(psms), ms_file, 'first_search', replace=True)
+            save_field = 'first_search'
+
+        store_hdf(pd.DataFrame(psms), ms_file, 'first_search', replace=True)
+        ion_columns = ['ion_index','ion_type','ion_int','db_int','ion_mass','db_mass','query_idx','db_idx']
+        store_hdf(pd.DataFrame(ions, columns = ion_columns), ms_file, 'ions', replace=True)
 
 
 def search_parallel_db(settings, calibration = None, callback = None):
@@ -1188,7 +1144,7 @@ def search_fasta_block(to_process):
                 psms, num_specs_compared = get_psms(query_data, db_data, features, **settings[file_idx]["search"])
 
                 if len(psms) > 0:
-                    psms, num_specs_scored = get_score_columns(psms, query_data, db_data, features, **settings[file_idx]["search"])
+                    psms, ions = get_score_columns(psms, query_data, db_data, features, **settings[file_idx]["search"])
 
                     fasta_indices = [','.join([str(x) for x in pept_dict[_]]) for _ in psms['sequence']]
 
