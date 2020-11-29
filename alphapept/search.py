@@ -544,24 +544,27 @@ def get_hits(query_frag, query_int, db_frag, db_int, frag_type, mtol, ppm, losse
 
     pointer = 0
 
-    ion_range = np.arange(len(query_frag))
+    query_range = np.arange(len(query_frag))
     db_range = np.arange(len(db_frag))
 
     for idx, off in enumerate(losses):
         hits = compare_frags(query_frag, db_frag-off, mtol, ppm)
         n_hits = np.sum(hits>0)
 
+        hitpos = hits[hits > 0] - 1
+        hit = hits > 0
+
         ions[pointer:pointer+n_hits,0] = frag_type[hits>0] #type
         ions[pointer:pointer+n_hits,1] = idx #ion-index
 
-        ions[pointer:pointer+n_hits,2] = query_int[hits[hits > 0] - 1] #query int
-        ions[pointer:pointer+n_hits,3] = db_int[hits > 0] #db int
+        ions[pointer:pointer+n_hits,2] = query_int[hitpos] #query int
+        ions[pointer:pointer+n_hits,3] = db_int[hit] #db int
 
-        ions[pointer:pointer+n_hits,4] = query_frag[hits[hits > 0] - 1] #query mass
-        ions[pointer:pointer+n_hits,5] = db_frag[hits > 0]-off # db mass
+        ions[pointer:pointer+n_hits,4] = query_frag[hitpos] #query mass
+        ions[pointer:pointer+n_hits,5] = db_frag[hit]-off # db mass
 
-        ions[pointer:pointer+n_hits,6] = ion_range[hits[hits > 0] - 1] # index to db entry
-        ions[pointer:pointer+n_hits,7] = db_range[hits > 0]-off # index to query entry
+        ions[pointer:pointer+n_hits,6] = query_range[hitpos] # index to db entry
+        ions[pointer:pointer+n_hits,7] = db_range[hit] # index to query entry
 
         pointer += n_hits
 
@@ -593,6 +596,8 @@ def score(
     losses = [0, 18.01056468346, 17.03052] #H2O, NH3
 
     ions_ = List()
+
+    ion_count = 0
 
     for i in range(len(psms)):
         query_idx = psms[i]["query_idx"]
@@ -631,9 +636,12 @@ def score(
         psms_['b-NH3_hits'][i] = np.sum(ions[ions[:,1]==2][:,0]>0)
         psms_['y-NH3_hits'][i] = np.sum(ions[ions[:,1]==2][:,0]<0)
 
-        i_shape = len(ions[:, 0])
+        n_ions = len(ions)
 
-        psms_['n_ions'][i] = i_shape
+        psms_['n_ions'][i] = n_ions
+        psms_['ion_idx'][i] = ion_count
+
+        ion_count += n_ions
         ions_.append(ions)
 
     return psms_, ions_
@@ -722,7 +730,7 @@ def get_score_columns(
     loss_dict['-NH3'] = 17.03052
 
     float_fields = ['o_mass', 'o_mass_ppm','delta_m','delta_m_ppm','matched_int_ratio','int_ratio']
-    int_fields = ['total_int','matched_int','n_ions'] + [a+_+'_hits' for _ in loss_dict for a in ['b','y']]
+    int_fields = ['total_int','matched_int','n_ions','ion_idx'] + [a+_+'_hits' for _ in loss_dict for a in ['b','y']]
 
     psms_dtype = np.dtype([(_,np.float32) for _ in float_fields] + [(_,np.int64) for _ in int_fields])
 
@@ -759,8 +767,6 @@ def get_score_columns(
     psms = add_column(psms, mass, "mass")
     psms = add_column(psms, mz, "mz")
     psms = add_column(psms, charge, "charge")
-
-    psms = add_column(psms, np.cumsum(psms['n_ions']), "ion_idx")
 
     psms = add_column(psms, np.char.add(np.char.add(psms['sequence'],"_"), psms['charge'].astype(int).astype(str)), 'precursor')
 
@@ -1030,7 +1036,7 @@ def search_db(to_process):
             logging.info('Saving first_search results to {}'.format(ms_file))
             save_field = 'first_search'
 
-        store_hdf(pd.DataFrame(psms), ms_file, 'first_search', replace=True)
+        store_hdf(pd.DataFrame(psms), ms_file, save_field, replace=True)
         ion_columns = ['ion_index','ion_type','ion_int','db_int','ion_mass','db_mass','query_idx','db_idx']
         store_hdf(pd.DataFrame(ions, columns = ion_columns), ms_file, 'ions', replace=True)
 
