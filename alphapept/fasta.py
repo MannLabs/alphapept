@@ -205,13 +205,14 @@ def add_fixed_mods(seqs, mods_fixed, **kwargs):
 # Cell
 def add_variable_mod(peps, mods_variable_dict):
     peptides = []
-    for pep in peps:
+    for pep_ in peps:
+        pep, min_idx = pep_
         for mod in mods_variable_dict:
             for i in range(len(pep)):
-                c = pep[i]
-                if c in mods_variable_dict:
-                    peptides.append(pep[:i]+[mods_variable_dict[c]]+pep[i+1:])
-
+                if i >= min_idx:
+                    c = pep[i]
+                    if c == mod:
+                        peptides.append((pep[:i]+[mods_variable_dict[c]]+pep[i+1:], i))
     return peptides
 
 
@@ -223,12 +224,17 @@ def get_isoforms(mods_variable_dict, peptide, max_isoforms):
     pep = list(parse(peptide))
 
     peptides = [pep]
-    new_peps = peptides
+    new_peps = [(pep, 0)]
     while len(peptides) < max_isoforms:
         new_peps = add_variable_mod(new_peps, mods_variable_dict)
+
         if len(new_peps) == 0:
             break
-        peptides.extend(new_peps)
+        if len(new_peps) > 1:
+            if new_peps[0][0] == new_peps[1][0]:
+                new_peps = new_peps[0:1]
+
+        peptides.extend([_[0] for _ in new_peps])
 
     peptides = [''.join(_) for _ in peptides]
 
