@@ -234,7 +234,9 @@ def get_isoforms(mods_variable_dict, peptide, max_isoforms):
             if new_peps[0][0] == new_peps[1][0]:
                 new_peps = new_peps[0:1]
 
-        peptides.extend([_[0] for _ in new_peps])
+        for _ in new_peps:
+            if len(peptides) < max_isoforms:
+                peptides.append(_[0])
 
     peptides = [''.join(_) for _ in peptides]
 
