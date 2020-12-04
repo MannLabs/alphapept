@@ -971,7 +971,7 @@ import copy
 import alphapept.io
 import alphapept.fasta
 
-def store_hdf(df, path, key, replace=False):
+def store_hdf(df, path, key, replace=False, swmr = False):
     """
     Stores in hdf
     """
@@ -983,10 +983,13 @@ def store_hdf(df, path, key, replace=False):
         try:
             df.to_hdf(path, key=key, append=True)
             #TODO, append is not implemented yet
-        except ValueError:
-            old_df = ms_file.read(dataset_name=key)
-            new_df = pd.concat([old_df, df])
-            ms_file.write(new_df, dataset_name=key)
+        except (ValueError, AttributeError):
+            try:
+                old_df = ms_file.read(dataset_name=key, swmr = swmr)
+                new_df = pd.concat([old_df, df])
+                ms_file.write(new_df, dataset_name=key, swmr = swmr)
+            except KeyError:
+                ms_file.write(df, dataset_name=key, swmr= swmr)
 
 def search_db(to_process):
     """
@@ -1085,7 +1088,7 @@ def search_parallel_db(settings, calibration = None, callback = None):
 
 from .fasta import blocks, generate_peptides, add_to_pept_dict
 from .io import list_to_numpy_f32
-from .fasta import block_idx, generate_fasta_list, generate_spectra
+from .fasta import block_idx, generate_fasta_list, generate_spectra, check_peptide
 from alphapept import constants
 mass_dict = constants.mass_dict
 
@@ -1096,7 +1099,6 @@ def search_fasta_block(to_process):
     """
 
     fasta_index, fasta_block, ms_files, settings = to_process
-
 
     settings_ = settings[0]
     spectra_block = settings_['fasta']['spectra_block']
@@ -1114,7 +1116,9 @@ def search_fasta_block(to_process):
         pept_dict, added_peptides = add_to_pept_dict(pept_dict, mod_peptides, fasta_index+f_index)
 
         if len(added_peptides) > 0:
-            to_add.extend(added_peptides)
+            for _ in added_peptides:
+                if check_peptide(_, constants.AAs):
+                    to_add.append(_)
         f_index += 1
 
     if len(to_add) > 0:
@@ -1133,18 +1137,15 @@ def search_fasta_block(to_process):
             for file_idx, ms_file in enumerate(ms_files):
                 query_data = alphapept.io.MS_Data_File(
                     f"{ms_file}"
-                ).read_DDA_query_data()
+                ).read_DDA_query_data(swmr=True)
 
-                if settings_['search']["use_features"]:
-                    try:
-                        features = alphapept.io.MS_Data_File(
-                            ms_file
-                        ).read(dataset_name="features")
-                    except FileNotFoundError:
-                        features = None
-                    except KeyError:
-                        features = None
-                else:
+                try:
+                    features = alphapept.io.MS_Data_File(
+                        ms_file
+                    ).read(dataset_name="features",swmr=True)
+                except FileNotFoundError:
+                    features = None
+                except KeyError:
                     features = None
 
                 psms, num_specs_compared = get_psms(query_data, db_data, features, **settings[file_idx]["search"])
@@ -1171,11 +1172,12 @@ def search_parallel(settings, calibration = None, callback = None):
     fasta_list, fasta_dict = generate_fasta_list(**settings['fasta'])
 
     fasta_block = settings['fasta']['fasta_block']
-    ms_files = []
+
+    ms_file_path = []
 
     for _ in settings['experiment']['file_paths']:
         base, ext = os.path.splitext(_)
-        ms_files.append(base + '.ms_data.hdf')
+        ms_file_path.append(base + '.ms_data.hdf')
 
     if calibration:
         custom_settings = []
@@ -1184,24 +1186,25 @@ def search_parallel(settings, calibration = None, callback = None):
             settings_["search"]["m_offset_calibrated"] = _
             custom_settings.append(settings_)
     else:
-        custom_settings = [settings for _ in ms_files]
+        custom_settings = [settings for _ in ms_file_path]
 
-    to_process = [(idx_start, fasta_list[idx_start:idx_end], ms_files, custom_settings) for idx_start, idx_end in block_idx(len(fasta_list), fasta_block)]
+    to_process = [(idx_start, fasta_list[idx_start:idx_end], ms_file_path, custom_settings) for idx_start, idx_end in block_idx(len(fasta_list), fasta_block)]
 
     n_processes = settings['general']['n_processes']
 
     with Pool(n_processes) as p:
         max_ = len(to_process)
-        for i, _ in enumerate(p.imap_unordered(search_fasta_block, to_process)):
 
+        for i, _ in enumerate(p.imap_unordered(search_fasta_block, to_process)):
+            logging.info(f'Block {i+1} of {max_} complete - {(i+1)/max_*100:.2f} %')
             for j in range(len(_)):
-                ms_file = ms_files[j]
+                ms_file = alphapept.io.MS_Data_File(ms_file_path[j])
                 output = [_ for _ in _[j]]
                 if len(output) > 0:
                     if calibration:
-                        store_hdf(pd.concat(output), ms_file, 'second_search')
+                        store_hdf(pd.concat(output), ms_file, 'second_search', swmr = True)
                     else:
-                        store_hdf(pd.concat(output), ms_file, 'first_search')
+                        store_hdf(pd.concat(output), ms_file, 'first_search', swmr = True)
 
             if callback:
                 callback((i+1)/max_)

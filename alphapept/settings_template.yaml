@@ -67,6 +67,12 @@ fasta:
     - hdf
     folder: false
     type: path
+  db_size:
+    default: 200000
+    description: Maximum number of fasta entries that are stored in a db.
+    max: 1000000
+    min: 1000
+    type: spinbox
   fasta_block:
     default: 1000
     description: Number of fasta entries to be processed in one block.

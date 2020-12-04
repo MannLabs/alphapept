@@ -247,6 +247,7 @@ def read(
     return_dataset_shape:bool=False,
     return_dataset_dtype:bool=False,
     return_dataset_slice:slice=slice(None),
+    swmr:bool=False,
 ):
     '''
     Read the contents of an HDF_File. If no `group_name` has been provided,
@@ -260,16 +261,16 @@ def read(
     If the `dataset_name` refers to a group, it is assumed to be
     pd.DataFrame and returned as such.
     '''
-    with h5py.File(self.file_name, "r") as hdf_file:
+    with h5py.File(self.file_name, "r", swmr=swmr) as hdf_file:
         if group_name is None:
             group = hdf_file
             group_name = "/"
         else:
             try:
                 group = hdf_file[group_name]
-            except KeyError:
+            except KeyError as k:
                 raise KeyError(
-                    f"Group {group_name} does not exist in {self}."
+                    f"Group {group_name} does not exist in {self}. Error {k}"
                 )
         if dataset_name is None:
             if attr_name is None:
@@ -348,6 +349,7 @@ def write(
     attr_name:str=None,
     overwrite:bool=None,
     dataset_compression=None,
+    swmr:bool=False,
 ):
     '''
     Write a `value` to an HDF_File. If an 'attr_name' is provided,
@@ -367,7 +369,7 @@ def write(
         )
     if overwrite is None:
         overwrite = self.is_overwritable
-    with h5py.File(self.file_name, "a") as hdf_file:
+    with h5py.File(self.file_name, "a", swmr=swmr) as hdf_file:
         if group_name is None:
             group = hdf_file
             group_name = "/"
@@ -1026,19 +1028,22 @@ def read_DDA_query_data(
     self:MS_Data_File,
     calibrated_fragments=False,
     force_recalibrate=False,
+    swmr = False,
     **kwargs
 ):
     query_data = {}
     for dataset_name in self.read(group_name="Raw/MS1_scans"):
         values = self.read(
             dataset_name=dataset_name,
-            group_name="Raw/MS1_scans"
+            group_name="Raw/MS1_scans",
+            swmr=swmr,
         )
         query_data[dataset_name] = values
     for dataset_name in self.read(group_name="Raw/MS2_scans"):
         values = self.read(
             dataset_name=dataset_name,
-            group_name="Raw/MS2_scans"
+            group_name="Raw/MS2_scans",
+            swmr=swmr
         )
         query_data[dataset_name] = values
 #     indices_ms1 = query_data["indices_ms1"]
@@ -1074,7 +1079,7 @@ def read_DDA_query_data(
             )
         query_data["mass_list_ms2"] *= (
             1 - self.read(
-                dataset_name="corrected_fragment_mzs"
+                dataset_name="corrected_fragment_mzs", swmr=swmr
             ) / 10**6
         )
     return query_data

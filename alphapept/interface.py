@@ -48,7 +48,7 @@ def check_version_and_hardware(settings):
 
 import os
 import functools
-
+import copy
 
 def create_database(
     settings,
@@ -65,75 +65,83 @@ def create_database(
         database_path = ''
     else:
         database_path = settings['fasta']['database_path']
-    if settings['fasta']['save_db']:
-        if os.path.isfile(database_path):
-            logging.info(
-                'Database path set and exists. Using {} as database.'.format(
-                    database_path
-                )
+
+    if not settings['fasta']['save_db']:
+        logging.info('Creating small database w/o modifications for first search.')
+        temp_settings = copy.deepcopy(settings)
+        temp_settings['fasta']['mods_fixed'] = []
+        temp_settings['fasta']['mods_fixed_terminal'] = []
+        temp_settings['fasta']['mods_fixed_terminal_prot'] = []
+        temp_settings['fasta']['mods_variable'] = []
+        temp_settings['fasta']['mods_variable_terminal'] = []
+        temp_settings['fasta']['mods_variable_terminal_prot'] = []
+    else:
+        temp_settings = settings
+
+    if os.path.isfile(database_path):
+        logging.info(
+            'Database path set and exists. Using {} as database.'.format(
+                database_path
             )
-        else:
-            logging.info(
-                'Database path {} is not a file.'.format(database_path)
-            )
-
-            if len(settings['fasta']['fasta_paths']) == 0:
-                raise FileNotFoundError("No FASTA files set.")
-
-            for fasta_file in settings['fasta']['fasta_paths']:
-                if os.path.isfile(fasta_file):
-                    logging.info(
-                        'Found FASTA file {} with size {:.2f} Mb.'.format(
-                            fasta_file,
-                            os.stat(fasta_file).st_size/(1024**2)
-                        )
-                    )
-                else:
-                    raise FileNotFoundError(
-                        'File {} not found'.format(fasta_file)
-                    )
-
-            logging.info('Creating a new database from FASTA.')
-
-            if not callback:
-                cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
-            else:
-                cb = callback
-
-            (
-                spectra,
-                pept_dict,
-                fasta_dict
-            ) = alphapept.fasta.generate_database_parallel(
-                settings,
-                callback=cb
-            )
-            logging.info(
-                'Digested {:,} proteins and generated {:,} spectra'.format(
-                    len(fasta_dict),
-                    len(spectra)
-                )
-            )
-
-            alphapept.fasta.save_database(
-                spectra,
-                pept_dict,
-                fasta_dict,
-                **settings['fasta']
-            )
-            logging.info(
-                'Database saved to {}. Filesize of database is {:.2f} GB'.format(
-                    database_path,
-                    os.stat(database_path).st_size/(1024**3)
-                )
-            )
-
-            settings['fasta']['database_path'] = database_path
-
+        )
     else:
         logging.info(
-            'Not using a stored database. Create database on the fly.'
+            'Database path {} is not a file.'.format(database_path)
         )
+
+        if len(settings['fasta']['fasta_paths']) == 0:
+            raise FileNotFoundError("No FASTA files set.")
+
+        for fasta_file in settings['fasta']['fasta_paths']:
+            if os.path.isfile(fasta_file):
+                logging.info(
+                    'Found FASTA file {} with size {:.2f} Mb.'.format(
+                        fasta_file,
+                        os.stat(fasta_file).st_size/(1024**2)
+                    )
+                )
+            else:
+                raise FileNotFoundError(
+                    'File {} not found'.format(fasta_file)
+                )
+
+        logging.info('Creating a new database from FASTA.')
+
+        if not callback:
+            cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
+        else:
+            cb = callback
+
+        (
+            spectra,
+            pept_dict,
+            fasta_dict
+        ) = alphapept.fasta.generate_database_parallel(
+            temp_settings,
+            callback=cb
+        )
+        logging.info(
+            'Digested {:,} proteins and generated {:,} spectra'.format(
+                len(fasta_dict),
+                len(spectra)
+            )
+        )
+
+        alphapept.fasta.save_database(
+            spectra,
+            pept_dict,
+            fasta_dict,
+            **settings['fasta']
+        )
+        logging.info(
+            'Database saved to {}. Filesize of database is {:.2f} GB'.format(
+                database_path,
+                os.stat(database_path).st_size/(1024**3)
+            )
+        )
+
+        settings['fasta']['database_path'] = database_path
+
     return settings
 
 # Cell
@@ -251,29 +259,18 @@ def search_data(
     import alphapept.io
 
     if not recalibrated:
-        if settings['fasta']['save_db']:
-            logging.info('Starting first search with DB.')
 
-            if not callback:
-                cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
-            else:
-                cb = callback
+        logging.info('Starting first search with DB.')
 
-            fasta_dict, pept_dict = alphapept.search.search_parallel_db(
-                settings,
-                callback=cb
-            )
-
+        if not callback:
+            cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
         else:
-            logging.info('Starting first search.')
+            cb = callback
 
-            if not callback:
-                cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
-            else:
-                cb = callback
-
-            fasta_dict = alphapept.search.search_parallel(settings, callback=cb)
-            pept_dict = None
+        fasta_dict, pept_dict = alphapept.search.search_parallel_db(
+            settings,
+            callback=cb
+        )
 
         logging.info('First search complete.')
     else:
@@ -281,6 +278,7 @@ def search_data(
         for _ in settings['experiment']['file_paths']:
             base, ext = os.path.splitext(_)
             ms_files.append(base + '.ms_data.hdf')
+
         offsets = [
             alphapept.io.MS_Data_File(
                 ms_file_name

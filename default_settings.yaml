@@ -13,6 +13,7 @@ fasta:
   AL_swap: false
   KR_swap: false
   database_path: null
+  db_size: 200000
   fasta_block: 1000
   fasta_paths: []
   max_isoforms: 1024

@@ -5,9 +5,9 @@ __all__ = ['get_missed_cleavages', 'cleave_sequence', 'count_missed_cleavages', 
            'add_variable_mod', 'get_isoforms', 'add_variable_mods', 'add_fixed_mod_terminal', 'add_fixed_mods_terminal',
            'add_variable_mods_terminal', 'get_unique_peptides', 'generate_peptides', 'get_precmass', 'get_fragmass',
            'get_frag_dict', 'get_spectrum', 'get_spectra', 'read_fasta_file', 'read_fasta_file_entries',
-           'check_sequence', 'add_to_pept_dict', 'merge_pept_dicts', 'generate_fasta_list', 'generate_database',
-           'generate_spectra', 'block_idx', 'blocks', 'digest_fasta_block', 'generate_database_parallel', 'mass_dict',
-           'pept_dict_from_search', 'save_database', 'read_database']
+           'check_sequence', 'check_peptide', 'add_to_pept_dict', 'merge_pept_dicts', 'generate_fasta_list',
+           'generate_database', 'generate_spectra', 'block_idx', 'blocks', 'digest_fasta_block',
+           'generate_database_parallel', 'mass_dict', 'pept_dict_from_search', 'save_database', 'read_database']
 
 # Cell
 from alphapept import constants
@@ -334,12 +334,16 @@ def generate_peptides(peptide, **kwargs):
     peptides = []
     [peptides.extend(cleave_sequence(_, **kwargs)) for _ in mod_peptide]
 
+    max_isoforms = kwargs['max_isoforms']
+
     all_peptides = []
-    for peptide in peptides:
+    for peptide in peptides: #1 per, limit the number of isoforms
         #Regular peptides
         mod_peptides = add_fixed_mods([peptide], **kwargs)
         mod_peptides = add_fixed_mods_terminal(mod_peptides, **kwargs)
         mod_peptides = add_variable_mods_terminal(mod_peptides, **kwargs)
+
+        kwargs['max_isoforms'] = max_isoforms - len(mod_peptides)
         mod_peptides = add_variable_mods(mod_peptides, **kwargs)
 
         all_peptides.extend(mod_peptides)
@@ -350,6 +354,9 @@ def generate_peptides(peptide, **kwargs):
         mod_peptides_decoy = add_fixed_mods(decoy_peptides, **kwargs)
         mod_peptides_decoy = add_fixed_mods_terminal(mod_peptides_decoy, **kwargs)
         mod_peptides_decoy = add_variable_mods_terminal(mod_peptides_decoy, **kwargs)
+
+        kwargs['max_isoforms'] = max_isoforms - len(mod_peptides)
+
         mod_peptides_decoy = add_variable_mods(mod_peptides_decoy, **kwargs)
 
         mod_peptides_decoy = add_decoy_tag(mod_peptides_decoy)
@@ -504,10 +511,18 @@ def check_sequence(element, AAs):
     """
     if not set(element['sequence']).issubset(AAs):
         unknown = set(element['sequence']) - set(AAs)
-        logging.error(f'This FASTA entry contains unknown AAs {unknown} and will be skipped: \n {element}\n')
+        logging.error(f'This FASTA entry contains unknown AAs {unknown} - Peptides with unknown AAs will be skipped: \n {element}\n')
         return False
     else:
         return True
+
+
+def check_peptide(peptide, AAs):
+
+    if set(peptide).issubset(AAs):
+        return True
+    else:
+        return False
 
 # Cell
 def add_to_pept_dict(pept_dict, new_peptides, i):
@@ -547,7 +562,7 @@ def merge_pept_dicts(list_of_pept_dicts):
 # Cell
 from collections import OrderedDict
 
-def generate_fasta_list(fasta_paths, callback = None, **kwargs):
+def generate_fasta_list(fasta_paths, db_size = 100000, callback = None, **kwargs):
     """
     Function to generate a database from a fasta file
     """
@@ -570,10 +585,15 @@ def generate_fasta_list(fasta_paths, callback = None, **kwargs):
         fasta_generator = read_fasta_file(fasta_file)
 
         for element in fasta_generator:
-            if check_sequence(element, constants.AAs):
+            if fasta_index < db_size:
+                check_sequence(element, constants.AAs)
                 fasta_list.append(element)
                 fasta_dict[fasta_index] = element
                 fasta_index += 1
+            else:
+                logging.info('Maximum DB size reached. Not adding more fasta entries.')
+                break
+
 
     return fasta_list, fasta_dict
 
@@ -601,12 +621,14 @@ def generate_database(mass_dict, fasta_paths, callback = None, **kwargs):
         fasta_generator = read_fasta_file(fasta_file)
 
         for element in fasta_generator:
-            if check_sequence(element, constants.AAs):
-                fasta_dict[fasta_index] = element
-                mod_peptides = generate_peptides(element["sequence"], **kwargs)
-                pept_dict, added_seqs = add_to_pept_dict(pept_dict, mod_peptides, fasta_index)
-                if len(added_seqs) > 0:
-                    to_add.extend(added_seqs)
+
+            fasta_dict[fasta_index] = element
+            mod_peptides = generate_peptides(element["sequence"], **kwargs)
+            pept_dict, added_seqs = add_to_pept_dict(pept_dict, mod_peptides, fasta_index)
+            if len(added_seqs) > 0:
+                for _ in added_seqs:
+                    if check_peptide(_, constants.AAs):
+                        to_add.append(_)
 
             fasta_index += 1
 
@@ -683,9 +705,10 @@ def digest_fasta_block(to_process):
         sequence = element["sequence"]
         mod_peptides = generate_peptides(sequence, **settings['fasta'])
         pept_dict, added_peptides = add_to_pept_dict(pept_dict, mod_peptides, fasta_index+f_index)
-
         if len(added_peptides) > 0:
-            to_add.extend(added_peptides)
+            for _ in added_peptides:
+                if check_peptide(_, constants.AAs):
+                    to_add.append(_)
         f_index += 1
 
     spectra = []
@@ -731,19 +754,21 @@ def pept_dict_from_search(settings):
     Generates a peptide dict from a large search
     """
 
-    paths = settings['experiment']['files']
-
-    bases = [os.path.splitext(_)[0]+'.hdf' for _ in paths]
+    paths = settings['experiment']['file_paths']
+    bases = [os.path.splitext(_)[0]+'.ms_data.hdf' for _ in paths]
 
     all_dfs = []
     for _ in bases:
         try:
-            df = pd.read_hdf(_, key='peptide_fdr')
+            df = alphapept.io.MS_Data_File(_).read(dataset_name="peptide_fdr")
         except KeyError:
             df = pd.DataFrame()
 
-        if df > 0:
+        if len(df) > 0:
             all_dfs.append(df)
+
+    if sum([len(_) for _ in all_dfs]) == 0:
+        raise ValueError("No sequences present to concatenate.")
 
     df = pd.concat(all_dfs)
 

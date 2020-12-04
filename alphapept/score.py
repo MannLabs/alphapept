@@ -278,7 +278,7 @@ def get_ML_features(df, protease='trypsin', **kwargs):
     return df
 
 def train_RF(df,
-             exclude_features = ['feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence'],
+             exclude_features = ['ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence'],
              train_fdr_level = 0.1,
              ini_score = 'x_tandem',
              min_train = 5000,
@@ -560,8 +560,9 @@ def score_hdf(to_process):
             try:
                 cv, features = train_RF(df)
                 df = filter_with_ML(df, cv, features = features)
-            except ValueError:
+            except ValueError as e:
                 logging.info('ML failed. Defaulting to x_tandem score')
+                logging.info(f"{e}")
                 df = filter_with_x_tandem(df)
         elif settings["general"]["score"] == 'x_tandem':
             df = filter_with_x_tandem(df)
