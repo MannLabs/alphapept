@@ -1102,7 +1102,7 @@ def search_fasta_block(to_process):
 
     settings_ = settings[0]
     spectra_block = settings_['fasta']['spectra_block']
-    to_add = []
+    to_add = List()
 
     psms_container = [list() for _ in ms_files]
 
@@ -1116,9 +1116,7 @@ def search_fasta_block(to_process):
         pept_dict, added_peptides = add_to_pept_dict(pept_dict, mod_peptides, fasta_index+f_index)
 
         if len(added_peptides) > 0:
-            for _ in added_peptides:
-                if check_peptide(_, constants.AAs):
-                    to_add.append(_)
+            to_add.extend(added_peptides)
         f_index += 1
 
     if len(to_add) > 0:
@@ -1130,8 +1128,8 @@ def search_fasta_block(to_process):
             db_data = {}
             db_data['precursors'] = np.array(precmasses)[sortindex]
             db_data['seqs'] = np.array(seqs)[sortindex]
-            db_data['fragmasses']  = list_to_numpy_f32(np.array(fragmasses)[sortindex])
-            db_data['fragtypes'] = list_to_numpy_f32(np.array(fragtypes)[sortindex])
+            db_data['fragmasses']  = list_to_numpy_f32(np.array(fragmasses, dtype=object)[sortindex])
+            db_data['fragtypes'] = list_to_numpy_f32(np.array(fragtypes, dtype=object)[sortindex])
             db_data['bounds'] = np.sum(db_data['fragmasses']>=0,axis=0).astype(np.int64)
 
             for file_idx, ms_file in enumerate(ms_files):
@@ -1160,7 +1158,7 @@ def search_fasta_block(to_process):
 
                     psms_container[file_idx].append(psms_df)
 
-    return psms_container
+    return psms_container, len(to_add)
 
 from multiprocessing import Pool
 
@@ -1188,15 +1186,19 @@ def search_parallel(settings, calibration = None, callback = None):
     else:
         custom_settings = [settings for _ in ms_file_path]
 
+
+    logging.info(f"Number of FASTA entries: {len(fasta_list):,} - FASTA settings {settings['fasta']}")
     to_process = [(idx_start, fasta_list[idx_start:idx_end], ms_file_path, custom_settings) for idx_start, idx_end in block_idx(len(fasta_list), fasta_block)]
 
     n_processes = settings['general']['n_processes']
 
+    n_seqs_ = 0
     with Pool(n_processes) as p:
         max_ = len(to_process)
 
-        for i, _ in enumerate(p.imap_unordered(search_fasta_block, to_process)):
-            logging.info(f'Block {i+1} of {max_} complete - {(i+1)/max_*100:.2f} %')
+        for i, (_, n_seqs) in enumerate(p.imap_unordered(search_fasta_block, to_process)):
+            n_seqs_ += n_seqs
+            logging.info(f'Block {i+1} of {max_} complete - {(i+1)/max_*100:.2f} % - created peptides {n_seqs:,}')
             for j in range(len(_)):
                 ms_file = alphapept.io.MS_Data_File(ms_file_path[j])
                 output = [_ for _ in _[j]]
@@ -1208,5 +1210,7 @@ def search_parallel(settings, calibration = None, callback = None):
 
             if callback:
                 callback((i+1)/max_)
+
+    logging.info(f'Complete. Created peptides {n_seqs_:,}')
 
     return fasta_dict

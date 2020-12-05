@@ -334,6 +334,8 @@ def generate_peptides(peptide, **kwargs):
     peptides = []
     [peptides.extend(cleave_sequence(_, **kwargs)) for _ in mod_peptide]
 
+    peptides = [_ for _ in peptides if check_peptide(_, constants.AAs)]
+
     max_isoforms = kwargs['max_isoforms']
 
     all_peptides = []
@@ -355,7 +357,7 @@ def generate_peptides(peptide, **kwargs):
         mod_peptides_decoy = add_fixed_mods_terminal(mod_peptides_decoy, **kwargs)
         mod_peptides_decoy = add_variable_mods_terminal(mod_peptides_decoy, **kwargs)
 
-        kwargs['max_isoforms'] = max_isoforms - len(mod_peptides)
+        kwargs['max_isoforms'] = max_isoforms - len(mod_peptides_decoy)
 
         mod_peptides_decoy = add_variable_mods(mod_peptides_decoy, **kwargs)
 
@@ -562,7 +564,7 @@ def merge_pept_dicts(list_of_pept_dicts):
 # Cell
 from collections import OrderedDict
 
-def generate_fasta_list(fasta_paths, db_size = 100000, callback = None, **kwargs):
+def generate_fasta_list(fasta_paths, callback = None, **kwargs):
     """
     Function to generate a database from a fasta file
     """
@@ -585,16 +587,10 @@ def generate_fasta_list(fasta_paths, db_size = 100000, callback = None, **kwargs
         fasta_generator = read_fasta_file(fasta_file)
 
         for element in fasta_generator:
-            if fasta_index < db_size:
-                check_sequence(element, constants.AAs)
-                fasta_list.append(element)
-                fasta_dict[fasta_index] = element
-                fasta_index += 1
-            else:
-                logging.info('Maximum DB size reached. Not adding more fasta entries.')
-                break
-
-
+            check_sequence(element, constants.AAs)
+            fasta_list.append(element)
+            fasta_dict[fasta_index] = element
+            fasta_index += 1
     return fasta_list, fasta_dict
 
 
@@ -626,9 +622,7 @@ def generate_database(mass_dict, fasta_paths, callback = None, **kwargs):
             mod_peptides = generate_peptides(element["sequence"], **kwargs)
             pept_dict, added_seqs = add_to_pept_dict(pept_dict, mod_peptides, fasta_index)
             if len(added_seqs) > 0:
-                for _ in added_seqs:
-                    if check_peptide(_, constants.AAs):
-                        to_add.append(_)
+                to_add.extend(added_seqs)
 
             fasta_index += 1
 
@@ -706,9 +700,7 @@ def digest_fasta_block(to_process):
         mod_peptides = generate_peptides(sequence, **settings['fasta'])
         pept_dict, added_peptides = add_to_pept_dict(pept_dict, mod_peptides, fasta_index+f_index)
         if len(added_peptides) > 0:
-            for _ in added_peptides:
-                if check_peptide(_, constants.AAs):
-                    to_add.append(_)
+            to_add.extend(added_seqs)
         f_index += 1
 
     spectra = []
@@ -725,6 +717,12 @@ def generate_database_parallel(settings, callback = None):
     n_processes = settings['general']['n_processes']
 
     fasta_list, fasta_dict = generate_fasta_list(**settings['fasta'])
+
+    logging.info(f'FASTA contains {len(fasta_list):,} entries.')
+
+    if len(fasta_list) > settings['fasta']['db_size']:
+        logging.info(f"FASTA exceeds set db_size of {settings['fasta']['db_size']:,}. Shortening fasta.")
+        fasta_list = fasta_list[:settings['fasta']['db_size']]
 
     blocks = block_idx(len(fasta_list), settings['fasta']['fasta_block'])
 
