@@ -3,11 +3,11 @@
 __all__ = ['get_missed_cleavages', 'cleave_sequence', 'count_missed_cleavages', 'count_internal_cleavages', 'parse',
            'list_to_numba', 'get_decoy_sequence', 'swap_KR', 'swap_AL', 'get_decoys', 'add_decoy_tag', 'add_fixed_mods',
            'add_variable_mod', 'get_isoforms', 'add_variable_mods', 'add_fixed_mod_terminal', 'add_fixed_mods_terminal',
-           'add_variable_mods_terminal', 'get_unique_peptides', 'generate_peptides', 'get_precmass', 'get_fragmass',
-           'get_frag_dict', 'get_spectrum', 'get_spectra', 'read_fasta_file', 'read_fasta_file_entries',
-           'check_sequence', 'check_peptide', 'add_to_pept_dict', 'merge_pept_dicts', 'generate_fasta_list',
-           'generate_database', 'generate_spectra', 'block_idx', 'blocks', 'digest_fasta_block',
-           'generate_database_parallel', 'mass_dict', 'pept_dict_from_search', 'save_database', 'read_database']
+           'add_variable_mods_terminal', 'get_unique_peptides', 'generate_peptides', 'check_peptide', 'get_precmass',
+           'get_fragmass', 'get_frag_dict', 'get_spectrum', 'get_spectra', 'read_fasta_file', 'read_fasta_file_entries',
+           'check_sequence', 'add_to_pept_dict', 'merge_pept_dicts', 'generate_fasta_list', 'generate_database',
+           'generate_spectra', 'block_idx', 'blocks', 'digest_fasta_block', 'generate_database_parallel', 'mass_dict',
+           'pept_dict_from_search', 'save_database', 'read_database']
 
 # Cell
 from alphapept import constants
@@ -368,6 +368,13 @@ def generate_peptides(peptide, **kwargs):
 
     return all_peptides
 
+def check_peptide(peptide, AAs):
+
+    if set(peptide).issubset(AAs):
+        return True
+    else:
+        return False
+
 # Cell
 from numba import njit
 from numba.typed import List
@@ -519,12 +526,6 @@ def check_sequence(element, AAs):
         return True
 
 
-def check_peptide(peptide, AAs):
-
-    if set(peptide).issubset(AAs):
-        return True
-    else:
-        return False
 
 # Cell
 def add_to_pept_dict(pept_dict, new_peptides, i):
@@ -700,7 +701,7 @@ def digest_fasta_block(to_process):
         mod_peptides = generate_peptides(sequence, **settings['fasta'])
         pept_dict, added_peptides = add_to_pept_dict(pept_dict, mod_peptides, fasta_index+f_index)
         if len(added_peptides) > 0:
-            to_add.extend(added_seqs)
+            to_add.extend(added_peptides)
         f_index += 1
 
     spectra = []
