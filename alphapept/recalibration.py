@@ -33,41 +33,47 @@ def get_calibration(df, features, outlier_std = 3, n_neighbors = 100, ppm_range 
     Calibration
 
     """
-    target = 'o_mass_ppm'
-    cols = ['mz','rt']
 
-    if 'mobility' in df.columns:
-        cols += ['mobility']
+    if len(df) > n_neighbors:
+        target = 'o_mass_ppm'
+        cols = ['mz','rt']
 
-    scaling_dict = {}
-    scaling_dict['mz'] = ('relative', ppm_range/1e6)
-    scaling_dict['rt'] = ('absolute', rt_range)
-    scaling_dict['mobility'] = ('relative', mob_range)
+        if 'mobility' in df.columns:
+            cols += ['mobility']
 
-    # Remove outliers for calibration
-    o_mass_std = np.abs(df['o_mass_ppm'].std())
-    o_mass_mean = df['o_mass_ppm'].mean()
+        scaling_dict = {}
+        scaling_dict['mz'] = ('relative', ppm_range/1e6)
+        scaling_dict['rt'] = ('absolute', rt_range)
+        scaling_dict['mobility'] = ('relative', mob_range)
 
-    df_sub = df.query('o_mass_ppm < @o_mass_mean+@outlier_std*@o_mass_std and o_mass_ppm > @o_mass_mean-@outlier_std*@o_mass_std').copy()
+        # Remove outliers for calibration
+        o_mass_std = np.abs(df['o_mass_ppm'].std())
+        o_mass_mean = df['o_mass_ppm'].mean()
 
-    tree_points = df_sub[cols].values
+        df_sub = df.query('o_mass_ppm < @o_mass_mean+@outlier_std*@o_mass_std and o_mass_ppm > @o_mass_mean-@outlier_std*@o_mass_std').copy()
 
-    for idx, _ in enumerate(df_sub[cols].columns):
-        tree_points[:, idx] = transform(tree_points[:, idx], _, scaling_dict)
+        tree_points = df_sub[cols].values
 
-    target_points = features[[_+'_matched' for _ in cols]].values
+        for idx, _ in enumerate(df_sub[cols].columns):
+            tree_points[:, idx] = transform(tree_points[:, idx], _, scaling_dict)
 
-    for idx, _ in enumerate(df_sub[cols].columns):
-        target_points[:, idx] = transform(target_points[:, idx], _, scaling_dict)
+        target_points = features[[_+'_matched' for _ in cols]].values
 
-    neigh = KNeighborsRegressor(n_neighbors=n_neighbors, weights = 'distance')
-    neigh.fit(tree_points, df_sub[target].values)
+        for idx, _ in enumerate(df_sub[cols].columns):
+            target_points[:, idx] = transform(target_points[:, idx], _, scaling_dict)
 
-    y_hat = neigh.predict(target_points)
+        neigh = KNeighborsRegressor(n_neighbors=n_neighbors, weights = 'distance')
+        neigh.fit(tree_points, df_sub[target].values)
 
-    corrected_mass = (1-y_hat/1e6) * features['mass_matched']
+        y_hat = neigh.predict(target_points)
 
-    return corrected_mass, y_hat.std()
+        corrected_mass = (1-y_hat/1e6) * features['mass_matched']
+
+        return corrected_mass, y_hat.std()
+
+    else:
+        logging.info('Not enough data points present. Skipping recalibration.')
+        return features['mass_matched'], np.abs(df['o_mass_ppm'].std())
 
 
 def calibrate_hdf(to_process):
