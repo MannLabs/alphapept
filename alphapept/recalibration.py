@@ -11,7 +11,7 @@ from .score import score_x_tandem
 import alphapept.io
 from multiprocessing import Pool
 from sklearn.neighbors import KNeighborsRegressor
-
+import logging
 
 def transform(x, _, scaling_dict):
 
