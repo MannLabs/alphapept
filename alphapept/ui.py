@@ -1,4 +1,4 @@
-from PyQt5.QtCore import QDir, QUrl, QSize, QCoreApplication, Qt
+from PyQt5.QtCore import QProcess, QDir, QUrl, QSize, QCoreApplication, Qt
 from PyQt5.QtWidgets import QDialog, QFileDialog, QMessageBox, QTableView, QTabWidget, QProgressBar, QGroupBox, QComboBox, QPushButton, QStackedWidget, QWidget, QMainWindow, QApplication, QStyleFactory, QHBoxLayout, QVBoxLayout, QLabel, QSpacerItem, QSizePolicy
 from PyQt5.QtGui import QIcon, QPixmap, QMovie, QDesktopServices
 
@@ -14,7 +14,7 @@ from alphapept.stylesheets import (
     progress_style_2,
     progress_style_4,
 )
-from alphapept.ui_classes import FastaFileSelector, QTextEditLogger, searchThread, External, RawFileSelector, SettingsEdit, pandasModel
+from alphapept.ui_classes import SmoothProgress,FastaFileSelector, QTextEditLogger, searchThread, External, RawFileSelector, SettingsEdit, pandasModel
 
 import yaml
 import psutil
@@ -63,6 +63,8 @@ class MainWindow(QMainWindow):
         self.setStyleSheet("font-size: 12pt;")
         self.setWindowTitle(self.title)
 
+        self.smooth_progress = SmoothProgress(self.progress_overall_changed)
+        self.smooth_progress.start()
         self.initUI()
 
     def open_url(self, url):
@@ -142,10 +144,10 @@ class MainWindow(QMainWindow):
         self.verticalLayout.addWidget(self.btn_run)
         self.btn_run.clicked.connect(self.page_run)
 
-        self.btn_explore = QPushButton("Explore")
-        self.btn_explore.setStyleSheet(big_font)
-        self.verticalLayout.addWidget(self.btn_explore)
-        self.btn_explore.clicked.connect(self.page_explore)
+        #self.btn_explore = QPushButton("Explore")
+        #self.btn_explore.setStyleSheet(big_font)
+        #self.verticalLayout.addWidget(self.btn_explore)
+        #self.btn_explore.clicked.connect(self.page_explore)
 
         self.btn_help = QPushButton("Help")
         self.btn_help.setStyleSheet(big_font)
@@ -622,33 +624,49 @@ class MainWindow(QMainWindow):
     def current_step_changed(self, task):
         self.current_task_label.setText(f"Current Task: {task}")
 
+    def onReadyReadStandardError(self):
+        error = self.process.readAllStandardError().data().decode()
+        logging.error(error)
+
+    def onReadyReadStandardOutput(self):
+        result = self.process.readAllStandardOutput().data().decode()
+        for line in result.splitlines():
+            if '__progress_current' in line:
+                self.progress_current_changed(float(line.split('__progress_current ')[1][:5]))
+            elif '__progress_overall' in line:
+                self.smooth_progress.set_progress(float(line.split('__progress_overall ')[1][:5]))
+            elif '__current_task' in line:
+                self.current_step_changed(line.strip('\n').split('__current_task ')[1])
+            else:
+                logging.info(line.strip('\n'))
+
+
+
     def start(self):
+
         logging.info("Started processing.")
 
         self.movie.start()
-
         self.read_settings()
-
         self.settingsWidget.disable_settings()
-
         self.btn_start.setText('Running..')
         self.btn_start.setEnabled(False)
 
         settings = self.read_settings()
 
-        self.searchthread = searchThread(settings)
+        dirname = os.path.dirname(settings['experiment']['results_path'])
 
-        self.searchthread.current_progress_update.connect(
-            self.progress_current_changed
-        )
-        self.searchthread.global_progress_update.connect(
-            self.progress_overall_changed
-        )
-        self.searchthread.task_update.connect(self.current_step_changed)
+        settings_path = os.path.join(dirname, '_.yaml')
 
-        self.searchthread.start()
+        with open(settings_path, "w") as file:
+            yaml.dump(settings, file)
 
-        self.searchthread.finished.connect(self.complete)
+        self.process = QProcess()
+
+        self.process.readyReadStandardError.connect(self.onReadyReadStandardError)
+        self.process.readyReadStandardOutput.connect(self.onReadyReadStandardOutput)
+
+        self.process.start(f"python -m alphapept workflow {settings_path} -p")
 
     def complete(self):
 

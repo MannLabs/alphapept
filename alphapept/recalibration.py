@@ -21,7 +21,7 @@ def transform(x, _, scaling_dict):
         type_, scale_ = scaling_dict[_]
 
         if type_ == 'relative':
-            return np.log(x)/scale_
+            return np.log(x, out=np.zeros_like(x), where=(x>0))/scale_
         elif type_ == 'absolute':
             return x/scale_
         else:

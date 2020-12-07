@@ -1,9 +1,9 @@
 calibration:
-  method: linear
-  min_mz_step: 80
-  min_rt_step: 50
-  minimum_score: 20
+  mob_range: 0.3
+  n_neighbors: 100
   outlier_std: 3
+  ppm_range: 20
+  rt_range: 0.5
 experiment:
   file_paths: []
   fractions: []

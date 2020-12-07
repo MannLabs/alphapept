@@ -551,6 +551,7 @@ from time import time
 
 def run_complete_workflow(
     settings,
+    progress = False,
     logger_set=False,
     settings_parsed=False,
     callback=None,
@@ -563,17 +564,33 @@ def run_complete_workflow(
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
 
-
     steps = [create_database, import_raw_data, feature_finding, search_data, recalibrate_data, search_data, score, align, match,
             lfq_quantification, export]
 
     n_steps = len(steps)
+
+
+    if progress:
+        logging.info('Setting callback to logger.')
+        #log progress to be used
+        def cb_logger_o(x):
+            logging.info(f"__progress_overall {x:.3f}")
+        def cb_logger_c(x):
+            logging.info(f"__progress_current {x:.3f}")
+        def cb_logger_t(x):
+            logging.info(f"__current_task {x}")
+
+        callback = cb_logger_c
+        callback_overall = cb_logger_o
+        callback_task = cb_logger_t
+
 
     def progress_wrapper(step, n_steps, current):
         if callback:
             callback(current)
         if callback_overall:
             callback_overall(step/n_steps+current/n_steps)
+
 
     recalibrated = False
 
@@ -798,10 +815,16 @@ def cli_export(settings_file):
     help="Run the complete AlphaPept workflow.",
     short_help="Run the complete AlphaPept workflow."
 )
+@click.option(
+    "--progress",
+    "-p",
+    help="Log progress output.",
+    is_flag=True,
+)
 @CLICK_SETTINGS_OPTION
-def cli_workflow(settings_file):
+def cli_workflow(settings_file, progress):
     settings = alphapept.settings.load_settings(settings_file)
-    run_complete_workflow(settings)
+    run_complete_workflow(settings, progress = progress)
 
 
 @click.command(

@@ -2,6 +2,7 @@ from PyQt5.QtCore import QDir, QThread, QProcess, pyqtSignal, Qt, QAbstractTable
 from PyQt5.QtWidgets import QMessageBox, QListWidget, QDialog, QFileDialog, QTableWidgetItem, QPlainTextEdit, QSpinBox, QCheckBox, QDoubleSpinBox, QTreeWidget, QTreeWidgetItem, QComboBox, QAbstractScrollArea, QPushButton, QTableWidget, QWidget, QVBoxLayout, QLabel
 from PyQt5.QtCore import pyqtSlot
 
+
 import os
 
 from functools import partial
@@ -309,22 +310,30 @@ class SmoothProgress(threading.Thread):
         super().__init__(daemon=True)
         self.current_progress = 0
         self.new_progress = 0
-        self.update_time = 0.5
-        self.splits = 10
+        self.update_time = 2
+        self.min_update_time = 0.2
+        self.splits = 30
         self.callback = callback
         self.old_set = 0
         self.min_change = 0.001 #0.1%
 
     def run (self):
+        sleep_time = self.update_time
         while True:
-            sleep(self.update_time)
+            sleep(sleep_time)
 
             if (self.new_progress == 1) or abs(self.current_progress-self.new_progress)<self.min_change:
                 to_set = self.new_progress
                 self.current_progress = self.new_progress
             else:
-                delta = (self.new_progress - self.current_progress) / self.splits
-                self.current_progress = self.current_progress+delta
+                delta = (self.new_progress - self.current_progress) / self.splits #move there in 60s
+
+                time_multiplier = delta/self.min_change
+                sleep_time = self.update_time/time_multiplier
+                if sleep_time < self.min_update_time:
+                    sleep_time = self.min_update_time
+
+                self.current_progress = self.current_progress+self.min_change
                 to_set = self.current_progress
 
             if self.old_set != to_set:
@@ -344,7 +353,7 @@ class searchThread(QThread):
     task_update = pyqtSignal(str)
 
     def __init__(self, settings):
-        QProcess.__init__(self)
+        QThread.__init__(self)
         self.settings = settings
         self.progress = SmoothProgress(callback=self.global_progress_update.emit)
         self.progress.start()
