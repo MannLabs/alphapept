@@ -366,7 +366,11 @@ def protein_profile(df, files, field_, protein, minimum_ratios=1):
     per_protein = per_protein[files]
 
     ratios = get_protein_ratios(per_protein.values, column_combinations, minimum_ratios)
-    solution, success = solve_profile_SLSQP(ratios)
+    try:
+        solution, success = solve_profile_SLSQP(ratios)
+    except ValueError:
+        logging.info('Normalization with SLSQP failed. Trying BFGS')
+        solution, success = solve_profile_LFBGSB(ratios)
 
     file_ids = per_protein.columns.tolist()
     pre_lfq = per_protein.sum().values
