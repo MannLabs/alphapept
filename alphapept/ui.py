@@ -645,7 +645,7 @@ class MainWindow(QMainWindow):
     def start(self):
 
         logging.info("Started processing.")
-
+        self.busy_indicator.setVisible(True)
         self.movie.start()
         self.read_settings()
         self.settingsWidget.disable_settings()
@@ -668,13 +668,15 @@ class MainWindow(QMainWindow):
 
         self.process.start(f"python -m alphapept workflow {settings_path} -p")
 
+        self.process.finished.connect(self.complete)
+
     def complete(self):
 
         self.btn_start.setText('Start')
         self.btn_start.setEnabled(True)
-
         self.movie.stop()
-        # self.movie.setVisible(False)
+
+        self.busy_indicator.setVisible(False)
 
 
 def main(close=False):
