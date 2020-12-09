@@ -464,6 +464,16 @@ class RawFileReader(object):
         trailerData = self.source.GetTrailerExtraInformation(scanNumber)
         return dict(zip(trailerData.Labels, trailerData.Values))
 
+    def GetMS2MonoMzAndChargeFromScanNum(self, scanNumber):
+        trailerData = self.GetTrailerExtraForScanNum(scanNumber)
+        mono = float(trailerData['Monoisotopic M/Z:'].strip())
+        charge = int(trailerData['Charge State:'].strip())
+        if mono < 1:
+            mono = self.GetPrecursorMassForScanNum(scanNumber)
+        if mono < 1:
+            mono = self.source.GetFilterForScanNumber(scanNumber).GetMass(0)
+        return mono, charge
+
     def GetProfileMassListFromScanNum(self, scanNumber):
         scanStatistics = self.source.GetScanStatsForScanNumber(scanNumber)
         segmentedScan = self.source.GetSegmentedScanFromScanNumber(scanNumber, scanStatistics)

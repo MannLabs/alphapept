@@ -1,16 +1,19 @@
 calibration:
-  method: linear
-  min_mz_step: 80
-  min_rt_step: 50
-  minimum_score: 20
+  mob_range: 0.3
+  n_neighbors: 100
   outlier_std: 3
+  ppm_range: 20
+  rt_range: 0.5
 experiment:
   file_paths: []
   fractions: []
   results_path: null
   shortnames: []
 fasta:
+  AL_swap: false
+  KR_swap: false
   database_path: null
+  db_size: 200000
   fasta_block: 1000
   fasta_paths: []
   max_isoforms: 1024
@@ -26,6 +29,7 @@ fasta:
   mods_variable_terminal_prot: []
   num_missed_cleavages: 2
   protease: trypsin
+  pseudo_reverse: true
   save_db: true
   spectra_block: 100000
 features:
@@ -40,9 +44,11 @@ general:
   find_features: true
   n_processes: 128
   ppm: true
-  score: x_tandem
-misc:
+  score: random_forest
+matching:
   match_between_runs: true
+  min_match_d: 3
+  min_match_p: 0.05
 quantification:
   max_lfq: true
   mode: int_sum
@@ -52,8 +58,8 @@ raw:
 search:
   calibrate: true
   calibration_std: 3
-  m_offset: 10
-  m_tol: 20
+  m_offset: 30
+  m_tol: 30
   min_frag_hits: 7
   parallel: true
   peptide_fdr: 0.01

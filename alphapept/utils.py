@@ -109,10 +109,26 @@ def check_settings(settings):
                 'No database path set and save_db option checked. Using default path {}'.format(settings['fasta']['database_path'])
             )
 
+    if settings['fasta']['save_db']:
+        var_id = ['mods_variable_terminal', 'mods_variable', 'mods_variable_terminal_prot']
+        n_var_mods = sum([len(settings['fasta'][_]) for _ in var_id])
+        if n_var_mods > 2:
+            logging.info(f'Number of variable modifications {n_var_mods} is larger than 2, possibly causing a very large search space. Only small DB w/o modifications will be created, the full database will be generated on the fly for the second search.')
+            settings['fasta']['save_db'] = False
+
+        protease = settings['fasta']['protease']
+        if protease == 'non-specific':
+            logging.info(f'Protease is {protease}, possibly causing a very large search space. Only small DB w/o modifications will be created, the full database will be generated on the fly for the second search.')
+            settings['fasta']['save_db'] = False
+
+    if settings['fasta']['fasta_block'] > settings['fasta']['db_size']:
+        logging.info('FASTA block size is larger than db size. Decreasing fasta block size.')
+        settings['fasta']['fasta_block'] = settings['fasta']['db_size']
+
     return settings
 
 
-def assemble_df(settings, callback=None):
+def assemble_df(settings, field = 'protein_fdr', callback=None):
     """
     Todo we could save this to disk
     include callback
@@ -128,7 +144,7 @@ def assemble_df(settings, callback=None):
 
         df = alphapept.io.MS_Data_File(
             file_name
-        ).read(dataset_name="protein_fdr")
+        ).read(dataset_name=field)
         df['filename'] = file_name
         df['shortname'] = shortnames[idx]
 
@@ -144,6 +160,6 @@ def assemble_df(settings, callback=None):
 
     # Here we could save things
 
-    xx.to_hdf(settings['experiment']['results_path'], 'combined_protein_fdr')
+    xx.to_hdf(settings['experiment']['results_path'], 'combined_'+field)
 
     return xx

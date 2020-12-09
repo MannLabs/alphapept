@@ -35,81 +35,36 @@ mass_dict["W"] = 186.07931299999998
 mass_dict["Y"] = 163.06332859999998
 mass_dict["cC"] = 160.03064823
 mass_dict["oxM"] = 147.03539923
-mass_dict["aA"] = 113.04767848999998
-mass_dict["aC"] = 145.01974919
-mass_dict["aD"] = 157.03750778999998
-mass_dict["aE"] = 171.05315778999997
-mass_dict["aF"] = 189.07897859
-mass_dict["aG"] = 99.03202842
-mass_dict["aH"] = 179.06947659
-mass_dict["aI"] = 155.09462868999998
-mass_dict["aK"] = 170.10552768999997
-mass_dict["aL"] = 155.09462868999998
-mass_dict["aM"] = 173.05104928999998
 mass_dict["aN"] = 156.05349219
-mass_dict["aP"] = 139.06332855
-mass_dict["aQ"] = 170.06914218999998
-mass_dict["aR"] = 198.11167569
-mass_dict["aS"] = 129.04259312
-mass_dict["aT"] = 143.05824319
-mass_dict["aU"] = 192.9641980857
-mass_dict["aV"] = 141.07897861
-mass_dict["aW"] = 228.08987768999998
-mass_dict["aY"] = 205.07389328999997
-mass_dict["amA"] = 70.05309820699999
-mass_dict["amC"] = 102.02516890700001
-mass_dict["amD"] = 114.04292750699999
-mass_dict["amE"] = 128.05857750699997
-mass_dict["amF"] = 146.084398307
-mass_dict["amG"] = 56.037448137
-mass_dict["amH"] = 136.074896307
-mass_dict["amI"] = 112.10004840699999
-mass_dict["amK"] = 127.11094740699998
-mass_dict["amL"] = 112.10004840699999
-mass_dict["amM"] = 130.05646900699998
 mass_dict["amN"] = 113.058911907
-mass_dict["amP"] = 96.068748267
-mass_dict["amQ"] = 127.07456190699999
-mass_dict["amR"] = 155.117095407
-mass_dict["amS"] = 86.048012837
-mass_dict["amT"] = 100.06366290700001
-mass_dict["amU"] = 149.9696178027
-mass_dict["amV"] = 98.084398327
-mass_dict["amW"] = 185.09529740699998
-mass_dict["amY"] = 162.07931300699997
+mass_dict["aK"] = 170.10552768999997
 mass_dict["pS"] = 166.99835935
 mass_dict["pT"] = 181.01400942
 mass_dict["pY"] = 243.02965952
 mass_dict["deamN"] = 115.02694309299999
 mass_dict["deamNQ"] = 129.042593093
-mass_dict["n"] = 467.2655281
+mass_dict["cmC"] = 85.9826354
 mass_dict["pgE"] = 111.03202840999998
 mass_dict["pgQ"] = 111.03202839999999
-mass_dict["eA"] = 337.1209813
-mass_dict["eC"] = 369.093052
-mass_dict["eD"] = 381.1108106
-mass_dict["eE"] = 395.1264606
-mass_dict["eF"] = 413.1522814
-mass_dict["eG"] = 323.10533123
-mass_dict["eH"] = 403.1427794
-mass_dict["eI"] = 379.1679315
+mass_dict["tmt0N"] = 338.1954054
+mass_dict["tmt0K"] = 352.2474409
+mass_dict["tmt0Y"] = 387.2158065
+mass_dict["tmt2N"] = 339.1987603
+mass_dict["tmt2K"] = 353.2507958
+mass_dict["tmt2Y"] = 388.21916139999996
+mass_dict["tmt6N"] = 343.20585969999996
+mass_dict["tmt6K"] = 357.25789519999995
+mass_dict["tmt6Y"] = 392.2262608
+mass_dict["itraq4KN"] = 258.14533789999996
+mass_dict["itraq4K"] = 272.19737339999995
+mass_dict["itraq4Y"] = 307.165739
+mass_dict["itraq8KN"] = 418.245127
+mass_dict["itraq8K"] = 432.2971625
+mass_dict["itraq8Y"] = 467.2655281
 mass_dict["eK"] = 394.1788305
-mass_dict["eL"] = 379.1679315
-mass_dict["eM"] = 397.1243521
-mass_dict["eN"] = 380.126795
-mass_dict["eP"] = 363.13663136
-mass_dict["eQ"] = 394.14244499999995
-mass_dict["eR"] = 422.1849785
-mass_dict["eS"] = 353.11589592999997
-mass_dict["eT"] = 367.131546
-mass_dict["eU"] = 417.03750089569996
-mass_dict["eV"] = 365.15228142
-mass_dict["eW"] = 452.16318049999995
-mass_dict["eY"] = 429.1471961
-mass_dict["amoxM"] = 146.05138359999998
-mass_dict["aoxM"] = 189.0459646
-mass_dict["camC"] = 159.04663250000002
-mass_dict["acC"] = 202.0412135
+mass_dict["arg10R"] = 166.10938057776002
+mass_dict["arg6R"] = 162.121241
+mass_dict["lys8K"] = 136.10916278887998
 
 mass_dict["Electron"] = 0.00054857990907
 mass_dict["Proton"] = 1.00727646687
@@ -118,12 +73,13 @@ mass_dict["C13"] = 13.003354835
 mass_dict["Oxygen"] = 15.994914619
 mass_dict["OH"] = 17.002739651229998
 mass_dict["H2O"] = 18.01056468346
+mass_dict["NH3"] = 17.03052
 
 mass_dict["delta_M"] = 1.00286864
 mass_dict["delta_S"] = 0.0109135
 
 # Cell
-def get_mass_dict(modfile="modifications.tsv", aasfile="amino_acids.tsv"):
+def get_mass_dict(modfile="../modifications.tsv", aasfile="../amino_acids.tsv"):
     """
     Creates a mass_dict based on tsv files
 
@@ -137,10 +93,11 @@ def get_mass_dict(modfile="modifications.tsv", aasfile="amino_acids.tsv"):
     Raises:
         FileNotFoundError: If files are not found
     """
+    import pandas as pd
 
-    for file in [modfile, aasfile]:
-        if not check_file(file):
-            raise FileNotFoundError("File {} not found.".format(file))
+    #for file in [modfile, aasfile]:
+        #if not check_file(file):
+        #    raise FileNotFoundError("File {} not found.".format(file))
 
     mods = pd.read_csv(modfile, delimiter="\t")
     aas = pd.read_csv(aasfile, delimiter="\t")
@@ -153,14 +110,18 @@ def get_mass_dict(modfile="modifications.tsv", aasfile="amino_acids.tsv"):
     for identifier, aar, mass in mods[
         ["Identifier", "Amino Acid Residue", "Monoisotopic Mass Shift (Da)"]
     ].values:
-        print(identifier, aar, mass)
+        #print(identifier, aar, mass)
 
         if ("<" in identifier) or (">" in identifier):
-            for aa_identifier, aa_mass in aas[
-                ["Identifier", "Monoisotopic Mass (Da)"]
-            ].values:
-                new_identifier = identifier[:-1] + aa_identifier
-                mass_dict[new_identifier] = float(mass) + mass_dict[aa_identifier]
+            for aa_identifier, aa_mass in aas[["Identifier", "Monoisotopic Mass (Da)"]].values:
+                if '^' in aa_identifier:
+                    new_identifier = identifier[:-1] + aa_identifier
+                    mass_dict[new_identifier] = float(mass) + mass_dict[aa_identifier]
+                elif aar == aa_identifier:
+                    new_identifier = identifier[:-2] + aa_identifier
+                    mass_dict[new_identifier] = float(mass) + mass_dict[aa_identifier]
+                else:
+                    pass
         else:
             mass_dict[identifier] = float(mass) + mass_dict[aar]
 

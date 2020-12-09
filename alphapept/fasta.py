@@ -2,9 +2,9 @@
 
 __all__ = ['get_missed_cleavages', 'cleave_sequence', 'count_missed_cleavages', 'count_internal_cleavages', 'parse',
            'list_to_numba', 'get_decoy_sequence', 'swap_KR', 'swap_AL', 'get_decoys', 'add_decoy_tag', 'add_fixed_mods',
-           'get_mod_pos', 'get_isoforms', 'add_variable_mods', 'add_fixed_mod_terminal', 'add_fixed_mods_terminal',
-           'add_variable_mods_terminal', 'get_unique_peptides', 'generate_peptides', 'get_precmass', 'get_fragmass',
-           'get_frag_dict', 'get_spectrum', 'get_spectra', 'read_fasta_file', 'read_fasta_file_entries',
+           'add_variable_mod', 'get_isoforms', 'add_variable_mods', 'add_fixed_mod_terminal', 'add_fixed_mods_terminal',
+           'add_variable_mods_terminal', 'get_unique_peptides', 'generate_peptides', 'check_peptide', 'get_precmass',
+           'get_fragmass', 'get_frag_dict', 'get_spectrum', 'get_spectra', 'read_fasta_file', 'read_fasta_file_entries',
            'check_sequence', 'add_to_pept_dict', 'merge_pept_dicts', 'generate_fasta_list', 'generate_database',
            'generate_spectra', 'block_idx', 'blocks', 'digest_fasta_block', 'generate_database_parallel', 'mass_dict',
            'pept_dict_from_search', 'save_database', 'read_database']
@@ -115,7 +115,7 @@ def list_to_numba(a_list):
 
 # Cell
 @njit
-def get_decoy_sequence(peptide, pseudo_reverse=True, AL_swap=False, KR_swap = False):
+def get_decoy_sequence(peptide, pseudo_reverse=False, AL_swap=False, KR_swap = False):
     """
     Reverses a sequence and adds the '_decoy' tag.
 
@@ -168,14 +168,20 @@ def swap_AL(peptide):
             i += 1
         i += 1
 
+    #aa_table = "GAVLIFMPWSCTYHKRQEND"
+    #DiaNN_table  = "LLLVVLLLLTSSSSLLNDQE"
+
+    #idx = aa_table.find(peptide[-2])
+    #peptide[-2] = decoy_table[idx]
+
     return peptide
 
-def get_decoys(peptide_list):
+def get_decoys(peptide_list, pseudo_reverse=False, AL_swap=False, KR_swap = False, **kwargs):
     """
     Wrapper to get decoys for lists of peptides
     """
     decoys = []
-    decoys.extend([get_decoy_sequence(peptide) for peptide in peptide_list])
+    decoys.extend([get_decoy_sequence(peptide, pseudo_reverse, AL_swap, KR_swap) for peptide in peptide_list])
     return decoys
 
 def add_decoy_tag(peptides):
@@ -197,44 +203,56 @@ def add_fixed_mods(seqs, mods_fixed, **kwargs):
         return seqs
 
 # Cell
-def get_mod_pos(variable_mods_r, sequence):
-    """
-    Returns a list with of tuples with all possibilities for modified an unmodified AAs.
-    """
-    modvar = []
-    for c in sequence:
-        if c in variable_mods_r.keys():
-            modvar.append((c, variable_mods_r[c]))
-        else:
-            modvar.append((c,))
+def add_variable_mod(peps, mods_variable_dict):
+    peptides = []
+    for pep_ in peps:
+        pep, min_idx = pep_
+        for mod in mods_variable_dict:
+            for i in range(len(pep)):
+                if i >= min_idx:
+                    c = pep[i]
+                    if c == mod:
+                        peptides.append((pep[:i]+[mods_variable_dict[c]]+pep[i+1:], i))
+    return peptides
 
-    return modvar
 
-# Cell
-
-from itertools import product
-def get_isoforms(variable_mods_r, sequence, max_isoforms):
+def get_isoforms(mods_variable_dict, peptide, max_isoforms):
     """
     Function to generate isoforms for a given peptide - returns a list of isoforms.
     The original sequence is included in the list
     """
-    modvar = get_mod_pos(variable_mods_r, sequence)
-    isoforms = []
-    i = 0
-    for o in product(*modvar):
-        if i < max_isoforms:
-            i += 1
-            isoforms.append("".join(o))
+    pep = list(parse(peptide))
 
-        else:
+    peptides = [pep]
+    new_peps = [(pep, 0)]
+    while len(peptides) < max_isoforms:
+        new_peps = add_variable_mod(new_peps, mods_variable_dict)
+
+        if len(new_peps) == 0:
             break
+        if len(new_peps) > 1:
+            if new_peps[0][0] == new_peps[1][0]:
+                new_peps = new_peps[0:1]
 
-    return isoforms
+        for _ in new_peps:
+            if len(peptides) < max_isoforms:
+                peptides.append(_[0])
+
+    peptides = [''.join(_) for _ in peptides]
+
+    return peptides
 
 # Cell
 from itertools import chain
 
 def add_variable_mods(peptide_list, mods_variable, max_isoforms, **kwargs):
+    #the peptide_list originates from one peptide already -> limit isoforms here
+
+    max_ = max_isoforms - len(peptide_list) + 1
+
+    if max_ < 0:
+        max_ = 0
+
     if not mods_variable:
         return peptide_list
     else:
@@ -242,7 +260,7 @@ def add_variable_mods(peptide_list, mods_variable, max_isoforms, **kwargs):
         for _ in mods_variable:
             mods_variable_r[_[-1]] = _
 
-        peptide_list = [get_isoforms(mods_variable_r, peptide, max_isoforms) for peptide in peptide_list]
+        peptide_list = [get_isoforms(mods_variable_r, peptide, max_) for peptide in peptide_list]
         return list(chain.from_iterable(peptide_list))
 
 # Cell
@@ -316,25 +334,46 @@ def generate_peptides(peptide, **kwargs):
     peptides = []
     [peptides.extend(cleave_sequence(_, **kwargs)) for _ in mod_peptide]
 
-    #Regular peptides
-    mod_peptides = add_fixed_mods(peptides, **kwargs)
-    mod_peptides = add_fixed_mods_terminal(mod_peptides, **kwargs)
-    mod_peptides = add_variable_mods_terminal(mod_peptides, **kwargs)
-    mod_peptides = add_variable_mods(mod_peptides, **kwargs)
+    peptides = [_ for _ in peptides if check_peptide(_, constants.AAs)]
 
-    #Decoys:
-    decoy_peptides = get_decoys(peptides)
+    max_isoforms = kwargs['max_isoforms']
 
-    mod_peptides_decoy = add_fixed_mods(decoy_peptides, **kwargs)
-    mod_peptides_decoy = add_fixed_mods_terminal(mod_peptides_decoy, **kwargs)
-    mod_peptides_decoy = add_variable_mods_terminal(mod_peptides_decoy, **kwargs)
-    mod_peptides_decoy = add_variable_mods(mod_peptides_decoy, **kwargs)
+    all_peptides = []
+    for peptide in peptides: #1 per, limit the number of isoforms
+        #Regular peptides
+        mod_peptides = add_fixed_mods([peptide], **kwargs)
+        mod_peptides = add_fixed_mods_terminal(mod_peptides, **kwargs)
+        mod_peptides = add_variable_mods_terminal(mod_peptides, **kwargs)
 
-    mod_peptides_decoy = add_decoy_tag(mod_peptides_decoy)
+        kwargs['max_isoforms'] = max_isoforms - len(mod_peptides)
+        mod_peptides = add_variable_mods(mod_peptides, **kwargs)
 
-    mod_peptides.extend(mod_peptides_decoy)
+        all_peptides.extend(mod_peptides)
 
-    return mod_peptides
+        #Decoys:
+        decoy_peptides = get_decoys([peptide], **kwargs)
+
+        mod_peptides_decoy = add_fixed_mods(decoy_peptides, **kwargs)
+        mod_peptides_decoy = add_fixed_mods_terminal(mod_peptides_decoy, **kwargs)
+        mod_peptides_decoy = add_variable_mods_terminal(mod_peptides_decoy, **kwargs)
+
+        kwargs['max_isoforms'] = max_isoforms - len(mod_peptides_decoy)
+
+        mod_peptides_decoy = add_variable_mods(mod_peptides_decoy, **kwargs)
+
+        mod_peptides_decoy = add_decoy_tag(mod_peptides_decoy)
+
+
+        all_peptides.extend(mod_peptides_decoy)
+
+    return all_peptides
+
+def check_peptide(peptide, AAs):
+
+    if set(peptide).issubset(AAs):
+        return True
+    else:
+        return False
 
 # Cell
 from numba import njit
@@ -364,51 +403,41 @@ def get_fragmass(parsed_pep, mass_dict):
     frag_masses = np.zeros(n_frags, dtype=np.float64)
     frag_type = np.zeros(n_frags, dtype=np.int8)
 
-    # b-ions -> 0
+    # b-ions > 0
     n_frag = 0
+
     frag_m = mass_dict["Proton"]
-    for _ in parsed_pep[:-1]:
+    for idx, _ in enumerate(parsed_pep[:-1]):
         frag_m += mass_dict[_]
         frag_masses[n_frag] = frag_m
-        frag_type[n_frag] = 0
+        frag_type[n_frag] = (idx+1)
         n_frag += 1
 
-    # y-ions -> 1
+    # y-ions < 0
     frag_m = mass_dict["Proton"] + mass_dict["H2O"]
-    for _ in parsed_pep[::-1][:-1]:
+    for idx, _ in enumerate(parsed_pep[::-1][:-1]):
         frag_m += mass_dict[_]
         frag_masses[n_frag] = frag_m
-        frag_type[n_frag] = 1
+        frag_type[n_frag] = -(idx+1)
         n_frag += 1
 
     return frag_masses, frag_type
 
 # Cell
 def get_frag_dict(parsed_pep, mass_dict):
-    """
-    Calculate the masses of the fragment ions
-    """
-    n_frags = (len(parsed_pep) - 1) * 2
 
     frag_dict = {}
+    frag_masses, frag_type = get_fragmass(parsed_pep, constants.mass_dict)
 
-    # b-ions -> 0
-    n_frag = 0
-    frag_m = mass_dict["Proton"]
+    for idx, _ in enumerate(frag_masses):
 
-    for _ in parsed_pep[:-1]:
-        frag_m += mass_dict[_]
-        n_frag += 1
-
-        frag_dict['b' + str(n_frag)] = frag_m
-
-    # y-ions -> 1
-    n_frag = 0
-    frag_m = mass_dict["Proton"] + mass_dict["H2O"]
-    for _ in parsed_pep[::-1][:-1]:
-        frag_m += mass_dict[_]
-        n_frag += 1
-        frag_dict['y' + str(n_frag)] = frag_m
+        cnt = frag_type[idx]
+        if cnt > 0:
+            identifier = 'b'
+        else:
+            identifier = 'y'
+            cnt = -cnt
+        frag_dict[identifier+str(cnt)] = _
 
     return frag_dict
 
@@ -490,10 +519,13 @@ def check_sequence(element, AAs):
     Checks wheter a sequence from a FASTA entry contains valid AAs
     """
     if not set(element['sequence']).issubset(AAs):
-        logging.error('This FASTA entry contains unknown AAs and will be skipped: \n {}\n'.format(element))
+        unknown = set(element['sequence']) - set(AAs)
+        logging.error(f'This FASTA entry contains unknown AAs {unknown} - Peptides with unknown AAs will be skipped: \n {element}\n')
         return False
     else:
         return True
+
+
 
 # Cell
 def add_to_pept_dict(pept_dict, new_peptides, i):
@@ -556,11 +588,10 @@ def generate_fasta_list(fasta_paths, callback = None, **kwargs):
         fasta_generator = read_fasta_file(fasta_file)
 
         for element in fasta_generator:
-            if check_sequence(element, constants.AAs):
-                fasta_list.append(element)
-                fasta_dict[fasta_index] = element
-                fasta_index += 1
-
+            check_sequence(element, constants.AAs)
+            fasta_list.append(element)
+            fasta_dict[fasta_index] = element
+            fasta_index += 1
     return fasta_list, fasta_dict
 
 
@@ -587,12 +618,12 @@ def generate_database(mass_dict, fasta_paths, callback = None, **kwargs):
         fasta_generator = read_fasta_file(fasta_file)
 
         for element in fasta_generator:
-            if check_sequence(element, constants.AAs):
-                fasta_dict[fasta_index] = element
-                mod_peptides = generate_peptides(element["sequence"], **kwargs)
-                pept_dict, added_seqs = add_to_pept_dict(pept_dict, mod_peptides, fasta_index)
-                if len(added_seqs) > 0:
-                    to_add.extend(added_seqs)
+
+            fasta_dict[fasta_index] = element
+            mod_peptides = generate_peptides(element["sequence"], **kwargs)
+            pept_dict, added_seqs = add_to_pept_dict(pept_dict, mod_peptides, fasta_index)
+            if len(added_seqs) > 0:
+                to_add.extend(added_seqs)
 
             fasta_index += 1
 
@@ -669,7 +700,6 @@ def digest_fasta_block(to_process):
         sequence = element["sequence"]
         mod_peptides = generate_peptides(sequence, **settings['fasta'])
         pept_dict, added_peptides = add_to_pept_dict(pept_dict, mod_peptides, fasta_index+f_index)
-
         if len(added_peptides) > 0:
             to_add.extend(added_peptides)
         f_index += 1
@@ -688,6 +718,12 @@ def generate_database_parallel(settings, callback = None):
     n_processes = settings['general']['n_processes']
 
     fasta_list, fasta_dict = generate_fasta_list(**settings['fasta'])
+
+    logging.info(f'FASTA contains {len(fasta_list):,} entries.')
+
+    if len(fasta_list) > settings['fasta']['db_size']:
+        logging.info(f"FASTA exceeds set db_size of {settings['fasta']['db_size']:,}. Shortening fasta.")
+        fasta_list = fasta_list[:settings['fasta']['db_size']]
 
     blocks = block_idx(len(fasta_list), settings['fasta']['fasta_block'])
 
@@ -717,19 +753,21 @@ def pept_dict_from_search(settings):
     Generates a peptide dict from a large search
     """
 
-    paths = settings['experiment']['files']
-
-    bases = [os.path.splitext(_)[0]+'.hdf' for _ in paths]
+    paths = settings['experiment']['file_paths']
+    bases = [os.path.splitext(_)[0]+'.ms_data.hdf' for _ in paths]
 
     all_dfs = []
     for _ in bases:
         try:
-            df = pd.read_hdf(_, key='peptide_fdr')
+            df = alphapept.io.MS_Data_File(_).read(dataset_name="peptide_fdr")
         except KeyError:
             df = pd.DataFrame()
 
-        if df > 0:
+        if len(df) > 0:
             all_dfs.append(df)
+
+    if sum([len(_) for _ in all_dfs]) == 0:
+        raise ValueError("No sequences present to concatenate.")
 
     df = pd.concat(all_dfs)
 

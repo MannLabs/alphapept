@@ -9,9 +9,9 @@ phosphorylation of T	amino acid residue	T	79.96633092	79.979902	0	0	none	21	Phos
 phosphorylation of Y	amino acid residue	Y	79.96633092	79.979902	0	0	none	21	Phospho	HPO3	pY
 deamidation of N	amino acid residue	N	0.984015593	0.98476	0	0	none	7	Deamidated	H-1N-1O	deamN
 deamidation of Q	amino acid residue	Q	0.984015593	0.98476	0	0	none	7	Deamidated	H-1N-1O	deamNQ
-pyro-cmC	peptide N-terminus	C	-17.0265491	-17.03052	0	0	none	26	Pyro-carbamidomethyl	H-3N-1	cmC<
-pyro-E	peptide N-terminus	E	-18.01056469	-18.01528	0	0	none	27	Glu->pyro-Glu	H-2O-1	pgE<
-pyro-Q	peptide N-terminus	Q	-17.0265491	-17.03052	0	0	none	28	Gln->pyro-Glu	H-3N-1	pgQ<
+pyro-cmC	peptide N-terminus	C	-17.0265491	-17.03052	0	0	none	26	Pyro-carbamidomethyl	H-3N-1	cm<C
+pyro-E	peptide N-terminus	E	-18.01056469	-18.01528	0	0	none	27	Glu->pyro-Glu	H-2O-1	pg<E
+pyro-Q	peptide N-terminus	Q	-17.0265491	-17.03052	0	0	none	28	Gln->pyro-Glu	H-3N-1	pg<Q
 TMT zero on peptide N-terminus	peptide N-terminus	N	224.1524779	224.2994	0	0	none	739	TMT	C12H20N2O2	tmt0<^
 TMT zero on K	amino acid residue	K	224.1524779	224.2994	0	0	none	739	TMT	C12H20N2O2	tmt0K
 TMT zero on Y	amino acid residue	Y	224.1524779	224.2994	0	0	none	739	TMT	C12H20N2O2	tmt0Y
@@ -29,3 +29,6 @@ iTRAQ 8-plex on K	amino acid residue	K	304.2021995	304.3077298	0	0	none	730	iTRA
 iTRAQ 8-plex on Y	amino acid residue	Y	304.2021995	304.3077298	0	0	none	730	iTRAQ8plex	113/114/116/117:C7(13C)7H24N3(15N)O3 + 115/118/119/121:C8(13C)6H24N2(15N)2O3	itraq8Y
 EASItag 6-plex on peptide N-terminus	peptide N-terminus	<	266.0838675	266.0838675	0	0	none	999999999	EASItag6plex	12C513C5H15O5NS	e<^
 EASItag 6-plex on K	amino acid residue	K	266.0838675	266.0838675	0	0	none	999999999	EASItag6plex	12C513C5H15O5NS	eK
+Arg 10 on peptide C-terminus	peptide C-terminus	R	10.008269577760007	10.008269577760007	0	0	none	none	Arg10	13C615N4	arg10>R
+Arg 6 on peptide C-terminus	peptide C-terminus	R	6.020130000000005	6.020130000000005	0	0	none	none	Arg6	13C6	arg6>R
+Lys 8 on peptide C-terminus	peptide C-terminus	K	8.014199788880006	8.014199788880006	0	0	none	none	Lys8	13C15N2	lys8>K

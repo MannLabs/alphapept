@@ -1,28 +1,14 @@
 calibration:
-  method:
-    default: linear
-    description: Interpolation method.
-    type: combobox
-    value:
-    - linear
-    - nearest
-    - cubic
-  min_mz_step:
-    default: 80
-    description: Minimum number of datapoints in for mz interpolation.
-    max: 999
-    min: 1
-    type: spinbox
-  min_rt_step:
-    default: 50
-    description: Minimum number of datapoints in for rt interpolation.
-    max: 999
-    min: 1
-    type: spinbox
-  minimum_score:
-    default: 20
-    description: Minimum score for psms used for calibration.
-    max: 999
+  mob_range:
+    default: 0.3
+    description: Scaling factor for mobility axis.
+    max: 1.0
+    min: 0.0
+    type: doublespinbox
+  n_neighbors:
+    default: 100
+    description: Number of neighbors that are used for offset interpolation.
+    max: 1000
     min: 1
     type: spinbox
   outlier_std:
@@ -31,6 +17,18 @@ calibration:
     max: 5
     min: 1
     type: spinbox
+  ppm_range:
+    default: 20
+    description: Scaling factor for mz axis.
+    max: 1000
+    min: 1
+    type: spinbox
+  rt_range:
+    default: 0.5
+    description: Scaling factor for rt axis.
+    max: 10
+    min: 0.0
+    type: doublespinbox
 experiment:
   file_paths:
     default: []
@@ -52,6 +50,14 @@ experiment:
     description: List of shortnames for the raw files.
     type: list
 fasta:
+  AL_swap:
+    default: false
+    description: Swap A and L for decoy generation.
+    type: checkbox
+  KR_swap:
+    default: false
+    description: Swap K and R (only if terminal) for decoy generation.
+    type: checkbox
   database_path:
     default: null
     description: Path to library file (.hdf).
@@ -59,6 +65,12 @@ fasta:
     - hdf
     folder: false
     type: path
+  db_size:
+    default: 200000
+    description: Maximum number of fasta entries that are stored in a db.
+    max: 1000000
+    min: 1000
+    type: spinbox
   fasta_block:
     default: 1000
     description: Number of fasta entries to be processed in one block.
@@ -92,7 +104,7 @@ fasta:
     - cC
     description: Fixed modifications.
     type: checkgroup
-    value: &id001
+    value:
       aK: acetylation of lysine
       cC: carbamidomethylation of C
       deamN: deamidation of N
@@ -116,13 +128,16 @@ fasta:
     default: []
     description: Fixed terminal modifications.
     type: checkgroup
-    value: &id002
-      cmC<: pyro-cmC
+    value:
+      arg10>R: Arg 10 on peptide C-terminus
+      arg6>R: Arg 6 on peptide C-terminus
+      cm<C: pyro-cmC
       e<^: EASItag 6-plex on peptide N-terminus
       itraq4K<^: iTRAQ 4-plex on peptide N-terminus
       itraq8K<^: iTRAQ 8-plex on peptide N-terminus
-      pgE<: pyro-E
-      pgQ<: pyro-Q
+      lys8>K: Lys 8 on peptide C-terminus
+      pg<E: pyro-E
+      pg<Q: pyro-Q
       tmt0<^: TMT zero on peptide N-terminus
       tmt2<^: TMT duplex on peptide N-terminus
       tmt6<^: TMT sixplex/tenplex on peptide N-terminus
@@ -130,25 +145,58 @@ fasta:
     default: []
     description: Fixed terminal modifications on proteins.
     type: checkgroup
-    value: &id003
+    value:
       a<^: acetylation of protein N-terminus
       am>^: amidation of protein C-terminus
   mods_variable:
     default:
     - oxM
-    description: Fixed variable modifications.
+    description: Variable modifications.
     type: checkgroup
-    value: *id001
+    value:
+      aK: acetylation of lysine
+      cC: carbamidomethylation of C
+      deamN: deamidation of N
+      deamNQ: deamidation of Q
+      eK: EASItag 6-plex on K
+      itraq4K: iTRAQ 4-plex on K
+      itraq4Y: iTRAQ 4-plex on Y
+      itraq8K: iTRAQ 8-plex on K
+      itraq8Y: iTRAQ 8-plex on Y
+      oxM: oxidation of M
+      pS: phosphorylation of S
+      pT: phosphorylation of T
+      pY: phosphorylation of Y
+      tmt0K: TMT zero on K
+      tmt0Y: TMT zero on Y
+      tmt2K: TMT duplex on K
+      tmt2Y: TMT duplex on Y
+      tmt6K: TMT sixplex/tenplex on K
+      tmt6Y: TMT sixplex/tenplex on Y
   mods_variable_terminal:
     default: []
-    description: Fixed varibale terminal modifications.
+    description: Varibale terminal modifications.
     type: checkgroup
-    value: *id002
+    value:
+      arg10>R: Arg 10 on peptide C-terminus
+      arg6>R: Arg 6 on peptide C-terminus
+      cm<C: pyro-cmC
+      e<^: EASItag 6-plex on peptide N-terminus
+      itraq4K<^: iTRAQ 4-plex on peptide N-terminus
+      itraq8K<^: iTRAQ 8-plex on peptide N-terminus
+      lys8>K: Lys 8 on peptide C-terminus
+      pg<E: pyro-E
+      pg<Q: pyro-Q
+      tmt0<^: TMT zero on peptide N-terminus
+      tmt2<^: TMT duplex on peptide N-terminus
+      tmt6<^: TMT sixplex/tenplex on peptide N-terminus
   mods_variable_terminal_prot:
     default: []
-    description: Fixed varibale terminal modifications  on proteins.
+    description: Varibale terminal modifications on proteins.
     type: checkgroup
-    value: *id003
+    value:
+      a<^: acetylation of protein N-terminus
+      am>^: amidation of protein C-terminus
   num_missed_cleavages:
     default: 2
     description: Number of missed cleavages.
@@ -197,6 +245,10 @@ fasta:
     - trypsin_exception
     - non-specific
     - trypsin
+  pseudo_reverse:
+    default: true
+    description: Use pseudo-reverse strategy instead of reverse.
+    type: checkbox
   save_db:
     default: true
     description: Save DB or create on the fly.
@@ -261,17 +313,29 @@ general:
     description: Use ppm instead of Dalton.
     type: checkbox
   score:
-    default: x_tandem
+    default: random_forest
     description: Scoring method.
     type: combobox
     value:
     - x_tandem
     - random_forest
-misc:
+matching:
   match_between_runs:
     default: true
     description: Perform match between runs type quantification.
     type: checkbox
+  min_match_d:
+    default: 3
+    description: Minimum distance cutoff for matching
+    max: 10.0
+    min: 0.001
+    type: doublespinbox
+  min_match_p:
+    default: 0.05
+    description: Minimum probability cutoff for matching
+    max: 1.0
+    min: 0.001
+    type: doublespinbox
 quantification:
   max_lfq:
     default: true
@@ -306,13 +370,13 @@ search:
     min: 1
     type: spinbox
   m_offset:
-    default: 10
+    default: 30
     description: Precursor mass offset.
     max: 99
     min: 1
     type: spinbox
   m_tol:
-    default: 20
+    default: 30
     description: MSMS mass offset.
     max: 99
     min: 1

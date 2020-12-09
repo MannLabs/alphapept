@@ -12,7 +12,7 @@ import zipfile
 import subprocess
 import numpy as np
 
-from alphapept.runner import run_alphapept
+import alphapept.interface
 from alphapept.settings import load_settings
 import alphapept
 import alphapept.io
@@ -30,6 +30,7 @@ FILE_DICT['contaminants.fasta'] = 'https://datashare.biochem.mpg.de/s/aRaFlwxdCH
 FILE_DICT['human.fasta'] = 'https://datashare.biochem.mpg.de/s/7KvRKOmMXQTTHOp/download'
 FILE_DICT['yeast.fasta'] = 'https://datashare.biochem.mpg.de/s/8zioyWKVHEPeo34/download'
 FILE_DICT['e_coli.fasta'] = 'https://datashare.biochem.mpg.de/s/ZUqqruTOxBbSf1k/download'
+FILE_DICT['arabidopsis.fasta'] = 'https://datashare.biochem.mpg.de/s/YQXTFSVnF4AMTOM/download'
 
 #PXD006109
 
@@ -84,7 +85,7 @@ class TestRun():
         self.m_tol = 20
         self.m_offset = 20
 
-        # Flag to run mixed_species_analysis
+        # Flag to run mixed_species_quantification
         self.run_mixed_analysis = None
 
 
@@ -151,7 +152,7 @@ class TestRun():
         report['timestamp'] = datetime.now()
 
         start = time()
-        settings = run_alphapept(self.settings)
+        settings = alphapept.interface.run_complete_workflow(self.settings)
         end = time()
 
         report['test_id'] = self.id
@@ -199,10 +200,10 @@ class TestRun():
 
         if self.run_mixed_analysis:
             species, groups = self.run_mixed_analysis
-            report['mixed_species'] = self.mixed_species_analysis(self.settings, species, groups)
+            report['mixed_species_quantification'] = self.mixed_species_quantification(self.settings, species, groups)
 
 
-        report['sample_fdr'] = self.mixed_species_fdr(self.settings, 'ECO') #ECO for now
+        report['protein_fdr_arabidopsis'] = self.mixed_species_fdr(self.settings, 'ARATH') #ECO for now
 
         self.report = report
         if password:
@@ -232,7 +233,7 @@ class TestRun():
         return ((df[[species in _ for _ in df.index]].count())/len(df)).to_dict()
 
 
-    def mixed_species_analysis(self, settings, species, groups, min_count = 2):
+    def mixed_species_quantification(self, settings, species, groups, min_count = 2):
         """
         Mixed species analysis
         """
@@ -271,9 +272,7 @@ class TestRun():
                 results[s+i+'_std'] = sub_std
 
             results['DELTA'+i]  = results[species[1]+i+'_mean'] - results[species[0]+i+'_mean']
-
             results['STD'+i]  = np.sqrt(results[species[1]+i+'_std']**2 + results[species[0]+i+'_std']**2)
-
             results['T'+i]  = results['DELTA'+i] / results['STD'+i]
 
         return results
@@ -283,15 +282,10 @@ class BrukerTestRun(TestRun):
     def __init__(self, *args):
         TestRun.__init__(self, *args)
 
-        self.m_tol = 30
-        self.m_offset = 30
-
-
 class ThermoTestRun(TestRun):
     def __init__(self, *args):
         TestRun.__init__(self, *args)
-        self.m_tol = 20
-        self.m_offset = 20
+
 
 
 def main():
@@ -311,7 +305,7 @@ def main():
         run.run(password=password)
     elif runtype == 'bruker_hela':
         files = ['bruker_HeLa.d']
-        fasta_files = ['human.fasta', 'e_coli.fasta', 'contaminants.fasta']
+        fasta_files = ['human.fasta', 'arabidopsis.fasta', 'contaminants.fasta']
         run = BrukerTestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'thermo_irt':
@@ -321,7 +315,7 @@ def main():
         run.run(password=password)
     elif runtype == 'thermo_hela':
         files = ['thermo_HeLa.raw']
-        fasta_files = ['human.fasta', 'e_coli.fasta', 'contaminants.fasta']
+        fasta_files = ['human.fasta', 'arabidopsis.fasta', 'contaminants.fasta']
         run = ThermoTestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'PXD006109':

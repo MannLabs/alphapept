@@ -316,7 +316,7 @@ def get_minima(y):
     return minima
 
 # Cell
-def split_hills(hills, centroids, smoothing = 1, split_level=1.3, callback=None):
+def split_hills(hills, centroids, smoothing = 1, split_level=5, callback=None):
     """
     Wrapper to split list of hills
     """
@@ -481,7 +481,7 @@ def get_hill_data(hills, centroids, callback=None):
 
     centroid_dtype = [("mz", float), ("int", np.int64), ("scan_no", int), ("rt", float)]
 
-    hill_data = []
+    hill_data = List()
 
     for idx, hill in enumerate(hills):
         hill_data.append(np.array([centroids[_[0]][_[1]] for _ in hill], dtype=centroid_dtype))
@@ -503,8 +503,8 @@ def get_hill_data(hills, centroids, callback=None):
 
     sortindex = np.argsort(hill_stats[:, 2])
     sorted_stats = hill_stats[sortindex]
-    sorted_hills = np.array(hills)[sortindex]
-    sorted_data = np.array(hill_data)[sortindex]
+    sorted_hills = np.array(hills, dtype='object')[sortindex]
+    sorted_data = np.array(hill_data, dtype='object')[sortindex]
 
     sorted_stats = np.core.records.fromarrays(sorted_stats.T, dtype=stats_dtype)
 
@@ -925,7 +925,7 @@ def mz_to_mass(mz, charge):
 
 
 @njit
-def get_minpos(y, split=1.3):
+def get_minpos(y, split=5):
     """
     Function to get a list of minima in a trace.
     A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.
@@ -1207,31 +1207,47 @@ def plot_isotope_pattern(index, df, sorted_stats, centroids, scan_range=100, mz_
 # Cell
 import subprocess
 import os
+import platform
 
-def extract_bruker(file, ff_dir = "ext/bruker/FF/", config = "default.config"):
+
+def extract_bruker(file, base_dir = "ext/bruker/FF/", config = "proteomics_4d.config"):
     """
     Call Bruker Feautre Finder via subprocess
     """
 
     feature_path = file + '/'+ os.path.split(file)[-1] + '.features'
 
-    ff_dir = os.path.join(os.path.dirname(__file__), ff_dir)
+    base_dir = os.path.join(os.path.dirname(__file__), base_dir)
 
-    ff_dir = os.path.join(os.path.dirname(__file__), ff_dir)
+    operating_system = platform.system()
+
+    if operating_system == 'Linux':
+        ff_dir = os.path.join(base_dir, 'linux64','uff-cmdline2')
+        logging.info('Using Linux FF')
+    elif operating_system == 'Windows':
+        ff_dir = os.path.join(base_dir, 'win64','uff-cmdline2.exe')
+        logging.info('Using Windows FF')
+    else:
+        raise NotImplementedError(f"System {operating_system} not supported.")
 
     if os.path.exists(feature_path):
         return feature_path
     else:
-        if not os.path.isdir(ff_dir):
-            raise FileNotFoundError('Bruker feature finder cmd not found.')
+        if not os.path.isfile(ff_dir):
+            raise FileNotFoundError(f'Bruker feature finder cmd not found here {ff_dir}.')
 
-        config_path = ff_dir + '/'+ 'default.config'
+        config_path = base_dir + '/'+ config
+
         if not os.path.isfile(config_path):
-            raise FileNotFoundError('Config file not found.')
+            raise FileNotFoundError(f'Config file not found here {config_path}.')
 
-        FF_parameters = [os.path.join(ff_dir, 'uff-cmdline.exe'),'--ff 4d','--readconfig ' + config_path,'--input ' + file]
+        FF_parameters = [ff_dir,'--ff 4d','--readconfig ' + config_path,'--analysisDirectory ' + file]
 
-        subprocess.run(FF_parameters)
+        #subprocess.run(FF_parameters)
+        #subprocess.check_output(' '.join(FF_parameters), shell=True).decode("utf-8")
+        process = subprocess.Popen(' '.join(FF_parameters), stdout=subprocess.PIPE)
+        for line in iter(process.stdout.readline, b''):  # replace '' with b'' for Python 3
+            logging.info(line.decode('utf8'))
 
         if os.path.exists(feature_path):
             return feature_path
@@ -1253,8 +1269,10 @@ def convert_bruker(feature_path):
 
     M_PROTON = mass_dict['Proton']
     feature_table['Mass'] = feature_table['MZ'].values * feature_table['Charge'].values - feature_table['Charge'].values*M_PROTON
-    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "Mobility": "mobility", "Charge":"charge","Intensity":'int_sum'})
+    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "RT_lower":"rt_start", "RT_upper":"rt_end", "Mobility": "mobility", "Mobility_lower": "mobility_lower", "Mobility_upper": "mobility_upper", "Charge":"charge","Intensity":'int_sum'})
     feature_table['rt_apex'] = feature_table['rt_apex']/60
+    feature_table['rt_start'] = feature_table['rt_start']/60
+    feature_table['rt_end'] = feature_table['rt_end']/60
 
     return feature_table
 
@@ -1317,8 +1335,9 @@ import logging
 import os
 from .search import query_data_to_features
 import alphapept.io
+import functools
 
-def find_and_save_features(to_process):
+def find_and_save_features(to_process, callback = None):
     """
     Wrapper for feature finding
     """
@@ -1348,22 +1367,36 @@ def find_and_save_features(to_process):
     else:
 
         if datatype == 'thermo':
+
+            def progress_wrapper(step, n_steps, current):
+                if callback:
+                    callback(step/n_steps+current/n_steps)
+
+            n_steps = 8
+
             logging.info('Feature finding on {}'.format(path))
-            centroids = raw_to_centroid(query_data)
+            centroids = raw_to_centroid(query_data, callback = functools.partial(progress_wrapper, 0, n_steps))
             logging.info('Loaded {:,} centroids.'.format(len(centroids)))
-            completed_hills = get_hills(centroids, buffer_size=500)
+
+            completed_hills = get_hills(centroids, buffer_size=500, callback = functools.partial(progress_wrapper, 1, n_steps))
             logging.info('A total of {:,} hills extracted. Average hill length {:.2f}'.format(len(completed_hills), np.mean([len(_) for _ in completed_hills])))
-            splitted_hills = split_hills(completed_hills, centroids, smoothing=1)
+
+            splitted_hills = split_hills(completed_hills, centroids, smoothing=1, callback = functools.partial(progress_wrapper, 2, n_steps))
             logging.info('Split {:,} hills into {:,} hills'.format(len(completed_hills), len(splitted_hills)))
-            filtered_hills = filter_hills(splitted_hills, centroids)
+
+            filtered_hills = filter_hills(splitted_hills, centroids, callback = functools.partial(progress_wrapper, 3, n_steps))
             logging.info('Filtered {:,} hills. Remaining {:,} hills'.format(len(splitted_hills), len(filtered_hills)))
-            sorted_hills, sorted_stats, sorted_data = get_hill_data(filtered_hills, centroids)
+
+            sorted_hills, sorted_stats, sorted_data = get_hill_data(filtered_hills, centroids, callback = functools.partial(progress_wrapper, 4, n_steps))
             logging.info('Extracting hill stats complete')
-            pre_isotope_patterns = get_edges(sorted_stats, sorted_data)
+
+            pre_isotope_patterns = get_edges(sorted_stats, sorted_data, callback = functools.partial(progress_wrapper, 5, n_steps))
             logging.info('Found {:,} pre isotope patterns.'.format(len(pre_isotope_patterns)))
-            isotope_patterns, isotope_charges = get_isotope_patterns(pre_isotope_patterns, sorted_stats, sorted_data, averagine_aa, isotopes)
+
+            isotope_patterns, isotope_charges = get_isotope_patterns(pre_isotope_patterns, sorted_stats, sorted_data, averagine_aa, isotopes, callback = functools.partial(progress_wrapper, 6, n_steps))
             logging.info('Extracted {:,} isotope patterns.'.format(len(isotope_patterns)))
-            feature_table = feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorted_data, sorted_hills, query_data)
+
+            feature_table = feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorted_data, sorted_hills, query_data, callback = functools.partial(progress_wrapper, 7, n_steps))
             logging.info('Report complete.')
 
         elif datatype == 'bruker':
@@ -1405,7 +1438,7 @@ def find_and_save_features_parallel(path_list, settings, callback=None):
         logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}')
 
     if len(to_process) == 1:
-        find_and_save_features(to_process[0])
+        find_and_save_features(to_process[0], callback = callback)
     else:
         with Pool(n_processes) as p:
             max_ = len(to_process)
@@ -1420,7 +1453,7 @@ import pandas as pd
 import numpy as np
 
 
-def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=3):
+def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=5):
     """
     Map MS1 features to MS2 based on rt and mz
     if ccs is included also add
@@ -1471,6 +1504,9 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
 
         dist, idx = matching_tree.query(ref_points, k=n_neighbors)
 
+
+    ref_matched = np.zeros(ref_points.shape[0], dtype=np.bool_)
+
     all_df = []
     for neighbor in range(n_neighbors):
         if use_mob:
@@ -1496,15 +1532,55 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
         ref_df['query_idx'] = ref_df.index
         ref_df['feature_idx'] = idx[:,neighbor]
 
-        for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+        for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm','mobility_lower','mobility_upper']:
             if field in feature_table.keys():
                 ref_df[field] = feature_table.iloc[idx[:,neighbor]][field].values
 
-        ref_df['dist'] = dist[:,neighbor]
+        rt_check = (ref_df['rt_start'] <= ref_df['rt']) & (ref_df['rt'] <= ref_df['rt_end'])
 
-        ref_df = ref_df[ref_df['dist']<1]
+        # check isolation window (win=3)
+        mass_check = np.abs(ref_df['mz_offset'].values) <= 3
+
+        _check = rt_check & mass_check
+        if use_mob:
+            mob_check = (ref_df['mobility_lower'] <= ref_df['mobility']) & (ref_df['mobility'] <= ref_df['mobility_upper'])
+            _check &= mob_check
+
+        ref_matched |= _check
+        ref_df['dist'] = dist[:,neighbor]
+        ref_df = ref_df[_check]
+
+        #ref_df['dist'] = dist[:,neighbor]
+        #ref_matched |= (ref_df['dist']<1)
+        #ref_df = ref_df[ref_df['dist']<1]
 
         all_df.append(ref_df)
+
+    if use_mob:
+        unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2'], query_data['mobility']]).T, columns=['rt', 'mass', 'mz', 'charge','mobility'])
+    else:
+        unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'mz', 'charge'])
+    unmatched_ref = unmatched_ref[~ref_matched]
+    unmatched_ref['mass_matched'] = unmatched_ref['mass']
+    unmatched_ref['mass_offset'] = 0
+    unmatched_ref['rt_matched'] = unmatched_ref['rt']
+    unmatched_ref['rt_offset'] = 0
+    unmatched_ref['mz_matched'] = unmatched_ref['mz']
+    unmatched_ref['mz_offset'] = 0
+    unmatched_ref['charge_matched'] = unmatched_ref['charge']
+    unmatched_ref['query_idx'] = unmatched_ref.index
+    unmatched_ref['feature_idx'] = 0
+
+    if use_mob:
+        ref_df['mobility_matched'] = unmatched_ref['mobility']
+        ref_df['mobility_offset'] = 0
+
+    for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+        if field in feature_table.keys():
+            unmatched_ref[field] = 0
+    unmatched_ref['dist'] = 0
+
+    all_df.append(unmatched_ref)
 
     features = pd.concat(all_df)
 
