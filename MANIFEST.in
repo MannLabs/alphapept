@@ -2,5 +2,5 @@ include settings.ini
 include LICENSE
 include CONTRIBUTING.md
 include README.md
-recursive-include alphapept
+recursive-include alphapept *
 recursive-exclude * __pycache__
