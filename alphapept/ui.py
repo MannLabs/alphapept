@@ -629,7 +629,7 @@ class MainWindow(QMainWindow):
 
     def onReadyReadStandardError(self):
         error = self.process.readAllStandardError().data().decode()
-        logging.error(error)
+        logging.info(error)
 
     def onReadyReadStandardOutput(self):
         result = self.process.readAllStandardOutput().data().decode()
@@ -663,7 +663,7 @@ class MainWindow(QMainWindow):
 
         if getattr(sys, 'frozen', False):
             application_path = sys._MEIPASS
-            exe_path = os.path.join(application_path, 'alphapept.exe')
+            exe_path = os.path.normpath(os.path.join(application_path, 'alphapept.exe'))
             logging.info(f'Starting exe from {exe_path}') #TODO: Change for different OS
             self.process.start(f"{exe_path} workflow {settings_path} -p")
         else:
