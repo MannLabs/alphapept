@@ -6,6 +6,9 @@ __all__ = ['load_thermo_raw', 'load_bruker_raw', 'one_over_k0_to_CCS', 'check_sa
            'HDF_File', 'MS_Data_File', 'raw_to_ms_data_file', 'raw_to_ms_data_file_parallel']
 
 # Cell
+
+import numpy as np
+
 def load_thermo_raw(raw_file, most_abundant, use_profile_ms1 = False, callback=None, **kwargs):
     """
     Load thermo raw file and extract spectra
