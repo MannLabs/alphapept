@@ -65,6 +65,9 @@ class MainWindow(QMainWindow):
 
         self.smooth_progress = SmoothProgress(self.progress_overall_changed)
         self.smooth_progress.start()
+
+        self.process = None
+
         self.initUI()
 
     def open_url(self, url):
@@ -640,10 +643,7 @@ class MainWindow(QMainWindow):
             else:
                 logging.info(line.strip('\n'))
 
-
-
     def start(self):
-
         logging.info("Started processing.")
         self.busy_indicator.setVisible(True)
         self.movie.start()
@@ -651,22 +651,25 @@ class MainWindow(QMainWindow):
         self.settingsWidget.disable_settings()
         self.btn_start.setText('Running..')
         self.btn_start.setEnabled(False)
-
         settings = self.read_settings()
-
         dirname = os.path.dirname(settings['experiment']['results_path'])
-
         settings_path = os.path.join(dirname, '_.yaml')
-
         with open(settings_path, "w") as file:
             yaml.dump(settings, file)
 
         self.process = QProcess()
-
         self.process.readyReadStandardError.connect(self.onReadyReadStandardError)
         self.process.readyReadStandardOutput.connect(self.onReadyReadStandardOutput)
 
-        self.process.start(f"python -m alphapept workflow {settings_path} -p")
+        if getattr(sys, 'frozen', False):
+            application_path = sys._MEIPASS
+            exe_path = os.path.join(application_path, 'alphapept.exe')
+            logging.info(f'Starting exe from {exe_path}') #TODO: Change for different OS
+            self.process.start(f"{exe_path} workflow {settings_path} -p")
+        else:
+            application_path = os.path.dirname(os.path.abspath(__file__))
+            logging.info('Starting from Python env')
+            self.process.start(f"python -m alphapept workflow {settings_path} -p")
 
         self.process.finished.connect(self.complete)
 
@@ -678,6 +681,18 @@ class MainWindow(QMainWindow):
 
         self.busy_indicator.setVisible(False)
 
+    def closeEvent(self, event):
+        reply = QMessageBox.question(self, 'Message',
+            "Are you sure to quit?", QMessageBox.Yes, QMessageBox.No)
+
+        if reply == QMessageBox.Yes:
+            logging.info('Closing running processes.')
+            if self.process is not None:
+                self.process.terminate()
+                self.process.kill()
+            event.accept()
+        else:
+            event.ignore()
 
 def main(close=False):
     app = QApplication(sys.argv)
@@ -694,7 +709,7 @@ def main(close=False):
             "An error occured",
             message
         )
-        #errorbox.set_stylesheet(dark_stylesheet)
+
         errorbox.exec_()
         sys.__excepthook__(type, value, tback)
 
@@ -705,7 +720,5 @@ def main(close=False):
     else:
         sys.exit(app.exec_())
 
-
 if __name__ == "__main__":
-
     main()
