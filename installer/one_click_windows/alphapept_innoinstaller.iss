@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "AlphaPept"
-#define MyAppVersion "0.3.5-dev0"
+#define MyAppVersion "0.3.6-dev0"
 #define MyAppPublisher "MannLabs"
 #define MyAppURL "https://github.com/MannLabs/alphapept"
 #define MyAppExeName "alphapeptw.exe"
@@ -23,7 +23,7 @@ DisableProgramGroupPage=yes
 LicenseFile=..\..\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputBaseFilename="AlphaPept-Windows-64bit-0.3.5-dev0"
+OutputBaseFilename="AlphaPept-Windows-64bit-0.3.6-dev0"
 SetupIconFile=..\alpha_logo.ico
 Compression=lzma
 SolidCompression=yes
