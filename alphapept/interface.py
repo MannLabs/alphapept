@@ -515,9 +515,15 @@ def lfq_quantification(
         )
         results_path = settings['experiment']['results_path']
         base, ext = os.path.splitext(results_path)
-        protein_table.to_csv(base+'.csv')
+        protein_table.to_csv(base+'_proteins.csv')
 
         logging.info('LFQ complete.')
+
+    logging.info('Exporting as csv.')
+    results_path = settings['experiment']['results_path']
+    base, ext = os.path.splitext(results_path)
+    df.to_csv(base+'.csv')
+
     return settings
 
 # Cell
