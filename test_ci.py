@@ -78,13 +78,14 @@ class TestRun():
     """
     Class to prepare and download files to make a default test run
     """
-    def __init__(self, id, experimental_files, fasta_paths):
+    def __init__(self, id, experimental_files, fasta_paths, exe_path = None):
 
         self.id = id
         self.file_paths = experimental_files
         self.fasta_paths = fasta_paths
         self.m_tol = 20
         self.m_offset = 20
+        self.exe_path = exe_path
 
         # Flag to run mixed_species_quantification
         self.run_mixed_analysis = None
@@ -145,7 +146,7 @@ class TestRun():
         self.settings['search']['m_offset'] =  self.m_offset
         self.settings['search']['m_tol'] =  self.m_tol
 
-    def run(self, password=None, exe_path = None):
+    def run(self, password=None):
         self.prepare_files()
         self.prepare_settings()
 
@@ -153,14 +154,14 @@ class TestRun():
         report['timestamp'] = datetime.now()
 
         start = time()
-        if exe_path is not None: #call compiled exe file
+        if self.exe_path is not None: #call compiled exe file
             dirname = os.path.dirname(settings['experiment']['results_path'])
             settings_path = os.path.join(dirname, '_.yaml')
             with open(settings_path, "w") as file:
                 yaml.dump(settings, file)
 
-            logging.info(f'Starting exe from {exe_path}') #TODO: Change for different OS
-            process = subprocess.Popen(f'"{exe_path}" workflow "{settings_path}"', stdout=subprocess.PIPE)
+            logging.info(f'Starting exe from {self.exe_path}') #TODO: Change for different OS
+            process = subprocess.Popen(f'"{self.exe_path}" workflow "{settings_path}"', stdout=subprocess.PIPE)
             for line in iter(process.stdout.readline, b''):  # replace '' with b'' for Python 3
                 logging.info(line.decode('utf8'))
 
@@ -343,7 +344,7 @@ def main():
         species = ['HUMAN', 'ECO']
         groups = (['PXD010012_CT_1_C2_01_Ratio', 'PXD010012_CT_2_C2_01_Ratio', 'PXD010012_CT_3_C2_01_Ratio', 'PXD010012_CT_4_C2_01_Ratio', 'PXD010012_CT_5_C2_01_Ratio'], ['PXD010012_CT_1_C1_01_Base', 'PXD010012_CT_2_C1_01_Base', 'PXD010012_CT_3_C1_01_Base', 'PXD010012_CT_4_C1_01_Base', 'PXD010012_CT_5_C1_01_Base'])
         test_run.run_mixed_analysis = (species, groups)
-        test_run.run(password=password, exe_path)
+        test_run.run(password=password)
 
     else:
         raise NotImplementedError(runtype)

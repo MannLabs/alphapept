@@ -23,7 +23,7 @@ DisableProgramGroupPage=yes
 LicenseFile=..\..\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
-OutputBaseFilename="AlphaPept-Windows-64bit-0.3.6-dev0"
+OutputBaseFilename="AlphaPept-Windows-64bit"
 SetupIconFile=..\alpha_logo.ico
 Compression=lzma
 SolidCompression=yes
@@ -46,4 +46,3 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Parameter
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-
