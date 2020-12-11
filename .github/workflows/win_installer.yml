@@ -8,19 +8,29 @@ on:
     branches: [ master ]
 
 jobs:
-  build_installer_windows:
+  create_release:
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
     - name: Creating installer for Windows
       run: |
-        conda activate alphapept
-        pip install PyInstaller
-        cd distribution
-        .\create_installer.bat
+        conda deactivate
+        cd installer\one_click_windows
+        .\create_installer_windows.bat
     - name: Test compiled version - cmd
       run: |
-        C:\actions-runner\_work\alphapept\alphapept\distribution\dist\alphapept\alphapept.exe
+        C:\actions-runner\_work\alphapept\alphapept\installer\one_click_windows\dist\alphapept\alphapept.exe
     - name: Test compiled version - gui
       run: |
-        C:\actions-runner\_work\alphapept\alphapept\distribution\dist\alphapept\alphapept.exe gui --test True
+        C:\actions-runner\_work\alphapept\alphapept\installer\one_click_windows\dist\alphapept\alphapept.exe gui --test
