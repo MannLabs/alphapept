@@ -589,7 +589,7 @@ def run_complete_workflow(
         if callback:
             callback(current)
         if callback_overall:
-            callback_overall(step/n_steps+current/n_steps)
+            callback_overall((step/n_steps)+(current/n_steps))
 
 
     recalibrated = False
@@ -626,7 +626,10 @@ def run_complete_workflow(
 
         end = time()
 
-        time_dict[step.__name__] = (end-start)/60 #minutes
+        if step.__name__ in time_dict:
+            time_dict[step.__name__+'_2'] = (end-start)/60 #minutes
+        else:
+            time_dict[step.__name__] = (end-start)/60 #minutes
 
         time_dict['total'] = (end-run_start)/60
 

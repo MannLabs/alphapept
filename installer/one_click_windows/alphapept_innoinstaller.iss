@@ -37,6 +37,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "dist\\alphapept\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
+Source: "..\font\Roboto-Regular.ttf"; DestDir: "{fonts}"; FontInstall: "Roboto"; Flags: onlyifdoesntexist uninsneveruninstall
+Source: "..\font\Roboto-Thin.ttf"; DestDir: "{fonts}"; FontInstall: "Roboto Thin"; Flags: onlyifdoesntexist uninsneveruninstall
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
