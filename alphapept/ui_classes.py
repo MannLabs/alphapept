@@ -724,38 +724,39 @@ class SettingsEdit(QWidget):
                 for subcategory in settings[category].keys():
                     if subcategory != 'fasta_paths':
                         value = settings[category][subcategory]
-                        widget = self.categories[category]["widgets"][subcategory]
-                        if isinstance(widget, QSpinBox):
-                            widget.setValue(value)
-                        elif isinstance(widget, QDoubleSpinBox):
-                            widget.setValue(value)
-                        elif isinstance(widget, QPushButton):
-                            widget.setText(value)
-                        elif isinstance(widget, QListWidget):
-                            for _ in value:
-                                widget.addItem(_)
-                        elif isinstance(widget, QComboBox):
-                            # Find and set
-                            idx = widget.findText(value)
-                            widget.setCurrentIndex(idx)
-                        elif isinstance(widget, QCheckBox):
-                            if value:
-                                widget.setCheckState(2)
-                            else:
-                                widget.setCheckState(0)
-                        elif isinstance(widget, dict):
-                            for _ in widget.keys():
-                                widget[_].setCheckState(1, Qt.Unchecked)
-                            if value:
+                        if subcategory in self.categories[category]["widgets"]:
+                            widget = self.categories[category]["widgets"][subcategory]
+                            if isinstance(widget, QSpinBox):
+                                widget.setValue(value)
+                            elif isinstance(widget, QDoubleSpinBox):
+                                widget.setValue(value)
+                            elif isinstance(widget, QPushButton):
+                                widget.setText(value)
+                            elif isinstance(widget, QListWidget):
                                 for _ in value:
-                                    widget[_].setCheckState(1, Qt.Checked)
+                                    widget.addItem(_)
+                            elif isinstance(widget, QComboBox):
+                                # Find and set
+                                idx = widget.findText(value)
+                                widget.setCurrentIndex(idx)
+                            elif isinstance(widget, QCheckBox):
+                                if value:
+                                    widget.setCheckState(2)
+                                else:
+                                    widget.setCheckState(0)
+                            elif isinstance(widget, dict):
+                                for _ in widget.keys():
+                                    widget[_].setCheckState(1, Qt.Unchecked)
+                                if value:
+                                    for _ in value:
+                                        widget[_].setCheckState(1, Qt.Checked)
 
-                        else:
-                            raise NotImplementedError(
-                                "Cannot set widget class {}.".format(
-                                    widget.__class__
+                            else:
+                                raise NotImplementedError(
+                                    "Cannot set widget class {}.".format(
+                                        widget.__class__
+                                    )
                                 )
-                            )
 
         if 'experiment' in settings:
             ex_settings = settings['experiment']

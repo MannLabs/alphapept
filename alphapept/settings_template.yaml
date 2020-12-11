@@ -302,10 +302,10 @@ general:
     description: Flag to perform feature finding.
     type: checkbox
   n_processes:
-    default: 64
+    default: 60
     description: Maximum number of processes for multiprocessing. If larger than number
       of processors it will be capped.
-    max: 64
+    max: 60
     min: 1
     type: spinbox
   ppm:

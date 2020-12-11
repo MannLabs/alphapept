@@ -554,6 +554,7 @@ def export(
 # Cell
 
 from time import time
+from .__version__ import VERSION_NO
 
 def run_complete_workflow(
     settings,
@@ -640,6 +641,7 @@ def run_complete_workflow(
         time_dict['total'] = (end-run_start)/60
 
         settings['summary']['timing'] = time_dict
+        settings['summary']['version'] = VERSION_NO
 
     return settings
 

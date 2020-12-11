@@ -42,7 +42,7 @@ features:
   smoothing: 1
 general:
   find_features: true
-  n_processes: 64
+  n_processes: 60
   ppm: true
   score: random_forest
 matching:

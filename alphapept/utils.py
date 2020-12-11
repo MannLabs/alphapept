@@ -69,8 +69,8 @@ def check_settings(settings):
         settings['general']['n_processes'] = n_actual
         logging.info('Setting number of processes to {}.'.format(n_actual))
 
-    if settings['general']['n_processes'] > 64:
-        settings['general']['n_processes'] = 64
+    if settings['general']['n_processes'] > 60:
+        settings['general']['n_processes'] = 60
         logging.info('Capping number of processes to {}.'.format(settings['general']['n_processes']))
 
     logging.info('Checking if files exist.')
