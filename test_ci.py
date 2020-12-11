@@ -14,6 +14,7 @@ import numpy as np
 
 import alphapept.interface
 from alphapept.settings import load_settings
+import yaml
 import alphapept
 import alphapept.io
 from alphapept.__version__ import VERSION_NO as alphapept_version
@@ -144,7 +145,7 @@ class TestRun():
         self.settings['search']['m_offset'] =  self.m_offset
         self.settings['search']['m_tol'] =  self.m_tol
 
-    def run(self, password=None):
+    def run(self, password=None, exe_path = None):
         self.prepare_files()
         self.prepare_settings()
 
@@ -152,7 +153,22 @@ class TestRun():
         report['timestamp'] = datetime.now()
 
         start = time()
-        settings = alphapept.interface.run_complete_workflow(self.settings)
+        if exe_path is not None: #call compiled exe file
+            dirname = os.path.dirname(settings['experiment']['results_path'])
+            settings_path = os.path.join(dirname, '_.yaml')
+            with open(settings_path, "w") as file:
+                yaml.dump(settings, file)
+
+            logging.info(f'Starting exe from {exe_path}') #TODO: Change for different OS
+            process = subprocess.Popen(f'"{exe_path}" workflow "{settings_path}"', stdout=subprocess.PIPE)
+            for line in iter(process.stdout.readline, b''):  # replace '' with b'' for Python 3
+                logging.info(line.decode('utf8'))
+
+            base, ext = os.path.splitext(settings['experiment']['results_path'])
+            settings_path = os.path.join(base, '.yaml')
+            settings = load_settings(settings_path)
+        else:
+            settings = alphapept.interface.run_complete_workflow(self.settings)
         end = time()
 
         report['test_id'] = self.id
@@ -228,10 +244,8 @@ class TestRun():
         """
         Estimate FDR by searching against differenft FASTAs
         """
-
         df = pd.read_hdf(settings['experiment']['results_path'], 'protein_table')
         return ((df[[species in _ for _ in df.index]].count())/len(df)).to_dict()
-
 
     def mixed_species_quantification(self, settings, species, groups, min_count = 2):
         """
@@ -278,16 +292,6 @@ class TestRun():
         return results
 
 
-class BrukerTestRun(TestRun):
-    def __init__(self, *args):
-        TestRun.__init__(self, *args)
-
-class ThermoTestRun(TestRun):
-    def __init__(self, *args):
-        TestRun.__init__(self, *args)
-
-
-
 def main():
     print(sys.argv, len(sys.argv))
 
@@ -297,32 +301,36 @@ def main():
         files = sys.argv[3].strip('[]').split(',')
     if len(sys.argv) > 4:
         fasta_files = sys.argv[4].strip('[]').split(',')
+    if len(sys.argv) > 5:
+        exe_path = sys.argv[5]
+    else:
+        exe_path = None
 
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']
         fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
-        run = BrukerTestRun(runtype, files, fasta_files)
+        run = TestRun(runtype, files, fasta_files, exe_path)
         run.run(password=password)
     elif runtype == 'bruker_hela':
         files = ['bruker_HeLa.d']
         fasta_files = ['human.fasta', 'arabidopsis.fasta', 'contaminants.fasta']
-        run = BrukerTestRun(runtype, files, fasta_files)
+        run = TestRun(runtype, files, fasta_files, exe_path)
         run.run(password=password)
     elif runtype == 'thermo_irt':
         files = ['thermo_IRT.raw']
         fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
-        run = ThermoTestRun(runtype, files, fasta_files)
+        run = TestRun(runtype, files, fasta_files, exe_path)
         run.run(password=password)
     elif runtype == 'thermo_hela':
         files = ['thermo_HeLa.raw']
         fasta_files = ['human.fasta', 'arabidopsis.fasta', 'contaminants.fasta']
-        run = ThermoTestRun(runtype, files, fasta_files)
+        run = TestRun(runtype, files, fasta_files, exe_path)
         run.run(password=password)
     elif runtype == 'PXD006109':
         files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
         #Multi-Species test
-        test_run = ThermoTestRun(runtype, files, fasta_files)
+        test_run = TestRun(runtype, files, fasta_files, exe_path)
         species = ['HUMAN', 'ECO']
         groups = (['PXD006109_HeLa12_1', 'PXD006109_HeLa12_2', 'PXD006109_HeLa12_3'], ['PXD006109_HeLa2_1', 'PXD006109_HeLa2_2', 'PXD006109_HeLa2_3'])
         test_run.run_mixed_analysis = (species, groups)
@@ -331,11 +339,11 @@ def main():
         files =  ['PXD010012_CT_1_C1_01_Base.d', 'PXD010012_CT_2_C1_01_Base.d', 'PXD010012_CT_3_C1_01_Base.d', 'PXD010012_CT_4_C1_01_Base.d', 'PXD010012_CT_5_C1_01_Base.d', 'PXD010012_CT_1_C2_01_Ratio.d', 'PXD010012_CT_2_C2_01_Ratio.d', 'PXD010012_CT_3_C2_01_Ratio.d', 'PXD010012_CT_4_C2_01_Ratio.d', 'PXD010012_CT_5_C2_01_Ratio.d']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
         #Multi-Species test
-        test_run = BrukerTestRun(runtype, files, fasta_files)
+        test_run = TestRun(runtype, files, fasta_files, exe_path)
         species = ['HUMAN', 'ECO']
         groups = (['PXD010012_CT_1_C2_01_Ratio', 'PXD010012_CT_2_C2_01_Ratio', 'PXD010012_CT_3_C2_01_Ratio', 'PXD010012_CT_4_C2_01_Ratio', 'PXD010012_CT_5_C2_01_Ratio'], ['PXD010012_CT_1_C1_01_Base', 'PXD010012_CT_2_C1_01_Base', 'PXD010012_CT_3_C1_01_Base', 'PXD010012_CT_4_C1_01_Base', 'PXD010012_CT_5_C1_01_Base'])
         test_run.run_mixed_analysis = (species, groups)
-        test_run.run(password=password)
+        test_run.run(password=password, exe_path)
 
     else:
         raise NotImplementedError(runtype)
