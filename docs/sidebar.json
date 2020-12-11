@@ -11,6 +11,7 @@
     "Recalibration": "recalibration.html",
     "Quantification": "quantification.html",
     "Matching": "matching.html",
-    "Constants": "constants.html"
+    "Constants": "constants.html",
+    "Interface": "interface.html"
   }
 }
