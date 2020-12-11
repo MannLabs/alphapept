@@ -1,0 +1,49 @@
+on:
+  workflow_dispatch:
+    inputs:
+      release_name:
+        description: 'Define release name'
+        required: true
+      prerelease:
+        description: 'Pre-Release?'
+        required: true
+        default: true
+      draft:
+        description: 'Draft?'
+        required: true
+        default: true
+
+name: Create Release
+
+jobs:
+  build:
+    name: Create Release
+    runs-on: self-hosted
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ github.event.inputs.release_name }}
+          release_name: Release ${{ github.event.inputs.release_name }}
+          draft: ${{ github.event.inputs.draft }}
+          prerelease: ${{ github.event.inputs.prerelease }}
+      - name: Creating installer for Windows
+        run: |
+          conda deactivate
+          cd installer\one_click_windows
+          .\create_installer_windows.bat
+      - name: Upload Windows Installer
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+          asset_path: .\Output\AlphaPept-Windows-64bit.exe
+          asset_name: AlphaPept-Windows-64bit.exe
+          asset_content_type: application/octet-stream
