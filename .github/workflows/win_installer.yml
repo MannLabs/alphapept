@@ -8,7 +8,9 @@ on:
     branches: [ master ]
 
 jobs:
-  create_installer_windows:
+  Create_Installer_Windows:
+    runs-on: self-hosted
+    steps:
     - name: Creating installer for Windows
       run: |
         conda deactivate
