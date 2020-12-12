@@ -579,8 +579,11 @@ def score_hdf(to_process):
         df = get_ML_features(df, **settings['fasta'])
 
         if settings["general"]["score"] == 'random_forest':
-            cv = train_RF(df)
-            df = filter_with_ML(df, cv)
+            try:
+                cv = train_RF(df)
+                df = filter_with_ML(df, cv)
+            except ValueError:
+                df = filter_with_x_tandem(df)
         elif settings["general"]["score"] == 'x_tandem':
             df = filter_with_x_tandem(df)
         else:
