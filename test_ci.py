@@ -1,7 +1,7 @@
 import wget
 import logging
 import shutil
-from pymongo import MongoClient
+
 import pandas as pd
 from time import time
 import os
@@ -73,22 +73,27 @@ def create_folder(dir_name):
         logging.info(f'Creating dir {dir_name}.')
         os.makedirs(dir_name)
 
+EXE_PATH = 'C:/actions-runner/_work/alphapept/alphapept/installer/one_click_windows/dist/alphapept/alphapept.exe'
 
 class TestRun():
     """
     Class to prepare and download files to make a default test run
     """
-    def __init__(self, id, experimental_files, fasta_paths, exe_path = None):
+    def __init__(self, id, experimental_files, fasta_paths):
 
         self.id = id
         self.file_paths = experimental_files
         self.fasta_paths = fasta_paths
         self.m_tol = 20
         self.m_offset = 20
-        self.exe_path = exe_path
+
 
         # Flag to run mixed_species_quantification
         self.run_mixed_analysis = None
+        if os.path.isfile(EXE_PATH):
+            self.exe_path = EXE_PATH
+        else:
+            self.exe_path = None
 
 
     def get_file(self, filename, link):
@@ -181,6 +186,11 @@ class TestRun():
 
         report['version'] = alphapept_version
 
+        if self.exe_path:
+            report['pyinstaller'] = True
+        else:
+            report['pyinstaller'] = False
+
         report['sysinfo'] = platform.uname()
 
         #File Sizes:
@@ -230,7 +240,7 @@ class TestRun():
             shutil.copyfile(settings['experiment']['results_path'], ARCHIVE_DIR+str(post_id)+ext)
 
     def upload_to_db(self, password):
-
+        from pymongo import MongoClient
         logging.info('Uploading to DB')
         string = f"mongodb+srv://{MONGODB_USER}:{password}@{MONGODB_URL}"
         client = MongoClient(string)
@@ -296,42 +306,42 @@ class TestRun():
 def main():
     print(sys.argv, len(sys.argv))
 
-    password = sys.argv[1]
-    runtype = sys.argv[2]
+    if len(sys.argv) == 2:
+        password = None
+        runtype = sys.argv[1]
+    else:
+        password = sys.argv[1]
+        runtype = sys.argv[2]
     if len(sys.argv) > 3:
         files = sys.argv[3].strip('[]').split(',')
     if len(sys.argv) > 4:
         fasta_files = sys.argv[4].strip('[]').split(',')
-    if len(sys.argv) > 5:
-        exe_path = sys.argv[5]
-    else:
-        exe_path = None
 
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']
         fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
-        run = TestRun(runtype, files, fasta_files, exe_path)
+        run = TestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'bruker_hela':
         files = ['bruker_HeLa.d']
         fasta_files = ['human.fasta', 'arabidopsis.fasta', 'contaminants.fasta']
-        run = TestRun(runtype, files, fasta_files, exe_path)
+        run = TestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'thermo_irt':
         files = ['thermo_IRT.raw']
         fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
-        run = TestRun(runtype, files, fasta_files, exe_path)
+        run = TestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'thermo_hela':
         files = ['thermo_HeLa.raw']
         fasta_files = ['human.fasta', 'arabidopsis.fasta', 'contaminants.fasta']
-        run = TestRun(runtype, files, fasta_files, exe_path)
+        run = TestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'PXD006109':
         files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
         #Multi-Species test
-        test_run = TestRun(runtype, files, fasta_files, exe_path)
+        test_run = TestRun(runtype, files, fasta_files)
         species = ['HUMAN', 'ECO']
         groups = (['PXD006109_HeLa12_1', 'PXD006109_HeLa12_2', 'PXD006109_HeLa12_3'], ['PXD006109_HeLa2_1', 'PXD006109_HeLa2_2', 'PXD006109_HeLa2_3'])
         test_run.run_mixed_analysis = (species, groups)
@@ -340,7 +350,7 @@ def main():
         files =  ['PXD010012_CT_1_C1_01_Base.d', 'PXD010012_CT_2_C1_01_Base.d', 'PXD010012_CT_3_C1_01_Base.d', 'PXD010012_CT_4_C1_01_Base.d', 'PXD010012_CT_5_C1_01_Base.d', 'PXD010012_CT_1_C2_01_Ratio.d', 'PXD010012_CT_2_C2_01_Ratio.d', 'PXD010012_CT_3_C2_01_Ratio.d', 'PXD010012_CT_4_C2_01_Ratio.d', 'PXD010012_CT_5_C2_01_Ratio.d']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
         #Multi-Species test
-        test_run = TestRun(runtype, files, fasta_files, exe_path)
+        test_run = TestRun(runtype, files, fasta_files)
         species = ['HUMAN', 'ECO']
         groups = (['PXD010012_CT_1_C2_01_Ratio', 'PXD010012_CT_2_C2_01_Ratio', 'PXD010012_CT_3_C2_01_Ratio', 'PXD010012_CT_4_C2_01_Ratio', 'PXD010012_CT_5_C2_01_Ratio'], ['PXD010012_CT_1_C1_01_Base', 'PXD010012_CT_2_C1_01_Base', 'PXD010012_CT_3_C1_01_Base', 'PXD010012_CT_4_C1_01_Base', 'PXD010012_CT_5_C1_01_Base'])
         test_run.run_mixed_analysis = (species, groups)
