@@ -619,10 +619,38 @@ def run_complete_workflow(
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
 
-    steps = [create_database, import_raw_data, feature_finding, search_data, recalibrate_data, search_data, score, align, match,
-            lfq_quantification, export]
+    steps = []
+
+    general = settings['general']
+
+    if general["create_database"]:
+        steps.append(create_database)
+    if general["import_raw_data"]:
+        steps.append(import_raw_data)
+    if general["feature_finding"]:
+        steps.append(import_raw_data)
+    if general["search_data"]:
+        steps.append(search_data)
+    if general["recalibrate_data"]:
+        steps.append(recalibrate_data)
+        steps.append(search_data)
+    if general["recalibrate_data"]:
+        steps.append(recalibrate_data)
+        steps.append(search_data)
+    steps.append(score)
+    if general["align"]:
+        steps.append(align)
+    if general["match"]:
+        if align not in steps:
+            steps.append(align)
+        steps.append(match)
+    if general["lfq_quantification"]:
+        steps.append(lfq_quantification)
+
+    steps.append(export)
 
     n_steps = len(steps)
+    logging.info(f"Workflow has {n_steps} steps')
 
 
     if progress:

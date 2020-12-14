@@ -41,10 +41,17 @@ features:
   ppm_tol: 8
   smoothing: 1
 general:
+  align: true
+  create_database: true
+  feature_finding: true
   find_features: true
+  import_raw_data: true
+  lfq_quantification: true
   n_processes: 60
   ppm: true
+  recalibrate_data: true
   score: random_forest
+  search_data: true
 matching:
   match_between_runs: true
   min_match_d: 3
