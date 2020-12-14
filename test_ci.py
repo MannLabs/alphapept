@@ -193,38 +193,6 @@ class TestRun():
 
         report['sysinfo'] = platform.uname()
 
-        #File Sizes:
-        report['file_sizes'] = {}
-        report['file_sizes']['database'] = os.path.getsize(settings['fasta']['database_path'])/1024**2
-
-        summary = {}
-
-        file_sizes = {}
-        for _ in settings['experiment']['file_paths']:
-
-            base, ext = os.path.splitext(_)
-            filename = os.path.split(base)[1]
-            file_sizes[base+"_ms_data"] = os.path.getsize(os.path.splitext(_)[0] + ".ms_data.hdf")/1024**2
-            # file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
-
-            ms_data = alphapept.io.MS_Data_File(os.path.splitext(_)[0] + ".ms_data.hdf")
-            for key in ms_data.read():
-                if "is_pd_dataframe" in ms_data.read(
-                    attr_name="",
-                    group_name=key
-                ):
-                    summary[filename+'_'+key.lstrip('/')] = len(
-                        ms_data.read(
-                            dataset_name=key,
-                        )
-                    )
-
-
-        report['file_sizes']['files'] = file_sizes
-        report['file_sizes']['results'] = os.path.getsize(settings['experiment']['results_path'])/1024**2
-
-        report['results'] = summary
-
         if self.run_mixed_analysis:
             species, groups = self.run_mixed_analysis
             report['mixed_species_quantification'] = self.mixed_species_quantification(self.settings, species, groups)

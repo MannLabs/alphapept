@@ -1,0 +1,11 @@
+path: '' #File path that should be watched
+settings: '' #Path to settings that should be used
+update_rate: 60 #Time in seconds for each file search
+tag: '' #Tag to filter for specific files
+minimum_file_size: 50 #Size in mb to consider files
+# Settings for mongodb upload
+db_user : ''
+db_password : ''
+db_url : ''
+db_database : ''
+db_collection : ''
