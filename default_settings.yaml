@@ -47,6 +47,7 @@ general:
   find_features: true
   import_raw_data: true
   lfq_quantification: true
+  match: true
   n_processes: 60
   ppm: true
   recalibrate_data: true

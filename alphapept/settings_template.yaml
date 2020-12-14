@@ -321,6 +321,10 @@ general:
     default: true
     description: Flag to perfrom lfq normalization.
     type: checkbox
+  match:
+    default: true
+    description: Flag to perform match-between runs.
+    type: checkbox
   n_processes:
     default: 60
     description: Maximum number of processes for multiprocessing. If larger than number
