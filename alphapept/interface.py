@@ -650,7 +650,7 @@ def run_complete_workflow(
     steps.append(export)
 
     n_steps = len(steps)
-    logging.info(f"Workflow has {n_steps} steps')
+    logging.info(f"Workflow has {n_steps} steps")
 
 
     if progress:
