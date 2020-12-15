@@ -628,7 +628,7 @@ def run_complete_workflow(
     if general["import_raw_data"]:
         steps.append(import_raw_data)
     if general["feature_finding"]:
-        steps.append(import_raw_data)
+        steps.append(feature_finding)
     if general["search_data"]:
         steps.append(search_data)
     if general["recalibrate_data"]:
