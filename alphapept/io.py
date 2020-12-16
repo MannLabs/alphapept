@@ -519,42 +519,52 @@ def load_thermo_raw(raw_file, most_abundant, use_profile_ms1 = False, callback=N
     charge_list = []
 
     for idx, i in enumerate(spec_indices):
-        ms_order = rawfile.GetMSOrderForScanNum(i)
-        rt = rawfile.RTFromScanNum(i)
+        try:
+            ms_order = rawfile.GetMSOrderForScanNum(i)
+            rt = rawfile.RTFromScanNum(i)
 
-        prec_mz = rawfile.GetPrecursorMassForScanNum(i, 0)
-
-        mono_mz, charge = rawfile.GetMS2MonoMzAndChargeFromScanNum(i)
-        #trailer_extra = rawfile.GetTrailerExtraForScanNum(i)
-        #mono_mz = float(trailer_extra["Monoisotopic M/Z:"])
-        #charge = int(trailer_extra["Charge State:"])
-        # if mono_mz == 0: mono_mz = prec_mz
-        # if mono_mz != 0 and abs(mono_mz - prec_mz) > 0.1:
-        #    print(f'MSn={ms_order}, mono_mz={mono_mz}, perc_mz={prec_mz}, charge={charge}')
-
-        # may be centroid for MS2 and profile for MS1 is better？
-
-        if use_profile_ms1:
             if ms_order == 2:
-                masses, intensity = rawfile.GetCentroidMassListFromScanNum(i)
-                masses, intensity = get_most_abundant(masses, intensity, most_abundant)
+                prec_mz = rawfile.GetPrecursorMassForScanNum(i, 0)
+
+                mono_mz, charge = rawfile.GetMS2MonoMzAndChargeFromScanNum(i)
             else:
-                masses, intensity = rawfile.GetProfileMassListFromScanNum(i)
-                masses, intensity = centroid_data(masses, intensity)
+                prec_mz, mono_mz, charge = 0,0,0
+            #trailer_extra = rawfile.GetTrailerExtraForScanNum(i)
+            #mono_mz = float(trailer_extra["Monoisotopic M/Z:"])
+            #charge = int(trailer_extra["Charge State:"])
+            # if mono_mz == 0: mono_mz = prec_mz
+            # if mono_mz != 0 and abs(mono_mz - prec_mz) > 0.1:
+            #    print(f'MSn={ms_order}, mono_mz={mono_mz}, perc_mz={prec_mz}, charge={charge}')
 
-        else:
-            masses, intensity = rawfile.GetCentroidMassListFromScanNum(i)
-            if ms_order == 2:
-                masses, intensity = get_most_abundant(masses, intensity, most_abundant)
+            # may be centroid for MS2 and profile for MS1 is better？
 
-        scan_list.append(i)
-        rt_list.append(rt)
-        mass_list.append(np.array(masses))
-        int_list.append(np.array(intensity, dtype=np.int64))
-        ms_list.append(ms_order)
-        prec_mzs_list.append(prec_mz)
-        mono_mzs_list.append(mono_mz)
-        charge_list.append(charge)
+            if use_profile_ms1:
+                if ms_order == 2:
+                    masses, intensity = rawfile.GetCentroidMassListFromScanNum(i)
+                    masses, intensity = get_most_abundant(masses, intensity, most_abundant)
+                else:
+                    masses, intensity = rawfile.GetProfileMassListFromScanNum(i)
+                    masses, intensity = centroid_data(masses, intensity)
+
+            else:
+                masses, intensity = rawfile.GetCentroidMassListFromScanNum(i)
+                if ms_order == 2:
+                    masses, intensity = get_most_abundant(masses, intensity, most_abundant)
+
+            scan_list.append(i)
+            rt_list.append(rt)
+            mass_list.append(np.array(masses))
+            int_list.append(np.array(intensity, dtype=np.int64))
+            ms_list.append(ms_order)
+            prec_mzs_list.append(prec_mz)
+            mono_mzs_list.append(mono_mz)
+            charge_list.append(charge)
+        except KeyboardInterrupt as e:
+            raise e
+        except SystemExit as e:
+            raise e
+        except Exception as e:
+            logging.info(f"Bad scan={i} in raw file '{raw_file}'")
 
         if callback:
             callback((idx+1)/len(spec_indices))
@@ -599,6 +609,7 @@ def load_thermo_raw(raw_file, most_abundant, use_profile_ms1 = False, callback=N
 #     TODO: Refactor charge2 to be consistent: charge_ms2
     query_data["charge2"] = np.array(charge2)
 
+    rawfile.Close()
     return query_data
 
 # Cell
