@@ -297,20 +297,48 @@ features:
     min: 1
     type: spinbox
 general:
+  align:
+    default: true
+    description: Flag to align the data.
+    type: checkbox
+  create_database:
+    default: true
+    description: Flag to create a database.
+    type: checkbox
+  feature_finding:
+    default: true
+    description: Flag to perform feature finding.
+    type: checkbox
   find_features:
     default: true
     description: Flag to perform feature finding.
     type: checkbox
+  import_raw_data:
+    default: true
+    description: Flag to import the raw data.
+    type: checkbox
+  lfq_quantification:
+    default: true
+    description: Flag to perfrom lfq normalization.
+    type: checkbox
+  match:
+    default: true
+    description: Flag to perform match-between runs.
+    type: checkbox
   n_processes:
-    default: 128
+    default: 60
     description: Maximum number of processes for multiprocessing. If larger than number
       of processors it will be capped.
-    max: 128
+    max: 60
     min: 1
     type: spinbox
   ppm:
     default: true
     description: Use ppm instead of Dalton.
+    type: checkbox
+  recalibrate_data:
+    default: true
+    description: Flag to perform recalibration.
     type: checkbox
   score:
     default: random_forest
@@ -319,6 +347,10 @@ general:
     value:
     - x_tandem
     - random_forest
+  search_data:
+    default: true
+    description: Flag to perform search.
+    type: checkbox
 matching:
   match_between_runs:
     default: true

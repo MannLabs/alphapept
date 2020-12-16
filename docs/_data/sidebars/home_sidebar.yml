@@ -42,6 +42,9 @@ entries:
     - output: web,pdf
       title: Constants
       url: constants.html
+    - output: web,pdf
+      title: Interface
+      url: interface.html
     output: web
     title: alphapept
   output: web

@@ -52,13 +52,6 @@ To calculate the isotope distribution for a given isotope, we define the functio
     
 <div class="cell border-box-sizing code_cell rendered">
 
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
 <div class="output_wrapper">
 <div class="output">
 
@@ -91,7 +84,7 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="fast_add" class="doc_header"><code>fast_add</code><a href="__main__.py#L61" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fast_add</code>(<strong><code>m0</code></strong>, <strong><code>dm0</code></strong>, <strong><code>int0</code></strong>, <strong><code>m1</code></strong>, <strong><code>dm1</code></strong>, <strong><code>int1</code></strong>, <strong><code>PRUNE_LEVEL</code></strong>=<em><code>1e-06</code></em>)</p>
+<h4 id="fast_add" class="doc_header"><code>fast_add</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L66" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fast_add</code>(<strong><code>m0</code></strong>, <strong><code>dm0</code></strong>, <strong><code>int0</code></strong>, <strong><code>m1</code></strong>, <strong><code>dm1</code></strong>, <strong><code>int1</code></strong>, <strong><code>PRUNE_LEVEL</code></strong>=<em><code>1e-06</code></em>)</p>
 </blockquote>
 <p>Function for fast estimation of masses</p>
 
@@ -116,7 +109,7 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="numba_bin" class="doc_header"><code>numba_bin</code><a href="__main__.py#L83" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>numba_bin</code>(<strong><code>decimal</code></strong>)</p>
+<h4 id="numba_bin" class="doc_header"><code>numba_bin</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L88" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>numba_bin</code>(<strong><code>decimal</code></strong>)</p>
 </blockquote>
 <p>Numba compatibale function to convert decimal to binary as list</p>
 
@@ -141,7 +134,7 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="dict_to_dist" class="doc_header"><code>dict_to_dist</code><a href="__main__.py#L98" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>dict_to_dist</code>(<strong><code>counted_AA</code></strong>, <strong><code>isotopes</code></strong>)</p>
+<h4 id="dict_to_dist" class="doc_header"><code>dict_to_dist</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L103" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>dict_to_dist</code>(<strong><code>counted_AA</code></strong>, <strong><code>isotopes</code></strong>)</p>
 </blockquote>
 <p>Function to convert a dictionary with numbers of amino acids to a isotope distribution.</p>
 
@@ -151,6 +144,13 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 </div>
 </div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}
@@ -208,9 +208,7 @@ To calculate the isotope distribution for a given isotope, we define the functio
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>f:\projects\alphapept\alphapept\constants.py:197: NumbaDeprecationWarning: <span class="ansi-bold">The &#39;numba.jitclass&#39; decorator has moved to &#39;numba.experimental.jitclass&#39; to better reflect the experimental nature of the functionality. Please update your imports to accommodate this change and see https://numba.pydata.org/numba-doc/latest/reference/deprecation.html#change-of-jitclass-location for the time frame.</span>
-  @jitclass(spec)
-C:\Users\admin\.conda\envs\alphapept\lib\site-packages\numba\typed\typeddict.py:34: NumbaTypeSafetyWarning: <span class="ansi-bold">unsafe cast from int64 to int32. Precision may be lost.</span>
+<pre>C:\Users\admin\.conda\envs\alphapept\lib\site-packages\numba\typed\typeddict.py:34: NumbaTypeSafetyWarning: <span class="ansi-bold">unsafe cast from int64 to int32. Precision may be lost.</span>
   d[key] = value
 </pre>
 </div>
@@ -245,13 +243,6 @@ C:\Users\admin\.conda\envs\alphapept\lib\site-packages\numba\typed\typeddict.py:
     
 <div class="cell border-box-sizing code_cell rendered">
 
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
 <div class="output_wrapper">
 <div class="output">
 
@@ -259,7 +250,7 @@ C:\Users\admin\.conda\envs\alphapept\lib\site-packages\numba\typed\typeddict.py:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_average_formula" class="doc_header"><code>get_average_formula</code><a href="__main__.py#L6" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_average_formula</code>(<strong><code>molecule_mass</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>sulphur</code></strong>=<em><code>True</code></em>)</p>
+<h4 id="get_average_formula" class="doc_header"><code>get_average_formula</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L124" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_average_formula</code>(<strong><code>molecule_mass</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>sulphur</code></strong>=<em><code>True</code></em>)</p>
 </blockquote>
 <p>Function to calculate the averagine formula for a molecule mass.</p>
 
@@ -269,6 +260,13 @@ C:\Users\admin\.conda\envs\alphapept\lib\site-packages\numba\typed\typeddict.py:
 
 </div>
 </div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}
@@ -317,13 +315,6 @@ C:\Users\admin\.conda\envs\alphapept\lib\site-packages\numba\typed\typeddict.py:
     
 <div class="cell border-box-sizing code_cell rendered">
 
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
 <div class="output_wrapper">
 <div class="output">
 
@@ -341,6 +332,13 @@ C:\Users\admin\.conda\envs\alphapept\lib\site-packages\numba\typed\typeddict.py:
 
 </div>
 </div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}
@@ -453,13 +451,6 @@ C:\Users\admin\.conda\envs\alphapept\lib\site-packages\numba\typed\typeddict.py:
     
 <div class="cell border-box-sizing code_cell rendered">
 
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
 <div class="output_wrapper">
 <div class="output">
 
@@ -467,7 +458,7 @@ C:\Users\admin\.conda\envs\alphapept\lib\site-packages\numba\typed\typeddict.py:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calculate_mass" class="doc_header"><code>calculate_mass</code><a href="__main__.py#L6" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_mass</code>(<strong><code>mono_mz</code></strong>, <strong><code>charge</code></strong>)</p>
+<h4 id="calculate_mass" class="doc_header"><code>calculate_mass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L170" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_mass</code>(<strong><code>mono_mz</code></strong>, <strong><code>charge</code></strong>)</p>
 </blockquote>
 <p>Calculate the precursor mass from mono mz and charge</p>
 
@@ -477,6 +468,13 @@ C:\Users\admin\.conda\envs\alphapept\lib\site-packages\numba\typed\typeddict.py:
 
 </div>
 </div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}

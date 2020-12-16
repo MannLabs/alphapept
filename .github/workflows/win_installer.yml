@@ -8,19 +8,17 @@ on:
     branches: [ master ]
 
 jobs:
-  build_installer_windows:
+  Create_Installer_Windows:
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Creating installer for Windows
       run: |
-        conda activate alphapept
-        pip install PyInstaller
-        cd distribution
-        .\create_installer.bat
+        conda deactivate
+        cd installer\one_click_windows
+        .\create_installer_windows.bat
     - name: Test compiled version - cmd
       run: |
-        C:\actions-runner\_work\alphapept\alphapept\distribution\dist\alphapept\alphapept.exe
+        C:\actions-runner\_work\alphapept\alphapept\installer\one_click_windows\dist\alphapept\alphapept.exe
     - name: Test compiled version - gui
       run: |
-        C:\actions-runner\_work\alphapept\alphapept\distribution\dist\alphapept\alphapept.exe gui --test True
+        C:\actions-runner\_work\alphapept\alphapept\installer\one_click_windows\dist\alphapept\alphapept.exe gui --test

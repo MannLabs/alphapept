@@ -1,7 +1,7 @@
 import wget
 import logging
 import shutil
-from pymongo import MongoClient
+
 import pandas as pd
 from time import time
 import os
@@ -14,6 +14,7 @@ import numpy as np
 
 import alphapept.interface
 from alphapept.settings import load_settings
+import yaml
 import alphapept
 import alphapept.io
 from alphapept.__version__ import VERSION_NO as alphapept_version
@@ -72,6 +73,7 @@ def create_folder(dir_name):
         logging.info(f'Creating dir {dir_name}.')
         os.makedirs(dir_name)
 
+EXE_PATH = 'C:/actions-runner/_work/alphapept/alphapept/installer/one_click_windows/dist/alphapept/alphapept.exe'
 
 class TestRun():
     """
@@ -85,8 +87,13 @@ class TestRun():
         self.m_tol = 20
         self.m_offset = 20
 
+
         # Flag to run mixed_species_quantification
         self.run_mixed_analysis = None
+        if os.path.isfile(EXE_PATH):
+            self.exe_path = EXE_PATH
+        else:
+            self.exe_path = None
 
 
     def get_file(self, filename, link):
@@ -152,7 +159,22 @@ class TestRun():
         report['timestamp'] = datetime.now()
 
         start = time()
-        settings = alphapept.interface.run_complete_workflow(self.settings)
+        if self.exe_path is not None: #call compiled exe file
+            dirname = os.path.dirname(settings['experiment']['results_path'])
+            settings_path = os.path.join(dirname, '_.yaml')
+            with open(settings_path, "w") as file:
+                yaml.dump(settings, file)
+
+            logging.info(f'Starting exe from {self.exe_path}') #TODO: Change for different OS
+            process = subprocess.Popen(f'"{self.exe_path}" workflow "{settings_path}"', stdout=subprocess.PIPE)
+            for line in iter(process.stdout.readline, b''):  # replace '' with b'' for Python 3
+                logging.info(line.decode('utf8'))
+
+            base, ext = os.path.splitext(settings['experiment']['results_path'])
+            settings_path = os.path.join(base, '.yaml')
+            settings = load_settings(settings_path)
+        else:
+            settings = alphapept.interface.run_complete_workflow(self.settings)
         end = time()
 
         report['test_id'] = self.id
@@ -164,39 +186,12 @@ class TestRun():
 
         report['version'] = alphapept_version
 
+        if self.exe_path:
+            report['pyinstaller'] = True
+        else:
+            report['pyinstaller'] = False
+
         report['sysinfo'] = platform.uname()
-
-        #File Sizes:
-        report['file_sizes'] = {}
-        report['file_sizes']['database'] = os.path.getsize(settings['fasta']['database_path'])/1024**2
-
-        summary = {}
-
-        file_sizes = {}
-        for _ in settings['experiment']['file_paths']:
-
-            base, ext = os.path.splitext(_)
-            filename = os.path.split(base)[1]
-            file_sizes[base+"_ms_data"] = os.path.getsize(os.path.splitext(_)[0] + ".ms_data.hdf")/1024**2
-            # file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
-
-            ms_data = alphapept.io.MS_Data_File(os.path.splitext(_)[0] + ".ms_data.hdf")
-            for key in ms_data.read():
-                if "is_pd_dataframe" in ms_data.read(
-                    attr_name="",
-                    group_name=key
-                ):
-                    summary[filename+'_'+key.lstrip('/')] = len(
-                        ms_data.read(
-                            dataset_name=key,
-                        )
-                    )
-
-
-        report['file_sizes']['files'] = file_sizes
-        report['file_sizes']['results'] = os.path.getsize(settings['experiment']['results_path'])/1024**2
-
-        report['results'] = summary
 
         if self.run_mixed_analysis:
             species, groups = self.run_mixed_analysis
@@ -213,7 +208,7 @@ class TestRun():
             shutil.copyfile(settings['experiment']['results_path'], ARCHIVE_DIR+str(post_id)+ext)
 
     def upload_to_db(self, password):
-
+        from pymongo import MongoClient
         logging.info('Uploading to DB')
         string = f"mongodb+srv://{MONGODB_USER}:{password}@{MONGODB_URL}"
         client = MongoClient(string)
@@ -228,10 +223,8 @@ class TestRun():
         """
         Estimate FDR by searching against differenft FASTAs
         """
-
         df = pd.read_hdf(settings['experiment']['results_path'], 'protein_table')
         return ((df[[species in _ for _ in df.index]].count())/len(df)).to_dict()
-
 
     def mixed_species_quantification(self, settings, species, groups, min_count = 2):
         """
@@ -278,21 +271,15 @@ class TestRun():
         return results
 
 
-class BrukerTestRun(TestRun):
-    def __init__(self, *args):
-        TestRun.__init__(self, *args)
-
-class ThermoTestRun(TestRun):
-    def __init__(self, *args):
-        TestRun.__init__(self, *args)
-
-
-
 def main():
     print(sys.argv, len(sys.argv))
 
-    password = sys.argv[1]
-    runtype = sys.argv[2]
+    if len(sys.argv) == 2:
+        password = None
+        runtype = sys.argv[1]
+    else:
+        password = sys.argv[1]
+        runtype = sys.argv[2]
     if len(sys.argv) > 3:
         files = sys.argv[3].strip('[]').split(',')
     if len(sys.argv) > 4:
@@ -301,28 +288,28 @@ def main():
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']
         fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
-        run = BrukerTestRun(runtype, files, fasta_files)
+        run = TestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'bruker_hela':
         files = ['bruker_HeLa.d']
         fasta_files = ['human.fasta', 'arabidopsis.fasta', 'contaminants.fasta']
-        run = BrukerTestRun(runtype, files, fasta_files)
+        run = TestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'thermo_irt':
         files = ['thermo_IRT.raw']
         fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
-        run = ThermoTestRun(runtype, files, fasta_files)
+        run = TestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'thermo_hela':
         files = ['thermo_HeLa.raw']
         fasta_files = ['human.fasta', 'arabidopsis.fasta', 'contaminants.fasta']
-        run = ThermoTestRun(runtype, files, fasta_files)
+        run = TestRun(runtype, files, fasta_files)
         run.run(password=password)
     elif runtype == 'PXD006109':
         files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
         #Multi-Species test
-        test_run = ThermoTestRun(runtype, files, fasta_files)
+        test_run = TestRun(runtype, files, fasta_files)
         species = ['HUMAN', 'ECO']
         groups = (['PXD006109_HeLa12_1', 'PXD006109_HeLa12_2', 'PXD006109_HeLa12_3'], ['PXD006109_HeLa2_1', 'PXD006109_HeLa2_2', 'PXD006109_HeLa2_3'])
         test_run.run_mixed_analysis = (species, groups)
@@ -331,7 +318,7 @@ def main():
         files =  ['PXD010012_CT_1_C1_01_Base.d', 'PXD010012_CT_2_C1_01_Base.d', 'PXD010012_CT_3_C1_01_Base.d', 'PXD010012_CT_4_C1_01_Base.d', 'PXD010012_CT_5_C1_01_Base.d', 'PXD010012_CT_1_C2_01_Ratio.d', 'PXD010012_CT_2_C2_01_Ratio.d', 'PXD010012_CT_3_C2_01_Ratio.d', 'PXD010012_CT_4_C2_01_Ratio.d', 'PXD010012_CT_5_C2_01_Ratio.d']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
         #Multi-Species test
-        test_run = BrukerTestRun(runtype, files, fasta_files)
+        test_run = TestRun(runtype, files, fasta_files)
         species = ['HUMAN', 'ECO']
         groups = (['PXD010012_CT_1_C2_01_Ratio', 'PXD010012_CT_2_C2_01_Ratio', 'PXD010012_CT_3_C2_01_Ratio', 'PXD010012_CT_4_C2_01_Ratio', 'PXD010012_CT_5_C2_01_Ratio'], ['PXD010012_CT_1_C1_01_Base', 'PXD010012_CT_2_C1_01_Base', 'PXD010012_CT_3_C1_01_Base', 'PXD010012_CT_4_C1_01_Base', 'PXD010012_CT_5_C1_01_Base'])
         test_run.run_mixed_analysis = (species, groups)
