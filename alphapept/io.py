@@ -335,7 +335,7 @@ def read_mzXML(filename, most_abundant):
     int_list = []
     ms_list = []
     prec_mzs_list = []
-
+    
     print('Start reading mzXML file...')
     if reader:
         for i in tqdm(spec_indices):
@@ -349,6 +349,7 @@ def read_mzXML(filename, most_abundant):
             int_list.append(intensities)
             ms_list.append(ms_order)
             prec_mzs_list.append(prec_mass)
+
 
     check_sanity(mass_list)
 
@@ -384,6 +385,7 @@ def read_mzXML(filename, most_abundant):
     query_data["mono_mzs2"] = np.array(mono_mzs2)
     query_data["charge2"] = np.array(charge2)
 
+    rawfile.Close()
     return query_data
 
 # Cell

@@ -45,6 +45,16 @@ nb_path: "nbs\07_recalibration.ipynb"
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
 
 </div>
     {% endraw %}
@@ -60,9 +70,8 @@ nb_path: "nbs\07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="estimate_stepsize" class="doc_header"><code>estimate_stepsize</code><a href="__main__.py#L11" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>estimate_stepsize</code>(<strong><code>df</code></strong>, <strong><code>min_mz_step</code></strong>=<em><code>80</code></em>, <strong><code>min_rt_step</code></strong>=<em><code>50</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="transform" class="doc_header"><code>transform</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L16" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>transform</code>(<strong><code>x</code></strong>, <strong><code>_</code></strong>, <strong><code>scaling_dict</code></strong>)</p>
 </blockquote>
-<p>Function to estimate the stepsize for recalibration</p>
 
 </div>
 
@@ -85,14 +94,9 @@ nb_path: "nbs\07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_calibration" class="doc_header"><code>get_calibration</code><a href="__main__.py#L31" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_calibration</code>(<strong><code>df</code></strong>, <strong><code>features</code></strong>, <strong><code>minimum_score</code></strong>=<em><code>20</code></em>, <strong><code>outlier_std</code></strong>=<em><code>3</code></em>, <strong><code>method</code></strong>=<em><code>'linear'</code></em>, <strong><code>min_mz_step</code></strong>=<em><code>80</code></em>, <strong><code>min_rt_step</code></strong>=<em><code>50</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_calibration" class="doc_header"><code>get_calibration</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L31" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_calibration</code>(<strong><code>df</code></strong>, <strong><code>features</code></strong>, <strong><code>outlier_std</code></strong>=<em><code>3</code></em>, <strong><code>n_neighbors</code></strong>=<em><code>100</code></em>, <strong><code>ppm_range</code></strong>=<em><code>20</code></em>, <strong><code>rt_range</code></strong>=<em><code>0.5</code></em>, <strong><code>mob_range</code></strong>=<em><code>0.3</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Calibration</p>
-<p>Brief description</p>
-<p>(1) From the scored psms isolate the o_mass ppm offset. Filter for x std deviations
-(2) Estimate a stepsize for interpolation to ensure minimum sampling
-(3) Use points to interpolate on a grid
-(4) Use grid to interpolate offset for features</p>
 
 </div>
 
@@ -115,7 +119,7 @@ nb_path: "nbs\07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calibrate_hdf" class="doc_header"><code>calibrate_hdf</code><a href="__main__.py#L118" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_hdf</code>(<strong><code>to_process</code></strong>)</p>
+<h4 id="calibrate_hdf" class="doc_header"><code>calibrate_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L79" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_hdf</code>(<strong><code>to_process</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -139,7 +143,7 @@ nb_path: "nbs\07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calibrate_hdf_parallel" class="doc_header"><code>calibrate_hdf_parallel</code><a href="__main__.py#L157" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_hdf_parallel</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="calibrate_hdf_parallel" class="doc_header"><code>calibrate_hdf_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L123" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_hdf_parallel</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 
 </div>
@@ -148,6 +152,13 @@ nb_path: "nbs\07_recalibration.ipynb"
 
 </div>
 </div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}
@@ -163,13 +174,6 @@ nb_path: "nbs\07_recalibration.ipynb"
     
 <div class="cell border-box-sizing code_cell rendered">
 
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
 <div class="output_wrapper">
 <div class="output">
 
@@ -177,7 +181,7 @@ nb_path: "nbs\07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_db_targets" class="doc_header"><code>get_db_targets</code><a href="__main__.py#L12" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_db_targets</code>(<strong><code>db_file_name</code></strong>, <strong><code>max_ppm</code></strong>=<em><code>100</code></em>, <strong><code>min_distance</code></strong>=<em><code>0.5</code></em>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
+<h4 id="get_db_targets" class="doc_header"><code>get_db_targets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L160" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_db_targets</code>(<strong><code>db_file_name</code></strong>, <strong><code>max_ppm</code></strong>=<em><code>100</code></em>, <strong><code>min_distance</code></strong>=<em><code>0.5</code></em>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
 </blockquote>
 
 </div>
@@ -208,7 +212,7 @@ nb_path: "nbs\07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="align_run_to_db" class="doc_header"><code>align_run_to_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L251" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_run_to_db</code>(<strong><code>ms_data_file_name</code></strong>, <strong><code>db_array</code></strong>, <strong><code>max_ppm_distance</code></strong>=<em><code>1000000</code></em>, <strong><code>rt_step_size</code></strong>=<em><code>0.1</code></em>, <strong><code>plot_ppms</code></strong>=<em><code>False</code></em>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
+<h4 id="align_run_to_db" class="doc_header"><code>align_run_to_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L204" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_run_to_db</code>(<strong><code>ms_data_file_name</code></strong>, <strong><code>db_array</code></strong>, <strong><code>max_ppm_distance</code></strong>=<em><code>1000000</code></em>, <strong><code>rt_step_size</code></strong>=<em><code>0.1</code></em>, <strong><code>plot_ppms</code></strong>=<em><code>False</code></em>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
 </blockquote>
 
 </div>
@@ -239,7 +243,7 @@ nb_path: "nbs\07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calibrate_fragments" class="doc_header"><code>calibrate_fragments</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L338" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_fragments</code>(<strong><code>db_file_name</code></strong>, <strong><code>ms_data_file_name</code></strong>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
+<h4 id="calibrate_fragments" class="doc_header"><code>calibrate_fragments</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L291" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_fragments</code>(<strong><code>db_file_name</code></strong>, <strong><code>ms_data_file_name</code></strong>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
 </blockquote>
 
 </div>
@@ -248,6 +252,13 @@ nb_path: "nbs\07_recalibration.ipynb"
 
 </div>
 </div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}

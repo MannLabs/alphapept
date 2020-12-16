@@ -31,15 +31,245 @@ nb_path: "nbs\09_matching.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This notebook contains all functions related to matching.</p>
-<p>Current ToDo here:</p>
-<ul>
-<li>Move the current Code to here</li>
-</ul>
+<h2 id="Dataset-Alignment">Dataset Alignment<a class="anchor-link" href="#Dataset-Alignment"> </a></h2><p>Align datasets via comparing shared precursors and calculating the median offset.
+All files will be compared with each other, and a linear equation system is used to calculate the best offset.</p>
+<p>Offset is either applied relative (mz, mobility) or absolute (rt).</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="calculate_distance" class="doc_header"><code>calculate_distance</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L17" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_distance</code>(<strong><code>table_1</code></strong>, <strong><code>table_2</code></strong>, <strong><code>offset_cols</code></strong>, <strong><code>calib</code></strong>=<em><code>False</code></em>)</p>
+</blockquote>
+<p>Calculate the distance, either relative or absolute
+TODO: We could use a weighting factor</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="calib_table" class="doc_header"><code>calib_table</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L48" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calib_table</code>(<strong><code>table</code></strong>, <strong><code>delta</code></strong>, <strong><code>offset_cols</code></strong>)</p>
+</blockquote>
+<p>Apply offset to a table
+If not _calib table exist, create a new one.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="align" class="doc_header"><code>align</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L68" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align</code>(<strong><code>deltas</code></strong>, <strong><code>filenames</code></strong>, <strong><code>weights</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Solve equation system</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="calculate_deltas" class="doc_header"><code>calculate_deltas</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L110" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_deltas</code>(<strong><code>combos</code></strong>, <strong><code>calib</code></strong>=<em><code>False</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Calculate offsets for multiple files
+TODO: Parallelize</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="align_files" class="doc_header"><code>align_files</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L153" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_files</code>(<strong><code>filenames</code></strong>, <strong><code>alignment</code></strong>, <strong><code>offset_cols</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="align_datasets" class="doc_header"><code>align_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L168" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_datasets</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Matching">Matching<a class="anchor-link" href="#Matching"> </a></h2><p>Transfer MS2 identifications to similar MS1 fatures.</p>
+<p>Brief outline of the computational task</p>
+<ul>
+<li>Start with aligned datasets</li>
+<li>Combine all datasets in one dataframe</li>
+<li>Group by percursor and calculate expected location (rt, mz, mobility) and standard deviation to calculate a reference</li>
+<li>For each dataset, calculate the subset of precursors that were not identified but are present in the reference</li>
+<li>Search for the closest neighbor for each element in the subset in the identified features</li>
+<li>The distance is calculated using the median standard deviation of the reference</li>
+<li>Use the <code>Mahalanobis</code> distance to calculate a probability that one featue belongs to the distribution</li>
+</ul>
+<p>For Mahalanobis distance, see here:
+<a href="https://stats.stackexchange.com/questions/331283/how-to-calculate-the-probability-of-a-data-point-belonging-to-a-multivariate-nor">https://stats.stackexchange.com/questions/331283/how-to-calculate-the-probability-of-a-data-point-belonging-to-a-multivariate-nor</a></p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_probability" class="doc_header"><code>get_probability</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L210" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_probability</code>(<strong><code>df</code></strong>, <strong><code>ref</code></strong>, <strong><code>sigma</code></strong>, <strong><code>index</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="match_datasets" class="doc_header"><code>match_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L228" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>match_datasets</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
 </div>
  
 

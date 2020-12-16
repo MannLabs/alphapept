@@ -1241,12 +1241,10 @@ def extract_bruker(file, base_dir = "ext/bruker/FF/", config = "proteomics_4d.co
         if not os.path.isfile(config_path):
             raise FileNotFoundError(f'Config file not found here {config_path}.')
 
-        FF_parameters = [ff_dir,'--ff 4d','--readconfig ' + config_path,'--analysisDirectory ' + file]
+        FF_parameters = [ff_dir,'--ff 4d',f'--readconfig "{config_path}"', f'--analysisDirectory "{file}"']
 
-        #subprocess.run(FF_parameters)
-        #subprocess.check_output(' '.join(FF_parameters), shell=True).decode("utf-8")
         process = subprocess.Popen(' '.join(FF_parameters), stdout=subprocess.PIPE)
-        for line in iter(process.stdout.readline, b''):  # replace '' with b'' for Python 3
+        for line in iter(process.stdout.readline, b''):
             logging.info(line.decode('utf8'))
 
         if os.path.exists(feature_path):
