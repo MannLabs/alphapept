@@ -8,7 +8,7 @@ __all__ = ['raw_to_centroid', 'get_pairs_centroids', 'tup_to_ind', 'ind_to_tup',
            'get_trails', 'isolate_isotope_pattern', 'check_averagine', 'pattern_to_mz', 'cosine_averagine',
            'int_list_to_array', 'mz_to_mass', 'get_minpos', 'get_local_minima', 'is_local_minima', 'truncate',
            'M_PROTON', 'get_isotope_patterns', 'feature_finder_report', 'plot_isotope_pattern', 'extract_bruker',
-           'convert_bruker', 'map_bruker', 'find_and_save_features', 'find_and_save_features_parallel', 'map_ms2']
+           'convert_bruker', 'map_bruker', 'find_features', 'map_ms2']
 
 # Cell
 from numba.typed import List
@@ -1335,114 +1335,104 @@ from .search import query_data_to_features
 import alphapept.io
 import functools
 
-def find_and_save_features(to_process, callback = None):
+
+def find_features(to_process, callback = None, parallel = False):
     """
     Wrapper for feature finding
     """
+    try:
+        index, settings = to_process
+        file_name = settings['experiment']['file_paths'][index]
 
-    path, settings = to_process
+        base, ext = os.path.splitext(file_name)
 
-    base, ext = os.path.splitext(path)
+        if ext.lower() == '.raw':
+            datatype='thermo'
+        elif ext.lower() == '.d':
+            datatype='bruker'
+        else:
+            raise NotImplementedError('File extension {} not understood.'.format(ext))
 
-    if ext.lower() == '.raw':
-        datatype='thermo'
-    elif ext.lower() == '.d':
-        datatype='bruker'
-    else:
-        raise NotImplementedError('File extension {} not understood.'.format(ext))
+        out_file = f"{base}.ms_data.hdf"
 
-    out_file = f"{base}.ms_data.hdf"
+        skip = True
+        if os.path.isfile(out_file):
+            try:
+                alphapept.io.MS_Data_File(
+                    out_file
+                ).read(dataset_name="features")
+                logging.info(
+                    'Found *.hdf with features for {}'.format(out_file)
+                )
+            except KeyError:
 
-#     ms_data_file
+                logging.info(
+                    'No *.hdf file with features found for {}. Adding to feature finding list.'.format(out_file)
+                )
+                skip = False
+
+        if not skip:
+            ms_file = alphapept.io.MS_Data_File(out_file, is_read_only=False)
+            query_data = ms_file.read_DDA_query_data()
+
+            if not settings['general']["find_features"]:
+                features = query_data_to_features(query_data)
+            else:
+
+                if datatype == 'thermo':
+
+                    def progress_wrapper(step, n_steps, current):
+                        if callback:
+                            callback(step/n_steps+current/n_steps)
+
+                    n_steps = 8
+
+                    logging.info('Feature finding on {}'.format(file_name))
+                    centroids = raw_to_centroid(query_data, callback = functools.partial(progress_wrapper, 0, n_steps))
+                    logging.info('Loaded {:,} centroids.'.format(len(centroids)))
+
+                    completed_hills = get_hills(centroids, buffer_size=500, callback = functools.partial(progress_wrapper, 1, n_steps))
+                    logging.info('A total of {:,} hills extracted. Average hill length {:.2f}'.format(len(completed_hills), np.mean([len(_) for _ in completed_hills])))
+
+                    splitted_hills = split_hills(completed_hills, centroids, smoothing=1, callback = functools.partial(progress_wrapper, 2, n_steps))
+                    logging.info('Split {:,} hills into {:,} hills'.format(len(completed_hills), len(splitted_hills)))
+
+                    filtered_hills = filter_hills(splitted_hills, centroids, callback = functools.partial(progress_wrapper, 3, n_steps))
+                    logging.info('Filtered {:,} hills. Remaining {:,} hills'.format(len(splitted_hills), len(filtered_hills)))
+
+                    sorted_hills, sorted_stats, sorted_data = get_hill_data(filtered_hills, centroids, callback = functools.partial(progress_wrapper, 4, n_steps))
+                    logging.info('Extracting hill stats complete')
+
+                    pre_isotope_patterns = get_edges(sorted_stats, sorted_data, callback = functools.partial(progress_wrapper, 5, n_steps))
+                    logging.info('Found {:,} pre isotope patterns.'.format(len(pre_isotope_patterns)))
+
+                    isotope_patterns, isotope_charges = get_isotope_patterns(pre_isotope_patterns, sorted_stats, sorted_data, averagine_aa, isotopes, callback = functools.partial(progress_wrapper, 6, n_steps))
+                    logging.info('Extracted {:,} isotope patterns.'.format(len(isotope_patterns)))
+
+                    feature_table = feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorted_data, sorted_hills, query_data, callback = functools.partial(progress_wrapper, 7, n_steps))
+                    logging.info('Report complete.')
+
+                elif datatype == 'bruker':
+                    logging.info('Feature finding on {}'.format(file_name))
+                    feature_path = extract_bruker(file_name)
+                    feature_table = convert_bruker(feature_path)
+                    logging.info('Bruker featurer finder complete. Extracted {:,} features.'.format(len(feature_table)))
+
+                logging.info('Matching features to query data.')
+                features = map_ms2(feature_table, query_data)
+
+                logging.info('Saving feature table.')
+                ms_file.write(feature_table, dataset_name="feature_table")
+                logging.info('Feature table saved to {}'.format(out_file))
 
 
-    ms_file = alphapept.io.MS_Data_File(out_file, is_read_only=False)
-
-    query_data = ms_file.read_DDA_query_data()
-
-    if not settings['general']["find_features"]:
-        features = query_data_to_features(query_data)
-    else:
-
-        if datatype == 'thermo':
-
-            def progress_wrapper(step, n_steps, current):
-                if callback:
-                    callback(step/n_steps+current/n_steps)
-
-            n_steps = 8
-
-            logging.info('Feature finding on {}'.format(path))
-            centroids = raw_to_centroid(query_data, callback = functools.partial(progress_wrapper, 0, n_steps))
-            logging.info('Loaded {:,} centroids.'.format(len(centroids)))
-
-            completed_hills = get_hills(centroids, buffer_size=500, callback = functools.partial(progress_wrapper, 1, n_steps))
-            logging.info('A total of {:,} hills extracted. Average hill length {:.2f}'.format(len(completed_hills), np.mean([len(_) for _ in completed_hills])))
-
-            splitted_hills = split_hills(completed_hills, centroids, smoothing=1, callback = functools.partial(progress_wrapper, 2, n_steps))
-            logging.info('Split {:,} hills into {:,} hills'.format(len(completed_hills), len(splitted_hills)))
-
-            filtered_hills = filter_hills(splitted_hills, centroids, callback = functools.partial(progress_wrapper, 3, n_steps))
-            logging.info('Filtered {:,} hills. Remaining {:,} hills'.format(len(splitted_hills), len(filtered_hills)))
-
-            sorted_hills, sorted_stats, sorted_data = get_hill_data(filtered_hills, centroids, callback = functools.partial(progress_wrapper, 4, n_steps))
-            logging.info('Extracting hill stats complete')
-
-            pre_isotope_patterns = get_edges(sorted_stats, sorted_data, callback = functools.partial(progress_wrapper, 5, n_steps))
-            logging.info('Found {:,} pre isotope patterns.'.format(len(pre_isotope_patterns)))
-
-            isotope_patterns, isotope_charges = get_isotope_patterns(pre_isotope_patterns, sorted_stats, sorted_data, averagine_aa, isotopes, callback = functools.partial(progress_wrapper, 6, n_steps))
-            logging.info('Extracted {:,} isotope patterns.'.format(len(isotope_patterns)))
-
-            feature_table = feature_finder_report(isotope_patterns, isotope_charges, sorted_stats, sorted_data, sorted_hills, query_data, callback = functools.partial(progress_wrapper, 7, n_steps))
-            logging.info('Report complete.')
-
-        elif datatype == 'bruker':
-            logging.info('Feature finding on {}'.format(path))
-            feature_path = extract_bruker(path)
-            feature_table = convert_bruker(feature_path)
-            logging.info('Bruker featurer finder complete. Extracted {:,} features.'.format(len(feature_table)))
-
-        logging.info('Matching features to query data.')
-        features = map_ms2(feature_table, query_data)
-
-        logging.info('Saving feature table.')
-        ms_file.write(feature_table, dataset_name="feature_table")
-        logging.info('Feature table saved to {}'.format(out_file))
-
-
-    logging.info('Saving features.')
-    ms_file.write(features, dataset_name="features")
-    logging.info('Feature file saved to {}'.format(out_file))
-
-
-from multiprocessing import Pool
-
-def find_and_save_features_parallel(path_list, settings, callback=None):
-
-    n_processes = settings['general']['n_processes']
-
-    to_process = [(_, settings) for _ in path_list]
-
-    #Check when having bruker files: Limit parallel processing for now
-    base, ext = os.path.splitext(path_list[0])
-
-    if ext.lower() == '.d':
-        import psutil
-        memory_available = psutil.virtual_memory().available/1024**3
-        n_processes = int(np.floor(memory_available/25)) #25 Gb per File
-        if n_processes == 0:
-            n_processes = 1
-        logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}')
-
-    if len(to_process) == 1:
-        find_and_save_features(to_process[0], callback = callback)
-    else:
-        with Pool(n_processes) as p:
-            max_ = len(to_process)
-            for i, _ in enumerate(p.imap_unordered(find_and_save_features, to_process)):
-                if callback:
-                    callback((i+1)/max_)
+            logging.info('Saving features.')
+            ms_file.write(features, dataset_name="features")
+            logging.info(f'Feature finding of file {file_name} complete.')
+        return True
+    except Exception as e:
+        logging.error(f'Feature finding of file {file_name} failed. Exception {e}')
+        return False
 
 # Cell
 

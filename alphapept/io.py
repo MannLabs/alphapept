@@ -3,12 +3,9 @@
 __all__ = ['load_thermo_raw', 'load_bruker_raw', 'one_over_k0_to_CCS', 'check_sanity', 'extract_mzml_info',
            'extract_mzxml_info', 'read_mzML', 'read_mzXML', 'extract_nested', 'extract_mq_settings', 'parse_mq_seq',
            'get_peaks', 'get_centroid', 'gaussian_estimator', 'centroid_data', 'get_most_abundant', 'list_to_numpy_f32',
-           'HDF_File', 'MS_Data_File', 'raw_to_ms_data_file', 'raw_to_ms_data_file_parallel']
+           'HDF_File', 'MS_Data_File', 'raw_conversion']
 
 # Cell
-
-import numpy as np
-
 def load_thermo_raw(raw_file, most_abundant, use_profile_ms1 = False, callback=None, **kwargs):
     """
     Load thermo raw file and extract spectra
@@ -31,42 +28,52 @@ def load_thermo_raw(raw_file, most_abundant, use_profile_ms1 = False, callback=N
     charge_list = []
 
     for idx, i in enumerate(spec_indices):
-        ms_order = rawfile.GetMSOrderForScanNum(i)
-        rt = rawfile.RTFromScanNum(i)
+        try:
+            ms_order = rawfile.GetMSOrderForScanNum(i)
+            rt = rawfile.RTFromScanNum(i)
 
-        prec_mz = rawfile.GetPrecursorMassForScanNum(i, 0)
-
-        mono_mz, charge = rawfile.GetMS2MonoMzAndChargeFromScanNum(i)
-        #trailer_extra = rawfile.GetTrailerExtraForScanNum(i)
-        #mono_mz = float(trailer_extra["Monoisotopic M/Z:"])
-        #charge = int(trailer_extra["Charge State:"])
-        # if mono_mz == 0: mono_mz = prec_mz
-        # if mono_mz != 0 and abs(mono_mz - prec_mz) > 0.1:
-        #    print(f'MSn={ms_order}, mono_mz={mono_mz}, perc_mz={prec_mz}, charge={charge}')
-
-        # may be centroid for MS2 and profile for MS1 is better？
-
-        if use_profile_ms1:
             if ms_order == 2:
-                masses, intensity = rawfile.GetCentroidMassListFromScanNum(i)
-                masses, intensity = get_most_abundant(masses, intensity, most_abundant)
+                prec_mz = rawfile.GetPrecursorMassForScanNum(i, 0)
+
+                mono_mz, charge = rawfile.GetMS2MonoMzAndChargeFromScanNum(i)
             else:
-                masses, intensity = rawfile.GetProfileMassListFromScanNum(i)
-                masses, intensity = centroid_data(masses, intensity)
+                prec_mz, mono_mz, charge = 0,0,0
+            #trailer_extra = rawfile.GetTrailerExtraForScanNum(i)
+            #mono_mz = float(trailer_extra["Monoisotopic M/Z:"])
+            #charge = int(trailer_extra["Charge State:"])
+            # if mono_mz == 0: mono_mz = prec_mz
+            # if mono_mz != 0 and abs(mono_mz - prec_mz) > 0.1:
+            #    print(f'MSn={ms_order}, mono_mz={mono_mz}, perc_mz={prec_mz}, charge={charge}')
 
-        else:
-            masses, intensity = rawfile.GetCentroidMassListFromScanNum(i)
-            if ms_order == 2:
-                masses, intensity = get_most_abundant(masses, intensity, most_abundant)
+            # may be centroid for MS2 and profile for MS1 is better？
 
-        scan_list.append(i)
-        rt_list.append(rt)
-        mass_list.append(np.array(masses))
-        int_list.append(np.array(intensity, dtype=np.int64))
-        ms_list.append(ms_order)
-        prec_mzs_list.append(prec_mz)
-        mono_mzs_list.append(mono_mz)
-        charge_list.append(charge)
+            if use_profile_ms1:
+                if ms_order == 2:
+                    masses, intensity = rawfile.GetCentroidMassListFromScanNum(i)
+                    masses, intensity = get_most_abundant(masses, intensity, most_abundant)
+                else:
+                    masses, intensity = rawfile.GetProfileMassListFromScanNum(i)
+                    masses, intensity = centroid_data(masses, intensity)
+
+            else:
+                masses, intensity = rawfile.GetCentroidMassListFromScanNum(i)
+                if ms_order == 2:
+                    masses, intensity = get_most_abundant(masses, intensity, most_abundant)
+
+            scan_list.append(i)
+            rt_list.append(rt)
+            mass_list.append(np.array(masses))
+            int_list.append(np.array(intensity, dtype=np.int64))
+            ms_list.append(ms_order)
+            prec_mzs_list.append(prec_mz)
+            mono_mzs_list.append(mono_mz)
+            charge_list.append(charge)
+        except KeyboardInterrupt as e:
+            raise e
+        except SystemExit as e:
+            raise e
+        except Exception as e:
+            logging.info(f"Bad scan={i} in raw file '{raw_file}'")
 
         if callback:
             callback((idx+1)/len(spec_indices))
@@ -111,6 +118,7 @@ def load_thermo_raw(raw_file, most_abundant, use_profile_ms1 = False, callback=N
 #     TODO: Refactor charge2 to be consistent: charge_ms2
     query_data["charge2"] = np.array(charge2)
 
+    rawfile.Close()
     return query_data
 
 # Cell
@@ -335,7 +343,7 @@ def read_mzXML(filename, most_abundant):
     int_list = []
     ms_list = []
     prec_mzs_list = []
-    
+
     print('Start reading mzXML file...')
     if reader:
         for i in tqdm(spec_indices):
@@ -349,7 +357,6 @@ def read_mzXML(filename, most_abundant):
             int_list.append(intensities)
             ms_list.append(ms_order)
             prec_mzs_list.append(prec_mass)
-
 
     check_sanity(mass_list)
 
@@ -385,7 +392,6 @@ def read_mzXML(filename, most_abundant):
     query_data["mono_mzs2"] = np.array(mono_mzs2)
     query_data["charge2"] = np.array(charge2)
 
-    rawfile.Close()
     return query_data
 
 # Cell
@@ -1141,41 +1147,30 @@ def read_DDA_query_data(
 
 # Cell
 
-def raw_to_ms_data_file(to_process, callback = None):
+def raw_conversion(to_process, callback = None, parallel=False):
     """
     Wrapper function to convert raw to ms_data_file hdf
     """
+    index, settings = to_process
+    file_name = settings['experiment']['file_paths'][index]
+    try:
+        local_file_name = os.path.basename(file_name)
+        output_path = os.path.dirname(file_name)
+        base_file_name, ext = os.path.splitext(local_file_name)
+        output_file_name = os.path.join(output_path, base_file_name+".ms_data.hdf")
 
-    file_name, settings = to_process
-    local_file_name = os.path.basename(file_name)
-    output_path = os.path.dirname(file_name)
-    base_file_name, ext = os.path.splitext(local_file_name)
-    output_file_name = os.path.join(output_path, base_file_name+".ms_data.hdf")
-    ms_data_file = MS_Data_File(
-        output_file_name,
-        is_new_file=True
-    )
-    ms_data_file.import_raw_DDA_data(
-        file_name,
-        most_abundant = settings["raw"]["most_abundant"]
-    )
+        if not os.path.isfile(output_file_name):
+            ms_data_file = MS_Data_File(
+                output_file_name,
+                is_new_file=True
+            )
+            ms_data_file.import_raw_DDA_data(
+                file_name,
+                most_abundant = settings["raw"]["most_abundant"]
+            )
 
-    logging.info(f'File conversion of file {file_name} complete.')
-
-from multiprocessing import Pool
-
-def raw_to_ms_data_file_parallel(path_list, settings, callback=None):
-
-    n_processes = settings['general']['n_processes']
-
-    to_process = [(_, settings) for _ in path_list]
-
-    if len(to_process) == 1:
-        raw_to_ms_data_file(to_process[0], callback=callback)
-
-    else:
-        with Pool(n_processes) as p:
-            max_ = len(to_process)
-            for i, _ in enumerate(p.imap_unordered(raw_to_ms_data_file, to_process)):
-                if callback:
-                    callback((i+1)/max_)
+        logging.info(f'File conversion of file {file_name} complete.')
+        return True
+    except Exception as e:
+        logging.error(f'File conversion of file {file_name} failed. Exception {e}')
+        return False
