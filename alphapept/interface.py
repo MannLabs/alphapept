@@ -686,9 +686,13 @@ def run_complete_workflow(
 
         start = time()
 
-        progress_wrapper(idx, n_steps, 0)
-
-        cb = functools.partial(progress_wrapper, idx, n_steps)
+        if callback_overall:
+            progress_wrapper(idx, n_steps, 0)
+            cb = functools.partial(progress_wrapper, idx, n_steps)
+        elif callback:
+            cb = callback
+        else:
+            cb = None
 
         if step is search_data:
             settings, pept_dict, fasta_dict = step(settings, first_search=first_search, logger_set = True, settings_parsed = True, callback = cb)
@@ -708,7 +712,8 @@ def run_complete_workflow(
         if step is recalibrate_data:
             first_search = False
 
-        progress_wrapper(idx, n_steps, 1)
+        if callback_overall:
+            progress_wrapper(idx, n_steps, 1)
 
         end = time()
 
