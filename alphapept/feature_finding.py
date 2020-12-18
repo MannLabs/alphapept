@@ -1246,8 +1246,7 @@ def extract_bruker(file, base_dir = "ext/bruker/FF/", config = "proteomics_4d.co
         process = subprocess.Popen(' '.join(FF_parameters), stdout=subprocess.PIPE)
         for line in iter(process.stdout.readline, b''):
             logtxt = line.decode('utf8')
-            if 'progress' in logtxt.lower():
-                logging.info(logtxt[48:].rstrip()) #Remove logging info from FF
+            logging.info(logtxt[48:].rstrip()) #Remove logging info from FF
 
         if os.path.exists(feature_path):
             return feature_path
