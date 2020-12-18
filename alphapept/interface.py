@@ -49,7 +49,7 @@ def parallel_execute(settings, step, callback=None):
                 n_processes = int(np.floor(memory_available/8)) #8 Gb per File
                 if n_processes == 0:
                     n_processes = 1
-                logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}')
+                logging.info(f'Setting Process limit to {n_processes}')
 
         with Pool(n_processes) as p:
             for i, success in enumerate(p.imap_unordered(step, to_process)):
