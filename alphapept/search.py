@@ -682,8 +682,9 @@ def get_score_columns(
 
     if 'prec_id2' in query_data.keys():
         bruker = True
-
         query_prec_id = query_data['prec_id2']
+    else:
+        bruker = False
 
     db_masses = db_data['precursors']
     db_frags = db_data['fragmasses']
