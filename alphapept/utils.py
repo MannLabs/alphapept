@@ -73,6 +73,9 @@ def check_settings(settings):
         settings['general']['n_processes'] = 60
         logging.info('Capping number of processes to {}.'.format(settings['general']['n_processes']))
 
+    if settings['experiment']['file_paths'] == []:
+        raise FileNotFoundError('No files selected')
+
     logging.info('Checking if files exist.')
     for file in settings['experiment']['file_paths']:
         if file.endswith('.d'):
@@ -146,24 +149,29 @@ def assemble_df(settings, field = 'protein_fdr', callback=None):
     all_dfs = []
     for idx, file_name in enumerate(paths):
 
-        df = alphapept.io.MS_Data_File(
-            file_name
-        ).read(dataset_name=field)
-        df['filename'] = file_name
-        df['shortname'] = shortnames[idx]
+        try:
+            df = alphapept.io.MS_Data_File(
+                file_name
+            ).read(dataset_name=field)
 
-        if 'fraction' in settings['experiment'].keys():
-            if settings['experiment']['fraction'] != []:
-                df['fraction'] = settings['experiment']['fraction'][idx]
-        all_dfs.append(df)
+            df['filename'] = file_name
+            df['shortname'] = shortnames[idx]
+
+            if 'fraction' in settings['experiment'].keys():
+                if settings['experiment']['fraction'] != []:
+                    df['fraction'] = settings['experiment']['fraction'][idx]
+
+            all_dfs.append(df)
+        except KeyError: # e.g. field does not exist
+            pass
 
         if callback:
             callback((idx+1)/len(paths))
 
-    xx = pd.concat(all_dfs)
-
-    # Here we could save things
-
-    xx.to_hdf(settings['experiment']['results_path'], 'combined_'+field)
+    if len(all_dfs) > 0:
+        xx = pd.concat(all_dfs)
+        xx.to_hdf(settings['experiment']['results_path'], 'combined_'+field)
+    else:
+        xx = pd.DataFrame()
 
     return xx

@@ -296,6 +296,7 @@ class QTextEditLogger(logging.Handler):
     def __init__(self, parent):
         super().__init__()
         self.widget = QPlainTextEdit(parent)
+        self.widget.setMinimumHeight(400)
         self.widget.setReadOnly(True)
         self.buffer = []
         self.worker = threading.Thread(target=self.write_log, daemon=True).start()

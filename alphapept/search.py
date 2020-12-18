@@ -4,8 +4,8 @@ __all__ = ['compare_frags', 'ppm_to_dalton', 'get_idxs', 'compare_specs_parallel
            'query_data_to_features', 'get_psms', 'frag_delta', 'intensity_fraction', 'intensity_product',
            'get_frag_mass_density_norm', 'mass_density_weighted_fragment_sum', 'mass_density_weighted_intensity_sum',
            'b_y_hits', 'add_column', 'remove_column', 'get_hits', 'score', 'get_sequences', 'get_score_columns',
-           'plot_hit', 'plot_psms', 'perform_search', 'store_hdf', 'search_db', 'search_parallel_db',
-           'search_fasta_block', 'search_parallel', 'mass_dict']
+           'plot_hit', 'plot_psms', 'perform_search', 'store_hdf', 'search_db', 'search_fasta_block', 'search_parallel',
+           'mass_dict']
 
 # Cell
 import logging
@@ -282,7 +282,7 @@ def get_psms(
         (len(query_masses), np.max(idxs_higher - idxs_lower)), dtype=int
     )
 
-    logging.info('Performing search on {:,} query and {:,} db entries with m_tol = {} and m_offset = {}.'.format(len(query_masses), len(db_masses), m_tol, m_offset))
+    logging.info(f'Performing search on {len(query_masses):,} query and {len(db_masses):,} db entries with m_tol = {m_tol:.2f} and m_offset = {m_offset:.2f}.')
 
     if callback is None:
         chunk = (0, 0)
@@ -677,11 +677,21 @@ def get_score_columns(
     query_charges = query_data['charge2']
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
+    query_scans = query_data['scan_list_ms2']
+
+
+    if 'prec_id2' in query_data.keys():
+        bruker = True
+        query_prec_id = query_data['prec_id2']
+    else:
+        bruker = False
 
     db_masses = db_data['precursors']
     db_frags = db_data['fragmasses']
     db_bounds = db_data['bounds']
     frag_types = db_data['fragtypes']
+
+
 
     db_seqs = db_data['seqs']
 
@@ -699,6 +709,11 @@ def get_score_columns(
         query_rt = features['rt_matched'].values
         query_bounds = query_bounds[features['query_idx'].values]
         query_charges = query_charges[features['query_idx'].values]
+        query_scans = query_scans[features['query_idx'].values]
+
+        if bruker:
+            query_prec_id = query_prec_id[features['query_idx'].values]
+
         query_selection = features['query_idx'].values
         indices = np.zeros(len(query_selection) + 1, np.int64)
         indices[1:] = np.diff(query_indices)[query_selection]
@@ -757,6 +772,7 @@ def get_score_columns(
     rts = np.array(query_rt)[psms["query_idx"]]
     psms = add_column(psms, rts, 'rt')
 
+
     seqs = get_sequences(psms, db_seqs)
     psms = add_column(psms, seqs, "sequence")
 
@@ -777,6 +793,14 @@ def get_score_columns(
         for key in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm','dist','mobility']:
             if key in features.keys():
                 psms = add_column(psms, features.loc[psms['query_idx']][key].values, key)
+
+    scan_no = np.array(query_scans)[psms["query_idx"]]
+    if bruker:
+        psms = add_column(psms, scan_no, "parent")
+        psms = add_column(psms, np.array(query_prec_id)[psms["query_idx"]], 'precursor_idx')
+        psms = add_column(psms, psms['feature_idx']+1, 'feature_id') #Bruker
+    else:
+        psms = add_column(psms, scan_no, "scan_no")
 
     logging.info(f'Extracted columns from {len(psms):,} spectra.')
 
@@ -991,98 +1015,76 @@ def store_hdf(df, path, key, replace=False, swmr = False):
             except KeyError:
                 ms_file.write(df, dataset_name=key, swmr= swmr)
 
-def search_db(to_process):
+
+def search_db(to_process, callback = None, parallel=False, first_search = True):
     """
     Perform a databse search. One file at a time.
     """
 
-    ms_file, settings = to_process
+    try:
+        index, settings = to_process
+        file_name = settings['experiment']['file_paths'][index]
+        base_file_name, ext = os.path.splitext(file_name)
+        ms_file = base_file_name+".ms_data.hdf"
 
-    skip = False
-    feature_calibration = False
+        skip = False
+        feature_calibration = False
 
-    if 'm_offset_calibrated' in settings["search"]:
-        calibration = settings['search']['m_offset_calibrated']
-        logging.info('Found calibrated m_offset with value {}'.format(calibration))
-        feature_calibration = True
-        if calibration == 0:
-            logging.info('Calibration is 0, skipping second database search.')
-            skip = True
-
-    if not skip:
-        db_data = alphapept.fasta.read_database(
-            settings['fasta']['database_path']
-        )
-
-
-        ms_file = alphapept.io.MS_Data_File(
+        ms_file_ = alphapept.io.MS_Data_File(
             f"{ms_file}"
         )
 
+        if not first_search:
+            try:
+                calibration = float(ms_file_.read(group_name = 'features', dataset_name='corrected_mass', attr_name='estimated_max_precursor_ppm'))
+                if calibration == 0:
+                    logging.info('Calibration is 0, skipping second database search.')
+                    skip = True
 
-#         TODO calibrated_fragments should be included in settings
-        query_data = ms_file.read_DDA_query_data(
-            calibrated_fragments=True,
-            database_file_name=settings['fasta']['database_path']
-        )
-
-        features = ms_file.read(dataset_name="features")
-
-        psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
-        if len(psms) > 0:
-            psms, ions = get_score_columns(psms, query_data, db_data, features, **settings["search"])
-
-        if 'm_offset_calibrated' in settings["search"]:
-            logging.info('Saving second_search results to {}'.format(ms_file))
-            save_field = 'second_search'
-        else:
-            logging.info('Saving first_search results to {}'.format(ms_file))
-            save_field = 'first_search'
-
-        store_hdf(pd.DataFrame(psms), ms_file, save_field, replace=True)
-        ion_columns = ['ion_index','ion_type','ion_int','db_int','ion_mass','db_mass','query_idx','db_idx']
-        store_hdf(pd.DataFrame(ions, columns = ion_columns), ms_file, 'ions', replace=True)
+                else:
+                    settings['search']['m_offset_calibrated'] = calibration*settings['search']['calibration_std']
+                    calib = settings['search']['m_offset_calibrated']
+                    logging.info(f"Found calibrated m_offset with value {calib:.2f}")
+            except KeyError:
+                pass
 
 
-def search_parallel_db(settings, calibration = None, callback = None):
-    """
-    Function to generate a database from a fasta file
-    """
-    ms_files = []
+        if not skip:
+            db_data = alphapept.fasta.read_database(
+                settings['fasta']['database_path']
+            )
 
-    for _ in settings['experiment']['file_paths']:
-        base, ext = os.path.splitext(_)
-        ms_files.append(base + '.ms_data.hdf')
 
-    if calibration:
-        custom_settings = []
-        for _ in calibration:
-            settings_ = copy.deepcopy(settings)
-            settings_["search"]["m_offset_calibrated"] = _
-            custom_settings.append(settings_)
-    else:
-        custom_settings = [settings for _ in ms_files]
+    #         TODO calibrated_fragments should be included in settings
+            query_data = ms_file_.read_DDA_query_data(
+                calibrated_fragments=True,
+                database_file_name=settings['fasta']['database_path']
+            )
 
-    n_processes = settings['general']['n_processes']
+            features = ms_file_.read(dataset_name="features")
 
-    to_process = [(ms_files[i], custom_settings[i]) for i in range(len(ms_files))]
+            psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
+            if len(psms) > 0:
+                psms, ions = get_score_columns(psms, query_data, db_data, features, **settings["search"])
 
-    if len(to_process) == 1:
-        ms_file, settings_ = to_process[0]
-        settings_['search']['parallel'] = True
-        search_db((ms_file, settings_))
-    else:
-        with Pool(n_processes) as p:
-            max_ = len(to_process)
-            for i, _ in enumerate(p.imap_unordered(search_db, to_process)):
-                if callback:
-                    callback((i+1)/max_)
+                if first_search:
+                    logging.info('Saving first_search results to {}'.format(ms_file))
+                    save_field = 'first_search'
+                else:
+                    logging.info('Saving second_search results to {}'.format(ms_file))
+                    save_field = 'second_search'
 
-    db_data = alphapept.fasta.read_database(
-        settings['fasta']['database_path']
-    )
+                store_hdf(pd.DataFrame(psms), ms_file_, save_field, replace=True)
+                ion_columns = ['ion_index','ion_type','ion_int','db_int','ion_mass','db_mass','query_idx','db_idx']
+                store_hdf(pd.DataFrame(ions, columns = ion_columns), ms_file_, 'ions', replace=True)
+            else:
+                logging.info('No psms found.')
 
-    return db_data['fasta_dict'].item(), db_data['pept_dict'].item()
+        logging.info(f'Search of file {file_name} complete.')
+        return True
+    except Exception as e:
+        logging.error(f'Search of file {file_name} failed. Exception {e}.')
+        return False
 
 # Cell
 
