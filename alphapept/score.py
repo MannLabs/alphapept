@@ -278,7 +278,7 @@ def get_ML_features(df, protease='trypsin', **kwargs):
     return df
 
 def train_RF(df,
-             exclude_features = ['ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence'],
+             exclude_features = ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence'],
              train_fdr_level = 0.1,
              ini_score = 'x_tandem',
              min_train = 5000,

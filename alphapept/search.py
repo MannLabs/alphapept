@@ -677,11 +677,20 @@ def get_score_columns(
     query_charges = query_data['charge2']
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
+    query_scans = query_data['scan_list_ms2']
+
+
+    if 'prec_id2' in query_data.keys():
+        bruker = True
+
+        query_prec_id = query_data['prec_id2']
 
     db_masses = db_data['precursors']
     db_frags = db_data['fragmasses']
     db_bounds = db_data['bounds']
     frag_types = db_data['fragtypes']
+
+
 
     db_seqs = db_data['seqs']
 
@@ -699,6 +708,11 @@ def get_score_columns(
         query_rt = features['rt_matched'].values
         query_bounds = query_bounds[features['query_idx'].values]
         query_charges = query_charges[features['query_idx'].values]
+        query_scans = query_scans[features['query_idx'].values]
+
+        if bruker:
+            query_prec_id = query_prec_id[features['query_idx'].values]
+
         query_selection = features['query_idx'].values
         indices = np.zeros(len(query_selection) + 1, np.int64)
         indices[1:] = np.diff(query_indices)[query_selection]
@@ -757,6 +771,7 @@ def get_score_columns(
     rts = np.array(query_rt)[psms["query_idx"]]
     psms = add_column(psms, rts, 'rt')
 
+
     seqs = get_sequences(psms, db_seqs)
     psms = add_column(psms, seqs, "sequence")
 
@@ -777,6 +792,14 @@ def get_score_columns(
         for key in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm','dist','mobility']:
             if key in features.keys():
                 psms = add_column(psms, features.loc[psms['query_idx']][key].values, key)
+
+    scan_no = np.array(query_scans)[psms["query_idx"]]
+    if bruker:
+        psms = add_column(psms, scan_no, "parent")
+        psms = add_column(psms, np.array(query_prec_id)[psms["query_idx"]], 'precursor_idx')
+        psms = add_column(psms, psms['feature_idx']+1, 'feature_id') #Bruker
+    else:
+        psms = add_column(psms, scan_no, "scan_no")
 
     logging.info(f'Extracted columns from {len(psms):,} spectra.')
 

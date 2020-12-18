@@ -43,6 +43,13 @@ def parallel_execute(settings, step, callback=None):
                 if n_processes == 0:
                     n_processes = 1
                 logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}')
+            if ext.lower() == '.raw':
+                import psutil
+                memory_available = psutil.virtual_memory().available/1024**3
+                n_processes = int(np.floor(memory_available/8)) #8 Gb per File
+                if n_processes == 0:
+                    n_processes = 1
+                logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}')
 
         with Pool(n_processes) as p:
             for i, success in enumerate(p.imap_unordered(step, to_process)):
