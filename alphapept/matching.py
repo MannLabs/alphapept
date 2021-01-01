@@ -171,6 +171,9 @@ def align_datasets(settings, callback=None):
     if callback:
         def progress_wrapper(current, step, n_steps):
             callback(step+current/n_steps)
+    else:
+        def progress_wrapper(current, step, n_steps):
+            pass
 
     if len(filenames) > 1:
         combos = list(combinations(filenames, 2))

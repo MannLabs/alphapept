@@ -225,7 +225,8 @@ def get_protein_ratios(signal, column_combinations, minimum_ratios = 1):
         i = element[0]
         j = element[1]
 
-        ratio = signal[:,j] / signal[:,i]
+        idx_0 = (signal[:,j]!=0)&(signal[:,i]!=0)
+        ratio = signal[idx_0,j] / signal[idx_0,i]
 
         non_nan = np.sum(~np.isnan(ratio))
 
