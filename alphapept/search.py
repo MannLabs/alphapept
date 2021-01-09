@@ -1084,7 +1084,7 @@ def search_db(to_process, callback = None, parallel=False, first_search = True):
         return True
     except Exception as e:
         logging.error(f'Search of file {file_name} failed. Exception {e}.')
-        return False
+        return f"{e}" #Can't return exception object, cast as string
 
 # Cell
 

@@ -581,7 +581,7 @@ def score_hdf(to_process, callback = None, parallel=False):
         return True
     except Exception as e:
         logging.error(f'Scoring of file {ms_file} failed. Exception {e}')
-        return False
+        return f"{e}" #Can't return exception object, cast as string
 
 # Cell
 

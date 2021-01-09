@@ -10,6 +10,10 @@ __all__ = ['parallel_execute', 'tqdm_wrapper', 'set_logger', 'check_version_and_
 # Cell
 from multiprocessing import Pool
 
+import logging
+import sys
+import numpy as np
+
 def parallel_execute(settings, step, callback=None):
 
     """
@@ -34,7 +38,7 @@ def parallel_execute(settings, step, callback=None):
 
     else:
         #Limit number of processes for Bruker FF
-        if step.__name__ == 'feature_finding':
+        if step.__name__ == 'find_features':
             base, ext = os.path.splitext(files[0])
             if ext.lower() == '.d':
                 import psutil
@@ -42,20 +46,22 @@ def parallel_execute(settings, step, callback=None):
                 n_processes = int(np.floor(memory_available/25)) #25 Gb per File
                 if n_processes == 0:
                     n_processes = 1
-                logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}')
-            if ext.lower() == '.raw':
+                logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}.')
+            elif ext.lower() == '.raw':
                 import psutil
                 memory_available = psutil.virtual_memory().available/1024**3
                 n_processes = int(np.floor(memory_available/8)) #8 Gb per File
                 if n_processes == 0:
                     n_processes = 1
                 logging.info(f'Setting Process limit to {n_processes}')
+            else:
+                raise NotImplementedError('File extension {} not understood.'.format(ext))
 
         with Pool(n_processes) as p:
-            for i, success in enumerate(p.imap_unordered(step, to_process)):
-                if not success:
+            for i, success in enumerate(p.imap(step, to_process)):
+                if success is not True:
                     failed.append(files[i])
-                    logging.error(f'Processing of {files[i]} for step {step.__name__} failed.')
+                    logging.error(f'Processing of {files[i]} for step {step.__name__} failed. Exception {success}')
 
                 if callback:
                     callback((i+1)/n_files)
@@ -79,10 +85,6 @@ def tqdm_wrapper(pbar, update):
     pbar.update(delta)
 
 # Cell
-
-import logging
-import sys
-
 
 def set_logger():
     root = logging.getLogger()

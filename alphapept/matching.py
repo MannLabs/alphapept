@@ -172,10 +172,14 @@ def align_datasets(settings, callback=None):
         def progress_wrapper(current, step, n_steps):
             callback(step+current/n_steps)
 
+        cb = functools.partial(progress_wrapper, 0, 2)
+    else:
+        cb = None
+
     if len(filenames) > 1:
         combos = list(combinations(filenames, 2))
 
-        deltas, weights, offset_cols = calculate_deltas(combos, callback=functools.partial(progress_wrapper, 0, 2))
+        deltas, weights, offset_cols = calculate_deltas(combos, callback=cb)
 
         cols = list(offset_cols.keys())
 
@@ -194,7 +198,10 @@ def align_datasets(settings, callback=None):
 
         align_files(filenames, -alignment, offset_cols)
 
-        deltas, weights, offset_cols = calculate_deltas(combos, calib=True, callback=functools.partial(progress_wrapper, 1, 2))
+        if cb:
+            cb = functools.partial(progress_wrapper, 1, 2)
+
+        deltas, weights, offset_cols = calculate_deltas(combos, calib=True, callback=cb)
 
         logging.info(f'Total deviation after calibration {deltas.abs().sum().to_dict()}')
         logging.info(f'Mean deviation after calibration {deltas.abs().mean().to_dict()}')
