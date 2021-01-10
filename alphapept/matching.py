@@ -98,7 +98,7 @@ def align(deltas, filenames, weights=None):
         reg = LinearRegression(fit_intercept=False).fit(matrix, deltas_.values)
         score= reg.score(matrix, deltas_.values)
 
-    logging.info(f"Regression socre is {score}")
+    logging.info(f"Regression score is {score}")
 
     x= reg.predict(np.eye(len(filenames)-1))
 
