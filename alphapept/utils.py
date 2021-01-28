@@ -5,6 +5,8 @@ import alphapept.io
 import os
 import psutil
 
+from alphapept.__version__ import VERSION_NO
+
 
 def check_file(file):
     if not os.path.isfile(file):
@@ -47,8 +49,9 @@ def check_hardware():
 
 def check_python_env():
     import numba
-    logging.info('Python version {}'.format(sys.version))
-    logging.info('Numba version {}'.format(numba.__version__))
+    logging.info(f'AlphaPept version {VERSION_NO}')
+    logging.info(f'Python version {sys.version}')
+    logging.info(f'Numba version {numba.__version__}')
     if float('.'.join(numba.__version__.split('.')[0:2])) < 0.46:
         raise RuntimeError(
             'Numba version {} not sufficient'.format(numba.__version__)
