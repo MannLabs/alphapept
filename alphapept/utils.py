@@ -154,7 +154,7 @@ def show_python_info() -> None:
     """Log all Python information.
     This is done in the following format:
         - [timestamp]> Python information:
-        - [timestamp]> alphatims          - [current_version]
+        - [timestamp]> alphapept          - [current_version]
         - [timestamp]> [required package] - [current_version]
         - ...
         - [timestamp]> [required package] - [current_version]
@@ -163,7 +163,7 @@ def show_python_info() -> None:
     import platform
     module_versions = {
         "python": platform.python_version(),
-        "alphapept": alphapept.__version__
+        "alphapept": VERSION_NO
     }
     requirements = importlib.metadata.requires("alphapept")
     for requirement in requirements:
