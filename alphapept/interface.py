@@ -670,6 +670,8 @@ def run_complete_workflow(
         if callback_overall:
             callback_overall((step/n_steps)+(current/n_steps))
 
+    pept_dict = None
+    fasta_dict = None
 
     first_search = True
 
@@ -697,6 +699,14 @@ def run_complete_workflow(
             settings, pept_dict, fasta_dict = step(settings, first_search=first_search, logger_set = True, settings_parsed = True, callback = cb)
 
         elif step is score:
+
+            if fasta_dict is None or pept_dict is None:
+
+                db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
+
+                fasta_dict = db_data['fasta_dict'].item()
+                pept_dict = db_data['pept_dict'].item()
+
             settings = step(settings, pept_dict=pept_dict, fasta_dict=fasta_dict, logger_set = True,  settings_parsed = True, callback = cb)
 
         else:
