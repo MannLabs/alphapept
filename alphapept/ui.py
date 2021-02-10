@@ -142,7 +142,7 @@ class MainWindow(QMainWindow):
         self.verticalLayout.addWidget(self.btn_settings)
         self.btn_settings.clicked.connect(self.page_settings)
 
-        self.btn_run = QPushButton("Run")
+        self.btn_run = QPushButton("Current Run")
         self.btn_run.setStyleSheet(big_font)
         self.verticalLayout.addWidget(self.btn_run)
         self.btn_run.clicked.connect(self.page_run)
@@ -211,10 +211,6 @@ class MainWindow(QMainWindow):
         self.label_settings = QLabel("Settings")
         self.label_settings.setStyleSheet(logo_font)
         self.settings_layout.addWidget(self.label_settings)
-        #self.combo_settings = QComboBox()
-        #self.combo_settings.setStyleSheet("QListView::item {height:20px;}")
-        #self.combo_settings.addItem("default")
-        #self.settings_layout.addWidget(self.combo_settings)
 
         self.settingsWidget = SettingsEdit(fasta_selector = self.fasta_selector, file_selector = self.file_selector, results_path = self.results_path)
         self.settings_layout.addWidget(self.settingsWidget)
@@ -354,7 +350,7 @@ class MainWindow(QMainWindow):
             QSizePolicy.Expanding
         )
         self.run_layout.addItem(spacerItem4)
-        self.btn_start = QPushButton("Start")
+        self.btn_start = QPushButton("Start analysis")
         self.btn_start.setStyleSheet(big_font)
         self.btn_start.clicked.connect(self.start)
 
