@@ -79,13 +79,14 @@ class TestRun():
     """
     Class to prepare and download files to make a default test run
     """
-    def __init__(self, id, experimental_files, fasta_paths):
+    def __init__(self, id, experimental_files, fasta_paths, new_files):
 
         self.id = id
         self.file_paths = experimental_files
         self.fasta_paths = fasta_paths
         self.m_tol = 20
         self.m_offset = 20
+        self.new_files = new_files
 
 
         # Flag to run mixed_species_quantification
@@ -152,7 +153,8 @@ class TestRun():
         self.settings['search']['m_tol'] =  self.m_tol
 
     def run(self, password=None):
-        self.prepare_files()
+        if self.new_files:
+            self.prepare_files()
         self.prepare_settings()
 
         report = {}
@@ -283,36 +285,34 @@ def main():
     else:
         password = sys.argv[1]
         runtype = sys.argv[2]
-    if len(sys.argv) > 3:
-        files = sys.argv[3].strip('[]').split(',')
-    if len(sys.argv) > 4:
-        fasta_files = sys.argv[4].strip('[]').split(',')
+
+    new_files = True
 
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']
         fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
-        run = TestRun(runtype, files, fasta_files)
+        run = TestRun(runtype, files, fasta_files, new_files)
         run.run(password=password)
     elif runtype == 'bruker_hela':
         files = ['bruker_HeLa.d']
         fasta_files = ['human.fasta', 'arabidopsis.fasta', 'contaminants.fasta']
-        run = TestRun(runtype, files, fasta_files)
+        run = TestRun(runtype, files, fasta_files, new_files)
         run.run(password=password)
     elif runtype == 'thermo_irt':
         files = ['thermo_IRT.raw']
         fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
-        run = TestRun(runtype, files, fasta_files)
+        run = TestRun(runtype, files, fasta_files, new_files)
         run.run(password=password)
     elif runtype == 'thermo_hela':
         files = ['thermo_HeLa.raw']
         fasta_files = ['human.fasta', 'arabidopsis.fasta', 'contaminants.fasta']
-        run = TestRun(runtype, files, fasta_files)
+        run = TestRun(runtype, files, fasta_files, new_files)
         run.run(password=password)
     elif runtype == 'PXD006109':
         files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
         #Multi-Species test
-        test_run = TestRun(runtype, files, fasta_files)
+        test_run = TestRun(runtype, files, fasta_files, new_files)
         species = ['HUMAN', 'ECO']
         groups = (['PXD006109_HeLa12_1', 'PXD006109_HeLa12_2', 'PXD006109_HeLa12_3'], ['PXD006109_HeLa2_1', 'PXD006109_HeLa2_2', 'PXD006109_HeLa2_3'])
         test_run.run_mixed_analysis = (species, groups)
@@ -321,7 +321,7 @@ def main():
         files =  ['PXD010012_CT_1_C1_01_Base.d', 'PXD010012_CT_2_C1_01_Base.d', 'PXD010012_CT_3_C1_01_Base.d', 'PXD010012_CT_4_C1_01_Base.d', 'PXD010012_CT_5_C1_01_Base.d', 'PXD010012_CT_1_C2_01_Ratio.d', 'PXD010012_CT_2_C2_01_Ratio.d', 'PXD010012_CT_3_C2_01_Ratio.d', 'PXD010012_CT_4_C2_01_Ratio.d', 'PXD010012_CT_5_C2_01_Ratio.d']
         fasta_files = ['human.fasta','e_coli.fasta','contaminants.fasta']
         #Multi-Species test
-        test_run = TestRun(runtype, files, fasta_files)
+        test_run = TestRun(runtype, files, fasta_files, new_files)
         species = ['HUMAN', 'ECO']
         groups = (['PXD010012_CT_1_C2_01_Ratio', 'PXD010012_CT_2_C2_01_Ratio', 'PXD010012_CT_3_C2_01_Ratio', 'PXD010012_CT_4_C2_01_Ratio', 'PXD010012_CT_5_C2_01_Ratio'], ['PXD010012_CT_1_C1_01_Base', 'PXD010012_CT_2_C1_01_Base', 'PXD010012_CT_3_C1_01_Base', 'PXD010012_CT_4_C1_01_Base', 'PXD010012_CT_5_C1_01_Base'])
         test_run.run_mixed_analysis = (species, groups)

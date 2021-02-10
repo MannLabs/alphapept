@@ -188,6 +188,7 @@ def compare_specs_single(
 
 import pandas as pd
 import logging
+from .fasta import read_database
 
 def query_data_to_features(query_data):
 
@@ -234,10 +235,14 @@ def get_psms(
     Raises:
     """
 
-
-    db_masses = db_data['precursors']
-    db_frags = db_data['fragmasses']
-    db_bounds = db_data['bounds']
+    if isinstance(db_data, str):
+        db_masses = read_database(db_data, array_name = 'precursors')
+        db_frags = read_database(db_data, array_name = 'fragmasses')
+        db_bounds = read_database(db_data, array_name = 'bounds')
+    else:
+        db_masses = db_data['precursors']
+        db_frags = db_data['fragmasses']
+        db_bounds = db_data['bounds']
 
     query_indices = query_data["indices_ms2"]
     query_bounds = query_data['bounds']
@@ -372,6 +377,10 @@ def get_psms(
     hit_query, hit_db = np.where(frag_hits >= min_frag_hits)
     hits = frag_hits[hit_query, hit_db]
     hit_db += idxs_lower[hit_query]
+
+    del db_masses
+    del db_frags
+    del db_bounds
 
     psms = np.array(
         list(zip(hit_query, hit_db, hits)), dtype=[("query_idx", int), ("db_idx", int), ("hits", int)]
@@ -679,26 +688,32 @@ def get_score_columns(
     query_ints = query_data['int_list_ms2']
     query_scans = query_data['scan_list_ms2']
 
-
     if 'prec_id2' in query_data.keys():
         bruker = True
         query_prec_id = query_data['prec_id2']
     else:
         bruker = False
 
-    db_masses = db_data['precursors']
-    db_frags = db_data['fragmasses']
-    db_bounds = db_data['bounds']
-    frag_types = db_data['fragtypes']
+    if isinstance(db_data, str):
+        db_masses = read_database(db_data, array_name = 'precursors')
+        db_frags = read_database(db_data, array_name = 'fragmasses')
+        db_bounds = read_database(db_data, array_name = 'bounds')
+        frag_types = read_database(db_data, array_name = 'fragtypes')
 
-
-
-    db_seqs = db_data['seqs']
-
-    if 'db_ints' in db_data.keys():
-        db_ints = db_data['db_ints']
+        try:
+            db_ints = read_database(db_data, array_name = 'db_ints')
+        except KeyError:
+            db_ints = None
     else:
-        db_ints = None
+        db_masses = db_data['precursors']
+        db_frags = db_data['fragmasses']
+        db_bounds = db_data['bounds']
+        frag_types = db_data['fragtypes']
+
+        if 'db_ints' in db_data.keys():
+            db_ints = db_data['db_ints']
+        else:
+            db_ints = None
 
     if features is not None:
         if m_offset_calibrated:
@@ -773,7 +788,15 @@ def get_score_columns(
     psms = add_column(psms, rts, 'rt')
 
 
+    if isinstance(db_data, str):
+        db_seqs = read_database(db_data, array_name = 'seqs').astype(str)
+    else:
+        db_seqs = db_data['seqs']
+
     seqs = get_sequences(psms, db_seqs)
+
+    del db_seqs
+
     psms = add_column(psms, seqs, "sequence")
 
     mass = np.array(query_masses)[psms["query_idx"]]
@@ -1050,10 +1073,7 @@ def search_db(to_process, callback = None, parallel=False, first_search = True):
 
 
         if not skip:
-            db_data = alphapept.fasta.read_database(
-                settings['fasta']['database_path']
-            )
-
+            db_data_path = settings['fasta']['database_path']
 
     #         TODO calibrated_fragments should be included in settings
             query_data = ms_file_.read_DDA_query_data(
@@ -1063,9 +1083,9 @@ def search_db(to_process, callback = None, parallel=False, first_search = True):
 
             features = ms_file_.read(dataset_name="features")
 
-            psms, num_specs_compared = get_psms(query_data, db_data, features, **settings["search"])
+            psms, num_specs_compared = get_psms(query_data, db_data_path, features, **settings["search"])
             if len(psms) > 0:
-                psms, ions = get_score_columns(psms, query_data, db_data, features, **settings["search"])
+                psms, ions = get_score_columns(psms, query_data, db_data_path, features, **settings["search"])
 
                 if first_search:
                     logging.info('Saving first_search results to {}'.format(ms_file))
@@ -1084,7 +1104,7 @@ def search_db(to_process, callback = None, parallel=False, first_search = True):
         return True
     except Exception as e:
         logging.error(f'Search of file {file_name} failed. Exception {e}.')
-        return False
+        return f"{e}" #Can't return exception object, cast as string
 
 # Cell
 
