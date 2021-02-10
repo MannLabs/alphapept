@@ -1251,7 +1251,7 @@ def extract_bruker(file, base_dir = "ext/bruker/FF/", config = "proteomics_4d.co
         if os.path.exists(feature_path):
             return feature_path
         else:
-            raise FileNotFoundError('Feature extraction failed.')
+            raise FileNotFoundError(f"Feature file {feature_path} does not exist.")
 
 
 import sqlalchemy as db
@@ -1433,7 +1433,7 @@ def find_features(to_process, callback = None, parallel = False):
         return True
     except Exception as e:
         logging.error(f'Feature finding of file {file_name} failed. Exception {e}')
-        return False
+        return f"{e}" #Can't return exception object, cast as string
 
 # Cell
 
@@ -1442,7 +1442,9 @@ import pandas as pd
 import numpy as np
 
 
-def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=5):
+
+
+def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=5, search_unidentified = False):
     """
     Map MS1 features to MS2 based on rt and mz
     if ccs is included also add
@@ -1545,31 +1547,33 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
 
         all_df.append(ref_df)
 
-    if use_mob:
-        unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2'], query_data['mobility']]).T, columns=['rt', 'mass', 'mz', 'charge','mobility'])
-    else:
-        unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'mz', 'charge'])
-    unmatched_ref = unmatched_ref[~ref_matched]
-    unmatched_ref['mass_matched'] = unmatched_ref['mass']
-    unmatched_ref['mass_offset'] = 0
-    unmatched_ref['rt_matched'] = unmatched_ref['rt']
-    unmatched_ref['rt_offset'] = 0
-    unmatched_ref['mz_matched'] = unmatched_ref['mz']
-    unmatched_ref['mz_offset'] = 0
-    unmatched_ref['charge_matched'] = unmatched_ref['charge']
-    unmatched_ref['query_idx'] = unmatched_ref.index
-    unmatched_ref['feature_idx'] = 0
 
-    if use_mob:
-        ref_df['mobility_matched'] = unmatched_ref['mobility']
-        ref_df['mobility_offset'] = 0
+    if search_unidentified:
+        if use_mob:
+            unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2'], query_data['mobility']]).T, columns=['rt', 'mass', 'mz', 'charge','mobility'])
+        else:
+            unmatched_ref = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'mz', 'charge'])
+        unmatched_ref = unmatched_ref[~ref_matched]
+        unmatched_ref['mass_matched'] = unmatched_ref['mass']
+        unmatched_ref['mass_offset'] = 0
+        unmatched_ref['rt_matched'] = unmatched_ref['rt']
+        unmatched_ref['rt_offset']  = 0
+        unmatched_ref['mz_matched'] = unmatched_ref['mz']
+        unmatched_ref['mz_offset'] = 0
+        unmatched_ref['charge_matched'] = unmatched_ref['charge']
+        unmatched_ref['query_idx'] = unmatched_ref.index
+        unmatched_ref['feature_idx'] = np.nan
 
-    for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
-        if field in feature_table.keys():
-            unmatched_ref[field] = 0
-    unmatched_ref['dist'] = 0
+        if use_mob:
+            ref_df['mobility_matched'] = unmatched_ref['mobility']
+            ref_df['mobility_offset'] = np.nan
 
-    all_df.append(unmatched_ref)
+        for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+            if field in feature_table.keys():
+                unmatched_ref[field] = np.nan
+        unmatched_ref['dist'] = np.nan
+
+        all_df.append(unmatched_ref)
 
     features = pd.concat(all_df)
 

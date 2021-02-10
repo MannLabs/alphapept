@@ -654,6 +654,12 @@ class HDF_File(object):
     def is_overwritable(self):
         return self.__is_overwritable
 
+    def read(self):
+        pass
+
+    def write(self):
+        pass
+
     def __init__(
         self,
         file_name:str,
@@ -1173,4 +1179,4 @@ def raw_conversion(to_process, callback = None, parallel=False):
         return True
     except Exception as e:
         logging.error(f'File conversion of file {file_name} failed. Exception {e}')
-        return False
+        return f"{e}" #Can't return exception object, cast as string

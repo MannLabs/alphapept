@@ -31,23 +31,25 @@ nb_path: "nbs\08_quantification.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Label-free-quantification">Label-free quantification<a class="anchor-link" href="#Label-free-quantification"> </a></h2><p>Algorithms related to label-free quantifications are motivated by the <a href="https://doi.org/10.1074/mcp.m113.031591">MaxLFQ paper</a>.</p>
+<h2 id="Label-free-quantification">Label-free quantification<a class="anchor-link" href="#Label-free-quantification"> </a></h2><p>Algorithms related to label-free quantifications are motivated by the <a href="https://doi.org/10.1074/mcp.m113.031591">MaxLFQ paper</a>. The main goal is to derive relative protein intensities that can be used for downstream analyses. In a first step, constant normalization coefficients are derived for each run. In a second step, pseudointensities are derived for each protein, such that differing conditions can be compared.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Delayed-Normalization">Delayed Normalization<a class="anchor-link" href="#Delayed-Normalization"> </a></h2><p>Delayed normalization describes the process of normalizing the differences that occur from prefractionation.</p>
-<p>ToDo: Describe the mathematical background.</p>
+<h2 id="Delayed-Normalization">Delayed Normalization<a class="anchor-link" href="#Delayed-Normalization"> </a></h2><p>Delayed normalization describes the process of normalizing the differences that occur from prefractionation as well as from sample handling. For each sample, a constant scaling factor is derived by minimizing the term
+{% raw %}
+$$H(\vec{N}) = \sum_{P \in peptides} \sum_{A,B \in sample pairs} |\frac{I(N_A, P, A)}{I(N_B, P, B)}|, $$
+{% endraw %}
+with peptide intensities $I$, which are determined by the peptide $P$ the sample $A$ or $B$ and the normalization factors $N_A$, $N_B$. In principle H(N) quantifies the variation of peptides over the samples. Minimizing this variation gives appropriate scaling factors under the assumption that most peptides do not change between the samples. Peptide intensities for fractionated samples are described as the sum of the intensities over the fractions, with fraction-specific normalization factors. Therefore, calculation of the summed intensities is <em>delayed</em> until the normalization is finished.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="In-Silico-Test-data">In Silico Test data<a class="anchor-link" href="#In-Silico-Test-data"> </a></h3><p>To test the delayed normalization approach we create an in silico test dataset with a known ground truth.
-We employ different solvers to recover the normalization parameters.</p>
+<h3 id="In-Silico-Test-data">In Silico Test data<a class="anchor-link" href="#In-Silico-Test-data"> </a></h3><p>To test the delayed normalization approach we create an in silico test dataset with a known ground truth. We therefore know, which systematic changes are between the samples and we employ different solvers to recover the normalization parameters.</p>
 
 </div>
 </div>
@@ -221,7 +223,8 @@ We employ different solvers to recover the normalization parameters.</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Benchmarking-different-optimiziers">Benchmarking different optimiziers<a class="anchor-link" href="#Benchmarking-different-optimiziers"> </a></h2>
+<h2 id="Benchmarking-different-optimiziers">Benchmarking different optimiziers<a class="anchor-link" href="#Benchmarking-different-optimiziers"> </a></h2><p>The normalization step is in principle a quadratic minimization of the normalization factors. Such minimization problems can be solved in various ways and a variety of approaches are realized in python community packages. We compare different solvers using our benchmarking set and uncover substantial differences in precision and runtime. We observe that the <em>Sequential Least Squares Quadratic Programming</em> (SLSQP) approach is a robust solution in our benchmarking, which gives substantial speed improvements.</p>
+
 </div>
 </div>
 </div>
@@ -612,7 +615,8 @@ We employ different solvers to recover the normalization parameters.</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Constructing-protein-intensity-profiles">Constructing protein intensity profiles<a class="anchor-link" href="#Constructing-protein-intensity-profiles"> </a></h2>
+<h2 id="Constructing-protein-intensity-profiles">Constructing protein intensity profiles<a class="anchor-link" href="#Constructing-protein-intensity-profiles"> </a></h2><p>Protein intensity profiles are constructed for each protein individually. All possible protein fold changes between the samples are derived from the median peptide fold changes. Subsequently, pseudointensities are chosen such that the fold changes between the pseudointensities ideally reconstruct the actually observed fold changes. Similar to the delayed normalization, this is formulated as a quadratic minimization, which we solve with the SLSQP solver.</p>
+
 </div>
 </div>
 </div>
@@ -691,7 +695,8 @@ We employ different solvers to recover the normalization parameters.</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Determine-pair-wise-intenisty-ratios">Determine pair-wise intenisty ratios<a class="anchor-link" href="#Determine-pair-wise-intenisty-ratios"> </a></h2>
+<h2 id="Determine-pair-wise-intenisty-ratios">Determine pair-wise intenisty ratios<a class="anchor-link" href="#Determine-pair-wise-intenisty-ratios"> </a></h2><p>The pair-wise protein ratios are determined from the median peptide ratio.</p>
+
 </div>
 </div>
 </div>
@@ -728,7 +733,8 @@ We employ different solvers to recover the normalization parameters.</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Error-Function">Error Function<a class="anchor-link" href="#Error-Function"> </a></h2>
+<h2 id="Error-Function">Error Function<a class="anchor-link" href="#Error-Function"> </a></h2><p>The error function evaluates the difference between the actually observed fold change and the fold change that is derived from the pseudointensities.</p>
+
 </div>
 </div>
 </div>
@@ -765,7 +771,8 @@ We employ different solvers to recover the normalization parameters.</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Different-ways-to-solve">Different ways to solve<a class="anchor-link" href="#Different-ways-to-solve"> </a></h2>
+<h2 id="Different-ways-to-solve">Different ways to solve<a class="anchor-link" href="#Different-ways-to-solve"> </a></h2><p>Different quadratic solving strategies are tested.</p>
+
 </div>
 </div>
 </div>

@@ -14,7 +14,7 @@ import alphapept.io
 def filter_score(df, mode='multiple'):
     """
     Filter df by score
-    TODO: PSMS could still have the same socre when having modifications at multiple positions that are not distinguishable.
+    TODO: PSMS could still have the same score when having modifications at multiple positions that are not distinguishable.
     Only keep one.
 
     """
@@ -581,7 +581,7 @@ def score_hdf(to_process, callback = None, parallel=False):
         return True
     except Exception as e:
         logging.error(f'Scoring of file {ms_file} failed. Exception {e}')
-        return False
+        return f"{e}" #Can't return exception object, cast as string
 
 # Cell
 
