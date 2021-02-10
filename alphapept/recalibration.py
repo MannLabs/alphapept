@@ -49,6 +49,7 @@ def get_calibration(df, features, outlier_std = 3, n_neighbors = 100, ppm_range 
         o_mass_std = np.abs(df['o_mass_ppm'].std())
         o_mass_mean = df['o_mass_ppm'].mean()
 
+        #df_sub = df[~df['feature_idx'].isna()].copy() #Remove unmatched features
         df_sub = df.query('o_mass_ppm < @o_mass_mean+@outlier_std*@o_mass_std and o_mass_ppm > @o_mass_mean-@outlier_std*@o_mass_std').copy()
 
         tree_points = df_sub[cols].values
@@ -125,7 +126,7 @@ def calibrate_hdf(to_process, callback = None, parallel=False):
         return True
     except Exception as e:
         logging.error(f'Calibration of file {ms_file} failed. Exception {e}.')
-        return False
+        return f"{e}" #Can't return exception object, cast as string
 
 # Cell
 

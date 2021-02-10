@@ -39,6 +39,7 @@ features:
   max_neighbors: 4
   min_hill_length: 3
   ppm_tol: 8
+  search_unidentified: false
   smoothing: 1
 general:
   align: true
@@ -47,7 +48,7 @@ general:
   find_features: true
   import_raw_data: true
   lfq_quantification: true
-  match: true
+  match: false
   n_processes: 60
   ppm: true
   recalibrate_data: true
