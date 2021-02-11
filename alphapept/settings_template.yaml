@@ -291,6 +291,10 @@ features:
     max: 99
     min: 1
     type: spinbox
+  search_unidentified:
+    default: false
+    description: Search MSMS w/o feature.
+    type: checkbox
   smoothing:
     default: 1
     max: 10
@@ -322,7 +326,7 @@ general:
     description: Flag to perfrom lfq normalization.
     type: checkbox
   match:
-    default: true
+    default: false
     description: Flag to perform match-between runs.
     type: checkbox
   n_processes:
