@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "AlphaPept"
-#define MyAppVersion "0.3.11-dev0"
+#define MyAppVersion "0.3.12-dev0"
 #define MyAppPublisher "MannLabs"
 #define MyAppURL "https://github.com/MannLabs/alphapept"
 #define MyAppExeName "alphapeptw.exe"
