@@ -8,7 +8,7 @@
 ![Windows Installer](https://github.com/MannLabs/alphapept/workflows/Windows%20Installer/badge.svg)
 
 # AlphaPept
-<img src="nbs\images\alphapept_logo.png" align="center">
+<img src="nbs/images/alphapept_logo.png" align="center">
 
  > A modular, python-based framework to analyze mass spectrometry data. Powered by nbdev. Supercharged with numba.
 
@@ -18,7 +18,7 @@
 The documentation is automatically built based on the jupyter notebooks (nbs/index.ipynb) and can be found [here](https://mannlabs.github.io/alphapept/):
 
 ## Windows Quickstart
-<img src="nbs\images\alphapept_screen.png" width="480," align="center">
+<img src="nbs/images/alphapept_screen.png" width="480," align="center">
 
 1. Download the latest installer [here](https://github.com/MannLabs/alphapept/releases/latest), install and click the shortcut on the desktop.
 2. In the `Experiment` tab drag and drop your experimental and FASTA files.
@@ -104,7 +104,7 @@ AlphaPept is meant to be a framework to implement and test new ideas quickly but
 
 For the [windows installation](https://github.com/MannLabs/alphapept/releases/latest), simply click on the shortcut after installation. The windows installation also installs the command-line tool so that you can call alphapept via `alphapept` in the command line.
 
-<img src="nbs\images\alphapept_cmd.png" width="480," align="center">
+<img src="nbs/images/alphapept_cmd.png" width="480," align="center">
 
 ### Python Package
 
