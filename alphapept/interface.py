@@ -626,7 +626,7 @@ def run_complete_workflow(
         steps.append(create_database)
     if general["import_raw_data"]:
         steps.append(import_raw_data)
-    if general["feature_finding"]:
+    if general["find_features"]:
         steps.append(feature_finding)
     if general["search_data"]:
         steps.append(search_data)
