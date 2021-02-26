@@ -96,7 +96,6 @@ from matplotlib_venn import venn2
 def compare_populations(df1, df2, software_1, software_2, field, exclude_decoy=True):
     """
     Compare to lists of peptides / proteins
-
     Convention: all should be uppercase
     ToDo: check this maybe
     """
