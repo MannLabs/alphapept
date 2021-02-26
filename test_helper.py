@@ -13,7 +13,6 @@ def prepare_files(path1, path2):
     df1 = [pd.DataFrame(np.array(h5py.File(path1)['protein_fdr'][_])) for _ in h5py.File(path1)['protein_fdr'].keys()]
     df1 = pd.concat(df1, axis=1)
     df1.columns = h5py.File(path1)['protein_fdr'].keys()
-
     # add sequence charge
     df1['missed_cleavages'] = df1['sequence'].str[:-1].str.count('K') + df1['sequence'].str[:-1].str.count('R')
 
@@ -97,7 +96,6 @@ from matplotlib_venn import venn2
 def compare_populations(df1, df2, software_1, software_2, field, exclude_decoy=True):
     """
     Compare to lists of peptides / proteins
-
     Convention: all should be uppercase
     ToDo: check this maybe
     """
@@ -194,22 +192,26 @@ def protein_rank(df1, df2, software_1, software_2):
     plt.ylabel('Protein Intensity')
     plt.show()
 
+
 def get_plot_df(ref, base_columns, ratio_columns, ax, id_):
 
     to_plot = pd.DataFrame()
+    ref[base_columns] = ref[base_columns].replace(0, np.nan)
+    ref[ratio_columns] = ref[ratio_columns].replace(0, np.nan)
     to_plot['Species'] = ref['Species']
 
     to_plot['base'] = ref[base_columns].median(axis=1)
     to_plot['ratio'] = ref[ratio_columns].median(axis=1)
-    to_plot['base_cnt'] = (ref[base_columns] != 0).sum(axis=1)
-    to_plot['ratio_cnt'] = (ref[ratio_columns] != 0).sum(axis=1)
+    to_plot['base_cnt'] = ref[base_columns].notna().sum(axis=1)
+    to_plot['ratio_cnt'] = ref[ratio_columns].notna().sum(axis=1)
 
     to_plot['ratio_'] = np.log2(to_plot['base'] / to_plot['ratio'])
     to_plot['sum_'] = np.log2(to_plot['ratio'])
 
     valid = to_plot.query(f'ratio_cnt >= 2 and base_cnt >=2')
 
-    ax = sns.scatterplot(ax = ax, x="ratio_", y="sum_", hue="Species", data=valid, alpha=0.2)
+    ax = sns.scatterplot(ax = ax, x="ratio_", y="sum_", hue="Species",
+    hue_order=['Homo sapiens', "Escherichia coli","X"], data=valid, alpha=0.2)
 
     homo = valid[valid['Species'] == 'Homo sapiens']['ratio_'].values
     e_coli = valid[valid['Species'] == 'Escherichia coli']['ratio_'].values
