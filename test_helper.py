@@ -43,7 +43,7 @@ def compare_field(df1, df2, software_1, software_2, field, exclude_decoy=True):
                  'digestion':'Occurence of last AA in sequence',
                  'total_missed_cleavages':'Total number of missed cleavages',
                  'missed_cleavages':'Ratio of number of of missed cleavages'}#nicer descriptions for the plots
-
+    
     if exclude_decoy:
         df1 = df1[~df1['decoy']]
         df2 = df2[~df2['decoy']]

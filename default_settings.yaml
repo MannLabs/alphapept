@@ -1,77 +1,75 @@
-calibration:
-  mob_range: 0.3
-  n_neighbors: 100
-  outlier_std: 3
-  ppm_range: 20
-  rt_range: 0.5
+general:
+  ppm: true
+  score: random_forest
+  n_processes: 60
+  create_database: true
+  import_raw_data: true
+  find_features: true
+  search_data: true
+  recalibrate_data: true
+  align: true
+  match: false
+  lfq_quantification: true
 experiment:
-  file_paths: []
-  fractions: []
   results_path: null
   shortnames: []
-fasta:
-  AL_swap: false
-  KR_swap: false
-  database_path: null
-  db_size: 200000
-  fasta_block: 1000
-  fasta_paths: []
-  max_isoforms: 1024
-  max_length: 27
-  min_length: 6
-  mods_fixed:
-  - cC
-  mods_fixed_terminal: []
-  mods_fixed_terminal_prot: []
-  mods_variable:
-  - oxM
-  mods_variable_terminal: []
-  mods_variable_terminal_prot: []
-  num_missed_cleavages: 2
-  protease: trypsin
-  pseudo_reverse: true
-  save_db: true
-  spectra_block: 100000
-features:
-  mass_importance: 100
-  max_distance: 0.4
-  max_gap: 2
-  max_neighbors: 4
-  min_hill_length: 3
-  ppm_tol: 8
-  search_unidentified: false
-  smoothing: 1
-general:
-  align: true
-  create_database: true
-  feature_finding: true
-  find_features: true
-  import_raw_data: true
-  lfq_quantification: true
-  match: false
-  n_processes: 60
-  ppm: true
-  recalibrate_data: true
-  score: random_forest
-  search_data: true
-matching:
-  match_between_runs: true
-  min_match_d: 3
-  min_match_p: 0.05
-quantification:
-  max_lfq: true
-  mode: int_sum
+  file_paths: []
+  fractions: []
 raw:
   most_abundant: 400
   use_profile_ms1: false
+fasta:
+  mods_fixed:
+  - cC
+  mods_fixed_terminal: []
+  mods_variable:
+  - oxM
+  mods_variable_terminal: []
+  mods_fixed_terminal_prot: []
+  mods_variable_terminal_prot: []
+  num_missed_cleavages: 2
+  min_length: 6
+  max_length: 27
+  max_isoforms: 1024
+  pseudo_reverse: true
+  AL_swap: false
+  KR_swap: false
+  protease: trypsin
+  spectra_block: 100000
+  fasta_block: 1000
+  save_db: true
+  db_size: 200000
+  database_path: null
+  fasta_paths: []
+features:
+  min_hill_length: 3
+  max_gap: 2
+  ppm_tol: 8
+  smoothing: 1
+  max_neighbors: 4
+  max_distance: 0.4
+  mass_importance: 100
+  search_unidentified: false
 search:
-  calibrate: true
-  calibration_std: 3
   m_offset: 30
   m_tol: 30
   min_frag_hits: 7
+  ppm: true
+  calibrate: true
+  calibration_std: 3
   parallel: true
   peptide_fdr: 0.01
-  ppm: true
   protein_fdr: 0.01
   recalibration_min: 100
+calibration:
+  outlier_std: 3
+  n_neighbors: 100
+  ppm_range: 20
+  rt_range: 0.5
+  mob_range: 0.3
+matching:
+  min_match_p: 0.05
+  min_match_d: 3
+quantification:
+  max_lfq: true
+  mode: int_sum

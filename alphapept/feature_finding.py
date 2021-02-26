@@ -1325,7 +1325,7 @@ import os
 import platform
 
 
-def extract_bruker(file, base_dir = "ext/bruker/FF/", config = "proteomics_4d.config"):
+def extract_bruker(file, base_dir = "ext/bruker/FF", config = "proteomics_4d.config"):
     """
     Call Bruker Feautre Finder via subprocess
     """
@@ -1356,12 +1356,24 @@ def extract_bruker(file, base_dir = "ext/bruker/FF/", config = "proteomics_4d.co
         if not os.path.isfile(config_path):
             raise FileNotFoundError(f'Config file not found here {config_path}.')
 
-        FF_parameters = [ff_dir,'--ff 4d',f'--readconfig "{config_path}"', f'--analysisDirectory "{file}"']
+        if operating_system == 'Windows':
+            FF_parameters = [ff_dir,'--ff 4d',f'--readconfig "{config_path}"', f'--analysisDirectory "{file}"']
 
-        process = subprocess.Popen(' '.join(FF_parameters), stdout=subprocess.PIPE)
-        for line in iter(process.stdout.readline, b''):
-            logtxt = line.decode('utf8')
-            logging.info(logtxt[48:].rstrip()) #Remove logging info from FF
+            process = subprocess.Popen(' '.join(FF_parameters), stdout=subprocess.PIPE)
+            for line in iter(process.stdout.readline, b''):
+                logtxt = line.decode('utf8')
+                logging.info(logtxt[48:].rstrip()) #Remove logging info from FF
+        elif operating_system == 'Linux':
+            FF_parameters = [
+                ff_dir,
+                '--ff',
+                '4d',
+                '--readconfig',
+                config_path,
+                '--analysisDirectory',
+                file
+            ]
+            process = subprocess.run(FF_parameters, stdout=subprocess.PIPE)
 
         if os.path.exists(feature_path):
             return feature_path

@@ -25,4 +25,4 @@ def save_settings(settings, path):
     Save a yaml settings file to path
     """
     with open(path, "w") as file:
-        yaml.dump(settings, file)
+        yaml.dump(settings, file, sort_keys=False)
