@@ -316,6 +316,7 @@ def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None
                 per_protein[_] = np.nan
 
         per_protein = per_protein[files]
+        per_protein = per_protein.replace(0, np.nan)
 
         ratios = get_protein_ratios(per_protein.values, column_combinations, minimum_ratios)
         try:
@@ -329,7 +330,9 @@ def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None
         pre_lfq = per_protein.sum().values
 
         if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
-            profile = pre_lfq
+            profile = [0 for x in range(len(pre_lfq))]
+            if np.sum(np.isnan(ratios)) != ratios.size:
+                logging.info(f'Solver failed for protein {protein} despite available ratios:\n {ratios}')
         else:
             invalid = ((np.nansum(ratios, axis=1) == 0) & (np.nansum(ratios, axis=0) == 0))
             total_int = subset[field_].sum() * solution
@@ -364,6 +367,7 @@ def protein_profile(df, files, field_, protein, minimum_ratios=1):
             per_protein[_] = np.nan
 
     per_protein = per_protein[files]
+    per_protein = per_protein.replace(0, np.nan)
 
     ratios = get_protein_ratios(per_protein.values, column_combinations, minimum_ratios)
     try:
@@ -376,7 +380,10 @@ def protein_profile(df, files, field_, protein, minimum_ratios=1):
     pre_lfq = per_protein.sum().values
 
     if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
-        profile = pre_lfq
+        profile = [0 for x in range(len(pre_lfq))]
+        if np.sum(np.isnan(ratios)) != ratios.size:
+            logging.info(f'Solver failed for protein {protein} despite available ratios:\n {ratios}')
+
     else:
         invalid = ((np.nansum(ratios, axis=1) == 0) & (np.nansum(ratios, axis=0) == 0))
         total_int = subset[field_].sum() * solution
