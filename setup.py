@@ -37,13 +37,14 @@ strict_requirements = {
 }
 with open("requirements.txt") as requirements_file:
     requirements = []
-    for line in requirements_file:
-        # TODO, this should be a proper regex parsing
-        requirement, version = line.split("==")
-        if requirement not in strict_requirements:
-            requirements.append(requirement)
-        else:
-            requirements.append(strict_requirements[requirement])
+    # for line in requirements_file:
+    #     # TODO, this should be a proper regex parsing
+    #     requirement, version = line.split("==")
+    #     if requirement not in strict_requirements:
+    #         requirements.append(requirement)
+    #     else:
+    #         requirements.append(strict_requirements[requirement])
+    requirements.append(line)
 
 setuptools.setup(
     name=cfg["lib_name"],
