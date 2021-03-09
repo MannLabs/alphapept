@@ -792,7 +792,11 @@ def read(
                     elif return_dataset_dtype:
                         return dataset.dtype
                     else:
-                        return dataset[return_dataset_slice]
+                        array = dataset[return_dataset_slice]
+                        # TODO: This assumes any object array is a string array
+                        if array.dtype == object:
+                            array = array.astype(str)
+                        return array
                 elif dataset.attrs["is_pd_dataframe"]:
                     if return_dataset_shape:
                         columns = list(dataset)
@@ -807,13 +811,20 @@ def read(
                             )
                         ]
                     else:
-                        return pd.DataFrame(
+                        df = pd.DataFrame(
                             {
                                 column: dataset[column][
                                     return_dataset_slice
                                 ] for column in sorted(dataset)
                             }
                         )
+                        # TODO: This assumes any object array is a string array
+                        for column in dataset:
+                            if df[column].dtype == object:
+                                df[column] = df[column].apply(
+                                    lambda x: x.decode('UTF-8')
+                                )
+                        return df
                 else:
                     raise ValueError(
                         f"{dataset_name} is not a valid dataset in "
@@ -924,21 +935,21 @@ def write(
                             overwrite=overwrite,
                             dataset_compression=dataset_compression,
                         )
-                elif value.dtype.type == np.str_:
-                    value = value.astype(np.dtype('O'))
-                elif value.dtype == np.dtype('O'):
-                    hdf_dataset = group.create_dataset(
-                        dataset_name,
-                        data=value,
-                        compression=dataset_compression,
-                        dtype=h5py.string_dtype()
-                    )
                 else:
-                    hdf_dataset = group.create_dataset(
-                        dataset_name,
-                        data=value,
-                        compression=dataset_compression,
-                    )
+                    dtype = value.dtype
+                    if value.dtype == np.dtype('O'):
+                        dtype = h5py.string_dtype()
+                    try:
+                        hdf_dataset = group.create_dataset(
+                            dataset_name,
+                            data=value,
+                            compression=dataset_compression,
+                            dtype=dtype
+                        )
+                    except TypeError:
+                        # TODO
+                        # print(f"Cannot save array {value} to HDF, skipping it...")
+                        pass
             else:
                 try:
                     dataset = group[dataset_name]
