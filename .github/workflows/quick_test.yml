@@ -28,6 +28,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
+        activate alphapept
         python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_irt
   IRT_Bruker_Win:
     needs: [Install_Alphapept, IRT_Thermo_Win]
@@ -36,4 +37,5 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run Alphapept on Bruker
       run: |
+        activate alphapept
         python test_ci.py "${{ secrets.MONGODB_PW }}" bruker_irt
