@@ -126,51 +126,18 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
     """
     Load bruker raw file and extract spectra
     """
-    import sqlalchemy as db
-    import pandas as pd
-
-    from .ext.bruker import timsdata
-
-    tdf = os.path.join(raw_file, 'analysis.tdf')
-    engine = db.create_engine('sqlite:///{}'.format(tdf))
-    prec_data = pd.read_sql_table('Precursors', engine)
-    frame_data = pd.read_sql_table('Frames', engine)
-    frame_data = frame_data.set_index('Id')
-
+    import alphatims.bruker
     from .constants import mass_dict
+    from .io import list_to_numpy_f32, get_most_abundant
 
-    tdf = timsdata.TimsData(raw_file)
+    data = alphatims.bruker.TimsTOF(raw_file)
+    prec_data = data.precursors
+    frame_data = data.frames
+    frame_data = frame_data.set_index('Id')
 
     M_PROTON = mass_dict['Proton']
 
     prec_data['Mass'] = prec_data['MonoisotopicMz'].values * prec_data['Charge'].values - prec_data['Charge'].values*M_PROTON
-
-    from .io import list_to_numpy_f32, get_most_abundant
-
-    mass_list_ms2 = []
-    int_list_ms2 = []
-    scan_list_ms2 = []
-
-    prec_data = prec_data.sort_values(by='Mass', ascending=True)
-
-    precursor_ids = prec_data['Id'].tolist()
-
-    for idx, key in enumerate(precursor_ids):
-
-        ms2_data = tdf.readPasefMsMs([key])
-        masses, intensity = ms2_data[key]
-
-        masses, intensity = get_most_abundant(np.array(masses), np.array(intensity), most_abundant)
-
-        mass_list_ms2.append(masses)
-        int_list_ms2.append(intensity)
-        scan_list_ms2.append(key)
-
-        if callback:
-            callback((idx+1)/len(precursor_ids))
-
-
-    check_sanity(mass_list_ms2)
 
     query_data = {}
 
@@ -180,10 +147,19 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
     query_data['rt_list_ms2'] = frame_data.loc[prec_data['Parent'].values]['Time'].values / 60 #convert to minutes
     query_data['scan_list_ms2'] = prec_data['Parent'].values
     query_data['charge2'] = prec_data['Charge'].values
-    query_data['mobility2'] = tdf.scanNumToOneOverK0(1, prec_data['ScanNumber'].to_list()) #check if its okay to always use first frame
-    query_data["mass_list_ms2"] = mass_list_ms2
-    query_data["int_list_ms2"] = int_list_ms2
 
+    query_data['mobility2'] = data.mobility_values[
+        data.precursors.ScanNumber.values.astype(np.int64)
+    ]
+    (
+        spectrum_indptr,
+        spectrum_tof_indices,
+        spectrum_intensity_values,
+    ) = data.index_precursors()
+    # TODO: Centroid spectra and trim
+    query_data["alphatims_spectrum_indptr_ms2"] = spectrum_indptr[1:]
+    query_data["alphatims_spectrum_mz_values_ms2"] = data.mz_values[spectrum_tof_indices]
+    query_data["alphatims_spectrum_intensity_values_ms2"] = spectrum_intensity_values
 
     return query_data
 
@@ -1087,6 +1063,12 @@ def _save_DDA_query_data(
                 value = np.concatenate(value)
             elif key == "int_list_ms2":
                 value = np.concatenate(value)
+            elif key == "alphatims_spectrum_indptr_ms2":
+                key = "indices_ms2"
+            elif key == "alphatims_spectrum_mz_values_ms2":
+                key = "mass_list_ms2"
+            elif key == "alphatims_spectrum_intensity_values_ms2":
+                key = "int_list_ms2"
             self.write(
                 value,
 #                 TODO: key should be trimmed: xxx_ms2 should just be e.g. xxx
