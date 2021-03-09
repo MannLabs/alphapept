@@ -44,7 +44,8 @@ with open("requirements.txt") as requirements_file:
     #         requirements.append(requirement)
     #     else:
     #         requirements.append(strict_requirements[requirement])
-    requirements.append(line)
+    for line in requirements_file:
+        requirements.append(line)
 
 setuptools.setup(
     name=cfg["lib_name"],
