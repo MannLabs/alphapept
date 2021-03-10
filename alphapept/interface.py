@@ -2,10 +2,10 @@
 
 __all__ = ['parallel_execute', 'tqdm_wrapper', 'check_version_and_hardware', 'create_database', 'import_raw_data',
            'feature_finding', 'wrapped_partial', 'search_data', 'recalibrate_data', 'score', 'align', 'match',
-           'lfq_quantification', 'export', 'get_summary', 'run_complete_workflow', 'FileWatcher', 'run_cli',
-           'cli_overview', 'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search', 'cli_recalibrate',
-           'cli_score', 'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui',
-           'cli_watcher', 'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
+           'quantification', 'export', 'get_summary', 'run_complete_workflow', 'FileWatcher', 'run_cli', 'cli_overview',
+           'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search', 'cli_recalibrate', 'cli_score',
+           'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui', 'cli_watcher',
+           'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
 
 # Cell
 import alphapept.utils
@@ -303,15 +303,20 @@ def search_data(
                 base, ext = os.path.splitext(_)
                 ms_files.append(base + '.ms_data.hdf')
 
-            offsets = [
-                alphapept.io.MS_Data_File(
-                    ms_file_name
-                ).read(
-                    dataset_name="corrected_mass",
-                    group_name="features",
-                    attr_name="estimated_max_precursor_ppm"
-                ) * settings['search']['calibration_std'] for ms_file_name in ms_files
-            ]
+            try:
+                offsets = [
+                    alphapept.io.MS_Data_File(
+                        ms_file_name
+                    ).read(
+                        dataset_name="corrected_mass",
+                        group_name="features",
+                        attr_name="estimated_max_precursor_ppm"
+                    ) * settings['search']['calibration_std'] for ms_file_name in ms_files
+                ]
+            except KeyError:
+                logging.info('No calibration found.')
+                offsets = None
+
             logging.info('Starting second search.')
 
             fasta_dict = alphapept.search.search_parallel(
@@ -451,7 +456,7 @@ def match(
 import pandas as pd
 
 
-def lfq_quantification(
+def quantification(
     settings,
     logger_set=False,
     settings_parsed=False,
@@ -470,58 +475,64 @@ def lfq_quantification(
     df = alphapept.utils.assemble_df(settings)
     logging.info('Assembly complete.')
 
-    if field in df.keys():  # Check if the quantification information exists.
-        # We could include another protein fdr in here..
-        if 'fraction' in df.keys():
-            logging.info('Delayed Normalization.')
-            df, normalization = alphapept.quantification.delayed_normalization(
-                df,
-                field
-            )
-            pd.DataFrame(normalization).to_hdf(
+    if settings["general"]["lfq_quantification"]:
+
+        if field in df.keys():  # Check if the quantification information exists.
+            # We could include another protein fdr in here..
+            if 'fraction' in df.keys():
+                logging.info('Delayed Normalization.')
+                df, normalization = alphapept.quantification.delayed_normalization(
+                    df,
+                    field
+                )
+                pd.DataFrame(normalization).to_hdf(
+                    settings['experiment']['results_path'],
+                    'fraction_normalization'
+                )
+                df_grouped = df.groupby(
+                    ['shortname', 'precursor', 'protein', 'filename']
+                )[['{}_dn'.format(field)]].sum().reset_index()
+            else:
+                df_grouped = df.groupby(
+                    ['shortname', 'precursor', 'protein', 'filename']
+                )[field].sum().reset_index()
+
+            df.to_hdf(
                 settings['experiment']['results_path'],
-                'fraction_normalization'
+                'combined_protein_fdr_dn'
             )
-            df_grouped = df.groupby(
-                ['shortname', 'precursor', 'protein', 'filename']
-            )[['{}_dn'.format(field)]].sum().reset_index()
-        else:
-            df_grouped = df.groupby(
-                ['shortname', 'precursor', 'protein', 'filename']
-            )[field].sum().reset_index()
 
-        df.to_hdf(
-            settings['experiment']['results_path'],
-            'combined_protein_fdr_dn'
-        )
+            logging.info('Complete. ')
+            logging.info('Starting profile extraction.')
 
-        logging.info('Complete. ')
-        logging.info('Starting profile extraction.')
+            if not callback:
+                cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
+            else:
+                cb = callback
 
-        if not callback:
-            cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
-        else:
-            cb = callback
+            protein_table = alphapept.quantification.protein_profile_parallel(
+                settings,
+                df_grouped,
+                callback=cb
+            )
+            protein_table.to_hdf(
+                settings['experiment']['results_path'],
+                'protein_table'
+            )
+            results_path = settings['experiment']['results_path']
+            base, ext = os.path.splitext(results_path)
+            protein_table.to_csv(base+'_proteins.csv')
 
-        protein_table = alphapept.quantification.protein_profile_parallel(
-            settings,
-            df_grouped,
-            callback=cb
-        )
-        protein_table.to_hdf(
-            settings['experiment']['results_path'],
-            'protein_table'
-        )
+            logging.info('LFQ complete.')
+
+    if len(df) > 0:
+        logging.info('Exporting as csv.')
         results_path = settings['experiment']['results_path']
         base, ext = os.path.splitext(results_path)
-        protein_table.to_csv(base+'_proteins.csv')
-
-        logging.info('LFQ complete.')
-
-    logging.info('Exporting as csv.')
-    results_path = settings['experiment']['results_path']
-    base, ext = os.path.splitext(results_path)
-    df.to_csv(base+'.csv')
+        df.to_csv(base+'.csv')
+        logging.info(f'Saved df of length {len(df):,} saved to {base}')
+    else:
+        logging.info(f"No Proteins found.")
 
     return settings
 
@@ -640,9 +651,8 @@ def run_complete_workflow(
         if align not in steps:
             steps.append(align)
         steps.append(match)
-    if general["lfq_quantification"]:
-        steps.append(lfq_quantification)
 
+    steps.append(quantification)
     steps.append(export)
 
     n_steps = len(steps)
@@ -701,16 +711,12 @@ def run_complete_workflow(
         elif step is score:
 
             if fasta_dict is None or pept_dict is None:
-
                 db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
-
                 fasta_dict = db_data['fasta_dict'].item()
                 pept_dict = db_data['pept_dict'].item()
-
             settings = step(settings, pept_dict=pept_dict, fasta_dict=fasta_dict, logger_set = True,  settings_parsed = True, callback = cb)
 
         else:
-
             if step is export:
                 # Get summary information
                 summary = get_summary(settings, summary)
@@ -1058,7 +1064,7 @@ def cli_match(settings_file):
 @CLICK_SETTINGS_OPTION
 def cli_quantify(settings_file):
     settings = alphapept.settings.load_settings(settings_file)
-    lfq_quantification(settings)
+    quantification(settings)
 
 
 @click.command(
