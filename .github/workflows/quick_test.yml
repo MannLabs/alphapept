@@ -16,7 +16,7 @@ jobs:
       run: |
         conda create --name alphapept python=3.8 -y
         conda activate alphapept
-        pip install -e .
+        pip install .
         pip install pymongo
         pip install dnspython
         pip install wget
