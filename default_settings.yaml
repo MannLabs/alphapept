@@ -38,7 +38,7 @@ fasta:
   spectra_block: 100000
   fasta_block: 1000
   save_db: true
-  db_size: 200000
+  db_size: 50000
   database_path: null
   fasta_paths: []
 features:

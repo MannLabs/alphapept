@@ -146,18 +146,34 @@ def create_database(
         if len(settings['fasta']['fasta_paths']) == 0:
             raise FileNotFoundError("No FASTA files set.")
 
+        total_fasta_size = 0
+
         for fasta_file in settings['fasta']['fasta_paths']:
             if os.path.isfile(fasta_file):
+
+                fasta_size = os.stat(fasta_file).st_size/(1024**2)
+
+                total_fasta_size += fasta_size
+
                 logging.info(
                     'Found FASTA file {} with size {:.2f} Mb.'.format(
                         fasta_file,
-                        os.stat(fasta_file).st_size/(1024**2)
+                        fasta_size
                     )
                 )
             else:
                 raise FileNotFoundError(
                     'File {} not found'.format(fasta_file)
                 )
+
+        max_fasta_size = settings['fasta']['max_fasta_size']
+
+        if total_fasta_size >= max_fasta_size:
+            logging.info(f'Total FASTA size {total_fasta_size:.2f} is larger than the set maximum size of {max_fasta_size:.2f} Mb')
+
+            settings['fasta']['database_path'] = None
+
+            return settings
 
         logging.info('Creating a new database from FASTA.')
 
@@ -275,16 +291,29 @@ def search_data(
         cb = callback
 
     if first_search:
+        logging.info('Starting first search.')
+        if settings['fasta']['database_path'] is not None:
+            settings = parallel_execute(settings, wrapped_partial(alphapept.search.search_db, first_search = first_search), callback = cb)
 
-        settings = parallel_execute(settings, wrapped_partial(alphapept.search.search_db, first_search = first_search), callback = cb)
+            db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
 
-        db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
+            fasta_dict = db_data['fasta_dict'].item()
+            pept_dict = db_data['pept_dict'].item()
 
-        fasta_dict = db_data['fasta_dict'].item()
-        pept_dict = db_data['pept_dict'].item()
+
+        else:
+            ms_files = []
+            for _ in settings['experiment']['file_paths']:
+                base, ext = os.path.splitext(_)
+                ms_files.append(base + '.ms_data.hdf')
+
+            fasta_dict = alphapept.search.search_parallel(
+                settings,
+                callback=cb
+            )
+            pept_dict = None
 
         logging.info('First search complete.')
-
     else:
 
         if settings['fasta']['save_db']:

@@ -278,7 +278,7 @@ fasta:
     type: spinbox
     min: 1000
     max: 1000000
-    default: 200000
+    default: 50000
     description: Maximum number of fasta entries that are stored in a db.
   database_path:
     type: path
