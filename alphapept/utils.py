@@ -9,7 +9,7 @@ from alphapept.__version__ import VERSION_NO
 
 BASE_PATH = os.path.dirname(__file__)
 HOME = os.path.expanduser("~")
-LOG_PATH = os.path.join(os.path.dirname(HOME), "alphapept", "logs")
+LOG_PATH = os.path.join(HOME, "alphapept", "logs")
 
 
 def set_logger(
