@@ -269,10 +269,6 @@ def check_settings(settings):
             logging.info(f'Protease is {protease}, possibly causing a very large search space. Only small DB w/o modifications will be created, the full database will be generated on the fly for the second search.')
             settings['fasta']['save_db'] = False
 
-    if settings['fasta']['fasta_block'] > settings['fasta']['db_size']:
-        logging.info('FASTA block size is larger than db size. Decreasing fasta block size.')
-        settings['fasta']['fasta_block'] = settings['fasta']['db_size']
-
     return settings
 
 
