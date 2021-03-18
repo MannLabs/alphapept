@@ -608,7 +608,6 @@ def protein_groups_hdf(to_process):
     ms_file = alphapept.io.MS_Data_File(path, is_overwritable=True)
     try:
         df = ms_file.read(dataset_name='peptide_fdr')
-        ions = ms_file.read(dataset_name='ions')
     except KeyError:
         skip = True
 
@@ -618,20 +617,27 @@ def protein_groups_hdf(to_process):
         df_pg = cut_global_fdr(df_pg, analyte_level='protein',  plot=False, **settings['search'])
         logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
 
-        logging.info('Extracting ions')
+        try:
+            logging.info('Extracting ions')
+            ions = ms_file.read(dataset_name='ions')
 
-        ion_list = []
-        ion_ints = []
 
-        for i in range(len(df_pg)):
-            ion, ints = get_ion(i, df_pg, ions)
-            ion_list.append(ion)
-            ion_ints.append(ints)
+            ion_list = []
+            ion_ints = []
 
-        df_pg['ion_int'] = ion_ints
-        df_pg['ion_types'] = ion_list
+            for i in range(len(df_pg)):
+                ion, ints = get_ion(i, df_pg, ions)
+                ion_list.append(ion)
+                ion_ints.append(ints)
 
-        logging.info('Extracting ions complete.')
+            df_pg['ion_int'] = ion_ints
+            df_pg['ion_types'] = ion_list
+
+            logging.info('Extracting ions complete.')
+
+        except KeyError:
+            logging.info('No ions present.')
+
 
         ms_file.write(df_pg, dataset_name="protein_fdr")
         base, ext = os.path.splitext(path)

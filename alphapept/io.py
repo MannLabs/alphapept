@@ -822,7 +822,7 @@ def read(
                         for column in dataset:
                             if df[column].dtype == object:
                                 df[column] = df[column].apply(
-                                    lambda x: x.decode('UTF-8')
+                                    lambda x: x if isinstance(x, str) else x.decode('UTF-8')
                                 )
                         return df
                 else:
@@ -873,6 +873,7 @@ def write(
     if overwrite is None:
         overwrite = self.is_overwritable
     with h5py.File(self.file_name, "a", swmr=swmr) as hdf_file:
+
         if group_name is None:
             group = hdf_file
             group_name = "/"

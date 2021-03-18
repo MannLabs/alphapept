@@ -315,6 +315,7 @@ def search_data(
 
         logging.info('First search complete.')
     else:
+        logging.info('Starting second search with DB.')
 
         if settings['fasta']['save_db']:
             settings = parallel_execute(settings, wrapped_partial(alphapept.search.search_db, first_search = first_search), callback = cb)
@@ -326,7 +327,7 @@ def search_data(
 
 
         else:
-            logging.info('Starting second search with DB.')
+
             ms_files = []
             for _ in settings['experiment']['file_paths']:
                 base, ext = os.path.splitext(_)
@@ -406,7 +407,10 @@ def score(
     else:
         cb = callback
 
-    if (fasta_dict is None) or (pept_dict is None):
+
+
+    if fasta_dict is None:
+
         db_data = alphapept.fasta.read_database(
             settings['fasta']['database_path']
         )
@@ -414,10 +418,15 @@ def score(
         pept_dict = db_data['pept_dict'].item()
 
 
+
+
     settings = parallel_execute(settings, alphapept.score.score_hdf, callback = cb)
 
-    if not settings['fasta']['save_db']:
+    if settings['fasta']['save_db'] or (pept_dict is None): #Pept dict extractions needs scored
         pept_dict = alphapept.fasta.pept_dict_from_search(settings)
+
+
+    logging.info(f'Fasta dict with length {len(fasta_dict):,}, Pept dict with length {len(pept_dict):,}')
 
     # Protein groups
     logging.info('Extracting protein groups.')
@@ -739,10 +748,6 @@ def run_complete_workflow(
 
         elif step is score:
 
-            if fasta_dict is None or pept_dict is None:
-                db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
-                fasta_dict = db_data['fasta_dict'].item()
-                pept_dict = db_data['pept_dict'].item()
             settings = step(settings, pept_dict=pept_dict, fasta_dict=fasta_dict, logger_set = True,  settings_parsed = True, callback = cb)
 
         else:

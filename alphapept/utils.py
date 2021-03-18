@@ -8,7 +8,9 @@ import logging
 from alphapept.__version__ import VERSION_NO
 
 BASE_PATH = os.path.dirname(__file__)
-LOG_PATH = os.path.join(os.path.dirname(BASE_PATH), "logs")
+HOME = os.path.expanduser("~")
+LOG_PATH = os.path.join(os.path.dirname(HOME), "alphapept", "logs")
+
 
 def set_logger(
     *,
@@ -90,6 +92,8 @@ def set_logger(
         file_handler.setLevel(log_level)
         file_handler.setFormatter(formatter)
         root.addHandler(file_handler)
+
+    logging.info(f"Logging to {log_file_name}.")
     return log_file_name
 
 
