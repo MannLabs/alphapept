@@ -2,8 +2,8 @@
 
 __all__ = ['filter_score', 'filter_precursor', 'get_q_values', 'cut_fdr', 'cut_global_fdr', 'get_x_tandem_score',
            'score_x_tandem', 'filter_with_x_tandem', 'score_psms', 'get_ML_features', 'train_RF', 'score_ML',
-           'filter_with_ML', 'get_protein_groups', 'perform_protein_grouping', 'score_hdf', 'score_hdf_parallel',
-           'get_ion', 'protein_groups_hdf', 'protein_groups_hdf_parallel', 'ion_dict']
+           'filter_with_ML', 'get_protein_groups', 'perform_protein_grouping', 'score_hdf', 'get_ion',
+           'protein_groups_hdf', 'protein_groups_hdf_parallel', 'ion_dict']
 
 # Cell
 import numpy as np
@@ -14,7 +14,7 @@ import alphapept.io
 def filter_score(df, mode='multiple'):
     """
     Filter df by score
-    TODO: PSMS could still have the same socre when having modifications at multiple positions that are not distinguishable.
+    TODO: PSMS could still have the same score when having modifications at multiple positions that are not distinguishable.
     Only keep one.
 
     """
@@ -278,7 +278,7 @@ def get_ML_features(df, protease='trypsin', **kwargs):
     return df
 
 def train_RF(df,
-             exclude_features = ['ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence'],
+             exclude_features = ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence'],
              train_fdr_level = 0.1,
              ini_score = 'x_tandem',
              min_train = 5000,
@@ -533,71 +533,55 @@ import os
 from multiprocessing import Pool
 
 
-def score_hdf(to_process):
-
-    path, settings = to_process
-
-    skip = False
-
-    ms_file = alphapept.io.MS_Data_File(path, is_overwritable=True)
-
+def score_hdf(to_process, callback = None, parallel=False):
     try:
-        df = ms_file.read(dataset_name='second_search')
+        index, settings = to_process
+        file_name = settings['experiment']['file_paths'][index]
+        base_file_name, ext = os.path.splitext(file_name)
+        ms_file = base_file_name+".ms_data.hdf"
 
-        logging.info('Found second search psms for scoring.')
-    except KeyError:
-        df = ms_file.read(dataset_name='first_search')
-        logging.info('No second search psms for scoring found. Using first search.')
+        skip = False
 
-    if len(df) == 0:
-        skip = True
-        logging.info('Dataframe does not contain data. Skipping scoring step.')
+        ms_file_ = alphapept.io.MS_Data_File(ms_file, is_overwritable=True)
 
-    if not skip:
-        df = get_ML_features(df, **settings['fasta'])
+        try:
+            df = ms_file_.read(dataset_name='second_search')
+            logging.info('Found second search psms for scoring.')
+        except KeyError:
+            df = ms_file_.read(dataset_name='first_search')
+            logging.info('No second search psms for scoring found. Using first search.')
 
-        if settings["general"]["score"] == 'random_forest':
-            try:
-                cv, features = train_RF(df)
-                df = filter_with_ML(df, cv, features = features)
-            except ValueError as e:
-                logging.info('ML failed. Defaulting to x_tandem score')
-                logging.info(f"{e}")
+        if len(df) == 0:
+            skip = True
+            logging.info('Dataframe does not contain data. Skipping scoring step.')
+
+        if not skip:
+            df = get_ML_features(df, **settings['fasta'])
+
+            if settings["general"]["score"] == 'random_forest':
+                try:
+                    cv, features = train_RF(df)
+                    df = filter_with_ML(df, cv, features = features)
+                except ValueError as e:
+                    logging.info('ML failed. Defaulting to x_tandem score')
+                    logging.info(f"{e}")
+                    df = filter_with_x_tandem(df)
+            elif settings["general"]["score"] == 'x_tandem':
                 df = filter_with_x_tandem(df)
-        elif settings["general"]["score"] == 'x_tandem':
-            df = filter_with_x_tandem(df)
-        else:
-            raise NotImplementedError('Scoring method {} not implemented.'.format(settings["general"]["score"]))
+            else:
+                raise NotImplementedError('Scoring method {} not implemented.'.format(settings["general"]["score"]))
 
-        df = cut_global_fdr(df, analyte_level='precursor',  plot=False, **settings['search'])
+            df = cut_global_fdr(df, analyte_level='precursor',  plot=False, **settings['search'])
 
-        ms_file.write(df, dataset_name="peptide_fdr")
+            ms_file_.write(df, dataset_name="peptide_fdr")
 
-        logging.info('FDR on peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
+            logging.info('FDR on peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
 
-
-def score_hdf_parallel(settings, callback=None):
-
-    paths = []
-
-    for _ in settings['experiment']['file_paths']:
-        base, ext = os.path.splitext(_)
-        hdf_path = base+'.ms_data.hdf'
-        paths.append(hdf_path)
-
-    to_process = [(path, settings) for path in paths]
-
-    n_processes = settings['general']['n_processes']
-
-    if len(to_process) == 1:
-        score_hdf(to_process[0])
-    else:
-
-        with Pool(n_processes) as p:
-            max_ = len(to_process)
-            for i, _ in enumerate(p.imap_unordered(score_hdf, to_process)):
-                if callback:
-                    callback((i+1)/max_)
+        logging.info(f'Scoring of file {ms_file} complete.')
+        return True
+    except Exception as e:
+        logging.error(f'Scoring of file {ms_file} failed. Exception {e}')
+        return f"{e}" #Can't return exception object, cast as string
 
 # Cell
 
@@ -624,7 +608,6 @@ def protein_groups_hdf(to_process):
     ms_file = alphapept.io.MS_Data_File(path, is_overwritable=True)
     try:
         df = ms_file.read(dataset_name='peptide_fdr')
-        ions = ms_file.read(dataset_name='ions')
     except KeyError:
         skip = True
 
@@ -634,20 +617,27 @@ def protein_groups_hdf(to_process):
         df_pg = cut_global_fdr(df_pg, analyte_level='protein',  plot=False, **settings['search'])
         logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
 
-        logging.info('Extracting ions')
+        try:
+            logging.info('Extracting ions')
+            ions = ms_file.read(dataset_name='ions')
 
-        ion_list = []
-        ion_ints = []
 
-        for i in range(len(df_pg)):
-            ion, ints = get_ion(i, df_pg, ions)
-            ion_list.append(ion)
-            ion_ints.append(ints)
+            ion_list = []
+            ion_ints = []
 
-        df_pg['ion_int'] = ion_ints
-        df_pg['ion_types'] = ion_list
+            for i in range(len(df_pg)):
+                ion, ints = get_ion(i, df_pg, ions)
+                ion_list.append(ion)
+                ion_ints.append(ints)
 
-        logging.info('Extracting ions complete.')
+            df_pg['ion_int'] = ion_ints
+            df_pg['ion_types'] = ion_list
+
+            logging.info('Extracting ions complete.')
+
+        except KeyError:
+            logging.info('No ions present.')
+
 
         ms_file.write(df_pg, dataset_name="protein_fdr")
         base, ext = os.path.splitext(path)
