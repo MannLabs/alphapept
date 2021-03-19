@@ -2,7 +2,7 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import h5py
+import alphapept.io
 import os
 import alphapept.io
 import seaborn as sns
@@ -10,9 +10,9 @@ from tqdm.notebook import tqdm as tqdm
 
 def prepare_files(path1, path2):
 
-    df1 = [pd.DataFrame(np.array(h5py.File(path1)['protein_fdr'][_])) for _ in h5py.File(path1)['protein_fdr'].keys()]
-    df1 = pd.concat(df1, axis=1)
-    df1.columns = h5py.File(path1)['protein_fdr'].keys()
+    ms_file = alphapept.io.MS_Data_File(path1)
+    df1 = ms_file.read(dataset_name='protein_fdr')
+
     # add sequence charge
     df1['missed_cleavages'] = df1['sequence'].str[:-1].str.count('K') + df1['sequence'].str[:-1].str.count('R')
 
@@ -43,7 +43,7 @@ def compare_field(df1, df2, software_1, software_2, field, exclude_decoy=True):
                  'digestion':'Occurence of last AA in sequence',
                  'total_missed_cleavages':'Total number of missed cleavages',
                  'missed_cleavages':'Ratio of number of of missed cleavages'}#nicer descriptions for the plots
-    
+
     if exclude_decoy:
         df1 = df1[~df1['decoy']]
         df2 = df2[~df2['decoy']]

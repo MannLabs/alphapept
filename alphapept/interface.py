@@ -417,12 +417,9 @@ def score(
         fasta_dict = db_data['fasta_dict'].item()
         pept_dict = db_data['pept_dict'].item()
 
-
-
-
     settings = parallel_execute(settings, alphapept.score.score_hdf, callback = cb)
 
-    if settings['fasta']['save_db'] or (pept_dict is None): #Pept dict extractions needs scored
+    if pept_dict is None: #Pept dict extractions needs scored
         pept_dict = alphapept.fasta.pept_dict_from_search(settings)
 
 
