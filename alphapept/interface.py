@@ -317,7 +317,7 @@ def search_data(
     else:
         logging.info('Starting second search with DB.')
 
-        if settings['fasta']['save_db']:
+        if settings['fasta']['database_path'] is not None:
             settings = parallel_execute(settings, wrapped_partial(alphapept.search.search_db, first_search = first_search), callback = cb)
 
             db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])

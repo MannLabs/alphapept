@@ -32,6 +32,7 @@ FILE_DICT['human.fasta'] = 'https://datashare.biochem.mpg.de/s/7KvRKOmMXQTTHOp/d
 FILE_DICT['yeast.fasta'] = 'https://datashare.biochem.mpg.de/s/8zioyWKVHEPeo34/download'
 FILE_DICT['e_coli.fasta'] = 'https://datashare.biochem.mpg.de/s/ZUqqruTOxBbSf1k/download'
 FILE_DICT['arabidopsis.fasta'] = 'https://datashare.biochem.mpg.de/s/YQXTFSVnF4AMTOM/download'
+FILE_DICT['all_uniprot_reviewed.fasta'] = 'https://datashare.biochem.mpg.de/s/QbzV6IvG2oHDYn6/download'
 
 #PXD006109
 
@@ -79,7 +80,7 @@ class TestRun():
     """
     Class to prepare and download files to make a default test run
     """
-    def __init__(self, id, experimental_files, fasta_paths, new_files):
+    def __init__(self, id, experimental_files, fasta_paths, new_files, custom_settings = None):
 
         self.id = id
         self.file_paths = experimental_files
@@ -87,6 +88,8 @@ class TestRun():
         self.m_tol = 20
         self.m_offset = 20
         self.new_files = new_files
+
+        self.custom_settings = custom_settings
 
 
         # Flag to run mixed_species_quantification
@@ -160,6 +163,13 @@ class TestRun():
         report = {}
         report['timestamp'] = datetime.now()
 
+        settings = self.settings
+
+        if self.custom_settings is not None:
+            for group in self.custom_settings:
+                for key in self.custom_settings[group]:
+                    settings[group][key] = self.custom_settings[group][key]
+
         start = time()
         if self.exe_path is not None: #call compiled exe file
             dirname = os.path.dirname(settings['experiment']['results_path'])
@@ -176,7 +186,7 @@ class TestRun():
             settings_path = os.path.join(base, '.yaml')
             settings = load_settings(settings_path)
         else:
-            settings = alphapept.interface.run_complete_workflow(self.settings)
+            settings = alphapept.interface.run_complete_workflow(settings)
         end = time()
 
         report['test_id'] = self.id
@@ -307,6 +317,20 @@ def main():
         files = ['thermo_HeLa.raw']
         fasta_files = ['human.fasta', 'arabidopsis.fasta', 'contaminants.fasta']
         run = TestRun(runtype, files, fasta_files, new_files)
+        run.run(password=password)
+    elif runtype == 'thermo_hela_large_fasta':
+        files = ['thermo_HeLa.raw']
+        fasta_files = ['all_uniprot_reviewed.fasta', 'contaminants.fasta']
+        run = TestRun(runtype, files, fasta_files, new_files)
+        run.run(password=password)
+    elif runtype == 'thermo_hela_modifications':
+        files = ['thermo_HeLa.raw']
+        fasta_files = ['human.fasta', 'contaminants.fasta']
+        custom_settings = {}
+        fasta = {}
+        fasta['mods_variable'] = ['oxM','pS','pT','pY']
+        custom_settings['fasta'] = fasta
+        run = TestRun(runtype, files, fasta_files, new_files, custom_settings)
         run.run(password=password)
     elif runtype == 'PXD006109':
         files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
