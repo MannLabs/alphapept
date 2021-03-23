@@ -143,6 +143,725 @@ nb_path: "nbs\00_settings.ipynb"
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="General-settings">General settings<a class="anchor-link" href="#General-settings"> </a></h3><p>General settings regarding the workflow and which algorithmic steps should be performed.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;general&#39;</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>align:
+  default: true
+  description: Flag to align the data.
+  type: checkbox
+create_database:
+  default: true
+  description: Flag to create a database.
+  type: checkbox
+find_features:
+  default: true
+  description: Flag to perform feature finding.
+  type: checkbox
+import_raw_data:
+  default: true
+  description: Flag to import the raw data.
+  type: checkbox
+lfq_quantification:
+  default: true
+  description: Flag to perfrom lfq normalization.
+  type: checkbox
+match:
+  default: false
+  description: Flag to perform match-between runs.
+  type: checkbox
+n_processes:
+  default: 60
+  description: Maximum number of processes for multiprocessing. If larger than number
+    of processors it will be capped.
+  max: 60
+  min: 1
+  type: spinbox
+ppm:
+  default: true
+  description: Use ppm instead of Dalton.
+  type: checkbox
+recalibrate_data:
+  default: true
+  description: Flag to perform recalibration.
+  type: checkbox
+score:
+  default: random_forest
+  description: Scoring method.
+  type: combobox
+  value:
+  - x_tandem
+  - random_forest
+search_data:
+  default: true
+  description: Flag to perform search.
+  type: checkbox
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Experimental-Settings">Experimental Settings<a class="anchor-link" href="#Experimental-Settings"> </a></h3><p>Core defintions of the experiment, regarding the filepaths..</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;experiment&#39;</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>file_paths:
+  default: []
+  description: Filepaths of the experiments.
+  type: list
+fractions:
+  default: []
+  description: List of fractions for the raw files.
+  type: list
+results_path:
+  default: null
+  description: Path where the results should be stored.
+  filetype:
+  - hdf
+  folder: false
+  type: path
+shortnames:
+  default: []
+  description: List of shortnames for the raw files.
+  type: list
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Raw-file-handling">Raw file handling<a class="anchor-link" href="#Raw-file-handling"> </a></h3>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;raw&#39;</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>most_abundant:
+  default: 400
+  description: Number of most abundant peaks to be isolated from raw spectra.
+  max: 1000
+  min: 1
+  type: spinbox
+use_profile_ms1:
+  default: false
+  description: Use profile data for MS1 and perform own centroiding.
+  type: checkbox
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="FASTA-settings">FASTA settings<a class="anchor-link" href="#FASTA-settings"> </a></h3>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;fasta&#39;</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>AL_swap:
+  default: false
+  description: Swap A and L for decoy generation.
+  type: checkbox
+KR_swap:
+  default: false
+  description: Swap K and R (only if terminal) for decoy generation.
+  type: checkbox
+database_path:
+  default: null
+  description: Path to library file (.hdf).
+  filetype:
+  - hdf
+  folder: false
+  type: path
+fasta_block:
+  default: 1000
+  description: Number of fasta entries to be processed in one block.
+  max: 10000
+  min: 100
+  type: spinbox
+fasta_paths:
+  default: []
+  description: List of paths for FASTA files.
+  type: list
+max_fasta_size:
+  default: 100
+  description: Maximum size of FASTA (MB) when switching on-the-fly.
+  max: 1000000
+  min: 1
+  type: spinbox
+max_isoforms:
+  default: 1024
+  description: Maximum number of isoforms per peptide.
+  max: 4096
+  min: 1
+  type: spinbox
+max_length:
+  default: 27
+  description: Maximum peptide length.
+  max: 99
+  min: 6
+  type: spinbox
+min_length:
+  default: 6
+  description: Minimum peptide length.
+  max: 99
+  min: 6
+  type: spinbox
+mods_fixed:
+  default:
+  - cC
+  description: Fixed modifications.
+  type: checkgroup
+  value:
+    aK: acetylation of lysine
+    cC: carbamidomethylation of C
+    deamN: deamidation of N
+    deamNQ: deamidation of Q
+    eK: EASItag 6-plex on K
+    itraq4K: iTRAQ 4-plex on K
+    itraq4Y: iTRAQ 4-plex on Y
+    itraq8K: iTRAQ 8-plex on K
+    itraq8Y: iTRAQ 8-plex on Y
+    oxM: oxidation of M
+    pS: phosphorylation of S
+    pT: phosphorylation of T
+    pY: phosphorylation of Y
+    tmt0K: TMT zero on K
+    tmt0Y: TMT zero on Y
+    tmt2K: TMT duplex on K
+    tmt2Y: TMT duplex on Y
+    tmt6K: TMT sixplex/tenplex on K
+    tmt6Y: TMT sixplex/tenplex on Y
+mods_fixed_terminal:
+  default: []
+  description: Fixed terminal modifications.
+  type: checkgroup
+  value:
+    arg10&gt;R: Arg 10 on peptide C-terminus
+    arg6&gt;R: Arg 6 on peptide C-terminus
+    cm&lt;C: pyro-cmC
+    e&lt;^: EASItag 6-plex on peptide N-terminus
+    itraq4K&lt;^: iTRAQ 4-plex on peptide N-terminus
+    itraq8K&lt;^: iTRAQ 8-plex on peptide N-terminus
+    lys8&gt;K: Lys 8 on peptide C-terminus
+    pg&lt;E: pyro-E
+    pg&lt;Q: pyro-Q
+    tmt0&lt;^: TMT zero on peptide N-terminus
+    tmt2&lt;^: TMT duplex on peptide N-terminus
+    tmt6&lt;^: TMT sixplex/tenplex on peptide N-terminus
+mods_fixed_terminal_prot:
+  default: []
+  description: Fixed terminal modifications on proteins.
+  type: checkgroup
+  value:
+    a&lt;^: acetylation of protein N-terminus
+    am&gt;^: amidation of protein C-terminus
+mods_variable:
+  default:
+  - oxM
+  description: Variable modifications.
+  type: checkgroup
+  value:
+    aK: acetylation of lysine
+    cC: carbamidomethylation of C
+    deamN: deamidation of N
+    deamNQ: deamidation of Q
+    eK: EASItag 6-plex on K
+    itraq4K: iTRAQ 4-plex on K
+    itraq4Y: iTRAQ 4-plex on Y
+    itraq8K: iTRAQ 8-plex on K
+    itraq8Y: iTRAQ 8-plex on Y
+    oxM: oxidation of M
+    pS: phosphorylation of S
+    pT: phosphorylation of T
+    pY: phosphorylation of Y
+    tmt0K: TMT zero on K
+    tmt0Y: TMT zero on Y
+    tmt2K: TMT duplex on K
+    tmt2Y: TMT duplex on Y
+    tmt6K: TMT sixplex/tenplex on K
+    tmt6Y: TMT sixplex/tenplex on Y
+mods_variable_terminal:
+  default: []
+  description: Varibale terminal modifications.
+  type: checkgroup
+  value:
+    arg10&gt;R: Arg 10 on peptide C-terminus
+    arg6&gt;R: Arg 6 on peptide C-terminus
+    cm&lt;C: pyro-cmC
+    e&lt;^: EASItag 6-plex on peptide N-terminus
+    itraq4K&lt;^: iTRAQ 4-plex on peptide N-terminus
+    itraq8K&lt;^: iTRAQ 8-plex on peptide N-terminus
+    lys8&gt;K: Lys 8 on peptide C-terminus
+    pg&lt;E: pyro-E
+    pg&lt;Q: pyro-Q
+    tmt0&lt;^: TMT zero on peptide N-terminus
+    tmt2&lt;^: TMT duplex on peptide N-terminus
+    tmt6&lt;^: TMT sixplex/tenplex on peptide N-terminus
+mods_variable_terminal_prot:
+  default: []
+  description: Varibale terminal modifications on proteins.
+  type: checkgroup
+  value:
+    a&lt;^: acetylation of protein N-terminus
+    am&gt;^: amidation of protein C-terminus
+num_missed_cleavages:
+  default: 2
+  description: Number of missed cleavages.
+  max: 99
+  min: 0
+  type: spinbox
+protease:
+  default: trypsin
+  description: Protease for digestions.
+  type: combobox
+  value:
+  - arg-c
+  - asp-n
+  - bnps-skatole
+  - caspase 1
+  - caspase 2
+  - caspase 3
+  - caspase 4
+  - caspase 5
+  - caspase 6
+  - caspase 7
+  - caspase 8
+  - caspase 9
+  - caspase 10
+  - chymotrypsin high specificity
+  - chymotrypsin low specificity
+  - clostripain
+  - cnbr
+  - enterokinase
+  - factor xa
+  - formic acid
+  - glutamyl endopeptidase
+  - granzyme b
+  - hydroxylamine
+  - iodosobenzoic acid
+  - lysc
+  - ntcb
+  - pepsin ph1.3
+  - pepsin ph2.0
+  - proline endopeptidase
+  - proteinase k
+  - staphylococcal peptidase i
+  - thermolysin
+  - thrombin
+  - trypsin_full
+  - trypsin_exception
+  - non-specific
+  - trypsin
+pseudo_reverse:
+  default: true
+  description: Use pseudo-reverse strategy instead of reverse.
+  type: checkbox
+save_db:
+  default: true
+  description: Save DB or create on the fly.
+  type: checkbox
+spectra_block:
+  default: 100000
+  description: Maximum number of sequences to be collected before theoretical spectra
+    are generated.
+  max: 1000000
+  min: 1000
+  type: spinbox
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Feature-Finding">Feature Finding<a class="anchor-link" href="#Feature-Finding"> </a></h3>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;features&#39;</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>mass_importance:
+  default: 100
+  max: 1000
+  min: 1
+  type: spinbox
+max_distance:
+  default: 0.4
+  max: 1.0
+  min: 0.0
+  type: doublespinbox
+max_gap:
+  default: 2
+  max: 99
+  min: 1
+  type: spinbox
+max_neighbors:
+  default: 4
+  max: 10
+  min: 1
+  type: spinbox
+min_hill_length:
+  default: 3
+  max: 10
+  min: 1
+  type: spinbox
+ppm_tol:
+  default: 8
+  max: 99
+  min: 1
+  type: spinbox
+search_unidentified:
+  default: false
+  description: Search MSMS w/o feature.
+  type: checkbox
+smoothing:
+  default: 1
+  max: 10
+  min: 1
+  type: spinbox
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Search">Search<a class="anchor-link" href="#Search"> </a></h3>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;search&#39;</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>calibrate:
+  default: true
+  description: Recalibrate masses.
+  type: checkbox
+calibration_std:
+  default: 3
+  description: Std range for search after calibration.
+  max: 5
+  min: 1
+  type: spinbox
+m_offset:
+  default: 30
+  description: Precursor mass offset.
+  max: 99
+  min: 1
+  type: spinbox
+m_tol:
+  default: 30
+  description: MSMS mass offset.
+  max: 99
+  min: 1
+  type: spinbox
+min_frag_hits:
+  default: 7
+  description: Minimum number of fragment hits.
+  max: 99
+  min: 1
+  type: spinbox
+parallel:
+  default: true
+  description: Use parallel processing.
+  type: checkbox
+peptide_fdr:
+  default: 0.01
+  description: FDR level for peptides.
+  max: 1.0
+  min: 0.0
+  type: doublespinbox
+ppm:
+  default: true
+  description: Use ppm instead of Dalton.
+  type: checkbox
+protein_fdr:
+  default: 0.01
+  description: FDR level for proteins.
+  max: 1.0
+  min: 0.0
+  type: doublespinbox
+recalibration_min:
+  default: 100
+  description: Minimum number of datapoints to perform calibration.
+  max: 10000
+  min: 100
+  type: spinbox
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Calibration">Calibration<a class="anchor-link" href="#Calibration"> </a></h3>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;calibration&#39;</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>mob_range:
+  default: 0.3
+  description: Scaling factor for mobility axis.
+  max: 1.0
+  min: 0.0
+  type: doublespinbox
+n_neighbors:
+  default: 100
+  description: Number of neighbors that are used for offset interpolation.
+  max: 1000
+  min: 1
+  type: spinbox
+outlier_std:
+  default: 3
+  description: Number of std. deviations to filter outliers in psms.
+  max: 5
+  min: 1
+  type: spinbox
+ppm_range:
+  default: 20
+  description: Scaling factor for mz axis.
+  max: 1000
+  min: 1
+  type: spinbox
+rt_range:
+  default: 0.5
+  description: Scaling factor for rt axis.
+  max: 10
+  min: 0.0
+  type: doublespinbox
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Matching">Matching<a class="anchor-link" href="#Matching"> </a></h3>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;matching&#39;</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Quantification">Quantification<a class="anchor-link" href="#Quantification"> </a></h3>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;quantification&#39;</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
 </div>
  
 

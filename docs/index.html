@@ -98,15 +98,22 @@ nb_path: "nbs\index.ipynb"
 <li>To ensure compatibility, install strict requirements with <code>pip install -r requirements.txt</code>.</li>
 </ol>
 <p>If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.</p>
+<h4 id="GPU-Support">GPU Support<a class="anchor-link" href="#GPU-Support"> </a></h4><p>To enable usage of a GPU, additional packages need to be installed. The following instructions are targeted at a more experienced audience.</p>
+<ol>
+<li>Make sure to have a working <a href="https://developer.nvidia.com/cuda-toolkit">CUDA toolkit</a> installation that is compatible with cupy. To check type <code>nvcc --version</code> in your terminal.</li>
+<li>Install <a href="https://cupy.dev">cupy</a>. Make sure to install the cupy version matching your CUDA toolkit (e.g. <code>pip install cupy-cuda110</code> for CUDA toolkit 11.0.</li>
+</ol>
 <h4 id="Notes">Notes<a class="anchor-link" href="#Notes"> </a></h4><ul>
 <li>If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: <code>conda install nb_conda</code>, which also installs the jupyter notebook extensions. They can be called from a running jupyter instance like so: <code>http://localhost:8888/nbextensions</code>. </li>
 <li>For navigating the notebooks, the exension <code>collapsible headings</code> and <code>toc2</code> are very beneficial.</li>
 <li>For developing with the notebooks, see the <code>nbev</code> section below.</li>
 </ul>
 <h4 id="Linux">Linux<a class="anchor-link" href="#Linux"> </a></h4><ol>
-<li>Install the build-essentials: <code>sudo apt-get install build-essential</code></li>
-<li>Install Mono from mono-project website <a href="https://www.mono-project.com/download/stable/#download-lin">Mono Linux</a></li>
+<li>Install the build-essentials: <code>sudo apt-get install build-essential</code>.</li>
+<li>Install Mono from mono-project website <a href="https://www.mono-project.com/download/stable/#download-lin">Mono Linux</a>. NOTE, the installed mono version should be at least 6.10, which requires you to add the ppa to your trusted sources!</li>
 <li>Navigate to the alphapept folder and install the package with <code>pip install .</code> (default users) or with <code>pip install -e .</code> to enable developers mode.</li>
+<li>Install libgomp.1 with <code>sudo apt-get install libgomp1</code>.</li>
+<li>Copy-paste the Bruker library for feature finding to your /usr/lib folder with <code>sudo cp alphapept/ext/bruker/FF/linux64/alphapeptlibtbb.so.2 /usr/lib/libtbb.so.2</code>.</li>
 </ol>
 <h4 id="Mac">Mac<a class="anchor-link" href="#Mac"> </a></h4><ol>
 <li>Install <a href="https://brew.sh">brew</a> and pkg-config: <code>brew install pkg-config</code></li>
@@ -237,6 +244,28 @@ For macOS Catalina, open the configuration of zsh via the terminal:</li>
 import alphapept.interface
 settings = load_settings('new_settings.yaml')
 r = alphapept.interface.run_complete_workflow(settings)</code></pre>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Notebooks">Notebooks<a class="anchor-link" href="#Notebooks"> </a></h2><p>Within the notebooks, we try to cover most aspects of a proteomics workflow:</p>
+<ul>
+<li>Settings: General settings to define a workflow</li>
+<li>Chem: Chemistry related functions, e.g., for calculating isotope distributions</li>
+<li>IO: Everything related to importing and exporting and the file formats used</li>
+<li>FASTA: Generating theoretical databases from FASTA files</li>
+<li>Feature Finding: How to extract MS1 features for quantification</li>
+<li>Search: Comparing theoretical databases to experimental spectra and getting Peptide-Spectrum-Matches (PSMs)</li>
+<li>Score: Scoring PSMs</li>
+<li>Recalibration: Recalibration of data based on identified peptides</li>
+<li>Quantification: Functions for quantification, e.g., LFQ</li>
+<li>Matching: Functions for Match-between-runs</li>
+<li>Constants: A collection of constants</li>
+<li>Interface: Code that generates the command-line-interface (CLI)</li>
+<li>Speed: Helper functions to speed up code with CPU / GPU</li>
+</ul>
 
 </div>
 </div>

@@ -13,7 +13,7 @@ jobs:
       run: |
         conda create --name alphapept_gpu python=3.8 -y
         conda activate alphapept_gpu
-        pip install -e .
+        pip install .
         pip install -r requirements.txt
         pip install cupy-cuda110
         pip install pymongo

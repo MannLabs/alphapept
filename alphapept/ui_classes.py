@@ -114,9 +114,9 @@ class FileSelector(QWidget):
         """ Loads  when dropped into the scene """
         paths = self.path_from_drop(event)
         if len(paths) == 1:
-            logging.info(f"Dropped file {paths}.")
+            logging.info(f"File {paths} added.")
         else:
-            logging.info(f"Dropped a total of {len(paths)} files.")
+            logging.info(f"Added a total of {len(paths)} files.")
         self.open_from_drop(paths)
 
     def open(self, path):
@@ -471,7 +471,7 @@ class SettingsEdit(QWidget):
 
         path, extension = self.path_from_drop(event)
 
-        logging.info("Dropped file {}.".format(path))
+        logging.info("Added file {}.".format(path))
 
         if extension == ".yaml":
 

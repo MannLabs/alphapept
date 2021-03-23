@@ -54,6 +54,13 @@ It is strongly recommended to install AlphaPept in its own environment.
 
 If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.
 
+#### GPU Support
+To enable usage of a GPU, additional packages need to be installed. The following instructions are targeted at a more experienced audience.
+
+1. Make sure to have a working [CUDA toolkit](https://developer.nvidia.com/cuda-toolkit) installation that is compatible with cupy. To check type `nvcc --version` in your terminal.
+2. Install [cupy](https://cupy.dev). Make sure to install the cupy version matching your CUDA toolkit (e.g. `pip install cupy-cuda110` for CUDA toolkit 11.0.
+
+
 #### Notes
 * If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`, which also installs the jupyter notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`. 
 * For navigating the notebooks, the exension `collapsible headings` and `toc2` are very beneficial.
@@ -62,9 +69,11 @@ If AlphaPept is installed correctly, you should be able to import Alphapept as a
 
 #### Linux
 
-1. Install the build-essentials: `sudo apt-get install build-essential`
-2. Install Mono from mono-project website [Mono Linux](https://www.mono-project.com/download/stable/#download-lin)
+1. Install the build-essentials: `sudo apt-get install build-essential`.
+2. Install Mono from mono-project website [Mono Linux](https://www.mono-project.com/download/stable/#download-lin). NOTE, the installed mono version should be at least 6.10, which requires you to add the ppa to your trusted sources!
 3. Navigate to the alphapept folder and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode.
+4. Install libgomp.1 with `sudo apt-get install libgomp1`.
+5. Copy-paste the Bruker library for feature finding to your /usr/lib folder with `sudo cp alphapept/ext/bruker/FF/linux64/alphapeptlibtbb.so.2 /usr/lib/libtbb.so.2`.
 
 
 #### Mac
@@ -170,6 +179,24 @@ import alphapept.interface
 settings = load_settings('new_settings.yaml')
 r = alphapept.interface.run_complete_workflow(settings)
 ```
+
+## Notebooks
+
+Within the notebooks, we try to cover most aspects of a proteomics workflow:
+
+* Settings: General settings to define a workflow
+* Chem: Chemistry related functions, e.g., for calculating isotope distributions
+* IO: Everything related to importing and exporting and the file formats used
+* FASTA: Generating theoretical databases from FASTA files
+* Feature Finding: How to extract MS1 features for quantification
+* Search: Comparing theoretical databases to experimental spectra and getting Peptide-Spectrum-Matches (PSMs)
+* Score: Scoring PSMs
+* Recalibration: Recalibration of data based on identified peptides
+* Quantification: Functions for quantification, e.g., LFQ
+* Matching: Functions for Match-between-runs
+* Constants: A collection of constants
+* Interface: Code that generates the command-line-interface (CLI)
+* Speed: Helper functions to speed up code with CPU / GPU
 
 ## Contributing
 If you have a feature request or a bug report, please post it as an issue on the GitHub issue tracker. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started [here](https://github.com/MannLabs/alphapept/blob/master/CONTRIBUTING.md). We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects-page on GitHub. You can also contact us via opensource@alphapept.com.

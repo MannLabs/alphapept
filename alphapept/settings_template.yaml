@@ -1,211 +1,221 @@
-calibration:
-  mob_range:
-    default: 0.3
-    description: Scaling factor for mobility axis.
-    max: 1.0
-    min: 0.0
-    type: doublespinbox
-  n_neighbors:
-    default: 100
-    description: Number of neighbors that are used for offset interpolation.
-    max: 1000
-    min: 1
+general:
+  ppm:
+    type: checkbox
+    default: true
+    description: Use ppm instead of Dalton.
+  score:
+    type: combobox
+    value:
+    - x_tandem
+    - random_forest
+    default: random_forest
+    description: Scoring method.
+  n_processes:
     type: spinbox
-  outlier_std:
-    default: 3
-    description: Number of std. deviations to filter outliers in psms.
-    max: 5
     min: 1
-    type: spinbox
-  ppm_range:
-    default: 20
-    description: Scaling factor for mz axis.
-    max: 1000
-    min: 1
-    type: spinbox
-  rt_range:
-    default: 0.5
-    description: Scaling factor for rt axis.
-    max: 10
-    min: 0.0
-    type: doublespinbox
+    max: 60
+    default: 60
+    description: Maximum number of processes for multiprocessing. If larger than number
+      of processors it will be capped.
+  create_database:
+    type: checkbox
+    default: true
+    description: Flag to create a database.
+  import_raw_data:
+    type: checkbox
+    default: true
+    description: Flag to import the raw data.
+  find_features:
+    type: checkbox
+    default: true
+    description: Flag to perform feature finding.
+  search_data:
+    type: checkbox
+    default: true
+    description: Flag to perform search.
+  recalibrate_data:
+    type: checkbox
+    default: true
+    description: Flag to perform recalibration.
+  align:
+    type: checkbox
+    default: true
+    description: Flag to align the data.
+  match:
+    type: checkbox
+    default: false
+    description: Flag to perform match-between runs.
+  lfq_quantification:
+    type: checkbox
+    default: true
+    description: Flag to perfrom lfq normalization.
 experiment:
-  file_paths:
-    default: []
-    description: Filepaths of the experiments.
-    type: list
-  fractions:
-    default: []
-    description: List of fractions for the raw files.
-    type: list
   results_path:
+    type: path
     default: null
-    description: Path where the results should be stored.
     filetype:
     - hdf
     folder: false
-    type: path
+    description: Path where the results should be stored.
   shortnames:
+    type: list
     default: []
     description: List of shortnames for the raw files.
+  file_paths:
     type: list
-fasta:
-  AL_swap:
-    default: false
-    description: Swap A and L for decoy generation.
-    type: checkbox
-  KR_swap:
-    default: false
-    description: Swap K and R (only if terminal) for decoy generation.
-    type: checkbox
-  database_path:
-    default: null
-    description: Path to library file (.hdf).
-    filetype:
-    - hdf
-    folder: false
-    type: path
-  db_size:
-    default: 200000
-    description: Maximum number of fasta entries that are stored in a db.
-    max: 1000000
-    min: 1000
-    type: spinbox
-  fasta_block:
-    default: 1000
-    description: Number of fasta entries to be processed in one block.
-    max: 10000
-    min: 100
-    type: spinbox
-  fasta_paths:
     default: []
-    description: List of paths for FASTA files.
+    description: Filepaths of the experiments.
+  fractions:
     type: list
-  max_isoforms:
-    default: 1024
-    description: Maximum number of isoforms per peptide.
-    max: 4096
+    default: []
+    description: List of fractions for the raw files.
+raw:
+  most_abundant:
+    type: spinbox
     min: 1
-    type: spinbox
-  max_length:
-    default: 27
-    description: Maximum peptide length.
-    max: 99
-    min: 6
-    type: spinbox
-  min_length:
-    default: 6
-    description: Minimum peptide length.
-    max: 99
-    min: 6
-    type: spinbox
+    max: 1000
+    default: 400
+    description: Number of most abundant peaks to be isolated from raw spectra.
+  use_profile_ms1:
+    type: checkbox
+    default: false
+    description: Use profile data for MS1 and perform own centroiding.
+fasta:
   mods_fixed:
+    type: checkgroup
+    value:
+      cC: carbamidomethylation of C
+      oxM: oxidation of M
+      aK: acetylation of lysine
+      pS: phosphorylation of S
+      pT: phosphorylation of T
+      pY: phosphorylation of Y
+      deamN: deamidation of N
+      deamNQ: deamidation of Q
+      tmt0K: TMT zero on K
+      tmt0Y: TMT zero on Y
+      tmt2K: TMT duplex on K
+      tmt2Y: TMT duplex on Y
+      tmt6K: TMT sixplex/tenplex on K
+      tmt6Y: TMT sixplex/tenplex on Y
+      itraq4K: iTRAQ 4-plex on K
+      itraq4Y: iTRAQ 4-plex on Y
+      itraq8K: iTRAQ 8-plex on K
+      itraq8Y: iTRAQ 8-plex on Y
+      eK: EASItag 6-plex on K
     default:
     - cC
     description: Fixed modifications.
+  mods_fixed_terminal:
     type: checkgroup
     value:
-      aK: acetylation of lysine
+      cm<C: pyro-cmC
+      pg<E: pyro-E
+      pg<Q: pyro-Q
+      tmt0<^: TMT zero on peptide N-terminus
+      tmt2<^: TMT duplex on peptide N-terminus
+      tmt6<^: TMT sixplex/tenplex on peptide N-terminus
+      itraq4K<^: iTRAQ 4-plex on peptide N-terminus
+      itraq8K<^: iTRAQ 8-plex on peptide N-terminus
+      e<^: EASItag 6-plex on peptide N-terminus
+      arg10>R: Arg 10 on peptide C-terminus
+      arg6>R: Arg 6 on peptide C-terminus
+      lys8>K: Lys 8 on peptide C-terminus
+    default: []
+    description: Fixed terminal modifications.
+  mods_variable:
+    type: checkgroup
+    value:
       cC: carbamidomethylation of C
-      deamN: deamidation of N
-      deamNQ: deamidation of Q
-      eK: EASItag 6-plex on K
-      itraq4K: iTRAQ 4-plex on K
-      itraq4Y: iTRAQ 4-plex on Y
-      itraq8K: iTRAQ 8-plex on K
-      itraq8Y: iTRAQ 8-plex on Y
       oxM: oxidation of M
+      aK: acetylation of lysine
       pS: phosphorylation of S
       pT: phosphorylation of T
       pY: phosphorylation of Y
+      deamN: deamidation of N
+      deamNQ: deamidation of Q
       tmt0K: TMT zero on K
       tmt0Y: TMT zero on Y
       tmt2K: TMT duplex on K
       tmt2Y: TMT duplex on Y
       tmt6K: TMT sixplex/tenplex on K
       tmt6Y: TMT sixplex/tenplex on Y
-  mods_fixed_terminal:
-    default: []
-    description: Fixed terminal modifications.
-    type: checkgroup
-    value:
-      arg10>R: Arg 10 on peptide C-terminus
-      arg6>R: Arg 6 on peptide C-terminus
-      cm<C: pyro-cmC
-      e<^: EASItag 6-plex on peptide N-terminus
-      itraq4K<^: iTRAQ 4-plex on peptide N-terminus
-      itraq8K<^: iTRAQ 8-plex on peptide N-terminus
-      lys8>K: Lys 8 on peptide C-terminus
-      pg<E: pyro-E
-      pg<Q: pyro-Q
-      tmt0<^: TMT zero on peptide N-terminus
-      tmt2<^: TMT duplex on peptide N-terminus
-      tmt6<^: TMT sixplex/tenplex on peptide N-terminus
-  mods_fixed_terminal_prot:
-    default: []
-    description: Fixed terminal modifications on proteins.
-    type: checkgroup
-    value:
-      a<^: acetylation of protein N-terminus
-      am>^: amidation of protein C-terminus
-  mods_variable:
+      itraq4K: iTRAQ 4-plex on K
+      itraq4Y: iTRAQ 4-plex on Y
+      itraq8K: iTRAQ 8-plex on K
+      itraq8Y: iTRAQ 8-plex on Y
+      eK: EASItag 6-plex on K
     default:
     - oxM
     description: Variable modifications.
-    type: checkgroup
-    value:
-      aK: acetylation of lysine
-      cC: carbamidomethylation of C
-      deamN: deamidation of N
-      deamNQ: deamidation of Q
-      eK: EASItag 6-plex on K
-      itraq4K: iTRAQ 4-plex on K
-      itraq4Y: iTRAQ 4-plex on Y
-      itraq8K: iTRAQ 8-plex on K
-      itraq8Y: iTRAQ 8-plex on Y
-      oxM: oxidation of M
-      pS: phosphorylation of S
-      pT: phosphorylation of T
-      pY: phosphorylation of Y
-      tmt0K: TMT zero on K
-      tmt0Y: TMT zero on Y
-      tmt2K: TMT duplex on K
-      tmt2Y: TMT duplex on Y
-      tmt6K: TMT sixplex/tenplex on K
-      tmt6Y: TMT sixplex/tenplex on Y
   mods_variable_terminal:
-    default: []
-    description: Varibale terminal modifications.
     type: checkgroup
     value:
-      arg10>R: Arg 10 on peptide C-terminus
-      arg6>R: Arg 6 on peptide C-terminus
       cm<C: pyro-cmC
-      e<^: EASItag 6-plex on peptide N-terminus
-      itraq4K<^: iTRAQ 4-plex on peptide N-terminus
-      itraq8K<^: iTRAQ 8-plex on peptide N-terminus
-      lys8>K: Lys 8 on peptide C-terminus
       pg<E: pyro-E
       pg<Q: pyro-Q
       tmt0<^: TMT zero on peptide N-terminus
       tmt2<^: TMT duplex on peptide N-terminus
       tmt6<^: TMT sixplex/tenplex on peptide N-terminus
-  mods_variable_terminal_prot:
+      itraq4K<^: iTRAQ 4-plex on peptide N-terminus
+      itraq8K<^: iTRAQ 8-plex on peptide N-terminus
+      e<^: EASItag 6-plex on peptide N-terminus
+      arg10>R: Arg 10 on peptide C-terminus
+      arg6>R: Arg 6 on peptide C-terminus
+      lys8>K: Lys 8 on peptide C-terminus
     default: []
-    description: Varibale terminal modifications on proteins.
+    description: Varibale terminal modifications.
+  mods_fixed_terminal_prot:
     type: checkgroup
     value:
       a<^: acetylation of protein N-terminus
       am>^: amidation of protein C-terminus
+    default: []
+    description: Fixed terminal modifications on proteins.
+  mods_variable_terminal_prot:
+    type: checkgroup
+    value:
+      a<^: acetylation of protein N-terminus
+      am>^: amidation of protein C-terminus
+    default: []
+    description: Varibale terminal modifications on proteins.
   num_missed_cleavages:
+    type: spinbox
+    min: 0
+    max: 99
     default: 2
     description: Number of missed cleavages.
-    max: 99
-    min: 0
+  min_length:
     type: spinbox
+    min: 6
+    max: 99
+    default: 6
+    description: Minimum peptide length.
+  max_length:
+    type: spinbox
+    min: 6
+    max: 99
+    default: 27
+    description: Maximum peptide length.
+  max_isoforms:
+    type: spinbox
+    min: 1
+    max: 4096
+    default: 1024
+    description: Maximum number of isoforms per peptide.
+  pseudo_reverse:
+    type: checkbox
+    default: true
+    description: Use pseudo-reverse strategy instead of reverse.
+  AL_swap:
+    type: checkbox
+    default: false
+    description: Swap A and L for decoy generation.
+  KR_swap:
+    type: checkbox
+    default: false
+    description: Swap K and R (only if terminal) for decoy generation.
   protease:
-    default: trypsin
-    description: Protease for digestions.
     type: combobox
     value:
     - arg-c
@@ -245,207 +255,189 @@ fasta:
     - trypsin_exception
     - non-specific
     - trypsin
-  pseudo_reverse:
-    default: true
-    description: Use pseudo-reverse strategy instead of reverse.
-    type: checkbox
-  save_db:
-    default: true
-    description: Save DB or create on the fly.
-    type: checkbox
+    default: trypsin
+    description: Protease for digestions.
   spectra_block:
+    type: spinbox
+    min: 1000
+    max: 1000000
     default: 100000
     description: Maximum number of sequences to be collected before theoretical spectra
       are generated.
-    max: 1000000
+  fasta_block:
+    type: spinbox
+    min: 100
+    max: 10000
+    default: 1000
+    description: Number of fasta entries to be processed in one block.
+  save_db:
+    type: checkbox
+    default: true
+    description: Save DB or create on the fly.
+  db_size:
+    type: spinbox
     min: 1000
-    type: spinbox
+    max: 1000000
+    default: 50000
+    description: Maximum number of fasta entries that are stored in a db.
+  database_path:
+    type: path
+    default: null
+    filetype:
+    - hdf
+    folder: false
+    description: Path to library file (.hdf).
+  fasta_paths:
+    type: list
+    default: []
+    description: List of paths for FASTA files.
 features:
-  mass_importance:
-    default: 100
-    max: 1000
-    min: 1
-    type: spinbox
-  max_distance:
-    default: 0.4
-    max: 1.0
-    min: 0.0
-    type: doublespinbox
-  max_gap:
-    default: 2
-    max: 99
-    min: 1
-    type: spinbox
-  max_neighbors:
-    default: 4
-    max: 10
-    min: 1
-    type: spinbox
   min_hill_length:
-    default: 3
+    type: spinbox
+    min: 1
     max: 10
-    min: 1
+    default: 3
+  max_gap:
     type: spinbox
-  ppm_tol:
-    default: 8
+    min: 1
     max: 99
-    min: 1
+    default: 2
+  ppm_tol:
     type: spinbox
+    min: 1
+    max: 99
+    default: 8
+  smoothing:
+    type: spinbox
+    min: 1
+    max: 10
+    default: 1
+  max_neighbors:
+    type: spinbox
+    min: 1
+    max: 10
+    default: 4
+  max_distance:
+    type: doublespinbox
+    min: 0.0
+    max: 1.0
+    default: 0.4
+  mass_importance:
+    type: spinbox
+    min: 1
+    max: 1000
+    default: 100
   search_unidentified:
+    type: checkbox
     default: false
     description: Search MSMS w/o feature.
-    type: checkbox
-  smoothing:
-    default: 1
-    max: 10
-    min: 1
+search:
+  m_offset:
     type: spinbox
-general:
-  align:
-    default: true
-    description: Flag to align the data.
-    type: checkbox
-  create_database:
-    default: true
-    description: Flag to create a database.
-    type: checkbox
-  feature_finding:
-    default: true
-    description: Flag to perform feature finding.
-    type: checkbox
-  find_features:
-    default: true
-    description: Flag to perform feature finding.
-    type: checkbox
-  import_raw_data:
-    default: true
-    description: Flag to import the raw data.
-    type: checkbox
-  lfq_quantification:
-    default: true
-    description: Flag to perfrom lfq normalization.
-    type: checkbox
-  match:
-    default: false
-    description: Flag to perform match-between runs.
-    type: checkbox
-  n_processes:
-    default: 60
-    description: Maximum number of processes for multiprocessing. If larger than number
-      of processors it will be capped.
-    max: 60
     min: 1
+    max: 99
+    default: 30
+    description: Precursor mass offset.
+  m_tol:
     type: spinbox
+    min: 1
+    max: 99
+    default: 30
+    description: MSMS mass offset.
+  min_frag_hits:
+    type: spinbox
+    min: 1
+    max: 99
+    default: 7
+    description: Minimum number of fragment hits.
   ppm:
+    type: checkbox
     default: true
     description: Use ppm instead of Dalton.
+  calibrate:
     type: checkbox
-  recalibrate_data:
     default: true
-    description: Flag to perform recalibration.
-    type: checkbox
-  score:
-    default: random_forest
-    description: Scoring method.
-    type: combobox
-    value:
-    - x_tandem
-    - random_forest
-  search_data:
-    default: true
-    description: Flag to perform search.
-    type: checkbox
-matching:
-  match_between_runs:
-    default: true
-    description: Perform match between runs type quantification.
-    type: checkbox
-  min_match_d:
+    description: Recalibrate masses.
+  calibration_std:
+    type: spinbox
+    min: 1
+    max: 5
     default: 3
-    description: Minimum distance cutoff for matching
-    max: 10.0
-    min: 0.001
+    description: Std range for search after calibration.
+  parallel:
+    type: checkbox
+    default: true
+    description: Use parallel processing.
+  peptide_fdr:
     type: doublespinbox
+    min: 0.0
+    max: 1.0
+    default: 0.01
+    description: FDR level for peptides.
+  protein_fdr:
+    type: doublespinbox
+    min: 0.0
+    max: 1.0
+    default: 0.01
+    description: FDR level for proteins.
+  recalibration_min:
+    type: spinbox
+    min: 100
+    max: 10000
+    default: 100
+    description: Minimum number of datapoints to perform calibration.
+calibration:
+  outlier_std:
+    type: spinbox
+    min: 1
+    max: 5
+    default: 3
+    description: Number of std. deviations to filter outliers in psms.
+  n_neighbors:
+    type: spinbox
+    min: 1
+    max: 1000
+    default: 100
+    description: Number of neighbors that are used for offset interpolation.
+  ppm_range:
+    type: spinbox
+    min: 1
+    max: 1000
+    default: 20
+    description: Scaling factor for mz axis.
+  rt_range:
+    type: doublespinbox
+    min: 0.0
+    max: 10
+    default: 0.5
+    description: Scaling factor for rt axis.
+  mob_range:
+    type: doublespinbox
+    min: 0.0
+    max: 1.0
+    default: 0.3
+    description: Scaling factor for mobility axis.
+matching:
   min_match_p:
+    type: doublespinbox
+    min: 0.001
+    max: 1.0
     default: 0.05
     description: Minimum probability cutoff for matching
-    max: 1.0
-    min: 0.001
+  min_match_d:
     type: doublespinbox
+    min: 0.001
+    max: 10.0
+    default: 3
+    description: Minimum distance cutoff for matching
 quantification:
   max_lfq:
+    type: checkbox
     default: true
     description: Perform max lfq type quantification.
-    type: checkbox
   mode:
-    default: int_sum
-    description: Column to perform quantification on.
     type: combobox
     value:
     - int_sum
-raw:
-  most_abundant:
-    default: 400
-    description: Number of most abundant peaks to be isolated from raw spectra.
-    max: 1000
-    min: 1
-    type: spinbox
-  use_profile_ms1:
-    default: false
-    description: Use profile data for MS1 and perform own centroiding.
-    type: checkbox
-search:
-  calibrate:
-    default: true
-    description: Recalibrate masses.
-    type: checkbox
-  calibration_std:
-    default: 3
-    description: Std range for search after calibration.
-    max: 5
-    min: 1
-    type: spinbox
-  m_offset:
-    default: 30
-    description: Precursor mass offset.
-    max: 99
-    min: 1
-    type: spinbox
-  m_tol:
-    default: 30
-    description: MSMS mass offset.
-    max: 99
-    min: 1
-    type: spinbox
-  min_frag_hits:
-    default: 7
-    description: Minimum number of fragment hits.
-    max: 99
-    min: 1
-    type: spinbox
-  parallel:
-    default: true
-    description: Use parallel processing.
-    type: checkbox
-  peptide_fdr:
-    default: 0.01
-    description: FDR level for peptides.
-    max: 1.0
-    min: 0.0
-    type: doublespinbox
-  ppm:
-    default: true
-    description: Use ppm instead of Dalton.
-    type: checkbox
-  protein_fdr:
-    default: 0.01
-    description: FDR level for proteins.
-    max: 1.0
-    min: 0.0
-    type: doublespinbox
-  recalibration_min:
-    default: 100
-    description: Minimum number of datapoints to perform calibration.
-    max: 10000
-    min: 100
-    type: spinbox
+    default: int_sum
+    description: Column to perform quantification on.

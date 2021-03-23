@@ -12,13 +12,29 @@ jobs:
           cd installer\one_click_windows
           .\create_pyinstaller_windows.bat
   HeLa_Thermo_Win:
-    needs: Pyinstaller
+    needs: Install_Alphapept
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
         python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela
+  HeLa_Thermo_Win_LargeFasta:
+    needs: [Install_Alphapept, HeLa_Thermo_Win]
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run Alphapept on Thermo
+      run: |
+        python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela_large_fasta
+  HeLa_Thermo_Win_Modifications:
+    needs: [Install_Alphapept, HeLa_Thermo_Win]
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run Alphapept on Thermo
+      run: |
+        python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela_modifications
   HeLa_Bruker_Win:
     needs: [Pyinstaller, HeLa_Thermo_Win]
     runs-on: self-hosted
