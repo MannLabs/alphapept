@@ -168,12 +168,6 @@ def swap_AL(peptide):
             i += 1
         i += 1
 
-    #aa_table = "GAVLIFMPWSCTYHKRQEND"
-    #DiaNN_table  = "LLLVVLLLLTSSSSLLNDQE"
-
-    #idx = aa_table.find(peptide[-2])
-    #peptide[-2] = decoy_table[idx]
-
     return peptide
 
 def get_decoys(peptide_list, pseudo_reverse=False, AL_swap=False, KR_swap = False, **kwargs):

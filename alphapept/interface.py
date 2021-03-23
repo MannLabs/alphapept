@@ -481,8 +481,8 @@ def match(
 
     import alphapept.matching
 
-    if settings['matching']['match_between_runs']:
-        alphapept.matching.match_datasets(settings)
+
+    alphapept.matching.match_datasets(settings)
 
     return settings
 
