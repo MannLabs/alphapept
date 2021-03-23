@@ -261,12 +261,12 @@ def check_settings(settings):
         var_id = ['mods_variable_terminal', 'mods_variable', 'mods_variable_terminal_prot']
         n_var_mods = sum([len(settings['fasta'][_]) for _ in var_id])
         if n_var_mods > 2:
-            logging.info(f'Number of variable modifications {n_var_mods} is larger than 2, possibly causing a very large search space. Only small DB w/o modifications will be created, the full database will be generated on the fly for the second search.')
+            logging.info(f'Number of variable modifications {n_var_mods} is larger than 2, possibly causing a very large search space. Database will be generated on the fly for the second search.')
             settings['fasta']['save_db'] = False
 
         protease = settings['fasta']['protease']
         if protease == 'non-specific':
-            logging.info(f'Protease is {protease}, possibly causing a very large search space. Only small DB w/o modifications will be created, the full database will be generated on the fly for the second search.')
+            logging.info(f'Protease is {protease}, possibly causing a very large search space. Database will be generated on the fly.')
             settings['fasta']['save_db'] = False
 
     return settings

@@ -120,17 +120,15 @@ def create_database(
     else:
         database_path = settings['fasta']['database_path']
 
-    if not settings['fasta']['save_db']:
-        logging.info('Creating small database w/o modifications for first search.')
-        temp_settings = copy.deepcopy(settings)
-        temp_settings['fasta']['mods_fixed'] = []
-        temp_settings['fasta']['mods_fixed_terminal'] = []
-        temp_settings['fasta']['mods_fixed_terminal_prot'] = []
-        temp_settings['fasta']['mods_variable'] = []
-        temp_settings['fasta']['mods_variable_terminal'] = []
-        temp_settings['fasta']['mods_variable_terminal_prot'] = []
-    else:
-        temp_settings = settings
+
+    if not settings['fasta']['save_db']: #Do not save DB
+        settings['fasta']['database_path'] = None
+        logging.info('Not saving Database.')
+
+        return settings
+
+
+    temp_settings = settings
 
     if os.path.isfile(database_path):
         logging.info(
