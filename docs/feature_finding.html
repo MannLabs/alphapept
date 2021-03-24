@@ -47,58 +47,17 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 <li><p>Deconvolution of Isotope Patterns</p>
 </li>
 </ol>
-<p>Current ToDo here:</p>
-<ul>
-<li>We could validate the results against Dinosaur again.</li>
-<li>The result table might need adjustments<ul>
-<li>Should we interpolate starting / end times</li>
-<li>Should we approximate the Apex of a feature?</li>
-</ul>
-</li>
-<li>Proper plotting of isotope patterns / environment should reveal shortcomings of the algorithm</li>
-</ul>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Loading-Data">Loading Data<a class="anchor-link" href="#Loading-Data"> </a></h2><p>From the <code>IO</code> library, we already have <code>*.ms_data.hdf</code> container that contains centroided data. To use it in feature finding, we load the data and convert this to a numba-compatible list of NumPy structured arrays.</p>
+<h2 id="Loading-Data">Loading Data<a class="anchor-link" href="#Loading-Data"> </a></h2><p>From the <code>IO</code> library, we already have <code>*.ms_data.hdf</code> container that contains centroided data. To use it in feature finding, we directly load the data.</p>
 
 </div>
 </div>
 </div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="raw_to_centroid" class="doc_header"><code>raw_to_centroid</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L19" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>raw_to_centroid</code>(<strong><code>query_data</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Connecting-Centroids-to-Hills">Connecting Centroids to Hills<a class="anchor-link" href="#Connecting-Centroids-to-Hills"> </a></h2><h3 id="Connecting-Centroids">Connecting Centroids<a class="anchor-link" href="#Connecting-Centroids"> </a></h3><p>In this step, we search for centroids that are connected (i.e., within a specific mass difference) over time. The connected centroids are termed hills. As we have a list of centroid lists, we ideally would have a list of tuples with indices to the centroids that describe the connected hills.</p>
@@ -118,7 +77,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="connect_centroids_unidirection" class="doc_header"><code>connect_centroids_unidirection</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L58" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>connect_centroids_unidirection</code>(<strong><code>idx</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>connections</code></strong>, <strong><code>scores</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>, <strong><code>ppm_tol</code></strong>)</p>
+<h4 id="connect_centroids_unidirection" class="doc_header"><code>connect_centroids_unidirection</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L20" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>connect_centroids_unidirection</code>(<strong><code>idx</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>connections</code></strong>, <strong><code>scores</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>, <strong><code>ppm_tol</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -142,7 +101,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="convert_connections_to_array" class="doc_header"><code>convert_connections_to_array</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L99" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_connections_to_array</code>(<strong><code>idx</code></strong>, <strong><code>from_r</code></strong>, <strong><code>from_c</code></strong>, <strong><code>to_r</code></strong>, <strong><code>to_c</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>out_from_idx</code></strong>, <strong><code>out_to_idx</code></strong>)</p>
+<h4 id="convert_connections_to_array" class="doc_header"><code>convert_connections_to_array</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L61" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_connections_to_array</code>(<strong><code>idx</code></strong>, <strong><code>from_r</code></strong>, <strong><code>from_c</code></strong>, <strong><code>to_r</code></strong>, <strong><code>to_c</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>out_from_idx</code></strong>, <strong><code>out_to_idx</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -166,7 +125,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="eliminate_overarching_vertex" class="doc_header"><code>eliminate_overarching_vertex</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L120" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>eliminate_overarching_vertex</code>(<strong><code>idx</code></strong>, <strong><code>from_idx</code></strong>, <strong><code>to_idx</code></strong>)</p>
+<h4 id="eliminate_overarching_vertex" class="doc_header"><code>eliminate_overarching_vertex</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L82" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>eliminate_overarching_vertex</code>(<strong><code>idx</code></strong>, <strong><code>from_idx</code></strong>, <strong><code>to_idx</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -190,7 +149,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="path_finder" class="doc_header"><code>path_finder</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L132" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>path_finder</code>(<strong><code>idx</code></strong>, <strong><code>from_idx</code></strong>, <strong><code>to_idx</code></strong>, <strong><code>forward</code></strong>, <strong><code>backward</code></strong>)</p>
+<h4 id="path_finder" class="doc_header"><code>path_finder</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L94" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>path_finder</code>(<strong><code>idx</code></strong>, <strong><code>from_idx</code></strong>, <strong><code>to_idx</code></strong>, <strong><code>forward</code></strong>, <strong><code>backward</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -214,7 +173,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="find_path_start" class="doc_header"><code>find_path_start</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L144" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_path_start</code>(<strong><code>idx</code></strong>, <strong><code>forward</code></strong>, <strong><code>backward</code></strong>, <strong><code>path_starts</code></strong>)</p>
+<h4 id="find_path_start" class="doc_header"><code>find_path_start</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L106" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_path_start</code>(<strong><code>idx</code></strong>, <strong><code>forward</code></strong>, <strong><code>backward</code></strong>, <strong><code>path_starts</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -238,7 +197,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="find_path_length" class="doc_header"><code>find_path_length</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L154" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_path_length</code>(<strong><code>idx</code></strong>, <strong><code>path_starts</code></strong>, <strong><code>forward</code></strong>, <strong><code>path_cnt</code></strong>)</p>
+<h4 id="find_path_length" class="doc_header"><code>find_path_length</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L116" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_path_length</code>(<strong><code>idx</code></strong>, <strong><code>path_starts</code></strong>, <strong><code>forward</code></strong>, <strong><code>path_cnt</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -262,7 +221,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="fill_path_matrix" class="doc_header"><code>fill_path_matrix</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L168" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fill_path_matrix</code>(<strong><code>idx</code></strong>, <strong><code>path_start</code></strong>, <strong><code>forwards</code></strong>, <strong><code>out_hill_data</code></strong>, <strong><code>out_hill_ptr</code></strong>)</p>
+<h4 id="fill_path_matrix" class="doc_header"><code>fill_path_matrix</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L130" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fill_path_matrix</code>(<strong><code>idx</code></strong>, <strong><code>path_start</code></strong>, <strong><code>forwards</code></strong>, <strong><code>out_hill_data</code></strong>, <strong><code>out_hill_ptr</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -286,7 +245,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="convert_to_coord_path" class="doc_header"><code>convert_to_coord_path</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L182" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_to_coord_path</code>(<strong><code>idx</code></strong>, <strong><code>out_rows</code></strong>, <strong><code>out_cols</code></strong>, <strong><code>connected_comps</code></strong>, <strong><code>d_width</code></strong>)</p>
+<h4 id="convert_to_coord_path" class="doc_header"><code>convert_to_coord_path</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L144" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_to_coord_path</code>(<strong><code>idx</code></strong>, <strong><code>out_rows</code></strong>, <strong><code>out_cols</code></strong>, <strong><code>connected_comps</code></strong>, <strong><code>d_width</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -380,7 +339,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="find_centroid_connections" class="doc_header"><code>find_centroid_connections</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L197" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_centroid_connections</code>(<strong><code>rowwise_peaks</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>ppm_tol</code></strong>=<em><code>8</code></em>)</p>
+<h4 id="find_centroid_connections" class="doc_header"><code>find_centroid_connections</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L160" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_centroid_connections</code>(<strong><code>rowwise_peaks</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>ppm_tol</code></strong>=<em><code>8</code></em>)</p>
 </blockquote>
 
 </div>
@@ -411,7 +370,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_hills" class="doc_header"><code>get_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L221" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hills</code>(<strong><code>centroids</code></strong>, <strong><code>from_idx</code></strong>, <strong><code>to_idx</code></strong>, <strong><code>min_hill_length</code></strong>=<em><code>3</code></em>)</p>
+<h4 id="get_hills" class="doc_header"><code>get_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L185" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hills</code>(<strong><code>centroids</code></strong>, <strong><code>from_idx</code></strong>, <strong><code>to_idx</code></strong>, <strong><code>min_hill_length</code></strong>=<em><code>3</code></em>)</p>
 </blockquote>
 
 </div>
@@ -442,7 +401,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="connect_centroids" class="doc_header"><code>connect_centroids</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L253" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>connect_centroids</code>(<strong><code>rowwise_peaks</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>ppm_tol</code></strong>=<em><code>8</code></em>)</p>
+<h4 id="connect_centroids" class="doc_header"><code>connect_centroids</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L217" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>connect_centroids</code>(<strong><code>rowwise_peaks</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>ppm_tol</code></strong>=<em><code>8</code></em>)</p>
 </blockquote>
 
 </div>
@@ -451,6 +410,13 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 </div>
 </div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}
@@ -466,7 +432,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_hills_" class="doc_header"><code>get_hills_</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L282" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hills_</code>(<strong><code>query_data</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>ppm_tol</code></strong>=<em><code>8</code></em>)</p>
+<h4 id="extract_hills" class="doc_header"><code>extract_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L247" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_hills</code>(<strong><code>query_data</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>ppm_tol</code></strong>=<em><code>8</code></em>)</p>
 </blockquote>
 
 </div>
@@ -482,149 +448,6 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Refinement-of-Hills">Refinement of Hills<a class="anchor-link" href="#Refinement-of-Hills"> </a></h2><p>There are several methods implemented to refine the hills.</p>
-<h3 id="Smoothing-of-Hills">Smoothing of Hills<a class="anchor-link" href="#Smoothing-of-Hills"> </a></h3><p>For smoothing, we use the function <a href="/alphapept/feature_finding.html#smooth"><code>smooth</code></a> that first uses a median smoothing (<a href="/alphapept/feature_finding.html#smooth_median"><code>smooth_median</code></a>) which is followed by a mean smoothing (<a href="/alphapept/feature_finding.html#smooth_mean"><code>smooth_mean</code></a>) over a defined <code>window</code> size.</p>
-
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="smooth_mean" class="doc_header"><code>smooth_mean</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L325" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>smooth_mean</code>(<strong><code>y</code></strong>, <strong><code>window</code></strong>)</p>
-</blockquote>
-<p>Mean smoothing</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="smooth_median" class="doc_header"><code>smooth_median</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L336" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>smooth_median</code>(<strong><code>y</code></strong>, <strong><code>window</code></strong>)</p>
-</blockquote>
-<p>Median smoothing</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="smooth" class="doc_header"><code>smooth</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L347" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>smooth</code>(<strong><code>y</code></strong>, <strong><code>window</code></strong>)</p>
-</blockquote>
-<p>First median smoothing, then mean smoothing</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-
-<span class="n">sample_signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.67738253</span><span class="p">,</span> <span class="mf">0.36984442</span><span class="p">,</span> <span class="mf">0.</span>        <span class="p">,</span> <span class="mf">0.32625508</span><span class="p">,</span> <span class="mf">0.56053166</span><span class="p">,</span>
-       <span class="mf">0.77507687</span><span class="p">,</span> <span class="mf">1.1627611</span> <span class="p">,</span> <span class="mf">1.59562655</span><span class="p">,</span> <span class="mf">1.23306671</span><span class="p">,</span> <span class="mf">1.5700985</span> <span class="p">,</span>
-       <span class="mf">1.14596591</span><span class="p">,</span> <span class="mf">1.53259171</span><span class="p">,</span> <span class="mf">1.84393649</span><span class="p">,</span> <span class="mf">2.0070499</span> <span class="p">,</span> <span class="mf">1.84017847</span><span class="p">,</span>
-       <span class="mf">1.70272915</span><span class="p">,</span> <span class="mf">1.96492529</span><span class="p">,</span> <span class="mf">1.75232992</span><span class="p">,</span> <span class="mf">1.65872689</span><span class="p">,</span> <span class="mf">2.06630325</span><span class="p">,</span>
-       <span class="mf">2.01519359</span><span class="p">,</span> <span class="mf">2.18511221</span><span class="p">,</span> <span class="mf">1.7601257</span> <span class="p">,</span> <span class="mf">1.51759074</span><span class="p">,</span> <span class="mf">1.0450398</span> <span class="p">,</span>
-       <span class="mf">1.13274011</span><span class="p">,</span> <span class="mf">0.77871398</span><span class="p">,</span> <span class="mf">0.64859666</span><span class="p">,</span> <span class="mf">0.45549976</span><span class="p">,</span> <span class="mf">0.26360763</span><span class="p">])</span>
-
-<span class="n">window</span> <span class="o">=</span> <span class="mi">3</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sample_signal</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span> <span class="n">linestyle</span> <span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">smooth_median</span><span class="p">(</span><span class="n">sample_signal</span><span class="p">,</span> <span class="n">window</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">smooth_mean</span><span class="p">(</span><span class="n">sample_signal</span><span class="p">,</span> <span class="n">window</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">smooth</span><span class="p">(</span><span class="n">sample_signal</span><span class="p">,</span> <span class="n">window</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;median, mean&#39;</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-"
->
-</div>
-
-</div>
-
-</div>
-</div>
 
 </div>
     {% endraw %}
@@ -647,97 +470,8 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_minima" class="doc_header"><code>get_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L357" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_minima</code>(<strong><code>y</code></strong>)</p>
+<h4 id="fast_minima" class="doc_header"><code>fast_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L272" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fast_minima</code>(<strong><code>y</code></strong>)</p>
 </blockquote>
-<p>Function extract the mimnima of a trace.
-Here, the definition of a minimum is:
-(1) left and right value are larger
-(2) second right and left are larger, right is equal
-(3) second left and right are larger, left is equal</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">trace</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">])</span>
-
-<span class="n">minima</span> <span class="o">=</span> <span class="n">get_minima</span><span class="p">(</span><span class="n">trace</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">minima</span><span class="p">)</span>
-
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">trace</span><span class="p">,</span><span class="s1">&#39;:&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">minima</span><span class="p">,</span> <span class="n">trace</span><span class="p">[</span><span class="n">minima</span><span class="p">],</span> <span class="s1">&#39;ko&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;minimum&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[8, 20]
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-"
->
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="split_hills" class="doc_header"><code>split_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L385" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split_hills</code>(<strong><code>hills</code></strong>, <strong><code>centroids</code></strong>, <strong><code>smoothing</code></strong>=<em><code>1</code></em>, <strong><code>split_level</code></strong>=<em><code>1.3</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
-</blockquote>
-<p>Wrapper to split list of hills</p>
 
 </div>
 
@@ -760,9 +494,8 @@ Here, the definition of a minimum is:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="split_hill" class="doc_header"><code>split_hill</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L403" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split_hill</code>(<strong><code>hill_data</code></strong>, <strong><code>current_hill</code></strong>, <strong><code>smoothing</code></strong>, <strong><code>split_level</code></strong>)</p>
+<h4 id="split" class="doc_header"><code>split</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L291" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split</code>(<strong><code>idx</code></strong>, <strong><code>hill_ptrs_range</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>int_data</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>splits</code></strong>, <strong><code>split_level</code></strong>, <strong><code>window</code></strong>)</p>
 </blockquote>
-<p>Wrapper to call recursive function to split hill</p>
 
 </div>
 
@@ -785,9 +518,8 @@ Here, the definition of a minimum is:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="split_recursive" class="doc_header"><code>split_recursive</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L416" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split_recursive</code>(<strong><code>current_hill</code></strong>, <strong><code>y_smooth</code></strong>, <strong><code>split_level</code></strong>)</p>
+<h4 id="split_hills" class="doc_header"><code>split_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L338" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split_hills</code>(<strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>split_level</code></strong>, <strong><code>window</code></strong>)</p>
 </blockquote>
-<p>Recursive function to split hill</p>
 
 </div>
 
@@ -802,57 +534,6 @@ Here, the definition of a minimum is:
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">n_peaks</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n_peaks</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="mi">2</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span><span class="mf">0.1</span><span class="p">)</span>
-<span class="n">yy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="n">n_peaks</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
-
-<span class="n">y_smooth</span> <span class="o">=</span> <span class="n">yy</span><span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">yy</span><span class="p">)</span>
-
-<span class="n">current_hill</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_smooth</span><span class="p">))</span>
-
-<span class="n">splits</span> <span class="o">=</span> <span class="n">split_recursive</span><span class="p">(</span><span class="n">current_hill</span><span class="p">,</span> <span class="n">y_smooth</span><span class="p">,</span> <span class="n">split_level</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-
-<span class="n">f</span><span class="p">,</span> <span class="p">(</span><span class="n">ax1</span><span class="p">,</span> <span class="n">ax2</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">ax1</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_smooth</span><span class="p">)</span>
-<span class="n">ax1</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Raw&#39;</span><span class="p">)</span>
-<span class="k">for</span> <span class="n">split</span> <span class="ow">in</span> <span class="n">splits</span><span class="p">:</span>
-    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">split</span><span class="p">,</span> <span class="n">y_smooth</span><span class="p">[</span><span class="n">split</span><span class="p">])</span>
-<span class="n">ax2</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;After split&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-
-<div class="output_png output_subarea ">
-<img src="data:image/png;base64,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
-"
->
-</div>
-
-</div>
-
-</div>
-</div>
 
 </div>
     {% endraw %}
@@ -875,9 +556,32 @@ Here, the definition of a minimum is:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="filter_hills" class="doc_header"><code>filter_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L455" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_hills</code>(<strong><code>hills</code></strong>, <strong><code>centroids</code></strong>, <strong><code>hill_min_length</code></strong>=<em><code>2</code></em>, <strong><code>hill_peak_factor</code></strong>=<em><code>2</code></em>, <strong><code>hill_peak_min_length</code></strong>=<em><code>40</code></em>, <strong><code>smoothing</code></strong>=<em><code>1</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="check_large_hills" class="doc_header"><code>check_large_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L357" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_large_hills</code>(<strong><code>idx</code></strong>, <strong><code>large_peaks</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>to_remove</code></strong>, <strong><code>large_peak</code></strong>=<em><code>40</code></em>, <strong><code>hill_peak_factor</code></strong>=<em><code>2</code></em>, <strong><code>window</code></strong>=<em><code>1</code></em>)</p>
 </blockquote>
-<p>Wrapper function to perform filtering on lists of hills</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="filter_hills" class="doc_header"><code>filter_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L391" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_hills</code>(<strong><code>hill_data</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>int_data</code></strong>, <strong><code>large_peak</code></strong>=<em><code>40</code></em>, <strong><code>window</code></strong>=<em><code>1</code></em>)</p>
+</blockquote>
 
 </div>
 
@@ -912,7 +616,7 @@ $$<p>To estimate the mass error, we calculate the error as a boostrap estimate:<
 <p>{% raw %}
 $$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m} )}{(B-1)}}$$
 {% endraw %}</p>
-<p>The calculation of hill statistics for a single hill is implemented in <a href="/alphapept/feature_finding.html#get_hill_stats"><code>get_hill_stats</code></a>. To calculate the hill stats for a list of hills, we can call the wrapper <a href="/alphapept/feature_finding.html#get_hill_data"><code>get_hill_data</code></a>.</p>
+<p>The calculation of hill statistics for a single hill is implemented in <code>get_hill_stats</code>. To calculate the hill stats for a list of hills, we can call the wrapper <a href="/alphapept/feature_finding.html#get_hill_data"><code>get_hill_data</code></a>.</p>
 
 </div>
 </div>
@@ -928,64 +632,7 @@ $$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m}
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="weighted_average" class="doc_header"><code>weighted_average</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L480" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>weighted_average</code>(<strong><code>array</code></strong>, <strong><code>weights</code></strong>)</p>
-</blockquote>
-<p>Calculate the weighted average of an array</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_hill_stats" class="doc_header"><code>get_hill_stats</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L489" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hill_stats</code>(<strong><code>hill_data</code></strong>, <strong><code>hill_nboot</code></strong>=<em><code>300</code></em>, <strong><code>hill_nboot_max</code></strong>=<em><code>300</code></em>)</p>
-</blockquote>
-<p>Calculate hill statistics with bootstraping and weighted averages</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_hill_data_numba" class="doc_header"><code>get_hill_data_numba</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L528" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hill_data_numba</code>(<strong><code>hill_data</code></strong>)</p>
+<h4 id="hill_stats" class="doc_header"><code>hill_stats</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L420" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>hill_stats</code>(<strong><code>idx</code></strong>, <strong><code>hill_range</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>mass_data</code></strong>, <strong><code>rt_</code></strong>, <strong><code>rt_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>hill_nboot_max</code></strong>, <strong><code>hill_nboot</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1009,9 +656,8 @@ $$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m}
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_hill_data" class="doc_header"><code>get_hill_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L543" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hill_data</code>(<strong><code>hills</code></strong>, <strong><code>centroids</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="get_hill_data" class="doc_header"><code>get_hill_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L471" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hill_data</code>(<strong><code>query_data</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>hill_nboot_max</code></strong>=<em><code>300</code></em>, <strong><code>hill_nboot</code></strong>=<em><code>150</code></em>)</p>
 </blockquote>
-<p>Function to calculate hill statistics from hills</p>
 
 </div>
 
@@ -1026,44 +672,6 @@ $$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m}
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
-    <span class="n">test_centroids</span> <span class="o">=</span> <span class="p">[</span>
-        <span class="p">[(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span>
-        <span class="p">[(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)],</span>
-        <span class="p">[(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)],</span>
-        <span class="p">[(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">)],</span>
-        <span class="p">[(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)],</span>
-        <span class="p">[(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">)],</span>
-        <span class="p">[(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">)],</span>
-        <span class="p">[(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)],</span>
-    <span class="p">]</span>
-
-    <span class="n">centroid_dtype</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;mz&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;scan_no&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;rt&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]</span>
-    <span class="n">test_centroids_tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">centroid_dtype</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">test_centroids</span><span class="p">]</span>
-
-    <span class="n">test_centroids</span> <span class="o">=</span> <span class="n">List</span><span class="p">([</span><span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">test_centroids_tmp</span><span class="p">])</span>
-
-    <span class="n">test_hills</span> <span class="o">=</span> <span class="n">get_hills</span><span class="p">(</span><span class="n">test_centroids</span><span class="p">)</span>
-    <span class="n">sorted_hills</span><span class="p">,</span> <span class="n">sorted_stats</span><span class="p">,</span> <span class="n">sorted_data_numba</span> <span class="o">=</span> <span class="n">get_hill_data</span><span class="p">(</span><span class="n">test_hills</span><span class="p">,</span> <span class="n">test_centroids</span><span class="p">)</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Hill Statistics&#39;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">sorted_stats</span><span class="p">)</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
 
 </div>
     {% endraw %}
@@ -1091,7 +699,7 @@ $$\left | \Delta m-\frac{\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_isotope_pattern" class="doc_header"><code>check_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L593" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_isotope_pattern</code>(<strong><code>mass1</code></strong>, <strong><code>mass2</code></strong>, <strong><code>delta_mass1</code></strong>, <strong><code>delta_mass2</code></strong>, <strong><code>charge</code></strong>, <strong><code>mass_range</code></strong>=<em><code>5</code></em>)</p>
+<h4 id="check_isotope_pattern" class="doc_header"><code>check_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L498" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_isotope_pattern</code>(<strong><code>mass1</code></strong>, <strong><code>mass2</code></strong>, <strong><code>delta_mass1</code></strong>, <strong><code>delta_mass2</code></strong>, <strong><code>charge</code></strong>, <strong><code>mass_range</code></strong>=<em><code>5</code></em>)</p>
 </blockquote>
 <p>Check if two masses could belong to the same isotope pattern</p>
 
@@ -1181,9 +789,8 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="cosinec" class="doc_header"><code>cosinec</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L609" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cosinec</code>(<strong><code>hill_data_one</code></strong>, <strong><code>hill_data_two</code></strong>)</p>
+<h4 id="correlate" class="doc_header"><code>correlate</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L515" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>correlate</code>(<strong><code>scans_</code></strong>, <strong><code>scans_2</code></strong>, <strong><code>int_</code></strong>, <strong><code>int_2</code></strong>)</p>
 </blockquote>
-<p>Cosine Correlation of two hills</p>
 
 </div>
 
@@ -1204,7 +811,7 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Extracting-pre-Isotope-Patterns">Extracting pre-Isotope Patterns<a class="anchor-link" href="#Extracting-pre-Isotope-Patterns"> </a></h3><p>Now having two criteria to check whether hills could, in principle, belong together, we define the wrapper functions <a href="/alphapept/feature_finding.html#extract_edge"><code>extract_edge</code></a> and <a href="/alphapept/feature_finding.html#get_edges"><code>get_edges</code></a> to extract the connected hills. To minimize the number of comparisons we need to perform, we only compare the hills that overlap in time (i.e., the start of one hill <code>rt_min</code> needs to be before the end of the other hill <code>rt_max</code>) and are less than the sum of $\Delta M$ and $\Delta S$ apart.</p>
+<h3 id="Extracting-pre-Isotope-Patterns">Extracting pre-Isotope Patterns<a class="anchor-link" href="#Extracting-pre-Isotope-Patterns"> </a></h3><p>Now having two criteria to check whether hills could, in principle, belong together, we define the wrapper functions <a href="/alphapept/feature_finding.html#extract_edge"><code>extract_edge</code></a> and <code>get_edges</code> to extract the connected hills. To minimize the number of comparisons we need to perform, we only compare the hills that overlap in time (i.e., the start of one hill <code>rt_min</code> needs to be before the end of the other hill <code>rt_max</code>) and are less than the sum of $\Delta M$ and $\Delta S$ apart.</p>
 <p>To extract all hills that belong together, we again rely on the <code>NetworkX</code>-package to extract the connected components.</p>
 
 </div>
@@ -1221,9 +828,8 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_edge" class="doc_header"><code>extract_edge</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L644" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_edge</code>(<strong><code>sorted_stats</code></strong>, <strong><code>runner</code></strong>, <strong><code>maxindex</code></strong>, <strong><code>min_charge</code></strong>=<em><code>1</code></em>, <strong><code>max_charge</code></strong>=<em><code>6</code></em>, <strong><code>mass_range</code></strong>=<em><code>5</code></em>)</p>
+<h4 id="extract_edge" class="doc_header"><code>extract_edge</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L542" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_edge</code>(<strong><code>stats</code></strong>, <strong><code>idxs_upper</code></strong>, <strong><code>runner</code></strong>, <strong><code>max_index</code></strong>, <strong><code>maximum_offset</code></strong>, <strong><code>min_charge</code></strong>=<em><code>1</code></em>, <strong><code>max_charge</code></strong>=<em><code>6</code></em>, <strong><code>mass_range</code></strong>=<em><code>5</code></em>)</p>
 </blockquote>
-<p>Extract edge</p>
 
 </div>
 
@@ -1246,9 +852,8 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_edges" class="doc_header"><code>get_edges</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L681" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_edges</code>(<strong><code>sorted_stats</code></strong>, <strong><code>hill_datas</code></strong>, <strong><code>cc_cutoff</code></strong>=<em><code>0.6</code></em>, <strong><code>min_charge</code></strong>=<em><code>1</code></em>, <strong><code>max_charge</code></strong>=<em><code>6</code></em>, <strong><code>mass_range</code></strong>=<em><code>5</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="edge_correlation" class="doc_header"><code>edge_correlation</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L560" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>edge_correlation</code>(<strong><code>idx</code></strong>, <strong><code>to_keep</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>pre_edges</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
 </blockquote>
-<p>Wrapper function to extract pre isotope patterns</p>
 
 </div>
 
@@ -1278,9 +883,8 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="plot_pattern" class="doc_header"><code>plot_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L731" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_pattern</code>(<strong><code>pattern</code></strong>, <strong><code>sorted_hills</code></strong>, <strong><code>centroids</code></strong>, <strong><code>hill_data</code></strong>)</p>
+<h4 id="get_pre_isotope_patterns" class="doc_header"><code>get_pre_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L589" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_pre_isotope_patterns</code>(<strong><code>stats</code></strong>, <strong><code>idxs_upper</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>maximum_offset</code></strong>, <strong><code>min_charge</code></strong>=<em><code>1</code></em>, <strong><code>max_charge</code></strong>=<em><code>6</code></em>, <strong><code>mass_range</code></strong>=<em><code>5</code></em>, <strong><code>cc_cutoff</code></strong>=<em><code>0.6</code></em>)</p>
 </blockquote>
-<p>Helper function to plot a pattern</p>
 
 </div>
 
@@ -1323,7 +927,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_isotope_pattern_directed" class="doc_header"><code>check_isotope_pattern_directed</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L762" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_isotope_pattern_directed</code>(<strong><code>mass1</code></strong>, <strong><code>mass2</code></strong>, <strong><code>delta_mass1</code></strong>, <strong><code>delta_mass2</code></strong>, <strong><code>charge</code></strong>, <strong><code>index</code></strong>, <strong><code>mass_range</code></strong>)</p>
+<h4 id="check_isotope_pattern_directed" class="doc_header"><code>check_isotope_pattern_directed</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L615" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_isotope_pattern_directed</code>(<strong><code>mass1</code></strong>, <strong><code>mass2</code></strong>, <strong><code>delta_mass1</code></strong>, <strong><code>delta_mass2</code></strong>, <strong><code>charge</code></strong>, <strong><code>index</code></strong>, <strong><code>mass_range</code></strong>)</p>
 </blockquote>
 <p>Check if two masses could belong to the same isotope pattern</p>
 
@@ -1348,7 +952,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="grow" class="doc_header"><code>grow</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L777" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>grow</code>(<strong><code>trail</code></strong>, <strong><code>seed</code></strong>, <strong><code>direction</code></strong>, <strong><code>relative_pos</code></strong>, <strong><code>index</code></strong>, <strong><code>stats</code></strong>, <strong><code>data</code></strong>, <strong><code>pattern</code></strong>, <strong><code>charge</code></strong>, <strong><code>mass_range</code></strong>)</p>
+<h4 id="grow" class="doc_header"><code>grow</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L630" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>grow</code>(<strong><code>trail</code></strong>, <strong><code>seed</code></strong>, <strong><code>direction</code></strong>, <strong><code>relative_pos</code></strong>, <strong><code>index</code></strong>, <strong><code>stats</code></strong>, <strong><code>pattern</code></strong>, <strong><code>charge</code></strong>, <strong><code>mass_range</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>)</p>
 </blockquote>
 <p>Grows isotope pattern based on a seed and direction</p>
 
@@ -1373,7 +977,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="grow_trail" class="doc_header"><code>grow_trail</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L826" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>grow_trail</code>(<strong><code>seed</code></strong>, <strong><code>pattern</code></strong>, <strong><code>stats</code></strong>, <strong><code>data</code></strong>, <strong><code>charge</code></strong>, <strong><code>mass_range</code></strong>)</p>
+<h4 id="grow_trail" class="doc_header"><code>grow_trail</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L691" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>grow_trail</code>(<strong><code>seed</code></strong>, <strong><code>pattern</code></strong>, <strong><code>stats</code></strong>, <strong><code>charge</code></strong>, <strong><code>mass_range</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>)</p>
 </blockquote>
 <p>Wrapper to grow an isotope pattern to the left and right side</p>
 
@@ -1398,9 +1002,148 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_trails" class="doc_header"><code>get_trails</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L840" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_trails</code>(<strong><code>seed</code></strong>, <strong><code>pattern</code></strong>, <strong><code>stats</code></strong>, <strong><code>data</code></strong>, <strong><code>mass_range</code></strong>, <strong><code>charge_range</code></strong>)</p>
+<h4 id="get_trails" class="doc_header"><code>get_trails</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L705" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_trails</code>(<strong><code>seed</code></strong>, <strong><code>pattern</code></strong>, <strong><code>stats</code></strong>, <strong><code>charge_range</code></strong>, <strong><code>mass_range</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>)</p>
 </blockquote>
 <p>Wrapper to extract trails for a given charge range</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="plot_pattern" class="doc_header"><code>plot_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L720" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_pattern</code>(<strong><code>pattern</code></strong>, <strong><code>sorted_hills</code></strong>, <strong><code>centroids</code></strong>, <strong><code>hill_data</code></strong>)</p>
+</blockquote>
+<p>Helper function to plot a pattern</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_minpos" class="doc_header"><code>get_minpos</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L909" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_minpos</code>(<strong><code>y</code></strong>, <strong><code>split</code></strong>=<em><code>5</code></em>)</p>
+</blockquote>
+<p>Function to get a list of minima in a trace.
+A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_local_minima" class="doc_header"><code>get_local_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L934" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_local_minima</code>(<strong><code>y</code></strong>)</p>
+</blockquote>
+<p>Function to return all local minima of a array</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="is_local_minima" class="doc_header"><code>is_local_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L946" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>is_local_minima</code>(<strong><code>y</code></strong>, <strong><code>i</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="truncate" class="doc_header"><code>truncate</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L952" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>truncate</code>(<strong><code>array</code></strong>, <strong><code>intensity_profile</code></strong>, <strong><code>seedpos</code></strong>)</p>
+</blockquote>
+<p>Function to truncate an intensity profile around its seedposition</p>
 
 </div>
 
@@ -1441,32 +1184,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="isolate_isotope_pattern" class="doc_header"><code>isolate_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L857" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>isolate_isotope_pattern</code>(<strong><code>pre_pattern</code></strong>, <strong><code>stats</code></strong>, <strong><code>data</code></strong>, <strong><code>mass_range</code></strong>, <strong><code>charge_range</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>seed_masses</code></strong>)</p>
-</blockquote>
-<p>Isolate isotope patterns</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_averagine" class="doc_header"><code>check_averagine</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L909" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_averagine</code>(<strong><code>stats</code></strong>, <strong><code>pattern</code></strong>, <strong><code>charge</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>)</p>
+<h4 id="check_averagine" class="doc_header"><code>check_averagine</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L824" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_averagine</code>(<strong><code>stats</code></strong>, <strong><code>pattern</code></strong>, <strong><code>charge</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1490,7 +1208,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="pattern_to_mz" class="doc_header"><code>pattern_to_mz</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L923" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pattern_to_mz</code>(<strong><code>stats</code></strong>, <strong><code>pattern</code></strong>, <strong><code>charge</code></strong>)</p>
+<h4 id="pattern_to_mz" class="doc_header"><code>pattern_to_mz</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L838" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pattern_to_mz</code>(<strong><code>stats</code></strong>, <strong><code>pattern</code></strong>, <strong><code>charge</code></strong>)</p>
 </blockquote>
 <p>Function to calculate masses and intensities from pattern for a given charge</p>
 
@@ -1515,7 +1233,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="cosine_averagine" class="doc_header"><code>cosine_averagine</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L943" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cosine_averagine</code>(<strong><code>int_one</code></strong>, <strong><code>int_two</code></strong>, <strong><code>spec_one</code></strong>, <strong><code>spec_two</code></strong>)</p>
+<h4 id="cosine_averagine" class="doc_header"><code>cosine_averagine</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L858" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cosine_averagine</code>(<strong><code>int_one</code></strong>, <strong><code>int_two</code></strong>, <strong><code>spec_one</code></strong>, <strong><code>spec_two</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1539,7 +1257,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="int_list_to_array" class="doc_header"><code>int_list_to_array</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L964" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>int_list_to_array</code>(<strong><code>numba_list</code></strong>)</p>
+<h4 id="int_list_to_array" class="doc_header"><code>int_list_to_array</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L881" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>int_list_to_array</code>(<strong><code>numba_list</code></strong>)</p>
 </blockquote>
 <p>Numba compatbilte function to convert a numba list with integers to a numpy array</p>
 
@@ -1564,7 +1282,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="mz_to_mass" class="doc_header"><code>mz_to_mass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L979" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>mz_to_mass</code>(<strong><code>mz</code></strong>, <strong><code>charge</code></strong>)</p>
+<h4 id="mz_to_mass" class="doc_header"><code>mz_to_mass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L896" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>mz_to_mass</code>(<strong><code>mz</code></strong>, <strong><code>charge</code></strong>)</p>
 </blockquote>
 <p>Function to calculate the mass from a mz value.</p>
 
@@ -1589,7 +1307,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_minpos" class="doc_header"><code>get_minpos</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L992" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_minpos</code>(<strong><code>y</code></strong>, <strong><code>split</code></strong>=<em><code>5</code></em>)</p>
+<h4 id="get_minpos" class="doc_header"><code>get_minpos</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L909" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_minpos</code>(<strong><code>y</code></strong>, <strong><code>split</code></strong>=<em><code>5</code></em>)</p>
 </blockquote>
 <p>Function to get a list of minima in a trace.
 A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.</p>
@@ -1615,7 +1333,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_local_minima" class="doc_header"><code>get_local_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1017" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_local_minima</code>(<strong><code>y</code></strong>)</p>
+<h4 id="get_local_minima" class="doc_header"><code>get_local_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L934" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_local_minima</code>(<strong><code>y</code></strong>)</p>
 </blockquote>
 <p>Function to return all local minima of a array</p>
 
@@ -1640,7 +1358,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="is_local_minima" class="doc_header"><code>is_local_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1029" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>is_local_minima</code>(<strong><code>y</code></strong>, <strong><code>i</code></strong>)</p>
+<h4 id="is_local_minima" class="doc_header"><code>is_local_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L946" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>is_local_minima</code>(<strong><code>y</code></strong>, <strong><code>i</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1664,7 +1382,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="truncate" class="doc_header"><code>truncate</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1035" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>truncate</code>(<strong><code>array</code></strong>, <strong><code>intensity_profile</code></strong>, <strong><code>seedpos</code></strong>)</p>
+<h4 id="truncate" class="doc_header"><code>truncate</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L952" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>truncate</code>(<strong><code>array</code></strong>, <strong><code>intensity_profile</code></strong>, <strong><code>seedpos</code></strong>)</p>
 </blockquote>
 <p>Function to truncate an intensity profile around its seedposition</p>
 
@@ -1703,9 +1421,9 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_isotope_patterns" class="doc_header"><code>get_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1062" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isotope_patterns</code>(<strong><code>pre_isotope_patterns</code></strong>, <strong><code>stats</code></strong>, <strong><code>data</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>min_charge</code></strong>=<em><code>1</code></em>, <strong><code>max_charge</code></strong>=<em><code>6</code></em>, <strong><code>mass_range</code></strong>=<em><code>5</code></em>, <strong><code>seed_masses</code></strong>=<em><code>100</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="isolate_isotope_pattern" class="doc_header"><code>isolate_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L980" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>isolate_isotope_pattern</code>(<strong><code>pre_pattern</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>mass_range</code></strong>, <strong><code>charge_range</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>seed_masses</code></strong>)</p>
 </blockquote>
-<p>Wrapper function to iterate over pre_isotope_patterns</p>
+<p>Isolate isotope patterns</p>
 
 </div>
 
@@ -1801,13 +1519,6 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 </div>
     {% endraw %}
 
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Data-Output">Data Output<a class="anchor-link" href="#Data-Output"> </a></h2><p>For each feature that is found we extract summary statistics and put it in tabular form to be used as as pandas dataframe.</p>
-
-</div>
-</div>
-</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -1819,9 +1530,9 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="feature_finder_report" class="doc_header"><code>feature_finder_report</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1111" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>feature_finder_report</code>(<strong><code>isotope_patterns</code></strong>, <strong><code>isotope_charges</code></strong>, <strong><code>sorted_stats</code></strong>, <strong><code>sorted_data</code></strong>, <strong><code>sorted_hills</code></strong>, <strong><code>query_data</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="get_isotope_patterns" class="doc_header"><code>get_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1034" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isotope_patterns</code>(<strong><code>pre_isotope_patterns</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>min_charge</code></strong>=<em><code>1</code></em>, <strong><code>max_charge</code></strong>=<em><code>6</code></em>, <strong><code>mass_range</code></strong>=<em><code>5</code></em>, <strong><code>seed_masses</code></strong>=<em><code>100</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Write a summary table</p>
+<p>Wrapper function to iterate over pre_isotope_patterns</p>
 
 </div>
 
@@ -1840,6 +1551,75 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 </div>
     {% endraw %}
 
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="report_" class="doc_header"><code>report_</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1091" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>report_</code>(<strong><code>idx</code></strong>, <strong><code>isotope_charges</code></strong>, <strong><code>isotope_patterns</code></strong>, <strong><code>iso_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>rt_</code></strong>, <strong><code>rt_idx</code></strong>, <strong><code>results</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="feature_finder_report" class="doc_header"><code>feature_finder_report</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1204" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>feature_finder_report</code>(<strong><code>query_data</code></strong>, <strong><code>isotope_patterns</code></strong>, <strong><code>isotope_charges</code></strong>, <strong><code>iso_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Data-Output">Data Output<a class="anchor-link" href="#Data-Output"> </a></h2><p>For each feature that is found we extract summary statistics and put it in tabular form to be used as as pandas dataframe.</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Plotting">Plotting<a class="anchor-link" href="#Plotting"> </a></h2><p>For quality control reasons we also employ a function to plot a feature in its local environment.</p>
@@ -1858,7 +1638,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="plot_isotope_pattern" class="doc_header"><code>plot_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1235" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_isotope_pattern</code>(<strong><code>index</code></strong>, <strong><code>df</code></strong>, <strong><code>sorted_stats</code></strong>, <strong><code>centroids</code></strong>, <strong><code>scan_range</code></strong>=<em><code>100</code></em>, <strong><code>mz_range</code></strong>=<em><code>2</code></em>, <strong><code>plot_hills</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="plot_isotope_pattern" class="doc_header"><code>plot_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1224" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_isotope_pattern</code>(<strong><code>index</code></strong>, <strong><code>df</code></strong>, <strong><code>sorted_stats</code></strong>, <strong><code>centroids</code></strong>, <strong><code>scan_range</code></strong>=<em><code>100</code></em>, <strong><code>mz_range</code></strong>=<em><code>2</code></em>, <strong><code>plot_hills</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Plot an isotope pattern in its local environment</p>
 
@@ -1897,7 +1677,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_bruker" class="doc_header"><code>extract_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1328" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_bruker</code>(<strong><code>file</code></strong>, <strong><code>base_dir</code></strong>=<em><code>'ext/bruker/FF'</code></em>, <strong><code>config</code></strong>=<em><code>'proteomics_4d.config'</code></em>)</p>
+<h4 id="extract_bruker" class="doc_header"><code>extract_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1317" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_bruker</code>(<strong><code>file</code></strong>, <strong><code>base_dir</code></strong>=<em><code>'ext/bruker/FF'</code></em>, <strong><code>config</code></strong>=<em><code>'proteomics_4d.config'</code></em>)</p>
 </blockquote>
 <p>Call Bruker Feautre Finder via subprocess</p>
 
@@ -1922,7 +1702,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="convert_bruker" class="doc_header"><code>convert_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1386" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_bruker</code>(<strong><code>feature_path</code></strong>)</p>
+<h4 id="convert_bruker" class="doc_header"><code>convert_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1375" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_bruker</code>(<strong><code>feature_path</code></strong>)</p>
 </blockquote>
 <p>Reads feature table and converts to feature table to be used with AlphaPept</p>
 
@@ -1947,7 +1727,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="map_bruker" class="doc_header"><code>map_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1406" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_bruker</code>(<strong><code>feature_path</code></strong>, <strong><code>feature_table</code></strong>, <strong><code>query_data</code></strong>)</p>
+<h4 id="map_bruker" class="doc_header"><code>map_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1395" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_bruker</code>(<strong><code>feature_path</code></strong>, <strong><code>feature_table</code></strong>, <strong><code>query_data</code></strong>)</p>
 </blockquote>
 <p>Map Ms1 to Ms2 via Table FeaturePrecursorMapping from Bruker FF</p>
 
@@ -1985,7 +1765,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="find_features" class="doc_header"><code>find_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1467" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_features</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="find_features" class="doc_header"><code>find_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1456" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_features</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Wrapper for feature finding</p>
 
@@ -2043,7 +1823,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="map_ms2" class="doc_header"><code>map_ms2</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1576" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_ms2</code>(<strong><code>feature_table</code></strong>, <strong><code>query_data</code></strong>, <strong><code>ppm_range</code></strong>=<em><code>20</code></em>, <strong><code>rt_range</code></strong>=<em><code>0.5</code></em>, <strong><code>mob_range</code></strong>=<em><code>0.3</code></em>, <strong><code>n_neighbors</code></strong>=<em><code>5</code></em>, <strong><code>search_unidentified</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="map_ms2" class="doc_header"><code>map_ms2</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1560" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_ms2</code>(<strong><code>feature_table</code></strong>, <strong><code>query_data</code></strong>, <strong><code>ppm_range</code></strong>=<em><code>20</code></em>, <strong><code>rt_range</code></strong>=<em><code>0.5</code></em>, <strong><code>mob_range</code></strong>=<em><code>0.3</code></em>, <strong><code>n_neighbors</code></strong>=<em><code>5</code></em>, <strong><code>search_unidentified</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Map MS1 features to MS2 based on rt and mz
 if ccs is included also add</p>

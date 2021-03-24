@@ -274,12 +274,12 @@ fasta:
     type: checkbox
     default: true
     description: Save DB or create on the fly.
-  db_size:
+  max_fasta_size:
     type: spinbox
-    min: 1000
+    min: 1
     max: 1000000
-    default: 50000
-    description: Maximum number of fasta entries that are stored in a db.
+    default: 100
+    description: Maximum size of FASTA (MB) when switching on-the-fly.
   database_path:
     type: path
     default: null

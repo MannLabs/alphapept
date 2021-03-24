@@ -836,6 +836,32 @@ rt_range:
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>min_match_d:
+  default: 3
+  description: Minimum distance cutoff for matching
+  max: 10.0
+  min: 0.001
+  type: doublespinbox
+min_match_p:
+  default: 0.05
+  description: Minimum probability cutoff for matching
+  max: 1.0
+  min: 0.001
+  type: doublespinbox
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
     {% endraw %}
 
@@ -856,6 +882,30 @@ rt_range:
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>max_lfq:
+  default: true
+  description: Perform max lfq type quantification.
+  type: checkbox
+mode:
+  default: int_sum
+  description: Column to perform quantification on.
+  type: combobox
+  value:
+  - int_sum
+
+</pre>
+</div>
+</div>
+
 </div>
 </div>
 

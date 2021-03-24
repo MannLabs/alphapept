@@ -99,12 +99,12 @@ def set_logger(
 
 def check_file(file):
     if not os.path.isfile(file):
-        raise FileNotFoundError(file)
+        raise FileNotFoundError(f"{file}")
 
 
 def check_dir(dir):
     if not os.path.isdir(dir):
-        raise FileNotFoundError(dir)
+        raise FileNotFoundError(f"{dir}")
 
 
 def log_me(given_function):

@@ -48,6 +48,7 @@ class FileSelector(QWidget):
         self.header = header
         self.setAcceptDrops(True)
         self.initUI()
+        self.setMinimumHeight(80)
 
     def initUI(self):
         self.setWindowTitle(self.title)
