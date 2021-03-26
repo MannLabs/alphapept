@@ -544,8 +544,11 @@ def score_hdf(to_process, callback = None, parallel=False):
             df = ms_file_.read(dataset_name='second_search')
             logging.info('Found second search psms for scoring.')
         except KeyError:
-            df = ms_file_.read(dataset_name='first_search')
-            logging.info('No second search psms for scoring found. Using first search.')
+            try:
+                df = ms_file_.read(dataset_name='first_search')
+                logging.info('No second search psms for scoring found. Using first search.')
+            except KeyError:
+                df = pd.DataFrame()
 
         if len(df) == 0:
             skip = True

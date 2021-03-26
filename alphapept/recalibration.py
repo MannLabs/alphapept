@@ -115,7 +115,15 @@ def calibrate_hdf(to_process, callback = None, parallel=False):
                 group_name="features"
             )
         else:
+
+            ms_file_.write(
+                features['mass_matched'],
+                dataset_name="corrected_mass",
+                group_name="features"
+            )
+
             o_mass_ppm_std = 0
+
         ms_file_.write(
             o_mass_ppm_std,
             dataset_name="corrected_mass",
