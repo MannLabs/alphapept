@@ -1032,7 +1032,7 @@ def _read_DDA_query_data(
     else:
         raise NotImplementedError(f'File extension {ext} not understood.')
     logging.info(
-        f'File conversion complete. Extracted {len(query_data["prec_mass_list2"])} precursors.'
+        f'File conversion complete. Extracted {len(query_data["prec_mass_list2"]):,} precursors.'
     )
     return query_data, vendor
 

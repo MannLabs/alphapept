@@ -79,7 +79,7 @@ def compare_specs_parallel(
     idxs_higher,
     mtol,
     query_bounds,
-    db_bounds,
+    db_indices,
     chunk=(0, 1),
     offset=False,
     ppm=False,
@@ -95,7 +95,7 @@ def compare_specs_parallel(
                 query_idx_start = query_indices[query_idx]
                 query_idx_end = query_indices[query_idx + 1]
                 query_frag = query_frags[query_idx_start:query_idx_end]
-                db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
+                db_frag = db_frags[db_indices[db_idx]:db_indices[db_idx+1]]
                 o_mass = query_masses[query_idx]  - db_masses[db_idx]
                 hits = compare_frags(query_frag, db_frag, mtol, ppm)
                 if offset is True:  # Mirrored search
@@ -114,7 +114,7 @@ def compare_specs_parallel(
                 query_idx_start = query_indices[query_idx]
                 query_idx_end = query_indices[query_idx + 1]
                 query_frag = query_frags[query_idx_start:query_idx_end]
-                db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
+                db_frag = db_frags[db_indices[db_idx]:db_indices[db_idx+1]]
                 o_mass = query_masses[query_idx]  - db_masses[db_idx]
                 hits = compare_frags(query_frag, db_frag, mtol, ppm)
                 if offset is True:  # Mirrored search
@@ -136,7 +136,7 @@ def compare_specs_single(
     idxs_higher,
     mtol,
     query_bounds,
-    db_bounds,
+    db_indices,
     chunk=(0, 1),
     offset=False,
     ppm=False,
@@ -154,7 +154,7 @@ def compare_specs_single(
                 query_idx_start = query_indices[query_idx]
                 query_idx_end = query_indices[query_idx + 1]
                 query_frag = query_frags[query_idx_start:query_idx_end]
-                db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
+                db_frag = db_frags[db_indices[db_idx]:db_indices[db_idx+1]]
                 o_mass = query_masses[query_idx]  - db_masses[db_idx]
                 hits = compare_frags(query_frag, db_frag, mtol, ppm)
                 if offset is True:  # Mirrored search
@@ -174,7 +174,7 @@ def compare_specs_single(
                 query_idx_start = query_indices[query_idx]
                 query_idx_end = query_indices[query_idx + 1]
                 query_frag = query_frags[query_idx_start:query_idx_end]
-                db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
+                db_frag = db_frags[db_indices[db_idx]:db_indices[db_idx+1]]
                 o_mass = query_masses[query_idx]  - db_masses[db_idx]
                 hits = compare_frags(query_frag, db_frag, mtol, ppm)
                 if offset is True:  # Mirrored search
@@ -232,16 +232,18 @@ def get_psms(
         idxs_lower: lower search range
         idxs_higher: upper search range
     Raises:
+
+
     """
 
     if isinstance(db_data, str):
         db_masses = read_database(db_data, array_name = 'precursors')
         db_frags = read_database(db_data, array_name = 'fragmasses')
-        db_bounds = read_database(db_data, array_name = 'bounds')
+        db_indices = read_database(db_data, array_name = 'indices')
     else:
         db_masses = db_data['precursors']
         db_frags = db_data['fragmasses']
-        db_bounds = db_data['bounds']
+        db_indices = db_data['indices']
 
     query_indices = query_data["indices_ms2"]
     query_bounds = query_data['bounds']
@@ -304,7 +306,7 @@ def get_psms(
                 idxs_higher,
                 m_tol,
                 query_bounds,
-                db_bounds,
+                db_indices,
                 chunk,
                 offset,
                 ppm,
@@ -321,7 +323,7 @@ def get_psms(
                 idxs_higher,
                 m_tol,
                 query_bounds,
-                db_bounds,
+                db_indices,
                 chunk,
                 offset,
                 ppm,
@@ -346,7 +348,7 @@ def get_psms(
                     idxs_higher,
                     m_tol,
                     query_bounds,
-                    db_bounds,
+                    db_indices,
                     chunk,
                     offset,
                     ppm,
@@ -363,7 +365,7 @@ def get_psms(
                     idxs_higher,
                     m_tol,
                     query_bounds,
-                    db_bounds,
+                    db_indices,
                     chunk,
                     offset,
                     ppm,
@@ -379,7 +381,7 @@ def get_psms(
 
     del db_masses
     del db_frags
-    del db_bounds
+    del db_indices
 
     psms = np.array(
         list(zip(hit_query, hit_db, hits)), dtype=[("query_idx", int), ("db_idx", int), ("hits", int)]
@@ -525,7 +527,7 @@ def score(
     frag_types,
     mtol,
     query_bounds,
-    db_bounds,
+    db_indices,
     ppm,
     psms_dtype,
     db_ints = None,
@@ -547,8 +549,8 @@ def score(
         query_idx_end = query_indices[query_idx + 1]
         query_frag = query_frags[query_idx_start:query_idx_end]
         query_int = query_ints[query_idx_start:query_idx_end]
-        db_frag = db_frags[:, db_idx] [: db_bounds[db_idx] ]
-        frag_type = frag_types[:, db_idx] [: db_bounds[db_idx] ]
+        db_frag = db_frags[db_indices[db_idx]:db_indices[db_idx+1]]
+        frag_type = frag_types[db_indices[db_idx]:db_indices[db_idx+1]]
 
         if db_ints is None:
             db_int = np.zeros(len(db_frag))
@@ -629,7 +631,7 @@ def get_score_columns(
     if isinstance(db_data, str):
         db_masses = read_database(db_data, array_name = 'precursors')
         db_frags = read_database(db_data, array_name = 'fragmasses')
-        db_bounds = read_database(db_data, array_name = 'bounds')
+        db_indices = read_database(db_data, array_name = 'indices')
         frag_types = read_database(db_data, array_name = 'fragtypes')
 
         try:
@@ -640,7 +642,7 @@ def get_score_columns(
     else:
         db_masses = db_data['precursors']
         db_frags = db_data['fragmasses']
-        db_bounds = db_data['bounds']
+        db_indices = db_data['indices']
         frag_types = db_data['fragtypes']
 
         if 'db_ints' in db_data.keys():
@@ -708,7 +710,7 @@ def get_score_columns(
         frag_types,
         m_tol,
         query_bounds,
-        db_bounds,
+        db_indices,
         ppm,
         psms_dtype)
 
@@ -767,7 +769,7 @@ def get_score_columns(
 def plot_hit(
     df,
     index,
-    db_bounds,
+    db_indices,
     db_frags,
     frag_types,
     query_bounds,
@@ -788,7 +790,7 @@ def plot_hit(
 
     intensity_fraction = spectrum["matched_int"] / spectrum["total_int"]
 
-    db_bound = db_bounds[db_idx]
+    db_bound = db_indices[db_idx]
     db_frag = db_frags[:, db_idx] [:db_bound]
     if db_ints is not None:
         db_int = db_ints[:, db_idx] [:db_bound]
@@ -923,20 +925,20 @@ def plot_psms(query_data, df, index, mass_dict, ppm=True, m_tol=20):
     plt.show()
 
 # Cell
-def perform_search(query_files, db_masses, db_frags, db_bounds, db_seqs, frag_types, plot, **kwargs):
+def perform_search(query_files, db_masses, db_frags, db_indices, db_seqs, frag_types, plot, **kwargs):
     """
     Function to search and score one or multiple MS runs by the X!Tandem approach.
 
     """
     if isinstance(query_files, str):
         kwargs['query_path'] = query_files
-        psms_all = score_psms(db_masses, db_frags, db_bounds, db_seqs, frag_types, plot=plot, **kwargs)
+        psms_all = score_psms(db_masses, db_frags, db_indices, db_seqs, frag_types, plot=plot, **kwargs)
         psms_all['filename'] = query_files
     elif isinstance(query_files, list):
         psms_all = []
         for file in query_files:
             kwargs['query_path'] = file
-            psms = score_psms(db_masses, db_frags, db_bounds, db_seqs, frag_types, plot=plot, **kwargs)
+            psms = score_psms(db_masses, db_frags, db_indices, db_seqs, frag_types, plot=plot, **kwargs)
             psms['filename'] = file
             psms_all.append(psms)
         psms_all = pd.concat(psms_all, ignore_index=True)
