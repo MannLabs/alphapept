@@ -19,6 +19,22 @@ jobs:
     - name: Run Alphapept on Thermo
       run: |
         python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela
+  HeLa_Thermo_Win_LargeFasta:
+    needs: [Pyinstaller, HeLa_Thermo_Win]
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run Alphapept on Thermo
+      run: |
+        python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela_large_fasta
+  HeLa_Thermo_Win_Modifications:
+    needs: [Pyinstaller, HeLa_Thermo_Win]
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run Alphapept on Thermo
+      run: |
+        python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela_modifications
   HeLa_Bruker_Win:
     needs: [Pyinstaller, HeLa_Thermo_Win]
     runs-on: self-hosted

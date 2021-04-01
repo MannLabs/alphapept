@@ -8,7 +8,9 @@ import logging
 from alphapept.__version__ import VERSION_NO
 
 BASE_PATH = os.path.dirname(__file__)
-LOG_PATH = os.path.join(os.path.dirname(BASE_PATH), "logs")
+HOME = os.path.expanduser("~")
+LOG_PATH = os.path.join(HOME, "alphapept", "logs")
+
 
 def set_logger(
     *,
@@ -90,17 +92,19 @@ def set_logger(
         file_handler.setLevel(log_level)
         file_handler.setFormatter(formatter)
         root.addHandler(file_handler)
+
+    logging.info(f"Logging to {log_file_name}.")
     return log_file_name
 
 
 def check_file(file):
     if not os.path.isfile(file):
-        raise FileNotFoundError(file)
+        raise FileNotFoundError(f"{file}")
 
 
 def check_dir(dir):
     if not os.path.isdir(dir):
-        raise FileNotFoundError(dir)
+        raise FileNotFoundError(f"{dir}")
 
 
 def log_me(given_function):
@@ -257,17 +261,13 @@ def check_settings(settings):
         var_id = ['mods_variable_terminal', 'mods_variable', 'mods_variable_terminal_prot']
         n_var_mods = sum([len(settings['fasta'][_]) for _ in var_id])
         if n_var_mods > 2:
-            logging.info(f'Number of variable modifications {n_var_mods} is larger than 2, possibly causing a very large search space. Only small DB w/o modifications will be created, the full database will be generated on the fly for the second search.')
+            logging.info(f'Number of variable modifications {n_var_mods} is larger than 2, possibly causing a very large search space. Database will be generated on the fly for the second search.')
             settings['fasta']['save_db'] = False
 
         protease = settings['fasta']['protease']
         if protease == 'non-specific':
-            logging.info(f'Protease is {protease}, possibly causing a very large search space. Only small DB w/o modifications will be created, the full database will be generated on the fly for the second search.')
+            logging.info(f'Protease is {protease}, possibly causing a very large search space. Database will be generated on the fly.')
             settings['fasta']['save_db'] = False
-
-    if settings['fasta']['fasta_block'] > settings['fasta']['db_size']:
-        logging.info('FASTA block size is larger than db size. Decreasing fasta block size.')
-        settings['fasta']['fasta_block'] = settings['fasta']['db_size']
 
     return settings
 

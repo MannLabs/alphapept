@@ -79,6 +79,8 @@ mass_dict["delta_M"] = 1.00286864
 mass_dict["delta_S"] = 0.0109135
 
 # Cell
+
+#generates the mass dictionary from table
 def get_mass_dict(modfile="../modifications.tsv", aasfile="../amino_acids.tsv"):
     """
     Creates a mass_dict based on tsv files

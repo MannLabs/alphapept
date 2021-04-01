@@ -2,10 +2,10 @@
 
 __all__ = ['parallel_execute', 'tqdm_wrapper', 'check_version_and_hardware', 'create_database', 'import_raw_data',
            'feature_finding', 'wrapped_partial', 'search_data', 'recalibrate_data', 'score', 'align', 'match',
-           'lfq_quantification', 'export', 'get_summary', 'run_complete_workflow', 'FileWatcher', 'run_cli',
-           'cli_overview', 'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search', 'cli_recalibrate',
-           'cli_score', 'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui',
-           'cli_watcher', 'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
+           'quantification', 'export', 'get_summary', 'run_complete_workflow', 'FileWatcher', 'run_cli', 'cli_overview',
+           'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search', 'cli_recalibrate', 'cli_score',
+           'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui', 'cli_watcher',
+           'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
 
 # Cell
 import alphapept.utils
@@ -120,17 +120,15 @@ def create_database(
     else:
         database_path = settings['fasta']['database_path']
 
-    if not settings['fasta']['save_db']:
-        logging.info('Creating small database w/o modifications for first search.')
-        temp_settings = copy.deepcopy(settings)
-        temp_settings['fasta']['mods_fixed'] = []
-        temp_settings['fasta']['mods_fixed_terminal'] = []
-        temp_settings['fasta']['mods_fixed_terminal_prot'] = []
-        temp_settings['fasta']['mods_variable'] = []
-        temp_settings['fasta']['mods_variable_terminal'] = []
-        temp_settings['fasta']['mods_variable_terminal_prot'] = []
-    else:
-        temp_settings = settings
+
+    if not settings['fasta']['save_db']: #Do not save DB
+        settings['fasta']['database_path'] = None
+        logging.info('Not saving Database.')
+
+        return settings
+
+
+    temp_settings = settings
 
     if os.path.isfile(database_path):
         logging.info(
@@ -146,18 +144,34 @@ def create_database(
         if len(settings['fasta']['fasta_paths']) == 0:
             raise FileNotFoundError("No FASTA files set.")
 
+        total_fasta_size = 0
+
         for fasta_file in settings['fasta']['fasta_paths']:
             if os.path.isfile(fasta_file):
+
+                fasta_size = os.stat(fasta_file).st_size/(1024**2)
+
+                total_fasta_size += fasta_size
+
                 logging.info(
                     'Found FASTA file {} with size {:.2f} Mb.'.format(
                         fasta_file,
-                        os.stat(fasta_file).st_size/(1024**2)
+                        fasta_size
                     )
                 )
             else:
                 raise FileNotFoundError(
                     'File {} not found'.format(fasta_file)
                 )
+
+        max_fasta_size = settings['fasta']['max_fasta_size']
+
+        if total_fasta_size >= max_fasta_size:
+            logging.info(f'Total FASTA size {total_fasta_size:.2f} is larger than the set maximum size of {max_fasta_size:.2f} Mb')
+
+            settings['fasta']['database_path'] = None
+
+            return settings
 
         logging.info('Creating a new database from FASTA.')
 
@@ -275,19 +289,8 @@ def search_data(
         cb = callback
 
     if first_search:
-
-        settings = parallel_execute(settings, wrapped_partial(alphapept.search.search_db, first_search = first_search), callback = cb)
-
-        db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
-
-        fasta_dict = db_data['fasta_dict'].item()
-        pept_dict = db_data['pept_dict'].item()
-
-        logging.info('First search complete.')
-
-    else:
-
-        if settings['fasta']['save_db']:
+        logging.info('Starting first search.')
+        if settings['fasta']['database_path'] is not None:
             settings = parallel_execute(settings, wrapped_partial(alphapept.search.search_db, first_search = first_search), callback = cb)
 
             db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
@@ -297,21 +300,51 @@ def search_data(
 
 
         else:
-            logging.info('Starting second search with DB.')
             ms_files = []
             for _ in settings['experiment']['file_paths']:
                 base, ext = os.path.splitext(_)
                 ms_files.append(base + '.ms_data.hdf')
 
-            offsets = [
-                alphapept.io.MS_Data_File(
-                    ms_file_name
-                ).read(
-                    dataset_name="corrected_mass",
-                    group_name="features",
-                    attr_name="estimated_max_precursor_ppm"
-                ) * settings['search']['calibration_std'] for ms_file_name in ms_files
-            ]
+            fasta_dict = alphapept.search.search_parallel(
+                settings,
+                callback=cb
+            )
+            pept_dict = None
+
+        logging.info('First search complete.')
+    else:
+        logging.info('Starting second search with DB.')
+
+        if settings['fasta']['database_path'] is not None:
+            settings = parallel_execute(settings, wrapped_partial(alphapept.search.search_db, first_search = first_search), callback = cb)
+
+            db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
+
+            fasta_dict = db_data['fasta_dict'].item()
+            pept_dict = db_data['pept_dict'].item()
+
+
+        else:
+
+            ms_files = []
+            for _ in settings['experiment']['file_paths']:
+                base, ext = os.path.splitext(_)
+                ms_files.append(base + '.ms_data.hdf')
+
+            try:
+                offsets = [
+                    alphapept.io.MS_Data_File(
+                        ms_file_name
+                    ).read(
+                        dataset_name="corrected_mass",
+                        group_name="features",
+                        attr_name="estimated_max_precursor_ppm"
+                    ) * settings['search']['calibration_std'] for ms_file_name in ms_files
+                ]
+            except KeyError:
+                logging.info('No calibration found.')
+                offsets = None
+
             logging.info('Starting second search.')
 
             fasta_dict = alphapept.search.search_parallel(
@@ -372,18 +405,23 @@ def score(
     else:
         cb = callback
 
-    if (fasta_dict is None) or (pept_dict is None):
+
+
+    if fasta_dict is None:
+
         db_data = alphapept.fasta.read_database(
             settings['fasta']['database_path']
         )
         fasta_dict = db_data['fasta_dict'].item()
         pept_dict = db_data['pept_dict'].item()
 
-
     settings = parallel_execute(settings, alphapept.score.score_hdf, callback = cb)
 
-    if not settings['fasta']['save_db']:
+    if pept_dict is None: #Pept dict extractions needs scored
         pept_dict = alphapept.fasta.pept_dict_from_search(settings)
+
+
+    logging.info(f'Fasta dict with length {len(fasta_dict):,}, Pept dict with length {len(pept_dict):,}')
 
     # Protein groups
     logging.info('Extracting protein groups.')
@@ -441,8 +479,8 @@ def match(
 
     import alphapept.matching
 
-    if settings['matching']['match_between_runs']:
-        alphapept.matching.match_datasets(settings)
+
+    alphapept.matching.match_datasets(settings)
 
     return settings
 
@@ -451,7 +489,7 @@ def match(
 import pandas as pd
 
 
-def lfq_quantification(
+def quantification(
     settings,
     logger_set=False,
     settings_parsed=False,
@@ -470,58 +508,64 @@ def lfq_quantification(
     df = alphapept.utils.assemble_df(settings)
     logging.info('Assembly complete.')
 
-    if field in df.keys():  # Check if the quantification information exists.
-        # We could include another protein fdr in here..
-        if 'fraction' in df.keys():
-            logging.info('Delayed Normalization.')
-            df, normalization = alphapept.quantification.delayed_normalization(
-                df,
-                field
-            )
-            pd.DataFrame(normalization).to_hdf(
+    if settings["general"]["lfq_quantification"]:
+
+        if field in df.keys():  # Check if the quantification information exists.
+            # We could include another protein fdr in here..
+            if 'fraction' in df.keys():
+                logging.info('Delayed Normalization.')
+                df, normalization = alphapept.quantification.delayed_normalization(
+                    df,
+                    field
+                )
+                pd.DataFrame(normalization).to_hdf(
+                    settings['experiment']['results_path'],
+                    'fraction_normalization'
+                )
+                df_grouped = df.groupby(
+                    ['shortname', 'precursor', 'protein', 'filename']
+                )[['{}_dn'.format(field)]].sum().reset_index()
+            else:
+                df_grouped = df.groupby(
+                    ['shortname', 'precursor', 'protein', 'filename']
+                )[field].sum().reset_index()
+
+            df.to_hdf(
                 settings['experiment']['results_path'],
-                'fraction_normalization'
+                'combined_protein_fdr_dn'
             )
-            df_grouped = df.groupby(
-                ['shortname', 'precursor', 'protein', 'filename']
-            )[['{}_dn'.format(field)]].sum().reset_index()
-        else:
-            df_grouped = df.groupby(
-                ['shortname', 'precursor', 'protein', 'filename']
-            )[field].sum().reset_index()
 
-        df.to_hdf(
-            settings['experiment']['results_path'],
-            'combined_protein_fdr_dn'
-        )
+            logging.info('Complete. ')
+            logging.info('Starting profile extraction.')
 
-        logging.info('Complete. ')
-        logging.info('Starting profile extraction.')
+            if not callback:
+                cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
+            else:
+                cb = callback
 
-        if not callback:
-            cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
-        else:
-            cb = callback
+            protein_table = alphapept.quantification.protein_profile_parallel(
+                settings,
+                df_grouped,
+                callback=cb
+            )
+            protein_table.to_hdf(
+                settings['experiment']['results_path'],
+                'protein_table'
+            )
+            results_path = settings['experiment']['results_path']
+            base, ext = os.path.splitext(results_path)
+            protein_table.to_csv(base+'_proteins.csv')
 
-        protein_table = alphapept.quantification.protein_profile_parallel(
-            settings,
-            df_grouped,
-            callback=cb
-        )
-        protein_table.to_hdf(
-            settings['experiment']['results_path'],
-            'protein_table'
-        )
+            logging.info('LFQ complete.')
+
+    if len(df) > 0:
+        logging.info('Exporting as csv.')
         results_path = settings['experiment']['results_path']
         base, ext = os.path.splitext(results_path)
-        protein_table.to_csv(base+'_proteins.csv')
-
-        logging.info('LFQ complete.')
-
-    logging.info('Exporting as csv.')
-    results_path = settings['experiment']['results_path']
-    base, ext = os.path.splitext(results_path)
-    df.to_csv(base+'.csv')
+        df.to_csv(base+'.csv')
+        logging.info(f'Saved df of length {len(df):,} saved to {base}')
+    else:
+        logging.info(f"No Proteins found.")
 
     return settings
 
@@ -640,9 +684,8 @@ def run_complete_workflow(
         if align not in steps:
             steps.append(align)
         steps.append(match)
-    if general["lfq_quantification"]:
-        steps.append(lfq_quantification)
 
+    steps.append(quantification)
     steps.append(export)
 
     n_steps = len(steps)
@@ -700,17 +743,9 @@ def run_complete_workflow(
 
         elif step is score:
 
-            if fasta_dict is None or pept_dict is None:
-
-                db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
-
-                fasta_dict = db_data['fasta_dict'].item()
-                pept_dict = db_data['pept_dict'].item()
-
             settings = step(settings, pept_dict=pept_dict, fasta_dict=fasta_dict, logger_set = True,  settings_parsed = True, callback = cb)
 
         else:
-
             if step is export:
                 # Get summary information
                 summary = get_summary(settings, summary)
@@ -1058,7 +1093,7 @@ def cli_match(settings_file):
 @CLICK_SETTINGS_OPTION
 def cli_quantify(settings_file):
     settings = alphapept.settings.load_settings(settings_file)
-    lfq_quantification(settings)
+    quantification(settings)
 
 
 @click.command(

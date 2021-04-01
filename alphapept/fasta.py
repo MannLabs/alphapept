@@ -168,12 +168,6 @@ def swap_AL(peptide):
             i += 1
         i += 1
 
-    #aa_table = "GAVLIFMPWSCTYHKRQEND"
-    #DiaNN_table  = "LLLVVLLLLTSSSSLLNDQE"
-
-    #idx = aa_table.find(peptide[-2])
-    #peptide[-2] = decoy_table[idx]
-
     return peptide
 
 def get_decoys(peptide_list, pseudo_reverse=False, AL_swap=False, KR_swap = False, **kwargs):
@@ -514,13 +508,14 @@ def read_fasta_file_entries(fasta_filename=""):
         return count
 
 
-def check_sequence(element, AAs):
+def check_sequence(element, AAs, verbose = False):
     """
     Checks wheter a sequence from a FASTA entry contains valid AAs
     """
     if not set(element['sequence']).issubset(AAs):
         unknown = set(element['sequence']) - set(AAs)
-        logging.error(f'This FASTA entry contains unknown AAs {unknown} - Peptides with unknown AAs will be skipped: \n {element}\n')
+        if verbose:
+            logging.error(f'This FASTA entry contains unknown AAs {unknown} - Peptides with unknown AAs will be skipped: \n {element}\n')
         return False
     else:
         return True
@@ -592,6 +587,8 @@ def generate_fasta_list(fasta_paths, callback = None, **kwargs):
             fasta_list.append(element)
             fasta_dict[fasta_index] = element
             fasta_index += 1
+
+
     return fasta_list, fasta_dict
 
 
@@ -720,10 +717,6 @@ def generate_database_parallel(settings, callback = None):
     fasta_list, fasta_dict = generate_fasta_list(**settings['fasta'])
 
     logging.info(f'FASTA contains {len(fasta_list):,} entries.')
-
-    if len(fasta_list) > settings['fasta']['db_size']:
-        logging.info(f"FASTA exceeds set db_size of {settings['fasta']['db_size']:,}. Shortening fasta.")
-        fasta_list = fasta_list[:settings['fasta']['db_size']]
 
     blocks = block_idx(len(fasta_list), settings['fasta']['fasta_block'])
 

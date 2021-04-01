@@ -130,11 +130,7 @@ def cut_fdr(df, fdr_level=0.01, plot=True):
     fdr = df.loc[cutoff_index, "fdr"]
 
 
-    logging.info(
-        "{:,} target ({:,} decoy) of {} PSM. fdr {:.6f} for a cutoff of {:.2f} ".format(
-            targets, decoy, len(df), fdr, cutoff_value
-        )
-    )
+    logging.info(f"{targets:,} target ({decoy:,} decoy) of {len(df)} PSMs. fdr {fdr:.6f} for a cutoff of {cutoff_value:.2f} (set fdr was {fdr_level})")
 
     if plot:
         import matplotlib.pyplot as plt
@@ -548,8 +544,11 @@ def score_hdf(to_process, callback = None, parallel=False):
             df = ms_file_.read(dataset_name='second_search')
             logging.info('Found second search psms for scoring.')
         except KeyError:
-            df = ms_file_.read(dataset_name='first_search')
-            logging.info('No second search psms for scoring found. Using first search.')
+            try:
+                df = ms_file_.read(dataset_name='first_search')
+                logging.info('No second search psms for scoring found. Using first search.')
+            except KeyError:
+                df = pd.DataFrame()
 
         if len(df) == 0:
             skip = True
@@ -561,17 +560,17 @@ def score_hdf(to_process, callback = None, parallel=False):
             if settings["general"]["score"] == 'random_forest':
                 try:
                     cv, features = train_RF(df)
-                    df = filter_with_ML(df, cv, features = features)
+                    df = filter_with_ML(df, cv, features = features, fdr_level = settings["search"]["peptide_fdr"])
                 except ValueError as e:
                     logging.info('ML failed. Defaulting to x_tandem score')
                     logging.info(f"{e}")
-                    df = filter_with_x_tandem(df)
+                    df = filter_with_x_tandem(df, fdr_level = settings["search"]["peptide_fdr"])
             elif settings["general"]["score"] == 'x_tandem':
-                df = filter_with_x_tandem(df)
+                df = filter_with_x_tandem(df, fdr_level = settings["search"]["peptide_fdr"])
             else:
                 raise NotImplementedError('Scoring method {} not implemented.'.format(settings["general"]["score"]))
 
-            df = cut_global_fdr(df, analyte_level='precursor',  plot=False, **settings['search'])
+            df = cut_global_fdr(df, analyte_level='precursor',  plot=False, fdr_level = settings["search"]["peptide_fdr"], **settings['search'])
 
             ms_file_.write(df, dataset_name="peptide_fdr")
 
@@ -608,30 +607,36 @@ def protein_groups_hdf(to_process):
     ms_file = alphapept.io.MS_Data_File(path, is_overwritable=True)
     try:
         df = ms_file.read(dataset_name='peptide_fdr')
-        ions = ms_file.read(dataset_name='ions')
     except KeyError:
         skip = True
 
     if not skip:
         df_pg = perform_protein_grouping(df, pept_dict, fasta_dict, callback = None)
 
-        df_pg = cut_global_fdr(df_pg, analyte_level='protein',  plot=False, **settings['search'])
+        df_pg = cut_global_fdr(df_pg, analyte_level='protein',  plot=False, fdr_level = settings["search"]["protein_fdr"], **settings['search'])
         logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
 
-        logging.info('Extracting ions')
+        try:
+            logging.info('Extracting ions')
+            ions = ms_file.read(dataset_name='ions')
 
-        ion_list = []
-        ion_ints = []
 
-        for i in range(len(df_pg)):
-            ion, ints = get_ion(i, df_pg, ions)
-            ion_list.append(ion)
-            ion_ints.append(ints)
+            ion_list = []
+            ion_ints = []
 
-        df_pg['ion_int'] = ion_ints
-        df_pg['ion_types'] = ion_list
+            for i in range(len(df_pg)):
+                ion, ints = get_ion(i, df_pg, ions)
+                ion_list.append(ion)
+                ion_ints.append(ints)
 
-        logging.info('Extracting ions complete.')
+            df_pg['ion_int'] = ion_ints
+            df_pg['ion_types'] = ion_list
+
+            logging.info('Extracting ions complete.')
+
+        except KeyError:
+            logging.info('No ions present.')
+
 
         ms_file.write(df_pg, dataset_name="protein_fdr")
         base, ext = os.path.splitext(path)
