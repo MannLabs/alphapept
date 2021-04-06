@@ -714,7 +714,7 @@ def generate_database_parallel(settings, callback = None):
     """
     n_processes = settings['general']['n_processes']
 
-    fasta_list, fasta_dict = generate_fasta_list(**settings['fasta'])
+    fasta_list, fasta_dict = generate_fasta_list(fasta_paths = settings['experiment']['fasta_paths'], **settings['fasta'])
 
     logging.info(f'FASTA contains {len(fasta_list):,} entries.')
 

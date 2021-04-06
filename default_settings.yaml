@@ -1,7 +1,4 @@
-general:
-  ppm: true
-  score: random_forest
-  n_processes: 60
+workflow:
   create_database: true
   import_raw_data: true
   find_features: true
@@ -10,11 +7,15 @@ general:
   align: true
   match: false
   lfq_quantification: true
+general:
+  n_processes: 60
 experiment:
   results_path: null
   shortnames: []
   file_paths: []
   fractions: []
+  database_path: null
+  fasta_paths: []
 raw:
   most_abundant: 400
   use_profile_ms1: false
@@ -39,16 +40,24 @@ fasta:
   fasta_block: 1000
   save_db: true
   max_fasta_size: 100
-  database_path: null
-  fasta_paths: []
 features:
-  min_hill_length: 3
   max_gap: 2
   ppm_tol: 8
-  smoothing: 1
-  max_neighbors: 4
-  max_distance: 0.4
-  mass_importance: 100
+  min_hill_length: 3
+  split_level: 1.3
+  smoothing_window: 1
+  large_peak: 40
+  min_charge: 1
+  max_charge: 6
+  seed_masses: 100
+  hill_nboot_max: 300
+  hill_nboot: 150
+  mass_range: 5
+  min_correlation: 0.6
+  ppm_range: 20
+  rt_range: 0.5
+  mob_range: 0.3
+  n_neighbors: 5
   search_unidentified: false
 search:
   m_offset: 30
@@ -72,4 +81,5 @@ matching:
   min_match_d: 3
 quantification:
   max_lfq: true
+  lfq_minimum_ratio: 1
   mode: int_sum

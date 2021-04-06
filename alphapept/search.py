@@ -1008,12 +1008,12 @@ def search_db(to_process, callback = None, parallel=False, first_search = True):
 
 
         if not skip:
-            db_data_path = settings['fasta']['database_path']
+            db_data_path = settings['experiment']['database_path']
 
     #         TODO calibrated_fragments should be included in settings
             query_data = ms_file_.read_DDA_query_data(
                 calibrated_fragments=True,
-                database_file_name=settings['fasta']['database_path']
+                database_file_name=settings['experiment']['database_path']
             )
 
             features = ms_file_.read(dataset_name="features")
@@ -1153,7 +1153,7 @@ def search_parallel(settings, calibration = None, callback = None):
     """
     Function to generate a database from a fasta file
     """
-    fasta_list, fasta_dict = generate_fasta_list(**settings['fasta'])
+    fasta_list, fasta_dict = generate_fasta_list(fasta_path = settings['experiment']['fasta_paths'], **settings['fasta'])
 
     fasta_block = settings['fasta']['fasta_block']
 

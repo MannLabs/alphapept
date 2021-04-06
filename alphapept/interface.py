@@ -115,14 +115,17 @@ def create_database(
         set_logger()
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
-    if 'database_path' not in settings['fasta']:
+    if 'database_path' not in settings['experiment']:
         database_path = ''
     else:
-        database_path = settings['fasta']['database_path']
+        database_path = settings['experiment']['database_path']
+
+    if database_path is None:
+        database_path = ''
 
 
     if not settings['fasta']['save_db']: #Do not save DB
-        settings['fasta']['database_path'] = None
+        settings['experiment']['database_path'] = None
         logging.info('Not saving Database.')
 
         return settings
@@ -141,12 +144,12 @@ def create_database(
             'Database path {} is not a file.'.format(database_path)
         )
 
-        if len(settings['fasta']['fasta_paths']) == 0:
+        if len(settings['experiment']['fasta_paths']) == 0:
             raise FileNotFoundError("No FASTA files set.")
 
         total_fasta_size = 0
 
-        for fasta_file in settings['fasta']['fasta_paths']:
+        for fasta_file in settings['experiment']['fasta_paths']:
             if os.path.isfile(fasta_file):
 
                 fasta_size = os.stat(fasta_file).st_size/(1024**2)
@@ -169,7 +172,7 @@ def create_database(
         if total_fasta_size >= max_fasta_size:
             logging.info(f'Total FASTA size {total_fasta_size:.2f} is larger than the set maximum size of {max_fasta_size:.2f} Mb')
 
-            settings['fasta']['database_path'] = None
+            settings['experiment']['database_path'] = None
 
             return settings
 
@@ -199,6 +202,7 @@ def create_database(
             spectra,
             pept_dict,
             fasta_dict,
+            database_path = database_path,
             **settings['fasta']
         )
         logging.info(
@@ -208,7 +212,7 @@ def create_database(
             )
         )
 
-        settings['fasta']['database_path'] = database_path
+        settings['experiment']['database_path'] = database_path
 
     return settings
 
@@ -290,10 +294,10 @@ def search_data(
 
     if first_search:
         logging.info('Starting first search.')
-        if settings['fasta']['database_path'] is not None:
+        if settings['experiment']['database_path'] is not None:
             settings = parallel_execute(settings, wrapped_partial(alphapept.search.search_db, first_search = first_search), callback = cb)
 
-            db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
+            db_data = alphapept.fasta.read_database(settings['experiment']['database_path'])
 
             fasta_dict = db_data['fasta_dict'].item()
             pept_dict = db_data['pept_dict'].item()
@@ -315,10 +319,10 @@ def search_data(
     else:
         logging.info('Starting second search with DB.')
 
-        if settings['fasta']['database_path'] is not None:
+        if settings['experiment']['database_path'] is not None:
             settings = parallel_execute(settings, wrapped_partial(alphapept.search.search_db, first_search = first_search), callback = cb)
 
-            db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
+            db_data = alphapept.fasta.read_database(settings['experiment']['database_path'])
 
             fasta_dict = db_data['fasta_dict'].item()
             pept_dict = db_data['pept_dict'].item()
@@ -410,7 +414,7 @@ def score(
     if fasta_dict is None:
 
         db_data = alphapept.fasta.read_database(
-            settings['fasta']['database_path']
+            settings['experiment']['database_path']
         )
         fasta_dict = db_data['fasta_dict'].item()
         pept_dict = db_data['pept_dict'].item()
@@ -508,7 +512,7 @@ def quantification(
     df = alphapept.utils.assemble_df(settings)
     logging.info('Assembly complete.')
 
-    if settings["general"]["lfq_quantification"]:
+    if settings["workflow"]["lfq_quantification"]:
 
         if field in df.keys():  # Check if the quantification information exists.
             # We could include another protein fdr in here..
@@ -654,33 +658,37 @@ def run_complete_workflow(
     settings_parsed=False,
     callback=None,
     callback_overall = None,
-    callback_task = None
+    callback_task = None,
+    logfile = None
 ):
 
     if not logger_set:
         set_logger()
+
+    if logfile is not None:
+        set_logger(logfile)
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
 
     steps = []
 
-    general = settings['general']
+    workflow = settings['workflow']
 
-    if general["create_database"]:
+    if workflow["create_database"]:
         steps.append(create_database)
-    if general["import_raw_data"]:
+    if workflow["import_raw_data"]:
         steps.append(import_raw_data)
-    if general["find_features"]:
+    if workflow["find_features"]:
         steps.append(feature_finding)
-    if general["search_data"]:
+    if workflow["search_data"]:
         steps.append(search_data)
-    if general["recalibrate_data"]:
+    if workflow["recalibrate_data"]:
         steps.append(recalibrate_data)
         steps.append(search_data)
     steps.append(score)
-    if general["align"]:
+    if workflow["align"]:
         steps.append(align)
-    if general["match"]:
+    if workflow["match"]:
         if align not in steps:
             steps.append(align)
         steps.append(match)
@@ -694,6 +702,8 @@ def run_complete_workflow(
 
     if progress:
         logging.info('Setting callback to logger.')
+
+
         #log progress to be used
         def cb_logger_o(x):
             logging.info(f"__progress_overall {x:.3f}")

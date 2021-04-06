@@ -164,12 +164,21 @@ def find_centroid_connections(rowwise_peaks, row_borders, centroids, max_gap=2, 
     connections = cupy.full((spectra_cnt, max_centroids, max_gap + 1), -1, dtype=np.int32)
     score = cupy.full((spectra_cnt, max_centroids, max_gap + 1), np.inf)
 
+
+
     connect_centroids_unidirection(row_borders,
                                    connections,
                                    score,
                                    centroids,
                                    max_gap,
                                    ppm_tol)
+
+    score = score[cupy.where(score < np.inf)]
+
+    score_median = cupy.median(score)
+    score_std = cupy.std(score)
+
+
     del score, max_centroids, spectra_cnt
 
     c_shape = connections.shape
@@ -178,7 +187,7 @@ def find_centroid_connections(rowwise_peaks, row_borders, centroids, max_gap=2, 
     to_c = connections[from_r, from_c, from_g] - to_r * c_shape[1]
 
     del connections, from_g
-    return from_r, from_c, to_r, to_c
+    return from_r, from_c, to_r, to_c, score_median, score_std
 
 # Cell
 
@@ -216,7 +225,7 @@ def get_hills(centroids, from_idx, to_idx, min_hill_length=3):
 # Cell
 def connect_centroids(rowwise_peaks, row_borders, centroids, max_gap=2, ppm_tol=8):
 
-    from_r, from_c, to_r, to_c = find_centroid_connections(rowwise_peaks,
+    from_r, from_c, to_r, to_c, score_median, score_std = find_centroid_connections(rowwise_peaks,
                                                            row_borders,
                                                            centroids,
                                                            max_gap=max_gap,
@@ -240,7 +249,7 @@ def connect_centroids(rowwise_peaks, row_borders, centroids, max_gap=2, ppm_tol=
     to_idx = cupy.take(to_idx, relavent_idx)[0]
 
     del from_r, from_c, to_r, to_c, relavent_idx
-    return from_idx, to_idx
+    return from_idx, to_idx, score_median, score_std
 
 
 # Cell
@@ -252,7 +261,7 @@ def extract_hills(query_data, max_gap = 2, ppm_tol = 8):
     rowwise_peaks = indices[1:] - indices[:-1]
     row_borders = indices[1:]
 
-    from_idx, to_idx = connect_centroids(rowwise_peaks, row_borders, mass_data, max_gap=max_gap, ppm_tol=ppm_tol)
+    from_idx, to_idx, score_median, score_std = connect_centroids(rowwise_peaks, row_borders, mass_data, max_gap=max_gap, ppm_tol=ppm_tol)
     hill_ptrs, hill_data, path_node_cnt = get_hills(mass_data, from_idx, to_idx)
 
     del mass_data
@@ -263,8 +272,11 @@ def extract_hills(query_data, max_gap = 2, ppm_tol = 8):
         hill_data = hill_data.get()
         path_node_cnt = path_node_cnt.get()
 
+        score_median = score_median.get()
+        score_std = score_std.get()
 
-    return hill_ptrs, hill_data, path_node_cnt
+
+    return hill_ptrs, hill_data, path_node_cnt, score_median, score_std
 
 
 
@@ -628,7 +640,7 @@ def check_isotope_pattern_directed(mass1, mass2, delta_mass1, delta_mass2, charg
 
 
 @njit
-def grow(trail, seed, direction, relative_pos, index, stats, pattern, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx):
+def grow(trail, seed, direction, relative_pos, index, stats, pattern, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
     """
     Grows isotope pattern based on a seed and direction
 
@@ -669,7 +681,7 @@ def grow(trail, seed, direction, relative_pos, index, stats, pattern, charge, ma
         int_2 = int_data[idx_]
         scans_2 = scan_idx[idx_]
 
-        if correlate(scans_, scans_2, int_, int_2) > 0.6:
+        if correlate(scans_, scans_2, int_, int_2) > cc_cutoff:
             if check_isotope_pattern_directed(mass1, mass2, delta_mass1, delta_mass2, charge, -direction * index, mass_range):
                 if direction == 1:
                     trail.append(y)
@@ -689,27 +701,27 @@ def grow(trail, seed, direction, relative_pos, index, stats, pattern, charge, ma
     return trail
 
 @njit
-def grow_trail(seed, pattern, stats, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx):
+def grow_trail(seed, pattern, stats, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
     """
     Wrapper to grow an isotope pattern to the left and right side
     """
     x = pattern[seed]
     trail = List()
     trail.append(x)
-    trail = grow(trail, seed, -1, -1, 1, stats, pattern, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx)
-    trail = grow(trail, seed, 1, 1, 1, stats, pattern, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx)
+    trail = grow(trail, seed, -1, -1, 1, stats, pattern, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
+    trail = grow(trail, seed, 1, 1, 1, stats, pattern, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
 
     return trail
 
 
 @njit
-def get_trails(seed, pattern, stats, charge_range, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx):
+def get_trails(seed, pattern, stats, charge_range, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
     """
     Wrapper to extract trails for a given charge range
     """
     trails = []
     for charge in charge_range:
-        trail = grow_trail(seed, pattern, stats, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx)
+        trail = grow_trail(seed, pattern, stats, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
 
         trails.append(trail)
 
@@ -978,7 +990,7 @@ def truncate(array, intensity_profile, seedpos):
 
 # Cell
 @njit
-def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, mass_range, charge_range, averagine_aa, isotopes, seed_masses):
+def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, mass_range, charge_range, averagine_aa, isotopes, seed_masses, cc_cutoff):
     """
     Isolate isotope patterns
     """
@@ -998,7 +1010,7 @@ def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_id
     for seed in massindex:  # Loop through all seeds
         seed_global = sorted_pattern[seed]
 
-        trails = get_trails(seed, sorted_pattern, stats, charge_range, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx)
+        trails = get_trails(seed, sorted_pattern, stats, charge_range, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
 
         for index, trail in enumerate(trails):
             if len(trail) > longest_trace:  # Needs to be longer than the current champion
@@ -1031,7 +1043,7 @@ def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_id
 
 from numba.typed import List
 
-def get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_,  averagine_aa, isotopes, min_charge = 1, max_charge = 6, mass_range = 5, seed_masses = 100, callback=None):
+def get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_,  averagine_aa, isotopes, min_charge = 1, max_charge = 6, mass_range = 5, seed_masses = 100, cc_cutoff=0.6, callback=None):
     """
     Wrapper function to iterate over pre_isotope_patterns
     """
@@ -1050,7 +1062,7 @@ def get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, s
     for idx, pre_pattern in enumerate(pre_isotope_patterns):
         extract = True
         while extract:
-            isotope_pattern, isotope_charge = isolate_isotope_pattern(np.array(pre_pattern), hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, mass_range, charge_range, averagine_aa, isotopes, seed_masses)
+            isotope_pattern, isotope_charge = isolate_isotope_pattern(np.array(pre_pattern), hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, mass_range, charge_range, averagine_aa, isotopes, seed_masses, cc_cutoff)
             if isotope_pattern is None:
                 length = 0
             else:
@@ -1499,27 +1511,49 @@ def find_features(to_process, callback = None, parallel = False):
 
                     from .constants import averagine_aa, isotopes
 
-                    #TODo: Include callback
+                    f_settings = settings['features']
+                    max_gap = f_settings['max_gap']
+                    ppm_tol = f_settings['ppm_tol']
+                    split_level = f_settings['split_level']
+                    window = f_settings['smoothing_window']
+                    large_peak = f_settings['large_peak']
+
+                    min_charge = f_settings['min_charge']
+                    max_charge = f_settings['max_charge']
+                    seed_masses = f_settings['seed_masses']
+
+                    hill_nboot_max = f_settings['hill_nboot_max']
+                    hill_nboot = f_settings['hill_nboot']
+
+                    mass_range = f_settings['mass_range']
+
+                    min_correlation = f_settings['min_correlation']
+
                     logging.info('Feature finding on {}'.format(file_name))
-                    hill_ptrs, hill_data, path_node_cnt = extract_hills(query_data, max_gap = 2, ppm_tol = 8)
+                    hill_ptrs, hill_data, path_node_cnt, score_median, score_std = extract_hills(query_data, max_gap = max_gap, ppm_tol = ppm_tol)
+                    logging.info(f'Number of hills {len(hill_ptrs):,}, len = {np.mean(path_node_cnt):.2f}')
+
+                    logging.info(f'Repeating hill extraction with ppm_tol {score_median+score_std*3:.2f}')
+
+                    hill_ptrs, hill_data, path_node_cnt, score_median, score_std = extract_hills(query_data, max_gap = max_gap, ppm_tol = score_median+score_std*3)
                     logging.info(f'Number of hills {len(hill_ptrs):,}, len = {np.mean(path_node_cnt):.2f}')
 
                     int_data = np.array(query_data['int_list_ms1'])
 
-                    hill_ptrs = split_hills(hill_ptrs, hill_data, int_data, split_level=1.3, window = 1) #hill lenght is inthere already
+                    hill_ptrs = split_hills(hill_ptrs, hill_data, int_data, split_level=split_level, window = window) #hill lenght is inthere already
                     logging.info(f'After split hill_ptrs {len(hill_ptrs):,}')
 
-                    hill_data, hill_ptrs = filter_hills(hill_data, hill_ptrs, int_data, large_peak =40, window=1)
+                    hill_data, hill_ptrs = filter_hills(hill_data, hill_ptrs, int_data, large_peak =large_peak, window=window)
 
                     logging.info(f'After filter hill_ptrs {len(hill_ptrs):,}')
 
-                    stats, sortindex_, idxs_upper, scan_idx = get_hill_data(query_data, hill_ptrs, hill_data)
+                    stats, sortindex_, idxs_upper, scan_idx = get_hill_data(query_data, hill_ptrs, hill_data, hill_nboot_max = hill_nboot_max, hill_nboot = hill_nboot)
                     logging.info('Extracting hill stats complete')
 
-                    pre_isotope_patterns = get_pre_isotope_patterns(stats, idxs_upper, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, maximum_offset)
+                    pre_isotope_patterns = get_pre_isotope_patterns(stats, idxs_upper, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, maximum_offset, min_charge=min_charge, max_charge=max_charge, mass_range=mass_range, cc_cutoff=min_correlation)
                     logging.info('Found {:,} pre isotope patterns.'.format(len(pre_isotope_patterns)))
 
-                    isotope_patterns, iso_idx, isotope_charges = get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, averagine_aa, isotopes, min_charge = 1, max_charge = 6, mass_range = 5, seed_masses = 100, callback=None)
+                    isotope_patterns, iso_idx, isotope_charges = get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, averagine_aa, isotopes, min_charge = min_charge, max_charge = max_charge, mass_range = mass_range, seed_masses = seed_masses, cc_cutoff = min_correlation, callback=None)
                     logging.info('Extracted {:,} isotope patterns.'.format(len(isotope_charges)))
 
                     feature_table = feature_finder_report(query_data, isotope_patterns, isotope_charges, iso_idx, stats, sortindex_, hill_ptrs, hill_data)
@@ -1533,7 +1567,7 @@ def find_features(to_process, callback = None, parallel = False):
                     logging.info('Bruker featurer finder complete. Extracted {:,} features.'.format(len(feature_table)))
 
                 logging.info('Matching features to query data.')
-                features = map_ms2(feature_table, query_data)
+                features = map_ms2(feature_table, query_data, **settings['features'])
 
                 logging.info('Saving feature table.')
                 ms_file.write(feature_table, dataset_name="feature_table")
@@ -1554,10 +1588,7 @@ from sklearn.neighbors import KDTree
 import pandas as pd
 import numpy as np
 
-
-
-
-def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=5, search_unidentified = False):
+def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=5, search_unidentified = False, **kwargs):
     """
     Map MS1 features to MS2 based on rt and mz
     if ccs is included also add
