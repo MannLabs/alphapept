@@ -155,7 +155,10 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
         spectrum_indptr,
         spectrum_tof_indices,
         spectrum_intensity_values,
-    ) = data.index_precursors(centroiding_window=5)
+    ) = data.index_precursors(
+        centroiding_window=5,
+        keep_n_most_abundant_peaks=most_abundant
+    )
     # TODO: Centroid spectra and trim
     query_data["alphatims_spectrum_indptr_ms2"] = spectrum_indptr[1:]
     query_data["alphatims_spectrum_mz_values_ms2"] = data.mz_values[spectrum_tof_indices]
