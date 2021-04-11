@@ -1153,7 +1153,7 @@ def search_parallel(settings, calibration = None, callback = None):
     """
     Function to generate a database from a fasta file
     """
-    fasta_list, fasta_dict = generate_fasta_list(fasta_path = settings['experiment']['fasta_paths'], **settings['fasta'])
+    fasta_list, fasta_dict = generate_fasta_list(fasta_paths = settings['experiment']['fasta_paths'], **settings['fasta'])
 
     fasta_block = settings['fasta']['fasta_block']
 
