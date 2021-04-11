@@ -506,8 +506,8 @@ def get_hits(query_frag, query_int, db_frag, db_int, frag_type, mtol, ppm, losse
         ions[pointer:pointer+n_hits,4] = query_frag[hitpos] #query mass
         ions[pointer:pointer+n_hits,5] = db_frag[hit]-off # db mass
 
-        ions[pointer:pointer+n_hits,6] = query_range[hitpos] # index to db entry
-        ions[pointer:pointer+n_hits,7] = db_range[hit] # index to query entry
+        ions[pointer:pointer+n_hits,6] = query_range[hitpos] # index to query entry
+        ions[pointer:pointer+n_hits,7] = db_range[hit] # index to db entry
 
         pointer += n_hits
 

@@ -70,6 +70,8 @@ search:
   peptide_fdr: 0.01
   protein_fdr: 0.01
   recalibration_min: 100
+score:
+  method: random_forest
 calibration:
   outlier_std: 3
   n_neighbors: 100

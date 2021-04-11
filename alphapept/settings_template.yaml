@@ -426,6 +426,14 @@ search:
     max: 10000
     default: 100
     description: Minimum number of datapoints to perform calibration.
+score:
+  method:
+    type: combobox
+    value:
+    - x_tandem
+    - random_forest
+    default: random_forest
+    description: Scoring method.
 calibration:
   outlier_std:
     type: spinbox

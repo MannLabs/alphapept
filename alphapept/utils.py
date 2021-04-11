@@ -27,7 +27,7 @@ def set_logger(
         The file name to where the log is written.
         Folders are automatically created if needed.
         This is relative to the current path. When an empty string is provided,
-        a log is written to the AlphaTims "logs" folder with the name
+        a log is written to the AlphaPept "logs" folder with the name
         "log_yymmddhhmmss" (reversed timestamp year to seconds).
         Default is "".
     stream : bool

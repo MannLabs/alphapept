@@ -274,7 +274,7 @@ def get_ML_features(df, protease='trypsin', **kwargs):
     return df
 
 def train_RF(df,
-             exclude_features = ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence'],
+             exclude_features = ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence','target'],
              train_fdr_level = 0.1,
              ini_score = 'x_tandem',
              min_train = 5000,
@@ -557,7 +557,7 @@ def score_hdf(to_process, callback = None, parallel=False):
         if not skip:
             df = get_ML_features(df, **settings['fasta'])
 
-            if settings["general"]["score"] == 'random_forest':
+            if settings["score"]["method"] == 'random_forest':
                 try:
                     cv, features = train_RF(df)
                     df = filter_with_ML(df, cv, features = features, fdr_level = settings["search"]["peptide_fdr"])
@@ -565,10 +565,10 @@ def score_hdf(to_process, callback = None, parallel=False):
                     logging.info('ML failed. Defaulting to x_tandem score')
                     logging.info(f"{e}")
                     df = filter_with_x_tandem(df, fdr_level = settings["search"]["peptide_fdr"])
-            elif settings["general"]["score"] == 'x_tandem':
+            elif settings["score"]["method"] == 'x_tandem':
                 df = filter_with_x_tandem(df, fdr_level = settings["search"]["peptide_fdr"])
             else:
-                raise NotImplementedError('Scoring method {} not implemented.'.format(settings["general"]["score"]))
+                raise NotImplementedError('Scoring method {} not implemented.'.format(settings["score"]["method"]))
 
             df = cut_global_fdr(df, analyte_level='precursor',  plot=False, fdr_level = settings["search"]["peptide_fdr"], **settings['search'])
 

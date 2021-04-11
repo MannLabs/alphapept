@@ -1504,7 +1504,7 @@ def find_features(to_process, callback = None, parallel = False):
             ms_file = alphapept.io.MS_Data_File(out_file, is_read_only=False)
             query_data = ms_file.read_DDA_query_data()
 
-            if not settings['general']["find_features"]:
+            if not settings['workflow']["find_features"]:
                 features = query_data_to_features(query_data)
             else:
                 if datatype == 'thermo':

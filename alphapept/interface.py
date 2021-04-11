@@ -666,7 +666,7 @@ def run_complete_workflow(
         set_logger()
 
     if logfile is not None:
-        set_logger(logfile)
+        set_logger(log_file_name=logfile)
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
 
