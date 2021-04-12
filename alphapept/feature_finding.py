@@ -1323,20 +1323,21 @@ def extract_bruker(file, base_dir = "ext/bruker/FF", config = "proteomics_4d.con
 
     base_dir = os.path.join(os.path.dirname(__file__), base_dir)
 
-    operating_system = platform.system()
-
-    if operating_system == 'Linux':
-        ff_dir = os.path.join(base_dir, 'linux64','uff-cmdline2')
-        logging.info('Using Linux FF')
-    elif operating_system == 'Windows':
-        ff_dir = os.path.join(base_dir, 'win64','uff-cmdline2.exe')
-        logging.info('Using Windows FF')
-    else:
-        raise NotImplementedError(f"System {operating_system} not supported.")
-
     if os.path.exists(feature_path):
         return feature_path
     else:
+
+        operating_system = platform.system()
+
+        if operating_system == 'Linux':
+            ff_dir = os.path.join(base_dir, 'linux64','uff-cmdline2')
+            logging.info('Using Linux FF')
+        elif operating_system == 'Windows':
+            ff_dir = os.path.join(base_dir, 'win64','uff-cmdline2.exe')
+            logging.info('Using Windows FF')
+        else:
+            raise NotImplementedError(f"System {operating_system} not supported.")
+
         if not os.path.isfile(ff_dir):
             raise FileNotFoundError(f'Bruker feature finder cmd not found here {ff_dir}.')
 
