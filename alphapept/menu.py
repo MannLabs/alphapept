@@ -95,7 +95,6 @@ def history():
     with st.beta_expander(f"Processed files ({len(processed_files)})"):
         st.table(processed_files)
 
-
     filter = st.text_input('Filter')
 
     if filter:
@@ -117,18 +116,26 @@ def history():
         bar.progress((idx+1)/len(filtered))
 
     if len(all_results) > 0:
-        fields = results['summary'].keys()
+        options = ['timing', 'feature_table','protein_fdr']
 
-        filename = [_ for _ in fields if _ not in ['timing','version','file_sizes']][0]
+        plots = st.multiselect('Plots', options = options, default=options)
 
-        st.multiselect('Plots', options = ['Timing'])
+        for plot in plots:
+            plot_dict = {} # summary_time
+            if plot == 'timing':
+                for _ in all_results.keys():
+                    plot_dict[_] = all_results[_]["summary"]["timing"]["total"]
+            else:
+                for _ in all_results.keys():
+                    file = os.path.splitext(all_results[_]['summary']['processed_files'][0])[0]
+                    plot_dict[_] = all_results[_]["summary"][file][plot]
 
-        st.write(results['summary'][filename])
-        #ields = {}
+            fig = plt.figure(figsize=(10,3))
+            plt.bar(range(len(plot_dict)), list(plot_dict.values()), align='center')
+            plt.xticks(range(len(plot_dict)), list(plot_dict.keys()), rotation='vertical')
+            plt.title(plot)
+            st.write(fig)
 
-        #fields['processing_time'] = ['']
-         #
-        st.write(fields)
 
         if False:
             plot_dict[_] = results['summary']['timing'][field]
@@ -144,7 +151,7 @@ def queue_watcher():
     Start the queue_watcher.
     """
     #This is in pool and should be reporting.
-    print('Started queue_watcher')
+    print(f'{datetime.now()} Started queue_watcher')
 
     while True:
         if os.path.isfile(PROCESS_FILE):
@@ -159,7 +166,7 @@ def queue_watcher():
 
     while True:
         queue_files = [_ for _ in os.listdir(QUEUE_PATH) if _.endswith('.yaml')]
-        print(f'queue_watcher running. {len(queue_files)} experiments to process.')
+        print(f'{datetime.now()} queue_watcher running. {len(queue_files)} experiments to process.')
 
         if len(queue_files) > 0:
             file_path = os.path.join(QUEUE_PATH, queue_files[0])
@@ -214,7 +221,7 @@ def file_watcher(folder, settings_template, minimum_file_size, tag):
         new_files = [_ for _ in new_files if _ not in already_added]
         already_added = new_files
 
-        print(f'file watcher running. {len(new_files)} new files.')
+        print(f'{datetime.now()} file watcher running. {len(new_files)} new files.')
 
         if len(new_files) > 0:
 
@@ -228,7 +235,7 @@ def file_watcher(folder, settings_template, minimum_file_size, tag):
 
                 save_settings(settings, os.path.join(QUEUE_PATH, new_file))
 
-                print(f'Added {file}')
+                print(f'{datetime.now()} Added {file}')
 
         else:
             time.sleep(60*5)
