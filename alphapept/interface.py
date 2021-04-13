@@ -2,7 +2,7 @@
 
 __all__ = ['parallel_execute', 'tqdm_wrapper', 'check_version_and_hardware', 'create_database', 'import_raw_data',
            'feature_finding', 'wrapped_partial', 'search_data', 'recalibrate_data', 'score', 'align', 'match',
-           'quantification', 'export', 'get_summary', 'run_complete_workflow', 'FileWatcher', 'run_cli', 'cli_overview',
+           'quantification', 'export', 'get_summary', 'run_complete_workflow', 'run_cli', 'cli_overview',
            'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search', 'cli_recalibrate', 'cli_score',
            'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui', 'CONTEXT_SETTINGS',
            'CLICK_SETTINGS_OPTION']
@@ -602,6 +602,7 @@ def export(
 
 from time import time, sleep
 from .__version__ import VERSION_NO
+import datetime
 
 def get_summary(settings, summary):
 
@@ -612,7 +613,9 @@ def get_summary(settings, summary):
 
         base, ext = os.path.splitext(_)
         filename = os.path.split(base)[1]
-        file_sizes[base+"_ms_data"] = os.path.getsize(os.path.splitext(_)[0] + ".ms_data.hdf")/1024**2
+        ms_file_name = os.path.splitext(_)[0] + ".ms_data.hdf"
+
+        file_sizes[ms_file_name] = os.path.getsize(ms_file_name)/1024**2
         # file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
 
         ms_data = alphapept.io.MS_Data_File(os.path.splitext(_)[0] + ".ms_data.hdf")
@@ -780,165 +783,16 @@ def run_complete_workflow(
 
         summary['timing'] = time_dict
         summary['version'] = VERSION_NO
+        summary['time'] = f"{datetime.datetime.now()}"
+
+        processed_files = []
+
+        for _ in settings['experiment']['file_paths']:
+            processed_files.append(os.path.split(_)[1])
+
+        summary['processed_files'] = processed_files
 
     return settings
-
-# Cell
-class FileWatcher():
-    """
-    Class to watch files and process
-    """
-    def __init__(self, config_path):
-        db_set = True
-        try:
-            from pymongo import MongoClient
-        except:
-            print('DB upload requires pymongo - DB upload deactivated')
-            db_set = False
-
-        try:
-            import dns
-        except:
-            print('DB upload requires dnspython - DB upload deactivated')
-            db_set = False
-
-        if os.path.isfile(config_path):
-            watcher_config = alphapept.settings.load_settings(config_path)
-        else:
-            raise FileNotFoundError(config_path)
-
-        if os.path.isdir(watcher_config['path']):
-            self.path = watcher_config['path']
-        else:
-            raise FileNotFoundError(path)
-
-
-        db_config = {}
-        for db_field in ['db_user', 'db_password', 'db_url', 'db_database', 'db_collection']:
-            if watcher_config[db_field] == '':
-                print(f"{db_field} not set.")
-                db_set = False
-            else:
-                db_config[db_field] = watcher_config[db_field]
-
-        if db_set:
-            self.set_db(**db_config)
-        else:
-            self.db_set = False
-
-        if os.path.isfile(watcher_config['settings']):
-            self.settings = alphapept.settings.load_settings(watcher_config['settings'])
-            print(f"Loaded settings from {watcher_config['settings']}")
-        else:
-            raise FileNotFoundError(watcher_config['settings'])
-
-        self.update_rate = watcher_config['update_rate']
-        self.n_processed = 0
-        self.n_failed = 0
-        self.minimum_file_size = watcher_config['minimum_file_size']
-        self.tag = watcher_config['tag']
-
-    def check_new_files(self):
-        """
-        Check for new files in folder
-        """
-        new_files = []
-
-        for dirpath, dirnames, filenames in os.walk(self.path):
-
-            for dirname in [d for d in dirnames if d.endswith(('.d','.d/'))]: #Bruker
-                new_file = os.path.join(dirpath, dirname)
-                base, ext = os.path.splitext(dirname)
-                hdf_path = os.path.join(dirpath, base+'.ms_data.hdf')
-
-                if not os.path.exists(hdf_path):
-                    new_files.append(new_file)
-
-            for filename in [f for f in filenames if f.lower().endswith(('.raw','.raw/'))]: #Thermo
-                new_file = os.path.join(dirpath, filename)
-                base, ext = os.path.splitext(filename)
-                hdf_path = os.path.join(dirpath, base+'.ms_data.hdf')
-
-                if not os.path.exists(hdf_path):
-                    new_files.append(new_file)
-        return new_files
-
-    def set_db(self, db_user = '', db_password = '', db_url = '', db_database= '', db_collection= ''):
-
-        self.db_user = db_user
-        self.db_password = db_password
-        self.db_url = db_url
-        self.db_database = db_database
-        self.db_collection = db_collection
-
-        self.db_set = True
-
-
-    def check_file_completion(self, list_of_files, sleep_time = 10):
-        to_analyze = []
-        file_dict = {}
-
-        for file in list_of_files:
-            if file.endswith('.d'):
-                to_check = os.path.join(file, 'analysis.tdf_bin')
-            else:
-                to_check = file
-
-            file_dict[file] = os.path.getsize(to_check)
-
-        sleep(sleep_time)
-
-        for file in list_of_files:
-            if file.endswith('.d'):
-                to_check = os.path.join(file, 'analysis.tdf_bin')
-            else:
-                to_check = file
-
-            filesize = os.path.getsize(to_check)
-            if (filesize == file_dict[file]) & (filesize/1024/1024 > self.minimum_file_size):
-                to_analyze.append(file)
-
-        return to_analyze
-
-    def run(self):
-        print(f'Starting FileWatcher on {self.path}')
-
-        while True:
-            unprocessed = self.check_file_completion(self.check_new_files())
-
-            if self.tag != '':
-                unprocessed = [_ for _ in unprocessed if self.tag.lower() in _.lower()]
-
-            if len(unprocessed) > 0:
-                try:
-                    settings = self.settings.copy()
-                    settings['experiment']['file_paths'] =  [unprocessed[0]]
-                    settings_ = alphapept.interface.run_complete_workflow(settings)
-
-                    if self.db_set:
-                        self.upload_to_db(settings_)
-                    self.n_processed +=1
-                    print(f'--- File Watcher Status: Files processed {self.n_processed:,} - failed {self.n_failed:,} ---')
-                except KeyboardInterrupt:
-                    raise
-                except Exception as e:
-                    logging.info(e)
-                    self.n_failed +=1
-            else:
-                sleep(self.update_rate)
-
-
-    def upload_to_db(self, settings):
-        from pymongo import MongoClient
-        logging.info('Uploading to DB')
-        string = f"mongodb+srv://{self.db_user}:{self.db_password}@{self.db_url}"
-        client = MongoClient(string)
-
-        post_id = client[self.db_database][self.db_collection].insert_one(settings).inserted_id
-
-        logging.info(f"Uploaded {post_id}.")
-
-        return post_id
 
 # Cell
 
@@ -1160,5 +1014,20 @@ def cli_gui():
 
     #sys.argv = ["streamlit", "run", file_path, args]
 
-    sys.argv = ["streamlit", "run", file_path]
+    theme = []
+
+    theme.append("--theme.backgroundColor=#FFFFFF")
+    theme.append("--theme.secondaryBackgroundColor=#f0f2f6")
+    theme.append("--theme.textColor=#262730")
+    theme.append("--theme.font='sans serif'")
+    theme.append("--theme.primaryColor=#18212b")
+
+    args = ["streamlit", "run", file_path, "--global.developmentMode=false", "--server.port=8501"]
+
+    args.extend(theme)
+
+    print(args)
+
+    sys.argv = args
+
     sys.exit(stcli.main())

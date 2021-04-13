@@ -78,7 +78,6 @@ def get_q_values(fdr_values):
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 def cut_fdr(df, fdr_level=0.01, plot=True):
     """
@@ -253,7 +252,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 from .fasta import count_missed_cleavages, count_internal_cleavages
 
@@ -350,6 +348,7 @@ def train_RF(df,
 
     # Inspect feature importances
     if plot:
+        import seaborn as sns
         g = sns.barplot(y=X.columns[indices][:40],
                         x = feature_importances[indices][:40],
                         orient='h', palette='RdBu')

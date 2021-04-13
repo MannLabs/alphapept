@@ -5,7 +5,7 @@
 #define MyAppVersion "0.3.18-dev0"
 #define MyAppPublisher "MannLabs"
 #define MyAppURL "https://github.com/MannLabs/alphapept"
-#define MyAppExeName "alphapeptw.exe"
+#define MyAppExeName "alphapept.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
@@ -33,12 +33,10 @@ WizardStyle=modern
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; 
+Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}";
 
 [Files]
 Source: "dist\\alphapept\*"; DestDir: "{app}"; Flags: recursesubdirs createallsubdirs
-Source: "..\font\Roboto-Regular.ttf"; DestDir: "{fonts}"; FontInstall: "Roboto"; Flags: onlyifdoesntexist uninsneveruninstall
-Source: "..\font\Roboto-Thin.ttf"; DestDir: "{fonts}"; FontInstall: "Roboto Thin"; Flags: onlyifdoesntexist uninsneveruninstall
 
 [Icons]
 Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
