@@ -4,7 +4,7 @@ __all__ = ['gaussian', 'return_elution_profile', 'simulate_sample_profiles', 'ge
            'get_total_error_parallel', 'get_total_error', 'normalize_experiment_SLSQP', 'normalize_experiment_BFGS',
            'delayed_normalization', 'get_protein_ratios', 'triangle_error', 'solve_profile_LFBGSB',
            'solve_profile_SLSQP', 'solve_profile_trf', 'get_protein_table', 'protein_profile',
-           'protein_profile_parallel']
+           'protein_profile_parallel', 'protein_profile_parallel_ap', 'protein_profile_parallel_mq']
 
 # Cell
 import random
@@ -396,31 +396,17 @@ from multiprocessing import Pool
 from functools import partial
 
 
-def protein_profile_parallel(settings, df, callback=None):
-
-    minimum_ratios = settings['quantification']['lfq_minimum_ratio']
-
-    field = settings['quantification']['mode']
+def protein_profile_parallel(df, minimum_ratios, field, callback=None):
 
     unique_proteins = df['protein'].unique().tolist()
 
     files = df['shortname'].unique().tolist()
-
     files.sort()
 
     columnes_ext = [_+'_LFQ' for _ in files]
     protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + files)
 
-    if field+'_dn' in df.columns:
-        field_ = field+'_dn'
-    else:
-        field_ = field
-
-    if df[field_].min() < 0:
-        raise ValueError('Negative intensity values present.')
-
-
-    grouped = df[[field_, 'shortname','precursor','protein']].groupby(['protein','shortname','precursor']).sum()
+    grouped = df[[field, 'shortname','precursor','protein']].groupby(['protein','shortname','precursor']).sum()
 
     column_combinations = List()
     [column_combinations.append(_) for _ in combinations(range(len(files)), 2)]
@@ -431,9 +417,7 @@ def protein_profile_parallel(settings, df, callback=None):
     results = []
 
     if len(files) > 1:
-
         logging.info('Preparing protein table for parallel processing.')
-
         split_df = []
 
         for idx, protein in enumerate(unique_proteins):
@@ -452,7 +436,6 @@ def protein_profile_parallel(settings, df, callback=None):
                     callback((i+1)/max_*4/5+1/5)
 
         for result in results:
-
             profile, pre_lfq, protein = result
             protein_table.loc[protein, [_+'_LFQ' for _ in files]] = profile
             protein_table.loc[protein, files] = pre_lfq
@@ -460,12 +443,68 @@ def protein_profile_parallel(settings, df, callback=None):
         protein_table[protein_table == 0] = np.nan
         protein_table = protein_table.astype('float')
     else:
-        protein_table = df.groupby(['protein'])[field_].sum().to_frame().reset_index()
+        protein_table = df.groupby(['protein'])[field].sum().to_frame().reset_index()
         protein_table = protein_table.set_index('protein')
         protein_table.index.name = None
         protein_table.columns=[files[0]]
 
         if callback:
             callback(1)
+
+    return protein_table
+
+
+def protein_profile_parallel_ap(settings, df, callback=None):
+
+    minimum_ratios = settings['quantification']['lfq_minimum_ratio']
+    field = settings['quantification']['mode']
+
+    if field+'_dn' in df.columns:
+        field_ = field+'_dn'
+    else:
+        field_ = field
+
+    if df[field_].min() < 0:
+        raise ValueError('Negative intensity values present.')
+
+    protein_table = protein_profile_parallel(df, minimum_ratios, field_, callback)
+
+    return protein_table
+
+
+def protein_profile_parallel_mq(evidence_path, protein_groups_path, callback=None):
+    logging.info('Loading files')
+
+    for file in [evidence_path, protein_groups_path]:
+        if not os.path.isfile(file):
+            raise FileNotFoundError(f'File {file} not found.')
+
+    evd = pd.read_csv(evidence_path, sep='\t')
+    ref = pd.read_csv(protein_groups_path, sep='\t')
+
+    experiments = evd['Raw file'].unique().tolist()
+    logging.info(f'A total of {len(experiments):,} files.')
+
+    protein_df = []
+
+    max_ = len(ref)
+    for i in range(max_):
+        investigate = ref.iloc[i]
+        evd_ids = [int(_) for _ in investigate['Evidence IDs'].split(';')]
+        subset = evd.loc[evd_ids].copy()
+
+        subset['protein'] =  investigate['Protein IDs']
+        subset['shortname'] = subset['Raw file']
+        subset['precursor']  = ['_'.join(_) for _ in zip(subset['Sequence'].values, subset['Charge'].values.astype('str'))]
+
+        protein_df.append(subset)
+
+        if callback:
+            callback((i+1)/len(ref))
+
+    logging.info(f'A total of {max_:,} proteins.')
+
+    df = pd.concat(protein_df)
+    protein_table = protein_profile_parallel(df, minimum_ratios=1, field='Intensity', callback=callback)
 
     return protein_table

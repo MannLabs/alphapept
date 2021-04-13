@@ -4,8 +4,8 @@ __all__ = ['parallel_execute', 'tqdm_wrapper', 'check_version_and_hardware', 'cr
            'feature_finding', 'wrapped_partial', 'search_data', 'recalibrate_data', 'score', 'align', 'match',
            'quantification', 'export', 'get_summary', 'run_complete_workflow', 'FileWatcher', 'run_cli', 'cli_overview',
            'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search', 'cli_recalibrate', 'cli_score',
-           'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui', 'cli_watcher',
-           'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
+           'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui', 'CONTEXT_SETTINGS',
+           'CLICK_SETTINGS_OPTION']
 
 # Cell
 import alphapept.utils
@@ -547,7 +547,7 @@ def quantification(
             else:
                 cb = callback
 
-            protein_table = alphapept.quantification.protein_profile_parallel(
+            protein_table = alphapept.quantification.protein_profile_parallel_ap(
                 settings,
                 df_grouped,
                 callback=cb
@@ -988,7 +988,6 @@ def run_cli():
     cli_overview.add_command(cli_export)
     cli_overview.add_command(cli_workflow)
     cli_overview.add_command(cli_gui)
-    cli_overview.add_command(cli_watcher)
     cli_overview()
 
 
@@ -1138,28 +1137,28 @@ def cli_workflow(settings_file, progress):
     "gui",
     help="Start graphical user interface for AlphaPept.",
 )
-@click.option(
-    "--test",
-    "test",
-    help="Test",
-    is_flag=True,
-    default=False,
-    show_default=True,
-)
-def cli_gui(test):
-    print('Launching GUI')
-    import alphapept.ui
-    if test:
-        alphapept.ui.main(close=True)
-    else:
-        alphapept.ui.main()
 
-@click.command(
-    "watcher",
-    help="Watch folder for new files and automatically process them. Upload to MongoDB possible.",
-    short_help="File watching and procesing."
-)
-@CLICK_SETTINGS_OPTION
-def cli_watcher(settings_file):
-    x = FileWatcher(settings_file)
-    x.run()
+def cli_gui():
+    print('Starting AlphaPept Server')
+    print('This may take a second..')
+
+    _this_file = os.path.abspath(__file__)
+    _this_directory = os.path.dirname(_this_file)
+
+    file_path = os.path.join(_this_directory, 'webui.py')
+
+    print(file_path)
+
+    import sys
+    from streamlit import cli as stcli
+
+    #if __name__ == '__main__':
+    #    sys.argv = ["streamlit", "run", "webui.py"]
+    #    sys.exit(stcli.main())
+
+    #args = '--theme.primaryColor #18212b --theme.backgroundColor #FFFFFF --theme.secondaryBackgroundColor #f0f2f6 --theme.textColor #262730 --theme.font "sans serif"'
+
+    #sys.argv = ["streamlit", "run", file_path, args]
+
+    sys.argv = ["streamlit", "run", file_path]
+    sys.exit(stcli.main())

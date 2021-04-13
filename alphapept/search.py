@@ -1084,12 +1084,37 @@ def search_fasta_block(to_process):
             precmasses, seqs, fragmasses, fragtypes = zip(*spectra)
             sortindex = np.argsort(precmasses)
 
+            fragmasses = np.array(fragmasses, dtype=object)[sortindex]
+            fragtypes = np.array(fragtypes, dtype=object)[sortindex]
+
+            lens = [len(_) for _ in fragmasses]
+
+            n_frags = sum(lens)
+
+            frags = np.zeros(n_frags, dtype=fragmasses[0].dtype)
+            frag_types = np.zeros(n_frags, dtype=fragtypes[0].dtype)
+
+            indices = np.zeros(len(lens) + 1, np.int64)
+            indices[1:] = lens
+            indices = np.cumsum(indices)
+
+            #Fill data
+
+            for _ in range(len(indices)-1):
+
+                start = indices[_]
+                end = indices[_+1]
+                frags[start:end] = fragmasses[_]
+                frag_types[start:end] = fragtypes[_]
+
             db_data = {}
-            db_data['precursors'] = np.array(precmasses)[sortindex]
-            db_data['seqs'] = np.array(seqs)[sortindex]
-            db_data['fragmasses']  = list_to_numpy_f32(np.array(fragmasses, dtype=object)[sortindex])
-            db_data['fragtypes'] = list_to_numpy_f32(np.array(fragtypes, dtype=object)[sortindex])
-            db_data['bounds'] = np.sum(db_data['fragmasses']>=0,axis=0).astype(np.int64)
+
+            db_data["precursors"] = np.array(precmasses)[sortindex]
+            db_data["seqs"] = np.array(seqs)[sortindex]
+
+            db_data["fragmasses"] = frags
+            db_data["fragtypes"] = frag_types
+            db_data["indices"] = indices
 
             for file_idx, ms_file in enumerate(ms_files):
                 query_data = alphapept.io.MS_Data_File(
