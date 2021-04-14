@@ -225,7 +225,16 @@ class TestRun():
         string = f"mongodb+srv://{MONGODB_USER}:{password}@{MONGODB_URL}"
         client = MongoClient(string)
 
-        post_id = client['github']['performance_runs'].insert_one(self.report).inserted_id
+
+        #When having keys with dots like filename.ms_data.hdf, mongodb causes an error. This is to remove the dots.
+        report = self.report
+        files_old = report['summary']['file_sizes']['files'].copy()
+        report['summary']['file_sizes']['files'] = {}
+        for file in files_old.keys():
+            new_filename = file.replace('.ms_data.hdf', '')
+            report['summary']['file_sizes']['files'][new_filename] = files_old[file]
+
+        post_id = client['github']['performance_runs'].insert_one(report).inserted_id
 
         logging.info(f"Uploaded {post_id}.")
 
