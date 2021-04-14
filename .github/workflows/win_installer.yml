@@ -19,6 +19,3 @@ jobs:
     - name: Test compiled version - cmd
       run: |
         C:\actions-runner\_work\alphapept\alphapept\installer\one_click_windows\dist\alphapept\alphapept.exe
-    - name: Test compiled version - gui
-      run: |
-        C:\actions-runner\_work\alphapept\alphapept\installer\one_click_windows\dist\alphapept\alphapept.exe gui --test
