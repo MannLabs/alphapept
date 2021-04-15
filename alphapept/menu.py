@@ -28,6 +28,10 @@ PROCESSED_PATH = os.path.join(HOME, "alphapept", "finished")
 PROCESS_FILE = os.path.join(QUEUE_PATH, 'process')
 FILE_WATCHER_FILE = os.path.join(QUEUE_PATH, 'file_watcher')
 
+for folder in [QUEUE_PATH, PROCESSED_PATH]:
+    if not os.path.isdir(folder):
+        os.mkdir(folder)
+
 def check_new_files(path):
     """
     Check for new files in folder
@@ -120,21 +124,25 @@ def history():
 
         plots = st.multiselect('Plots', options = options, default=options)
 
-        for plot in plots:
-            plot_dict = {} # summary_time
-            if plot == 'timing':
-                for _ in all_results.keys():
-                    plot_dict[_] = all_results[_]["summary"]["timing"]["total"]
-            else:
-                for _ in all_results.keys():
-                    file = os.path.splitext(all_results[_]['summary']['processed_files'][0])[0]
-                    plot_dict[_] = all_results[_]["summary"][file][plot]
+        with st.spinner('Creating plots..'):
+            for plot in plots:
+                plot_dict = {} # summary_time
+                if plot == 'timing':
+                    for _ in all_results.keys():
+                        plot_dict[_] = all_results[_]["summary"]["timing"]["total"]
+                else:
+                    for _ in all_results.keys():
+                        file = os.path.splitext(all_results[_]['summary']['processed_files'][0])[0]
+                        try:
+                            plot_dict[_] = all_results[_]["summary"][file][plot]
+                        except KeyError:
+                            plot_dict[_] = 0
 
-            fig = plt.figure(figsize=(10,3))
-            plt.bar(range(len(plot_dict)), list(plot_dict.values()), align='center')
-            plt.xticks(range(len(plot_dict)), list(plot_dict.keys()), rotation='vertical')
-            plt.title(plot)
-            st.write(fig)
+                fig = plt.figure(figsize=(10,3))
+                plt.bar(range(len(plot_dict)), list(plot_dict.values()), align='center')
+                plt.xticks(range(len(plot_dict)), list(plot_dict.keys()), rotation='vertical')
+                plt.title(plot)
+                st.write(fig)
 
 
         if False:
@@ -201,6 +209,8 @@ def file_watcher(folder, settings_template, minimum_file_size, tag):
 
     already_added = []
 
+    print(f'{datetime.now()} file watcher started.')
+
     while True:
         if os.path.isfile(FILE_WATCHER_FILE):
             with open(FILE_WATCHER_FILE, "r") as process_file:
@@ -218,7 +228,9 @@ def file_watcher(folder, settings_template, minimum_file_size, tag):
 
         if tag != 'None':
             new_files = [_ for _ in new_files if tag in _]
+
         new_files = [_ for _ in new_files if _ not in already_added]
+
         already_added = new_files
 
         print(f'{datetime.now()} file watcher running. {len(new_files)} new files.')
@@ -254,6 +266,7 @@ def start_process(target, process_file, args = None, verbose = True):
 
     if verbose:
         st.success(f'Started process PID {p.pid} at {now}')
+
     with open(process_file, "w") as file:
         yaml.dump(process, file, sort_keys=False)
 
@@ -346,6 +359,8 @@ def system():
         else:
             settings_ = load_settings(settings_template)
             st.success('Valid settings file.')
+            if st.checkbox('Show'):
+                st.write(settings_)
 
         if valid:
             start_watcher = st.button('Start file watcher ')

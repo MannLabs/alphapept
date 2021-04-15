@@ -1022,7 +1022,7 @@ def cli_gui():
     theme.append("--theme.font='sans serif'")
     theme.append("--theme.primaryColor=#18212b")
 
-    args = ["streamlit", "run", file_path, "--global.developmentMode=false", "--server.port=8501"]
+    args = ["streamlit", "run", file_path, "--global.developmentMode=false", "--server.port=8502"]
 
     args.extend(theme)
 
