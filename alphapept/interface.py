@@ -2,10 +2,10 @@
 
 __all__ = ['parallel_execute', 'tqdm_wrapper', 'check_version_and_hardware', 'create_database', 'import_raw_data',
            'feature_finding', 'wrapped_partial', 'search_data', 'recalibrate_data', 'score', 'align', 'match',
-           'quantification', 'export', 'get_summary', 'run_complete_workflow', 'FileWatcher', 'run_cli', 'cli_overview',
+           'quantification', 'export', 'get_summary', 'run_complete_workflow', 'run_cli', 'cli_overview',
            'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search', 'cli_recalibrate', 'cli_score',
-           'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui', 'cli_watcher',
-           'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
+           'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui', 'CONTEXT_SETTINGS',
+           'CLICK_SETTINGS_OPTION']
 
 # Cell
 import alphapept.utils
@@ -115,14 +115,17 @@ def create_database(
         set_logger()
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
-    if 'database_path' not in settings['fasta']:
+    if 'database_path' not in settings['experiment']:
         database_path = ''
     else:
-        database_path = settings['fasta']['database_path']
+        database_path = settings['experiment']['database_path']
+
+    if database_path is None:
+        database_path = ''
 
 
     if not settings['fasta']['save_db']: #Do not save DB
-        settings['fasta']['database_path'] = None
+        settings['experiment']['database_path'] = None
         logging.info('Not saving Database.')
 
         return settings
@@ -141,12 +144,12 @@ def create_database(
             'Database path {} is not a file.'.format(database_path)
         )
 
-        if len(settings['fasta']['fasta_paths']) == 0:
+        if len(settings['experiment']['fasta_paths']) == 0:
             raise FileNotFoundError("No FASTA files set.")
 
         total_fasta_size = 0
 
-        for fasta_file in settings['fasta']['fasta_paths']:
+        for fasta_file in settings['experiment']['fasta_paths']:
             if os.path.isfile(fasta_file):
 
                 fasta_size = os.stat(fasta_file).st_size/(1024**2)
@@ -169,7 +172,7 @@ def create_database(
         if total_fasta_size >= max_fasta_size:
             logging.info(f'Total FASTA size {total_fasta_size:.2f} is larger than the set maximum size of {max_fasta_size:.2f} Mb')
 
-            settings['fasta']['database_path'] = None
+            settings['experiment']['database_path'] = None
 
             return settings
 
@@ -199,6 +202,7 @@ def create_database(
             spectra,
             pept_dict,
             fasta_dict,
+            database_path = database_path,
             **settings['fasta']
         )
         logging.info(
@@ -208,7 +212,7 @@ def create_database(
             )
         )
 
-        settings['fasta']['database_path'] = database_path
+        settings['experiment']['database_path'] = database_path
 
     return settings
 
@@ -290,10 +294,10 @@ def search_data(
 
     if first_search:
         logging.info('Starting first search.')
-        if settings['fasta']['database_path'] is not None:
+        if settings['experiment']['database_path'] is not None:
             settings = parallel_execute(settings, wrapped_partial(alphapept.search.search_db, first_search = first_search), callback = cb)
 
-            db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
+            db_data = alphapept.fasta.read_database(settings['experiment']['database_path'])
 
             fasta_dict = db_data['fasta_dict'].item()
             pept_dict = db_data['pept_dict'].item()
@@ -315,10 +319,10 @@ def search_data(
     else:
         logging.info('Starting second search with DB.')
 
-        if settings['fasta']['database_path'] is not None:
+        if settings['experiment']['database_path'] is not None:
             settings = parallel_execute(settings, wrapped_partial(alphapept.search.search_db, first_search = first_search), callback = cb)
 
-            db_data = alphapept.fasta.read_database(settings['fasta']['database_path'])
+            db_data = alphapept.fasta.read_database(settings['experiment']['database_path'])
 
             fasta_dict = db_data['fasta_dict'].item()
             pept_dict = db_data['pept_dict'].item()
@@ -410,7 +414,7 @@ def score(
     if fasta_dict is None:
 
         db_data = alphapept.fasta.read_database(
-            settings['fasta']['database_path']
+            settings['experiment']['database_path']
         )
         fasta_dict = db_data['fasta_dict'].item()
         pept_dict = db_data['pept_dict'].item()
@@ -508,7 +512,7 @@ def quantification(
     df = alphapept.utils.assemble_df(settings)
     logging.info('Assembly complete.')
 
-    if settings["general"]["lfq_quantification"]:
+    if settings["workflow"]["lfq_quantification"]:
 
         if field in df.keys():  # Check if the quantification information exists.
             # We could include another protein fdr in here..
@@ -543,7 +547,7 @@ def quantification(
             else:
                 cb = callback
 
-            protein_table = alphapept.quantification.protein_profile_parallel(
+            protein_table = alphapept.quantification.protein_profile_parallel_ap(
                 settings,
                 df_grouped,
                 callback=cb
@@ -598,6 +602,7 @@ def export(
 
 from time import time, sleep
 from .__version__ import VERSION_NO
+import datetime
 
 def get_summary(settings, summary):
 
@@ -608,7 +613,9 @@ def get_summary(settings, summary):
 
         base, ext = os.path.splitext(_)
         filename = os.path.split(base)[1]
-        file_sizes[base+"_ms_data"] = os.path.getsize(os.path.splitext(_)[0] + ".ms_data.hdf")/1024**2
+        ms_file_name = os.path.splitext(_)[0] + ".ms_data.hdf"
+
+        file_sizes[ms_file_name] = os.path.getsize(ms_file_name)/1024**2
         # file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
 
         ms_data = alphapept.io.MS_Data_File(os.path.splitext(_)[0] + ".ms_data.hdf")
@@ -654,33 +661,37 @@ def run_complete_workflow(
     settings_parsed=False,
     callback=None,
     callback_overall = None,
-    callback_task = None
+    callback_task = None,
+    logfile = None
 ):
 
     if not logger_set:
         set_logger()
+
+    if logfile is not None:
+        set_logger(log_file_name=logfile)
     if not settings_parsed:
         settings = check_version_and_hardware(settings)
 
     steps = []
 
-    general = settings['general']
+    workflow = settings['workflow']
 
-    if general["create_database"]:
+    if workflow["create_database"]:
         steps.append(create_database)
-    if general["import_raw_data"]:
+    if workflow["import_raw_data"]:
         steps.append(import_raw_data)
-    if general["find_features"]:
+    if workflow["find_features"]:
         steps.append(feature_finding)
-    if general["search_data"]:
+    if workflow["search_data"]:
         steps.append(search_data)
-    if general["recalibrate_data"]:
+    if workflow["recalibrate_data"]:
         steps.append(recalibrate_data)
         steps.append(search_data)
     steps.append(score)
-    if general["align"]:
+    if workflow["align"]:
         steps.append(align)
-    if general["match"]:
+    if workflow["match"]:
         if align not in steps:
             steps.append(align)
         steps.append(match)
@@ -694,6 +705,8 @@ def run_complete_workflow(
 
     if progress:
         logging.info('Setting callback to logger.')
+
+
         #log progress to be used
         def cb_logger_o(x):
             logging.info(f"__progress_overall {x:.3f}")
@@ -770,165 +783,16 @@ def run_complete_workflow(
 
         summary['timing'] = time_dict
         summary['version'] = VERSION_NO
+        summary['time'] = f"{datetime.datetime.now()}"
+
+        processed_files = []
+
+        for _ in settings['experiment']['file_paths']:
+            processed_files.append(os.path.split(_)[1])
+
+        summary['processed_files'] = processed_files
 
     return settings
-
-# Cell
-class FileWatcher():
-    """
-    Class to watch files and process
-    """
-    def __init__(self, config_path):
-        db_set = True
-        try:
-            from pymongo import MongoClient
-        except:
-            print('DB upload requires pymongo - DB upload deactivated')
-            db_set = False
-
-        try:
-            import dns
-        except:
-            print('DB upload requires dnspython - DB upload deactivated')
-            db_set = False
-
-        if os.path.isfile(config_path):
-            watcher_config = alphapept.settings.load_settings(config_path)
-        else:
-            raise FileNotFoundError(config_path)
-
-        if os.path.isdir(watcher_config['path']):
-            self.path = watcher_config['path']
-        else:
-            raise FileNotFoundError(path)
-
-
-        db_config = {}
-        for db_field in ['db_user', 'db_password', 'db_url', 'db_database', 'db_collection']:
-            if watcher_config[db_field] == '':
-                print(f"{db_field} not set.")
-                db_set = False
-            else:
-                db_config[db_field] = watcher_config[db_field]
-
-        if db_set:
-            self.set_db(**db_config)
-        else:
-            self.db_set = False
-
-        if os.path.isfile(watcher_config['settings']):
-            self.settings = alphapept.settings.load_settings(watcher_config['settings'])
-            print(f"Loaded settings from {watcher_config['settings']}")
-        else:
-            raise FileNotFoundError(watcher_config['settings'])
-
-        self.update_rate = watcher_config['update_rate']
-        self.n_processed = 0
-        self.n_failed = 0
-        self.minimum_file_size = watcher_config['minimum_file_size']
-        self.tag = watcher_config['tag']
-
-    def check_new_files(self):
-        """
-        Check for new files in folder
-        """
-        new_files = []
-
-        for dirpath, dirnames, filenames in os.walk(self.path):
-
-            for dirname in [d for d in dirnames if d.endswith(('.d','.d/'))]: #Bruker
-                new_file = os.path.join(dirpath, dirname)
-                base, ext = os.path.splitext(dirname)
-                hdf_path = os.path.join(dirpath, base+'.ms_data.hdf')
-
-                if not os.path.exists(hdf_path):
-                    new_files.append(new_file)
-
-            for filename in [f for f in filenames if f.lower().endswith(('.raw','.raw/'))]: #Thermo
-                new_file = os.path.join(dirpath, filename)
-                base, ext = os.path.splitext(filename)
-                hdf_path = os.path.join(dirpath, base+'.ms_data.hdf')
-
-                if not os.path.exists(hdf_path):
-                    new_files.append(new_file)
-        return new_files
-
-    def set_db(self, db_user = '', db_password = '', db_url = '', db_database= '', db_collection= ''):
-
-        self.db_user = db_user
-        self.db_password = db_password
-        self.db_url = db_url
-        self.db_database = db_database
-        self.db_collection = db_collection
-
-        self.db_set = True
-
-
-    def check_file_completion(self, list_of_files, sleep_time = 10):
-        to_analyze = []
-        file_dict = {}
-
-        for file in list_of_files:
-            if file.endswith('.d'):
-                to_check = os.path.join(file, 'analysis.tdf_bin')
-            else:
-                to_check = file
-
-            file_dict[file] = os.path.getsize(to_check)
-
-        sleep(sleep_time)
-
-        for file in list_of_files:
-            if file.endswith('.d'):
-                to_check = os.path.join(file, 'analysis.tdf_bin')
-            else:
-                to_check = file
-
-            filesize = os.path.getsize(to_check)
-            if (filesize == file_dict[file]) & (filesize/1024/1024 > self.minimum_file_size):
-                to_analyze.append(file)
-
-        return to_analyze
-
-    def run(self):
-        print(f'Starting FileWatcher on {self.path}')
-
-        while True:
-            unprocessed = self.check_file_completion(self.check_new_files())
-
-            if self.tag != '':
-                unprocessed = [_ for _ in unprocessed if self.tag.lower() in _.lower()]
-
-            if len(unprocessed) > 0:
-                try:
-                    settings = self.settings.copy()
-                    settings['experiment']['file_paths'] =  [unprocessed[0]]
-                    settings_ = alphapept.interface.run_complete_workflow(settings)
-
-                    if self.db_set:
-                        self.upload_to_db(settings_)
-                    self.n_processed +=1
-                    print(f'--- File Watcher Status: Files processed {self.n_processed:,} - failed {self.n_failed:,} ---')
-                except KeyboardInterrupt:
-                    raise
-                except Exception as e:
-                    logging.info(e)
-                    self.n_failed +=1
-            else:
-                sleep(self.update_rate)
-
-
-    def upload_to_db(self, settings):
-        from pymongo import MongoClient
-        logging.info('Uploading to DB')
-        string = f"mongodb+srv://{self.db_user}:{self.db_password}@{self.db_url}"
-        client = MongoClient(string)
-
-        post_id = client[self.db_database][self.db_collection].insert_one(settings).inserted_id
-
-        logging.info(f"Uploaded {post_id}.")
-
-        return post_id
 
 # Cell
 
@@ -978,7 +842,6 @@ def run_cli():
     cli_overview.add_command(cli_export)
     cli_overview.add_command(cli_workflow)
     cli_overview.add_command(cli_gui)
-    cli_overview.add_command(cli_watcher)
     cli_overview()
 
 
@@ -1128,28 +991,41 @@ def cli_workflow(settings_file, progress):
     "gui",
     help="Start graphical user interface for AlphaPept.",
 )
-@click.option(
-    "--test",
-    "test",
-    help="Test",
-    is_flag=True,
-    default=False,
-    show_default=True,
-)
-def cli_gui(test):
-    print('Launching GUI')
-    import alphapept.ui
-    if test:
-        alphapept.ui.main(close=True)
-    else:
-        alphapept.ui.main()
 
-@click.command(
-    "watcher",
-    help="Watch folder for new files and automatically process them. Upload to MongoDB possible.",
-    short_help="File watching and procesing."
-)
-@CLICK_SETTINGS_OPTION
-def cli_watcher(settings_file):
-    x = FileWatcher(settings_file)
-    x.run()
+def cli_gui():
+    print('Starting AlphaPept Server')
+    print('This may take a second..')
+
+    _this_file = os.path.abspath(__file__)
+    _this_directory = os.path.dirname(_this_file)
+
+    file_path = os.path.join(_this_directory, 'webui.py')
+
+    print(file_path)
+
+    import sys
+    from streamlit import cli as stcli
+
+    #if __name__ == '__main__':
+    #    sys.argv = ["streamlit", "run", "webui.py"]
+    #    sys.exit(stcli.main())
+
+    #args = '--theme.primaryColor #18212b --theme.backgroundColor #FFFFFF --theme.secondaryBackgroundColor #f0f2f6 --theme.textColor #262730 --theme.font "sans serif"'
+
+    #sys.argv = ["streamlit", "run", file_path, args]
+
+    theme = []
+
+    theme.append("--theme.backgroundColor=#FFFFFF")
+    theme.append("--theme.secondaryBackgroundColor=#f0f2f6")
+    theme.append("--theme.textColor=#262730")
+    theme.append("--theme.font='sans serif'")
+    theme.append("--theme.primaryColor=#18212b")
+
+    args = ["streamlit", "run", file_path, "--global.developmentMode=false", "--server.port=8501", "--browser.gatherUsageStats=False"]
+
+    args.extend(theme)
+
+    sys.argv = args
+
+    sys.exit(stcli.main())

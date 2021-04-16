@@ -714,7 +714,7 @@ def generate_database_parallel(settings, callback = None):
     """
     n_processes = settings['general']['n_processes']
 
-    fasta_list, fasta_dict = generate_fasta_list(**settings['fasta'])
+    fasta_list, fasta_dict = generate_fasta_list(fasta_paths = settings['experiment']['fasta_paths'], **settings['fasta'])
 
     logging.info(f'FASTA contains {len(fasta_list):,} entries.')
 
@@ -793,6 +793,28 @@ def save_database(spectra, pept_dict, fasta_dict, database_path, **kwargs):
 
     precmasses, seqs, fragmasses, fragtypes = zip(*spectra)
     sortindex = np.argsort(precmasses)
+    fragmasses = np.array(fragmasses, dtype=object)[sortindex]
+    fragtypes = np.array(fragtypes, dtype=object)[sortindex]
+
+    lens = [len(_) for _ in fragmasses]
+
+    n_frags = sum(lens)
+
+    frags = np.zeros(n_frags, dtype=fragmasses[0].dtype)
+    frag_types = np.zeros(n_frags, dtype=fragtypes[0].dtype)
+
+    indices = np.zeros(len(lens) + 1, np.int64)
+    indices[1:] = lens
+    indices = np.cumsum(indices)
+
+    #Fill data
+
+    for _ in range(len(indices)-1):
+
+        start = indices[_]
+        end = indices[_+1]
+        frags[start:end] = fragmasses[_]
+        frag_types[start:end] = fragtypes[_]
 
     to_save = {}
 
@@ -800,10 +822,9 @@ def save_database(spectra, pept_dict, fasta_dict, database_path, **kwargs):
     to_save["seqs"] = np.array(seqs, dtype=object)[sortindex]
     to_save["proteins"] = pd.DataFrame(fasta_dict).T
 
-    to_save["fragmasses"] = alphapept.io.list_to_numpy_f32(np.array(fragmasses, dtype='object')[sortindex])
-    to_save["fragtypes"] = alphapept.io.list_to_numpy_f32(np.array(fragtypes, dtype='object')[sortindex])
-
-    to_save["bounds"] = np.sum(to_save['fragmasses']>=0,axis=0).astype(np.int64)
+    to_save["fragmasses"] = frags
+    to_save["fragtypes"] = frag_types
+    to_save["indices"] = indices
 
     db_file = alphapept.io.HDF_File(database_path, is_new_file=True)
     for key, value in to_save.items():
