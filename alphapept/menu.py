@@ -90,10 +90,9 @@ def history():
     Plot history of previous experiments
     """
     st.write("# History")
-    with st.beta_expander("Information"):
-        st.text(f'History allows to visualize summary information about previous analysis.'
-        f'\nIt checks {PROCESSED_PATH} for *.yaml files.'
-        '\nFiles can be filtered to only include a subset.')
+    st.text(f'History allows to visualize summary information from multiple previous analysis.'
+    f'\nIt checks {PROCESSED_PATH} for *.yaml files.'
+    '\nFiles can be filtered to only include a subset.')
 
     processed_files = [_ for _ in os.listdir(PROCESSED_PATH) if _.endswith('.yaml')]
     with st.beta_expander(f"Processed files ({len(processed_files)})"):
@@ -294,6 +293,7 @@ def check_process(process_path):
 def system():
 
     st.write("# System")
+    st.text(f'This page shows system status and settings and allows to launch a file watcher.')
     st.write('## General')
 
     # Main Process
@@ -376,6 +376,7 @@ def system():
 def status():
 
     st.write("# Status")
+    st.text(f'This page shows the status of the current analysis.\nSwitch to `New experiment` to define a new experiment')
     status_msg = st.empty()
 
     current_log = ''
@@ -498,8 +499,7 @@ def get_table_download_link(df, name):
 def result():
     st.write("# Results")
 
-    with st.beta_expander(f'Info'):
-        st.write("This page allows to explore the analysis results. AlphaPept uses the HDF container format which can be accessed here.")
+    st.text("This page allows to explore the analysis results.\nAlphaPept uses the HDF container format which can be accessed here.")
 
     #TOdo: include previously processed output files..
 
