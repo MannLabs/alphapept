@@ -703,23 +703,22 @@ def experiment():
                                 for element in group:
                                     recorder = widget_from_setting(recorder, key, group, element)
 
-                name = st.text_input('Enter experiment name and press enter to start.')
+                name = st.text_input('Enter experiment name and press enter.')
 
                 if name:
-                    settings = load_settings(DEFAULT_SETTINGS_PATH)
-
-                    for group in recorder:
-                        for key in recorder[group]:
-                            settings[group][key] = recorder[group][key]
-
                     long_name = datetime.today().strftime('%Y_%m_%d_') + name + '.yaml'
-
                     long_name_path = os.path.join(QUEUE_PATH, long_name)
 
                     if os.path.exists(long_name_path):
                         st.error(f'Name {long_name} already exists. Please rename.')
                     else:
+                        st.info(f'Filename will be: {long_name}. Click submit button to add to queue.')
+                        if st.button('Submit'):
+                            settings = load_settings(DEFAULT_SETTINGS_PATH)
+                            for group in recorder:
+                                for key in recorder[group]:
+                                    settings[group][key] = recorder[group][key]
 
-                        save_settings(settings, long_name_path)
-                        #Change things from experiment
-                        st.success(f'Experiment {long_name} submitted. Switch to Status tab to track progress.')
+                            save_settings(settings, long_name_path)
+                            #Change things from experiment
+                            st.success(f'Experiment {long_name} submitted. Switch to Status tab to track progress.')
