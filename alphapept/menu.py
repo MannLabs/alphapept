@@ -390,8 +390,11 @@ def status():
     overall = st.progress(0)
 
     task = st.empty()
-
     task.text('Current task: None')
+
+    current_p = st.empty()
+    current_p.text('Current progess: 0%')
+
     current = st.progress(0)
 
     last_log = st.empty()
@@ -438,7 +441,10 @@ def status():
 
                 for line in f.readlines():
                     if '__progress_current' in line:
-                        current.progress(float(line.split('__progress_current ')[1][:5]))
+                        current_p_ = float(line.split('__progress_current ')[1][:5])
+                        current.progress(current_p_)
+
+                        current_p.text(f'Current progress: {current_p_*100:.2f}%')
                     elif '__progress_overall' in line:
 
                         overall_p = float(line.split('__progress_overall ')[1][:5])
