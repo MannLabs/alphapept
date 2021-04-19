@@ -160,11 +160,7 @@ import os
 
 def AlphaPool(a, *args, **kwargs):
 
-    p = psutil.Process(os.getpid())
-    with p.oneshot():
-        n_threads = p.num_threads()
-
-    new_max = min(a, 62-n_threads)
-    print(f"AlphaPool {n_threads} threads running. Setting max to {new_max}.")
+    new_max = min(a, 50)
+    print(f"AlphaPool was set to {a} processes. Setting max to {new_max}.")
 
     return Pool(new_max)
