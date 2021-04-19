@@ -604,7 +604,7 @@ def parse_folder(file_folder):
     return raw_files, fasta_files, db_files
 
 
-def widget_from_setting(recorder, key, group, element):
+def widget_from_setting(recorder, key, group, element, override=None):
     """
     e.g. key = General
 
@@ -620,17 +620,22 @@ def widget_from_setting(recorder, key, group, element):
     else:
         help = ''
 
+    value = _['default']
+
+    if override:
+        value = override
+
     if _['type'] == 'doublespinbox':
-        recorder[key][element] = st.slider(element, min_value = float(_['min']), max_value = float(_['max']), value = float(_['default']), help = help)
+        recorder[key][element] = st.slider(element, min_value = float(_['min']), max_value = float(_['max']), value = float(value), help = help)
     elif _['type'] == 'spinbox':
-        recorder[key][element] = st.slider(element, min_value = _['min'], max_value = _['max'], value = _['default'], help = help)
+        recorder[key][element] = st.slider(element, min_value = _['min'], max_value = _['max'], value = value, help = help)
     elif _['type'] == 'checkbox':
-        recorder[key][element] = st.checkbox(element, value = _['default'], help = help)
+        recorder[key][element] = st.checkbox(element, value = value, help = help)
     elif _['type'] == 'checkgroup':
         opts = list(_['value'].keys())
-        recorder[key][element] = st.multiselect(label = element, options = opts, default = _['default'], help = help)
+        recorder[key][element] = st.multiselect(label = element, options = opts, default = value, help = help)
     elif _['type'] == 'combobox':
-        recorder[key][element] = st.selectbox(label = element, options = _['value'], index = _['value'].index(_['default']),  help = help)
+        recorder[key][element] = st.selectbox(label = element, options = _['value'], index = _['value'].index(value),  help = help)
     else:
         st.write(f"Not understood {_}")
 
@@ -653,7 +658,6 @@ def experiment():
     else:
         with st.spinner('Parsing folder'):
             raw_files, fasta_files, db_files = parse_folder(file_folder)
-
 
             recorder['experiment']['fasta_paths'] = [os.path.join(file_folder, _) for _ in fasta_files]
             recorder['experiment']['file_paths'] = [os.path.join(file_folder, _) for _ in raw_files]
@@ -701,13 +705,35 @@ def experiment():
 
                 st.write(f"## Additional settings")
 
-                with st.beta_expander("Settings"):
+                prev_settings = st.checkbox('Use previous settings as template')
+
+                loaded = False
+                if prev_settings:
+                    uploaded_file = st.file_uploader("Choose a file")
+                    if uploaded_file is not None:
+                        uploaded_settings =  yaml.load(uploaded_file, Loader=yaml.FullLoader)
+                        loaded=True
+
+                with st.beta_expander("Settings", loaded):
                     for key in SETTINGS_TEMPLATE.keys():
                         if key not in ['experiment', 'workflow']:
                             group = SETTINGS_TEMPLATE[key]
-                            if st.checkbox(key):
+
+                            #Check if different than default
+                            if loaded:
+                                changed = sum([uploaded_settings[key][element] != group[element]['default'] for element in group]) > 0
+                            else:
+                                changed = False
+
+                            if st.checkbox(key, changed):
                                 for element in group:
-                                    recorder = widget_from_setting(recorder, key, group, element)
+                                    override = None
+                                    if changed:
+                                        if uploaded_settings[key][element] != group[element]['default']:
+                                            override = uploaded_settings[key][element]
+
+                                    recorder = widget_from_setting(recorder, key, group, element, override)
+
 
                 name = st.text_input('Enter experiment name and press enter.')
 
