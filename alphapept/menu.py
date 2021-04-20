@@ -586,7 +586,9 @@ def result():
                     df = pd.read_hdf(file, opt)
                 else:
                     df = ms_file.read(dataset_name = opt)
-                st.write(df)
+
+                range = st.slider('Preview', 0, len(df), (0,100))
+                st.write(df.iloc[range[0]:range[1]])
                 if st.checkbox('Create download link'):
                     if not isinstance(df, pd.DataFrame):
                         df = pd.DataFrame(df)
