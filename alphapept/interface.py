@@ -60,7 +60,7 @@ def parallel_execute(settings, step, callback=None):
             n_processes = np.max([int(np.floor(memory_available/6)),1]) # 8 gb per file: Todo: make this better
             logging.info(f'Searching. Setting Process limit to {n_processes}.')
 
-        with alphapept.speed.Pool(n_processes) as p:
+        with alphapept.speed.AlphaPool(n_processes) as p:
             for i, success in enumerate(p.imap(step, to_process)):
                 if success is not True:
                     failed.append(files[i])

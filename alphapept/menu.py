@@ -540,10 +540,11 @@ def result():
 
             if os.path.isfile(log_path):
                 with st.beta_expander(f"Run log"):
-                    with open(log_path, "r") as logfile:
-                        lines = logfile.readlines()
-                        st.code(''.join(lines))
-
+                    with st.spinner('Parsing file'):
+                        with open(log_path, "r") as logfile:
+                            lines = logfile.readlines()
+                            lines = [_ for _ in lines if '__' not in _]
+                            st.code(''.join(lines))
 
             raw_files = [os.path.splitext(_)[0]+'.ms_data.hdf' for _ in results['experiment']['file_paths']]
 
