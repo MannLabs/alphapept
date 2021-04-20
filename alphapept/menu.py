@@ -587,7 +587,7 @@ def result():
                 else:
                     df = ms_file.read(dataset_name = opt)
 
-                range = st.slider('Preview', 0, len(df), (0,100))
+                range = st.slider('Data range', 0, len(df), (0,1000))
                 st.write(df.iloc[range[0]:range[1]])
                 if st.checkbox('Create download link'):
                     if not isinstance(df, pd.DataFrame):
