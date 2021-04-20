@@ -390,8 +390,11 @@ def status():
     overall = st.progress(0)
 
     task = st.empty()
-
     task.text('Current task: None')
+
+    current_p = st.empty()
+    current_p.text('Current progess: 0%')
+
     current = st.progress(0)
 
     last_log = st.empty()
@@ -438,7 +441,10 @@ def status():
 
                 for line in f.readlines():
                     if '__progress_current' in line:
-                        current.progress(float(line.split('__progress_current ')[1][:5]))
+                        current_p_ = float(line.split('__progress_current ')[1][:5])
+                        current.progress(current_p_)
+
+                        current_p.text(f'Current progress: {current_p_*100:.2f}%')
                     elif '__progress_overall' in line:
 
                         overall_p = float(line.split('__progress_overall ')[1][:5])
@@ -534,10 +540,11 @@ def result():
 
             if os.path.isfile(log_path):
                 with st.beta_expander(f"Run log"):
-                    with open(log_path, "r") as logfile:
-                        lines = logfile.readlines()
-                        st.code(''.join(lines))
-
+                    with st.spinner('Parsing file'):
+                        with open(log_path, "r") as logfile:
+                            lines = logfile.readlines()
+                            lines = [_ for _ in lines if '__' not in _]
+                            st.code(''.join(lines))
 
             raw_files = [os.path.splitext(_)[0]+'.ms_data.hdf' for _ in results['experiment']['file_paths']]
 
@@ -579,7 +586,9 @@ def result():
                     df = pd.read_hdf(file, opt)
                 else:
                     df = ms_file.read(dataset_name = opt)
-                st.write(df)
+
+                range = st.slider('Data range', 0, len(df), (0,1000))
+                st.write(df.iloc[range[0]:range[1]])
                 if st.checkbox('Create download link'):
                     if not isinstance(df, pd.DataFrame):
                         df = pd.DataFrame(df)
@@ -598,7 +607,7 @@ def parse_folder(file_folder):
     return raw_files, fasta_files, db_files
 
 
-def widget_from_setting(recorder, key, group, element):
+def widget_from_setting(recorder, key, group, element, override=None):
     """
     e.g. key = General
 
@@ -614,17 +623,22 @@ def widget_from_setting(recorder, key, group, element):
     else:
         help = ''
 
+    value = _['default']
+
+    if override:
+        value = override
+
     if _['type'] == 'doublespinbox':
-        recorder[key][element] = st.slider(element, min_value = float(_['min']), max_value = float(_['max']), value = float(_['default']), help = help)
+        recorder[key][element] = st.slider(element, min_value = float(_['min']), max_value = float(_['max']), value = float(value), help = help)
     elif _['type'] == 'spinbox':
-        recorder[key][element] = st.slider(element, min_value = _['min'], max_value = _['max'], value = _['default'], help = help)
+        recorder[key][element] = st.slider(element, min_value = _['min'], max_value = _['max'], value = value, help = help)
     elif _['type'] == 'checkbox':
-        recorder[key][element] = st.checkbox(element, value = _['default'], help = help)
+        recorder[key][element] = st.checkbox(element, value = value, help = help)
     elif _['type'] == 'checkgroup':
         opts = list(_['value'].keys())
-        recorder[key][element] = st.multiselect(label = element, options = opts, default = _['default'], help = help)
+        recorder[key][element] = st.multiselect(label = element, options = opts, default = value, help = help)
     elif _['type'] == 'combobox':
-        recorder[key][element] = st.selectbox(label = element, options = _['value'], index = _['value'].index(_['default']),  help = help)
+        recorder[key][element] = st.selectbox(label = element, options = _['value'], index = _['value'].index(value),  help = help)
     else:
         st.write(f"Not understood {_}")
 
@@ -647,7 +661,6 @@ def experiment():
     else:
         with st.spinner('Parsing folder'):
             raw_files, fasta_files, db_files = parse_folder(file_folder)
-
 
             recorder['experiment']['fasta_paths'] = [os.path.join(file_folder, _) for _ in fasta_files]
             recorder['experiment']['file_paths'] = [os.path.join(file_folder, _) for _ in raw_files]
@@ -695,13 +708,35 @@ def experiment():
 
                 st.write(f"## Additional settings")
 
-                with st.beta_expander("Settings"):
+                prev_settings = st.checkbox('Use previous settings as template')
+
+                loaded = False
+                if prev_settings:
+                    uploaded_file = st.file_uploader("Choose a file")
+                    if uploaded_file is not None:
+                        uploaded_settings =  yaml.load(uploaded_file, Loader=yaml.FullLoader)
+                        loaded=True
+
+                with st.beta_expander("Settings", loaded):
                     for key in SETTINGS_TEMPLATE.keys():
                         if key not in ['experiment', 'workflow']:
                             group = SETTINGS_TEMPLATE[key]
-                            if st.checkbox(key):
+
+                            #Check if different than default
+                            if loaded:
+                                changed = sum([uploaded_settings[key][element] != group[element]['default'] for element in group]) > 0
+                            else:
+                                changed = False
+
+                            if st.checkbox(key, changed):
                                 for element in group:
-                                    recorder = widget_from_setting(recorder, key, group, element)
+                                    override = None
+                                    if changed:
+                                        if uploaded_settings[key][element] != group[element]['default']:
+                                            override = uploaded_settings[key][element]
+
+                                    recorder = widget_from_setting(recorder, key, group, element, override)
+
 
                 name = st.text_input('Enter experiment name and press enter.')
 

@@ -78,7 +78,6 @@ def compare_specs_parallel(
     idxs_lower,
     idxs_higher,
     mtol,
-    query_bounds,
     db_indices,
     chunk=(0, 1),
     offset=False,
@@ -135,7 +134,6 @@ def compare_specs_single(
     idxs_lower,
     idxs_higher,
     mtol,
-    query_bounds,
     db_indices,
     chunk=(0, 1),
     offset=False,
@@ -246,8 +244,9 @@ def get_psms(
         db_indices = db_data['indices']
 
     query_indices = query_data["indices_ms2"]
-    query_bounds = query_data['bounds']
     query_frags = query_data['mass_list_ms2']
+
+
 
     if features is not None:
         if m_offset_calibrated:
@@ -257,7 +256,6 @@ def get_psms(
             query_masses = features['mass_matched'].values
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
-        query_bounds = query_bounds[features['query_idx'].values]
         query_selection = features['query_idx'].values
         indices = np.zeros(len(query_selection) + 1, np.int64)
         indices[1:] = np.diff(query_indices)[query_selection]
@@ -305,7 +303,6 @@ def get_psms(
                 idxs_lower,
                 idxs_higher,
                 m_tol,
-                query_bounds,
                 db_indices,
                 chunk,
                 offset,
@@ -322,7 +319,6 @@ def get_psms(
                 idxs_lower,
                 idxs_higher,
                 m_tol,
-                query_bounds,
                 db_indices,
                 chunk,
                 offset,
@@ -347,7 +343,6 @@ def get_psms(
                     idxs_lower,
                     idxs_higher,
                     m_tol,
-                    query_bounds,
                     db_indices,
                     chunk,
                     offset,
@@ -364,7 +359,6 @@ def get_psms(
                     idxs_lower,
                     idxs_higher,
                     m_tol,
-                    query_bounds,
                     db_indices,
                     chunk,
                     offset,
@@ -526,7 +520,6 @@ def score(
     db_frags,
     frag_types,
     mtol,
-    query_bounds,
     db_indices,
     ppm,
     psms_dtype,
@@ -616,7 +609,6 @@ def get_score_columns(
 ):
     logging.info('Extracting columns for scoring.')
     query_indices = query_data["indices_ms2"]
-    query_bounds = query_data['bounds']
     query_charges = query_data['charge2']
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
@@ -657,7 +649,6 @@ def get_score_columns(
             query_masses = features['mass_matched'].values
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
-        query_bounds = query_bounds[features['query_idx'].values]
         query_charges = query_charges[features['query_idx'].values]
         query_scans = query_scans[features['query_idx'].values]
 
@@ -709,7 +700,6 @@ def get_score_columns(
         db_frags,
         frag_types,
         m_tol,
-        query_bounds,
         db_indices,
         ppm,
         psms_dtype)
@@ -721,7 +711,6 @@ def get_score_columns(
 
     rts = np.array(query_rt)[psms["query_idx"]]
     psms = add_column(psms, rts, 'rt')
-
 
     if isinstance(db_data, str):
         db_seqs = read_database(db_data, array_name = 'seqs').astype(str)
@@ -772,7 +761,6 @@ def plot_hit(
     db_indices,
     db_frags,
     frag_types,
-    query_bounds,
     query_frags,
     query_ints,
     query_indices,
@@ -801,7 +789,6 @@ def plot_hit(
 
     frag_type = frag_types[:, db_idx] [:db_bound]
 
-    query_bound = query_bounds[query_idx]
     query_idx_start = query_indices[query_idx]
     query_idx_end = query_indices[query_idx + 1]
     query_frag = query_frags[query_idx_start:query_idx_end]
@@ -866,11 +853,9 @@ def plot_psms(query_data, df, index, mass_dict, ppm=True, m_tol=20):
 
     db_int = [100 for _ in db_frag]
 
-    query_bounds = query_data['bounds']
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
 
-    query_bound = query_bounds[query_idx]
     query_idx_start = query_indices[query_idx]
     query_idx_end = query_indices[query_idx + 1]
     query_frag = query_frags[query_idx_start:query_idx_end]
@@ -1049,6 +1034,7 @@ from .fasta import block_idx, generate_fasta_list, generate_spectra, check_pepti
 from alphapept import constants
 mass_dict = constants.mass_dict
 import os
+import alphapept.speed
 
 def search_fasta_block(to_process):
     """
@@ -1078,9 +1064,12 @@ def search_fasta_block(to_process):
 
         f_index += 1
 
+
     if len(to_add) > 0:
         for seq_block in blocks(to_add, spectra_block):
+
             spectra = generate_spectra(seq_block, mass_dict)
+
             precmasses, seqs, fragmasses, fragtypes = zip(*spectra)
             sortindex = np.argsort(precmasses)
 
@@ -1090,6 +1079,7 @@ def search_fasta_block(to_process):
             lens = [len(_) for _ in fragmasses]
 
             n_frags = sum(lens)
+
 
             frags = np.zeros(n_frags, dtype=fragmasses[0].dtype)
             frag_types = np.zeros(n_frags, dtype=fragtypes[0].dtype)
@@ -1101,7 +1091,6 @@ def search_fasta_block(to_process):
             #Fill data
 
             for _ in range(len(indices)-1):
-
                 start = indices[_]
                 end = indices[_+1]
                 frags[start:end] = fragmasses[_]
@@ -1174,6 +1163,7 @@ def filter_top_n(temp, top_n = 10):
 
     return temp
 
+
 def search_parallel(settings, calibration = None, callback = None):
     """
     Function to generate a database from a fasta file
@@ -1210,11 +1200,13 @@ def search_parallel(settings, calibration = None, callback = None):
 
     df_cache = {}
 
-    with Pool(n_processes) as p:
+    with alphapept.speed.AlphaPool(n_processes) as p:
         max_ = len(to_process)
 
         for i, (_, n_seqs) in enumerate(p.imap_unordered(search_fasta_block, to_process)):
             n_seqs_ += n_seqs
+
+
             logging.info(f'Block {i+1} of {max_} complete - {((i+1)/max_*100):.2f} % - created peptides {n_seqs:,} ')
             for j in range(len(_)): #Temporary hdf files for avoiding saving issues
                 output = [_ for _ in _[j]]

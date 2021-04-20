@@ -16,12 +16,11 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 _this_file = os.path.abspath(__file__)
 _this_directory = os.path.dirname(_this_file)
 LOGO_PATH = os.path.join(_this_directory, 'ap_round.png')
-
 image = Image.open(LOGO_PATH)
+computer_name = os.environ['COMPUTERNAME']
 
 st.sidebar.image(image, width = 300)
-st.sidebar.code(f"AlphaPept {VERSION_NO}")
-st.sidebar.write('')
+st.sidebar.code(f"AlphaPept {VERSION_NO} \n{computer_name}")
 
 sidebar = {'Status': status,
            'New experiment': experiment,

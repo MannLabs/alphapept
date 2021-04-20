@@ -392,7 +392,7 @@ def protein_profile(files, minimum_ratios, chunk):
 
 
 import os
-from multiprocessing import Pool
+import alphapept.speed
 from functools import partial
 
 
@@ -428,7 +428,7 @@ def protein_profile_parallel(df, minimum_ratios, field, callback=None):
         results = []
 
         logging.info(f'Starting protein extraction for {len(split_df)} proteins.')
-        with Pool() as p:
+        with alphapept.speed.AlphaPool(-1) as p:
             max_ = len(split_df)
             for i, _ in enumerate(p.imap_unordered(partial(protein_profile, files, minimum_ratios), split_df)):
                 results.append(_)

@@ -357,7 +357,6 @@ def generate_peptides(peptide, **kwargs):
 
         mod_peptides_decoy = add_decoy_tag(mod_peptides_decoy)
 
-
         all_peptides.extend(mod_peptides_decoy)
 
     return all_peptides
