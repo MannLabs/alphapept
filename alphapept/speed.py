@@ -159,9 +159,10 @@ from multiprocessing import Pool
 import os
 
 def AlphaPool(a, *args, **kwargs):
+    max_processes = psutil.cpu_count()
     if a == -1:
-        a = psutil.cpu_count()
-    new_max = min(a, 50)
+        a = max_processes
+    new_max = min(a, 50, max_processes)
     print(f"AlphaPool was set to {a} processes. Setting max to {new_max}.")
 
     return Pool(new_max)
