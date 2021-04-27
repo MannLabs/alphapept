@@ -637,14 +637,22 @@ def get_summary(settings, summary):
                         f_name = filename+'_'+key.lstrip('/')
 
                         f_summary[key] = len(df)
-                        if key in 'protein_fdr':
+                        if key in ['protein_fdr']:
                             if 'type' in df.columns:
                                 f_summary['id_rate'] = df[df['type'] == 'msms']['raw_idx'].nunique() / n_ms2
                             else:
                                 f_summary['id_rate'] = df['raw_idx'].nunique() / n_ms2
 
                             for field in ['protein','protein_group','precursor','naked_sequence','sequence']:
-                                f_summary['n_'+field] = df[field].nunique()
+                                if field in df.columns:
+                                    f_summary['protein_fdr_n_'+field] = df[field].nunique()
+
+                        if key in ['feature_table']:
+                            if ('rt_start' in df.columns) and ('rt_end' in df.columns):
+                                df['rt_length'] = df['rt_end'] - df['rt_start']
+                            for field in ['fwhm','int_sum','rt_length']:
+                                if field in df.columns:
+                                    f_summary['feature_table_median_'+field] = df[field].median()
 
                     summary[filename] = f_summary
 
