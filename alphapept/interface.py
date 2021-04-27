@@ -1010,10 +1010,6 @@ def cli_gui():
 
     file_path = os.path.join(_this_directory, 'webui.py')
 
-    print(file_path)
-
-    import sys
-    from streamlit import cli as stcli
 
     #if __name__ == '__main__':
     #    sys.argv = ["streamlit", "run", "webui.py"]
@@ -1022,6 +1018,25 @@ def cli_gui():
     #args = '--theme.primaryColor #18212b --theme.backgroundColor #FFFFFF --theme.secondaryBackgroundColor #f0f2f6 --theme.textColor #262730 --theme.font "sans serif"'
 
     #sys.argv = ["streamlit", "run", file_path, args]
+
+    HOME = os.path.expanduser("~")
+
+    ST_PATH = os.path.join(HOME, ".streamlit")
+
+    for folder in [ST_PATH]:
+        if not os.path.isdir(folder):
+            os.mkdir(folder)
+
+    #Check if streamlit credentials exists
+    ST_CREDENTIALS = os.path.join(ST_PATH, 'credentials.toml')
+    if not os.path.isfile(ST_CREDENTIALS):
+        with open(ST_CREDENTIALS, 'w') as file:
+            file.write("[general]\n")
+            file.write('\nemail = ""')
+
+
+    import sys
+    from streamlit import cli as stcli
 
     theme = []
 

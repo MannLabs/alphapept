@@ -22,13 +22,13 @@ SETTINGS_TEMPLATE_PATH = os.path.join(_this_directory, 'settings_template.yaml')
 SETTINGS_TEMPLATE = load_settings(SETTINGS_TEMPLATE_PATH)
 
 HOME = os.path.expanduser("~")
-
+AP_PATH = os.path.join(HOME, "alphapept")
 QUEUE_PATH = os.path.join(HOME, "alphapept", "queue")
 PROCESSED_PATH = os.path.join(HOME, "alphapept", "finished")
 PROCESS_FILE = os.path.join(QUEUE_PATH, 'process')
 FILE_WATCHER_FILE = os.path.join(QUEUE_PATH, 'file_watcher')
 
-for folder in [QUEUE_PATH, PROCESSED_PATH]:
+for folder in [AP_PATH, QUEUE_PATH, PROCESSED_PATH]:
     if not os.path.isdir(folder):
         os.mkdir(folder)
 
