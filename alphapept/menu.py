@@ -204,8 +204,8 @@ def file_watcher(folder, settings_template, minimum_file_size, tag):
             if len(files) > 0:
                 settings = settings_template.copy()
                 settings['experiment']['file_paths'] = files
-                settings['experiment']['results_path'] = ''
                 new_file = os.path.splitext(os.path.split(file)[1])[0] + '.yaml'
+                settings['experiment']['results_path'] = os.path.splitext(file)[0] + '.yaml'
                 save_settings(settings, os.path.join(QUEUE_PATH, new_file))
                 print(f'{datetime.now()} Added {file}')
 
