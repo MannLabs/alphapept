@@ -32,56 +32,29 @@ for folder in [AP_PATH, QUEUE_PATH, PROCESSED_PATH]:
     if not os.path.isdir(folder):
         os.mkdir(folder)
 
-def check_new_files(path):
-    """
-    Check for new files in folder
-    """
-    new_files = []
+def check_file_completion(file, minimum_file_size):
 
-    for dirpath, dirnames, filenames in os.walk(path):
-
-        for dirname in [d for d in dirnames if d.endswith('.d')]: #Bruker
-            new_file = os.path.join(dirpath, dirname)
-            base, ext = os.path.splitext(dirname)
-            hdf_path = os.path.join(dirpath, base+'.ms_data.hdf')
-
-            if not os.path.exists(hdf_path):
-                new_files.append(new_file)
-
-        for filename in [f for f in filenames if f.lower().endswith('.raw')]: #Thermo
-            new_file = os.path.join(dirpath, filename)
-            base, ext = os.path.splitext(filename)
-            hdf_path = os.path.join(dirpath, base+'.ms_data.hdf')
-
-            if not os.path.exists(hdf_path):
-                new_files.append(new_file)
-
-    return new_files
-
-
-def check_file_completion(list_of_files, minimum_file_size):
     to_analyze = []
-    for file in list_of_files:
 
-        if file.endswith('.d'):
-            #Bruker
-            to_check = os.path.join(file, 'analysis.tdf_bin')
+    if file.endswith('.d'):
+        #Bruker
+        to_check = os.path.join(file, 'analysis.tdf_bin')
+    else:
+        to_check = file
+
+    filesize = os.path.getsize(to_check)
+
+    writing = True
+    while writing:
+        time.sleep(1)
+        new_filesize = os.path.getsize(to_check)
+        if filesize == new_filesize:
+            writing  = False
         else:
-            to_check = file
+            filesize = new_filesize
 
-        filesize = os.path.getsize(to_check)
-
-        writing = True
-        while writing:
-            time.sleep(1)
-            new_filesize = os.path.getsize(to_check)
-            if filesize == new_filesize:
-                writing  = False
-            else:
-                filesize = new_filesize
-
-        if filesize/1024/1024 > minimum_file_size: #bytes, kbytes, mbytes
-            to_analyze.append(file)
+    if filesize/1024/1024 > minimum_file_size: #bytes, kbytes, mbytes
+        to_analyze.append(file)
 
     return to_analyze
 
@@ -206,9 +179,44 @@ def file_watcher(folder, settings_template, minimum_file_size, tag):
 
     """
 
-    already_added = []
+    from watchdog.observers import Observer
+    from watchdog.events import PatternMatchingEventHandler
+
+    patterns = "*"
+    ignore_patterns = ""
+    ignore_directories = False
+    case_sensitive = False
+    my_event_handler = PatternMatchingEventHandler(patterns, ignore_patterns, ignore_directories, case_sensitive)
+
+    def on_created(event):
+        print(f"{event.src_path} has been created!")
+
+        file = event.src_path
+
+        if tag != 'None':
+            if tag not in file:
+                return
+
+        if file.lower().endswith('.raw') or file.lower().endswith('.d'):
+
+            files = check_file_completion(file, minimum_file_size)
+
+            if len(files) > 0:
+                settings = settings_template.copy()
+                settings['experiment']['file_paths'] = files
+                settings['experiment']['results_path'] = ''
+                new_file = os.path.splitext(os.path.split(file)[1])[0] + '.yaml'
+                save_settings(settings, os.path.join(QUEUE_PATH, new_file))
+                print(f'{datetime.now()} Added {file}')
 
     print(f'{datetime.now()} file watcher started.')
+
+
+    my_event_handler.on_created = on_created
+
+    go_recursively = True
+    my_observer = Observer()
+    my_observer.schedule(my_event_handler, folder, recursive=go_recursively)
 
     while True:
         if os.path.isfile(FILE_WATCHER_FILE):
@@ -222,34 +230,9 @@ def file_watcher(folder, settings_template, minimum_file_size, tag):
         else:
             time.sleep(1)
 
+    my_observer.start()
     while True:
-        new_files = check_file_completion(check_new_files(folder), minimum_file_size)
-
-        if tag != 'None':
-            new_files = [_ for _ in new_files if tag in _]
-
-        new_files = [_ for _ in new_files if _ not in already_added]
-
-        already_added = new_files
-
-        print(f'{datetime.now()} file watcher running. {len(new_files)} new files.')
-
-        if len(new_files) > 0:
-
-            for file in new_files:
-                settings = settings_template.copy()
-
-                settings['experiment']['file_paths'] = [file]
-                settings['experiment']['results_path'] = ''
-
-                new_file = os.path.splitext(os.path.split(file)[1])[0] + '.yaml'
-
-                save_settings(settings, os.path.join(QUEUE_PATH, new_file))
-
-                print(f'{datetime.now()} Added {file}')
-
-        else:
-            time.sleep(60*5)
+        time.sleep(1)
 
 
 def start_process(target, process_file, args = None, verbose = True):

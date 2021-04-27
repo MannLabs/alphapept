@@ -652,7 +652,7 @@ def get_summary(settings, summary):
                                 df['rt_length'] = df['rt_end'] - df['rt_start']
                             for field in ['fwhm','int_sum','rt_length']:
                                 if field in df.columns:
-                                    f_summary['feature_table_median_'+field] = df[field].median()
+                                    f_summary['feature_table_median_'+field] = float(df[field].median())
 
                     summary[filename] = f_summary
 
