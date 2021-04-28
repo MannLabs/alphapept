@@ -1032,7 +1032,7 @@ def _read_DDA_query_data(
     else:
         raise NotImplementedError(f'File extension {ext} not understood.')
     logging.info(
-        f'File conversion complete. Extracted {len(query_data["prec_mass_list2"])} precursors.'
+        f'File conversion complete. Extracted {len(query_data["prec_mass_list2"]):,} precursors.'
     )
     return query_data, vendor
 
@@ -1143,7 +1143,6 @@ def read_DDA_query_data(
 #     query_data["int_list_ms2"] = np.array(
 #         [int_ms2[s:e] for s,e in zip(indices_ms2[:-1], indices_ms2[1:])]
 #     )
-    query_data["bounds"] = np.diff(indices_ms2)
     if self.read(attr_name="vendor", group_name="Raw") == "Bruker":
         query_data["mobility"] = query_data["mobility2"]
         query_data["prec_id"] = query_data["prec_id2"]

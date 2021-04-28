@@ -4,7 +4,7 @@ __all__ = ['gaussian', 'return_elution_profile', 'simulate_sample_profiles', 'ge
            'get_total_error_parallel', 'get_total_error', 'normalize_experiment_SLSQP', 'normalize_experiment_BFGS',
            'delayed_normalization', 'get_protein_ratios', 'triangle_error', 'solve_profile_LFBGSB',
            'solve_profile_SLSQP', 'solve_profile_trf', 'get_protein_table', 'protein_profile',
-           'protein_profile_parallel']
+           'protein_profile_parallel', 'protein_profile_parallel_ap', 'protein_profile_parallel_mq']
 
 # Cell
 import random
@@ -256,8 +256,8 @@ from scipy.optimize import minimize, least_squares
 
 def solve_profile_LFBGSB(ratios):
     x0 = np.ones(ratios.shape[1])
-    bounds = [(x0[0]*0+0.01, x0[0]) for _ in x0]
-    res_wrapped = minimize(triangle_error, args = ratios , x0 = x0*0.5, bounds=bounds, method = 'L-BFGS-B')
+    bounds = [(min(np.nanmin(ratios), 1/np.nanmax(ratios)), 1) for _ in x0]
+    res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = 'L-BFGS-B')
     solution = res_wrapped.x
     solution = solution/np.max(solution)
     return solution, res_wrapped.success
@@ -265,8 +265,8 @@ def solve_profile_LFBGSB(ratios):
 
 def solve_profile_SLSQP(ratios):
     x0 = np.ones(ratios.shape[1])
-    bounds = [(x0[0]*0+0.01, x0[0]) for _ in x0]
-    res_wrapped = minimize(triangle_error, args = ratios , x0 = x0*0.5, bounds=bounds, method = 'SLSQP', options={'maxiter':10000})
+    bounds = [(min(np.nanmin(ratios), 1/np.nanmax(ratios)), 1) for _ in x0]
+    res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = 'SLSQP', options={'maxiter':10000})
     solution = res_wrapped.x
     solution = solution/np.max(solution)
     return solution, res_wrapped.success
@@ -330,7 +330,7 @@ def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None
         pre_lfq = per_protein.sum().values
 
         if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
-            profile = [0 for x in range(len(pre_lfq))]
+            profile = np.zeros_like(pre_lfq)
             if np.sum(np.isnan(ratios)) != ratios.size:
                 logging.info(f'Solver failed for protein {protein} despite available ratios:\n {ratios}')
         else:
@@ -351,66 +351,113 @@ def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None
 
     return protein_table
 
-def protein_profile(df, files, field_, protein, minimum_ratios=1):
-    """
-    Calculate the protein profile for a a df based on a dateframe
+def protein_profile(files, minimum_ratios, chunk):
 
-    """
+    grouped, protein = chunk
+
     column_combinations = List()
     [column_combinations.append(_) for _ in combinations(range(len(files)), 2)]
 
-    subset = df[df['protein'] == protein].copy()
-    per_protein = subset.groupby(['shortname','precursor'])[field_].sum().unstack().T
+    selection = grouped.unstack().T.copy()
+    selection = selection.replace(0, np.nan)
 
-    for _ in files:
-        if _ not in per_protein.columns:
-            per_protein[_] = np.nan
+    if not selection.shape[1] == len(files):
+        selection[[_ for _ in files if _ not in selection.columns]] = np.nan
 
-    per_protein = per_protein[files]
-    per_protein = per_protein.replace(0, np.nan)
+    selection = selection[files]
 
-    ratios = get_protein_ratios(per_protein.values, column_combinations, minimum_ratios)
+    ratios = get_protein_ratios(selection.values, column_combinations, minimum_ratios)
+
     try:
         solution, success = solve_profile_SLSQP(ratios)
     except ValueError:
         logging.info('Normalization with SLSQP failed. Trying BFGS')
         solution, success = solve_profile_LFBGSB(ratios)
 
-    file_ids = per_protein.columns.tolist()
-    pre_lfq = per_protein.sum().values
+    pre_lfq = selection.sum().values
 
     if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
-        profile = [0 for x in range(len(pre_lfq))]
+        profile = np.zeros_like(pre_lfq)
         if np.sum(np.isnan(ratios)) != ratios.size:
             logging.info(f'Solver failed for protein {protein} despite available ratios:\n {ratios}')
 
     else:
         invalid = ((np.nansum(ratios, axis=1) == 0) & (np.nansum(ratios, axis=0) == 0))
-        total_int = subset[field_].sum() * solution
+        total_int = pre_lfq.sum() * solution
         total_int[invalid] = 0
-        profile = total_int * subset[field_].sum().sum() / np.sum(total_int) #Normalize inensity again
+        profile = total_int * pre_lfq.sum() / np.sum(total_int) #Normalize inensity again
 
-    return profile, pre_lfq, file_ids, protein
+
+    return profile, pre_lfq, protein
 
 
 import os
-from multiprocessing import Pool
+import alphapept.speed
 from functools import partial
 
 
-def protein_profile_parallel(settings, df, callback=None):
-
-    n_processes = settings['general']['n_processes']
-    field = settings['quantification']['mode']
+def protein_profile_parallel(df, minimum_ratios, field, callback=None):
 
     unique_proteins = df['protein'].unique().tolist()
 
     files = df['shortname'].unique().tolist()
-
     files.sort()
 
     columnes_ext = [_+'_LFQ' for _ in files]
     protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + files)
+
+    grouped = df[[field, 'shortname','precursor','protein']].groupby(['protein','shortname','precursor']).sum()
+
+    column_combinations = List()
+    [column_combinations.append(_) for _ in combinations(range(len(files)), 2)]
+
+    files = df['shortname'].unique().tolist()
+    files.sort()
+
+    results = []
+
+    if len(files) > 1:
+        logging.info('Preparing protein table for parallel processing.')
+        split_df = []
+
+        for idx, protein in enumerate(unique_proteins):
+            split_df.append((grouped.loc[protein], protein))
+            if callback:
+                callback((idx+1)/len(unique_proteins)*1/5)
+
+        results = []
+
+        logging.info(f'Starting protein extraction for {len(split_df)} proteins.')
+        with alphapept.speed.AlphaPool(-1) as p:
+            max_ = len(split_df)
+            for i, _ in enumerate(p.imap_unordered(partial(protein_profile, files, minimum_ratios), split_df)):
+                results.append(_)
+                if callback:
+                    callback((i+1)/max_*4/5+1/5)
+
+        for result in results:
+            profile, pre_lfq, protein = result
+            protein_table.loc[protein, [_+'_LFQ' for _ in files]] = profile
+            protein_table.loc[protein, files] = pre_lfq
+
+        protein_table[protein_table == 0] = np.nan
+        protein_table = protein_table.astype('float')
+    else:
+        protein_table = df.groupby(['protein'])[field].sum().to_frame().reset_index()
+        protein_table = protein_table.set_index('protein')
+        protein_table.index.name = None
+        protein_table.columns=[files[0]]
+
+        if callback:
+            callback(1)
+
+    return protein_table
+
+
+def protein_profile_parallel_ap(settings, df, callback=None):
+
+    minimum_ratios = settings['quantification']['lfq_minimum_ratio']
+    field = settings['quantification']['mode']
 
     if field+'_dn' in df.columns:
         field_ = field+'_dn'
@@ -420,31 +467,44 @@ def protein_profile_parallel(settings, df, callback=None):
     if df[field_].min() < 0:
         raise ValueError('Negative intensity values present.')
 
-    results = []
+    protein_table = protein_profile_parallel(df, minimum_ratios, field_, callback)
 
-    if len(files) > 1:
-        with Pool(n_processes) as p:
-            max_ = len(unique_proteins)
-            for i, _ in enumerate(p.imap_unordered(partial(protein_profile, df, files, field_), unique_proteins)):
-                results.append(_)
-                if callback:
-                    callback((i+1)/max_)
+    return protein_table
 
-        for result in results:
 
-            profile, pre_lfq, file_ids, protein = result
-            protein_table.loc[protein, [_+'_LFQ' for _ in file_ids]] = profile
-            protein_table.loc[protein, file_ids] = pre_lfq
+def protein_profile_parallel_mq(evidence_path, protein_groups_path, callback=None):
+    logging.info('Loading files')
 
-        protein_table[protein_table == 0] = np.nan
-        protein_table = protein_table.astype('float')
-    else:
-        protein_table = df.groupby(['protein'])[field_].sum().to_frame().reset_index()
-        protein_table = protein_table.set_index('protein')
-        protein_table.index.name = None
-        protein_table.columns=[files[0]]
+    for file in [evidence_path, protein_groups_path]:
+        if not os.path.isfile(file):
+            raise FileNotFoundError(f'File {file} not found.')
+
+    evd = pd.read_csv(evidence_path, sep='\t')
+    ref = pd.read_csv(protein_groups_path, sep='\t')
+
+    experiments = evd['Raw file'].unique().tolist()
+    logging.info(f'A total of {len(experiments):,} files.')
+
+    protein_df = []
+
+    max_ = len(ref)
+    for i in range(max_):
+        investigate = ref.iloc[i]
+        evd_ids = [int(_) for _ in investigate['Evidence IDs'].split(';')]
+        subset = evd.loc[evd_ids].copy()
+
+        subset['protein'] =  investigate['Protein IDs']
+        subset['shortname'] = subset['Raw file']
+        subset['precursor']  = ['_'.join(_) for _ in zip(subset['Sequence'].values, subset['Charge'].values.astype('str'))]
+
+        protein_df.append(subset)
 
         if callback:
-            callback(1)
+            callback((i+1)/len(ref))
+
+    logging.info(f'A total of {max_:,} proteins.')
+
+    df = pd.concat(protein_df)
+    protein_table = protein_profile_parallel(df, minimum_ratios=1, field='Intensity', callback=callback)
 
     return protein_table
