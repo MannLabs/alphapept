@@ -25,6 +25,8 @@ def parallel_execute(settings, step, callback=None):
 
     """
     n_processes = settings['general']['n_processes']
+    n_processes = alphapept.speed.set_max_process(n_processes)
+
     files = settings['experiment']['file_paths']
     n_files = len(files)
     logging.info(f'Processing {len(files)} files for step {step.__name__}')

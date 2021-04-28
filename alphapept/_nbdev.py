@@ -250,6 +250,7 @@ index = {"print_settings": "00_settings.ipynb",
          "grid_2d": "12_speed.ipynb",
          "set_cuda_grid": "12_speed.ipynb",
          "parallel_compiled_func": "12_speed.ipynb",
+         "set_max_process": "12_speed.ipynb",
          "AlphaPool": "12_speed.ipynb",
          "numba": "12_speed.ipynb",
          "cuda": "12_speed.ipynb"}
