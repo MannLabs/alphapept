@@ -161,7 +161,7 @@ import os
 
 def set_max_process(a):
     max_processes = psutil.cpu_count()
-    new_max = min(a, max_process)
+    new_max = min(a, max_processes)
 
     return new_max
 
