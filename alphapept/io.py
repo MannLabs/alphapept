@@ -118,8 +118,11 @@ def load_thermo_raw(raw_file, most_abundant, use_profile_ms1 = False, callback=N
 #     TODO: Refactor charge2 to be consistent: charge_ms2
     query_data["charge2"] = np.array(charge2)
 
+    acquisition_date_time = rawfile.GetCreationDate()
+
     rawfile.Close()
-    return query_data
+
+    return query_data, acquisition_date_time
 
 # Cell
 def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
@@ -136,6 +139,12 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
     prec_data = pd.read_sql_table('Precursors', engine)
     frame_data = pd.read_sql_table('Frames', engine)
     frame_data = frame_data.set_index('Id')
+
+
+    global_metadata = pd.read_sql_table('GlobalMetadata', engine)
+    global_metadata = global_metadata.set_index('Key').to_dict()['Value']
+    acquisition_date_time = global_metadata['AcquisitionDateTime']
+
 
     from .constants import mass_dict
 
@@ -184,8 +193,7 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
     query_data["mass_list_ms2"] = mass_list_ms2
     query_data["int_list_ms2"] = int_list_ms2
 
-
-    return query_data
+    return query_data, acquisition_date_time
 
 # Cell
 import alphapept
@@ -993,12 +1001,12 @@ def import_raw_DDA_data(
     '''
     base, ext = os.path.splitext(file_name)
     if query_data is None:
-        query_data, vendor = _read_DDA_query_data(
+        query_data, vendor, acquisition_date_time = _read_DDA_query_data(
             file_name,
             most_abundant=most_abundant,
             callback=callback
         )
-    self._save_DDA_query_data(query_data, vendor)
+    self._save_DDA_query_data(query_data, vendor, acquisition_date_time)
 
 
 def _read_DDA_query_data(
@@ -1010,13 +1018,14 @@ def _read_DDA_query_data(
     if ext.lower() == '.raw':
         if os.path.isdir(file_name):
             vendor = "Waters"
+            acquisition_date_time = None
             raise NotImplementedError(
                 f'File extension {ext} indicates Waters, which is not implemented.'
             )
         else:
             vendor = "Thermo"
             logging.info(f'File {base} has extension {ext} - converting from {vendor}.')
-            query_data = load_thermo_raw(
+            query_data, acquisition_date_time = load_thermo_raw(
                 file_name,
                 most_abundant,
                 callback=callback,
@@ -1024,7 +1033,7 @@ def _read_DDA_query_data(
     elif ext.lower() == '.d':
         vendor = "Bruker"
         logging.info(f'File {base} has extension {ext} - converting from {vendor}.')
-        query_data = load_bruker_raw(
+        query_data, acquisition_date_time = load_bruker_raw(
             file_name,
             most_abundant,
             callback=callback,
@@ -1034,7 +1043,7 @@ def _read_DDA_query_data(
     logging.info(
         f'File conversion complete. Extracted {len(query_data["prec_mass_list2"]):,} precursors.'
     )
-    return query_data, vendor
+    return query_data, vendor, acquisition_date_time
 
 
 @patch
@@ -1042,6 +1051,7 @@ def _save_DDA_query_data(
     self:MS_Data_File,
     query_data:dict,
     vendor:str,
+    acquisition_date_time:str,
     overwrite=False
 ):
 #     if vendor == "Bruker":
@@ -1049,6 +1059,7 @@ def _save_DDA_query_data(
     if "Raw" not in self.read():
         self.write("Raw")
     self.write(vendor, group_name="Raw", attr_name="vendor")
+    self.write(acquisition_date_time, group_name="Raw", attr_name="acquisition_date_time")
     if "MS1_scans" not in self.read(group_name="Raw"):
         self.write("MS1_scans", group_name="Raw")
     if "MS2_scans" not in self.read(group_name="Raw"):
