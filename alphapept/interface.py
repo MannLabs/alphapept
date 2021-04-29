@@ -71,7 +71,7 @@ def parallel_execute(settings, step, callback=None):
                 if callback:
                     callback((i+1)/n_files)
 
-    if step.__name__ in settings['failed']:
+    if step.__name__ not in settings['failed']:
         settings['failed'][step.__name__] = failed
     else:
         settings['failed'][step.__name__+'_2'] = failed

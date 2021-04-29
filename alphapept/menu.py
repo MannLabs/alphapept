@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import alphapept.io
 from multiprocessing import Process
 from datetime import datetime
-from alphapept.settings import load_settings, save_settings
+from alphapept.settings import save_settings, load_settings_as_template
 import alphapept.interface
 import base64
 
@@ -19,7 +19,7 @@ _this_directory = os.path.dirname(_this_file)
 DEFAULT_SETTINGS_PATH = os.path.join(_this_directory, 'default_settings.yaml')
 SETTINGS_TEMPLATE_PATH = os.path.join(_this_directory, 'settings_template.yaml')
 
-SETTINGS_TEMPLATE = load_settings(SETTINGS_TEMPLATE_PATH)
+SETTINGS_TEMPLATE = load_settings_as_template(SETTINGS_TEMPLATE_PATH)
 
 HOME = os.path.expanduser("~")
 AP_PATH = os.path.join(HOME, "alphapept")
@@ -150,7 +150,7 @@ def queue_watcher():
 
         if len(queue_files) > 0:
             file_path = os.path.join(QUEUE_PATH, queue_files[0])
-            settings = load_settings(file_path)
+            settings = load_settings_as_template(file_path)
 
             current_file = {}
             current_file['started'] = datetime.now()
@@ -340,7 +340,7 @@ def system():
             st.error('Not a valid path.')
             valid = False
         else:
-            settings_ = load_settings(settings_template)
+            settings_ = load_settings_as_template(settings_template)
             st.success('Valid settings file.')
             if st.checkbox('Show'):
                 st.write(settings_)
@@ -732,7 +732,7 @@ def experiment():
                     else:
                         st.info(f'Filename will be: {long_name}. Click submit button to add to queue.')
                         if st.button('Submit'):
-                            settings = load_settings(DEFAULT_SETTINGS_PATH)
+                            settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
                             for group in recorder:
                                 for key in recorder[group]:
                                     settings[group][key] = recorder[group][key]

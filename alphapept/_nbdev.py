@@ -4,6 +4,7 @@ __all__ = ["index", "modules", "custom_doc_links", "git_url"]
 
 index = {"print_settings": "00_settings.ipynb",
          "load_settings": "00_settings.ipynb",
+         "load_settings_as_template": "00_settings.ipynb",
          "save_settings": "00_settings.ipynb",
          "IsotopeDistribution": "01_chem.ipynb",
          "fast_add": "01_chem.ipynb",
