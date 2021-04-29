@@ -115,7 +115,15 @@ def calibrate_hdf(to_process, callback = None, parallel=False):
                 group_name="features"
             )
         else:
+
+            ms_file_.write(
+                features['mass_matched'],
+                dataset_name="corrected_mass",
+                group_name="features"
+            )
+
             o_mass_ppm_std = 0
+
         ms_file_.write(
             o_mass_ppm_std,
             dataset_name="corrected_mass",
@@ -123,12 +131,47 @@ def calibrate_hdf(to_process, callback = None, parallel=False):
             attr_name="estimated_max_precursor_ppm"
         )
         logging.info(f'Calibration of file {ms_file} complete.')
+
+
+        # Calibration of fragments
+
+        skip = False
+
+        try:
+            logging.info(f'Calibrating fragments')
+            ions = ms_file_.read(dataset_name='ions')
+        except KeyError:
+            logging.info('No ions to calibrate fragment masses found')
+
+            skip = True
+
+        if not skip:
+            delta_ppm = ((ions['db_mass'] - ions['ion_mass'])/((ions['db_mass'] + ions['ion_mass'])/2)*1e6).values
+            median_offset = -np.median(delta_ppm)
+            std_offset = np.std(delta_ppm)
+            mass_list_ms2 = ms_file_.read(dataset_name = 'mass_list_ms2', group_name = "Raw/MS2_scans")
+
+            try:
+                offset = ms_file_.read(dataset_name = 'corrected_fragment_mzs')
+            except KeyError:
+                offset = np.zeros(len(mass_list_ms2))
+
+            offset += median_offset
+
+            logging.info(f'Median fragment offset {median_offset:.2f} - std {std_offset:.2f} ppm')
+
+            ms_file_.write(
+                offset,
+                dataset_name="corrected_fragment_mzs",
+            )
+
         return True
     except Exception as e:
         logging.error(f'Calibration of file {ms_file} failed. Exception {e}.')
         return f"{e}" #Can't return exception object, cast as string
 
 # Cell
+
 
 import alphapept.io
 import pandas as pd

@@ -78,7 +78,6 @@ def get_q_values(fdr_values):
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 def cut_fdr(df, fdr_level=0.01, plot=True):
     """
@@ -253,7 +252,6 @@ from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
 
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 from .fasta import count_missed_cleavages, count_internal_cleavages
 
@@ -262,7 +260,7 @@ def get_ML_features(df, protease='trypsin', **kwargs):
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
     df['abs_delta_m_ppm'] = np.abs(df['delta_m_ppm'])
-    df['naked_sequence'] = df['sequence'].str.replace('[a-z]|_', '')
+    df['naked_sequence'] = df['sequence'].apply(lambda x: ''.join([_ for _ in x if _.isupper()]))
     df['n_AA']= df['naked_sequence'].str.len()
     df['matched_ion_fraction'] = df['hits']/(2*df['n_AA'])
 
@@ -274,11 +272,11 @@ def get_ML_features(df, protease='trypsin', **kwargs):
     return df
 
 def train_RF(df,
-             exclude_features = ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence'],
+             exclude_features = ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence','target'],
              train_fdr_level = 0.1,
              ini_score = 'x_tandem',
              min_train = 5000,
-             test_size = 0.8,
+             test_size = 0.2,
              max_depth = [5,25,50],
              max_leaf_nodes = [150,200,250],
              n_jobs=1,
@@ -350,6 +348,7 @@ def train_RF(df,
 
     # Inspect feature importances
     if plot:
+        import seaborn as sns
         g = sns.barplot(y=X.columns[indices][:40],
                         x = feature_importances[indices][:40],
                         orient='h', palette='RdBu')
@@ -544,8 +543,11 @@ def score_hdf(to_process, callback = None, parallel=False):
             df = ms_file_.read(dataset_name='second_search')
             logging.info('Found second search psms for scoring.')
         except KeyError:
-            df = ms_file_.read(dataset_name='first_search')
-            logging.info('No second search psms for scoring found. Using first search.')
+            try:
+                df = ms_file_.read(dataset_name='first_search')
+                logging.info('No second search psms for scoring found. Using first search.')
+            except KeyError:
+                df = pd.DataFrame()
 
         if len(df) == 0:
             skip = True
@@ -554,7 +556,7 @@ def score_hdf(to_process, callback = None, parallel=False):
         if not skip:
             df = get_ML_features(df, **settings['fasta'])
 
-            if settings["general"]["score"] == 'random_forest':
+            if settings["score"]["method"] == 'random_forest':
                 try:
                     cv, features = train_RF(df)
                     df = filter_with_ML(df, cv, features = features, fdr_level = settings["search"]["peptide_fdr"])
@@ -562,10 +564,10 @@ def score_hdf(to_process, callback = None, parallel=False):
                     logging.info('ML failed. Defaulting to x_tandem score')
                     logging.info(f"{e}")
                     df = filter_with_x_tandem(df, fdr_level = settings["search"]["peptide_fdr"])
-            elif settings["general"]["score"] == 'x_tandem':
+            elif settings["score"]["method"] == 'x_tandem':
                 df = filter_with_x_tandem(df, fdr_level = settings["search"]["peptide_fdr"])
             else:
-                raise NotImplementedError('Scoring method {} not implemented.'.format(settings["general"]["score"]))
+                raise NotImplementedError('Scoring method {} not implemented.'.format(settings["score"]["method"]))
 
             df = cut_global_fdr(df, analyte_level='precursor',  plot=False, fdr_level = settings["search"]["peptide_fdr"], **settings['search'])
 

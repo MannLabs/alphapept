@@ -27,7 +27,7 @@ def set_logger(
         The file name to where the log is written.
         Folders are automatically created if needed.
         This is relative to the current path. When an empty string is provided,
-        a log is written to the AlphaTims "logs" folder with the name
+        a log is written to the AlphaPept "logs" folder with the name
         "log_yymmddhhmmss" (reversed timestamp year to seconds).
         Default is "".
     stream : bool
@@ -99,12 +99,12 @@ def set_logger(
 
 def check_file(file):
     if not os.path.isfile(file):
-        raise FileNotFoundError(file)
+        raise FileNotFoundError(f"{file}")
 
 
 def check_dir(dir):
     if not os.path.isdir(dir):
-        raise FileNotFoundError(dir)
+        raise FileNotFoundError(f"{dir}")
 
 
 def log_me(given_function):
@@ -202,18 +202,6 @@ def check_settings(settings):
     import multiprocessing
     logging.info('Check for settings not completely implemented yet.')
 
-    n_set = settings['general']['n_processes']
-    n_actual = psutil.cpu_count()
-
-    logging.info('Checking CPU settings.')
-    if n_set > n_actual:
-        settings['general']['n_processes'] = n_actual
-        logging.info('Setting number of processes to {}.'.format(n_actual))
-
-    if settings['general']['n_processes'] > 60:
-        settings['general']['n_processes'] = 60
-        logging.info('Capping number of processes to {}.'.format(settings['general']['n_processes']))
-
     if settings['experiment']['file_paths'] == []:
         raise FileNotFoundError('No files selected')
 
@@ -224,7 +212,7 @@ def check_settings(settings):
         else:
             check_file(file)
 
-    for file in settings['fasta']['fasta_paths']:
+    for file in settings['experiment']['fasta_paths']:
         check_file(file)
 
     if not settings['experiment']['results_path']:
@@ -248,25 +236,25 @@ def check_settings(settings):
         settings['experiment']['shortnames'] = shortnames
 
     if settings['fasta']['save_db']:
-        if not settings['fasta']['database_path']:
+        if not settings['experiment']['database_path']:
             file_dir = os.path.dirname(settings['experiment']['file_paths'][0])
-            settings['fasta']['database_path'] = os.path.normpath(
+            settings['experiment']['database_path'] = os.path.normpath(
                 os.path.join(file_dir, 'database.hdf')
             )
             logging.info(
-                'No database path set and save_db option checked. Using default path {}'.format(settings['fasta']['database_path'])
+                'No database path set and save_db option checked. Using default path {}'.format(settings['experiment']['database_path'])
             )
 
     if settings['fasta']['save_db']:
         var_id = ['mods_variable_terminal', 'mods_variable', 'mods_variable_terminal_prot']
         n_var_mods = sum([len(settings['fasta'][_]) for _ in var_id])
         if n_var_mods > 2:
-            logging.info(f'Number of variable modifications {n_var_mods} is larger than 2, possibly causing a very large search space. Only small DB w/o modifications will be created, the full database will be generated on the fly for the second search.')
+            logging.info(f'Number of variable modifications {n_var_mods} is larger than 2, possibly causing a very large search space. Database will be generated on the fly for the second search.')
             settings['fasta']['save_db'] = False
 
         protease = settings['fasta']['protease']
         if protease == 'non-specific':
-            logging.info(f'Protease is {protease}, possibly causing a very large search space. Only small DB w/o modifications will be created, the full database will be generated on the fly for the second search.')
+            logging.info(f'Protease is {protease}, possibly causing a very large search space. Database will be generated on the fly.')
             settings['fasta']['save_db'] = False
 
     return settings
