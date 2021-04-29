@@ -988,8 +988,8 @@ def search_db(to_process, callback = None, parallel=False, first_search = True):
                     settings['search']['m_offset_calibrated'] = calibration*settings['search']['calibration_std']
                     calib = settings['search']['m_offset_calibrated']
                     logging.info(f"Found calibrated m_offset with value {calib:.2f}")
-            except KeyError:
-                pass
+            except KeyError as e:
+                logging.info(f'{e}')
 
 
         if not skip:

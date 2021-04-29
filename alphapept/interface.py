@@ -2,10 +2,10 @@
 
 __all__ = ['parallel_execute', 'tqdm_wrapper', 'check_version_and_hardware', 'create_database', 'import_raw_data',
            'feature_finding', 'wrapped_partial', 'search_data', 'recalibrate_data', 'score', 'align', 'match',
-           'quantification', 'export', 'get_summary', 'run_complete_workflow', 'run_cli', 'cli_overview',
-           'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search', 'cli_recalibrate', 'cli_score',
-           'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui', 'CONTEXT_SETTINGS',
-           'CLICK_SETTINGS_OPTION']
+           'quantification', 'export', 'get_file_summary', 'get_summary', 'run_complete_workflow', 'run_cli',
+           'cli_overview', 'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search', 'cli_recalibrate',
+           'cli_score', 'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui',
+           'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
 
 # Cell
 import alphapept.utils
@@ -577,9 +577,7 @@ def quantification(
     return settings
 
 # Cell
-
 import yaml
-
 
 def export(
     settings,
@@ -607,6 +605,39 @@ from time import time, sleep
 from .__version__ import VERSION_NO
 import datetime
 
+
+def get_file_summary(ms_data):
+    f_summary = {}
+
+    f_summary['acquisition_date_time'] = ms_data.read(group_name = 'Raw', attr_name = 'acquisition_date_time')
+    n_ms2 = ms_data.read(group_name='Raw/MS2_scans', dataset_name='prec_mass_list2', return_dataset_shape=True)[0]
+
+    for key in ms_data.read():
+
+        if "is_pd_dataframe" in ms_data.read(attr_name="", group_name=key):
+            df = ms_data.read(dataset_name=key)
+
+            f_summary[key] = len(df)
+
+            if key in ['protein_fdr']:
+                if 'type' in df.columns:
+                    f_summary['id_rate'] = df[df['type'] == 'msms']['raw_idx'].nunique() / n_ms2
+                else:
+                    f_summary['id_rate'] = df['raw_idx'].nunique() / n_ms2
+
+                for field in ['protein','protein_group','precursor','naked_sequence','sequence']:
+                    if field in df.columns:
+                        f_summary['protein_fdr_n_'+field] = df[field].nunique()
+
+            if key in ['feature_table']:
+                if ('rt_start' in df.columns) and ('rt_end' in df.columns):
+                    df['rt_length'] = df['rt_end'] - df['rt_start']
+                for field in ['fwhm','int_sum','rt_length']:
+                    if field in df.columns:
+                        f_summary['feature_table_median_'+field] = float(df[field].median())
+
+    return f_summary
+
 def get_summary(settings, summary):
 
     summary['file_sizes'] = {}
@@ -619,44 +650,10 @@ def get_summary(settings, summary):
         ms_file_name = os.path.splitext(_)[0] + ".ms_data.hdf"
 
         file_sizes[ms_file_name] = os.path.getsize(ms_file_name)/1024**2
-        # file_sizes[base+"_result"] = os.path.getsize(os.path.splitext(_)[0] + ".hdf")/1024**2
 
         ms_data = alphapept.io.MS_Data_File(os.path.splitext(_)[0] + ".ms_data.hdf")
-        n_ms2 = ms_data.read(group_name='Raw/MS2_scans', dataset_name='prec_mass_list2', return_dataset_shape=True)[0]
-        for key in ms_data.read():
-            if "is_pd_dataframe" in ms_data.read(
-                attr_name="",
-                group_name=key
-            ):
-                f_summary = {}
-                for key in ms_data.read():
-                    if "is_pd_dataframe" in ms_data.read(
-                        attr_name="",
-                        group_name=key
-                    ):
-                        df = ms_data.read(dataset_name=key)
 
-                        f_name = filename+'_'+key.lstrip('/')
-
-                        f_summary[key] = len(df)
-                        if key in ['protein_fdr']:
-                            if 'type' in df.columns:
-                                f_summary['id_rate'] = df[df['type'] == 'msms']['raw_idx'].nunique() / n_ms2
-                            else:
-                                f_summary['id_rate'] = df['raw_idx'].nunique() / n_ms2
-
-                            for field in ['protein','protein_group','precursor','naked_sequence','sequence']:
-                                if field in df.columns:
-                                    f_summary['protein_fdr_n_'+field] = df[field].nunique()
-
-                        if key in ['feature_table']:
-                            if ('rt_start' in df.columns) and ('rt_end' in df.columns):
-                                df['rt_length'] = df['rt_end'] - df['rt_start']
-                            for field in ['fwhm','int_sum','rt_length']:
-                                if field in df.columns:
-                                    f_summary['feature_table_median_'+field] = float(df[field].median())
-
-                    summary[filename] = f_summary
+        summary[filename] = get_file_summary(ms_data)
 
     summary['file_sizes']['files'] = file_sizes
     if os.path.isfile(settings['experiment']['results_path']):
