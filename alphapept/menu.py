@@ -25,6 +25,7 @@ HOME = os.path.expanduser("~")
 AP_PATH = os.path.join(HOME, "alphapept")
 QUEUE_PATH = os.path.join(HOME, "alphapept", "queue")
 PROCESSED_PATH = os.path.join(HOME, "alphapept", "finished")
+FAILED_PATH = os.path.join(HOME, "alphapept", "failed")
 PROCESS_FILE = os.path.join(QUEUE_PATH, 'process')
 FILE_WATCHER_FILE = os.path.join(QUEUE_PATH, 'file_watcher')
 
@@ -162,13 +163,19 @@ def queue_watcher():
                 yaml.dump(current_file, file, sort_keys=False)
 
             logfile = os.path.join(PROCESSED_PATH, os.path.splitext(queue_files[0])[0]+'.log')
-            settings_ = alphapept.interface.run_complete_workflow(settings, progress=True, logfile = logfile)
-            save_settings(settings_, os.path.join(PROCESSED_PATH, queue_files[0]))
-            os.remove(file_path)
+            try:
+                settings_ = alphapept.interface.run_complete_workflow(settings, progress=True, logfile = logfile)
+                save_settings(settings_, os.path.join(PROCESSED_PATH, queue_files[0]))
 
+            except Exception as e:
+                print(f'Run {file_path} failed with {e}')
+                settings_ = settings.copy()
+                settings_['error'] = e
+                save_settings(settings_, os.path.join(FAILED_PATH, queue_files[0]))
+
+            os.remove(file_path)
             if os.path.isfile(current_file_path):
                 os.remove(current_file_path)
-
         else:
             time.sleep(15)
 
