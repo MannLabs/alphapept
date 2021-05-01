@@ -62,6 +62,13 @@ def check_file_completion(file, minimum_file_size):
 
     return to_analyze
 
+def check_group(filename, groups):
+    for group in groups:
+        if group in filename:
+            return group
+    return 'None'
+
+
 def history():
     """
     Plot history of previous experiments
@@ -79,6 +86,23 @@ def history():
     with st.beta_expander(f"Processed files ({len(processed_files)})"):
         st.table(processed_files)
 
+    group_txt = os.path.join(AP_PATH, 'groups.txt')
+
+
+    if os.path.isfile(group_txt):
+
+        with open(group_txt, 'r') as f:
+            groups = f.readlines()
+            groups = [_.rstrip('\n') for _ in groups]
+    else:
+        groups = []
+
+    with st.beta_expander(f"Group files"):
+        st.text(f"If a groups.txt is present in the AlphaPept folder {AP_PATH}, data will be grouped.")
+
+        groups = st.multiselect('Groups', default = groups, options=groups)
+
+
     filter = st.text_input('Filter')
 
     if filter:
@@ -90,7 +114,7 @@ def history():
 
     st.write(f"Remaining {len(filtered)} of {len(processed_files)} files.")
 
-    preview = st.slider('Preview', 1, len(filtered), min(len(filtered), 20))
+    preview = st.slider('Preview', 1, len(filtered), min(len(filtered), 50))
 
     filtered = filtered[:preview]
 
@@ -111,7 +135,7 @@ def history():
 
         plots = st.multiselect('Select fields to plot', options = options, default=options)
 
-        mode = st.selectbox('X-Axis', options = ['Filename', 'AcquisitionDateTime'])
+        mode = st.selectbox('X-Axis', options = ['AcquisitionDateTime','Filename'])
 
         with st.spinner('Creating plots..'):
 
@@ -134,6 +158,11 @@ def history():
                 plot_df = pd.DataFrame([files, acquisition_date_times, vals]).T#, columns=['Filename','AcquisitionDateTime',plot])
                 plot_df.columns = ['Filename', 'AcquisitionDateTime', plot]
 
+                if groups != []:
+                    plot_df['group'] = plot_df['Filename'].apply(lambda x: check_group(x, groups))
+                else:
+                    plot_df['group'] = 'None'
+
                 median_ = plot_df[plot].median()
 
                 plot_df = plot_df.sort_values(mode)
@@ -143,7 +172,7 @@ def history():
                 else:
                     height = 400
 
-                fig = px.scatter(plot_df, x=mode, y=plot, hover_name='Filename', hover_data=['AcquisitionDateTime'], title=f'{plot} - median {median_:.2f}', height=height).update_traces(mode='lines+markers')
+                fig = px.scatter(plot_df, x=mode, y=plot, color = 'group', hover_name='Filename', hover_data=['AcquisitionDateTime'], title=f'{plot} - median {median_:.2f}', height=height).update_traces(mode='lines+markers')
                 fig.add_hline(y=median_, line_dash="dash")
                 st.plotly_chart(fig)
 
