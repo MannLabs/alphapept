@@ -388,6 +388,7 @@ def status():
     st.write("# Status")
     st.text(f'This page shows the status of the current analysis.\nSwitch to `New experiment` to define a new experiment')
     status_msg = st.empty()
+    failed_msg = st.empty()
 
     current_log = ''
     log_txt = []
@@ -432,6 +433,9 @@ def status():
         with st.beta_expander(f"Queue"):
             queue_table = st.empty()
 
+        with st.beta_expander(f"Failed"):
+            failed_table = st.empty()
+
         refresh = st.checkbox('Auto-Update Page')
 
         while True:
@@ -474,6 +478,8 @@ def status():
             cpu.progress(psutil.cpu_percent()/100)
 
             queue_files = [_ for _ in os.listdir(QUEUE_PATH) if _.endswith('.yaml')]
+            failed_files = [_ for _ in os.listdir(FAILED_PATH) if _.endswith('.yaml')]
+            n_failed = len(failed_files)
             n_queue = len(queue_files)
 
             if n_queue == 0:
@@ -492,6 +498,12 @@ def status():
 
                 queue_table.table(queue_df)
 
+            if n_failed == 1:
+                failed_msg.error(f'{n_failed} run failed. Please check {FAILED_PATH}.')
+            elif n_failed > 1:
+                failed_msg.error(f'{n_failed} runs failed. Please check {FAILED_PATH}.')
+
+            failed_table.table(pd.DataFrame(failed_files))
             time.sleep(0.2)
 
             if not refresh:
