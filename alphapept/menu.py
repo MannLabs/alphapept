@@ -74,6 +74,7 @@ def history():
     processed_files = [_ for _ in os.listdir(PROCESSED_PATH) if _.endswith('.yaml')]
 
     processed_files.sort()
+    processed_files = processed_files[::-1]
 
     with st.beta_expander(f"Processed files ({len(processed_files)})"):
         st.table(processed_files)
