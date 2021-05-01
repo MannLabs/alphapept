@@ -11,6 +11,9 @@ from datetime import datetime
 from alphapept.settings import save_settings, load_settings_as_template
 import alphapept.interface
 import base64
+import numpy as np
+
+import plotly.express as px
 
 
 _this_file = os.path.abspath(__file__)
@@ -69,6 +72,9 @@ def history():
     '\nFiles can be filtered to only include a subset.')
 
     processed_files = [_ for _ in os.listdir(PROCESSED_PATH) if _.endswith('.yaml')]
+
+    processed_files.sort()
+
     with st.beta_expander(f"Processed files ({len(processed_files)})"):
         st.table(processed_files)
 
@@ -79,7 +85,14 @@ def history():
     else:
         filtered = processed_files
 
+    st.write(filter)
+
     st.write(f"Remaining {len(filtered)} of {len(processed_files)} files.")
+
+    preview = st.slider('Preview', 1, len(filtered), min(len(filtered), 20))
+
+    filtered = filtered[:preview]
+
     bar = st.progress(0)
 
     all_results = {}
@@ -87,45 +100,52 @@ def history():
     for idx, _ in enumerate(filtered):
         with open(os.path.join(PROCESSED_PATH, _), "r") as settings_file:
             results = yaml.load(settings_file, Loader=yaml.FullLoader)
-
-            all_results[_] = results
+            base, ext = os.path.splitext(_)
+            all_results[base] = results
 
         bar.progress((idx+1)/len(filtered))
 
     if len(all_results) > 0:
-        options = ['timing', 'feature_table','protein_fdr']
+        options = ['feature_table', 'feature_table_median_rt_length','protein_fdr_n_sequence','protein_fdr_n_protein', 'protein_fdr_n_protein_group', 'id_rate','timing']
 
-        plots = st.multiselect('Plots', options = options, default=options)
+        plots = st.multiselect('Select fields to plot', options = options, default=options)
+
+        mode = st.selectbox('X-Axis', options = ['Filename', 'AcquisitionDateTime'])
 
         with st.spinner('Creating plots..'):
+
+            # Get filename and acquisition_date_time
+            files = [os.path.splitext(all_results[_]['summary']['processed_files'][0])[0] for _ in all_results.keys()]
+            acquisition_date_times = [all_results[_]["summary"][files[idx]]['acquisition_date_time'] for idx, _ in enumerate(all_results.keys())]
+
+            plot_dict = {}
             for plot in plots:
-                plot_dict = {} # summary_time
-                if plot == 'timing':
-                    for _ in all_results.keys():
-                        plot_dict[_] = all_results[_]["summary"]["timing"]["total"]
-                else:
-                    for _ in all_results.keys():
-                        file = os.path.splitext(all_results[_]['summary']['processed_files'][0])[0]
+                vals = []
+                for idx, _ in enumerate(all_results.keys()):
+                    if plot == 'timing':
+                        vals.append(all_results[_]["summary"]["timing"]["total"])
+                    else:
                         try:
-                            plot_dict[_] = all_results[_]["summary"][file][plot]
+                            vals.append(all_results[_]["summary"][files[idx]][plot])
                         except KeyError:
-                            plot_dict[_] = 0
+                            vals.append(0)
 
-                fig = plt.figure(figsize=(10,3))
-                plt.bar(range(len(plot_dict)), list(plot_dict.values()), align='center')
-                plt.xticks(range(len(plot_dict)), list(plot_dict.keys()), rotation='vertical')
-                plt.title(plot)
-                st.write(fig)
+                plot_df = pd.DataFrame([files, acquisition_date_times, vals]).T#, columns=['Filename','AcquisitionDateTime',plot])
+                plot_df.columns = ['Filename', 'AcquisitionDateTime', plot]
 
+                median_ = plot_df[plot].median()
 
-        if False:
-            plot_dict[_] = results['summary']['timing'][field]
+                plot_df = plot_df.sort_values(mode)
 
-            fig = plt.figure(figsize=(10,3))
-            plt.bar(range(len(plot_dict)), list(plot_dict.values()), align='center')
-            plt.xticks(range(len(plot_dict)), list(plot_dict.keys()))
-            plt.title(field)
-            st.write(fig)
+                if mode == 'Filename':
+                    height = 800
+                else:
+                    height = 400
+
+                fig = px.scatter(plot_df, x=mode, y=plot, hover_name='Filename', hover_data=['AcquisitionDateTime'], title=f'{plot} - median {median_:.2f}', height=height).update_traces(mode='lines+markers')
+                fig.add_hline(y=median_, line_dash="dash")
+                st.plotly_chart(fig)
+
 
 def queue_watcher():
     """
