@@ -1,4 +1,9 @@
 workflow:
+  continue_runs:
+    type: checkbox
+    default: false
+    description: Flag to continue previously computated runs. If False existing ms_data
+      will be deleted.
   create_database:
     type: checkbox
     default: true

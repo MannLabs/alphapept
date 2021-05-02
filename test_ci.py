@@ -225,7 +225,6 @@ class TestRun():
         string = f"mongodb+srv://{MONGODB_USER}:{password}@{MONGODB_URL}"
         client = MongoClient(string)
 
-
         #When having keys with dots like filename.ms_data.hdf, mongodb causes an error. This is to remove the dots.
         report = self.report
 

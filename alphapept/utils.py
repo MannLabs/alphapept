@@ -300,3 +300,8 @@ def assemble_df(settings, field = 'protein_fdr', callback=None):
         xx = pd.DataFrame()
 
     return xx
+
+    def delete_file(filename):
+        if os.path.isfile(filename):
+            os.remove(filename)
+            logging.info('Deleted {filename}')
