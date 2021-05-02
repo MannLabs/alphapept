@@ -1,4 +1,5 @@
 workflow:
+  continue_runs: false
   create_database: true
   import_raw_data: true
   find_features: true
