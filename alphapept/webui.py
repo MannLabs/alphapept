@@ -1,5 +1,5 @@
 import streamlit as st
-from menu import experiment, status, result, history, system
+from alphapept.gui import history, results, filewatcher, status, experiment
 from PIL import Image
 from alphapept.__version__ import VERSION_NO
 import os
@@ -22,11 +22,11 @@ computer_name = os.environ['COMPUTERNAME']
 st.sidebar.image(image, width = 300)
 st.sidebar.code(f"AlphaPept {VERSION_NO} \n{computer_name}")
 
-sidebar = {'Status': status,
-           'New experiment': experiment,
-           'Results': result,
-           'History': history,
-           'System': system}
+sidebar = {'Status': status.status,
+           'New experiment': experiment.experiment,
+           'Results': results.results,
+           'History': history.history,
+           'FileWatcher': filewatcher.filewatcher}
 
 menu = st.sidebar.radio("", list(sidebar.keys()))
 
