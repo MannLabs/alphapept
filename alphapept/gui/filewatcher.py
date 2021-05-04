@@ -53,7 +53,7 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
     my_event_handler = PatternMatchingEventHandler(patterns, ignore_patterns, ignore_directories, case_sensitive)
 
     def on_created(event):
-        print(f"{event.src_path} has been created!")
+        print(f"{event.src_path} has been created.")
 
         file = event.src_path
 
@@ -62,7 +62,7 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
                 return
 
         if file.lower().endswith('.raw') or file.lower().endswith('.d'):
-
+            print(f"Checking {file}")
             files = check_file_completion(file, minimum_file_size)
 
             if len(files) > 0:
