@@ -2,8 +2,8 @@ import streamlit as st
 from alphapept.gui.utils import files_in_folder, read_log
 from alphapept.paths import PROCESSED_PATH
 from alphapept.settings import load_settings
-import os 
-import yaml 
+import os
+import yaml
 import alphapept.io
 import pandas as pd
 import base64
@@ -13,7 +13,7 @@ def readable_files_from_yaml(results_yaml):
     """
     Returns all readable files from results yaml
     """
-    
+
     raw_files = [os.path.splitext(_)[0]+'.ms_data.hdf' for _ in results_yaml['experiment']['file_paths']]
     raw_files = raw_files + [results_yaml['experiment']['results_path']]
     raw_files = [_ for _ in raw_files if os.path.exists(_)]
@@ -66,7 +66,6 @@ def parse_file_and_display(file):
             df = pd.read_hdf(file, opt)
         else:
             df = ms_file.read(dataset_name = opt)
-        
         if not isinstance(df, pd.DataFrame):
             df = pd.DataFrame(df)
 
@@ -101,7 +100,7 @@ def results():
             filepath_selection = os.path.join(PROCESSED_PATH, selection)
             results_yaml = load_settings(filepath_selection)
 
-            with st.beta_expander(f"Run summary"):
+            with st.beta_expander("Run summary"):
                 st.write(results_yaml['summary'])
 
             read_log(os.path.splitext(filepath_selection)[0]+'.log')
@@ -122,5 +121,3 @@ def results():
     else:
         with st.spinner('Parsing file'):
             parse_file_and_display(file)
-
-

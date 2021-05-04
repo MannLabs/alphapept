@@ -1,6 +1,6 @@
 import streamlit as st
 import os
-import pandas as pd 
+import pandas as pd
 import datetime
 from alphapept.paths import SETTINGS_TEMPLATE, QUEUE_PATH, DEFAULT_SETTINGS_PATH
 from alphapept.settings import load_settings_as_template, save_settings
@@ -20,7 +20,7 @@ def parse_folder(file_folder):
 def widget_from_setting(recorder, key, group, element, override=None):
     """
     Creates streamlit widgets from settigns
-    Returns a recorder to extract set values 
+    Returns a recorder to extract set values
     """
     _ = group[element]
 
@@ -78,7 +78,7 @@ def submit_experiment(recorder):
                 st.success(f'Experiment {long_name} submitted. Switch to Status tab to track progress.')
 
 
-def customize_settings(recorder, loaded):
+def customize_settings(recorder, uploaded_settings, loaded):
 
     with st.beta_expander("Settings", loaded):
         for key in SETTINGS_TEMPLATE.keys():
@@ -103,8 +103,8 @@ def customize_settings(recorder, loaded):
 
 
 def experiment():
-    st.write(f"# New experiment")
-    st.write(f'## Files')
+    st.write("# New experiment")
+    st.write('## Files')
 
     recorder = {}
     recorder['experiment'] = {}
@@ -161,7 +161,7 @@ def experiment():
                     for element in group:
                         recorder = widget_from_setting(recorder, 'workflow', group, element)
 
-                st.write(f"## Additional settings")
+                st.write("## Additional settings")
 
                 prev_settings = st.checkbox('Use previous settings as template')
 
@@ -173,8 +173,6 @@ def experiment():
                         loaded=True
 
 
-                recorder = customize_settings(recorder, loaded)
+                recorder = customize_settings(recorder, uploaded_settings, loaded)
 
                 submit_experiment(recorder)
-
-

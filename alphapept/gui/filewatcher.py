@@ -1,9 +1,12 @@
 import streamlit as st
-from alphapept.paths import FILE_WATCHER_FILE, DEFAULT_SETTINGS_PATH
+from alphapept.paths import FILE_WATCHER_FILE, DEFAULT_SETTINGS_PATH, QUEUE_PATH
 from alphapept.gui.utils import check_process, init_process, start_process
-from alphapept.settings import load_settings_as_template
+from alphapept.settings import load_settings_as_template, save_settings
 import os
 import time
+import datetime
+import yaml
+import psutil
 
 def check_file_completion(file, minimum_file_size):
 
@@ -68,9 +71,9 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
                 new_file = os.path.splitext(os.path.split(file)[1])[0] + '.yaml'
                 settings['experiment']['results_path'] = os.path.splitext(file)[0] + '.yaml'
                 save_settings(settings, os.path.join(QUEUE_PATH, new_file))
-                print(f'{datetime.now()} Added {file}')
+                print(f'{datetime.datetime.now()} Added {file}')
 
-    print(f'{datetime.now()} file watcher started.')
+    print(f'{datetime.datetime.now()} file watcher started.')
 
     my_event_handler.on_created = on_created
 
@@ -79,7 +82,6 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
     my_observer.schedule(my_event_handler, folder, recursive=go_recursively)
 
     init_process(FILE_WATCHER_FILE, folder=folder)
-
 
     my_observer.start()
     while True:
@@ -119,6 +121,7 @@ def filewatcher():
 
     minimum_size = st.slider("Minimum file size in MB. Files that are smaller will be ignored.", min_value=1, max_value = 10000, value=200)
 
+    tag = st.text_input("Enter tag to only select files with tag. Keep None for all files. ",'None')
 
     settings_template = st.text_input("Enter path to a settings template:", DEFAULT_SETTINGS_PATH)
     if not os.path.isfile(settings_template):

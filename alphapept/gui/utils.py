@@ -1,9 +1,10 @@
 import os
 import datetime
 import yaml
-import streamlit as st 
+import streamlit as st
 from multiprocessing import Process
-import psutil 
+import psutil
+import time
 
 def files_in_folder(folder, ending):
     """
@@ -20,9 +21,8 @@ def read_log(log_path):
     """
     Reads logfile cleanly (i.e. removing lines with __ which are used for progress)
     """
-    
     if os.path.isfile(log_path):
-        with st.beta_expander(f"Run log"):
+        with st.beta_expander("Run log"):
             with st.spinner('Parsing file'):
                 with open(log_path, "r") as logfile:
                     lines = logfile.readlines()
@@ -69,7 +69,7 @@ def check_process(process_path):
 
 def init_process(process_path, **kwargs):
     """
-    Waits until a process file is created and then writes an init flag to the file 
+    Waits until a process file is created and then writes an init flag to the file
     """
     while True:
         if os.path.isfile(process_path):

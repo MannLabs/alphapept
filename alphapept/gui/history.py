@@ -1,8 +1,8 @@
 import os
 import streamlit as st
 import plotly.express as px
-import yaml 
-import pandas as pd 
+import yaml
+import pandas as pd
 from alphapept.paths import PROCESSED_PATH, AP_PATH
 from alphapept.gui.utils import files_in_folder
 
@@ -62,7 +62,7 @@ def check_group(filename, groups):
 
 def create_single_plot(all_results, files, acquisition_date_times, mode, groups, plot):
     """
-    Creates single plotly express plot 
+    Creates single plotly express plot
     """
     vals = []
     for idx, _ in enumerate(all_results.keys()):
@@ -96,7 +96,7 @@ def create_single_plot(all_results, files, acquisition_date_times, mode, groups,
 
 def create_multiple_plots(all_results, groups):
     """
-    Creates multiple plotly express plots 
+    Creates multiple plotly express plots
 
     """
     plot_types = ['feature_table', 'feature_table_median_rt_length','protein_fdr_n_sequence','protein_fdr_n_protein', 'protein_fdr_n_protein_group', 'id_rate','timing']
@@ -128,7 +128,7 @@ def history():
 
     groups = read_groups()
 
-    with st.beta_expander(f"Group files"):
+    with st.beta_expander("Group files"):
         st.text(f"If a groups.txt is present in the AlphaPept folder {AP_PATH}, data will be grouped.")
         groups = st.multiselect('Groups', default = groups, options=groups)
 
