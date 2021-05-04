@@ -3,6 +3,7 @@ from alphapept.paths import FILE_WATCHER_FILE, DEFAULT_SETTINGS_PATH
 from alphapept.gui.utils import check_process, init_process
 from alphapept.settings import load_settings_as_template
 import os 
+import time
 
 def check_file_completion(file, minimum_file_size):
 
@@ -11,6 +12,8 @@ def check_file_completion(file, minimum_file_size):
     if file.endswith('.d'):
         #Bruker
         to_check = os.path.join(file, 'analysis.tdf_bin')
+        while not os.path.isfile(to_check):
+            time.sleep(1)
     else:
         to_check = file
 
