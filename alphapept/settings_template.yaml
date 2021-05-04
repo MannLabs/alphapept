@@ -290,12 +290,12 @@ features:
   max_gap:
     type: spinbox
     min: 1
-    max: 99
+    max: 10
     default: 2
   ppm_tol:
     type: spinbox
     min: 1
-    max: 99
+    max: 25
     default: 8
   min_hill_length:
     type: spinbox

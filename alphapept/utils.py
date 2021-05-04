@@ -304,4 +304,4 @@ def assemble_df(settings, field = 'protein_fdr', callback=None):
 def delete_file(filename):
     if os.path.isfile(filename):
         os.remove(filename)
-        logging.info('Deleted {filename}')
+        logging.info(f'Deleted {filename}')
