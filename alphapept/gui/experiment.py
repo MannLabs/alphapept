@@ -168,6 +168,7 @@ def experiment():
                 prev_settings = st.checkbox('Use previous settings as template')
 
                 loaded = False
+                uploaded_settings = None
                 if prev_settings:
                     uploaded_file = st.file_uploader("Choose a file")
                     if uploaded_file is not None:
