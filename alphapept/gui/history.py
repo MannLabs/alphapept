@@ -133,7 +133,8 @@ def history():
         groups = st.multiselect('Groups', default = groups, options=groups)
 
     filtered = filter_by_tag(processed_files)
-    filtered = filtered[:st.slider('Preview', 1, len(filtered), min(len(filtered), 50))]
+    if len(filtered) > 1:
+        filtered = filtered[:st.slider('Preview', 1, len(filtered), min(len(filtered), 50))]
     all_results = load_files(filtered, callback=st.progress(0))
 
     if len(all_results) > 0:

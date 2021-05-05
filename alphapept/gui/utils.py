@@ -6,6 +6,15 @@ from multiprocessing import Process
 import psutil
 import time
 
+def escape_markdown(text):
+    """
+    Escape markdown
+    """
+    MD_SPECIAL_CHARS = "\`*_{}[]()#+-.!"
+    for char in MD_SPECIAL_CHARS:
+        text = text.replace(char, "\\"+char)
+    return text
+
 def files_in_folder(folder, ending):
     """
     Reads a folder and returns all files that have this ending. Sorts the files by name.

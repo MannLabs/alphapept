@@ -1,5 +1,5 @@
 import streamlit as st
-from alphapept.gui.utils import files_in_folder, read_log, check_process, init_process, start_process
+from alphapept.gui.utils import files_in_folder, read_log, check_process, init_process, start_process, escape_markdown
 from alphapept.paths import PROCESSED_PATH, PROCESS_FILE, QUEUE_PATH, FAILED_PATH
 from alphapept.settings import load_settings, load_settings_as_template, save_settings
 import os
@@ -116,7 +116,7 @@ def status():
 
                 cf = cf_['file']
                 cf_start = cf_['started']
-                status_msg.success(f'Processing {cf}. Started at {cf_start}')
+                status_msg.success(f'Processing {escape_markdown(cf)}. Started at {cf_start}')
 
                 logfile = os.path.join(PROCESSED_PATH, os.path.splitext(cf)[0]+'.log')
                 if current_log != logfile:

@@ -4,6 +4,7 @@ import pandas as pd
 import datetime
 from alphapept.paths import SETTINGS_TEMPLATE, QUEUE_PATH, DEFAULT_SETTINGS_PATH
 from alphapept.settings import load_settings_as_template, save_settings
+from alphapept.gui.utils import escape_markdown
 
 
 def parse_folder(file_folder):
@@ -57,25 +58,24 @@ def submit_experiment(recorder):
     """
     Asks for an experiment name and creates a button to submit.
     """
-    name = st.text_input('Enter experiment name and press enter.')
+    name = st.text_input('Enter experiment name and press enter.', datetime.datetime.today().strftime('%Y_%m_%d_'))
 
-    if name:
-        long_name = datetime.datetime.today().strftime('%Y_%m_%d_') + name + '.yaml'
-        long_name_path = os.path.join(QUEUE_PATH, long_name)
+    long_name = name + '.yaml'
+    long_name_path = os.path.join(QUEUE_PATH, long_name)
 
-        if os.path.exists(long_name_path):
-            st.error(f'Name {long_name} already exists. Please rename.')
-        else:
-            st.info(f'Filename will be: {long_name}. Click submit button to add to queue.')
-            if st.button('Submit'):
-                settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
-                for group in recorder:
-                    for key in recorder[group]:
-                        settings[group][key] = recorder[group][key]
+    if os.path.exists(long_name_path):
+        st.error(f'Name {escape_markdown(long_name)} already exists. Please rename.')
+    else:
+        st.info(f'Filename will be: {escape_markdown(long_name)}. Click submit button to add to queue.')
+        if st.button('Submit'):
+            settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
+            for group in recorder:
+                for key in recorder[group]:
+                    settings[group][key] = recorder[group][key]
 
-                save_settings(settings, long_name_path)
-                #Change things from experiment
-                st.success(f'Experiment {long_name} submitted. Switch to Status tab to track progress.')
+            save_settings(settings, long_name_path)
+            #Change things from experiment
+            st.success(f'Experiment {escape_markdown(long_name)} submitted. Switch to Status tab to track progress.')
 
 
 def customize_settings(recorder, uploaded_settings, loaded):
