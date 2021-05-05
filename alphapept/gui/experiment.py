@@ -143,16 +143,18 @@ def experiment():
                 #        st.table(pd.DataFrame(fasta_files, columns=['File']))
 
                 with st.beta_expander("Fractions"):
-                    st.write('Fractions can be automatically assigned based on the filename.',
-                            'Enter the string that preceds the fraction identifier and the string that comes after.')
-                    prec = st.text_input('Preceding')
-                    after = st.text_input('After')
+                    st.write('Fractions are currently not supported.')
+                    if False:
+                        st.write('Fractions can be automatically assigned based on the filename.',
+                                'Enter the string that preceds the fraction identifier and the string that comes after.')
+                        prec = st.text_input('Preceding')
+                        after = st.text_input('After')
 
-                    if st.button('Apply'):
-                        with st.spinner('Parsing folder'):
-                            files = pd.DataFrame(raw_files, columns=['File'])
-                            files['Fraction'] = files['File'].apply(lambda x: x.split(prec)[1].split(after)[0])
-                            st.table(files)
+                        if st.button('Apply'):
+                            with st.spinner('Parsing folder'):
+                                files = pd.DataFrame(raw_files, columns=['File'])
+                                files['Fraction'] = files['File'].apply(lambda x: x.split(prec)[1].split(after)[0])
+                                st.table(files)
 
                 st.write(f"## Workflow")
 
