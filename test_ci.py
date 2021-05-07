@@ -223,7 +223,7 @@ class TestRun():
     def upload_to_db(self, password):
         from pymongo import MongoClient
         logging.info('Uploading to DB')
-        string = f"mongodb+srv://{MONGODB_USER}:{password}@{MONGODB_URL}"
+        string = f"mongodb+srv://{MONGODB_USER}:{password}@{MONGODB_URL}?ssl=true&ssl_cert_reqs=CERT_NONE"
         client = MongoClient(string)
 
         #When having keys with dots like filename.ms_data.hdf, mongodb causes an error. This is to remove the dots.
