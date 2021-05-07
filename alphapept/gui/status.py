@@ -124,7 +124,9 @@ def status():
                     log_txt = []
                     f = open(logfile, "r")
 
-                for line in f.readlines():
+                lines = f.readlines()[:200] # Limit to 200 lines 
+
+                for line in lines:
                     if '__progress_current' in line:
                         current_p_ = float(line.split('__progress_current ')[1][:5])
                         current.progress(current_p_)
