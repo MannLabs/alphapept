@@ -18,6 +18,7 @@ import yaml
 import alphapept
 import alphapept.io
 from alphapept.__version__ import VERSION_NO as alphapept_version
+from alphapept.paths import DEFAULT_SETTINGS
 
 
 # Global dictionary to store links to the files
@@ -147,7 +148,7 @@ class TestRun():
         Prepares the settings according to the test run
         """
 
-        self.settings = load_settings('default_settings.yaml')
+        self.settings = DEFAULT_SETTINGS
         self.settings['experiment']['file_paths'] =  [TEST_DIR + _ for _ in self.file_paths]
 
         self.settings['experiment']['fasta_paths'] = [TEST_DIR + _ for _ in self.fasta_paths]
@@ -224,7 +225,6 @@ class TestRun():
         logging.info('Uploading to DB')
         string = f"mongodb+srv://{MONGODB_USER}:{password}@{MONGODB_URL}"
         client = MongoClient(string)
-
 
         #When having keys with dots like filename.ms_data.hdf, mongodb causes an error. This is to remove the dots.
         report = self.report

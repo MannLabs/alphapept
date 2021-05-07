@@ -604,6 +604,7 @@ def export(
 from time import time, sleep
 from .__version__ import VERSION_NO
 import datetime
+import alphapept.utils
 
 
 def get_file_summary(ms_data):
@@ -685,6 +686,10 @@ def run_complete_workflow(
 
     workflow = settings['workflow']
 
+    if "continue_runs" in workflow:
+        if not workflow["continue_runs"]:
+            for _ in settings['experiment']['file_paths']:
+                alphapept.utils.delete_file(os.path.splitext(_)[0]+".ms_data.hdf")
     if workflow["create_database"]:
         steps.append(create_database)
     if workflow["import_raw_data"]:
