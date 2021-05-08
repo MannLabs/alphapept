@@ -2,10 +2,11 @@ import streamlit as st
 import os
 import pandas as pd
 import datetime
-from alphapept.paths import SETTINGS_TEMPLATE, QUEUE_PATH, DEFAULT_SETTINGS_PATH
-from alphapept.settings import load_settings_as_template, save_settings
+from alphapept.paths import SETTINGS_TEMPLATE_PATH, QUEUE_PATH, DEFAULT_SETTINGS_PATH
+from alphapept.settings import load_settings_as_template, save_settings, load_settings
 from alphapept.gui.utils import escape_markdown
 
+SETTINGS_TEMPLATE = load_settings(SETTINGS_TEMPLATE_PATH)
 
 def parse_folder(file_folder):
     """
