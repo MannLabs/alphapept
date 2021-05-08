@@ -102,6 +102,10 @@ def customize_settings(recorder, uploaded_settings, loaded):
 
     return recorder
 
+def refresh_folder():
+    if st.button('Refresh'):
+        raise st.script_runner.RerunException(st.script_request_queue.RerunData(None))
+
 
 def experiment():
     st.write("# New experiment")
@@ -125,10 +129,13 @@ def experiment():
             if (len(raw_files) == 0) or (len(fasta_files) == 0):
                 if (len(raw_files) == 0) and (len(fasta_files) == 0):
                     st.warning('No raw and FASTA files in folder.')
+                    refresh_folder()
                 elif len(raw_files) == 0:
                     st.warning('No raw files in folder.')
+                    refresh_folder()
                 elif len(fasta_files) == 0:
                     st.warning('No fasta files in folder.')
+                    refresh_folder()
 
             else:
                 with st.beta_expander(f"Raw files ({len(raw_files)})"):
