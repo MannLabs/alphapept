@@ -32,7 +32,7 @@ fasta:
   num_missed_cleavages: 2
   min_length: 6
   max_length: 27
-  max_isoforms: 1024
+  max_isoforms: 8
   pseudo_reverse: true
   AL_swap: false
   KR_swap: false

@@ -639,7 +639,7 @@ def get_file_summary(ms_data):
 
                 for field in ['fwhm','int_sum','rt_length','o_mass_ppm_raw']:
                     if field in df.columns:
-                        f_summary['feature_table_median_'+field] = float(df[field].median())
+                        f_summary[key+'_median_'+field] = float(df[field].median())
 
     return f_summary
 
