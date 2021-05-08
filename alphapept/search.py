@@ -513,6 +513,7 @@ def get_hits(query_frag, query_int, db_frag, db_int, frag_type, mtol, ppm, losse
 def score(
     psms,
     query_masses,
+    query_masses_raw,
     query_frags,
     query_ints,
     query_indices,
@@ -554,6 +555,9 @@ def score(
 
         psms_['o_mass'][i] = query_masses[query_idx] - db_masses[db_idx]
         psms_['o_mass_ppm'][i] = 2 * psms_['o_mass'][i] / (query_masses[query_idx]  + db_masses[db_idx] ) * 1e6
+
+        psms_['o_mass_raw'][i] = query_masses_raw[query_idx] - db_masses[db_idx]
+        psms_['o_mass_ppm_raw'][i] = 2 * psms_['o_mass'][i] / (query_masses_raw[query_idx]  + db_masses[db_idx] ) * 1e6
 
         psms_['delta_m'][i] = np.mean(ions[:,4]-ions[:,5])
         psms_['delta_m_ppm'][i] = np.mean(2 * psms_['delta_m'][i] / (ions[:,4]  + ions[:,5] ) * 1e6)
@@ -647,6 +651,9 @@ def get_score_columns(
             query_masses = features['corrected_mass'].values
         else:
             query_masses = features['mass_matched'].values
+
+        query_masses_raw = features['mass_matched'].values
+
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
         query_charges = query_charges[features['query_idx'].values]
@@ -675,7 +682,9 @@ def get_score_columns(
         )
         query_indices = indices
     else:
+        #TODO: This code is outdated, callin with features = None will crash.
         query_masses = query_data['prec_mass_list2']
+        query_masses_raw = query_data['prec_mass_list2']
         query_mz = query_data['mono_mzs2']
         query_rt = query_data['rt_list_ms2']
 
@@ -685,7 +694,7 @@ def get_score_columns(
     loss_dict['-H2O'] = 18.01056468346
     loss_dict['-NH3'] = 17.03052
 
-    float_fields = ['o_mass', 'o_mass_ppm','delta_m','delta_m_ppm','matched_int_ratio','int_ratio']
+    float_fields = ['o_mass', 'o_mass_ppm', 'o_mass_raw','o_mass_ppm_raw','delta_m','delta_m_ppm','matched_int_ratio','int_ratio']
     int_fields = ['total_int','matched_int','n_ions','ion_idx'] + [a+_+'_hits' for _ in loss_dict for a in ['b','y']]
 
     psms_dtype = np.dtype([(_,np.float32) for _ in float_fields] + [(_,np.int64) for _ in int_fields])
@@ -693,6 +702,7 @@ def get_score_columns(
     psms_, ions_,  = score(
         psms,
         query_masses,
+        query_masses_raw,
         query_frags,
         query_ints,
         query_indices,
