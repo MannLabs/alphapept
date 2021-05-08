@@ -5,6 +5,20 @@ from alphapept.__version__ import VERSION_NO
 import os
 import socket
 
+_this_file = os.path.abspath(__file__)
+_this_directory = os.path.dirname(_this_file)
+LOGO_PATH = os.path.join(_this_directory, 'ap_round.png')
+ICON_PATH = os.path.join(_this_directory, 'favicon.ico')
+image = Image.open(LOGO_PATH)
+icon = Image.open(ICON_PATH)
+computer_name = socket.gethostname()
+
+st.set_page_config(
+    page_title=f"Alphapept {VERSION_NO}",
+    page_icon=icon,
+    layout="wide",
+)
+
 hide_streamlit_style = """
 <style>
 #MainMenu {visibility: hidden;}
@@ -14,11 +28,6 @@ footer {visibility: hidden;}
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-_this_file = os.path.abspath(__file__)
-_this_directory = os.path.dirname(_this_file)
-LOGO_PATH = os.path.join(_this_directory, 'ap_round.png')
-image = Image.open(LOGO_PATH)
-computer_name = socket.gethostname()
 
 st.sidebar.image(image, width = 300)
 st.sidebar.code(f"AlphaPept {VERSION_NO} \n{computer_name}")
