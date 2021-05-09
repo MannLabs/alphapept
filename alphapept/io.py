@@ -1185,8 +1185,6 @@ def raw_conversion(to_process, callback = None, parallel=False):
         local_file_name = os.path.basename(file_name)
         output_path = os.path.dirname(file_name)
         base_file_name, ext = os.path.splitext(local_file_name)
-        if ext == '.hdf':
-            return
         output_file_name = os.path.join(output_path, base_file_name+".ms_data.hdf")
 
         if not os.path.isfile(output_file_name):
