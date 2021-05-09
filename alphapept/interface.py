@@ -630,12 +630,16 @@ def get_file_summary(ms_data):
                     if field in df.columns:
                         f_summary['protein_fdr_n_'+field] = df[field].nunique()
 
-            if key in ['feature_table']:
-                if ('rt_start' in df.columns) and ('rt_end' in df.columns):
+            if key in ['feature_table', 'protein_fdr']:
+                if ('rt_start' in df.columns) and ('rt_end' in df.columns) and ('rt_apex' in df.columns):
                     df['rt_length'] = df['rt_end'] - df['rt_start']
-                for field in ['fwhm','int_sum','rt_length']:
+                    df['rt_right'] = df['rt_end'] - df['rt_apex']
+                    df['rt_left'] = df['rt_apex'] - df['rt_start']
+                    df['rt_tail'] = df['rt_right'] / df['rt_left']
+
+                for field in ['fwhm','int_sum','rt_length','o_mass_ppm_raw']:
                     if field in df.columns:
-                        f_summary['feature_table_median_'+field] = float(df[field].median())
+                        f_summary[key+'_median_'+field] = float(df[field].median())
 
     return f_summary
 

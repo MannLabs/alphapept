@@ -210,7 +210,7 @@ def add_variable_mod(peps, mods_variable_dict):
     return peptides
 
 
-def get_isoforms(mods_variable_dict, peptide, max_isoforms):
+def get_isoforms(mods_variable_dict, peptide, max_isoforms, limit_modifications=None):
     """
     Function to generate isoforms for a given peptide - returns a list of isoforms.
     The original sequence is included in the list
@@ -219,7 +219,15 @@ def get_isoforms(mods_variable_dict, peptide, max_isoforms):
 
     peptides = [pep]
     new_peps = [(pep, 0)]
+
+    iteration = 0
     while len(peptides) < max_isoforms:
+
+
+        if limit_modifications:
+            if iteration >= limit_modifications:
+                break
+
         new_peps = add_variable_mod(new_peps, mods_variable_dict)
 
         if len(new_peps) == 0:
@@ -232,6 +240,10 @@ def get_isoforms(mods_variable_dict, peptide, max_isoforms):
             if len(peptides) < max_isoforms:
                 peptides.append(_[0])
 
+        iteration +=1
+
+
+
     peptides = [''.join(_) for _ in peptides]
 
     return peptides
@@ -239,7 +251,7 @@ def get_isoforms(mods_variable_dict, peptide, max_isoforms):
 # Cell
 from itertools import chain
 
-def add_variable_mods(peptide_list, mods_variable, max_isoforms, **kwargs):
+def add_variable_mods(peptide_list, mods_variable, max_isoforms, limit_modifications, **kwargs):
     #the peptide_list originates from one peptide already -> limit isoforms here
 
     max_ = max_isoforms - len(peptide_list) + 1
@@ -254,7 +266,7 @@ def add_variable_mods(peptide_list, mods_variable, max_isoforms, **kwargs):
         for _ in mods_variable:
             mods_variable_r[_[-1]] = _
 
-        peptide_list = [get_isoforms(mods_variable_r, peptide, max_) for peptide in peptide_list]
+        peptide_list = [get_isoforms(mods_variable_r, peptide, max_, limit_modifications) for peptide in peptide_list]
         return list(chain.from_iterable(peptide_list))
 
 # Cell

@@ -13,13 +13,12 @@ import subprocess
 import numpy as np
 
 import alphapept.interface
-from alphapept.settings import load_settings
+from alphapept.settings import load_settings, load_settings_as_template
 import yaml
 import alphapept
 import alphapept.io
 from alphapept.__version__ import VERSION_NO as alphapept_version
-from alphapept.paths import DEFAULT_SETTINGS
-
+from alphapept.paths import DEFAULT_SETTINGS_PATH
 
 # Global dictionary to store links to the files
 FILE_DICT = {}
@@ -148,9 +147,8 @@ class TestRun():
         Prepares the settings according to the test run
         """
 
-        self.settings = DEFAULT_SETTINGS
+        self.settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
         self.settings['experiment']['file_paths'] =  [TEST_DIR + _ for _ in self.file_paths]
-
         self.settings['experiment']['fasta_paths'] = [TEST_DIR + _ for _ in self.fasta_paths]
 
         self.settings['search']['m_offset'] =  self.m_offset
@@ -193,10 +191,8 @@ class TestRun():
         report['test_id'] = self.id
         report['settings'] = settings
         report['time_elapsed_min'] = (end-start)/60
-
         report['branch'] = subprocess.check_output("git branch --show-current").decode("utf-8").rstrip('\n')
         report['commit'] = subprocess.check_output("git rev-parse --verify HEAD").decode("utf-8").rstrip('\n')
-
         report['version'] = alphapept_version
 
         if self.exe_path:
@@ -223,7 +219,7 @@ class TestRun():
     def upload_to_db(self, password):
         from pymongo import MongoClient
         logging.info('Uploading to DB')
-        string = f"mongodb+srv://{MONGODB_USER}:{password}@{MONGODB_URL}"
+        string = f"mongodb+srv://{MONGODB_USER}:{password}@{MONGODB_URL}?ssl=true&ssl_cert_reqs=CERT_NONE"
         client = MongoClient(string)
 
         #When having keys with dots like filename.ms_data.hdf, mongodb causes an error. This is to remove the dots.
