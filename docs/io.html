@@ -524,7 +524,7 @@ ToDo: include more sequences</p>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Centroiding-profile-data">Centroiding profile data<a class="anchor-link" href="#Centroiding-profile-data"> </a></h3><p>Importing raw data frequently results in profile data. When having profile data, Alphapept first needs to perform centroiding to use this data properly. For this, it needs to search local maxima ("peaks") of the intensity as a function of m/z. For this AlphaPept uses the function <a href="/alphapept/io.html#get_peaks"><code>get_peaks</code></a>. A peak is described by three points, the <code>start</code> of the peak, the <code>center</code> and the <code>end</code>. The function accepts an intensity array and calculates the delta (gradient) between consecutive datapoints to determine the start, center and end.</p>
+<h3 id="Centroiding-profile-data">Centroiding profile data<a class="anchor-link" href="#Centroiding-profile-data"> </a></h3><p>Importing raw data frequently results in profile data. When having profile data, Alphapept first needs to perform centroiding to use this data properly. For this, it needs to search local maxima ("peaks") of the intensity as a function of m/z. For this AlphaPept uses the function <a href="/io.html#get_peaks"><code>get_peaks</code></a>. A peak is described by three points, the <code>start</code> of the peak, the <code>center</code> and the <code>end</code>. The function accepts an intensity array and calculates the delta (gradient) between consecutive datapoints to determine the start, center and end.</p>
 
 </div>
 </div>
@@ -611,7 +611,7 @@ ToDo: include more sequences</p>
 <li>Three or more data points: Gaussian estimation of the center position.</li>
 </ul>
 <p>For the Gaussian estimation, only the three central points are used to fit a Gaussian Peak shape. The Gaussian is then approximated with the logarithm.</p>
-<p>The gaussian estimator is defined in <a href="/alphapept/io.html#gaussian_estimator"><code>gaussian_estimator</code></a> and is used by the wrapper <a href="/alphapept/io.html#get_centroid"><code>get_centroid</code></a>.</p>
+<p>The gaussian estimator is defined in <a href="/io.html#gaussian_estimator"><code>gaussian_estimator</code></a> and is used by the wrapper <a href="/io.html#get_centroid"><code>get_centroid</code></a>.</p>
 
 </div>
 </div>
@@ -821,7 +821,7 @@ ToDo: include more sequences</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Trimming-spectra-to-retain-the-n-most-intense-peaks">Trimming spectra to retain the <code>n</code> most intense peaks<a class="anchor-link" href="#Trimming-spectra-to-retain-the-n-most-intense-peaks"> </a></h3><p><a href="/alphapept/io.html#get_most_abundant"><code>get_most_abundant</code></a>: In order to save spectra in a more memory efficient form, we only keep the n most abundant peaks. This allows us to save data in a fast accessible matrix format.</p>
+<h3 id="Trimming-spectra-to-retain-the-n-most-intense-peaks">Trimming spectra to retain the <code>n</code> most intense peaks<a class="anchor-link" href="#Trimming-spectra-to-retain-the-n-most-intense-peaks"> </a></h3><p><a href="/io.html#get_most_abundant"><code>get_most_abundant</code></a>: In order to save spectra in a more memory efficient form, we only keep the n most abundant peaks. This allows us to save data in a fast accessible matrix format.</p>
 
 </div>
 </div>
@@ -862,7 +862,7 @@ Setting <code>n_max</code> to -1 returns all peaks.</p>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>For saving, we are currently relying on the hdf-container (see below).</p>
-<p>While we could, in principle, store the mz and int arrays as a list of variable length, this will come at a performance decrease. We, therefore, create an array of the dimensions of the n most abundant peaks and the number of spectra with the function <a href="/alphapept/io.html#list_to_numpy_f32"><code>list_to_numpy_f32</code></a> and fill the unoccupied cells with <code>-1</code>. This allows an increase in accessing times at the cost of additional disk space.</p>
+<p>While we could, in principle, store the mz and int arrays as a list of variable length, this will come at a performance decrease. We, therefore, create an array of the dimensions of the n most abundant peaks and the number of spectra with the function <a href="/io.html#list_to_numpy_f32"><code>list_to_numpy_f32</code></a> and fill the unoccupied cells with <code>-1</code>. This allows an increase in accessing times at the cost of additional disk space.</p>
 
 </div>
 </div>
@@ -1091,7 +1091,7 @@ data with an HDF container.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="MS_Data_File" class="doc_header"><code>class</code> <code>MS_Data_File</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L984" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>MS_Data_File</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>is_read_only</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>is_new_file</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>is_overwritable</code></strong>:<code>bool</code>=<em><code>False</code></em>) :: <a href="/alphapept/io.html#HDF_File"><code>HDF_File</code></a></p>
+<h2 id="MS_Data_File" class="doc_header"><code>class</code> <code>MS_Data_File</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L984" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>MS_Data_File</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>is_read_only</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>is_new_file</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>is_overwritable</code></strong>:<code>bool</code>=<em><code>False</code></em>) :: <a href="/io.html#HDF_File"><code>HDF_File</code></a></p>
 </blockquote>
 <p>A generic class to store and retrieve on-disk
 data with an HDF container.</p>

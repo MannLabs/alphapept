@@ -37,14 +37,14 @@ nb_path: "nbs\03_fasta.ipynb"
 <li>For each peptide, calculate a theoretical spectrum and precursor mass</li>
 <li>Save spectra</li>
 </ol>
-<p>Currently, <a href="/alphapept/speed.html#numba"><code>numba</code></a> has only limited string support. A lot of the functions are therefore Python-native.</p>
+<p>Currently, <a href="/speed.html#numba"><code>numba</code></a> has only limited string support. A lot of the functions are therefore Python-native.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Cleaving">Cleaving<a class="anchor-link" href="#Cleaving"> </a></h2><p>For cleaving, we use regular expressions to find potential cleavages sites and write the wrapper <a href="/alphapept/fasta.html#cleave_sequence"><code>cleave_sequence</code></a> to use it.</p>
+<h2 id="Cleaving">Cleaving<a class="anchor-link" href="#Cleaving"> </a></h2><p>For cleaving, we use regular expressions to find potential cleavages sites and write the wrapper <a href="/fasta.html#cleave_sequence"><code>cleave_sequence</code></a> to use it.</p>
 
 </div>
 </div>
@@ -245,7 +245,7 @@ nb_path: "nbs\03_fasta.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Parsing">Parsing<a class="anchor-link" href="#Parsing"> </a></h2><p>Peptides are composed out of amino acids that are written in capital letters - <code>PEPTIDE</code>. to distinguish modifications, they are written in lowercase such as <code>PEPTIoxDE</code> and can be of arbitrary length. For a modified amino acid (AA), the modification precedes the letter of the amino acid. Decoys are indicated with an underscore. Therfore, the <a href="/alphapept/fasta.html#parse"><code>parse</code></a> function splits after <code>_</code>. When parsing, the peptide string is converted into a numba-compatible list, like so: <code>PEPoxTIDE</code> -&gt; <code>[P, E, P, oxT, I, D, E]</code>. This allows that we can use the <a href="/alphapept/constants.html#mass_dict"><code>mass_dict</code></a> from <code>alphapept.constants</code> to directly determine the masses for the corresponding amino acids.</p>
+<h2 id="Parsing">Parsing<a class="anchor-link" href="#Parsing"> </a></h2><p>Peptides are composed out of amino acids that are written in capital letters - <code>PEPTIDE</code>. to distinguish modifications, they are written in lowercase such as <code>PEPTIoxDE</code> and can be of arbitrary length. For a modified amino acid (AA), the modification precedes the letter of the amino acid. Decoys are indicated with an underscore. Therfore, the <a href="/fasta.html#parse"><code>parse</code></a> function splits after <code>_</code>. When parsing, the peptide string is converted into a numba-compatible list, like so: <code>PEPoxTIDE</code> -&gt; <code>[P, E, P, oxT, I, D, E]</code>. This allows that we can use the <a href="/constants.html#mass_dict"><code>mass_dict</code></a> from <code>alphapept.constants</code> to directly determine the masses for the corresponding amino acids.</p>
 
 </div>
 </div>
@@ -341,7 +341,7 @@ nb_path: "nbs\03_fasta.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Decoy">Decoy<a class="anchor-link" href="#Decoy"> </a></h2><p>The decoy strategy employed is a pseudo-reversal of the peptide sequence, keeping only the terminal amino-acid and reversing the rest. Additionally, we can call the functions <a href="/alphapept/fasta.html#swap_KR"><code>swap_KR</code></a> and and <a href="/alphapept/fasta.html#swap_AL"><code>swap_AL</code></a> that will swap the respective AAs. The function <a href="/alphapept/fasta.html#swap_KR"><code>swap_KR</code></a> will only swap terminal AAs. The swapping functions only work if the AA is not modified.</p>
+<h2 id="Decoy">Decoy<a class="anchor-link" href="#Decoy"> </a></h2><p>The decoy strategy employed is a pseudo-reversal of the peptide sequence, keeping only the terminal amino-acid and reversing the rest. Additionally, we can call the functions <a href="/fasta.html#swap_KR"><code>swap_KR</code></a> and and <a href="/fasta.html#swap_AL"><code>swap_AL</code></a> that will swap the respective AAs. The function <a href="/fasta.html#swap_KR"><code>swap_KR</code></a> will only swap terminal AAs. The swapping functions only work if the AA is not modified.</p>
 
 </div>
 </div>
@@ -753,7 +753,7 @@ The original sequence is included in the list</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Lastly, we define the wrapper <a href="/alphapept/fasta.html#add_variable_mods"><code>add_variable_mods</code></a> so that the functions can be called for lists of peptides and a list of variable modifications.</p>
+<p>Lastly, we define the wrapper <a href="/fasta.html#add_variable_mods"><code>add_variable_mods</code></a> so that the functions can be called for lists of peptides and a list of variable modifications.</p>
 
 </div>
 </div>
@@ -939,7 +939,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Terminal-Modifications---Variable">Terminal Modifications - Variable<a class="anchor-link" href="#Terminal-Modifications---Variable"> </a></h3><p>Lastly, to handle terminal variable modifications we use the function <a href="/alphapept/fasta.html#add_variable_mods_terminal"><code>add_variable_mods_terminal</code></a>. As the modifcation can only be at the terminal end this function only adds a peptide where the terminal end is modified.</p>
+<h3 id="Terminal-Modifications---Variable">Terminal Modifications - Variable<a class="anchor-link" href="#Terminal-Modifications---Variable"> </a></h3><p>Lastly, to handle terminal variable modifications we use the function <a href="/fasta.html#add_variable_mods_terminal"><code>add_variable_mods_terminal</code></a>. As the modifcation can only be at the terminal end this function only adds a peptide where the terminal end is modified.</p>
 
 </div>
 </div>
@@ -1036,7 +1036,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Generating-Peptides">Generating Peptides<a class="anchor-link" href="#Generating-Peptides"> </a></h3><p>Lastly we put all the functions into a wrapper <a href="/alphapept/fasta.html#generate_peptides"><code>generate_peptides</code></a>. It will accept a peptide and a dictionary with settings so that we can get all modified peptides</p>
+<h3 id="Generating-Peptides">Generating Peptides<a class="anchor-link" href="#Generating-Peptides"> </a></h3><p>Lastly we put all the functions into a wrapper <a href="/fasta.html#generate_peptides"><code>generate_peptides</code></a>. It will accept a peptide and a dictionary with settings so that we can get all modified peptides</p>
 
 </div>
 </div>
@@ -1147,7 +1147,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Mass-Calculations">Mass Calculations<a class="anchor-link" href="#Mass-Calculations"> </a></h2><p>Using the <a href="/alphapept/constants.html#mass_dict"><code>mass_dict</code></a> from <a href="/alphapept/constants.html"><code>constants</code></a> and being able to parse sequences with <a href="/alphapept/fasta.html#parse"><code>parse</code></a> one can simply look up the masses for each modified or unmodified amino acid and add everything up.</p>
+<h2 id="Mass-Calculations">Mass Calculations<a class="anchor-link" href="#Mass-Calculations"> </a></h2><p>Using the <a href="/constants.html#mass_dict"><code>mass_dict</code></a> from <a href="/constants.html"><code>constants</code></a> and being able to parse sequences with <a href="/fasta.html#parse"><code>parse</code></a> one can simply look up the masses for each modified or unmodified amino acid and add everything up.</p>
 
 </div>
 </div>
@@ -1226,9 +1226,9 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Fragments">Fragments<a class="anchor-link" href="#Fragments"> </a></h3><p>Likewise, we can calculate the masses of the fragment ions. We employ two functions: <a href="/alphapept/fasta.html#get_fragmass"><code>get_fragmass</code></a> and <a href="/alphapept/fasta.html#get_frag_dict"><code>get_frag_dict</code></a>.</p>
-<p><a href="/alphapept/fasta.html#get_fragmass"><code>get_fragmass</code></a> is a fast, <a href="/alphapept/speed.html#numba"><code>numba</code></a>-compatible function that calculates the fragmasses and returns an array indicating wheter the iontype was <code>b</code> or <code>y</code>.</p>
-<p><a href="/alphapept/fasta.html#get_frag_dict"><code>get_frag_dict</code></a> instead is not <a href="/alphapept/speed.html#numba"><code>numba</code></a>-compatible and hence a bit slower. It returns a dictionary with the respective ion and can be used for plotting theoretical spectra.</p>
+<h3 id="Fragments">Fragments<a class="anchor-link" href="#Fragments"> </a></h3><p>Likewise, we can calculate the masses of the fragment ions. We employ two functions: <a href="/fasta.html#get_fragmass"><code>get_fragmass</code></a> and <a href="/fasta.html#get_frag_dict"><code>get_frag_dict</code></a>.</p>
+<p><a href="/fasta.html#get_fragmass"><code>get_fragmass</code></a> is a fast, <a href="/speed.html#numba"><code>numba</code></a>-compatible function that calculates the fragmasses and returns an array indicating wheter the iontype was <code>b</code> or <code>y</code>.</p>
+<p><a href="/fasta.html#get_frag_dict"><code>get_frag_dict</code></a> instead is not <a href="/speed.html#numba"><code>numba</code></a>-compatible and hence a bit slower. It returns a dictionary with the respective ion and can be used for plotting theoretical spectra.</p>
 
 </div>
 </div>
@@ -1439,14 +1439,14 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Spectra">Spectra<a class="anchor-link" href="#Spectra"> </a></h3><p>The function <a href="/alphapept/fasta.html#get_spectrum"><code>get_spectrum</code></a> returns a tuple with the following content:</p>
+<h3 id="Spectra">Spectra<a class="anchor-link" href="#Spectra"> </a></h3><p>The function <a href="/fasta.html#get_spectrum"><code>get_spectrum</code></a> returns a tuple with the following content:</p>
 <ul>
 <li>precursor mass</li>
 <li>peptide sequence</li>
 <li>fragmasses</li>
 <li>fragtypes</li>
 </ul>
-<p>Likewise, <a href="/alphapept/fasta.html#get_spectra"><code>get_spectra</code></a> returns a list of tuples. We employ a list of tuples here as this way we can sort them easily by precursor mass.</p>
+<p>Likewise, <a href="/fasta.html#get_spectra"><code>get_spectra</code></a> returns a list of tuples. We employ a list of tuples here as this way we can sort them easily by precursor mass.</p>
 
 </div>
 </div>
@@ -1541,8 +1541,8 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Reading-FASTA">Reading FASTA<a class="anchor-link" href="#Reading-FASTA"> </a></h2><p>To read FASTA files we use the <code>SeqIO</code> module from the <code>Biopython</code> library. This is a generator expression so that we read one FASTA entry after another until the <code>StopIteration</code> is reached, which is implemented in <a href="/alphapept/fasta.html#read_fasta_file"><code>read_fasta_file</code></a>. Additionally, we define the funciton <a href="/alphapept/fasta.html#read_fasta_file_entries"><code>read_fasta_file_entries</code></a> that simply counts the number of FASTA entries.</p>
-<p>All FASTA entries that contain AAs which are not in the mass_dict can be checked with <a href="/alphapept/fasta.html#check_sequence"><code>check_sequence</code></a> and will be ignored.</p>
+<h2 id="Reading-FASTA">Reading FASTA<a class="anchor-link" href="#Reading-FASTA"> </a></h2><p>To read FASTA files we use the <code>SeqIO</code> module from the <code>Biopython</code> library. This is a generator expression so that we read one FASTA entry after another until the <code>StopIteration</code> is reached, which is implemented in <a href="/fasta.html#read_fasta_file"><code>read_fasta_file</code></a>. Additionally, we define the funciton <a href="/fasta.html#read_fasta_file_entries"><code>read_fasta_file_entries</code></a> that simply counts the number of FASTA entries.</p>
+<p>All FASTA entries that contain AAs which are not in the mass_dict can be checked with <a href="/fasta.html#check_sequence"><code>check_sequence</code></a> and will be ignored.</p>
 
 </div>
 </div>
@@ -1669,7 +1669,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Peptide-Dictionary">Peptide Dictionary<a class="anchor-link" href="#Peptide-Dictionary"> </a></h2><p>In order to efficiently store peptides, we rely on the Python dictionary. The idea is to have a dictionary with peptides as keys and indices to proteins as values. This way, one can quickly look up to which protein a peptide belongs to. The function <a href="/alphapept/fasta.html#add_to_pept_dict"><code>add_to_pept_dict</code></a> uses a regular python dictionary and allows to add peptides and stores indices to the originating proteins as a list. If a peptide is already present in the dictionary, the list is appended. The function returns a list of <code>added_peptides</code>, which were not present in the dictionary yet. One can use the function <a href="/alphapept/fasta.html#merge_pept_dicts"><code>merge_pept_dicts</code></a> to merge multiple peptide dicts.</p>
+<h2 id="Peptide-Dictionary">Peptide Dictionary<a class="anchor-link" href="#Peptide-Dictionary"> </a></h2><p>In order to efficiently store peptides, we rely on the Python dictionary. The idea is to have a dictionary with peptides as keys and indices to proteins as values. This way, one can quickly look up to which protein a peptide belongs to. The function <a href="/fasta.html#add_to_pept_dict"><code>add_to_pept_dict</code></a> uses a regular python dictionary and allows to add peptides and stores indices to the originating proteins as a list. If a peptide is already present in the dictionary, the list is appended. The function returns a list of <code>added_peptides</code>, which were not present in the dictionary yet. One can use the function <a href="/fasta.html#merge_pept_dicts"><code>merge_pept_dicts</code></a> to merge multiple peptide dicts.</p>
 
 </div>
 </div>
@@ -1838,8 +1838,8 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Generating-a-database">Generating a database<a class="anchor-link" href="#Generating-a-database"> </a></h2><p>To wrap everything up, we employ two functions <a href="/alphapept/fasta.html#generate_database"><code>generate_database</code></a> and <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spectra</code></a>. The first one reads a FASTA file and generates a list of peptides, as well as the peptide dictionary and an ordered FASTA dictionary to be able to look up the protein indices laster. For the <code>callback</code> we first read the whole FASTA file to determine the total number of entries in the FASTA file.  For a typical FASTA file of 30 Mb with 40k entries, this should take less than a second. The progress of the digestion is monitored by processing the FASTA file one by one.
-The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spectra</code></a> then calculates precursor masses and fragment ions. Here, we split the total_number of sequences in <code>1000</code> steps to be able to track progress with the <code>callback</code>.</p>
+<h2 id="Generating-a-database">Generating a database<a class="anchor-link" href="#Generating-a-database"> </a></h2><p>To wrap everything up, we employ two functions <a href="/fasta.html#generate_database"><code>generate_database</code></a> and <a href="/fasta.html#generate_spectra"><code>generate_spectra</code></a>. The first one reads a FASTA file and generates a list of peptides, as well as the peptide dictionary and an ordered FASTA dictionary to be able to look up the protein indices laster. For the <code>callback</code> we first read the whole FASTA file to determine the total number of entries in the FASTA file.  For a typical FASTA file of 30 Mb with 40k entries, this should take less than a second. The progress of the digestion is monitored by processing the FASTA file one by one.
+The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code></a> then calculates precursor masses and fragment ions. Here, we split the total_number of sequences in <code>1000</code> steps to be able to track progress with the <code>callback</code>.</p>
 
 </div>
 </div>
@@ -1928,7 +1928,7 @@ The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spe
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Parallelized-version">Parallelized version<a class="anchor-link" href="#Parallelized-version"> </a></h2><p>To speed up spectra generated, one can use the parallelized version. The function <a href="/alphapept/fasta.html#generate_database_parallel"><code>generate_database_parallel</code></a> reads an entire FASTA file and splits it into multiple blocks. Each block will be processed, and the generated pept_dicts will be merged.</p>
+<h2 id="Parallelized-version">Parallelized version<a class="anchor-link" href="#Parallelized-version"> </a></h2><p>To speed up spectra generated, one can use the parallelized version. The function <a href="/fasta.html#generate_database_parallel"><code>generate_database_parallel</code></a> reads an entire FASTA file and splits it into multiple blocks. Each block will be processed, and the generated pept_dicts will be merged.</p>
 
 </div>
 </div>
@@ -2042,7 +2042,7 @@ The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spe
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Parallel-search-on-large-files">Parallel search on large files<a class="anchor-link" href="#Parallel-search-on-large-files"> </a></h3><p>In some cases (e.g., a lot of modifications or very large FASTA files), it will not be useful to save the database as it will consume too much memory. Here, we use the function <a href="/alphapept/search.html#search_parallel"><code>search_parallel</code></a> from search. It creates theoretical spectra on the fly and directly searches against them. As we cannot create a pept_dict here, we need to create one from the search results. For this, we group peptides by their FASTA index and generate a lookup dictionary that can be used as a pept_dict.</p>
+<h3 id="Parallel-search-on-large-files">Parallel search on large files<a class="anchor-link" href="#Parallel-search-on-large-files"> </a></h3><p>In some cases (e.g., a lot of modifications or very large FASTA files), it will not be useful to save the database as it will consume too much memory. Here, we use the function <a href="/search.html#search_parallel"><code>search_parallel</code></a> from search. It creates theoretical spectra on the fly and directly searches against them. As we cannot create a pept_dict here, we need to create one from the search results. For this, we group peptides by their FASTA index and generate a lookup dictionary that can be used as a pept_dict.</p>
 <blockquote><p>Note that we are passing the settings argument here. Search results should be stored in the corresponding path in the hdf file.</p>
 </blockquote>
 
