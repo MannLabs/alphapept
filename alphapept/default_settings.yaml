@@ -1,0 +1,89 @@
+workflow:
+  continue_runs: false
+  create_database: true
+  import_raw_data: true
+  find_features: true
+  search_data: true
+  recalibrate_data: true
+  align: true
+  match: false
+  lfq_quantification: true
+general:
+  n_processes: 60
+experiment:
+  results_path: null
+  shortnames: []
+  file_paths: []
+  fractions: []
+  database_path: null
+  fasta_paths: []
+raw:
+  most_abundant: 400
+  use_profile_ms1: false
+fasta:
+  mods_fixed:
+  - cC
+  mods_fixed_terminal: []
+  mods_variable:
+  - oxM
+  mods_variable_terminal: []
+  mods_fixed_terminal_prot: []
+  mods_variable_terminal_prot: []
+  num_missed_cleavages: 2
+  min_length: 6
+  max_length: 27
+  max_isoforms: 1024
+  limit_modifications: 8
+  pseudo_reverse: true
+  AL_swap: false
+  KR_swap: false
+  protease: trypsin
+  spectra_block: 100000
+  fasta_block: 1000
+  save_db: true
+  max_fasta_size: 100
+features:
+  max_gap: 2
+  ppm_tol: 8
+  min_hill_length: 3
+  split_level: 1.3
+  smoothing_window: 1
+  large_peak: 40
+  min_charge: 1
+  max_charge: 6
+  seed_masses: 100
+  hill_nboot_max: 300
+  hill_nboot: 150
+  mass_range: 5
+  min_correlation: 0.6
+  ppm_range: 20
+  rt_range: 0.5
+  mob_range: 0.3
+  n_neighbors: 5
+  search_unidentified: false
+search:
+  m_offset: 30
+  m_tol: 30
+  min_frag_hits: 7
+  ppm: true
+  calibrate: true
+  calibration_std: 3
+  parallel: true
+  peptide_fdr: 0.01
+  protein_fdr: 0.01
+  recalibration_min: 100
+score:
+  method: random_forest
+calibration:
+  outlier_std: 3
+  n_neighbors: 100
+  ppm_range: 20
+  rt_range: 0.5
+  mob_range: 0.3
+matching:
+  min_match_p: 0.05
+  min_match_d: 3
+quantification:
+  max_lfq: true
+  lfq_minimum_ratio: 1
+  mode: int_sum

@@ -20,9 +20,9 @@ The documentation is automatically built based on the jupyter notebooks (nbs/ind
 ## Windows Quickstart
 <img src="nbs\images\alphapept_screen.png" width="480," align="center">
 
-1. Download the latest installer [here](https://github.com/MannLabs/alphapept/releases/latest), install and click the shortcut on the desktop.
-2. In the `Experiment` tab drag and drop your experimental and FASTA files.
-3. Specify additional settings such as modifications in the `Settings`-tab.
+1. Download the latest installer [here](https://github.com/MannLabs/alphapept/releases/latest), install and click the shortcut on the desktop. A browser window with the AlphaPept interface should open. In case Windows Firewall asks for network access for AlphaPept, please allow.
+2. In the `New Experiment` select a folder with raw files and FASTA files.
+3. Specify additional settings such as modifications with `Settings`.
 4. Click `Start` and run the analysis. 
 
 See also below for more detailed instructions.
@@ -49,7 +49,7 @@ It is strongly recommended to install AlphaPept in its own environment.
 1. Open the console and create a new conda environment: `conda create --name alphapept python=3.8`
 2. Activate the environment: `conda activate alphapept`
 3. Redirect to the folder of choice and clone the repository: `git clone https://github.com/MannLabs/alphapept.git`
-4. Navigate to the alphapept folder and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode.
+4. Navigate to the alphapept folder with `cd alphapept` and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode.
 5. To ensure compatibility, install strict requirements with `pip install -r requirements.txt`.
 
 If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.
@@ -119,7 +119,7 @@ For the [windows installation](https://github.com/MannLabs/alphapept/releases/la
 
 Once AlphaPept is correctly installed, you can use it like any other python module.
 
-```
+```python
 from alphapept.fasta import get_frag_dict, parse
 from alphapept import constants
 

@@ -2,6 +2,7 @@
 import os
 import sys
 import numpy as np
+import time
 
 # require pythonnet, pip install pythonnet on Windows
 import clr
@@ -192,7 +193,7 @@ class RawFileReader(object):
         """Returns the file creation date in DATE format."""
         # https://msdn.microsoft.com/en-us/library/82ab7w69.aspx
         # The DATE type is implemented using an 8-byte floating-point number
-        return self.source.CreationDate.ToOADate()
+        return self.source.CreationDate.ToString('o')
 
     def IsError(self):
         """Returns the error state flag of the raw file. A return value of TRUE indicates that an error has

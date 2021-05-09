@@ -1,22 +1,9 @@
-general:
-  ppm:
+workflow:
+  continue_runs:
     type: checkbox
-    default: true
-    description: Use ppm instead of Dalton.
-  score:
-    type: combobox
-    value:
-    - x_tandem
-    - random_forest
-    default: random_forest
-    description: Scoring method.
-  n_processes:
-    type: spinbox
-    min: 1
-    max: 60
-    default: 60
-    description: Maximum number of processes for multiprocessing. If larger than number
-      of processors it will be capped.
+    default: false
+    description: Flag to continue previously computated runs. If False existing ms_data
+      will be deleted.
   create_database:
     type: checkbox
     default: true
@@ -49,6 +36,14 @@ general:
     type: checkbox
     default: true
     description: Flag to perfrom lfq normalization.
+general:
+  n_processes:
+    type: spinbox
+    min: 1
+    max: 60
+    default: 60
+    description: Maximum number of processes for multiprocessing. If larger than number
+      of processors it will be capped.
 experiment:
   results_path:
     type: path
@@ -69,6 +64,17 @@ experiment:
     type: list
     default: []
     description: List of fractions for the raw files.
+  database_path:
+    type: path
+    default: null
+    filetype:
+    - hdf
+    folder: false
+    description: Path to library file (.hdf).
+  fasta_paths:
+    type: list
+    default: []
+    description: List of paths for FASTA files.
 raw:
   most_abundant:
     type: spinbox
@@ -203,6 +209,12 @@ fasta:
     max: 4096
     default: 1024
     description: Maximum number of isoforms per peptide.
+  limit_modifications:
+    type: spinbox
+    min: 1
+    max: 4096
+    default: 8
+    description: Limit the number of modifications per peptide.
   pseudo_reverse:
     type: checkbox
     default: true
@@ -280,53 +292,92 @@ fasta:
     max: 1000000
     default: 100
     description: Maximum size of FASTA (MB) when switching on-the-fly.
-  database_path:
-    type: path
-    default: null
-    filetype:
-    - hdf
-    folder: false
-    description: Path to library file (.hdf).
-  fasta_paths:
-    type: list
-    default: []
-    description: List of paths for FASTA files.
 features:
+  max_gap:
+    type: spinbox
+    min: 1
+    max: 10
+    default: 2
+  ppm_tol:
+    type: spinbox
+    min: 1
+    max: 25
+    default: 8
   min_hill_length:
     type: spinbox
     min: 1
     max: 10
     default: 3
-  max_gap:
-    type: spinbox
-    min: 1
-    max: 99
-    default: 2
-  ppm_tol:
-    type: spinbox
-    min: 1
-    max: 99
-    default: 8
-  smoothing:
+  split_level:
+    type: doublespinbox
+    min: 0.1
+    max: 10.0
+    default: 1.3
+  smoothing_window:
     type: spinbox
     min: 1
     max: 10
     default: 1
-  max_neighbors:
+  large_peak:
+    type: spinbox
+    min: 1
+    max: 100
+    default: 40
+  min_charge:
+    type: spinbox
+    min: 1
+    max: 6
+    default: 1
+  max_charge:
+    type: spinbox
+    min: 1
+    max: 6
+    default: 6
+  seed_masses:
+    type: spinbox
+    min: 1
+    max: 500
+    default: 100
+  hill_nboot_max:
+    type: spinbox
+    min: 1
+    max: 500
+    default: 300
+  hill_nboot:
+    type: spinbox
+    min: 1
+    max: 500
+    default: 150
+  mass_range:
     type: spinbox
     min: 1
     max: 10
-    default: 4
-  max_distance:
+    default: 5
+  min_correlation:
     type: doublespinbox
-    min: 0.0
-    max: 1.0
-    default: 0.4
-  mass_importance:
+    min: 0.1
+    max: 1
+    default: 0.6
+  ppm_range:
     type: spinbox
     min: 1
-    max: 1000
-    default: 100
+    max: 100
+    default: 20
+  rt_range:
+    type: doublespinbox
+    min: 0.1
+    max: 1
+    default: 0.5
+  mob_range:
+    type: doublespinbox
+    min: 0.1
+    max: 1
+    default: 0.3
+  n_neighbors:
+    type: spinbox
+    min: 1
+    max: 10
+    default: 5
   search_unidentified:
     type: checkbox
     default: false
@@ -386,6 +437,14 @@ search:
     max: 10000
     default: 100
     description: Minimum number of datapoints to perform calibration.
+score:
+  method:
+    type: combobox
+    value:
+    - x_tandem
+    - random_forest
+    default: random_forest
+    description: Scoring method.
 calibration:
   outlier_std:
     type: spinbox
@@ -435,6 +494,12 @@ quantification:
     type: checkbox
     default: true
     description: Perform max lfq type quantification.
+  lfq_minimum_ratio:
+    type: spinbox
+    min: 1
+    max: 10
+    default: 1
+    description: Minimum number of ratios for LFQ.
   mode:
     type: combobox
     value:

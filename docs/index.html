@@ -53,9 +53,9 @@ nb_path: "nbs\index.ipynb"
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Windows-Quickstart">Windows Quickstart<a class="anchor-link" href="#Windows-Quickstart"> </a></h2><p>{% include image.html align="center" max-width="480," file="/alphapept/images/alphapept_screen.png" %}</p>
 <ol>
-<li>Download the latest installer <a href="https://github.com/MannLabs/alphapept/releases/latest">here</a>, install and click the shortcut on the desktop.</li>
-<li>In the <code>Experiment</code> tab drag and drop your experimental and FASTA files.</li>
-<li>Specify additional settings such as modifications in the <code>Settings</code>-tab.</li>
+<li>Download the latest installer <a href="https://github.com/MannLabs/alphapept/releases/latest">here</a>, install and click the shortcut on the desktop. A browser window with the AlphaPept interface should open. In case Windows Firewall asks for network access for AlphaPept, please allow.</li>
+<li>In the <code>New Experiment</code> select a folder with raw files and FASTA files.</li>
+<li>Specify additional settings such as modifications with <code>Settings</code>.</li>
 <li>Click <code>Start</code> and run the analysis. </li>
 </ol>
 <p>See also below for more detailed instructions.</p>
@@ -94,7 +94,7 @@ nb_path: "nbs\index.ipynb"
 <li>Open the console and create a new conda environment: <code>conda create --name alphapept python=3.8</code></li>
 <li>Activate the environment: <code>conda activate alphapept</code></li>
 <li>Redirect to the folder of choice and clone the repository: <code>git clone https://github.com/MannLabs/alphapept.git</code></li>
-<li>Navigate to the alphapept folder and install the package with <code>pip install .</code> (default users) or with <code>pip install -e .</code> to enable developers mode.</li>
+<li>Navigate to the alphapept folder with <code>cd alphapept</code> and install the package with <code>pip install .</code> (default users) or with <code>pip install -e .</code> to enable developers mode.</li>
 <li>To ensure compatibility, install strict requirements with <code>pip install -r requirements.txt</code>.</li>
 </ol>
 <p>If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.</p>
