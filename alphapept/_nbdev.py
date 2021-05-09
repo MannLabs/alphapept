@@ -271,7 +271,7 @@ modules = ["settings.py",
            "interface.py",
            "speed.py"]
 
-doc_url = "https://mannlabs.github.io/"
+doc_url = "https://mannlabs.github.io/alphapept/"
 
 git_url = "https://github.com/mannlabs/alphapept/tree/master/"
 

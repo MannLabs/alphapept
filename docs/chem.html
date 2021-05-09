@@ -31,8 +31,8 @@ nb_path: "nbs\01_chem.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This notebook contains all chemistry-related functionality.  Here, a major part is functionality to generate isotope patterns and the averagine model. This is required for feature finding, where an isotope pattern is validated by being compared to its averagine model. We use the data structure <code>Isotopes</code> from constants to handle Isotopes. Next, we define the class <a href="/chem.html#IsotopeDistribution"><code>IsotopeDistribution</code></a> to calculate isotope distributions for a given Isotope. The core of the calculation is the function <a href="/chem.html#fast_add"><code>fast_add</code></a>, which allows the fast estimation of isotope distributions. <br>
-To calculate the isotope distribution for the averagine model, we define the function <a href="/chem.html#get_average_formula"><code>get_average_formula</code></a>, which calculates the amino acid composition of the averagine molecule for the given mass.</p>
+<p>This notebook contains all chemistry-related functionality.  Here, a major part is functionality to generate isotope patterns and the averagine model. This is required for feature finding, where an isotope pattern is validated by being compared to its averagine model. We use the data structure <code>Isotopes</code> from constants to handle Isotopes. Next, we define the class <a href="/alphapept/chem.html#IsotopeDistribution"><code>IsotopeDistribution</code></a> to calculate isotope distributions for a given Isotope. The core of the calculation is the function <a href="/alphapept/chem.html#fast_add"><code>fast_add</code></a>, which allows the fast estimation of isotope distributions. <br>
+To calculate the isotope distribution for the averagine model, we define the function <a href="/alphapept/chem.html#get_average_formula"><code>get_average_formula</code></a>, which calculates the amino acid composition of the averagine molecule for the given mass.</p>
 <p><em>Implementation note: Ideally, we would like to have constants such as isotopes as global variables to not overload functions with parameters. However, currently, numba is not able to handle typed dictionaries or jitclasses as globals. We, therefore, pass them as arguments.</em></p>
 
 </div>
@@ -59,7 +59,7 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="IsotopeDistribution" class="doc_header"><code>class</code> <code>IsotopeDistribution</code><a href="" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>IsotopeDistribution</code>(<strong>*<code>args</code></strong>, <strong>**<code>kwargs</code></strong>) :: <a href="/chem.html#IsotopeDistribution"><code>IsotopeDistribution</code></a></p>
+<h2 id="IsotopeDistribution" class="doc_header"><code>class</code> <code>IsotopeDistribution</code><a href="" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>IsotopeDistribution</code>(<strong>*<code>args</code></strong>, <strong>**<code>kwargs</code></strong>) :: <a href="/alphapept/chem.html#IsotopeDistribution"><code>IsotopeDistribution</code></a></p>
 </blockquote>
 <p>Class to calculate Isotope Distributions.</p>
 
@@ -234,7 +234,7 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Averagine">Averagine<a class="anchor-link" href="#Averagine"> </a></h2><p>The averagine model is based on <a href="https://www.sciencedirect.com/science/article/pii/1044030595000178">Senko et al.</a>. We define the function <a href="/chem.html#get_average_formula"><code>get_average_formula</code></a> to calculate a dictionary with averagine masses.</p>
+<h2 id="Averagine">Averagine<a class="anchor-link" href="#Averagine"> </a></h2><p>The averagine model is based on <a href="https://www.sciencedirect.com/science/article/pii/1044030595000178">Senko et al.</a>. We define the function <a href="/alphapept/chem.html#get_average_formula"><code>get_average_formula</code></a> to calculate a dictionary with averagine masses.</p>
 
 </div>
 </div>
@@ -306,7 +306,7 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>To directly calculate the isotope distribution of a molecule mass based on the averagine model, we define the wrapper function <a href="/chem.html#mass_to_dist"><code>mass_to_dist</code></a>.</p>
+<p>To directly calculate the isotope distribution of a molecule mass based on the averagine model, we define the wrapper function <a href="/alphapept/chem.html#mass_to_dist"><code>mass_to_dist</code></a>.</p>
 
 </div>
 </div>
@@ -442,7 +442,7 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Mass-Calculations">Mass Calculations<a class="anchor-link" href="#Mass-Calculations"> </a></h2><p><a href="/chem.html#calculate_mass"><code>calculate_mass</code></a>: This function allows to calculate the precursor mass from the monoisotopic m/z and the charge.</p>
+<h2 id="Mass-Calculations">Mass Calculations<a class="anchor-link" href="#Mass-Calculations"> </a></h2><p><a href="/alphapept/chem.html#calculate_mass"><code>calculate_mass</code></a>: This function allows to calculate the precursor mass from the monoisotopic m/z and the charge.</p>
 
 </div>
 </div>
