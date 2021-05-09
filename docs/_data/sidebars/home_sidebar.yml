@@ -48,9 +48,6 @@ entries:
     - output: web,pdf
       title: Speed
       url: speed.html
-    - output: web,pdf
-      title: Title
-      url: playground.html
     output: web
     title: alphapept
   output: web

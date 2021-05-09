@@ -67,12 +67,15 @@ def create_single_plot(all_results, files, acquisition_date_times, mode, groups,
     vals = []
     for idx, _ in enumerate(all_results.keys()):
         if plot == 'timing':
-            vals.append(all_results[_]["summary"]["timing"]["total"])
+            try:
+                vals.append(all_results[_]["summary"]["timing"]["total"])
+            except KeyError:
+                vals.append(np.nan)
         else:
             try:
                 vals.append(all_results[_]["summary"][files[idx]][plot])
             except KeyError:
-                vals.append(0)
+                vals.append(np.nan)
 
     plot_df = pd.DataFrame([files, acquisition_date_times, vals]).T
     plot_df.columns = ['Filename', 'AcquisitionDateTime', plot]
@@ -99,11 +102,20 @@ def create_multiple_plots(all_results, groups):
     Creates multiple plotly express plots
 
     """
-    plot_types = ['feature_table', 'feature_table_median_rt_length','protein_fdr_n_sequence','protein_fdr_n_protein', 'protein_fdr_n_protein_group', 'id_rate','timing']
+    # Get filename and acquisition_date_time
+    files = [os.path.splitext(all_results[_]['summary']['processed_files'][0])[0] for _ in all_results.keys()]
+    acquisition_date_times = [all_results[_]["summary"][files[idx]]['acquisition_date_time'] for idx, _ in enumerate(all_results.keys())]
+
+    fields = set()
+    [fields.update(all_results[_]["summary"][files[idx]].keys()) for idx, _ in enumerate(all_results.keys())]
+    fields.remove('acquisition_date_time')
+    fields = list(fields)
+    fields.sort()
+
+    plot_types = fields + ['timing']
     mode = st.selectbox('X-Axis', options = ['AcquisitionDateTime','Filename'])
 
     with st.spinner('Creating plots..'):
-
         # Get filename and acquisition_date_time
         files = [os.path.splitext(all_results[_]['summary']['processed_files'][0])[0] for _ in all_results.keys()]
         acquisition_date_times = [all_results[_]["summary"][files[idx]]['acquisition_date_time'] for idx, _ in enumerate(all_results.keys())]
