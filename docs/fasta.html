@@ -651,7 +651,7 @@ nb_path: "nbs\03_fasta.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Variable-Modifications">Variable Modifications<a class="anchor-link" href="#Variable-Modifications"> </a></h3><p>To employ variable modifications, we use the function <code>get_mod_pos</code> that returns a list of tuples with all possible modifications when giving a dicitionary with variable modifications.</p>
+<h3 id="Variable-Modifications">Variable Modifications<a class="anchor-link" href="#Variable-Modifications"> </a></h3><p>To employ variable modifications, we loop through each variable modification and and each position of the peptide and add them to the peptide list. For each iteration in get_isoforms, one more variable modification will be added.</p>
 
 </div>
 </div>
@@ -691,7 +691,7 @@ nb_path: "nbs\03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_isoforms" class="doc_header"><code>get_isoforms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L213" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isoforms</code>(<strong><code>mods_variable_dict</code></strong>, <strong><code>peptide</code></strong>, <strong><code>max_isoforms</code></strong>)</p>
+<h4 id="get_isoforms" class="doc_header"><code>get_isoforms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L213" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isoforms</code>(<strong><code>mods_variable_dict</code></strong>, <strong><code>peptide</code></strong>, <strong><code>max_isoforms</code></strong>, <strong><code>limit_modifications</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Function to generate isoforms for a given peptide - returns a list of isoforms.
 The original sequence is included in the list</p>
@@ -725,6 +725,7 @@ The original sequence is included in the list</p>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">get_isoforms</span><span class="p">(</span><span class="n">mods_variable_dict</span><span class="p">,</span> <span class="s1">&#39;PEPTIDE&#39;</span><span class="p">,</span> <span class="n">max_isoforms</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">get_isoforms</span><span class="p">(</span><span class="n">mods_variable_dict</span><span class="p">,</span> <span class="s1">&#39;AMAMA&#39;</span><span class="p">,</span> <span class="n">max_isoforms</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">get_isoforms</span><span class="p">(</span><span class="n">mods_variable_dict</span><span class="p">,</span> <span class="s1">&#39;AMAMA&#39;</span><span class="p">,</span> <span class="n">max_isoforms</span><span class="p">,</span> <span class="n">limit_modifications</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
 </pre></div>
 
     </div>
@@ -739,6 +740,7 @@ The original sequence is included in the list</p>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>[&#39;PEPTIDE&#39;, &#39;pPEPTIDE&#39;, &#39;PEpPTIDE&#39;, &#39;pPEpPTIDE&#39;]
 [&#39;AMAMA&#39;, &#39;AoxMAMA&#39;, &#39;AMAoxMA&#39;, &#39;AoxMAoxMA&#39;]
+[&#39;AMAMA&#39;, &#39;AoxMAMA&#39;, &#39;AMAoxMA&#39;]
 </pre>
 </div>
 </div>
@@ -767,7 +769,7 @@ The original sequence is included in the list</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_variable_mods" class="doc_header"><code>add_variable_mods</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L242" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mods</code>(<strong><code>peptide_list</code></strong>, <strong><code>mods_variable</code></strong>, <strong><code>max_isoforms</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="add_variable_mods" class="doc_header"><code>add_variable_mods</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L254" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mods</code>(<strong><code>peptide_list</code></strong>, <strong><code>mods_variable</code></strong>, <strong><code>max_isoforms</code></strong>, <strong><code>limit_modifications</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -797,8 +799,9 @@ The original sequence is included in the list</p>
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">peptide_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;AMA&#39;</span><span class="p">,</span> <span class="s1">&#39;AAC&#39;</span><span class="p">]</span>
 <span class="n">mods_variable</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;oxM&#39;</span><span class="p">,</span><span class="s1">&#39;amC&#39;</span><span class="p">]</span>
 <span class="n">max_isoforms</span> <span class="o">=</span> <span class="mi">1024</span>
+<span class="n">limit_modifications</span> <span class="o">=</span> <span class="mi">10</span>
 
-<span class="n">add_variable_mods</span><span class="p">(</span><span class="n">peptide_list</span><span class="p">,</span> <span class="n">mods_variable</span><span class="p">,</span> <span class="n">max_isoforms</span><span class="p">)</span>
+<span class="n">add_variable_mods</span><span class="p">(</span><span class="n">peptide_list</span><span class="p">,</span> <span class="n">mods_variable</span><span class="p">,</span> <span class="n">max_isoforms</span><span class="p">,</span> <span class="n">limit_modifications</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -847,7 +850,7 @@ The original sequence is included in the list</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_fixed_mod_terminal" class="doc_header"><code>add_fixed_mod_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L261" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mod_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mod</code></strong>)</p>
+<h4 id="add_fixed_mod_terminal" class="doc_header"><code>add_fixed_mod_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L273" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mod_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mod</code></strong>)</p>
 </blockquote>
 <p>Adds fixed terminal modifications</p>
 
@@ -872,7 +875,7 @@ The original sequence is included in the list</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_fixed_mods_terminal" class="doc_header"><code>add_fixed_mods_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L279" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mods_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mods_fixed_terminal</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="add_fixed_mods_terminal" class="doc_header"><code>add_fixed_mods_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L291" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mods_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mods_fixed_terminal</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Wrapper to add fixed mods on sequences and lists of mods</p>
 
@@ -952,7 +955,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_variable_mods_terminal" class="doc_header"><code>add_variable_mods_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L292" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mods_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mods_variable_terminal</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="add_variable_mods_terminal" class="doc_header"><code>add_variable_mods_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L304" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mods_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mods_variable_terminal</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to add variable terminal modifications</p>
 
@@ -977,7 +980,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_unique_peptides" class="doc_header"><code>get_unique_peptides</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L317" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_unique_peptides</code>(<strong><code>peptides</code></strong>)</p>
+<h4 id="get_unique_peptides" class="doc_header"><code>get_unique_peptides</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L329" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_unique_peptides</code>(<strong><code>peptides</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1049,7 +1052,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_peptides" class="doc_header"><code>generate_peptides</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L321" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_peptides</code>(<strong><code>peptide</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="generate_peptides" class="doc_header"><code>generate_peptides</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L333" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_peptides</code>(<strong><code>peptide</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Wrapper to get modified peptides from a peptide</p>
 
@@ -1074,7 +1077,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_peptide" class="doc_header"><code>check_peptide</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L365" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_peptide</code>(<strong><code>peptide</code></strong>, <strong><code>AAs</code></strong>)</p>
+<h4 id="check_peptide" class="doc_header"><code>check_peptide</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L376" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_peptide</code>(<strong><code>peptide</code></strong>, <strong><code>AAs</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1114,6 +1117,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;mods_fixed_terminal_prot&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;mods_variable_terminal_prot&quot;</span><span class="p">]</span>  <span class="o">=</span> <span class="p">[]</span>
 <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;max_isoforms&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1024</span>
+<span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;limit_modifications&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
 <span class="n">generate_peptides</span><span class="p">(</span><span class="s1">&#39;PEPTIDEM&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
@@ -1166,7 +1170,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_precmass" class="doc_header"><code>get_precmass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L377" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_precmass</code>(<strong><code>parsed_pep</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_precmass" class="doc_header"><code>get_precmass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L388" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_precmass</code>(<strong><code>parsed_pep</code></strong>, <strong><code>mass_dict</code></strong>)</p>
 </blockquote>
 <p>Calculate the mass of the neutral precursor</p>
 
@@ -1240,7 +1244,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_fragmass" class="doc_header"><code>get_fragmass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L390" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_fragmass</code>(<strong><code>parsed_pep</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_fragmass" class="doc_header"><code>get_fragmass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L401" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_fragmass</code>(<strong><code>parsed_pep</code></strong>, <strong><code>mass_dict</code></strong>)</p>
 </blockquote>
 <p>Calculate the masses of the fragment ions</p>
 
@@ -1308,7 +1312,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_frag_dict" class="doc_header"><code>get_frag_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L421" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_frag_dict</code>(<strong><code>parsed_pep</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_frag_dict" class="doc_header"><code>get_frag_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L432" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_frag_dict</code>(<strong><code>parsed_pep</code></strong>, <strong><code>mass_dict</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1458,7 +1462,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_spectrum" class="doc_header"><code>get_spectrum</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L439" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_spectrum</code>(<strong><code>peptide</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_spectrum" class="doc_header"><code>get_spectrum</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L450" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_spectrum</code>(<strong><code>peptide</code></strong>, <strong><code>mass_dict</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1482,7 +1486,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_spectra" class="doc_header"><code>get_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L452" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_spectra</code>(<strong><code>peptides</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_spectra" class="doc_header"><code>get_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L463" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_spectra</code>(<strong><code>peptides</code></strong>, <strong><code>mass_dict</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1554,7 +1558,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_fasta_file" class="doc_header"><code>read_fasta_file</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L467" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_fasta_file</code>(<strong><code>fasta_filename</code></strong>=<em><code>''</code></em>)</p>
+<h4 id="read_fasta_file" class="doc_header"><code>read_fasta_file</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L478" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_fasta_file</code>(<strong><code>fasta_filename</code></strong>=<em><code>''</code></em>)</p>
 </blockquote>
 <p>Read a FASTA file line by line</p>
 
@@ -1579,7 +1583,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_fasta_file_entries" class="doc_header"><code>read_fasta_file_entries</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L494" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_fasta_file_entries</code>(<strong><code>fasta_filename</code></strong>=<em><code>''</code></em>)</p>
+<h4 id="read_fasta_file_entries" class="doc_header"><code>read_fasta_file_entries</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L505" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_fasta_file_entries</code>(<strong><code>fasta_filename</code></strong>=<em><code>''</code></em>)</p>
 </blockquote>
 <p>Function to count entries in fasta file</p>
 
@@ -1604,7 +1608,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_sequence" class="doc_header"><code>check_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L511" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_sequence</code>(<strong><code>element</code></strong>, <strong><code>AAs</code></strong>, <strong><code>verbose</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="check_sequence" class="doc_header"><code>check_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L522" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_sequence</code>(<strong><code>element</code></strong>, <strong><code>AAs</code></strong>, <strong><code>verbose</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Checks wheter a sequence from a FASTA entry contains valid AAs</p>
 
@@ -1681,7 +1685,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_to_pept_dict" class="doc_header"><code>add_to_pept_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L526" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_to_pept_dict</code>(<strong><code>pept_dict</code></strong>, <strong><code>new_peptides</code></strong>, <strong><code>i</code></strong>)</p>
+<h4 id="add_to_pept_dict" class="doc_header"><code>add_to_pept_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L537" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_to_pept_dict</code>(<strong><code>pept_dict</code></strong>, <strong><code>new_peptides</code></strong>, <strong><code>i</code></strong>)</p>
 </blockquote>
 <p>Add peptides to the peptide dictionary</p>
 
@@ -1753,7 +1757,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="merge_pept_dicts" class="doc_header"><code>merge_pept_dicts</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L542" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>merge_pept_dicts</code>(<strong><code>list_of_pept_dicts</code></strong>)</p>
+<h4 id="merge_pept_dicts" class="doc_header"><code>merge_pept_dicts</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L553" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>merge_pept_dicts</code>(<strong><code>list_of_pept_dicts</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1851,7 +1855,7 @@ The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spe
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_fasta_list" class="doc_header"><code>generate_fasta_list</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L563" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_fasta_list</code>(<strong><code>fasta_paths</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="generate_fasta_list" class="doc_header"><code>generate_fasta_list</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L574" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_fasta_list</code>(<strong><code>fasta_paths</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to generate a database from a fasta file</p>
 
@@ -1876,7 +1880,7 @@ The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spe
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_database" class="doc_header"><code>generate_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L595" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database</code>(<strong><code>mass_dict</code></strong>, <strong><code>fasta_paths</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="generate_database" class="doc_header"><code>generate_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L606" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database</code>(<strong><code>mass_dict</code></strong>, <strong><code>fasta_paths</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to generate a database from a fasta file</p>
 
@@ -1901,7 +1905,7 @@ The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spe
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_spectra" class="doc_header"><code>generate_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L633" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_spectra</code>(<strong><code>to_add</code></strong>, <strong><code>mass_dict</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="generate_spectra" class="doc_header"><code>generate_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L644" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_spectra</code>(<strong><code>to_add</code></strong>, <strong><code>mass_dict</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Function to generate a database from a fasta file</p>
 
@@ -1940,7 +1944,7 @@ The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spe
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="block_idx" class="doc_header"><code>block_idx</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L662" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>block_idx</code>(<strong><code>len_list</code></strong>, <strong><code>block_size</code></strong>=<em><code>1000</code></em>)</p>
+<h4 id="block_idx" class="doc_header"><code>block_idx</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L673" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>block_idx</code>(<strong><code>len_list</code></strong>, <strong><code>block_size</code></strong>=<em><code>1000</code></em>)</p>
 </blockquote>
 <p>Create indices for a list of length len_list</p>
 
@@ -1965,7 +1969,7 @@ The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spe
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="blocks" class="doc_header"><code>blocks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L677" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>blocks</code>(<strong><code>l</code></strong>, <strong><code>n</code></strong>)</p>
+<h4 id="blocks" class="doc_header"><code>blocks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L688" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>blocks</code>(<strong><code>l</code></strong>, <strong><code>n</code></strong>)</p>
 </blockquote>
 <p>Create blocks from a given list</p>
 
@@ -1990,7 +1994,7 @@ The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spe
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="digest_fasta_block" class="doc_header"><code>digest_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L684" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>digest_fasta_block</code>(<strong><code>to_process</code></strong>)</p>
+<h4 id="digest_fasta_block" class="doc_header"><code>digest_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L695" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>digest_fasta_block</code>(<strong><code>to_process</code></strong>)</p>
 </blockquote>
 <p>Digest and create spectra for a whole fasta_block</p>
 
@@ -2015,7 +2019,7 @@ The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spe
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_database_parallel" class="doc_header"><code>generate_database_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L711" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database_parallel</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="generate_database_parallel" class="doc_header"><code>generate_database_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L724" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database_parallel</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Function to generate a database from a fasta file</p>
 
@@ -2056,7 +2060,7 @@ The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spe
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="pept_dict_from_search" class="doc_header"><code>pept_dict_from_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L744" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pept_dict_from_search</code>(<strong><code>settings</code></strong>)</p>
+<h4 id="pept_dict_from_search" class="doc_header"><code>pept_dict_from_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L759" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pept_dict_from_search</code>(<strong><code>settings</code></strong>)</p>
 </blockquote>
 <p>Generates a peptide dict from a large search</p>
 
@@ -2107,7 +2111,7 @@ The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spe
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="save_database" class="doc_header"><code>save_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L789" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_database</code>(<strong><code>spectra</code></strong>, <strong><code>pept_dict</code></strong>, <strong><code>fasta_dict</code></strong>, <strong><code>database_path</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="save_database" class="doc_header"><code>save_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L804" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_database</code>(<strong><code>spectra</code></strong>, <strong><code>pept_dict</code></strong>, <strong><code>fasta_dict</code></strong>, <strong><code>database_path</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to save a database to the *.hdf format.</p>
 
@@ -2139,7 +2143,7 @@ The function <a href="/alphapept/fasta.html#generate_spectra"><code>generate_spe
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_database" class="doc_header"><code>read_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L838" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_database</code>(<strong><code>database_path</code></strong>:<code>str</code>, <strong><code>array_name</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
+<h4 id="read_database" class="doc_header"><code>read_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L874" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_database</code>(<strong><code>database_path</code></strong>:<code>str</code>, <strong><code>array_name</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
 </blockquote>
 
 </div>

@@ -104,7 +104,32 @@ nb_path: "nbs\00_settings.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="save_settings" class="doc_header"><code>save_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L23" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_settings</code>(<strong><code>settings</code></strong>, <strong><code>path</code></strong>)</p>
+<h4 id="load_settings_as_template" class="doc_header"><code>load_settings_as_template</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L24" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_settings_as_template</code>(<strong><code>path</code></strong>)</p>
+</blockquote>
+<p>Loads settings but removes run specific fields</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="save_settings" class="doc_header"><code>save_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L42" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_settings</code>(<strong><code>settings</code></strong>, <strong><code>path</code></strong>)</p>
 </blockquote>
 <p>Save a yaml settings file to path</p>
 
@@ -145,7 +170,7 @@ nb_path: "nbs\00_settings.ipynb"
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="General-settings">General settings<a class="anchor-link" href="#General-settings"> </a></h3><p>General settings regarding the workflow and which algorithmic steps should be performed.</p>
+<h3 id="Worfklow-settings">Worfklow settings<a class="anchor-link" href="#Worfklow-settings"> </a></h3><p>Workflow settings regarding the workflow - which algorithmic steps should be performed.</p>
 
 </div>
 </div>
@@ -157,7 +182,7 @@ nb_path: "nbs\00_settings.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;general&#39;</span><span class="p">]))</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;workflow&#39;</span><span class="p">]))</span>
 </pre></div>
 
     </div>
@@ -173,6 +198,11 @@ nb_path: "nbs\00_settings.ipynb"
 <pre>align:
   default: true
   description: Flag to align the data.
+  type: checkbox
+continue_runs:
+  default: false
+  description: Flag to continue previously computated runs. If False existing ms_data
+    will be deleted.
   type: checkbox
 create_database:
   default: true
@@ -194,32 +224,73 @@ match:
   default: false
   description: Flag to perform match-between runs.
   type: checkbox
-n_processes:
+recalibrate_data:
+  default: true
+  description: Flag to perform recalibration.
+  type: checkbox
+search_data:
+  default: true
+  description: Flag to perform search.
+  type: checkbox
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">general</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">general</span><span class="p">[</span><span class="s1">&#39;n_processes&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;spinbox&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span><span class="mi">60</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span><span class="mi">60</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span><span class="s2">&quot;Maximum number of processes for multiprocessing. If larger than number of processors it will be capped.&quot;</span><span class="p">}</span>
+
+<span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s2">&quot;general&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">general</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;general&#39;</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>n_processes:
   default: 60
   description: Maximum number of processes for multiprocessing. If larger than number
     of processors it will be capped.
   max: 60
   min: 1
   type: spinbox
-ppm:
-  default: true
-  description: Use ppm instead of Dalton.
-  type: checkbox
-recalibrate_data:
-  default: true
-  description: Flag to perform recalibration.
-  type: checkbox
-score:
-  default: random_forest
-  description: Scoring method.
-  type: combobox
-  value:
-  - x_tandem
-  - random_forest
-search_data:
-  default: true
-  description: Flag to perform search.
-  type: checkbox
 
 </pre>
 </div>
@@ -258,7 +329,18 @@ search_data:
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>file_paths:
+<pre>database_path:
+  default: null
+  description: Path to library file (.hdf).
+  filetype:
+  - hdf
+  folder: false
+  type: path
+fasta_paths:
+  default: []
+  description: List of paths for FASTA files.
+  type: list
+file_paths:
   default: []
   description: Filepaths of the experiments.
   type: list
@@ -369,23 +451,18 @@ KR_swap:
   default: false
   description: Swap K and R (only if terminal) for decoy generation.
   type: checkbox
-database_path:
-  default: null
-  description: Path to library file (.hdf).
-  filetype:
-  - hdf
-  folder: false
-  type: path
 fasta_block:
   default: 1000
   description: Number of fasta entries to be processed in one block.
   max: 10000
   min: 100
   type: spinbox
-fasta_paths:
-  default: []
-  description: List of paths for FASTA files.
-  type: list
+limit_modifications:
+  default: 8
+  description: Limit the number of modifications per peptide.
+  max: 4096
+  min: 1
+  type: spinbox
 max_fasta_size:
   default: 100
   description: Maximum size of FASTA (MB) when switching on-the-fly.
@@ -608,45 +685,95 @@ spectra_block:
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>mass_importance:
-  default: 100
-  max: 1000
+<pre>hill_nboot:
+  default: 150
+  max: 500
   min: 1
   type: spinbox
-max_distance:
-  default: 0.4
-  max: 1.0
-  min: 0.0
-  type: doublespinbox
-max_gap:
-  default: 2
-  max: 99
+hill_nboot_max:
+  default: 300
+  max: 500
   min: 1
   type: spinbox
-max_neighbors:
-  default: 4
+large_peak:
+  default: 40
+  max: 100
+  min: 1
+  type: spinbox
+mass_range:
+  default: 5
   max: 10
   min: 1
   type: spinbox
+max_charge:
+  default: 6
+  max: 6
+  min: 1
+  type: spinbox
+max_gap:
+  default: 2
+  max: 10
+  min: 1
+  type: spinbox
+min_charge:
+  default: 1
+  max: 6
+  min: 1
+  type: spinbox
+min_correlation:
+  default: 0.6
+  max: 1
+  min: 0.1
+  type: doublespinbox
 min_hill_length:
   default: 3
   max: 10
   min: 1
   type: spinbox
-ppm_tol:
-  default: 8
-  max: 99
+mob_range:
+  default: 0.3
+  max: 1
+  min: 0.1
+  type: doublespinbox
+n_neighbors:
+  default: 5
+  max: 10
   min: 1
   type: spinbox
+ppm_range:
+  default: 20
+  max: 100
+  min: 1
+  type: spinbox
+ppm_tol:
+  default: 8
+  max: 25
+  min: 1
+  type: spinbox
+rt_range:
+  default: 0.5
+  max: 1
+  min: 0.1
+  type: doublespinbox
 search_unidentified:
   default: false
   description: Search MSMS w/o feature.
   type: checkbox
-smoothing:
+seed_masses:
+  default: 100
+  max: 500
+  min: 1
+  type: spinbox
+smoothing_window:
   default: 1
   max: 10
   min: 1
   type: spinbox
+split_level:
+  default: 1.3
+  max: 10.0
+  min: 0.1
+  type: doublespinbox
 
 </pre>
 </div>
@@ -738,6 +865,50 @@ recalibration_min:
   max: 10000
   min: 100
   type: spinbox
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Score">Score<a class="anchor-link" href="#Score"> </a></h3>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">yaml</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s1">&#39;score&#39;</span><span class="p">]))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>method:
+  default: random_forest
+  description: Scoring method.
+  type: combobox
+  value:
+  - x_tandem
+  - random_forest
 
 </pre>
 </div>
@@ -891,7 +1062,13 @@ min_match_p:
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>max_lfq:
+<pre>lfq_minimum_ratio:
+  default: 1
+  description: Minimum number of ratios for LFQ.
+  max: 10
+  min: 1
+  type: spinbox
+max_lfq:
   default: true
   description: Perform max lfq type quantification.
   type: checkbox

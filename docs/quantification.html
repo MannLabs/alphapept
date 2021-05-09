@@ -289,6 +289,15 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 <div class="output_area">
 
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>C:\ProgramData\Anaconda3\envs\alphapept\lib\site-packages\scipy\optimize\optimize.py:282: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  warnings.warn(&#34;Values in x were outside bounds during a &#34;
+</pre>
+</div>
+</div>
+
+<div class="output_area">
+
 
 <div class="output_html rendered_html output_subarea output_execute_result">
 <div>
@@ -319,30 +328,30 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
     <tr>
       <th>0</th>
       <td>L-BFGS-B</td>
-      <td>0.039515</td>
-      <td>0.639518</td>
-      <td>0.415446</td>
+      <td>0.038645</td>
+      <td>0.613492</td>
+      <td>0.336389</td>
     </tr>
     <tr>
       <th>1</th>
       <td>TNC</td>
-      <td>0.029501</td>
-      <td>0.706563</td>
-      <td>0.459000</td>
+      <td>0.019305</td>
+      <td>0.638834</td>
+      <td>0.350285</td>
     </tr>
     <tr>
       <th>2</th>
       <td>SLSQP</td>
-      <td>0.003713</td>
-      <td>0.639518</td>
-      <td>0.415446</td>
+      <td>0.003049</td>
+      <td>0.613492</td>
+      <td>0.336389</td>
     </tr>
     <tr>
       <th>3</th>
       <td>trf</td>
-      <td>0.254894</td>
-      <td>0.641983</td>
-      <td>0.417048</td>
+      <td>0.184128</td>
+      <td>0.615414</td>
+      <td>0.337443</td>
     </tr>
   </tbody>
 </table>
@@ -472,6 +481,15 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 <div class="output_wrapper">
 <div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>C:\ProgramData\Anaconda3\envs\alphapept\lib\site-packages\scipy\optimize\optimize.py:282: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  warnings.warn(&#34;Values in x were outside bounds during a &#34;
+</pre>
+</div>
+</div>
 
 <div class="output_area">
 
@@ -641,7 +659,7 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 <span class="k">def</span> <span class="nf">generate_dummy_data</span><span class="p">(</span><span class="n">n_sequences</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">,</span> <span class="n">noise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">remove</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">peptide_ratio</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">abundance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">signal_level</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">noise_divider</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">keep</span><span class="o">=</span><span class="mf">0.8</span><span class="p">):</span>
 
     <span class="n">species</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;P&#39;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">_</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n_sequences</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
-    <span class="n">sample</span> <span class="o">=</span> <span class="p">[</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">[</span><span class="n">_</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_samples</span><span class="p">)]</span>
+    <span class="n">sample</span> <span class="o">=</span> <span class="p">[</span><span class="n">string</span><span class="o">.</span><span class="n">ascii_uppercase</span><span class="p">[</span><span class="n">_</span><span class="o">%</span><span class="k">26</span>]+str(_//26) for _ in range(n_samples)]
     
     <span class="k">if</span> <span class="n">peptide_ratio</span><span class="p">:</span>
         <span class="n">peptide_ratio</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n_sequences</span><span class="p">)</span>
@@ -916,8 +934,10 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>C:\ProgramData\Anaconda3\envs\alphapept\lib\site-packages\scipy\optimize\slsqp.py:63: RuntimeWarning: invalid value encountered in subtract
-  jac[i] = (func(*((x0+dx,)+args)) - f0)/epsilon
+<pre>C:\ProgramData\Anaconda3\envs\alphapept\lib\site-packages\scipy\optimize\optimize.py:282: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  warnings.warn(&#34;Values in x were outside bounds during a &#34;
+C:\ProgramData\Anaconda3\envs\alphapept\lib\site-packages\scipy\optimize\_numdiff.py:557: RuntimeWarning: invalid value encountered in subtract
+  df = fun(x) - f0
 </pre>
 </div>
 </div>
@@ -960,24 +980,24 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
   <tbody>
     <tr>
       <th>L-FBGS-B</th>
-      <td>0.044621</td>
-      <td>0.422225</td>
+      <td>0.037563</td>
+      <td>1.092636</td>
       <td>0.0</td>
-      <td>0.8</td>
+      <td>0.80</td>
     </tr>
     <tr>
       <th>SLSQP</th>
-      <td>0.001576</td>
-      <td>0.422228</td>
+      <td>0.003630</td>
+      <td>1.092644</td>
       <td>0.0</td>
-      <td>0.8</td>
+      <td>0.80</td>
     </tr>
     <tr>
       <th>trf</th>
-      <td>0.031017</td>
-      <td>0.020241</td>
+      <td>0.029791</td>
+      <td>0.015071</td>
       <td>0.2</td>
-      <td>0.8</td>
+      <td>0.75</td>
     </tr>
   </tbody>
 </table>
@@ -1044,8 +1064,10 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>C:\ProgramData\Anaconda3\envs\alphapept\lib\site-packages\scipy\optimize\slsqp.py:63: RuntimeWarning: invalid value encountered in subtract
-  jac[i] = (func(*((x0+dx,)+args)) - f0)/epsilon
+<pre>C:\ProgramData\Anaconda3\envs\alphapept\lib\site-packages\scipy\optimize\optimize.py:282: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
+  warnings.warn(&#34;Values in x were outside bounds during a &#34;
+C:\ProgramData\Anaconda3\envs\alphapept\lib\site-packages\scipy\optimize\_numdiff.py:557: RuntimeWarning: invalid value encountered in subtract
+  df = fun(x) - f0
 </pre>
 </div>
 </div>
@@ -1097,9 +1119,8 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile" class="doc_header"><code>protein_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L354" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile</code>(<strong><code>df</code></strong>, <strong><code>files</code></strong>, <strong><code>field_</code></strong>, <strong><code>protein</code></strong>, <strong><code>minimum_ratios</code></strong>=<em><code>1</code></em>)</p>
+<h4 id="protein_profile" class="doc_header"><code>protein_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L354" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile</code>(<strong><code>files</code></strong>, <strong><code>minimum_ratios</code></strong>, <strong><code>chunk</code></strong>)</p>
 </blockquote>
-<p>Calculate the protein profile for a a df based on a dateframe</p>
 
 </div>
 
@@ -1122,7 +1143,55 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile_parallel" class="doc_header"><code>protein_profile_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L401" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel</code>(<strong><code>settings</code></strong>, <strong><code>df</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="protein_profile_parallel" class="doc_header"><code>protein_profile_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L399" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel</code>(<strong><code>df</code></strong>, <strong><code>minimum_ratios</code></strong>, <strong><code>field</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="protein_profile_parallel_ap" class="doc_header"><code>protein_profile_parallel_ap</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L457" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_ap</code>(<strong><code>settings</code></strong>, <strong><code>df</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="protein_profile_parallel_mq" class="doc_header"><code>protein_profile_parallel_mq</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L475" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_mq</code>(<strong><code>evidence_path</code></strong>, <strong><code>protein_groups_path</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 
 </div>
@@ -1149,119 +1218,27 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
+    <span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
 
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;shortname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span>
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;shortname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
+    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span>
 
-<span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
+    <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
 
-<span class="n">display</span><span class="p">(</span><span class="n">test_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">display</span><span class="p">(</span><span class="n">test_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
 
-<span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+    <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
 
-<span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+    <span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">pre_lfq</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pre_lfq</span><span class="p">)</span>
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_html rendered_html output_subarea ">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>precursor</th>
-      <th>shortname</th>
-      <th>protein</th>
-      <th>int_sum</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>Prec_1</td>
-      <td>A</td>
-      <td>X</td>
-      <td>0.6</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>Prec_1</td>
-      <td>B</td>
-      <td>X</td>
-      <td>0.8</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>Prec_2</td>
-      <td>A</td>
-      <td>X</td>
-      <td>0.6</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>Prec_2</td>
-      <td>B</td>
-      <td>X</td>
-      <td>1.2</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>Prec_3</td>
-      <td>A</td>
-      <td>X</td>
-      <td>1.6</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>Prec_3</td>
-      <td>B</td>
-      <td>X</td>
-      <td>1.2</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>[2.57134929 3.42865071]
-[2.8 3.2]
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
@@ -1275,42 +1252,42 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">test_protein_profile</span><span class="p">():</span>
-    
-    <span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">test_protein_profile</span><span class="p">():</span>
 
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;fraction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">6</span>
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;shortname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">18</span>
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
+        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
+        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;fraction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">6</span>
+        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;shortname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">18</span>
+        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
 
-    <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+        <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
 
-    <span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
-    
-    <span class="c1"># total intensity should be preserved</span>
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">pre_lfq</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
-    
-    <span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
 
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;shortname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span>
+        <span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
 
-    <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
+        <span class="c1"># total intensity should be preserved</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">pre_lfq</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
 
-    <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+        <span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;shortname&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
+        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span>
 
-    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">pre_lfq</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
-    
-<span class="n">test_protein_profile</span><span class="p">()</span>
-                       
+        <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
+
+        <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+
+        <span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">pre_lfq</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+    <span class="n">test_protein_profile</span><span class="p">()</span>
 </pre></div>
 
     </div>
