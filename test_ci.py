@@ -13,7 +13,7 @@ import subprocess
 import numpy as np
 
 import alphapept.interface
-from alphapept.settings import load_settings
+from alphapept.settings import load_settings, load_settings_as_template
 import yaml
 import alphapept
 import alphapept.io

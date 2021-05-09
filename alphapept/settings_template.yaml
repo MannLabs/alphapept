@@ -207,6 +207,12 @@ fasta:
     type: spinbox
     min: 1
     max: 4096
+    default: 1024
+    description: Maximum number of isoforms per peptide.
+  limit_modifications:
+    type: spinbox
+    min: 1
+    max: 4096
     default: 8
     description: Limit the number of modifications per peptide.
   pseudo_reverse:
