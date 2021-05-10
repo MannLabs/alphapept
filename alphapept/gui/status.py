@@ -19,34 +19,40 @@ def queue_watcher():
 
     init_process(PROCESS_FILE)
 
-
     while True:
         queue_files = [_ for _ in os.listdir(QUEUE_PATH) if _.endswith('.yaml')]
         #print(f'{datetime.datetime.now()} queue_watcher running. {len(queue_files)} experiments to process.')
 
         if len(queue_files) > 0:
-            file_path = os.path.join(QUEUE_PATH, queue_files[0])
+
+            created = [time.ctime(os.path.getctime(os.path.join(QUEUE_PATH, _))) for _ in queue_files]
+            queue_df = pd.DataFrame(queue_files, columns = ['File'])
+            queue_df['Created'] = created
+
+            file_to_process = queue_df.sort_values('Created')['File'].iloc[0]
+
+            file_path = os.path.join(QUEUE_PATH, file_to_process)
             settings = load_settings_as_template(file_path)
 
             current_file = {}
             current_file['started'] = datetime.datetime.now()
-            current_file['file'] = queue_files[0]
+            current_file['file'] = file_to_process
 
             current_file_path = os.path.join(QUEUE_PATH, 'current_file')
 
             with open(current_file_path, "w") as file:
                 yaml.dump(current_file, file, sort_keys=False)
 
-            logfile = os.path.join(PROCESSED_PATH, os.path.splitext(queue_files[0])[0]+'.log')
+            logfile = os.path.join(PROCESSED_PATH, os.path.splitext(file_to_process)[0]+'.log')
             try:
                 settings_ = alphapept.interface.run_complete_workflow(settings, progress=True, logfile = logfile)
-                save_settings(settings_, os.path.join(PROCESSED_PATH, queue_files[0]))
+                save_settings(settings_, os.path.join(PROCESSED_PATH, file_to_process))
 
             except Exception as e:
                 print(f'Run {file_path} failed with {e}')
                 settings_ = settings.copy()
                 settings_['error'] = f"{e}"
-                save_settings(settings_, os.path.join(FAILED_PATH, queue_files[0]))
+                save_settings(settings_, os.path.join(FAILED_PATH, file_to_process))
 
             os.remove(file_path)
             if os.path.isfile(current_file_path):
@@ -124,7 +130,7 @@ def status():
                     log_txt = []
                     f = open(logfile, "r")
 
-                lines = f.readlines()[-200:] # Limit to 200 lines 
+                lines = f.readlines()[-200:] # Limit to 200 lines
 
                 for line in lines:
                     if '__progress_current' in line:
