@@ -160,55 +160,58 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
     files = np.sort(df['shortname'].unique()).tolist()
     n_files = len(files)
 
-    if 'fraction' in df.keys():
-        fractions = np.sort(df['fraction'].unique()).tolist()
-        n_fractions = len(fractions)
+    if 'fraction' not in df.keys():
+        df['fraction'] = [1 for x in range(len(df.index))]
 
-        df_max = df.groupby(['precursor','fraction','shortname'])[field].max() #Maximum per fraction
+    fractions = np.sort(df['fraction'].unique()).tolist()
 
-        prec_count = df_max.index.get_level_values('precursor').value_counts()
+    n_fractions = len(fractions)
 
-        if not minimum_occurence:
-            minimum_occurence = np.percentile(prec_count[prec_count>1].values, 75) #Take the 25% best datapoints
-            logging.info('Setting minimum occurence to {}'.format(minimum_occurence))
+    df_max = df.groupby(['precursor','fraction','shortname'])[field].max() #Maximum per fraction
 
-        shared_precs = prec_count[prec_count >= minimum_occurence]
-        precs = prec_count[prec_count > minimum_occurence].index.tolist()
+    prec_count = df_max.index.get_level_values('precursor').value_counts()
 
-        n_profiles = len(precs)
+    if not minimum_occurence:
+        minimum_occurence = np.percentile(prec_count[prec_count>1].values, 75) #Take the 25% best datapoints
+        logging.info('Setting minimum occurence to {}'.format(minimum_occurence))
 
-        selected_precs = df_max.loc[precs]
-        selected_precs = selected_precs.reset_index()
+    shared_precs = prec_count[prec_count >= minimum_occurence]
+    precs = prec_count[prec_count > minimum_occurence].index.tolist()
 
-        profiles = np.empty((n_fractions, n_files, n_profiles))
-        profiles[:] = np.nan
+    n_profiles = len(precs)
 
-        #get dictionaries
-        fraction_dict = {_:i for i,_ in enumerate(fractions)}
-        filename_dict = {_:i for i,_ in enumerate(files)}
-        precursor_dict = {_:i for i,_ in enumerate(precs)}
+    selected_precs = df_max.loc[precs]
+    selected_precs = selected_precs.reset_index()
 
-        prec_id = [precursor_dict[_] for _ in selected_precs['precursor']]
-        frac_id = [fraction_dict[_] for _ in selected_precs['fraction']]
-        file_id = [filename_dict[_] for _ in selected_precs['shortname']]
+    profiles = np.empty((n_fractions, n_files, n_profiles))
+    profiles[:] = np.nan
 
-        profiles[frac_id,file_id, prec_id] = selected_precs[field]
+    #get dictionaries
+    fraction_dict = {_:i for i,_ in enumerate(fractions)}
+    filename_dict = {_:i for i,_ in enumerate(files)}
+    precursor_dict = {_:i for i,_ in enumerate(precs)}
 
-        try:
-            normalization = normalize_experiment_SLSQP(profiles)
-        except ValueError: # SLSQP error in scipy https://github.com/scipy/scipy/issues/11403
-            logging.info('Normalization with SLSQP failed. Trying BFGS')
-            normalization = normalize_experiment_BFGS(profiles)
+    prec_id = [precursor_dict[_] for _ in selected_precs['precursor']]
+    frac_id = [fraction_dict[_] for _ in selected_precs['fraction']]
+    file_id = [filename_dict[_] for _ in selected_precs['shortname']]
+
+    profiles[frac_id,file_id, prec_id] = selected_precs[field]
+
+    try:
+        normalization = normalize_experiment_SLSQP(profiles)
+    except ValueError: # SLSQP error in scipy https://github.com/scipy/scipy/issues/11403
+        logging.info('Normalization with SLSQP failed. Trying BFGS')
+        normalization = normalize_experiment_BFGS(profiles)
 
 
-        #intensity normalization: total intensity to remain unchanged
+    #intensity normalization: total intensity to remain unchanged
 
-        df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [filename_dict[_] for _ in df['shortname']]]
-        df[field+'_dn'] *= df[field].sum()/df[field+'_dn'].sum()
+    df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [filename_dict[_] for _ in df['shortname']]]
+    df[field+'_dn'] *= df[field].sum()/df[field+'_dn'].sum()
 
-    else:
-        logging.info('No fractions present. Skipping delayed normalization.')
-        normalization = None
+    # else:
+    #     logging.info('No fractions present. Skipping delayed normalization.')
+    #     normalization = None
 
     return df, normalization
 
@@ -505,6 +508,7 @@ def protein_profile_parallel_mq(evidence_path, protein_groups_path, callback=Non
     logging.info(f'A total of {max_:,} proteins.')
 
     df = pd.concat(protein_df)
+    df, normed = delayed_normalization(df, field ='Intensity')
     protein_table = protein_profile_parallel(df, minimum_ratios=1, field='Intensity', callback=callback)
 
     return protein_table

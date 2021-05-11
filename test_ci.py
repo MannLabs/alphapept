@@ -303,14 +303,25 @@ def main(runtype = None, password = None, new_files = True):
 
 
     if runtype == None:
-        if len(sys.argv) == 2:
-            password = None
-            runtype = sys.argv[1]
-        else:
-            password = sys.argv[1]
+        if len(sys.argv) == 3:
+            tmp_folder = sys.argv[1]
             runtype = sys.argv[2]
+            password = None
+            
+        else:
+            tmp_folder = sys.argv[1]
+            runtype = sys.argv[2]
+            password = sys.argv[3]
 
+    
+    BASE_DIR = os.path.join(tmp_folder, './test_files/') # Storarge location for test files
+    TEST_DIR = os.path.join(tmp_folder, './test_temp/')
+    ARCHIVE_DIR = os.path.join(tmp_folder, './test_archive/')
 
+    MONGODB_USER = 'github_actions'
+    MONGODB_URL = 'ci.yue0n.mongodb.net/'
+
+    print(f"start processing, tmp folder is {tmp_folder}")
 
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']

@@ -272,4 +272,16 @@ def algorithm_test(evd, ref, base_columns, ratio_columns, base_columns2, ratio_c
     get_plot_df(df, base_columns2, ratio_columns2, axes[1], id_)
 
 
-def prepare_protein_tables()
+def add_species_column(prot_df_mq):
+    if 'Species' in prot_df_mq.keys():
+        return
+    prots = prot_df_mq["Protein IDs"]
+    species = []
+    for prot in prots:
+        if "_ECO" in prot:
+            species.append('Escherichia coli')
+        elif "HUMAN" in prot:
+            species.append("Homo sapiens")
+        else:
+            species.append("X")
+    prot_df_mq['Species'] = species

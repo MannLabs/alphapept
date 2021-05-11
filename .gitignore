@@ -21,6 +21,9 @@ __pycache__/
 #temp files sandbox
 sandbox/temp/
 temp_backup
+sandbox/check_quantification.py
+sandbox/check_quantification.ipynb
+
 
 # Distribution / packaging
 .Python
