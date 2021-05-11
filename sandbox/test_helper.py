@@ -270,3 +270,6 @@ def algorithm_test(evd, ref, base_columns, ratio_columns, base_columns2, ratio_c
 
     id_ = f'{software_1} on {software_2} {test_id}'
     get_plot_df(df, base_columns2, ratio_columns2, axes[1], id_)
+
+
+def prepare_protein_tables()

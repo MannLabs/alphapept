@@ -56,12 +56,19 @@ FILE_DICT['PXD010012_CT_3_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/
 FILE_DICT['PXD010012_CT_4_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/swO523hdX1aqN3R/download'
 FILE_DICT['PXD010012_CT_5_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/Kbq97G9IzxQ8AHb/download'
 
-BASE_DIR = 'E:/test_files/' # Storarge location for test files
-TEST_DIR = 'E:/test_temp/'
-ARCHIVE_DIR = 'E:/test_archive/'
 
-MONGODB_USER = 'github_actions'
-MONGODB_URL = 'ci.yue0n.mongodb.net/'
+
+mods = sys.modules[__name__]
+
+
+
+def config_test_paths(pathinfo):
+    mods.BASE_DIR = pathinfo.BASE_DIR
+    mods.TEST_DIR = pathinfo.TEST_DIR
+    mods.ARCHIVE_DIR = pathinfo.ARCHIVE_DIR
+    mods.MONGODB_USER = pathinfo.MONGODB_USER
+    mods.MONGODB_URL = pathinfo.MONGODB_URL
+
 
 
 def delete_folder(dir_name):
@@ -292,17 +299,18 @@ class TestRun():
         return results
 
 
-def main():
-    print(sys.argv, len(sys.argv))
+def main(runtype = None, password = None, new_files = True):
 
-    if len(sys.argv) == 2:
-        password = None
-        runtype = sys.argv[1]
-    else:
-        password = sys.argv[1]
-        runtype = sys.argv[2]
 
-    new_files = True
+    if runtype == None:
+        if len(sys.argv) == 2:
+            password = None
+            runtype = sys.argv[1]
+        else:
+            password = sys.argv[1]
+            runtype = sys.argv[2]
+
+
 
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']

@@ -18,6 +18,10 @@ __pycache__/
 # C extensions
 *.so
 
+#temp files sandbox
+sandbox/temp/
+temp_backup
+
 # Distribution / packaging
 .Python
 env/
