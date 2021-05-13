@@ -125,13 +125,7 @@ def results():
     if selection == 'Previous results':
 
         results_files = files_in_folder(PROCESSED_PATH, '.yaml', sort='date')
-
-        with st.beta_expander(f"Total {len(results_files)} Files"):
-            st.table(results_files)
-
-        st.write('### Select results file')
-
-        selection = st.selectbox('Run', results_files)
+        selection = st.selectbox('Last run', results_files)
 
         if selection:
 
