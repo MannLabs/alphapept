@@ -2,9 +2,9 @@ import streamlit as st
 import os
 import pandas as pd
 import datetime
-from alphapept.paths import SETTINGS_TEMPLATE_PATH, QUEUE_PATH, DEFAULT_SETTINGS_PATH
+from alphapept.paths import SETTINGS_TEMPLATE_PATH, QUEUE_PATH, DEFAULT_SETTINGS_PATH, FASTA_PATH
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
-from alphapept.gui.utils import escape_markdown
+from alphapept.gui.utils import escape_markdown, files_in_folder
 
 SETTINGS_TEMPLATE = load_settings(SETTINGS_TEMPLATE_PATH)
 
@@ -127,16 +127,9 @@ def experiment():
             recorder['experiment']['fasta_paths'] = [os.path.join(file_folder, _) for _ in fasta_files]
             recorder['experiment']['file_paths'] = [os.path.join(file_folder, _) for _ in raw_files]
 
-            if (len(raw_files) == 0) or (len(fasta_files) == 0):
-                if (len(raw_files) == 0) and (len(fasta_files) == 0):
-                    st.warning('No raw and FASTA files in folder.')
-                    refresh_folder()
-                elif len(raw_files) == 0:
-                    st.warning('No raw files in folder.')
-                    refresh_folder()
-                elif len(fasta_files) == 0:
-                    st.warning('No fasta files in folder.')
-                    refresh_folder()
+            if len(raw_files) == 0:
+                st.warning('No raw files in folder.')
+                refresh_folder()
 
             else:
                 with st.beta_expander(f"Raw files ({len(raw_files)})"):
@@ -145,6 +138,10 @@ def experiment():
                 if len(fasta_files) > 0:
                     with st.beta_expander(f"FASTA files ({len(fasta_files)})"):
                         st.table(pd.DataFrame(fasta_files, columns=['File']))
+                else:
+                    fasta_files_home_dir = files_in_folder(FASTA_PATH, '.fasta')
+                    selection = st.multiselect(f'Select FASTA files from {FASTA_PATH}', options=fasta_files_home_dir)
+                    recorder['experiment']['fasta_paths'] = [os.path.join(FASTA_PATH, _) for _ in selection]
 
                 #TODO: Include databse files
                 #if len(fasta_files) > 0:

@@ -63,7 +63,7 @@ def queue_watcher():
 def status():
 
     st.write("# Status")
-    st.text(f'This page shows the status of the current analysis.\nSwitch to `New experiment` to define a new experiment')
+    st.text(f'This page shows the status of the current analysis.\nSwitch to `New experiment` to define a new experiment.\nSwitch to `Results` to see previous results.')
     status_msg = st.empty()
     failed_msg = st.empty()
 

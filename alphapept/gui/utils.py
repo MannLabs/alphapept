@@ -5,6 +5,7 @@ import streamlit as st
 from multiprocessing import Process
 import psutil
 import time
+import pandas as pd
 
 def escape_markdown(text):
     """
@@ -15,16 +16,35 @@ def escape_markdown(text):
         text = text.replace(char, "\\"+char)
     return text
 
-def files_in_folder(folder, ending):
+def files_in_folder(folder, ending, sort='name'):
     """
-    Reads a folder and returns all files that have this ending. Sorts the files by name.
+    Reads a folder and returns all files that have this ending. Sorts the files by name or creation date.
     """
     files = [_ for _ in os.listdir(folder) if _.endswith(ending)]
-    files.sort()
+
+    if sort == 'name':
+        files.sort()
+    elif sort == 'date':
+        files.sort(key=lambda x: os.path.getctime(os.path.join(folder, x)))
+    else:
+        raise NotImplementedError
+
     files = files[::-1]
 
     return files
 
+def files_in_folder_pandas(folder):
+    """
+    Reads a folder and returns pandas dataframe
+    """
+    files = os.listdir(folder)
+    created = [time.ctime(os.path.getctime(os.path.join(folder, _))) for _ in files]
+    sizes = [os.path.getsize(os.path.join(folder, _))/1024**2 for _ in files]
+    df = pd.DataFrame(files, columns = ['File'])
+    df['Created'] = created
+    df['Filesize (Mb)'] = sizes
+
+    return df
 
 def read_log(log_path):
     """
