@@ -82,8 +82,6 @@ def results():
 
     #TOdo: include previously processed output files..
 
-    file = ''
-
     selection = st.selectbox('File selection', ('Previous results', 'Enter file'))
 
     if selection == 'Previous results':
@@ -113,7 +111,7 @@ def results():
     elif selection == 'Enter file':
         file = st.text_input("Enter path to hdf file.", os.getcwd())
     else:
-        pass
+        file = ''
 
     if file is None:
         file = ''
