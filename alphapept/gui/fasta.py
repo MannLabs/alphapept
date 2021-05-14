@@ -36,6 +36,7 @@ def fasta():
             def bar(current, total, width):
                 download_bar.progress(current/total)
 
-            wget.download(download_link, new_file, bar = bar)
+            with st.spinner('Downloading..'):
+                wget.download(download_link, new_file, bar = bar)
 
             raise st.script_runner.RerunException(st.script_request_queue.RerunData(None))
