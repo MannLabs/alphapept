@@ -2,11 +2,8 @@
 name: GPU Test Cupy 11.2
 
 on:
-  push:
-    branches: [ master, develop]
-  pull_request:
-    branches: [ master, develop]
-
+  workflow_dispatch:
+    
 jobs:
   Install_Alphapept:
     runs-on: self-hosted
