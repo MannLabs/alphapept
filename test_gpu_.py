@@ -47,19 +47,16 @@ def main():
 
     set_speed_mode(mode)
     import alphapept.interface
-    for _ in settings['workflow']:
-        settings['workflow'][_] = False
 
-    settings['workflow']['import_raw_data'] = True
-    settings['workflow']['find_features'] = True
-
+    settings_ = alphapept.interface.import_raw_data(settings)
     start = time()
-    settings_ = alphapept.interface.run_complete_workflow(settings)
+    settings_ = alphapept.interface.feature_finding(settings)
     end = time()
 
     te = end-start
 
     print(f'Time elapsed {te}')
+
 
 if __name__ == "__main__":
     main()
