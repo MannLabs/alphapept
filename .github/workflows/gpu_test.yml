@@ -1,9 +1,9 @@
 # GitHub Actions to automatically test on sample files
-name: GPU Test Cupy 11.2
+name: GPU Test Cupy 11.1
 
 on:
   workflow_dispatch:
-    
+
 jobs:
   Install_Alphapept:
     runs-on: self-hosted
@@ -18,7 +18,7 @@ jobs:
         pip install pymongo
         pip install dnspython
         pip install wget
-        pip install cupy-cuda112
+        pip install cupy-cuda111
   GPU_Test:
     needs: Install_Alphapept
     runs-on: self-hosted
