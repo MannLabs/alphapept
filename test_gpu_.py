@@ -15,14 +15,24 @@ FILE_DICT['thermo_IRT.raw'] = 'https://datashare.biochem.mpg.de/s/GpXsATZtMwgQoQ
 FILE_DICT['IRT_fasta.fasta'] = 'https://datashare.biochem.mpg.de/s/p8Qu3KolzbSiCHH/download'
 
 
+tmp_folder = 'E:/test_temp/'
+
+def delete_folder(dir_name):
+    if os.path.exists(dir_name):
+        shutil.rmtree(dir_name)
+
+
+def create_folder(dir_name):
+    if not os.path.exists(dir_name):
+        logging.info(f'Creating dir {dir_name}.')
+        os.makedirs(dir_name)
 
 def main():
     mode = sys.argv[1]
     print(f"Testing with mode {mode}")
-    tmp_folder = os.path.join(os.getcwd(),'/temp')
 
-    if not os.path.isdir(tmp_folder):
-        os.mkdir(tmp_folder)
+    delete_folder(tmp_folder)
+    create_folder(tmp_folder)
 
     for file in FILE_DICT:
         target = os.path.join(tmp_folder, file)
