@@ -10,6 +10,7 @@ from alphapept.paths import DEFAULT_SETTINGS_PATH
 from alphapept.speed import set_speed_mode
 import sys
 import shutil
+import logging
 
 FILE_DICT = {}
 FILE_DICT['thermo_IRT.raw'] = 'https://datashare.biochem.mpg.de/s/GpXsATZtMwgQoQt/download'
