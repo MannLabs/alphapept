@@ -333,6 +333,14 @@ def get_unique_peptides(peptides):
 def generate_peptides(peptide, **kwargs):
     """
     Wrapper to get modified peptides from a peptide
+
+    TODO:
+
+    There can be some edge-cases which are not defined yet.
+    Example:
+    Setting the same fixed modification - once for all peptides and once for only terminal for the protein.
+    The modification will thenbe applied twice.
+
     """
     mod_peptide = add_fixed_mods_terminal([peptide], kwargs['mods_fixed_terminal_prot'])
     mod_peptide = add_variable_mods_terminal(mod_peptide, kwargs['mods_variable_terminal_prot'])
@@ -346,6 +354,7 @@ def generate_peptides(peptide, **kwargs):
 
     all_peptides = []
     for peptide in peptides: #1 per, limit the number of isoforms
+
         #Regular peptides
         mod_peptides = add_fixed_mods([peptide], **kwargs)
         mod_peptides = add_fixed_mods_terminal(mod_peptides, **kwargs)
@@ -375,7 +384,7 @@ def generate_peptides(peptide, **kwargs):
 
 def check_peptide(peptide, AAs):
 
-    if set(peptide).issubset(AAs):
+    if set([_ for _ in peptide if _.isupper()]).issubset(AAs):
         return True
     else:
         return False
@@ -465,7 +474,10 @@ def get_spectra(peptides, mass_dict):
     spectra = List()
 
     for i in range(len(peptides)):
-        spectra.append(get_spectrum(peptides[i], mass_dict))
+        try:
+            spectra.append(get_spectrum(peptides[i], mass_dict))
+        except Exception: #TODO: This is to fix edge cases when having multiple modifications on the same AA.
+            pass
 
     return spectra
 

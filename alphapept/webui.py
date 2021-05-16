@@ -1,5 +1,5 @@
 import streamlit as st
-from alphapept.gui import history, results, filewatcher, status, experiment, fasta
+from alphapept.gui import history, results, filewatcher, status, experiment, fasta#, compare
 from PIL import Image
 from alphapept.__version__ import VERSION_NO
 import os
@@ -28,7 +28,6 @@ footer {visibility: hidden;}
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-
 st.sidebar.image(image, width = 300)
 st.sidebar.code(f"AlphaPept {VERSION_NO} \n{computer_name}")
 
@@ -38,6 +37,7 @@ sidebar = {'Status': status.status,
            'Results': results.results,
            'History': history.history,
            'FileWatcher': filewatcher.filewatcher}
+           #'Compare': compare.compare}
 
 menu = st.sidebar.radio("", list(sidebar.keys()))
 
