@@ -12,6 +12,7 @@ jobs:
           cd installer\one_click_windows
           .\create_installer_windows.bat
   Prepare_Environment_for_testing:
+    needs: [Pyinstaller]
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
