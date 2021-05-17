@@ -72,6 +72,25 @@ def ion_plot(ms_file, options):
 
                 st.write(fig)
 
+def protein_rank(ms_file, options):
+    """
+    Displays summary statistics from matched ions
+
+    """
+    if 'protein_fdr' in options:
+        if st.button('Protein Rank'):
+            with st.spinner('Creating plot.'):
+
+                protein_fdr = ms_file.read(dataset_name='protein_fdr')
+                p_df = protein_fdr.groupby('protein').sum()['int_sum'].sort_values()[::-1].apply(np.log).to_frame().reset_index().reset_index()
+                p_df['protein_index'] =p_df['protein']
+
+                p_df = p_df.set_index('protein_index')
+                fig = px.scatter(p_df, x='index', y='int_sum', hover_data=["protein"], title='Protein Rank')
+                fig.update_layout(showlegend=False)
+
+                st.write(fig)
+
 def parse_file_and_display(file):
     """
     Loads file and displays dataframe in streamlit
@@ -90,6 +109,7 @@ def parse_file_and_display(file):
 
     st.write('Basic Plots')
     ion_plot(ms_file, options)
+    protein_rank(ms_file, options)
 
     opt = st.selectbox('Select group', [None] + options)
     if opt is not None:
