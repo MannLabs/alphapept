@@ -19,34 +19,40 @@ def queue_watcher():
 
     init_process(PROCESS_FILE)
 
-
     while True:
         queue_files = [_ for _ in os.listdir(QUEUE_PATH) if _.endswith('.yaml')]
         #print(f'{datetime.datetime.now()} queue_watcher running. {len(queue_files)} experiments to process.')
 
         if len(queue_files) > 0:
-            file_path = os.path.join(QUEUE_PATH, queue_files[0])
+
+            created = [time.ctime(os.path.getctime(os.path.join(QUEUE_PATH, _))) for _ in queue_files]
+            queue_df = pd.DataFrame(queue_files, columns = ['File'])
+            queue_df['Created'] = created
+
+            file_to_process = queue_df.sort_values('Created')['File'].iloc[0]
+
+            file_path = os.path.join(QUEUE_PATH, file_to_process)
             settings = load_settings_as_template(file_path)
 
             current_file = {}
             current_file['started'] = datetime.datetime.now()
-            current_file['file'] = queue_files[0]
+            current_file['file'] = file_to_process
 
             current_file_path = os.path.join(QUEUE_PATH, 'current_file')
 
             with open(current_file_path, "w") as file:
                 yaml.dump(current_file, file, sort_keys=False)
 
-            logfile = os.path.join(PROCESSED_PATH, os.path.splitext(queue_files[0])[0]+'.log')
+            logfile = os.path.join(PROCESSED_PATH, os.path.splitext(file_to_process)[0]+'.log')
             try:
                 settings_ = alphapept.interface.run_complete_workflow(settings, progress=True, logfile = logfile)
-                save_settings(settings_, os.path.join(PROCESSED_PATH, queue_files[0]))
+                save_settings(settings_, os.path.join(PROCESSED_PATH, file_to_process))
 
             except Exception as e:
                 print(f'Run {file_path} failed with {e}')
                 settings_ = settings.copy()
                 settings_['error'] = f"{e}"
-                save_settings(settings_, os.path.join(FAILED_PATH, queue_files[0]))
+                save_settings(settings_, os.path.join(FAILED_PATH, file_to_process))
 
             os.remove(file_path)
             if os.path.isfile(current_file_path):
@@ -54,10 +60,40 @@ def queue_watcher():
         else:
             time.sleep(15)
 
+def terminate_process():
+
+    with st.spinner('Terminating..'):
+
+        running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
+
+        p_ = psutil.Process(last_pid)
+        p_.terminate()
+        st.success(f'Terminated {last_pid}')
+
+        current_file = os.path.join(QUEUE_PATH, 'current_file')
+
+        with open(current_file, "r") as file:
+            cf_ = yaml.load(file, Loader=yaml.FullLoader)
+
+        cf = cf_['file']
+        file_in_process = os.path.join(QUEUE_PATH, cf)
+        target_file = os.path.join(FAILED_PATH, cf)
+
+        os.rename(file_in_process, target_file)
+        st.success(f'Moved {escape_markdown(file_in_process)} to {escape_markdown(target_file)}')
+
+        if os.path.isfile(current_file):
+            os.remove(current_file)
+        st.success(f'Cleaned up {escape_markdown(current_file)}')
+
+        time.sleep(3)
+
+        raise st.script_runner.RerunException(st.script_request_queue.RerunData(None))
+
 def status():
 
     st.write("# Status")
-    st.text(f'This page shows the status of the current analysis.\nSwitch to `New experiment` to define a new experiment')
+    st.text(f'This page shows the status of the current analysis.\nSwitch to `New experiment` to define a new experiment.\nSwitch to `Results` to see previous results.')
     status_msg = st.empty()
     failed_msg = st.empty()
 
@@ -109,6 +145,11 @@ def status():
 
         refresh = st.checkbox('Auto-Update Page')
 
+        if st.checkbox('Terminate process'):
+            st.error(f"This will abort the current run and move it to failed. Please confirm.")
+            if st.button('Confirm'):
+                terminate_process()
+
         while True:
             if os.path.isfile(current_file):
                 with open(current_file, "r") as file:
@@ -124,7 +165,7 @@ def status():
                     log_txt = []
                     f = open(logfile, "r")
 
-                lines = f.readlines()[-200:] # Limit to 200 lines 
+                lines = f.readlines()[-200:] # Limit to 200 lines
 
                 for line in lines:
                     if '__progress_current' in line:

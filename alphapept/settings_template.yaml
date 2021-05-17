@@ -183,7 +183,8 @@ fasta:
     value:
       a<^: acetylation of protein N-terminus
       am>^: amidation of protein C-terminus
-    default: []
+    default:
+    - a<^
     description: Varibale terminal modifications on proteins.
   num_missed_cleavages:
     type: spinbox

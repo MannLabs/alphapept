@@ -637,7 +637,7 @@ def get_file_summary(ms_data):
                     df['rt_left'] = df['rt_apex'] - df['rt_start']
                     df['rt_tail'] = df['rt_right'] / df['rt_left']
 
-                for field in ['fwhm','int_sum','rt_length','o_mass_ppm_raw']:
+                for field in ['fwhm','int_sum','rt_length','rt_tail','o_mass_ppm_raw']:
                     if field in df.columns:
                         f_summary[key+'_median_'+field] = float(df[field].median())
 

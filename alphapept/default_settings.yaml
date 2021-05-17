@@ -28,7 +28,8 @@ fasta:
   - oxM
   mods_variable_terminal: []
   mods_fixed_terminal_prot: []
-  mods_variable_terminal_prot: []
+  mods_variable_terminal_prot:
+  - a<^
   num_missed_cleavages: 2
   min_length: 6
   max_length: 27

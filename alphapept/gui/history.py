@@ -5,6 +5,7 @@ import yaml
 import pandas as pd
 from alphapept.paths import PROCESSED_PATH, AP_PATH
 from alphapept.gui.utils import files_in_folder
+import numpy as np
 
 def load_files(file_list, callback = None):
     """
