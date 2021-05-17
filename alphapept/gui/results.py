@@ -9,6 +9,9 @@ import pandas as pd
 import base64
 import plotly.express as px
 from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+from scipy import stats
+import numpy as np
 
 def readable_files_from_yaml(results_yaml):
     """
@@ -44,6 +47,30 @@ def make_df_downloadble(df, file):
         file_name = os.path.splitext(os.path.split(file)[-1])[0] + '.csv'
         get_table_download_link(df, file_name)
 
+def ion_plot(ms_file, options):
+    """
+    Displays summary statistics from matched ions
+
+    """
+
+    if 'ions' in options:
+        if st.button('Ion calibration'):
+            with st.spinner('Creating plot.'):
+                ions = ms_file.read(dataset_name='ions')
+                delta_ppm = ((ions['db_mass'] - ions['ion_mass'])/((ions['db_mass'] + ions['ion_mass'])/2)*1e6).values
+                counts, bins =np.histogram(delta_ppm, bins=100, density=True)
+                bin_edges = bins[1:] + (bins[1] - bins[0])/2
+                bins=np.arange(ions['db_mass'].min(), ions['db_mass'].max(), 1)
+                offset = stats.binned_statistic(ions['ion_mass'].values, delta_ppm, 'mean', bins=bins)
+                counts_ = stats.binned_statistic(ions['ion_mass'].values, delta_ppm, 'count', bins=bins)
+                counts_ = counts_.statistic
+
+                fig = make_subplots(rows=1, cols=2, column_widths=[0.8, 0.2], subplot_titles=("Mean ion offset (ppm) over m/z", "Histogram of Offset (ppm)"))
+                fig.add_trace(go.Scatter(x = offset.bin_edges[1:], y = offset.statistic, marker_color='#17212b', mode = 'markers', marker={'opacity': np.sqrt(counts_/np.max(counts_))}), row=1, col=1)
+                fig.add_bar(y= counts, x= bin_edges, row=1, col=2, marker_color='#17212b')
+                fig.update_layout(showlegend=False)
+
+                st.write(fig)
 
 def parse_file_and_display(file):
     """
@@ -60,6 +87,9 @@ def parse_file_and_display(file):
 
         with pd.HDFStore(file) as hdf:
             options = list(hdf.keys())
+
+    st.write('Basic Plots')
+    ion_plot(ms_file, options)
 
     opt = st.selectbox('Select group', [None] + options)
     if opt is not None:
