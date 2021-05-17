@@ -10,7 +10,7 @@ jobs:
         run: |
           conda deactivate
           cd installer\one_click_windows
-          .\create_pyinstaller_windows.bat
+          .\create_installer_windows.bat
   HeLa_Thermo_Win:
     needs: Pyinstaller
     runs-on: self-hosted
