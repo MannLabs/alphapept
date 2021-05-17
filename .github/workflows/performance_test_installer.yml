@@ -18,6 +18,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
+        conda activate alphapeptinstaller
         python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela
   HeLa_Thermo_Win_LargeFasta:
     needs: [Pyinstaller, HeLa_Thermo_Win]
@@ -26,6 +27,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
+        conda activate alphapeptinstaller
         python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela_large_fasta
   HeLa_Thermo_Win_Modifications:
     needs: [Pyinstaller, HeLa_Thermo_Win]
@@ -34,6 +36,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
+        conda activate alphapeptinstaller
         python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela_modifications
   HeLa_Bruker_Win:
     needs: [Pyinstaller, HeLa_Thermo_Win]
@@ -42,6 +45,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run Alphapept on Bruker
       run: |
+        conda activate alphapeptinstaller
         python test_ci.py "${{ secrets.MONGODB_PW }}" bruker_hela
   PXD006109:
     needs: [Pyinstaller, HeLa_Thermo_Win]
@@ -50,6 +54,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run Alphapept on PXD006109
       run: |
+        conda activate alphapeptinstaller
         python test_ci.py "${{ secrets.MONGODB_PW }}" PXD006109
   PXD010012:
     needs: [Pyinstaller, HeLa_Bruker_Win]
@@ -58,4 +63,5 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run Alphapept on PXD010012
       run: |
+        conda activate alphapeptinstaller
         python test_ci.py "${{ secrets.MONGODB_PW }}" PXD010012
