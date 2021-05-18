@@ -198,8 +198,11 @@ class TestRun():
         report['test_id'] = self.id
         report['settings'] = settings
         report['time_elapsed_min'] = (end-start)/60
-        report['branch'] = subprocess.check_output("git branch --show-current").decode("utf-8").rstrip('\n')
-        report['commit'] = subprocess.check_output("git rev-parse --verify HEAD").decode("utf-8").rstrip('\n')
+        try:
+            report['branch'] = subprocess.check_output("git branch --show-current").decode("utf-8").rstrip('\n')
+            report['commit'] = subprocess.check_output("git rev-parse --verify HEAD").decode("utf-8").rstrip('\n')
+        except:
+            None
         report['version'] = alphapept_version
 
         if self.exe_path:
