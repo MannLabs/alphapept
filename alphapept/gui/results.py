@@ -149,8 +149,8 @@ def plot_summary(results_yaml):
     hovertext = [data_df['filename'].values]
 
     fig.add_bar(x=data_df.index, y=data_df['feature_table'], hovertext = hovertext, row=1, col=1, marker_color='#3dc5ef')
-    fig.add_bar(x=data_df.index, y=data_df['protein_fdr_n_protein_group'], hovertext = hovertext, row=1, col=2, marker_color='#42dee1')
-    fig.add_bar(x=data_df.index, y=data_df['protein_fdr_n_sequence'], hovertext = hovertext, row=1, col=3, marker_color='#6eecb9')
+    fig.add_bar(x=data_df.index, y=data_df['protein_fdr_n_sequence'], hovertext = hovertext, row=1, col=2, marker_color='#42dee1')
+    fig.add_bar(x=data_df.index, y=data_df['protein_fdr_n_protein_group'], hovertext = hovertext, row=1, col=3, marker_color='#6eecb9')
 
     fig.update_layout(showlegend=False)
     #fig.update_xaxes(tickmode = 'array', ticktext=list((range(len(data_df)))))
