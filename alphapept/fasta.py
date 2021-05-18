@@ -553,7 +553,8 @@ def add_to_pept_dict(pept_dict, new_peptides, i):
     added_peptides = List()
     for peptide in new_peptides:
         if peptide in pept_dict:
-            pept_dict[peptide].append(i)
+            if i not in pept_dict[peptide]:
+                pept_dict[peptide].append(i)
         else:
             pept_dict[peptide] = [i]
             added_peptides.append(peptide)

@@ -90,7 +90,7 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
 def filewatcher():
     st.write('# FileWatcher')
 
-    # FIleWatcher
+    # FileWatcher
     running, last_pid, p_name, status, p_init  = check_process(FILE_WATCHER_FILE)
 
     if running:
@@ -130,13 +130,33 @@ def filewatcher():
     else:
         settings_ = load_settings_as_template(settings_template)
         st.success('Valid settings file.')
-        if st.checkbox('Show'):
+        with st.beta_expander("Show settings"):
             st.write(settings_)
 
-    if valid:
-        start_watcher = st.button('Start file watcher ')
-        valid = False
+    st.write('## Start watcher')
 
-        if start_watcher:
+    if valid:
+        process_existing = st.checkbox('Process already existing files.')
+
+        if st.button('Start'):
+
+            if process_existing:
+                raw_files = [_ for _ in os.listdir(folder) if _.lower().endswith('.raw') or _.lower().endswith('.d')]
+                st.success(f'Found {len(raw_files)} existing raw files.')
+
+                current = st.progress(0)
+
+                for idx, file in enumerate(raw_files):
+                    file = os.path.join(folder, file)
+                    settings = settings_.copy()
+                    settings['experiment']['file_paths'] = [file]
+                    new_file = os.path.splitext(os.path.split(file)[1])[0] + '.yaml'
+                    settings['experiment']['results_path'] = os.path.splitext(file)[0] + '.yaml'
+                    save_settings(settings, os.path.join(QUEUE_PATH, new_file))
+                    print(f'{datetime.datetime.now()} Added {file}')
+
+                    current.progress((idx+1)/len(raw_files))
+
             start_process(target = file_watcher_process, process_file = FILE_WATCHER_FILE, args = (folder, settings_, minimum_size, tag), verbose = True)
+            valid = False
             raise st.script_runner.RerunException(st.script_request_queue.RerunData(None))
