@@ -255,7 +255,12 @@ index = {"print_settings": "00_settings.ipynb",
          "set_max_process": "12_speed.ipynb",
          "AlphaPool": "12_speed.ipynb",
          "numba": "12_speed.ipynb",
-         "cuda": "12_speed.ipynb"}
+         "cuda": "12_speed.ipynb",
+         "mq_ouput_files": "13_export.ipynb",
+         "mod_translation": "13_export.ipynb",
+         "remove_mods": "13_export.ipynb",
+         "ap_to_mq_sequence": "13_export.ipynb",
+         "prepare_ap_results": "13_export.ipynb"}
 
 modules = ["settings.py",
            "chem.py",
@@ -269,7 +274,8 @@ modules = ["settings.py",
            "matching.py",
            "constants.py",
            "interface.py",
-           "speed.py"]
+           "speed.py",
+           "export.py"]
 
 doc_url = "https://mannlabs.github.io/alphapept/"
 
