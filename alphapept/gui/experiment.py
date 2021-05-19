@@ -6,6 +6,18 @@ from alphapept.paths import SETTINGS_TEMPLATE_PATH, QUEUE_PATH, DEFAULT_SETTINGS
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
 from alphapept.gui.utils import escape_markdown, files_in_folder
 
+# Dict to match workflow 
+WORKFLOW_DICT = {}
+WORKFLOW_DICT['create_database'] = ['fasta']
+WORKFLOW_DICT['import_raw_data'] = ['raw']
+WORKFLOW_DICT['find_features'] = ['features']
+WORKFLOW_DICT['search_data'] = ['search', 'score']
+WORKFLOW_DICT['recalibrate_data'] = ['calibration']
+WORKFLOW_DICT['align'] = []
+WORKFLOW_DICT['match'] = ['matching']
+WORKFLOW_DICT['lfq_quantification'] = ['quantification']
+
+
 SETTINGS_TEMPLATE = load_settings(SETTINGS_TEMPLATE_PATH)
 
 def parse_folder(file_folder):
@@ -83,8 +95,16 @@ def submit_experiment(recorder):
 def customize_settings(recorder, uploaded_settings, loaded):
 
     with st.beta_expander("Settings", loaded):
+
+        checked = [_ for _ in recorder['workflow'] if not recorder['workflow'][_]]
+        checked_ = []
+        [checked_.extend(WORKFLOW_DICT[_]) for _ in checked if _ in WORKFLOW_DICT]
+
+        exclude = ['experiment', 'workflow'] + checked_
+
         for key in SETTINGS_TEMPLATE.keys():
-            if key not in ['experiment', 'workflow']:
+            if key not in exclude:
+
                 group = SETTINGS_TEMPLATE[key]
                 #Check if different than default
                 if loaded:
@@ -185,3 +205,6 @@ def experiment():
                 recorder = customize_settings(recorder, uploaded_settings, loaded)
 
                 submit_experiment(recorder)
+
+
+
