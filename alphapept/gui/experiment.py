@@ -32,7 +32,7 @@ def parse_folder(file_folder):
     return raw_files, fasta_files, db_files
 
 
-def widget_from_setting(recorder, key, group, element, override=None):
+def widget_from_setting(recorder, key, group, element, override=None, indent=False):
     """
     Creates streamlit widgets from settigns
     Returns a recorder to extract set values
@@ -52,17 +52,22 @@ def widget_from_setting(recorder, key, group, element, override=None):
     if override:
         value = override
 
+    if indent:
+        c1, c2 = st.beta_columns((1,8))
+    else:
+        c2 = st
+
     if _['type'] == 'doublespinbox':
-        recorder[key][element] = st.slider(element, min_value = float(_['min']), max_value = float(_['max']), value = float(value), help = help)
+        recorder[key][element] = c2.slider(element, min_value = float(_['min']), max_value = float(_['max']), value = float(value), help = help)
     elif _['type'] == 'spinbox':
-        recorder[key][element] = st.slider(element, min_value = _['min'], max_value = _['max'], value = value, help = help)
+        recorder[key][element] = c2.slider(element, min_value = _['min'], max_value = _['max'], value = value, help = help)
     elif _['type'] == 'checkbox':
-        recorder[key][element] = st.checkbox(element, value = value, help = help)
+        recorder[key][element] = c2.checkbox(element, value = value, help = help)
     elif _['type'] == 'checkgroup':
         opts = list(_['value'].keys())
-        recorder[key][element] = st.multiselect(label = element, options = opts, default = value, help = help)
+        recorder[key][element] = c2.multiselect(label = element, options = opts, default = value, help = help)
     elif _['type'] == 'combobox':
-        recorder[key][element] = st.selectbox(label = element, options = _['value'], index = _['value'].index(value),  help = help)
+        recorder[key][element] = c2.selectbox(label = element, options = _['value'], index = _['value'].index(value),  help = help)
     else:
         st.write(f"Not understood {_}")
 
@@ -119,7 +124,7 @@ def customize_settings(recorder, uploaded_settings, loaded):
                             if uploaded_settings[key][element] != group[element]['default']:
                                 override = uploaded_settings[key][element]
 
-                        recorder = widget_from_setting(recorder, key, group, element, override)
+                        recorder = widget_from_setting(recorder, key, group, element, override, indent=True)
 
     return recorder
 
@@ -189,7 +194,7 @@ def experiment():
                     for element in group:
                         recorder = widget_from_setting(recorder, 'workflow', group, element)
 
-                st.write("## Additional settings")
+                st.write("## Modify settings")
 
                 prev_settings = st.checkbox('Use previous settings as template')
 
@@ -204,6 +209,7 @@ def experiment():
 
                 recorder = customize_settings(recorder, uploaded_settings, loaded)
 
+                st.write("## Submit experiment")
                 submit_experiment(recorder)
 
 
