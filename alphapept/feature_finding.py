@@ -1396,7 +1396,7 @@ def convert_bruker(feature_path):
 
     M_PROTON = mass_dict['Proton']
     feature_table['Mass'] = feature_table['MZ'].values * feature_table['Charge'].values - feature_table['Charge'].values*M_PROTON
-    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "RT_lower":"rt_start", "RT_upper":"rt_end", "Mobility": "mobility", "Mobility_lower": "mobility_lower", "Mobility_upper": "mobility_upper", "Charge":"charge","Intensity":'int_sum'})
+    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "RT_lower":"rt_start", "RT_upper":"rt_end", "Mobility": "mobility", "Mobility_lower": "mobility_lower", "Mobility_upper": "mobility_upper", "Charge":"charge","Intensity":'int_sum',"ClusterCount":'n_isotopes'})
     feature_table['rt_apex'] = feature_table['rt_apex']/60
     feature_table['rt_start'] = feature_table['rt_start']/60
     feature_table['rt_end'] = feature_table['rt_end']/60
@@ -1565,6 +1565,12 @@ def find_features(to_process, callback = None, parallel = False):
                     feature_path = extract_bruker(file_name)
                     feature_table = convert_bruker(feature_path)
                     logging.info('Bruker featurer finder complete. Extracted {:,} features.'.format(len(feature_table)))
+
+                # Calculate additional params
+                feature_table['rt_length'] = feature_table['rt_end'] - feature_table['rt_start']
+                feature_table['rt_right'] = feature_table['rt_end'] - feature_table['rt_apex']
+                feature_table['rt_left'] = feature_table['rt_apex'] - feature_table['rt_start']
+                feature_table['rt_tail'] = feature_table['rt_right'] / feature_table['rt_left']
 
                 logging.info('Matching features to query data.')
                 features = map_ms2(feature_table, query_data, **settings['features'])
