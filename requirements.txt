@@ -19,7 +19,7 @@ pythonnet==2.5.1
 fastcore==1.3.5
 nbdev==1.1.5
 click==7.1.2
-alphatims==0.2.0
+alphatims==0.2.7
 streamlit==0.80.0
 plotly_express==0.4.0
 watchdog==2.1.0
