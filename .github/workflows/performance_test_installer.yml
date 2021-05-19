@@ -1,8 +1,5 @@
 name: Performance test pyinstaller
 
-env:
-  TMP_FOLDER: 'E:/test_dir/'
-
 on:
   workflow_dispatch:
 jobs:
@@ -21,7 +18,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
-        python test_ci.py "${{env.TMP_folder}}" thermo_hela "${{ secrets.MONGODB_PW }}" 
+        python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela
   HeLa_Thermo_Win_LargeFasta:
     needs: [Pyinstaller, HeLa_Thermo_Win]
     runs-on: self-hosted
