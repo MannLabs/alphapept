@@ -62,12 +62,12 @@ mods = sys.modules[__name__]
 
 
 
-def config_test_paths(pathinfo):
-    mods.BASE_DIR = pathinfo.BASE_DIR
-    mods.TEST_DIR = pathinfo.TEST_DIR
-    mods.ARCHIVE_DIR = pathinfo.ARCHIVE_DIR
-    mods.MONGODB_USER = pathinfo.MONGODB_USER
-    mods.MONGODB_URL = pathinfo.MONGODB_URL
+def config_test_paths(BASE_DIR, TEST_DIR, ARCHIVE_DIR, MONGODB_USER, MONGODB_URL):
+    mods.BASE_DIR = BASE_DIR
+    mods.TEST_DIR = TEST_DIR
+    mods.ARCHIVE_DIR = ARCHIVE_DIR
+    mods.MONGODB_USER = MONGODB_USER
+    mods.MONGODB_URL = MONGODB_URL
 
 
 
