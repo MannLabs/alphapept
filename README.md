@@ -17,8 +17,6 @@
 
 The documentation is automatically built based on the jupyter notebooks (nbs/index.ipynb) and can be found [here](https://mannlabs.github.io/alphapept/):
 
-This is now the addition to the readme.
-
 ## Windows Quickstart
 <img src="nbs/images/alphapept_screen.png" width="480," align="center">
 
