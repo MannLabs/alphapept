@@ -39,4 +39,4 @@ jobs:
     - name: Run Alphapept on Bruker
       run: |
         conda activate alphapept
-        python test_ci.py "${{ secrets.MONGODB_PW }}" bruker_irt
+        python test_ci.py "${{ env.TMP_FOLDER }}" bruker "${{ secrets.MONGODB_PW }}"
