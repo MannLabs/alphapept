@@ -153,6 +153,7 @@ def normalize_experiment_BFGS(profiles):
 
     return solution
 
+
 def delayed_normalization(df, field='int_sum', minimum_occurence=None):
     """
     Returns normalization for given peptide intensities
@@ -176,7 +177,10 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
         logging.info('Setting minimum occurence to {}'.format(minimum_occurence))
 
     shared_precs = prec_count[prec_count >= minimum_occurence]
-    precs = prec_count[prec_count > minimum_occurence].index.tolist()
+
+
+    precs = shared_precs.index.tolist()
+
 
     n_profiles = len(precs)
 
@@ -199,9 +203,15 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
 
     try:
         normalization = normalize_experiment_SLSQP(profiles)
+        norm1d = np.ravel(normalization)
+        if sum((norm1d!=1))==0:
+            raise ValueError("optimization with SLSQP terminated at initial values. Trying BFGS")
     except ValueError: # SLSQP error in scipy https://github.com/scipy/scipy/issues/11403
         logging.info('Normalization with SLSQP failed. Trying BFGS')
         normalization = normalize_experiment_BFGS(profiles)
+        norm1d = np.ravel(normalization)
+        if sum((norm1d!=1))==0:
+            logging.warn('No normalization factors could be determined. Continuing with non-normalized data.')
 
 
     #intensity normalization: total intensity to remain unchanged
