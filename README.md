@@ -17,13 +17,15 @@
 
 The documentation is automatically built based on the jupyter notebooks (nbs/index.ipynb) and can be found [here](https://mannlabs.github.io/alphapept/):
 
+This is now the addition to the readme.
+
 ## Windows Quickstart
 <img src="nbs/images/alphapept_screen.png" width="480," align="center">
 
 1. Download the latest installer [here](https://github.com/MannLabs/alphapept/releases/latest), install and click the shortcut on the desktop. A browser window with the AlphaPept interface should open. In case Windows Firewall asks for network access for AlphaPept, please allow.
 2. In the `New Experiment` select a folder with raw files and FASTA files.
 3. Specify additional settings such as modifications with `Settings`.
-4. Click `Start` and run the analysis. 
+4. Click `Start` and run the analysis.
 
 See also below for more detailed instructions.
 
@@ -62,7 +64,7 @@ To enable usage of a GPU, additional packages need to be installed. The followin
 
 
 #### Notes
-* If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`, which also installs the jupyter notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`. 
+* If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`, which also installs the jupyter notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`.
 * For navigating the notebooks, the exension `collapsible headings` and `toc2` are very beneficial.
 * For developing with the notebooks, see the `nbev` section below.
 
@@ -85,7 +87,7 @@ For macOS Catalina, open the configuration of zsh via the terminal:
 * Type in `cd` to navigate to the home directory.
 * Type `nano ~/.zshrc` to open the configuration of the terminal
 * Add the path to your mono installation: `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/pkgconfig:$PKG_CONFIG_PATH`. Make sure that the Path matches to your version (Here 6.12.0)
-* Save everything and execute `. ~/.zshrc` 
+* Save everything and execute `. ~/.zshrc`
 4. Navigate to the alphapept folder and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode.
 
 
@@ -107,7 +109,7 @@ AlphaPept is meant to be a framework to implement and test new ideas quickly but
 
 * GUI: Use the graphical user interface to select settings and process files manually.
 * CMD: Use the command-line interface to process files. Useful when building automatic pipelines.
-* Python: Use python modules to build individual workflows. Useful when building customized pipelines and using Python as a scripting language or when implementing new ideas. 
+* Python: Use python modules to build individual workflows. Useful when building customized pipelines and using Python as a scripting language or when implementing new ideas.
 
 ### Windows Standalone Installation
 
@@ -161,7 +163,7 @@ This describes the minimal steps to analyze an experiment.
 
 ### GUI
 
-1. Open the GUI. Drag and drop experimental files and at least one fasta in the `Experiment` tab. 
+1. Open the GUI. Drag and drop experimental files and at least one fasta in the `Experiment` tab.
 2. Default settings are loaded and can be changed or saved in the `Settings` tab
 3. Navigate to the Run panel and click `Start`
 
