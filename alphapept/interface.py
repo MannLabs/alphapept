@@ -438,14 +438,8 @@ def score(
     else:
         cb = callback
 
-    # This is on each file individually -> when having repeats maybe
-    # use differently (if this matter at all )
-    alphapept.score.protein_groups_hdf_parallel(
-        settings,
-        pept_dict,
-        fasta_dict,
-        callback=cb
-    )
+    alphapept.score.protein_grouping_all(settings, pept_dict, fasta_dict, callback=cb)
+
     logging.info('Protein groups complete.')
 
     return settings
@@ -511,9 +505,7 @@ def quantification(
 
     field = settings['quantification']['mode']
 
-    logging.info('Assembling dataframe.')
-    df = alphapept.utils.assemble_df(settings)
-    logging.info('Assembly complete.')
+    df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
 
     if settings["workflow"]["lfq_quantification"]:
 
@@ -620,7 +612,7 @@ def get_file_summary(ms_data):
 
             f_summary[key] = len(df)
 
-            if key in ['protein_fdr']:
+            if key in ['peptide_fdr']:
                 if 'type' in df.columns:
                     f_summary['id_rate'] = df[df['type'] == 'msms']['raw_idx'].nunique() / n_ms2
                 else:
@@ -628,12 +620,12 @@ def get_file_summary(ms_data):
 
                 for field in ['protein','protein_group','precursor','naked_sequence','sequence']:
                     if field in df.columns:
-                        f_summary['protein_fdr_n_'+field] = df[field].nunique()
+                        f_summary[f'{field} (peptide_fdr)'] = df[field].nunique()
 
-            if key in ['feature_table', 'protein_fdr']:
+            if key in ['feature_table', 'peptide_fdr']:
                 for field in ['fwhm','int_sum','rt_length','rt_tail','o_mass_ppm_raw']:
                     if field in df.columns:
-                        f_summary[key+'_median_'+field] = float(df[field].median())
+                        f_summary[f'{field} ({key},median)'] = float(df[field].median())
 
     return f_summary
 
