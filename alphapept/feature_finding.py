@@ -3,14 +3,13 @@
 __all__ = ['connect_centroids_unidirection', 'convert_connections_to_array', 'eliminate_overarching_vertex',
            'path_finder', 'find_path_start', 'find_path_length', 'fill_path_matrix', 'convert_to_coord_path',
            'find_centroid_connections', 'get_hills', 'connect_centroids', 'extract_hills', 'fast_minima', 'split',
-           'split_hills', 'check_large_hills', 'filter_hills', 'hill_stats', 'get_hill_data', 'check_isotope_pattern',
-           'DELTA_M', 'DELTA_S', 'maximum_offset', 'correlate', 'extract_edge', 'edge_correlation',
-           'get_pre_isotope_patterns', 'check_isotope_pattern_directed', 'grow', 'grow_trail', 'get_trails',
-           'plot_pattern', 'get_minpos', 'get_local_minima', 'is_local_minima', 'truncate', 'check_averagine',
-           'pattern_to_mz', 'cosine_averagine', 'int_list_to_array', 'mz_to_mass', 'get_minpos', 'get_local_minima',
-           'is_local_minima', 'truncate', 'M_PROTON', 'isolate_isotope_pattern', 'get_isotope_patterns', 'report_',
-           'feature_finder_report', 'plot_isotope_pattern', 'extract_bruker', 'convert_bruker', 'map_bruker',
-           'find_features', 'map_ms2']
+           'split_hills', 'check_large_hills', 'filter_hills', 'hill_stats', 'remove_duplicates', 'get_hill_data',
+           'check_isotope_pattern', 'DELTA_M', 'DELTA_S', 'maximum_offset', 'correlate', 'extract_edge',
+           'edge_correlation', 'get_pre_isotope_patterns', 'check_isotope_pattern_directed', 'grow', 'grow_trail',
+           'get_trails', 'plot_pattern', 'get_local_minima', 'is_local_minima', 'get_minpos', 'truncate',
+           'check_averagine', 'pattern_to_mz', 'cosine_averagine', 'int_list_to_array', 'mz_to_mass', 'M_PROTON',
+           'isolate_isotope_pattern', 'get_isotope_patterns', 'report_', 'feature_finder_report',
+           'plot_isotope_pattern', 'extract_bruker', 'convert_bruker', 'map_bruker', 'find_features', 'map_ms2']
 
 # Cell
 import alphapept.speed
@@ -348,7 +347,7 @@ def split(idx, hill_ptrs_range, hill_ptrs, int_data, hill_data, splits, split_le
             break # Split only once per iteration
 
 def split_hills(hill_ptrs, hill_data, int_data, split_level, window):
-    splits = np.zeros(len(int_data), dtype=cupy.int32)
+    splits = np.zeros(len(hill_ptrs), dtype=cupy.int32)
     to_check = np.arange(len(hill_ptrs)-1)
 
     while len(to_check) > 0:
@@ -361,7 +360,7 @@ def split_hills(hill_ptrs, hill_data, int_data, split_level, window):
         to_check = np.insert(to_check, splitpoints+1, np.ones(len(splitpoints))).nonzero()[0] #array, index, what
         hill_ptrs = np.insert(hill_ptrs, splitpoints+1, splits[splitpoints]) #array, index, what
 
-        splits[:] = 0
+        splits = np.zeros(len(hill_ptrs), dtype=cupy.int32)
 
     return hill_ptrs
 
@@ -432,9 +431,11 @@ def filter_hills(hill_data, hill_ptrs, int_data, large_peak =40, window = 1):
 @parallel_compiled_func(cpu_only=True) #Only CPU optimized at this point
 def hill_stats(idx, hill_range, hill_ptrs, hill_data, int_data, mass_data, rt_, rt_idx, stats, hill_nboot_max, hill_nboot):
     if idx == -1:
-        x = alphapept.speed.cuda.grid(1)
+        k = alphapept.speed.cuda.grid(1)
     else:
-        x = idx
+        k = idx
+
+    x = hill_range[k]
 
     np.random.seed(42)
 
@@ -480,6 +481,26 @@ def hill_stats(idx, hill_range, hill_ptrs, hill_data, int_data, mass_data, rt_, 
     stats[x,4] = rt_min
     stats[x,5] = rt_max
 
+def remove_duplicates(stats, hill_data, hill_ptrs):
+    dups = pd.DataFrame(stats).duplicated() #all duplicated hills
+
+    idx_ = np.ones(len(hill_data), dtype = np.int32) #keep all
+    keep = np.ones(len(hill_ptrs)-1, dtype = np.int32)
+
+    for _ in np.arange(len(stats))[dups]: #duplicates will be assigned zeros
+        idx_[hill_ptrs[_]:hill_ptrs[_+1]] = 0
+        keep[_] = 0
+
+    hill_lens = np.diff(hill_ptrs)
+    keep_ = hill_lens[keep.nonzero()[0]]
+
+    hill_data_ = hill_data[idx_.nonzero()[0]]
+    hill_ptrs_ = np.empty((len(keep_) + 1), dtype=np.int32)
+    hill_ptrs_[0] = 0
+    hill_ptrs_[1:] = keep_.cumsum()
+
+    return hill_data_, hill_ptrs_, stats[~dups]
+
 def get_hill_data(query_data, hill_ptrs, hill_data, hill_nboot_max = 300, hill_nboot = 150):
 
     indices_ = np.array(query_data['indices_ms1'])
@@ -491,13 +512,16 @@ def get_hill_data(query_data, hill_ptrs, hill_data, hill_nboot_max = 300, hill_n
     stats = np.zeros((len(hill_ptrs)-1, 6)) #mz, delta, rt_min, rt_max, sum_max
     hill_stats(np.arange(len(hill_ptrs)-1), hill_ptrs, hill_data, int_data, mass_data, rt_, scan_idx, stats, hill_nboot_max, hill_nboot)
 
+    # Remove duplicate hills
+    hill_data, hill_ptrs, stats = remove_duplicates(stats, hill_data, hill_ptrs)
+
     # sort the stats
     sortindex = np.argsort(stats[:,4]) #Sorted by rt_min
     stats = stats[sortindex,:]
     idxs_upper = stats[:,4].searchsorted(stats[:,5], side="right")
     sortindex_ = np.arange(len(sortindex))[sortindex]
 
-    return stats, sortindex_, idxs_upper, scan_idx
+    return stats, sortindex_, idxs_upper, scan_idx, hill_data, hill_ptrs
 
 # Cell
 from .constants import mass_dict
@@ -761,31 +785,6 @@ def plot_pattern(pattern, sorted_hills, centroids, hill_data):
 # Cell
 
 @njit
-def get_minpos(y, split=5):
-    """
-    Function to get a list of minima in a trace.
-    A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.
-    """
-    minima = get_local_minima(y)
-    minima_list = List()
-
-    for minpos in minima:
-
-        minval = y[minpos]
-        left_side = y[:minpos]
-        right_side = y[minpos:]
-
-        left_max = np.max(left_side)
-        right_max = np.max(right_side)
-
-        minimum_max = np.min(np.array((left_max, right_max)))
-
-        if minimum_max / minval > split:
-            minima_list.append(minpos)
-
-    return minima_list
-
-@njit
 def get_local_minima(y):
     """
     Function to return all local minima of a array
@@ -801,14 +800,36 @@ def get_local_minima(y):
 def is_local_minima(y, i):
     return (y[i - 1] > y[i]) & (y[i + 1] > y[i])
 
-
-#export
 @njit
-def truncate(array, intensity_profile, seedpos):
+def get_minpos(y, iso_split_level=1.3):
+    """
+    Function to get a list of minima in a trace.
+    A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.
+    """
+    minima = get_local_minima(y)
+    minima_list = List()
+
+    for minpos in minima:
+
+        minval = y[minpos]
+
+        left_max = (y[:minpos]).max()
+        right_max = (y[minpos:]).max()
+
+        minimum_max = min(left_max, right_max)
+
+        if minimum_max / minval >= iso_split_level:
+            minima_list.append(minpos)
+
+    return minima_list
+
+
+@njit
+def truncate(array, intensity_profile, seedpos, iso_split_level):
     """
     Function to truncate an intensity profile around its seedposition
     """
-    minima = int_list_to_array(get_minpos(intensity_profile))
+    minima = int_list_to_array(get_minpos(intensity_profile, iso_split_level))
 
     if len(minima) > 0:
         left_minima = minima[minima < seedpos]
@@ -917,80 +938,9 @@ def mz_to_mass(mz, charge):
 
     return mass
 
-
-@njit
-def get_minpos(y, split=5):
-    """
-    Function to get a list of minima in a trace.
-    A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.
-    """
-    minima = get_local_minima(y)
-    minima_list = List()
-
-    for minpos in minima:
-
-        minval = y[minpos]
-        left_side = y[:minpos]
-        right_side = y[minpos:]
-
-        left_max = np.max(left_side)
-        right_max = np.max(right_side)
-
-        minimum_max = np.min(np.array((left_max, right_max)))
-
-        if minimum_max / minval > split:
-            minima_list.append(minpos)
-
-    return minima_list
-
-@njit
-def get_local_minima(y):
-    """
-    Function to return all local minima of a array
-    """
-    minima = List()
-    for i in range(1, len(y) - 1):
-        if is_local_minima(y, i):
-            minima.append(i)
-    return minima
-
-
-@njit
-def is_local_minima(y, i):
-    return (y[i - 1] > y[i]) & (y[i + 1] > y[i])
-
-
-#export
-@njit
-def truncate(array, intensity_profile, seedpos):
-    """
-    Function to truncate an intensity profile around its seedposition
-    """
-    minima = int_list_to_array(get_minpos(intensity_profile))
-
-    if len(minima) > 0:
-        left_minima = minima[minima < seedpos]
-        right_minima = minima[minima > seedpos]
-
-        # If the minimum is smaller than the seed
-        if len(left_minima) > 0:
-            minpos = left_minima[-1]
-        else:
-            minpos = 0
-
-        if len(right_minima) > 0:
-            maxpos = right_minima[0]
-        else:
-            maxpos = len(array)
-
-        array = array[minpos:maxpos+1]
-        intensity_profile = intensity_profile[minpos:maxpos+1]
-
-    return array, intensity_profile
-
 # Cell
 @njit
-def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, mass_range, charge_range, averagine_aa, isotopes, seed_masses, cc_cutoff):
+def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, mass_range, charge_range, averagine_aa, isotopes, seed_masses, cc_cutoff, iso_split_level):
     """
     Isolate isotope patterns
     """
@@ -1020,7 +970,7 @@ def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_id
                 seedpos = np.nonzero(arr==seed_global)[0][0]
 
                 # truncate around the seed...
-                arr, intensity_profile = truncate(arr, intensity_profile, seedpos)
+                arr, intensity_profile = truncate(arr, intensity_profile, seedpos, iso_split_level)
 
                 # Remove lower masses:
                 # Take the index of the maximum and remove all masses on the left side
@@ -1043,7 +993,7 @@ def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_id
 
 from numba.typed import List
 
-def get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_,  averagine_aa, isotopes, min_charge = 1, max_charge = 6, mass_range = 5, seed_masses = 100, cc_cutoff=0.6, callback=None):
+def get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_,  averagine_aa, isotopes, min_charge = 1, max_charge = 6, mass_range = 5, seed_masses = 100, cc_cutoff=0.6, iso_split_level = 1.3, callback=None):
     """
     Wrapper function to iterate over pre_isotope_patterns
     """
@@ -1062,7 +1012,7 @@ def get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, s
     for idx, pre_pattern in enumerate(pre_isotope_patterns):
         extract = True
         while extract:
-            isotope_pattern, isotope_charge = isolate_isotope_pattern(np.array(pre_pattern), hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, mass_range, charge_range, averagine_aa, isotopes, seed_masses, cc_cutoff)
+            isotope_pattern, isotope_charge = isolate_isotope_pattern(np.array(pre_pattern), hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, mass_range, charge_range, averagine_aa, isotopes, seed_masses, cc_cutoff, iso_split_level)
             if isotope_pattern is None:
                 length = 0
             else:
@@ -1226,6 +1176,12 @@ def feature_finder_report(query_data, isotope_patterns, isotope_charges, iso_idx
     report_(isotope_charges, isotope_patterns, iso_idx, stats, sortindex_, hill_ptrs, hill_data, int_data, rt_, rt_idx, results)
 
     df = pd.DataFrame(results, columns = ['mz','mz_std','mz_most_abundant','charge','rt_start','rt_apex','rt_end','fwhm','n_isotopes','mass','int_apex','int_area', 'int_sum'])
+
+    #Test
+    #df_ = df.copy()
+    #df_['mz'] -= 1.00286864/df_['charge']
+    #df_['mass'] = df_['mz'] * df_['charge'] - df_['charge'] * 1.00727646687
+    #df = pd.concat([df,df_])
 
     df.sort_values(['rt_start','mz'])
 
@@ -1514,7 +1470,10 @@ def find_features(to_process, callback = None, parallel = False):
                     f_settings = settings['features']
                     max_gap = f_settings['max_gap']
                     ppm_tol = f_settings['ppm_tol']
-                    split_level = f_settings['split_level']
+                    hill_split_level = f_settings['hill_split_level']
+                    iso_split_level = f_settings['iso_split_level']
+
+
                     window = f_settings['smoothing_window']
                     large_peak = f_settings['large_peak']
 
@@ -1540,20 +1499,20 @@ def find_features(to_process, callback = None, parallel = False):
 
                     int_data = np.array(query_data['int_list_ms1'])
 
-                    hill_ptrs = split_hills(hill_ptrs, hill_data, int_data, split_level=split_level, window = window) #hill lenght is inthere already
+                    hill_ptrs = split_hills(hill_ptrs, hill_data, int_data, split_level=hill_split_level, window = window) #hill lenght is inthere already
                     logging.info(f'After split hill_ptrs {len(hill_ptrs):,}')
 
                     hill_data, hill_ptrs = filter_hills(hill_data, hill_ptrs, int_data, large_peak =large_peak, window=window)
 
                     logging.info(f'After filter hill_ptrs {len(hill_ptrs):,}')
 
-                    stats, sortindex_, idxs_upper, scan_idx = get_hill_data(query_data, hill_ptrs, hill_data, hill_nboot_max = hill_nboot_max, hill_nboot = hill_nboot)
+                    stats, sortindex_, idxs_upper, scan_idx, hill_data, hill_ptrs = get_hill_data(query_data, hill_ptrs, hill_data, hill_nboot_max = hill_nboot_max, hill_nboot = hill_nboot)
                     logging.info('Extracting hill stats complete')
 
                     pre_isotope_patterns = get_pre_isotope_patterns(stats, idxs_upper, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, maximum_offset, min_charge=min_charge, max_charge=max_charge, mass_range=mass_range, cc_cutoff=min_correlation)
                     logging.info('Found {:,} pre isotope patterns.'.format(len(pre_isotope_patterns)))
 
-                    isotope_patterns, iso_idx, isotope_charges = get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, averagine_aa, isotopes, min_charge = min_charge, max_charge = max_charge, mass_range = mass_range, seed_masses = seed_masses, cc_cutoff = min_correlation, callback=None)
+                    isotope_patterns, iso_idx, isotope_charges = get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, averagine_aa, isotopes, min_charge = min_charge, max_charge = max_charge, mass_range = mass_range, seed_masses = seed_masses, cc_cutoff = min_correlation, iso_split_level=iso_split_level, callback=None)
                     logging.info('Extracted {:,} isotope patterns.'.format(len(isotope_charges)))
 
                     feature_table = feature_finder_report(query_data, isotope_patterns, isotope_charges, iso_idx, stats, sortindex_, hill_ptrs, hill_data)
