@@ -248,20 +248,22 @@ def get_probability(df, ref, sigma, index):
 def match_datasets(settings, callback = None):
 
     if len(settings['experiment']['file_paths']) > 2:
-        xx = assemble_df(settings, field='peptide_fdr')
-        cols = ['precursor','mz_calib','rt_calib']
+        xx = alphapept.utils.assemble_df(settings, field='peptide_fdr')
+
+        base_col = ['precursor']
+        alignment_cols = ['mz_calib','rt_calib']
+        extra_cols = ['score','decoy','target']
 
         if 'mobility' in xx.columns:
-            cols += ['mobility_calib']
+            alignment_cols += ['mobility_calib']
             use_mobility = True
         else:
             use_mobility = False
 
-        grouped = xx[cols].groupby('precursor').mean()
-        std_ = xx[cols].groupby('precursor').std()
+        grouped = xx[base_col + alignment_cols + extra_cols].groupby('precursor').mean()
+        std_ = xx[base_col + alignment_cols].groupby('precursor').std()
 
-        group_columns = grouped.columns
-        grouped[[_+'_std' for _ in group_columns]] = std_
+        grouped[[_+'_std' for _ in alignment_cols]] = std_
 
         std_range = np.nanmedian(std_.values, axis=0)
 
@@ -285,11 +287,11 @@ def match_datasets(settings, callback = None):
             mz_range = std_range[0]
             rt_range = std_range[1]
 
-            tree_points = features[group_columns].values
+            tree_points = features[alignment_cols].values
             tree_points[:,0] = tree_points[:,0]/mz_range
             tree_points[:,1] = tree_points[:,1]/rt_range
 
-            query_points = grouped.loc[matching_set][group_columns].values
+            query_points = grouped.loc[matching_set][alignment_cols].values
             query_points[:,0] = query_points[:,0]/mz_range
             query_points[:,1] = query_points[:,1]/rt_range
 
@@ -306,16 +308,19 @@ def match_datasets(settings, callback = None):
 
             matched = features.iloc[idx[:,0]]
 
+            for _ in extra_cols:
+                matched[_] = grouped.loc[matching_set, _].values
+
             to_keep = dist < min_match_d
 
             matched = matched[to_keep]
 
-            ref = grouped.loc[matching_set][group_columns][to_keep]
+            ref = grouped.loc[matching_set][alignment_cols][to_keep]
             sigma = std_.loc[matching_set][to_keep]
 
             logging.info(f'{len(matched):,} possible features for matching based on distance of {min_match_d}')
 
-            matched['matching_p'] = [get_probability(matched[group_columns], ref, sigma, i) for i in range(len(matched))]
+            matched['matching_p'] = [get_probability(matched[alignment_cols], ref, sigma, i) for i in range(len(matched))]
             matched['precursor'] = grouped.loc[matching_set][to_keep].index.values
 
             matched = matched[matched['matching_p']< min_match_p]
@@ -338,8 +343,5 @@ def match_datasets(settings, callback = None):
             ms_file = alphapept.io.MS_Data_File(file, is_overwritable=True)
 
             ms_file.write(df_, dataset_name='peptide_fdr')
-
-            if callback:
-                callback((i+1)/len(filenames))
     else:
         logging.info('Less than 3 datasets present. Skipping matching.')
