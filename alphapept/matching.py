@@ -37,9 +37,9 @@ def calculate_distance(table_1, table_2, offset_cols, calib = False):
             col_ = col
 
         if offset_cols[col] == 'absolute':
-            deltas.append(np.nanmean(table_1_[col_] - table_2_[col_]))
+            deltas.append(np.nanmedian(table_1_[col_] - table_2_[col_]))
         elif offset_cols[col] == 'relative':
-            deltas.append(np.nanmean((table_1_[col_] - table_2_[col_]) / (table_1_[col_] + table_2_[col_]) * 2))
+            deltas.append(np.nanmedian((table_1_[col_] - table_2_[col_]) / (table_1_[col_] + table_2_[col_]) * 2))
         else:
             raise NotImplementedError(offset_cols[col_])
 
@@ -125,7 +125,7 @@ def calculate_deltas(combos, filenames, splits, calib = False, callback=None):
         df_2 = splits[combo[1]].copy()
 
         if not offset_cols:
-            offset_cols = {'mz':'absolute', 'rt':'absolute'}
+            offset_cols = {'mz':'relative', 'rt':'absolute'}
             if 'mobility' in df_1.columns:
                 logging.info("Also using mobility for calibration.")
                 offset_cols['mobility'] = 'relative'
@@ -184,6 +184,9 @@ def align_datasets(settings, callback=None):
     else:
         cb = None
 
+    filenames_ = settings['experiment']['file_paths']
+    filenames_ = [os.path.splitext(_)[0]+'.ms_data.hdf' for _ in filenames_]
+
     if len(filenames) > 1:
 
         df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
@@ -201,8 +204,11 @@ def align_datasets(settings, callback=None):
 
         cols = list(offset_cols.keys())
 
-        logging.info(f'Total deviation before calibration {deltas.abs().sum().to_dict()}')
-        logging.info(f'Mean deviation before calibration {deltas.abs().mean().to_dict()}')
+        before_sum = deltas.abs().sum().to_dict()
+        before_mean = deltas.abs().mean().to_dict()
+
+        logging.info(f'Total deviation before calibration {before_sum}')
+        logging.info(f'Mean deviation before calibration {before_mean}')
 
         logging.info(f'Solving equation system')
 
@@ -214,12 +220,11 @@ def align_datasets(settings, callback=None):
 
         logging.info(f'Applying offset')
 
-        align_files(filenames, -alignment, offset_cols) #Feature_table
+        align_files(filenames_, -alignment, offset_cols) #Feature_table
 
-        stack = align_dfs(splits, alignment, offset_cols)
+        stack = align_dfs(splits, -alignment, offset_cols)
 
         c = pd.concat(stack).sort_index()
-
         c.to_hdf(settings['experiment']['results_path'], 'protein_fdr')
 
         if cb:
@@ -229,8 +234,18 @@ def align_datasets(settings, callback=None):
 
         deltas, weights, offset_cols = calculate_deltas(combos, filenames, splits_indexed, calib = True, callback=cb)
 
-        logging.info(f'Total deviation after calibration {deltas.abs().sum().to_dict()}')
-        logging.info(f'Mean deviation after calibration {deltas.abs().mean().to_dict()}')
+        after_sum = deltas.abs().sum().to_dict()
+        after_mean = deltas.abs().mean().to_dict()
+
+        logging.info(f'Total deviation after calibration {after_sum}')
+        logging.info(f'Mean deviation after calibration {after_mean}')
+
+        change_sum = {k:v/before_sum[k] for k,v in after_sum.items()}
+        change_mean = {k:v/before_mean[k] for k,v in after_mean.items()}
+
+        logging.info(f'Change (after/before) total deviation {change_sum}')
+        logging.info(f'Change (after/before) mean deviation {change_mean}')
+
     else:
         logging.info('Only 1 dataset present. Skipping alignment.')
 
