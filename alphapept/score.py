@@ -608,31 +608,31 @@ def score_hdf(to_process, callback = None, parallel=False):
 
             df = cut_global_fdr(df, analyte_level='precursor',  plot=False, fdr_level = settings["search"]["peptide_fdr"], **settings['search'])
 
-            ms_file_.write(df, dataset_name="peptide_fdr")
-
             logging.info('FDR on peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
 
             # Insert here
 
             try:
                 logging.info('Extracting ions')
-                ions = ms_file.read(dataset_name='ions')
+                ions = ms_file_.read(dataset_name='ions')
 
                 ion_list = []
                 ion_ints = []
 
-                for i in range(len(df_pg)):
-                    ion, ints = get_ion(i, df_pg, ions)
+                for i in range(len(df)):
+                    ion, ints = get_ion(i, df, ions)
                     ion_list.append(ion)
                     ion_ints.append(ints)
 
-                df_pg['ion_int'] = ion_ints
-                df_pg['ion_types'] = ion_list
+                df['ion_int'] = ion_ints
+                df['ion_types'] = ion_list
 
                 logging.info('Extracting ions complete.')
 
             except KeyError:
                 logging.info('No ions present.')
+
+            ms_file_.write(df, dataset_name="peptide_fdr")
 
         logging.info(f'Scoring of file {ms_file} complete.')
         return True
