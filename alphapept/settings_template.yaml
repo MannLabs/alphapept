@@ -26,7 +26,7 @@ workflow:
     description: Flag to perform recalibration.
   align:
     type: checkbox
-    default: false
+    default: true
     description: Flag to align the data.
   match:
     type: checkbox

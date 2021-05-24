@@ -5,7 +5,7 @@ workflow:
   find_features: true
   search_data: true
   recalibrate_data: true
-  align: false
+  align: true
   match: false
   lfq_quantification: true
 general:
