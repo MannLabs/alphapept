@@ -202,7 +202,7 @@ class TestRun():
             report['mixed_species_quantification'] = self.mixed_species_quantification(self.settings, species, groups)
 
 
-        report['protein_fdr_arabidopsis'] = self.mixed_species_fdr(self.settings, ('ARATH','HUMAN')) #ECO for now
+        report['peptide_fdr_arabidopsis'] = self.mixed_species_fdr(self.settings, ('ARATH','HUMAN')) #ECO for now
 
         self.report = report
         if password:
@@ -236,8 +236,7 @@ class TestRun():
         """
         Estimate FDR by searching against differenft FASTAs
         """
-        file_name = os.path.splitext(settings['experiment']['file_paths'][0])[0]+'.ms_data.hdf'
-        df = alphapept.io.MS_Data_File(file_name).read(dataset_name='protein_fdr')
+        df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
         fdr = len([_ for _ in df['protein_group'] if (species[0] in _) & (species[1] not in _)])/len(df)
 
         return fdr
