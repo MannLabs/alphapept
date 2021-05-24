@@ -691,14 +691,13 @@ def run_complete_workflow(
     if workflow["recalibrate_data"]:
         steps.append(recalibrate_data)
         steps.append(search_data)
-    steps.append(score)
     if workflow["align"]:
         steps.append(align)
     if workflow["match"]:
         if align not in steps:
             steps.append(align)
         steps.append(match)
-
+    steps.append(score)
     steps.append(quantification)
     steps.append(export)
 
