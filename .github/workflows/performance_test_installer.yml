@@ -13,7 +13,18 @@ jobs:
         run: |
           conda deactivate
           cd installer\one_click_windows
-          .\create_pyinstaller_windows.bat
+          .\create_installer_windows.bat
+  Prepare_Environment_for_testing:
+    needs: [Pyinstaller]
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install package
+      run: |
+        conda activate alphapeptinstaller
+        pip install pymongo
+        pip install dnspython
+        pip install wget
   HeLa_Thermo_Win:
     needs: Pyinstaller
     runs-on: self-hosted

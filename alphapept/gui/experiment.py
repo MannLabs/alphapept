@@ -2,9 +2,21 @@ import streamlit as st
 import os
 import pandas as pd
 import datetime
-from alphapept.paths import SETTINGS_TEMPLATE_PATH, QUEUE_PATH, DEFAULT_SETTINGS_PATH
+from alphapept.paths import SETTINGS_TEMPLATE_PATH, QUEUE_PATH, DEFAULT_SETTINGS_PATH, FASTA_PATH
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
-from alphapept.gui.utils import escape_markdown
+from alphapept.gui.utils import escape_markdown, files_in_folder
+
+# Dict to match workflow 
+WORKFLOW_DICT = {}
+WORKFLOW_DICT['create_database'] = ['fasta']
+WORKFLOW_DICT['import_raw_data'] = ['raw']
+WORKFLOW_DICT['find_features'] = ['features']
+WORKFLOW_DICT['search_data'] = ['search', 'score']
+WORKFLOW_DICT['recalibrate_data'] = ['calibration']
+WORKFLOW_DICT['align'] = []
+WORKFLOW_DICT['match'] = ['matching']
+WORKFLOW_DICT['lfq_quantification'] = ['quantification']
+
 
 SETTINGS_TEMPLATE = load_settings(SETTINGS_TEMPLATE_PATH)
 
@@ -20,7 +32,7 @@ def parse_folder(file_folder):
     return raw_files, fasta_files, db_files
 
 
-def widget_from_setting(recorder, key, group, element, override=None):
+def widget_from_setting(recorder, key, group, element, override=None, indent=False):
     """
     Creates streamlit widgets from settigns
     Returns a recorder to extract set values
@@ -40,17 +52,22 @@ def widget_from_setting(recorder, key, group, element, override=None):
     if override:
         value = override
 
+    if indent:
+        c1, c2 = st.beta_columns((1,8))
+    else:
+        c2 = st
+
     if _['type'] == 'doublespinbox':
-        recorder[key][element] = st.slider(element, min_value = float(_['min']), max_value = float(_['max']), value = float(value), help = help)
+        recorder[key][element] = c2.slider(element, min_value = float(_['min']), max_value = float(_['max']), value = float(value), help = help)
     elif _['type'] == 'spinbox':
-        recorder[key][element] = st.slider(element, min_value = _['min'], max_value = _['max'], value = value, help = help)
+        recorder[key][element] = c2.slider(element, min_value = _['min'], max_value = _['max'], value = value, help = help)
     elif _['type'] == 'checkbox':
-        recorder[key][element] = st.checkbox(element, value = value, help = help)
+        recorder[key][element] = c2.checkbox(element, value = value, help = help)
     elif _['type'] == 'checkgroup':
         opts = list(_['value'].keys())
-        recorder[key][element] = st.multiselect(label = element, options = opts, default = value, help = help)
+        recorder[key][element] = c2.multiselect(label = element, options = opts, default = value, help = help)
     elif _['type'] == 'combobox':
-        recorder[key][element] = st.selectbox(label = element, options = _['value'], index = _['value'].index(value),  help = help)
+        recorder[key][element] = c2.selectbox(label = element, options = _['value'], index = _['value'].index(value),  help = help)
     else:
         st.write(f"Not understood {_}")
 
@@ -83,8 +100,16 @@ def submit_experiment(recorder):
 def customize_settings(recorder, uploaded_settings, loaded):
 
     with st.beta_expander("Settings", loaded):
+
+        checked = [_ for _ in recorder['workflow'] if not recorder['workflow'][_]]
+        checked_ = []
+        [checked_.extend(WORKFLOW_DICT[_]) for _ in checked if _ in WORKFLOW_DICT]
+
+        exclude = ['experiment', 'workflow'] + checked_
+
         for key in SETTINGS_TEMPLATE.keys():
-            if key not in ['experiment', 'workflow']:
+            if key not in exclude:
+
                 group = SETTINGS_TEMPLATE[key]
                 #Check if different than default
                 if loaded:
@@ -99,7 +124,7 @@ def customize_settings(recorder, uploaded_settings, loaded):
                             if uploaded_settings[key][element] != group[element]['default']:
                                 override = uploaded_settings[key][element]
 
-                        recorder = widget_from_setting(recorder, key, group, element, override)
+                        recorder = widget_from_setting(recorder, key, group, element, override, indent=True)
 
     return recorder
 
@@ -127,16 +152,9 @@ def experiment():
             recorder['experiment']['fasta_paths'] = [os.path.join(file_folder, _) for _ in fasta_files]
             recorder['experiment']['file_paths'] = [os.path.join(file_folder, _) for _ in raw_files]
 
-            if (len(raw_files) == 0) or (len(fasta_files) == 0):
-                if (len(raw_files) == 0) and (len(fasta_files) == 0):
-                    st.warning('No raw and FASTA files in folder.')
-                    refresh_folder()
-                elif len(raw_files) == 0:
-                    st.warning('No raw files in folder.')
-                    refresh_folder()
-                elif len(fasta_files) == 0:
-                    st.warning('No fasta files in folder.')
-                    refresh_folder()
+            if len(raw_files) == 0:
+                st.warning('No raw files in folder.')
+                refresh_folder()
 
             else:
                 with st.beta_expander(f"Raw files ({len(raw_files)})"):
@@ -145,6 +163,10 @@ def experiment():
                 if len(fasta_files) > 0:
                     with st.beta_expander(f"FASTA files ({len(fasta_files)})"):
                         st.table(pd.DataFrame(fasta_files, columns=['File']))
+                else:
+                    fasta_files_home_dir = files_in_folder(FASTA_PATH, '.fasta')
+                    selection = st.multiselect(f'Select FASTA files from {FASTA_PATH}', options=fasta_files_home_dir)
+                    recorder['experiment']['fasta_paths'] = [os.path.join(FASTA_PATH, _) for _ in selection]
 
                 #TODO: Include databse files
                 #if len(fasta_files) > 0:
@@ -172,7 +194,7 @@ def experiment():
                     for element in group:
                         recorder = widget_from_setting(recorder, 'workflow', group, element)
 
-                st.write("## Additional settings")
+                st.write("## Modify settings")
 
                 prev_settings = st.checkbox('Use previous settings as template')
 
@@ -187,4 +209,8 @@ def experiment():
 
                 recorder = customize_settings(recorder, uploaded_settings, loaded)
 
+                st.write("## Submit experiment")
                 submit_experiment(recorder)
+
+
+

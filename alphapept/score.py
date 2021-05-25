@@ -2,8 +2,9 @@
 
 __all__ = ['filter_score', 'filter_precursor', 'get_q_values', 'cut_fdr', 'cut_global_fdr', 'get_x_tandem_score',
            'score_x_tandem', 'filter_with_x_tandem', 'score_psms', 'get_ML_features', 'train_RF', 'score_ML',
-           'filter_with_ML', 'get_protein_groups', 'perform_protein_grouping', 'score_hdf', 'get_ion',
-           'protein_groups_hdf', 'protein_groups_hdf_parallel', 'ion_dict']
+           'filter_with_ML', 'get_unique_proteins', 'get_shared_proteins', 'get_protein_groups',
+           'perform_protein_grouping', 'get_ion', 'score_hdf', 'ion_dict', 'protein_groups_hdf', 'protein_grouping_all',
+           'protein_groups_hdf_parallel']
 
 # Cell
 import numpy as np
@@ -399,35 +400,46 @@ def filter_with_ML(df,
 
 # Cell
 import networkx as nx
-def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
-    """
-    Function to perform protein grouping by razor approach
-    ToDo: implement callback for solving
-    Each protein is indicated with a p -> protein index
-    """
-    G=nx.Graph()
+
+def get_unique_proteins(data, pept_dict):
+    data = data.reset_index(drop=True)
+
+    data['n_possible_proteins'] = data['sequence'].apply(lambda x: len(pept_dict[x]))
+    unique_peptides = (data['n_possible_proteins'] == 1).sum()
+    shared_peptides = (data['n_possible_proteins'] > 1).sum()
+
+    logging.info(f'A total of {unique_peptides:,} unique and {shared_peptides:,} shared peptides.')
+
+    sub = data[data['n_possible_proteins']==1]
+    psms_to_protein = sub['sequence'].apply(lambda x: pept_dict[x])
 
     found_proteins = {}
+    for idx, _ in enumerate(psms_to_protein):
+        idx_ = psms_to_protein.index[idx]
+        p_str = 'p' + str(_[0])
+        if p_str in found_proteins:
+            found_proteins[p_str] = found_proteins[p_str] + [str(idx_)]
+        else:
+            found_proteins[p_str] = [str(idx_)]
 
-    for i in range(len(data)):
-        line = data.iloc[i]
-        seq = line['sequence']
-        score = line['score']
-        if seq in pept_dict:
-            proteins = pept_dict[seq]
-            if len(proteins) > 1:
-                for protein in proteins:
-                    G.add_edge(str(i), 'p'+str(protein), score=score)
-            else: #if there is only one PSM just add to this protein
-                if 'p'+str(proteins[0]) in found_proteins.keys():
-                    found_proteins['p'+str(proteins[0])] = found_proteins['p'+str(proteins[0])] + [str(i)]
-                else:
-                    found_proteins['p'+str(proteins[0])] = [str(i)]
+    #protein_count = {k:len(found_proteins[k]) for k in found_proteins.keys()}
 
-        if callback:
-            callback((i+1)/len(data))
+    return data, found_proteins
 
-    logging.info('A total of {:,} proteins with unique PSMs found'.format(len(found_proteins)))
+def get_shared_proteins(data, found_proteins, pept_dict):
+
+    G = nx.Graph()
+
+    sub = data[data['n_possible_proteins']>1]
+
+    for i in range(len(sub)):
+        seq, score = sub.iloc[i][['sequence','score']]
+        idx = sub.index[i]
+        possible_proteins = pept_dict[seq]
+
+        for p in possible_proteins:
+            G.add_edge(str(idx), 'p'+str(p), score=score)
+
 
     connected_groups = np.array([list(c) for c in sorted(nx.connected_components(G), key=len, reverse=True)], dtype=object)
     n_groups = len(connected_groups)
@@ -439,13 +451,10 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
     found_proteins_razor = {}
     for a in connected_groups:
         H = G.subgraph(a)
-
         shared_proteins = list(np.array(a)[np.array(list(i[0] == 'p' for i in a))])
-
         removed = []
 
         while len(shared_proteins) > 0:
-
             neighbors_list = []
 
             for node in shared_proteins:
@@ -459,42 +468,54 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
                 neighbors_list.append((n_neigbhors, node, neighbors))
 
             neighbors_list.sort()
-
             #Remove the last entry:
-
             count, node, psms = neighbors_list[-1]
-
             shared_proteins.remove(node)
-
             psms = [_ for _ in psms if _ not in removed]
-
             removed += psms
-
             found_proteins_razor[node] = psms
 
-    #Put back in Df
+    return found_proteins_razor, connected_groups
+
+
+
+def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
+    """
+    Function to perform protein grouping by razor approach
+    ToDo: implement callback for solving
+    Each protein is indicated with a p -> protein index
+    """
+    data, found_proteins = get_unique_proteins(data, pept_dict)
+    found_proteins_razor, connected_groups = get_shared_proteins(data, found_proteins, pept_dict)
+
     report = data.copy()
-    report['protein'] = ''
-    report['protein_group'] = ''
+
+    assignment = np.zeros(len(report), dtype=object)
+    assignment[:] = ''
+    assignment_pg = assignment.copy()
+    razor = assignment.copy()
+    razor[:] = False
 
     for protein_str in found_proteins.keys():
         protein = int(protein_str[1:])
         indexes = [int(_) for _ in found_proteins[protein_str]]
-        report.loc[indexes, 'protein'] = fasta_dict[protein]['name']
-        report.loc[indexes, 'protein_group'] = fasta_dict[protein]['name']
+        assignment[indexes] = fasta_dict[protein]['name']
+        assignment_pg[indexes] = fasta_dict[protein]['name']
 
-    report['razor'] = False
     for protein_str in found_proteins_razor.keys():
         protein = int(protein_str[1:])
         indexes = [int(_) for _ in found_proteins_razor[protein_str]]
-
-        report.loc[indexes, 'protein'] = fasta_dict[protein]['name']
-        report.loc[indexes, 'razor'] = True
+        assignment[indexes] = fasta_dict[protein]['name']
+        razor[indexes] = True
 
     for a in connected_groups:
         protein_group = list(np.array(a)[np.array(list(i[0] == 'p' for i in a))])
         psms = [int(i) for i in a if i not in protein_group]
-        report.loc[psms, 'protein_group'] = ','.join([fasta_dict[int(_[1:])]['name'] for _ in protein_group])
+        assignment_pg[psms] = ','.join([fasta_dict[int(_[1:])]['name'] for _ in protein_group])
+
+    report['protein'] = assignment
+    report['protein_group'] = assignment_pg
+    report['razor'] = razor
 
     return report
 
@@ -526,6 +547,22 @@ def perform_protein_grouping(data, pept_dict, fasta_dict, **kwargs):
 # Cell
 import os
 from multiprocessing import Pool
+
+ion_dict = {}
+ion_dict[0] = ''
+ion_dict[1] = '-H20'
+ion_dict[2] = '-NH3'
+
+def get_ion(i, df, ions):
+    start = df['ion_idx'].iloc[i]
+    end = df['n_ions'].iloc[i]+start
+
+    ion = [('b'+str(int(_))).replace('b-','y') for _ in ions.iloc[start:end]['ion_index']]
+    losses = [ion_dict[int(_)] for _ in ions.iloc[start:end]['ion_type']]
+    ion = [a+b for a,b in zip(ion, losses)]
+    ints = ions.iloc[start:end]['ion_int'].astype('int').values
+
+    return ion, ints
 
 
 def score_hdf(to_process, callback = None, parallel=False):
@@ -571,9 +608,31 @@ def score_hdf(to_process, callback = None, parallel=False):
 
             df = cut_global_fdr(df, analyte_level='precursor',  plot=False, fdr_level = settings["search"]["peptide_fdr"], **settings['search'])
 
-            ms_file_.write(df, dataset_name="peptide_fdr")
-
             logging.info('FDR on peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
+
+            # Insert here
+
+            try:
+                logging.info('Extracting ions')
+                ions = ms_file_.read(dataset_name='ions')
+
+                ion_list = []
+                ion_ints = []
+
+                for i in range(len(df)):
+                    ion, ints = get_ion(i, df, ions)
+                    ion_list.append(ion)
+                    ion_ints.append(ints)
+
+                df['ion_int'] = ion_ints
+                df['ion_types'] = ion_list
+
+                logging.info('Extracting ions complete.')
+
+            except KeyError:
+                logging.info('No ions present.')
+
+            ms_file_.write(df, dataset_name="peptide_fdr")
 
         logging.info(f'Scoring of file {ms_file} complete.')
         return True
@@ -583,21 +642,7 @@ def score_hdf(to_process, callback = None, parallel=False):
 
 # Cell
 
-ion_dict = {}
-ion_dict[0] = ''
-ion_dict[1] = '-H20'
-ion_dict[2] = '-NH3'
-
-def get_ion(i, df, ions):
-    start = df['ion_idx'].iloc[i]
-    end = df['n_ions'].iloc[i]+start
-
-    ion = [('b'+str(int(_))).replace('b-','y') for _ in ions.iloc[start:end]['ion_index']]
-    losses = [ion_dict[int(_)] for _ in ions.iloc[start:end]['ion_type']]
-    ion = [a+b for a,b in zip(ion, losses)]
-    ints = ions.iloc[start:end]['ion_int'].astype('int').values
-
-    return ion, ints
+import alphapept.utils
 
 def protein_groups_hdf(to_process):
 
@@ -619,7 +664,6 @@ def protein_groups_hdf(to_process):
             logging.info('Extracting ions')
             ions = ms_file.read(dataset_name='ions')
 
-
             ion_list = []
             ion_ints = []
 
@@ -636,12 +680,37 @@ def protein_groups_hdf(to_process):
         except KeyError:
             logging.info('No ions present.')
 
-
         ms_file.write(df_pg, dataset_name="protein_fdr")
         base, ext = os.path.splitext(path)
         df_pg.to_csv(base+'_protein_fdr.csv')
 
         logging.info('Saving complete.')
+
+
+def protein_grouping_all(settings, pept_dict, fasta_dict, callback=None):
+    """
+    Perform protein grouping on everything
+    """
+
+    df = alphapept.utils.assemble_df(settings, field = 'peptide_fdr', callback=None)
+
+    df_pg = perform_protein_grouping(df, pept_dict, fasta_dict, callback = None)
+
+    df_pg = cut_global_fdr(df_pg, analyte_level='protein',  plot=False, fdr_level = settings["search"]["protein_fdr"], **settings['search'])
+    logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
+
+    path = settings['experiment']['results_path']
+
+    base, ext = os.path.splitext(path)
+
+    df_pg.to_csv(base+'_protein_fdr.csv')
+
+    df_pg.to_hdf(
+        path,
+        'protein_fdr'
+    )
+
+    logging.info('Saving complete.')
 
 
 def protein_groups_hdf_parallel(settings, pept_dict, fasta_dict, callback=None):

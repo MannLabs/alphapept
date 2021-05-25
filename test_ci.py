@@ -92,8 +92,6 @@ class TestRun():
         self.id = id
         self.file_paths = experimental_files
         self.fasta_paths = fasta_paths
-        self.m_tol = 20
-        self.m_offset = 20
         self.new_files = new_files
 
         self.custom_settings = custom_settings
@@ -158,9 +156,6 @@ class TestRun():
         self.settings['experiment']['file_paths'] =  [TEST_DIR + _ for _ in self.file_paths]
         self.settings['experiment']['fasta_paths'] = [TEST_DIR + _ for _ in self.fasta_paths]
 
-        self.settings['search']['m_offset'] =  self.m_offset
-        self.settings['search']['m_tol'] =  self.m_tol
-
     def run(self, password=None):
         if self.new_files:
             self.prepare_files()
@@ -217,7 +212,7 @@ class TestRun():
             report['mixed_species_quantification'] = self.mixed_species_quantification(self.settings, species, groups)
 
 
-        report['protein_fdr_arabidopsis'] = self.mixed_species_fdr(self.settings, ('ARATH','HUMAN')) #ECO for now
+        report['peptide_fdr_arabidopsis'] = self.mixed_species_fdr(self.settings, ('ARATH','HUMAN')) #ECO for now
 
         self.report = report
         if password:
@@ -251,8 +246,7 @@ class TestRun():
         """
         Estimate FDR by searching against differenft FASTAs
         """
-        file_name = os.path.splitext(settings['experiment']['file_paths'][0])[0]+'.ms_data.hdf'
-        df = alphapept.io.MS_Data_File(file_name).read(dataset_name='protein_fdr')
+        df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
         fdr = len([_ for _ in df['protein_group'] if (species[0] in _) & (species[1] not in _)])/len(df)
 
         return fdr

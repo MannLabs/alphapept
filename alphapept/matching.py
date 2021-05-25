@@ -37,9 +37,9 @@ def calculate_distance(table_1, table_2, offset_cols, calib = False):
             col_ = col
 
         if offset_cols[col] == 'absolute':
-            deltas.append(np.nanmean(table_1_[col_] - table_2_[col_]))
+            deltas.append(np.nanmedian(table_1_[col_] - table_2_[col_]))
         elif offset_cols[col] == 'relative':
-            deltas.append(np.nanmean((table_1_[col_] - table_2_[col_]) / (table_1_[col_] + table_2_[col_]) * 2))
+            deltas.append(np.nanmedian((table_1_[col_] - table_2_[col_]) / (table_1_[col_] + table_2_[col_]) * 2))
         else:
             raise NotImplementedError(offset_cols[col_])
 
@@ -126,8 +126,8 @@ def calculate_deltas(combos, calib = False, callback=None):
         file1 = os.path.splitext(combo[0])[0] + '.ms_data.hdf'
         file2 = os.path.splitext(combo[1])[0] + '.ms_data.hdf'
 
-        df_1 = alphapept.io.MS_Data_File(file1).read(dataset_name="protein_fdr")
-        df_2 = alphapept.io.MS_Data_File(file2).read(dataset_name="protein_fdr")
+        df_1 = alphapept.io.MS_Data_File(file1).read(dataset_name="peptide_fdr")
+        df_2 = alphapept.io.MS_Data_File(file2).read(dataset_name="peptide_fdr")
 
         if not offset_cols:
             offset_cols = {'mz':'relative', 'rt':'absolute'}
@@ -156,7 +156,7 @@ def align_files(filenames, alignment, offset_cols):
 
         file = os.path.splitext(filename)[0] + '.ms_data.hdf'
 
-        for column in ['protein_fdr', 'feature_table']:
+        for column in ['peptide_fdr', 'feature_table']:
             df = alphapept.io.MS_Data_File(file).read(dataset_name=column)
             calib_table(df, alignment.iloc[idx], offset_cols)
             logging.info(f"Saving {file} - {column}.")
@@ -183,8 +183,11 @@ def align_datasets(settings, callback=None):
 
         cols = list(offset_cols.keys())
 
-        logging.info(f'Total deviation before calibration {deltas.abs().sum().to_dict()}')
-        logging.info(f'Mean deviation before calibration {deltas.abs().mean().to_dict()}')
+        before_sum = deltas.abs().sum().to_dict()
+        before_mean = deltas.abs().mean().to_dict()
+
+        logging.info(f'Total deviation before calibration {before_sum}')
+        logging.info(f'Mean deviation before calibration {before_mean}')
 
         logging.info(f'Solving equation system')
 
@@ -203,8 +206,18 @@ def align_datasets(settings, callback=None):
 
         deltas, weights, offset_cols = calculate_deltas(combos, calib=True, callback=cb)
 
-        logging.info(f'Total deviation after calibration {deltas.abs().sum().to_dict()}')
-        logging.info(f'Mean deviation after calibration {deltas.abs().mean().to_dict()}')
+        after_sum = deltas.abs().sum().to_dict()
+        after_mean = deltas.abs().mean().to_dict()
+
+        logging.info(f'Total deviation after calibration {after_sum}')
+        logging.info(f'Mean deviation after calibration {after_mean}')
+
+        change_sum = {k:v/before_sum[k] for k,v in after_sum.items()}
+        change_mean = {k:v/before_mean[k] for k,v in after_mean.items()}
+
+        logging.info(f'Change (after/before) total deviation {change_sum}')
+        logging.info(f'Change (after/before) mean deviation {change_mean}')
+
     else:
         logging.info('Only 1 dataset present. Skipping alignment.')
 
@@ -235,20 +248,22 @@ def get_probability(df, ref, sigma, index):
 def match_datasets(settings, callback = None):
 
     if len(settings['experiment']['file_paths']) > 2:
-        xx = assemble_df(settings, field='protein_fdr')
-        cols = ['precursor','mz_calib','rt_calib']
+        xx = alphapept.utils.assemble_df(settings, field='peptide_fdr')
+
+        base_col = ['precursor']
+        alignment_cols = ['mz_calib','rt_calib']
+        extra_cols = ['score','decoy','target']
 
         if 'mobility' in xx.columns:
-            cols += ['mobility_calib']
+            alignment_cols += ['mobility_calib']
             use_mobility = True
         else:
             use_mobility = False
 
-        grouped = xx[cols].groupby('precursor').mean()
-        std_ = xx[cols].groupby('precursor').std()
+        grouped = xx[base_col + alignment_cols + extra_cols].groupby('precursor').mean()
+        std_ = xx[base_col + alignment_cols].groupby('precursor').std()
 
-        group_columns = grouped.columns
-        grouped[[_+'_std' for _ in group_columns]] = std_
+        grouped[[_+'_std' for _ in alignment_cols]] = std_
 
         std_range = np.nanmedian(std_.values, axis=0)
 
@@ -257,12 +272,12 @@ def match_datasets(settings, callback = None):
 
         filenames = settings['experiment']['file_paths']
 
-        lookup_dict = xx.set_index('precursor')[['protein','protein_group','sequence']].to_dict()
+        lookup_dict = xx.set_index('precursor')[['sequence']].to_dict()
 
         for idx, filename in enumerate(filenames):
             file = os.path.splitext(filename)[0] + '.ms_data.hdf'
 
-            df = alphapept.io.MS_Data_File(file).read(dataset_name='protein_fdr')
+            df = alphapept.io.MS_Data_File(file).read(dataset_name='peptide_fdr')
             features = alphapept.io.MS_Data_File(file).read(dataset_name='feature_table')
             features['feature_idx'] = features.index
 
@@ -272,11 +287,11 @@ def match_datasets(settings, callback = None):
             mz_range = std_range[0]
             rt_range = std_range[1]
 
-            tree_points = features[group_columns].values
+            tree_points = features[alignment_cols].values
             tree_points[:,0] = tree_points[:,0]/mz_range
             tree_points[:,1] = tree_points[:,1]/rt_range
 
-            query_points = grouped.loc[matching_set][group_columns].values
+            query_points = grouped.loc[matching_set][alignment_cols].values
             query_points[:,0] = query_points[:,0]/mz_range
             query_points[:,1] = query_points[:,1]/rt_range
 
@@ -293,16 +308,19 @@ def match_datasets(settings, callback = None):
 
             matched = features.iloc[idx[:,0]]
 
+            for _ in extra_cols:
+                matched[_] = grouped.loc[matching_set, _].values
+
             to_keep = dist < min_match_d
 
             matched = matched[to_keep]
 
-            ref = grouped.loc[matching_set][group_columns][to_keep]
+            ref = grouped.loc[matching_set][alignment_cols][to_keep]
             sigma = std_.loc[matching_set][to_keep]
 
             logging.info(f'{len(matched):,} possible features for matching based on distance of {min_match_d}')
 
-            matched['matching_p'] = [get_probability(matched[group_columns], ref, sigma, i) for i in range(len(matched))]
+            matched['matching_p'] = [get_probability(matched[alignment_cols], ref, sigma, i) for i in range(len(matched))]
             matched['precursor'] = grouped.loc[matching_set][to_keep].index.values
 
             matched = matched[matched['matching_p']< min_match_p]
@@ -310,7 +328,6 @@ def match_datasets(settings, callback = None):
             logging.info(f'{len(matched):,} possible features for matching based on probability of {min_match_p}')
 
             matched['type'] = 'matched'
-
 
             for _ in lookup_dict.keys():
                 matched[_] = [lookup_dict[_][x] for x in matched['precursor']]
@@ -322,12 +339,9 @@ def match_datasets(settings, callback = None):
 
             df_ = pd.concat([df, matched[shared_columns]], ignore_index=True)
 
-            logging.info(f"Saving {file} - protein_fdr.")
+            logging.info(f"Saving {file} - peptide_fdr.")
             ms_file = alphapept.io.MS_Data_File(file, is_overwritable=True)
 
-            ms_file.write(df_, dataset_name='protein_fdr')
-
-            if callback:
-                callback((i+1)/len(filenames))
+            ms_file.write(df_, dataset_name='peptide_fdr')
     else:
         logging.info('Less than 3 datasets present. Skipping matching.')

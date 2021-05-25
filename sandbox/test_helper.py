@@ -10,8 +10,7 @@ from tqdm.notebook import tqdm as tqdm
 
 def prepare_files(path1, path2):
 
-    ms_file = alphapept.io.MS_Data_File(path1)
-    df1 = ms_file.read(dataset_name='protein_fdr')
+    df1 = pd.read_hdf(path1, 'protein_fdr')
 
     # add sequence charge
     df1['missed_cleavages'] = df1['sequence'].str[:-1].str.count('K') + df1['sequence'].str[:-1].str.count('R')
