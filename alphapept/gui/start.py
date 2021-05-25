@@ -31,3 +31,8 @@ def start():
         st.write("If your firewall policy allows external access, this page can also be accessed from other computers in the network.")
         st.write("The server starts an AlphaPept process in the background that will process new experiments once they are submitted.")
 
+    with st.beta_expander('Sample Run'):
+        st.write('Download the following sample files:')
+        markdown_link('Download IRT sample here.', "https://datashare.biochem.mpg.de/s/GpXsATZtMwgQoQt/download")
+        markdown_link('Download IRT FASTA here.', "https://datashare.biochem.mpg.de/s/p8Qu3KolzbSiCHH/download")
+        st.write('Put both files in one folder and go to the New experiment tab.')
