@@ -38,6 +38,8 @@ def read_groups():
 
     return groups
 
+
+
 def filter_by_tag(files):
     """
     Streamlit text input to filter filenames by tag
@@ -69,7 +71,7 @@ def create_single_plot(all_results, files, acquisition_date_times, mode, groups,
     for idx, _ in enumerate(all_results.keys()):
         if plot == 'timing':
             try:
-                vals.append(all_results[_]["summary"]["timing"]["total"])
+                vals.append(all_results[_]["summary"]["timing"]["total (min)"])
             except KeyError:
                 vals.append(np.nan)
         else:
@@ -113,7 +115,7 @@ def create_multiple_plots(all_results, groups):
     fields = list(fields)
     fields.sort()
 
-    plot_types = fields + ['timing']
+    plot_types = fields + ['timing (min)']
     mode = st.selectbox('X-Axis', options = ['AcquisitionDateTime','Filename'])
 
     with st.spinner('Creating plots..'):

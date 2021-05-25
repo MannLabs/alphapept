@@ -80,7 +80,6 @@ def protein_rank(ms_file, options):
     if 'protein_fdr' in options:
         if st.button('Protein Rank'):
             with st.spinner('Creating plot.'):
-
                 protein_fdr = ms_file.read(dataset_name='protein_fdr')
                 p_df = protein_fdr.groupby('protein').sum()['int_sum'].sort_values()[::-1].apply(np.log).to_frame().reset_index().reset_index()
                 p_df['protein_index'] =p_df['protein']
@@ -136,25 +135,25 @@ def plot_summary(results_yaml):
     data_df = pd.DataFrame(data)
     data_df['filename'] = files
 
-    median_features = int(data_df['feature_table'].median())
-    median_protein_groups= int(data_df['protein_fdr_n_protein_group'].median())
-    median_peptides = int(data_df['protein_fdr_n_sequence'].median())
+    for _ in ['feature_table (n in table)', 'sequence (protein_fdr, n unique)', 'protein_group (protein_fdr, n unique)']:
+        if _ not in data_df:
+            data_df[_] = 0
+
+    median_features = int(data_df['feature_table (n in table)'].median())
+    median_peptides = int(data_df['sequence (protein_fdr, n unique)'].median())
+    median_protein_groups = int(data_df['protein_group (protein_fdr, n unique)'].median())
 
     st.write(f"### Median: {median_features:,} features | {median_peptides:,} peptides | {median_protein_groups:,}  protein groups ")
 
-    col1, col2, col3 = st.beta_columns(3)
-
     fig = make_subplots(rows=1, cols=3, subplot_titles=("Features", "Peptides", "Protein Groups", ))
 
-    hovertext = [data_df['filename'].values]
+    hovertext = list(data_df['filename'].values)
 
-    fig.add_bar(x=data_df.index, y=data_df['feature_table'], hovertext = hovertext, row=1, col=1, marker_color='#3dc5ef')
-    fig.add_bar(x=data_df.index, y=data_df['protein_fdr_n_sequence'], hovertext = hovertext, row=1, col=2, marker_color='#42dee1')
-    fig.add_bar(x=data_df.index, y=data_df['protein_fdr_n_protein_group'], hovertext = hovertext, row=1, col=3, marker_color='#6eecb9')
+    fig.add_bar(x=data_df.index, y=data_df['feature_table (n in table)'], hovertext = hovertext, row=1, col=1, marker_color='#3dc5ef')
+    fig.add_bar(x=data_df.index, y=data_df['sequence (protein_fdr, n unique)'], hovertext = hovertext, row=1, col=2, marker_color='#42dee1')
+    fig.add_bar(x=data_df.index, y=data_df['protein_group (protein_fdr, n unique)'], hovertext = hovertext, row=1, col=3, marker_color='#6eecb9')
 
     fig.update_layout(showlegend=False)
-    #fig.update_xaxes(tickmode = 'array', ticktext=list((range(len(data_df)))))
-
     fig.update_layout(title_text="Run Summary")
 
     st.write(fig)

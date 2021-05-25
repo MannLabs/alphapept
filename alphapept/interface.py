@@ -2,10 +2,10 @@
 
 __all__ = ['parallel_execute', 'tqdm_wrapper', 'check_version_and_hardware', 'create_database', 'import_raw_data',
            'feature_finding', 'wrapped_partial', 'search_data', 'recalibrate_data', 'score', 'protein_grouping',
-           'align', 'match', 'quantification', 'export', 'get_file_summary', 'get_summary', 'run_complete_workflow',
-           'run_cli', 'cli_overview', 'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search',
-           'cli_recalibrate', 'cli_score', 'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow',
-           'cli_gui', 'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
+           'align', 'match', 'quantification', 'export', 'extract_median_unique', 'get_file_summary', 'get_summary',
+           'run_complete_workflow', 'run_cli', 'cli_overview', 'cli_database', 'cli_import', 'cli_feature_finding',
+           'cli_search', 'cli_recalibrate', 'cli_score', 'cli_align', 'cli_match', 'cli_quantify', 'cli_export',
+           'cli_workflow', 'cli_gui', 'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
 
 # Cell
 import alphapept.utils
@@ -630,6 +630,19 @@ import datetime
 import alphapept.utils
 
 
+def extract_median_unique(settings):
+    protein_fdr = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
+    cols = [_ for _ in ['protein','protein_group','precursor','naked_sequence','sequence'] if _ in protein_fdr.columns]
+    n_unique = protein_fdr.groupby('filename')[cols].nunique()
+    n_unique.index = [os.path.split(_)[1][:-12] for _ in n_unique.index]
+    cols = [_ for _ in ['fwhm','int_sum','rt_length','rt_tail','o_mass_ppm_raw'] if _ in protein_fdr.columns]
+    median = protein_fdr.groupby('filename')[cols].median()
+    median.index = [os.path.split(_)[1][:-12] for _ in median.index]
+
+    return median, n_unique
+
+
+
 def get_file_summary(ms_data):
     f_summary = {}
 
@@ -641,22 +654,18 @@ def get_file_summary(ms_data):
         if "is_pd_dataframe" in ms_data.read(attr_name="", group_name=key):
             df = ms_data.read(dataset_name=key)
 
-            f_summary[key] = len(df)
+            f_summary[f"{key} (n in table)"] = len(df)
 
             if key in ['peptide_fdr']:
                 if 'type' in df.columns:
-                    f_summary['id_rate'] = df[df['type'] == 'msms']['raw_idx'].nunique() / n_ms2
+                    f_summary['id_rate (peptide_fdr)'] = float(df[df['type'] == 'msms']['raw_idx'].nunique() / n_ms2)
                 else:
-                    f_summary['id_rate'] = df['raw_idx'].nunique() / n_ms2
+                    f_summary['id_rate (peptide_fdr)'] = float(df['raw_idx'].nunique() / n_ms2)
 
-                for field in ['protein','protein_group','precursor','naked_sequence','sequence']:
-                    if field in df.columns:
-                        f_summary[f'{field} (peptide_fdr)'] = df[field].nunique()
-
-            if key in ['feature_table', 'peptide_fdr']:
+            if key in ['feature_table','peptide_fdr']:
                 for field in ['fwhm','int_sum','rt_length','rt_tail','o_mass_ppm_raw']:
                     if field in df.columns:
-                        f_summary[f'{field} ({key},median)'] = float(df[field].median())
+                        f_summary[f'{field} ({key}, median)'] = float(df[field].median())
 
     return f_summary
 
@@ -680,6 +689,16 @@ def get_summary(settings, summary):
     summary['file_sizes']['files'] = file_sizes
     if os.path.isfile(settings['experiment']['results_path']):
         summary['file_sizes']['results'] = os.path.getsize(settings['experiment']['results_path'])/1024**2
+
+        median, n_unique = extract_median_unique(settings)
+
+        for col in median.columns:
+            for _ in range(len(median)):
+                summary[median.index[_]][f'{col} (protein_fdr, median)'] = float(median.iloc[_][col])
+
+        for col in n_unique.columns:
+            for _ in range(len(n_unique)):
+                summary[n_unique.index[_]][f'{col} (protein_fdr, n unique)'] = int(n_unique.iloc[_][col])
 
     return summary
 
@@ -808,12 +827,12 @@ def run_complete_workflow(
 
         end = time()
 
-        if step.__name__ in time_dict:
-            time_dict[step.__name__+'_2'] = (end-start)/60 #minutes
+        if f"{step.__name__} (min)" in time_dict:
+            time_dict[f"{step.__name__}_2 (min)"] = (end-start)/60 #minutes
         else:
-            time_dict[step.__name__] = (end-start)/60 #minutes
+            time_dict[f"{step.__name__} (min)"] = (end-start)/60 #minutes
 
-        time_dict['total'] = (end-run_start)/60
+        time_dict['total (min)'] = (end-run_start)/60
 
         summary['timing'] = time_dict
         summary['version'] = VERSION_NO
