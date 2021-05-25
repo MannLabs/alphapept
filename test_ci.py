@@ -317,8 +317,8 @@ def main(runtype = None, password = None, new_files = True):
 
         MONGODB_USER = 'github_actions'
         MONGODB_URL = 'ci.yue0n.mongodb.net/'
-
-        print(f"start processing, tmp folder is {tmp_folder}")
+        config_test_paths(BASE_DIR, TEST_DIR, ARCHIVE_DIR, MONGODB_USER, MONGODB_URL)
+        
 
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']
