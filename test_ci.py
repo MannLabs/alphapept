@@ -311,9 +311,9 @@ def main(runtype = None, password = None, new_files = True):
             password = sys.argv[3]
 
     
-        BASE_DIR = os.path.join(tmp_folder, './test_files/') # Storarge location for test files
-        TEST_DIR = os.path.join(tmp_folder, './test_temp/')
-        ARCHIVE_DIR = os.path.join(tmp_folder, './test_archive/')
+        BASE_DIR = os.path.join(tmp_folder,os.pathsep,'test_files') # Storarge location for test files
+        TEST_DIR = os.path.join(tmp_folder, os.pathsep,'test_temp')
+        ARCHIVE_DIR = os.path.join(tmp_folder,  os.pathsep, 'test_archive')
 
         MONGODB_USER = 'github_actions'
         MONGODB_URL = 'ci.yue0n.mongodb.net/'
