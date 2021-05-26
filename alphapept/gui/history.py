@@ -58,7 +58,7 @@ def create_single_plot(all_results, files, acquisition_date_times, mode, groups,
     """
     vals = []
     for idx, _ in enumerate(all_results.keys()):
-        if plot == 'timing':
+        if plot == 'timing (min)':
             try:
                 vals.append(all_results[_]["summary"]["timing"]["total (min)"])
             except KeyError:
@@ -138,7 +138,7 @@ def history():
     if 'history' in plot_settings:
         history_settings = plot_settings['history']
     else:
-        history_settings = {} 
+        history_settings = {}
 
     if 'groups' in history_settings:
         groups = history_settings['groups']
