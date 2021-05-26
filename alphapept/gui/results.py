@@ -102,29 +102,31 @@ def parse_file_and_display(file):
         options = [_ for _ in ms_file.read() if _ != "Raw"]
     except KeyError:
         pandas_hdf = True
+        ms_file = None
 
         with pd.HDFStore(file) as hdf:
             options = list(hdf.keys())
 
-    st.write('Basic Plots')
-    ion_plot(ms_file, options)
-    protein_rank(ms_file, options)
+    if ms_file is not None:
+        st.write('Basic Plots')
+        ion_plot(ms_file, options)
+        protein_rank(ms_file, options)
 
-    opt = st.selectbox('Select group', [None] + options)
-    if opt is not None:
-        if pandas_hdf:
-            df = pd.read_hdf(file, opt)
-        else:
-            df = ms_file.read(dataset_name = opt)
-        if not isinstance(df, pd.DataFrame):
-            df = pd.DataFrame(df)
+        opt = st.selectbox('Select group', [None] + options)
+        if opt is not None:
+            if pandas_hdf:
+                df = pd.read_hdf(file, opt)
+            else:
+                df = ms_file.read(dataset_name = opt)
+            if not isinstance(df, pd.DataFrame):
+                df = pd.DataFrame(df)
 
-        data_range = st.slider('Data range', 0, len(df), (0,1000))
-        st.write(df.iloc[data_range[0]:data_range[1]])
+            data_range = st.slider('Data range', 0, len(df), (0,1000))
+            st.write(df.iloc[data_range[0]:data_range[1]])
 
-        make_df_downloadble(df, file)
+            make_df_downloadble(df, file)
 
-def plot_summary(results_yaml):
+def plot_summary(results_yaml, selection):
     """
     Plot summary
     """
@@ -143,7 +145,8 @@ def plot_summary(results_yaml):
     median_peptides = int(data_df['sequence (protein_fdr, n unique)'].median())
     median_protein_groups = int(data_df['protein_group (protein_fdr, n unique)'].median())
 
-    st.write(f"### Median: {median_features:,} features | {median_peptides:,} peptides | {median_protein_groups:,}  protein groups ")
+    st.write(f"### {selection}")
+    st.write(f"### {median_features:,} features | {median_peptides:,} peptides | {median_protein_groups:,}  protein groups (median)")
 
     fig = make_subplots(rows=1, cols=3, subplot_titles=("Features", "Peptides", "Protein Groups", ))
 
@@ -181,7 +184,8 @@ def results():
             filepath_selection = os.path.join(PROCESSED_PATH, selection)
             results_yaml = load_settings(filepath_selection)
 
-            plot_summary(results_yaml)
+            with st.spinner('Loading data..'):
+                plot_summary(results_yaml, selection)
 
             with st.beta_expander("Run summary"):
                 st.write(results_yaml['summary'])
