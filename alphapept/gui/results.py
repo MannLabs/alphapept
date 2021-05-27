@@ -12,6 +12,7 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from scipy import stats
 import numpy as np
+from sklearn.decomposition import PCA
 
 def readable_files_from_yaml(results_yaml):
     """
@@ -19,7 +20,7 @@ def readable_files_from_yaml(results_yaml):
     """
 
     raw_files = [os.path.splitext(_)[0]+'.ms_data.hdf' for _ in results_yaml['experiment']['file_paths']]
-    raw_files = raw_files + [results_yaml['experiment']['results_path']]
+    raw_files = [results_yaml['experiment']['results_path']] + raw_files
     raw_files = [_ for _ in raw_files if os.path.exists(_)]
 
     return raw_files
@@ -72,23 +73,76 @@ def ion_plot(ms_file, options):
 
                 st.write(fig)
 
-def protein_rank(ms_file, options):
-    """
-    Displays summary statistics from matched ions
 
-    """
-    if 'protein_fdr' in options:
-        if st.button('Protein Rank'):
-            with st.spinner('Creating plot.'):
-                protein_fdr = ms_file.read(dataset_name='protein_fdr')
-                p_df = protein_fdr.groupby('protein').sum()['int_sum'].sort_values()[::-1].apply(np.log).to_frame().reset_index().reset_index()
-                p_df['protein_index'] =p_df['protein']
 
-                p_df = p_df.set_index('protein_index')
-                fig = px.scatter(p_df, x='index', y='int_sum', hover_data=["protein"], title='Protein Rank')
-                fig.update_layout(showlegend=False)
+def correlation_heatmap(file, options):
+    if '/protein_table' in options:
+        with st.beta_expander('Correlation heatmap'):
+            df = pd.read_hdf(file, 'protein_table')
 
-                st.write(fig)
+            cols = [_ for _ in df.columns if 'LFQ' in _]
+            if len(cols) == 0:
+                cols = df.columns
+
+            df = np.log(df[cols])
+            corr = df.corr()
+
+            fig = make_subplots(rows=1, cols=1)
+            fig.add_trace(trace = go.Heatmap(z=corr.values,
+                              x=corr.index.values,
+                              y=corr.columns.values, colorscale='Greys'))
+            fig.update_layout(height=600, width=600)
+            st.write(fig)
+
+def pca_plot(file, options):
+    if '/protein_table' in options:
+        with st.beta_expander('PCA'):
+            df = pd.read_hdf(file, 'protein_table')
+
+            cols = [_ for _ in df.columns if 'LFQ' in _]
+            if len(cols) == 0:
+                cols = df.columns
+
+            pca = PCA(n_components=2)
+            components = pca.fit_transform(df[cols].fillna(0).T)
+
+            plot_df = pd.DataFrame(components, columns = ['Component 1', 'Component 2'])
+            plot_df['Filename'] = cols
+            fig = px.scatter(plot_df, x='Component 1', y='Component 2', hover_data=['Filename'], title='PCA')
+            fig.update_layout(height=600, width=600)
+            fig.update_traces(marker=dict(color='#18212b'))
+            st.write(fig)
+
+def volcano_plot(file, options):
+    if '/protein_table' in options:
+        with st.beta_expander('Volcano plot'):
+            df = pd.read_hdf(file, 'protein_table')
+
+            cols = [_ for _ in df.columns if 'LFQ' in _]
+            if len(cols) == 0:
+                cols = df.columns
+
+            df_log = np.log(df.copy())
+            col1, col2 = st.beta_columns(2)
+
+            group_1 = col1.multiselect('Group1', df.columns)
+            group_2 = col2.multiselect('Group2', df.columns)
+
+            if (len(group_1) > 0) and (len(group_2) > 0):
+                with st.spinner('Creating plot..'):
+                    test = stats.ttest_ind(df_log[group_1].values, df_log[group_2].values, nan_policy='omit', axis=1)
+
+                    t_diff = np.nanmean(df_log[group_1].values, axis = 1) - np.nanmean(df_log[group_2].values, axis = 1)
+                    plot_df = pd.DataFrame()
+
+                    plot_df['t_test_diff'] = t_diff
+                    plot_df['-log(pvalue)'] = -np.log(test.pvalue.data)
+                    plot_df['id'] = df.index
+
+                    fig = px.scatter(plot_df, x='t_test_diff', y='-log(pvalue)', hover_data=['id'], title='Volcano', opacity=0.5)
+                    fig.update_layout(height=600, width=600)
+                    fig.update_traces(marker=dict(color='#18212b'))
+                    st.write(fig)
 
 def parse_file_and_display(file):
     """
@@ -107,10 +161,14 @@ def parse_file_and_display(file):
         with pd.HDFStore(file) as hdf:
             options = list(hdf.keys())
 
+    if pandas_hdf:
+        volcano_plot(file, options)
+        correlation_heatmap(file, options)
+        pca_plot(file, options)
+
     if ms_file is not None:
         st.write('Basic Plots')
         ion_plot(ms_file, options)
-        protein_rank(ms_file, options)
 
         opt = st.selectbox('Select group', [None] + options)
         if opt is not None:
