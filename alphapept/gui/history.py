@@ -3,9 +3,14 @@ import streamlit as st
 import plotly.express as px
 import yaml
 import pandas as pd
-from alphapept.paths import PROCESSED_PATH, AP_PATH
+from alphapept.paths import PROCESSED_PATH, AP_PATH, PLOT_SETTINGS
 from alphapept.gui.utils import files_in_folder
 import numpy as np
+from alphapept.settings import load_settings
+
+def load_plot_settings():
+    plot_settings = load_settings(PLOT_SETTINGS)
+    return plot_settings
 
 def load_files(file_list, callback = None):
     """
@@ -23,20 +28,6 @@ def load_files(file_list, callback = None):
             callback.progress((idx+1)/len(file_list))
 
     return all_results
-
-def read_groups():
-    """
-    Checks the AlphaPept Home Folder if a group.txt is present
-    """
-    group_txt = os.path.join(AP_PATH, 'groups.txt')
-    if os.path.isfile(group_txt):
-        with open(group_txt, 'r') as f:
-            groups = f.readlines()
-            groups = [_.rstrip('\n') for _ in groups]
-    else:
-        groups = []
-
-    return groups
 
 def filter_by_tag(files):
     """
@@ -67,9 +58,9 @@ def create_single_plot(all_results, files, acquisition_date_times, mode, groups,
     """
     vals = []
     for idx, _ in enumerate(all_results.keys()):
-        if plot == 'timing':
+        if plot == 'timing (min)':
             try:
-                vals.append(all_results[_]["summary"]["timing"]["total"])
+                vals.append(all_results[_]["summary"]["timing"]["total (min)"])
             except KeyError:
                 vals.append(np.nan)
         else:
@@ -98,7 +89,7 @@ def create_single_plot(all_results, files, acquisition_date_times, mode, groups,
     fig.add_hline(y=median_, line_dash="dash")
     st.plotly_chart(fig)
 
-def create_multiple_plots(all_results, groups):
+def create_multiple_plots(all_results, groups, to_plot):
     """
     Creates multiple plotly express plots
 
@@ -113,7 +104,11 @@ def create_multiple_plots(all_results, groups):
     fields = list(fields)
     fields.sort()
 
-    plot_types = fields + ['timing']
+    if to_plot == []:
+        plot_types = fields + ['timing (min)']
+    else:
+        plot_types = [_ for _ in to_plot if _ in fields]
+
     mode = st.selectbox('X-Axis', options = ['AcquisitionDateTime','Filename'])
 
     with st.spinner('Creating plots..'):
@@ -139,11 +134,24 @@ def history():
     with st.beta_expander(f"Processed files ({len(processed_files)})"):
         st.table(processed_files)
 
-    groups = read_groups()
+    plot_settings = load_plot_settings()
+    if 'history' in plot_settings:
+        history_settings = plot_settings['history']
+    else:
+        history_settings = {}
 
-    with st.beta_expander("Group files"):
-        st.text(f"If a groups.txt is present in the AlphaPept folder {AP_PATH}, data will be grouped.")
-        groups = st.multiselect('Groups', default = groups, options=groups)
+    if 'groups' in history_settings:
+        groups = history_settings['groups']
+    else:
+        groups = []
+    if 'plots' in history_settings:
+        to_plot = history_settings['plots']
+    else:
+        to_plot = []
+
+    with st.beta_expander("Customize plots"):
+        st.text(f"Plots can be modified by changing {PLOT_SETTINGS}, set groups to group plots according to filename, set plots to define the plots.")
+        st.write(history_settings)
 
     filtered = filter_by_tag(processed_files)
     if len(filtered) > 1:
@@ -151,4 +159,4 @@ def history():
     all_results = load_files(filtered, callback=st.progress(0))
 
     if len(all_results) > 0:
-        create_multiple_plots(all_results, groups)
+        create_multiple_plots(all_results, groups, to_plot)

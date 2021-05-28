@@ -26,7 +26,7 @@ jobs:
         pip install dnspython
         pip install wget
   HeLa_Thermo_Win:
-    needs: Pyinstaller
+    needs: [Pyinstaller, Prepare_Environment_for_testing]
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
@@ -34,7 +34,7 @@ jobs:
       run: |
         python test_ci.py "${{ env.TMP_FOLDER }}" thermo_hela "${{ secrets.MONGODB_PW }}" 
   HeLa_Thermo_Win_LargeFasta:
-    needs: [Pyinstaller, HeLa_Thermo_Win]
+    needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
@@ -42,7 +42,7 @@ jobs:
       run: |
         python test_ci.py "${{ env.TMP_FOLDER }}" thermo_hela_large_fasta "${{ secrets.MONGODB_PW }}" 
   HeLa_Thermo_Win_Modifications:
-    needs: [Pyinstaller, HeLa_Thermo_Win]
+    needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
@@ -50,7 +50,7 @@ jobs:
       run: |
         python test_ci.py "${{ env.TMP_FOLDER }}" thermo_hela_modifications "${{ secrets.MONGODB_PW }}" 
   HeLa_Bruker_Win:
-    needs: [Pyinstaller, HeLa_Thermo_Win]
+    needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
@@ -58,7 +58,7 @@ jobs:
       run: |
         python test_ci.py "${{ env.TMP_FOLDER }}" bruker_hela "${{ secrets.MONGODB_PW }}" 
   PXD006109:
-    needs: [Pyinstaller, HeLa_Thermo_Win]
+    needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
@@ -66,7 +66,7 @@ jobs:
       run: |
         python test_ci.py "${{ env.TMP_FOLDER }}" PXD006109 "${{ secrets.MONGODB_PW }}"
   PXD010012:
-    needs: [Pyinstaller, HeLa_Bruker_Win]
+    needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Bruker_Win]
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2

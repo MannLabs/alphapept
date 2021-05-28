@@ -479,7 +479,7 @@ def get_shared_proteins(data, found_proteins, pept_dict):
 
 
 
-def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
+def get_protein_groups(data, pept_dict, fasta_dict, decoy = False, callback = None, **kwargs):
     """
     Function to perform protein grouping by razor approach
     ToDo: implement callback for solving
@@ -493,29 +493,43 @@ def get_protein_groups(data, pept_dict, fasta_dict, callback = None, **kwargs):
     assignment = np.zeros(len(report), dtype=object)
     assignment[:] = ''
     assignment_pg = assignment.copy()
+
+    assignment_idx = assignment.copy()
+    assignment_idx[:] = np.nan
+
     razor = assignment.copy()
     razor[:] = False
 
+    if decoy:
+        add = 'REV__'
+    else:
+        add = ''
+
     for protein_str in found_proteins.keys():
         protein = int(protein_str[1:])
+        protein_name = add+fasta_dict[protein]['name']
         indexes = [int(_) for _ in found_proteins[protein_str]]
-        assignment[indexes] = fasta_dict[protein]['name']
-        assignment_pg[indexes] = fasta_dict[protein]['name']
+        assignment[indexes] = protein_name
+        assignment_pg[indexes] = protein_name
+        assignment_idx[indexes] = protein
 
     for protein_str in found_proteins_razor.keys():
         protein = int(protein_str[1:])
         indexes = [int(_) for _ in found_proteins_razor[protein_str]]
-        assignment[indexes] = fasta_dict[protein]['name']
+        protein_name = add+fasta_dict[protein]['name']
+        assignment[indexes] = protein_name
+        assignment_idx[indexes] = protein
         razor[indexes] = True
 
     for a in connected_groups:
         protein_group = list(np.array(a)[np.array(list(i[0] == 'p' for i in a))])
         psms = [int(i) for i in a if i not in protein_group]
-        assignment_pg[psms] = ','.join([fasta_dict[int(_[1:])]['name'] for _ in protein_group])
+        assignment_pg[psms] = ','.join([add+fasta_dict[int(_[1:])]['name'] for _ in protein_group])
 
     report['protein'] = assignment
     report['protein_group'] = assignment_pg
     report['razor'] = razor
+    report['protein_idx'] = assignment_idx
 
     return report
 
@@ -531,17 +545,23 @@ def perform_protein_grouping(data, pept_dict, fasta_dict, **kwargs):
     targets = targets.reset_index(drop=True)
     protein_targets = get_protein_groups(targets, pept_dict, fasta_dict, **kwargs)
 
+    protein_targets['decoy_protein'] = False
+
     decoys = data_sub_unique[data_sub_unique.decoy == True]
     decoys = decoys.reset_index(drop=True)
-    protein_decoys = get_protein_groups(decoys, pept_dict, fasta_dict, **kwargs)
+    protein_decoys = get_protein_groups(decoys, pept_dict, fasta_dict, decoy=True, **kwargs)
+
+    protein_decoys['decoy_protein'] = True
 
     protein_groups = protein_targets.append(protein_decoys)
-    protein_groups_app = protein_groups[['sequence','decoy','protein','protein_group','razor']]
+    protein_groups_app = protein_groups[['sequence','decoy','protein','protein_group','razor','protein_idx','decoy_protein']]
     protein_report = pd.merge(data,
                                 protein_groups_app,
                                 how = 'inner',
                                 on = ['sequence','decoy'],
                                 validate="many_to_one")
+
+
     return protein_report
 
 # Cell
