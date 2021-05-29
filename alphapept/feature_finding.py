@@ -9,7 +9,8 @@ __all__ = ['connect_centroids_unidirection', 'convert_connections_to_array', 'el
            'get_trails', 'plot_pattern', 'get_local_minima', 'is_local_minima', 'get_minpos', 'truncate',
            'check_averagine', 'pattern_to_mz', 'cosine_averagine', 'int_list_to_array', 'mz_to_mass', 'M_PROTON',
            'isolate_isotope_pattern', 'get_isotope_patterns', 'report_', 'feature_finder_report',
-           'plot_isotope_pattern', 'extract_bruker', 'convert_bruker', 'map_bruker', 'find_features', 'map_ms2']
+           'plot_isotope_pattern', 'extract_bruker', 'convert_bruker', 'map_bruker', 'find_features', 'replace_infs',
+           'map_ms2']
 
 # Cell
 import alphapept.speed
@@ -1553,81 +1554,63 @@ from sklearn.neighbors import KDTree
 import pandas as pd
 import numpy as np
 
-def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=5, search_unidentified = False, **kwargs):
+
+def replace_infs(array):
+    """
+    Replace nans and infs with 0
+    """
+    array[array == -np.inf] = 0
+    array[array == np.inf] = 0
+    array[np.isnan(array)] = 0
+
+    return array
+
+def map_ms2(feature_table, query_data, map_mz_range = 1, map_rt_range = 0.5, map_mob_range = 0.3, map_n_neighbors=5, search_unidentified = False, **kwargs):
     """
     Map MS1 features to MS2 based on rt and mz
     if ccs is included also add
     """
+    feature_table['rt'] = feature_table['rt_apex']
 
-    if 'mobility' in feature_table.columns:
-        use_mob = True
-    else:
+    range_dict = {}
+    range_dict['mz'] = ('mono_mzs2', map_mz_range)
+    range_dict['rt'] = ('rt_list_ms2', map_rt_range)
+    range_dict['mobility'] = ('mobility', map_mob_range)
+
+    query_dict = {}
+    query_dict['rt'] = 'rt_list_ms2'
+    query_dict['mass'] = 'prec_mass_list2'
+    query_dict['mz'] = 'mono_mzs2'
+    query_dict['charge'] = 'charge2'
+    query_dict['mobility'] = 'mobility'
+
+    if 'mobility' not in feature_table.columns:
+        del range_dict['mobility']
+        del query_dict['mobility']
         use_mob = False
-
-    if use_mob:
-
-        tree_points = feature_table[['mz','rt_apex','mobility']].values
-
-        tree_points[:,0] = np.log(tree_points[:,0])*1e6/ppm_range #m/z -> log transform, this is in ppm then
-        tree_points[:,1] = tree_points[:,1]/rt_range # -> this is in minutes
-        tree_points[:,2] = tree_points[:,2]/mob_range
-
-        matching_tree = KDTree(tree_points, metric="minkowski")
-
-        query_mz = np.log(query_data['mono_mzs2'])*1e6/ppm_range
-        query_rt = query_data['rt_list_ms2'] / rt_range
-        query_mob = query_data['mobility'] / mob_range
-
-        ref_points = np.array([query_mz, query_rt, query_mob]).T
-
-        ref_points[ref_points == -np.inf] = 0
-        ref_points[ref_points == np.inf] = 0
-        ref_points[np.isnan(ref_points)] = 0
-
-        dist, idx = matching_tree.query(ref_points, k=n_neighbors)
-
     else:
-        tree_points = feature_table[['mz','rt_apex']].values
-        tree_points[:,0] = np.log(tree_points[:,0])*1e6/ppm_range #m/z -> log transform, this is in ppm then
-        tree_points[:,1] = tree_points[:,1]/rt_range # -> this is in minutes
+        use_mob = True
 
-        matching_tree = KDTree(tree_points, metric="minkowski")
+    tree_points = feature_table[list(range_dict.keys())].values
 
-        query_mz = np.log(query_data['mono_mzs2'])*1e6/ppm_range
-        query_rt = query_data['rt_list_ms2'] / rt_range
+    for i, key in enumerate(range_dict):
+        tree_points[:,i] = tree_points[:,i]/range_dict[key][1]
 
-        ref_points = np.array([query_mz, query_rt]).T
+    matching_tree = KDTree(tree_points, metric="minkowski")
+    ref_points = np.array([query_data[range_dict[_][0]] / range_dict[_][1] for _ in range_dict]).T
+    ref_points = replace_infs(ref_points)
 
-        ref_points[ref_points == -np.inf] = 0
-        ref_points[ref_points == np.inf] = 0
-        ref_points[np.isnan(ref_points)] = 0
-
-        dist, idx = matching_tree.query(ref_points, k=n_neighbors)
-
-
+    dist, idx = matching_tree.query(ref_points, k=map_n_neighbors)
     ref_matched = np.zeros(ref_points.shape[0], dtype=np.bool_)
 
     all_df = []
-    for neighbor in range(n_neighbors):
-        if use_mob:
-            ref_df = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2'], query_data['mobility']]).T, columns=['rt', 'mass', 'mz', 'charge','mobility'])
-        else:
-            ref_df = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'mz', 'charge'])
+    for neighbor in range(map_n_neighbors):
 
-        ref_df['mass_matched'] = feature_table.iloc[idx[:,neighbor]]['mass'].values
-        ref_df['mass_offset'] = ref_df['mass_matched'] - ref_df['mass']
+        ref_df = pd.DataFrame(np.array([query_data[query_dict[_]] for _ in query_dict]).T, columns = query_dict.keys())
 
-        ref_df['rt_matched'] = feature_table.iloc[idx[:,neighbor]]['rt_apex'].values
-        ref_df['rt_offset'] = ref_df['rt_matched'] - ref_df['rt']
-
-        ref_df['mz_matched'] = feature_table.iloc[idx[:,neighbor]]['mz'].values
-        ref_df['mz_offset'] = ref_df['mz_matched'] - ref_df['mz']
-
-        if use_mob:
-            ref_df['mobility_matched'] = feature_table.iloc[idx[:,neighbor]]['mobility'].values
-            ref_df['mobility_offset'] = ref_df['mobility_matched'] - ref_df['mobility']
-
-        ref_df['charge_matched'] = feature_table.iloc[idx[:,neighbor]]['charge'].values
+        for _ in query_dict:
+            ref_df[_+'_matched'] = feature_table.iloc[idx[:,neighbor]][_].values
+            ref_df[_+'_offset'] = ref_df[_+'_matched'] - ref_df[_]
 
         ref_df['query_idx'] = ref_df.index
         ref_df['feature_idx'] = idx[:,neighbor]
@@ -1649,10 +1632,6 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
         ref_matched |= _check
         ref_df['dist'] = dist[:,neighbor]
         ref_df = ref_df[_check]
-
-        #ref_df['dist'] = dist[:,neighbor]
-        #ref_matched |= (ref_df['dist']<1)
-        #ref_df = ref_df[ref_df['dist']<1]
 
         all_df.append(ref_df)
 
