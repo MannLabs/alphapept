@@ -125,6 +125,7 @@ class TestRun():
         Downloads files to base_dir and copies to test folder for a test run
         """
         create_folder(BASE_DIR)
+        create_folder(ARCHIVE_DIR)
 
         for file in self.file_paths + self.fasta_paths:
             self.get_file(os.path.join(BASE_DIR, file), FILE_DICT[file])
