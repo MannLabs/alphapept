@@ -556,11 +556,11 @@ def quantification(
                     'fraction_normalization'
                 )
                 df_grouped = df.groupby(
-                    ['shortname', 'precursor', 'protein', 'filename']
+                    ['shortname', 'precursor', 'protein_group', 'filename']
                 )[['{}_dn'.format(field)]].sum().reset_index()
             else:
                 df_grouped = df.groupby(
-                    ['shortname', 'precursor', 'protein', 'filename']
+                    ['shortname', 'precursor', 'protein_group', 'filename']
                 )[field].sum().reset_index()
 
 

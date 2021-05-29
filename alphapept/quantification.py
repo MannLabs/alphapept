@@ -299,7 +299,7 @@ from numba.typed import List
 from itertools import combinations
 
 def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None):
-    unique_proteins = df['protein'].unique()
+    unique_proteins = df['protein_group'].unique()
     files = df['filename'].unique().tolist()
     files.sort()
 
@@ -321,7 +321,7 @@ def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None
         raise ValueError('Negative intensity values present.')
 
     for idx, protein in enumerate(unique_proteins):
-        subset = df[df['protein'] == protein].copy()
+        subset = df[df['protein_group'] == protein].copy()
         per_protein = subset.groupby(['filename','precursor'])[field_].sum().unstack().T
 
         for _ in files:
@@ -411,7 +411,7 @@ from functools import partial
 
 def protein_profile_parallel(df, minimum_ratios, field, callback=None):
 
-    unique_proteins = df['protein'].unique().tolist()
+    unique_proteins = df['protein_group'].unique().tolist()
 
     files = df['filename'].unique().tolist()
     files.sort()
@@ -419,7 +419,7 @@ def protein_profile_parallel(df, minimum_ratios, field, callback=None):
     columnes_ext = [_+'_LFQ' for _ in files]
     protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + files)
 
-    grouped = df[[field, 'filename','precursor','protein']].groupby(['protein','filename','precursor']).sum()
+    grouped = df[[field, 'filename','precursor','protein_group']].groupby(['protein_group','filename','precursor']).sum()
 
     column_combinations = List()
     [column_combinations.append(_) for _ in combinations(range(len(files)), 2)]
@@ -456,8 +456,8 @@ def protein_profile_parallel(df, minimum_ratios, field, callback=None):
         protein_table[protein_table == 0] = np.nan
         protein_table = protein_table.astype('float')
     else:
-        protein_table = df.groupby(['protein'])[field].sum().to_frame().reset_index()
-        protein_table = protein_table.set_index('protein')
+        protein_table = df.groupby(['protein_group'])[field].sum().to_frame().reset_index()
+        protein_table = protein_table.set_index('protein_group')
         protein_table.index.name = None
         protein_table.columns=[files[0]]
 
@@ -506,7 +506,7 @@ def protein_profile_parallel_mq(evidence_path, protein_groups_path, callback=Non
         evd_ids = [int(_) for _ in investigate['Evidence IDs'].split(';')]
         subset = evd.loc[evd_ids].copy()
 
-        subset['protein'] =  investigate['Protein IDs']
+        subset['protein_group'] =  investigate['Protein IDs']
         subset['filename'] = subset['Raw file']
         subset['precursor']  = ['_'.join(_) for _ in zip(subset['Sequence'].values, subset['Charge'].values.astype('str'))]
 
