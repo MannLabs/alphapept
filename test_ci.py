@@ -146,7 +146,7 @@ class TestRun():
 
         self.settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
         self.settings['experiment']['file_paths'] =  [os.path.join(TEST_DIR, _) for _ in self.file_paths]
-        self.settings['experiment']['fasta_paths'] = [s.path.join(TEST_DIR, _) for _ in self.fasta_paths]
+        self.settings['experiment']['fasta_paths'] = [os.path.join(TEST_DIR, _) for _ in self.fasta_paths]
 
     def run(self, password=None):
         if self.new_files:
