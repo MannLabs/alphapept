@@ -145,8 +145,8 @@ class TestRun():
         """
 
         self.settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
-        self.settings['experiment']['file_paths'] =  [TEST_DIR + _ for _ in self.file_paths]
-        self.settings['experiment']['fasta_paths'] = [TEST_DIR + _ for _ in self.fasta_paths]
+        self.settings['experiment']['file_paths'] =  [os.path.join(TEST_DIR, _) for _ in self.file_paths]
+        self.settings['experiment']['fasta_paths'] = [s.path.join(TEST_DIR, _) for _ in self.fasta_paths]
 
     def run(self, password=None):
         if self.new_files:
@@ -211,7 +211,7 @@ class TestRun():
             post_id = self.upload_to_db(password)
             # Copy results file to archive location
             base, ext = os.path.splitext(settings['experiment']['results_path'])
-            shutil.copyfile(settings['experiment']['results_path'], ARCHIVE_DIR+str(post_id)+ext)
+            shutil.copyfile(settings['experiment']['results_path'], os.path.join(ARCHIVE_DIR, str(post_id)+ext))
 
     def upload_to_db(self, password):
         from pymongo import MongoClient
