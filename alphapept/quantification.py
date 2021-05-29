@@ -158,7 +158,7 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
     """
     Returns normalization for given peptide intensities
     """
-    files = np.sort(df['shortname'].unique()).tolist()
+    files = np.sort(df['filename'].unique()).tolist()
     n_files = len(files)
 
     if 'fraction' not in df.keys():
@@ -168,7 +168,7 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
 
     n_fractions = len(fractions)
 
-    df_max = df.groupby(['precursor','fraction','shortname'])[field].max() #Maximum per fraction
+    df_max = df.groupby(['precursor','fraction','filename'])[field].max() #Maximum per fraction
 
     prec_count = df_max.index.get_level_values('precursor').value_counts()
 
@@ -197,7 +197,7 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
 
     prec_id = [precursor_dict[_] for _ in selected_precs['precursor']]
     frac_id = [fraction_dict[_] for _ in selected_precs['fraction']]
-    file_id = [filename_dict[_] for _ in selected_precs['shortname']]
+    file_id = [filename_dict[_] for _ in selected_precs['filename']]
 
     profiles[frac_id,file_id, prec_id] = selected_precs[field]
 
@@ -216,7 +216,7 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
 
     #intensity normalization: total intensity to remain unchanged
 
-    df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [filename_dict[_] for _ in df['shortname']]]
+    df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [filename_dict[_] for _ in df['filename']]]
     df[field+'_dn'] *= df[field].sum()/df[field+'_dn'].sum()
 
     # else:
@@ -300,7 +300,7 @@ from itertools import combinations
 
 def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None):
     unique_proteins = df['protein'].unique()
-    files = df['shortname'].unique().tolist()
+    files = df['filename'].unique().tolist()
     files.sort()
 
     if len(files) == 1:
@@ -322,7 +322,7 @@ def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None
 
     for idx, protein in enumerate(unique_proteins):
         subset = df[df['protein'] == protein].copy()
-        per_protein = subset.groupby(['shortname','precursor'])[field_].sum().unstack().T
+        per_protein = subset.groupby(['filename','precursor'])[field_].sum().unstack().T
 
         for _ in files:
             if _ not in per_protein.columns:
@@ -413,18 +413,18 @@ def protein_profile_parallel(df, minimum_ratios, field, callback=None):
 
     unique_proteins = df['protein'].unique().tolist()
 
-    files = df['shortname'].unique().tolist()
+    files = df['filename'].unique().tolist()
     files.sort()
 
     columnes_ext = [_+'_LFQ' for _ in files]
     protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + files)
 
-    grouped = df[[field, 'shortname','precursor','protein']].groupby(['protein','shortname','precursor']).sum()
+    grouped = df[[field, 'filename','precursor','protein']].groupby(['protein','filename','precursor']).sum()
 
     column_combinations = List()
     [column_combinations.append(_) for _ in combinations(range(len(files)), 2)]
 
-    files = df['shortname'].unique().tolist()
+    files = df['filename'].unique().tolist()
     files.sort()
 
     results = []
@@ -507,7 +507,7 @@ def protein_profile_parallel_mq(evidence_path, protein_groups_path, callback=Non
         subset = evd.loc[evd_ids].copy()
 
         subset['protein'] =  investigate['Protein IDs']
-        subset['shortname'] = subset['Raw file']
+        subset['filename'] = subset['Raw file']
         subset['precursor']  = ['_'.join(_) for _ in zip(subset['Sequence'].values, subset['Charge'].values.astype('str'))]
 
         protein_df.append(subset)
