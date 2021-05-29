@@ -58,10 +58,10 @@ features:
   hill_nboot: 150
   mass_range: 5
   min_correlation: 0.6
-  ppm_range: 20
-  rt_range: 0.5
-  mob_range: 0.3
-  n_neighbors: 5
+  map_mz_range: 1.5
+  map_rt_range: 0.5
+  map_mob_range: 0.3
+  map_n_neighbors: 5
   search_unidentified: false
 search:
   m_offset: 30
