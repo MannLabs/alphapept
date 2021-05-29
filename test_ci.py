@@ -56,18 +56,18 @@ FILE_DICT['PXD010012_CT_3_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/
 FILE_DICT['PXD010012_CT_4_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/swO523hdX1aqN3R/download'
 FILE_DICT['PXD010012_CT_5_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/Kbq97G9IzxQ8AHb/download'
 
-BASE_DIR = 'E:/test_files/' # Storarge location for test files
-TEST_DIR = 'E:/test_temp/'
-ARCHIVE_DIR = 'E:/test_archive/'
+mods = sys.modules[__name__]
 
-MONGODB_USER = 'github_actions'
-MONGODB_URL = 'ci.yue0n.mongodb.net/'
-
+def config_test_paths(BASE_DIR, TEST_DIR, ARCHIVE_DIR, MONGODB_USER, MONGODB_URL):
+    mods.BASE_DIR = BASE_DIR
+    mods.TEST_DIR = TEST_DIR
+    mods.ARCHIVE_DIR = ARCHIVE_DIR
+    mods.MONGODB_USER = MONGODB_USER
+    mods.MONGODB_URL = MONGODB_URL
 
 def delete_folder(dir_name):
     if os.path.exists(dir_name):
         shutil.rmtree(dir_name)
-
 
 def create_folder(dir_name):
     if not os.path.exists(dir_name):
@@ -88,7 +88,6 @@ class TestRun():
         self.new_files = new_files
 
         self.custom_settings = custom_settings
-
 
         # Flag to run mixed_species_quantification
         self.run_mixed_analysis = None
@@ -126,9 +125,10 @@ class TestRun():
         Downloads files to base_dir and copies to test folder for a test run
         """
         create_folder(BASE_DIR)
+        create_folder(ARCHIVE_DIR)
 
         for file in self.file_paths + self.fasta_paths:
-            self.get_file(BASE_DIR+file, FILE_DICT[file])
+            self.get_file(os.path.join(BASE_DIR, file), FILE_DICT[file])
 
         delete_folder(TEST_DIR)
         create_folder(TEST_DIR)
@@ -136,9 +136,9 @@ class TestRun():
         for file in self.file_paths + self.fasta_paths:
 
             if file.endswith('.d'):
-                shutil.copytree(BASE_DIR+file, TEST_DIR+file)
+                shutil.copytree(os.path.join(BASE_DIR, file), os.path.join(TEST_DIR, file))
             else:
-                shutil.copyfile(BASE_DIR+file, TEST_DIR+file)
+                shutil.copyfile(os.path.join(BASE_DIR, file), os.path.join(TEST_DIR, file))
 
     def prepare_settings(self):
         """
@@ -146,8 +146,8 @@ class TestRun():
         """
 
         self.settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
-        self.settings['experiment']['file_paths'] =  [TEST_DIR + _ for _ in self.file_paths]
-        self.settings['experiment']['fasta_paths'] = [TEST_DIR + _ for _ in self.fasta_paths]
+        self.settings['experiment']['file_paths'] =  [os.path.join(TEST_DIR, _) for _ in self.file_paths]
+        self.settings['experiment']['fasta_paths'] = [os.path.join(TEST_DIR, _) for _ in self.fasta_paths]
 
     def run(self, password=None):
         if self.new_files:
@@ -186,8 +186,11 @@ class TestRun():
         report['test_id'] = self.id
         report['settings'] = settings
         report['time_elapsed_min'] = (end-start)/60
-        report['branch'] = subprocess.check_output("git branch --show-current").decode("utf-8").rstrip('\n')
-        report['commit'] = subprocess.check_output("git rev-parse --verify HEAD").decode("utf-8").rstrip('\n')
+        try:
+            report['branch'] = subprocess.check_output("git branch --show-current").decode("utf-8").rstrip('\n')
+            report['commit'] = subprocess.check_output("git rev-parse --verify HEAD").decode("utf-8").rstrip('\n')
+        except:
+            None
         report['version'] = alphapept_version
 
         if self.exe_path:
@@ -209,7 +212,7 @@ class TestRun():
             post_id = self.upload_to_db(password)
             # Copy results file to archive location
             base, ext = os.path.splitext(settings['experiment']['results_path'])
-            shutil.copyfile(settings['experiment']['results_path'], ARCHIVE_DIR+str(post_id)+ext)
+            shutil.copyfile(settings['experiment']['results_path'], os.path.join(ARCHIVE_DIR, str(post_id)+ext))
 
     def upload_to_db(self, password):
         from pymongo import MongoClient
@@ -286,17 +289,29 @@ class TestRun():
         return results
 
 
-def main():
-    print(sys.argv, len(sys.argv))
+def main(runtype = None, password = None, new_files = True):
 
-    if len(sys.argv) == 2:
-        password = None
-        runtype = sys.argv[1]
-    else:
-        password = sys.argv[1]
-        runtype = sys.argv[2]
 
-    new_files = True
+    if runtype == None:
+        if len(sys.argv) == 3:
+            tmp_folder = sys.argv[1]
+            runtype = sys.argv[2]
+            password = None
+
+        else:
+            tmp_folder = sys.argv[1]
+            runtype = sys.argv[2]
+            password = sys.argv[3]
+
+
+        BASE_DIR = os.path.join(tmp_folder,'test_files') # Storarge location for test files
+        TEST_DIR = os.path.join(tmp_folder,'test_temp')
+        ARCHIVE_DIR = os.path.join(tmp_folder, 'test_archive')
+
+        MONGODB_USER = 'github_actions'
+        MONGODB_URL = 'ci.yue0n.mongodb.net/'
+        config_test_paths(BASE_DIR, TEST_DIR, ARCHIVE_DIR, MONGODB_USER, MONGODB_URL)
+
 
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']

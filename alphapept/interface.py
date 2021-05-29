@@ -542,7 +542,10 @@ def quantification(
 
         if field in df.keys():  # Check if the quantification information exists.
             # We could include another protein fdr in here..
-            if 'fraction' in df.keys():
+
+            files = df['shortname'].unique().tolist()
+
+            if len(files) >1:
                 logging.info('Delayed Normalization.')
                 df, normalization = alphapept.quantification.delayed_normalization(
                     df,
@@ -559,6 +562,8 @@ def quantification(
                 df_grouped = df.groupby(
                     ['shortname', 'precursor', 'protein', 'filename']
                 )[field].sum().reset_index()
+
+
 
             df.to_hdf(
                 settings['experiment']['results_path'],
