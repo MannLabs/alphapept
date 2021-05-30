@@ -7,6 +7,7 @@ import os
 import alphapept.io
 import seaborn as sns
 from tqdm.notebook import tqdm as tqdm
+import warnings
 
 def prepare_files(path1, path2):
 
@@ -218,11 +219,13 @@ def get_plot_df(ref, base_columns, ratio_columns, ax, id_, valid_filter = True):
     homo = valid[valid['Species'] == 'Homo sapiens']['ratio_'].values
     e_coli = valid[valid['Species'] == 'Escherichia coli']['ratio_'].values
 
-    homo_ratio = np.nanmean(homo[~np.isinf(homo)])
-    e_coli_ratio = np.nanmean(e_coli[~np.isinf(e_coli)])
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        homo_ratio = np.nanmean(homo[~np.isinf(homo)])
+        e_coli_ratio = np.nanmean(e_coli[~np.isinf(e_coli)])
 
-    homo_ratio_std = np.nanstd(homo[~np.isinf(homo)])
-    e_coli_ratio_std = np.nanstd(e_coli[~np.isinf(e_coli)])
+        homo_ratio_std = np.nanstd(homo[~np.isinf(homo)])
+        e_coli_ratio_std = np.nanstd(e_coli[~np.isinf(e_coli)])
 
     nl = '\n'
     ax.set_title(f'{id_} {nl} Homo (mean, std) {homo_ratio:.2f}, {homo_ratio_std:.2f} {nl} EColi (mean, std) {e_coli_ratio:.2f}, {e_coli_ratio_std:.2f} {nl} {valid["Species"].value_counts().to_dict()}')
@@ -248,7 +251,7 @@ def algorithm_test(evd, ref, base_columns, ratio_columns, base_columns2, ratio_c
         field_ = 'Intensity'
 
         subset['protein'] = 'X'
-        subset['shortname'] = subset['Raw file']
+        subset['filename'] = subset['Raw file']
         subset['precursor']  = ['_'.join(_) for _ in zip(subset['Modified sequence'].values, subset['Charge'].values.astype('str'))]
         protein = 'X'
 
@@ -298,9 +301,9 @@ def generate_peptide_list(num_peps):
             list = new_list
         peptides.extend(list)
         pepcount+=1
-    
+
     return peptides
-    
+
 def generate_protein_list(pepnames):
     """simulate protein names for a list of peptide names"""
     res = []
@@ -317,7 +320,7 @@ def generate_protein_list(pepnames):
     return res
 
 def simulate_biased_peptides(num_pep, samplevec, fractionvec):
-    """generate a dataframe with simuated peptides belonging to different fractions and samples. 
+    """generate a dataframe with simuated peptides belonging to different fractions and samples.
     Systematic shifts are simulated into the samples
 
     Args:
@@ -325,11 +328,11 @@ def simulate_biased_peptides(num_pep, samplevec, fractionvec):
         samplevec (list[String]): each entry corresponds to one "fake sample"
         fractionvec (list[int]): list of same length as above, each entry gives the number of fractions to simulate for the fake sample
 
-        
+
 
     Returns:
         dataframe: dataframe in the same format as "real" peptides
-    
+
     Example:
      simulate_biased_peptides(20000, ["A", "B"], [3, 5]) simulates a dataset consisting of sample A with 3 fractions and sample B with 5 fractions
     """
@@ -340,7 +343,7 @@ def simulate_biased_peptides(num_pep, samplevec, fractionvec):
     pep_idxs = list(range(len(pepnames)))
     pep2baseint = { name : np.abs(np.random.lognormal(5))*1000 for name in pepnames}
 
-    
+
     shortname = [] #sample names
     precursor = []
     fraction = []
@@ -360,7 +363,7 @@ def simulate_biased_peptides(num_pep, samplevec, fractionvec):
             shortname_local = [sample for x in precursors_local]
             fraction_local = [frac_idx for x in precursors_local]
             intensity_local = [(np.random.standard_normal()+shift_factor)*pep2baseint.get(x) for x in precursors_local]
-            
+
             #extend global lists
             shortname.extend(shortname_local)
             precursor.extend(precursors_local)
@@ -369,10 +372,10 @@ def simulate_biased_peptides(num_pep, samplevec, fractionvec):
 
             start_idx+= peps_per_frac
 
-    
+
     proteins = [pep2prot.get(x) for x in precursor]
     species = ['X' for x in precursor]
-    df_simul = pd.DataFrame({"protein": proteins, "precursor": precursor, "shortname" : shortname,"fraction": fraction, "Intensity" : intensity,
+    df_simul = pd.DataFrame({"protein_group": proteins, "precursor": precursor, "filename" : shortname,"fraction": fraction, "Intensity" : intensity,
     'Species' : species})
 
     return df_simul

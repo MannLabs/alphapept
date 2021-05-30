@@ -250,6 +250,8 @@ class TestRun():
         """
 
         df = pd.read_hdf(settings['experiment']['results_path'], 'protein_table')
+
+        df.columns = [os.path.split(_)[1].replace('.ms_data.hdf','') for _ in df.columns]
         results = {}
 
         for i in ['','_LFQ']:
