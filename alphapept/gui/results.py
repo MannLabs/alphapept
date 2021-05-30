@@ -118,10 +118,6 @@ def volcano_plot(file, options):
         with st.beta_expander('Volcano plot'):
             df = pd.read_hdf(file, 'protein_table')
 
-            cols = [_ for _ in df.columns if 'LFQ' in _]
-            if len(cols) == 0:
-                cols = df.columns
-
             df_log = np.log(df.copy())
             col1, col2 = st.beta_columns(2)
 
@@ -144,6 +140,30 @@ def volcano_plot(file, options):
                     fig.update_traces(marker=dict(color='#18212b'))
                     st.write(fig)
 
+def scatter_plot(file, options):
+    if '/protein_table' in options:
+        with st.beta_expander('Scatter plot'):
+            df = pd.read_hdf(file, 'protein_table')
+
+            df_log = np.log(df.copy())
+            col1, col2 = st.beta_columns(2)
+
+            all_cols = df.columns
+
+            group_1 = col1.selectbox('Group1', df.columns)
+            group_2 = col2.selectbox('Group2', df.columns)
+
+            with st.spinner('Creating plot..'):
+                df_log['id'] = df_log.index
+                fig = px.scatter(df_log, x=group_1, y=group_2, hover_data=['id'], title='Scatterplot', opacity=0.2, trendline="ols")
+                fig.update_layout(height=600, width=600)
+                fig.update_traces(marker=dict(color='#18212b'))
+
+                results = px.get_trendline_results(fig)
+
+                st.write(fig)
+                st.code(results.px_fit_results.iloc[0].summary())
+
 def parse_file_and_display(file):
     """
     Loads file and displays dataframe in streamlit
@@ -164,6 +184,7 @@ def parse_file_and_display(file):
     if pandas_hdf:
         volcano_plot(file, options)
         correlation_heatmap(file, options)
+        scatter_plot(file, options)
         pca_plot(file, options)
 
     if ms_file is not None:
