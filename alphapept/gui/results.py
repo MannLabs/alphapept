@@ -14,6 +14,12 @@ from scipy import stats
 import numpy as np
 from sklearn.decomposition import PCA
 
+
+@st.cache
+def cached_file(file):
+    df = pd.read_hdf(file, 'protein_table')
+    return df
+
 def readable_files_from_yaml(results_yaml):
     """
     Returns all readable files from results yaml
@@ -78,7 +84,7 @@ def ion_plot(ms_file, options):
 def correlation_heatmap(file, options):
     if '/protein_table' in options:
         with st.beta_expander('Correlation heatmap'):
-            df = pd.read_hdf(file, 'protein_table')
+            df = cached_file(file)
 
             cols = [_ for _ in df.columns if 'LFQ' in _]
             if len(cols) == 0:
@@ -97,7 +103,7 @@ def correlation_heatmap(file, options):
 def pca_plot(file, options):
     if '/protein_table' in options:
         with st.beta_expander('PCA'):
-            df = pd.read_hdf(file, 'protein_table')
+            df = cached_file(file)
 
             cols = [_ for _ in df.columns if 'LFQ' in _]
             if len(cols) == 0:
@@ -113,10 +119,12 @@ def pca_plot(file, options):
             fig.update_traces(marker=dict(color='#18212b'))
             st.write(fig)
 
+
+
 def volcano_plot(file, options):
     if '/protein_table' in options:
         with st.beta_expander('Volcano plot'):
-            df = pd.read_hdf(file, 'protein_table')
+            df = cached_file(file)
 
             df_log = np.log(df.copy())
             col1, col2 = st.beta_columns(2)
@@ -179,7 +187,7 @@ def volcano_plot(file, options):
 def scatter_plot(file, options):
     if '/protein_table' in options:
         with st.beta_expander('Scatter plot'):
-            df = pd.read_hdf(file, 'protein_table')
+            df = cached_file(file)
 
             df_log = np.log(df.copy())
             col1, col2 = st.beta_columns(2)
