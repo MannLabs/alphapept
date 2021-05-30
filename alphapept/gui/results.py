@@ -124,7 +124,11 @@ def volcano_plot(file, options):
             group_1 = col1.multiselect('Group1', df.columns)
             group_2 = col2.multiselect('Group2', df.columns)
 
+            show_proteins = st.multiselect('Highlight proteins', df.index)
+
             if (len(group_1) > 0) and (len(group_2) > 0):
+
+
                 with st.spinner('Creating plot..'):
                     test = stats.ttest_ind(df_log[group_1].values, df_log[group_2].values, nan_policy='omit', axis=1)
 
@@ -134,10 +138,42 @@ def volcano_plot(file, options):
                     plot_df['t_test_diff'] = t_diff
                     plot_df['-log(pvalue)'] = -np.log(test.pvalue.data)
                     plot_df['id'] = df.index
+                    plot_df.index = df.index
 
-                    fig = px.scatter(plot_df, x='t_test_diff', y='-log(pvalue)', hover_data=['id'], title='Volcano', opacity=0.5)
+                    fig = make_subplots()
+
+                    fig.add_trace(
+                        go.Scatter(
+                                    x= plot_df['t_test_diff'],
+                                    y=plot_df['-log(pvalue)'],
+                                    hovertemplate ='<b>%{text}</b>' +
+                                    '<br>t_test diff: %{y:.3f}'+
+                                    '<br>-log(pvalue): %{x:.3f}',
+                                    text = plot_df.index,
+                                    opacity=0.8,
+                                    mode='markers',
+                                    marker = dict(color='#3dc5ef')))
+
+                    if len(show_proteins)> 0:
+                        fig.add_trace(go.Scatter(
+                            x=plot_df.loc[show_proteins]['t_test_diff'],
+                            y=plot_df.loc[show_proteins]['-log(pvalue)'],
+                            hovertemplate ='<b>%{text}</b>' +
+                            '<br>t_test diff: %{y:.3f}'+
+                            '<br>-log(pvalue): %{x:.3f}',
+                            text = show_proteins,
+                            mode="markers+text",
+                            textposition="top center",
+                            marker_color='#18212b',
+                            textfont=dict(
+                                family="Courier New, monospace",
+                                size=16,
+                                color="#18212b"
+                                )
+                            )
+                            )
                     fig.update_layout(height=600, width=600)
-                    fig.update_traces(marker=dict(color='#18212b'))
+                    fig.update_layout(showlegend=False)
                     st.write(fig)
 
 def scatter_plot(file, options):
