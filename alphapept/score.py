@@ -2,7 +2,7 @@
 
 __all__ = ['filter_score', 'filter_precursor', 'get_q_values', 'cut_fdr', 'cut_global_fdr', 'get_x_tandem_score',
            'score_x_tandem', 'filter_with_x_tandem', 'filter_with_score', 'score_psms', 'get_ML_features', 'train_RF',
-           'score_ML', 'filter_with_ML', 'get_unique_proteins', 'get_shared_proteins', 'get_protein_groups',
+           'score_ML', 'filter_with_ML', 'assign_proteins', 'get_shared_proteins', 'get_protein_groups',
            'perform_protein_grouping', 'get_ion', 'ecdf', 'score_hdf', 'ion_dict', 'protein_groups_hdf',
            'protein_grouping_all', 'protein_groups_hdf_parallel']
 
@@ -414,7 +414,15 @@ def filter_with_ML(df,
 # Cell
 import networkx as nx
 
-def get_unique_proteins(data, pept_dict):
+def assign_proteins(data, pept_dict):
+    """
+    Assign proteins to psms.
+    This functions requires a dataframe and a peptide dictionary (that matches sequences to proteins).
+    It will append the dataframe with the column 'n_possible_proteins' which indicate how many proteins could belong to the PSMs.
+    It will return a dictionary `found_proteins` where each protein is mapped to the indices of PSMs.
+
+    """
+
     data = data.reset_index(drop=True)
 
     data['n_possible_proteins'] = data['sequence'].apply(lambda x: len(pept_dict[x]))
@@ -435,8 +443,6 @@ def get_unique_proteins(data, pept_dict):
         else:
             found_proteins[p_str] = [str(idx_)]
 
-    #protein_count = {k:len(found_proteins[k]) for k in found_proteins.keys()}
-
     return data, found_proteins
 
 def get_shared_proteins(data, found_proteins, pept_dict):
@@ -453,42 +459,66 @@ def get_shared_proteins(data, found_proteins, pept_dict):
         for p in possible_proteins:
             G.add_edge(str(idx), 'p'+str(p), score=score)
 
-
     connected_groups = np.array([list(c) for c in sorted(nx.connected_components(G), key=len, reverse=True)], dtype=object)
     n_groups = len(connected_groups)
-
 
     logging.info('A total of {} ambigious proteins'.format(len(connected_groups)))
 
     #Solving with razor:
     found_proteins_razor = {}
-    for a in connected_groups:
-        H = G.subgraph(a)
+    for a in connected_groups[::-1]:
+        H = G.subgraph(a).copy()
         shared_proteins = list(np.array(a)[np.array(list(i[0] == 'p' for i in a))])
-        removed = []
 
         while len(shared_proteins) > 0:
             neighbors_list = []
 
             for node in shared_proteins:
-                neighbors = list(H.neighbors(node))
-                n_neigbhors = len(neighbors)
+                shared_peptides = list(H.neighbors(node))
 
                 if node in G:
                     if node in found_proteins.keys():
-                        n_neigbhors+= len(found_proteins[node])
+                        shared_peptides += found_proteins[node]
 
-                neighbors_list.append((n_neigbhors, node, neighbors))
+                n_neigbhors = len(shared_peptides)
 
+                neighbors_list.append((n_neigbhors, node, shared_peptides))
+
+
+            #Check if we have a protein_group (e.g. they share the same everythin)
             neighbors_list.sort()
-            #Remove the last entry:
-            count, node, psms = neighbors_list[-1]
-            shared_proteins.remove(node)
-            psms = [_ for _ in psms if _ not in removed]
-            removed += psms
-            found_proteins_razor[node] = psms
 
-    return found_proteins_razor, connected_groups
+            # Check for protein group
+            node_ = [neighbors_list[-1][1]]
+            idx = 1
+            while idx < len(neighbors_list): #Check for protein groups
+                if neighbors_list[-idx][0] == neighbors_list[-idx-1][0]: #lenght check
+                    if set(neighbors_list[-idx][2]) == set(neighbors_list[-idx-1][2]): #identical peptides
+                        node_.append(neighbors_list[-idx-1][1])
+                        idx += 1
+                    else:
+                        break
+                else:
+                    break
+
+            #Remove the last entry:
+            shared_peptides = neighbors_list[-1][2]
+            for node in node_:
+                shared_proteins.remove(node)
+
+            for _ in shared_peptides:
+                if _ in H:
+                    H.remove_node(_)
+
+            if len(shared_peptides) > 0:
+                if len(node_) > 1:
+                    node_ = tuple(node_)
+                else:
+                    node_ = node_[0]
+
+                found_proteins_razor[node_] = shared_peptides
+
+    return found_proteins_razor
 
 
 
@@ -498,8 +528,8 @@ def get_protein_groups(data, pept_dict, fasta_dict, decoy = False, callback = No
     ToDo: implement callback for solving
     Each protein is indicated with a p -> protein index
     """
-    data, found_proteins = get_unique_proteins(data, pept_dict)
-    found_proteins_razor, connected_groups = get_shared_proteins(data, found_proteins, pept_dict)
+    data, found_proteins = assign_proteins(data, pept_dict)
+    found_proteins_razor = get_shared_proteins(data, found_proteins, pept_dict)
 
     report = data.copy()
 
@@ -508,7 +538,7 @@ def get_protein_groups(data, pept_dict, fasta_dict, decoy = False, callback = No
     assignment_pg = assignment.copy()
 
     assignment_idx = assignment.copy()
-    assignment_idx[:] = np.nan
+    assignment_idx[:] = ''
 
     razor = assignment.copy()
     razor[:] = False
@@ -524,20 +554,24 @@ def get_protein_groups(data, pept_dict, fasta_dict, decoy = False, callback = No
         indexes = [int(_) for _ in found_proteins[protein_str]]
         assignment[indexes] = protein_name
         assignment_pg[indexes] = protein_name
-        assignment_idx[indexes] = protein
+        assignment_idx[indexes] = str(protein)
 
     for protein_str in found_proteins_razor.keys():
-        protein = int(protein_str[1:])
         indexes = [int(_) for _ in found_proteins_razor[protein_str]]
-        protein_name = add+fasta_dict[protein]['name']
-        assignment[indexes] = protein_name
-        assignment_idx[indexes] = protein
-        razor[indexes] = True
 
-    for a in connected_groups:
-        protein_group = list(np.array(a)[np.array(list(i[0] == 'p' for i in a))])
-        psms = [int(i) for i in a if i not in protein_group]
-        assignment_pg[psms] = ','.join([add+fasta_dict[int(_[1:])]['name'] for _ in protein_group])
+        if isinstance(protein_str, tuple):
+            proteins = [int(_[1:]) for _ in protein_str]
+            protein_name = ','.join([add+fasta_dict[_]['name'] for _ in proteins])
+            protein = ','.join([str(_) for _ in proteins])
+
+        else:
+            protein = int(protein_str[1:])
+            protein_name = add+fasta_dict[protein]['name']
+
+        assignment[indexes] = protein_name
+        assignment_pg[indexes] = protein_name
+        assignment_idx[indexes] = str(protein)
+        razor[indexes] = True
 
     report['protein'] = assignment
     report['protein_group'] = assignment_pg
@@ -567,7 +601,7 @@ def perform_protein_grouping(data, pept_dict, fasta_dict, **kwargs):
     protein_decoys['decoy_protein'] = True
 
     protein_groups = protein_targets.append(protein_decoys)
-    protein_groups_app = protein_groups[['sequence','decoy','protein','protein_group','razor','protein_idx','decoy_protein']]
+    protein_groups_app = protein_groups[['sequence','decoy','protein','protein_group','razor','protein_idx','decoy_protein','n_possible_proteins']]
     protein_report = pd.merge(data,
                                 protein_groups_app,
                                 how = 'inner',
