@@ -59,7 +59,7 @@ def parallel_execute(settings, step, callback=None):
 
         if step.__name__ == 'search_db':
             memory_available = psutil.virtual_memory().available/1024**3
-            n_processes = np.max([int(np.floor(memory_available/6)),1]) # 8 gb per file: Todo: make this better
+            n_processes = np.max([int(np.floor(memory_available/8)),1]) # 8 gb per file: Todo: make this better
             logging.info(f'Searching. Setting Process limit to {n_processes}.')
 
         with alphapept.speed.AlphaPool(n_processes) as p:
