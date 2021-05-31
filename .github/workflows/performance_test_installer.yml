@@ -9,7 +9,6 @@ jobs:
   Pyinstaller:
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
       - name: Freezing code
         run: |
           conda deactivate
