@@ -131,8 +131,9 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
     """
     import sqlalchemy as db
     import pandas as pd
-
+    from .constants import mass_dict
     from .ext.bruker import timsdata
+    from .io import list_to_numpy_f32, get_most_abundant
 
     tdf = os.path.join(raw_file, 'analysis.tdf')
     engine = db.create_engine('sqlite:///{}'.format(tdf))
@@ -140,21 +141,15 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
     frame_data = pd.read_sql_table('Frames', engine)
     frame_data = frame_data.set_index('Id')
 
-
     global_metadata = pd.read_sql_table('GlobalMetadata', engine)
     global_metadata = global_metadata.set_index('Key').to_dict()['Value']
     acquisition_date_time = global_metadata['AcquisitionDateTime']
-
-
-    from .constants import mass_dict
 
     tdf = timsdata.TimsData(raw_file)
 
     M_PROTON = mass_dict['Proton']
 
     prec_data['Mass'] = prec_data['MonoisotopicMz'].values * prec_data['Charge'].values - prec_data['Charge'].values*M_PROTON
-
-    from .io import list_to_numpy_f32, get_most_abundant
 
     mass_list_ms2 = []
     int_list_ms2 = []
@@ -168,9 +163,7 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
 
         ms2_data = tdf.readPasefMsMs([key])
         masses, intensity = ms2_data[key]
-
         masses, intensity = get_most_abundant(np.array(masses), np.array(intensity), most_abundant)
-
         mass_list_ms2.append(masses)
         int_list_ms2.append(intensity)
         scan_list_ms2.append(key)
@@ -178,11 +171,9 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
         if callback:
             callback((idx+1)/len(precursor_ids))
 
-
     check_sanity(mass_list_ms2)
 
     query_data = {}
-
     query_data['prec_mass_list2'] = prec_data['Mass'].values
     query_data['prec_id2'] = prec_data['Id'].values
     query_data['mono_mzs2'] = prec_data['MonoisotopicMz'].values
@@ -405,8 +396,10 @@ import numpy as np
 
 @njit
 def get_peaks(int_array):
-    "Detects peaks in an array."
+    """
+    Detects peaks in an array
 
+    """
     peaklist = []
     gradient = np.diff(int_array)
     start, center, end = -1, -1, -1
@@ -693,7 +686,7 @@ def read(
     return_dataset_slice:slice=slice(None),
     swmr:bool=False,
 ):
-    '''
+    """
     Read the contents of an HDF_File. If no `group_name` has been provided,
     read directly from the root group. If no `dataset_name` has been provided,
     read directly from the group. If `attr_name` is not None,
@@ -704,7 +697,7 @@ def read(
     datasets only partially.
     If the `dataset_name` refers to a group, it is assumed to be
     pd.DataFrame and returned as such.
-    '''
+    """
     with h5py.File(self.file_name, "r", swmr=swmr) as hdf_file:
         if group_name is None:
             group = hdf_file
@@ -806,7 +799,7 @@ def write(
     dataset_compression=None,
     swmr:bool=False,
 ):
-    '''
+    """
     Write a `value` to an HDF_File. If an 'attr_name' is provided,
     `value` will be stored for this attribute.
     If no `group_name` is provided, write directly to the root group.
@@ -817,7 +810,7 @@ def write(
     If the `overwrite` flag is True, overwrite the given attribute
     or dataset and truncate groups. If the `overwrite` flag is False,
     ignore the is_overwritable flag of this HDF_File.
-    '''
+    """
     if self.is_read_only:
         raise IOError(
             f"Trying to write to {self}, which is read_only."
