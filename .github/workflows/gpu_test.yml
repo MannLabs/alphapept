@@ -27,8 +27,8 @@ jobs:
     - name: Run CPU test script
       run: |
         conda activate alphapept_gpu
-        python test_gpu_.py numba
+        python test_gpu_.py numba-multithread
     - name: Run GPU test script
       run: |
         conda activate alphapept_gpu
-        python test_gpu_.py numba_gpu
+        python test_gpu_.py cuda
