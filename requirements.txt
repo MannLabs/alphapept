@@ -23,4 +23,3 @@ streamlit==0.80.0
 plotly_express==0.4.0
 watchdog==2.1.0
 wget==3.2
-pywin32==225
