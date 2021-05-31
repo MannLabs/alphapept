@@ -45,22 +45,22 @@ def compare_frags(query_frag, db_frag, mtol, ppm=False):
 # Cell
 from numba import prange
 @njit
-def ppm_to_dalton(mass, m_offset):
+def ppm_to_dalton(mass, prec_tol):
     """
 
     """
-    return mass / 1e6 * m_offset
+    return mass / 1e6 * prec_tol
 
 
-def get_idxs(db_masses, query_masses, m_offset, ppm):
+def get_idxs(db_masses, query_masses, prec_tol, ppm):
     """
     Function to get upper and lower limits to define search range.
 
     """
     if ppm:
-        dalton_offset = ppm_to_dalton(query_masses, m_offset)
+        dalton_offset = ppm_to_dalton(query_masses, prec_tol)
     else:
-        dalton_offset = m_offset
+        dalton_offset = prec_tol
 
     idxs_lower = db_masses.searchsorted(query_masses - dalton_offset, side="left")
     idxs_higher = db_masses.searchsorted(query_masses + dalton_offset, side="right")
@@ -209,8 +209,8 @@ def get_psms(
     db_data,
     features,
     parallel,
-    m_tol,
-    m_offset,
+    frag_tol,
+    prec_tol,
     ppm,
     min_frag_hits,
     callback = None,
@@ -223,7 +223,7 @@ def get_psms(
     Args:
         db_masses: database precursor masses
         query_masses: query precursor masses
-        m_offset: mass offset in dalton or ppm
+        prec_tol: mass offset in dalton or ppm
         ppm: flag for ppm or dalton
         callback: Callback function, e.g. for progress bar
     Returns:
@@ -250,7 +250,7 @@ def get_psms(
 
     if features is not None:
         if m_offset_calibrated:
-            m_offset = m_offset_calibrated
+            prec_tol = m_offset_calibrated
             query_masses = features['corrected_mass'].values
         else:
             query_masses = features['mass_matched'].values
@@ -270,23 +270,23 @@ def get_psms(
         query_indices = indices
     else:
         if m_offset_calibrated:
-            m_offset = m_offset_calibrated
+            prec_tol = m_offset_calibrated
         query_masses = query_data['prec_mass_list2']
         query_mz = query_data['mono_mzs2']
         query_rt = query_data['rt_list_ms2']
 
-#     idxs_lower, idxs_higher = get_idxs(db_masses, query_masses, m_offset, ppm)
+#     idxs_lower, idxs_higher = get_idxs(db_masses, query_masses, prec_tol, ppm)
     idxs_lower, idxs_higher = get_idxs(
         db_masses,
         query_masses,
-        m_offset,
+        prec_tol,
         ppm
     )
     frag_hits = np.zeros(
         (len(query_masses), np.max(idxs_higher - idxs_lower)), dtype=int
     )
 
-    logging.info(f'Performing search on {len(query_masses):,} query and {len(db_masses):,} db entries with m_tol = {m_tol:.2f} and m_offset = {m_offset:.2f}.')
+    logging.info(f'Performing search on {len(query_masses):,} query and {len(db_masses):,} db entries with frag_tol = {frag_tol:.2f} and prec_tol = {prec_tol:.2f}.')
 
     if callback is None:
         chunk = (0, 0)
@@ -302,7 +302,7 @@ def get_psms(
                 db_frags,
                 idxs_lower,
                 idxs_higher,
-                m_tol,
+                frag_tol,
                 db_indices,
                 chunk,
                 offset,
@@ -318,7 +318,7 @@ def get_psms(
                 db_frags,
                 idxs_lower,
                 idxs_higher,
-                m_tol,
+                frag_tol,
                 db_indices,
                 chunk,
                 offset,
@@ -342,7 +342,7 @@ def get_psms(
                     db_frags,
                     idxs_lower,
                     idxs_higher,
-                    m_tol,
+                    frag_tol,
                     db_indices,
                     chunk,
                     offset,
@@ -358,7 +358,7 @@ def get_psms(
                     db_frags,
                     idxs_lower,
                     idxs_higher,
-                    m_tol,
+                    frag_tol,
                     db_indices,
                     chunk,
                     offset,
@@ -605,8 +605,8 @@ def get_score_columns(
     db_data,
     features,
     parallel,
-    m_tol,
-    m_offset,
+    frag_tol,
+    prec_tol,
     ppm,
     m_offset_calibrated=None,
     **kwargs
@@ -709,7 +709,7 @@ def get_score_columns(
         db_masses,
         db_frags,
         frag_types,
-        m_tol,
+        frag_tol,
         db_indices,
         ppm,
         psms_dtype)
@@ -775,7 +775,7 @@ def plot_hit(
     query_ints,
     query_indices,
     ppm,
-    m_tol,
+    frag_tol,
     db_ints = None,
     **kwargs
 ):
@@ -806,7 +806,7 @@ def plot_hit(
 
     query_int = query_int / np.max(query_int) * 100
 
-    hits = compare_frags(query_frag, db_frag, m_tol, ppm)
+    hits = compare_frags(query_frag, db_frag, frag_tol, ppm)
 
     n_hits = np.sum(hits > 0)
 
@@ -839,7 +839,7 @@ def plot_hit(
 from .fasta import get_frag_dict, parse
 import matplotlib.pyplot as plt
 
-def plot_psms(query_data, df, index, mass_dict, ppm=True, m_tol=20):
+def plot_psms(query_data, df, index, mass_dict, ppm=True, frag_tol=20):
     """
     Plot a psms
     """
@@ -873,7 +873,7 @@ def plot_psms(query_data, df, index, mass_dict, ppm=True, m_tol=20):
 
     query_int = query_int / np.max(query_int) * 100
 
-    hits = compare_frags(query_frag, db_frag, m_tol, ppm)
+    hits = compare_frags(query_frag, db_frag, frag_tol, ppm)
 
     n_hits = np.sum(hits > 0)
 
@@ -997,7 +997,7 @@ def search_db(to_process, callback = None, parallel=False, first_search = True):
                 else:
                     settings['search']['m_offset_calibrated'] = calibration*settings['search']['calibration_std']
                     calib = settings['search']['m_offset_calibrated']
-                    logging.info(f"Found calibrated m_offset with value {calib:.2f}")
+                    logging.info(f"Found calibrated prec_tol with value {calib:.2f}")
             except KeyError as e:
                 logging.info(f'{e}')
 

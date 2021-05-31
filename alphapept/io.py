@@ -6,7 +6,7 @@ __all__ = ['load_thermo_raw', 'load_bruker_raw', 'one_over_k0_to_CCS', 'check_sa
            'raw_conversion']
 
 # Cell
-def load_thermo_raw(raw_file, most_abundant, use_profile_ms1 = False, callback=None, **kwargs):
+def load_thermo_raw(raw_file, n_most_abundant, use_profile_ms1 = False, callback=None, **kwargs):
     """
     Load thermo raw file and extract spectra
     """
@@ -50,7 +50,7 @@ def load_thermo_raw(raw_file, most_abundant, use_profile_ms1 = False, callback=N
             if use_profile_ms1:
                 if ms_order == 2:
                     masses, intensity = rawfile.GetCentroidMassListFromScanNum(i)
-                    masses, intensity = get_most_abundant(masses, intensity, most_abundant)
+                    masses, intensity = get_most_abundant(masses, intensity, n_most_abundant)
                 else:
                     masses, intensity = rawfile.GetProfileMassListFromScanNum(i)
                     masses, intensity = centroid_data(masses, intensity)
@@ -58,7 +58,7 @@ def load_thermo_raw(raw_file, most_abundant, use_profile_ms1 = False, callback=N
             else:
                 masses, intensity = rawfile.GetCentroidMassListFromScanNum(i)
                 if ms_order == 2:
-                    masses, intensity = get_most_abundant(masses, intensity, most_abundant)
+                    masses, intensity = get_most_abundant(masses, intensity, n_most_abundant)
 
             scan_list.append(i)
             rt_list.append(rt)
@@ -125,7 +125,7 @@ def load_thermo_raw(raw_file, most_abundant, use_profile_ms1 = False, callback=N
     return query_data, acquisition_date_time
 
 # Cell
-def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
+def load_bruker_raw(raw_file, n_most_abundant, callback=None, **kwargs):
     """
     Load bruker raw file and extract spectra
     """
@@ -163,7 +163,7 @@ def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
 
         ms2_data = tdf.readPasefMsMs([key])
         masses, intensity = ms2_data[key]
-        masses, intensity = get_most_abundant(np.array(masses), np.array(intensity), most_abundant)
+        masses, intensity = get_most_abundant(np.array(masses), np.array(intensity), n_most_abundant)
         mass_list_ms2.append(masses)
         int_list_ms2.append(intensity)
         scan_list_ms2.append(key)
@@ -231,7 +231,7 @@ def extract_mzml_info(input_dict):
     return rt, masses, intensities, ms_order, prec_mass, mono_mz, charge
 
 
-def load_mzml_data(filename, most_abundant, callback=None, **kwargs):
+def load_mzml_data(filename, n_most_abundant, callback=None, **kwargs):
     """
     Read spectral data from an mzML file and return various lists separately for ms1 and ms2 data.
     """
@@ -274,7 +274,7 @@ def load_mzml_data(filename, most_abundant, callback=None, **kwargs):
             scan_list.append(i)
             rt, masses, intensities, ms_order, prec_mass, mono_mz, charge = extract_mzml_info(spec)
             if ms_order == 2:
-                masses, intensities = get_most_abundant(masses, intensities, most_abundant)
+                masses, intensities = get_most_abundant(masses, intensities, n_most_abundant)
             rt_list.append(rt)
             mass_list.append(masses)
             int_list.append(intensities)
@@ -926,7 +926,7 @@ class MS_Data_File(HDF_File): pass
 def import_raw_DDA_data(
     self:MS_Data_File,
     file_name:str,
-    most_abundant:int=-1,
+    n_most_abundant:int=-1,
     callback=None,
     query_data:dict=None,
     vendor:str=None
@@ -940,7 +940,7 @@ def import_raw_DDA_data(
     if query_data is None:
         query_data, vendor, acquisition_date_time = _read_DDA_query_data(
             file_name,
-            most_abundant=most_abundant,
+            n_most_abundant=n_most_abundant,
             callback=callback
         )
     self._save_DDA_query_data(query_data, vendor, acquisition_date_time)
@@ -948,7 +948,7 @@ def import_raw_DDA_data(
 
 def _read_DDA_query_data(
     file_name:str,
-    most_abundant:int=-1,
+    n_most_abundant:int=-1,
     callback=None
 ):
     base, ext = os.path.splitext(file_name)
@@ -964,7 +964,7 @@ def _read_DDA_query_data(
             logging.info(f'File {base} has extension {ext} - converting from {vendor}.')
             query_data, acquisition_date_time = load_thermo_raw(
                 file_name,
-                most_abundant,
+                n_most_abundant,
                 callback=callback,
             )
     elif ext.lower() == '.d':
@@ -972,14 +972,14 @@ def _read_DDA_query_data(
         logging.info(f'File {base} has extension {ext} - converting from {vendor}.')
         query_data, acquisition_date_time = load_bruker_raw(
             file_name,
-            most_abundant,
+            n_most_abundant,
             callback=callback,
         )
     elif ext.lower() == '.mzml':
         logging.info(f'File {base} has extension {ext} - converting from {ext[1:]}.')
         query_data, acquisition_date_time, vendor = load_mzml_data(
             file_name,
-            most_abundant,
+            n_most_abundant,
             callback=callback,
         )
     else:
@@ -1138,7 +1138,7 @@ def raw_conversion(to_process, callback = None, parallel=False):
             )
             ms_data_file.import_raw_DDA_data(
                 file_name,
-                most_abundant = settings["raw"]["most_abundant"]
+                n_most_abundant = settings["raw"]["n_most_abundant"]
             )
 
         logging.info(f'File conversion of file {file_name} complete.')

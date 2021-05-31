@@ -27,13 +27,13 @@ def transform(x, _, scaling_dict):
             raise NotImplementedError(f"Type {type_} not known.")
 
 
-def get_calibration(df, features, outlier_std = 3, n_neighbors = 100, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, callback = None, **kwargs):
+def get_calibration(df, features, outlier_std = 3, calib_n_neighbors = 100, calib_mz_range = 20, calib_rt_range = 0.5, calib_mob_range = 0.3, callback = None, **kwargs):
     """
     Calibration
 
     """
 
-    if len(df) > n_neighbors:
+    if len(df) > calib_n_neighbors:
         target = 'o_mass_ppm'
         cols = ['mz','rt']
 
@@ -41,9 +41,9 @@ def get_calibration(df, features, outlier_std = 3, n_neighbors = 100, ppm_range 
             cols += ['mobility']
 
         scaling_dict = {}
-        scaling_dict['mz'] = ('relative', ppm_range/1e6)
-        scaling_dict['rt'] = ('absolute', rt_range)
-        scaling_dict['mobility'] = ('relative', mob_range)
+        scaling_dict['mz'] = ('relative', calib_mz_range/1e6)
+        scaling_dict['rt'] = ('absolute', calib_rt_range)
+        scaling_dict['mobility'] = ('relative', calib_mob_range)
 
         # Remove outliers for calibration
         o_mass_std = np.abs(df['o_mass_ppm'].std())
@@ -62,7 +62,7 @@ def get_calibration(df, features, outlier_std = 3, n_neighbors = 100, ppm_range 
         for idx, _ in enumerate(df_sub[cols].columns):
             target_points[:, idx] = transform(target_points[:, idx], _, scaling_dict)
 
-        neigh = KNeighborsRegressor(n_neighbors=n_neighbors, weights = 'distance')
+        neigh = KNeighborsRegressor(calib_n_neighbors=calib_n_neighbors, weights = 'distance')
         neigh.fit(tree_points, df_sub[target].values)
 
         y_hat = neigh.predict(target_points)

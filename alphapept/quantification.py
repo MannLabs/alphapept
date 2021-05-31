@@ -469,7 +469,7 @@ def protein_profile_parallel(df, minimum_ratios, field, callback=None):
 
 def protein_profile_parallel_ap(settings, df, callback=None):
 
-    minimum_ratios = settings['quantification']['lfq_minimum_ratio']
+    minimum_ratios = settings['quantification']['lfq_ratio_min']
     field = settings['quantification']['mode']
 
     if field+'_dn' in df.columns:
