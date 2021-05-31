@@ -9,6 +9,7 @@ jobs:
   Pyinstaller:
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v2
       - name: Freezing code
         run: |
           conda deactivate
@@ -18,7 +19,6 @@ jobs:
     needs: [Pyinstaller]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Install package
       run: |
         conda activate alphapeptinstaller
@@ -29,7 +29,6 @@ jobs:
     needs: [Pyinstaller, Prepare_Environment_for_testing]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
         conda activate alphapeptinstaller
@@ -38,7 +37,6 @@ jobs:
     needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
         conda activate alphapeptinstaller
@@ -47,7 +45,6 @@ jobs:
     needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
         conda activate alphapeptinstaller
@@ -56,7 +53,6 @@ jobs:
     needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Run Alphapept on Bruker
       run: |
         conda activate alphapeptinstaller
@@ -65,7 +61,6 @@ jobs:
     needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Run Alphapept on PXD006109
       run: |
         conda activate alphapeptinstaller
@@ -74,7 +69,6 @@ jobs:
     needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Bruker_Win]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Run Alphapept on PXD010012
       run: |
         conda activate alphapeptinstaller
