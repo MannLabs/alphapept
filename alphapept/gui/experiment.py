@@ -6,7 +6,7 @@ from alphapept.paths import SETTINGS_TEMPLATE_PATH, QUEUE_PATH, DEFAULT_SETTINGS
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
 from alphapept.gui.utils import escape_markdown, files_in_folder
 
-# Dict to match workflow 
+# Dict to match workflow
 WORKFLOW_DICT = {}
 WORKFLOW_DICT['create_database'] = ['fasta']
 WORKFLOW_DICT['import_raw_data'] = ['raw']
@@ -149,7 +149,8 @@ def experiment():
         with st.spinner('Parsing folder'):
             raw_files, fasta_files, db_files = parse_folder(file_folder)
 
-            recorder['experiment']['fasta_paths'] = [os.path.join(file_folder, _) for _ in fasta_files]
+            fasta_files = [os.path.join(file_folder, _) for _ in fasta_files]
+
             recorder['experiment']['file_paths'] = [os.path.join(file_folder, _) for _ in raw_files]
 
             if len(raw_files) == 0:
@@ -160,13 +161,13 @@ def experiment():
                 with st.beta_expander(f"Raw files ({len(raw_files)})"):
                     st.table(pd.DataFrame(raw_files, columns=['File']))
 
-                if len(fasta_files) > 0:
-                    with st.beta_expander(f"FASTA files ({len(fasta_files)})"):
-                        st.table(pd.DataFrame(fasta_files, columns=['File']))
-                else:
-                    fasta_files_home_dir = files_in_folder(FASTA_PATH, '.fasta')
-                    selection = st.multiselect(f'Select FASTA files from {FASTA_PATH}', options=fasta_files_home_dir)
-                    recorder['experiment']['fasta_paths'] = [os.path.join(FASTA_PATH, _) for _ in selection]
+                fasta_files_home_dir = files_in_folder(FASTA_PATH, '.fasta')
+                fasta_files_home_dir = [os.path.join(FASTA_PATH, _) for _ in fasta_files_home_dir]
+                
+                fasta_files_home_dir += fasta_files
+
+                selection = st.multiselect(f'Select FASTA files', options=fasta_files_home_dir, default = fasta_files)
+                recorder['experiment']['fasta_paths'] = selection
 
                 #TODO: Include databse files
                 #if len(fasta_files) > 0:
@@ -211,6 +212,3 @@ def experiment():
 
                 st.write("## Submit experiment")
                 submit_experiment(recorder)
-
-
-
