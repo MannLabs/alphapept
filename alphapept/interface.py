@@ -36,6 +36,8 @@ def parallel_execute(settings, step, callback=None):
 
     to_process = [(i, settings) for i in range(n_files)]
 
+    failed = []
+
     if n_files == 1:
         if not step(to_process[0], callback=callback, parallel=True):
             failed.append(files[0])
