@@ -8,15 +8,23 @@ import datetime
 import yaml
 import psutil
 
+TIMEOUT = 100 #Wait a maximum of 100seconds
+
 def check_file_completion(file, minimum_file_size):
 
     to_analyze = []
 
     if file.endswith('.d'):
-        #Bruker
+        #Bruker: If file is being copied, check if analysis.tdf_bin exists
         to_check = os.path.join(file, 'analysis.tdf_bin')
+
+        elapsed = 0
         while not os.path.isfile(to_check):
             time.sleep(1)
+            elapsed +=1
+            if elapsed > TIMEOUT:
+                print('No analysis.tdf_bin found. Skipping file.')
+                return to_analyze
     else:
         to_check = file
 
@@ -24,7 +32,7 @@ def check_file_completion(file, minimum_file_size):
 
     writing = True
     while writing:
-        time.sleep(1)
+        time.sleep(5)
         new_filesize = os.path.getsize(to_check)
         if filesize == new_filesize:
             writing  = False
@@ -53,7 +61,7 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
     my_event_handler = PatternMatchingEventHandler(patterns, ignore_patterns, ignore_directories, case_sensitive)
 
     def on_created(event):
-        print(f"{event.src_path} has been created.")
+        print(f"New file {event.src_path} in folder.")
 
         file = event.src_path
 
@@ -62,7 +70,7 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
                 return
 
         if file.lower().endswith('.raw') or file.lower().endswith('.d'):
-            print(f"Checking {file}")
+            print(f"Checking if {file} is complete")
             files = check_file_completion(file, minimum_file_size)
 
             if len(files) > 0:
@@ -70,8 +78,14 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
                 settings['experiment']['file_paths'] = files
                 new_file = os.path.splitext(os.path.split(file)[1])[0] + '.yaml'
                 settings['experiment']['results_path'] = os.path.splitext(file)[0] + '.yaml'
-                save_settings(settings, os.path.join(QUEUE_PATH, new_file))
-                print(f'{datetime.datetime.now()} Added {file}')
+
+                queue_file = os.path.join(QUEUE_PATH, new_file)
+
+                if os.path.isfile(queue_file):
+                    print('File exists in Queue already. Skipping.')
+                else:
+                    save_settings(settings, queue_file)
+                    print(f'{datetime.datetime.now()} Added {file} as {queue_file}')
 
     print(f'{datetime.datetime.now()} file watcher started.')
 
