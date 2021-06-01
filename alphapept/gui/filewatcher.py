@@ -8,38 +8,42 @@ import datetime
 import yaml
 import psutil
 
-TIMEOUT = 100 #Wait a maximum of 100seconds
+def get_folder_size(start_path = '.'):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(start_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            # skip if it is symbolic link
+            if not os.path.islink(fp):
+                total_size += os.path.getsize(fp)
+    return total_size
 
 def check_file_completion(file, minimum_file_size):
 
     to_analyze = []
 
     if file.endswith('.d'):
-        #Bruker: If file is being copied, check if analysis.tdf_bin exists
-        to_check = os.path.join(file, 'analysis.tdf_bin')
-
-        elapsed = 0
-        while not os.path.isfile(to_check):
-            time.sleep(1)
-            elapsed +=1
-            if elapsed > TIMEOUT:
-                print('No analysis.tdf_bin found. Skipping file.')
-                return to_analyze
+        size_function = get_folder_size
     else:
-        to_check = file
+        size_function = os.path.getsize
 
-    filesize = os.path.getsize(to_check)
+    filesize = size_function(file)
 
     writing = True
     while writing:
         time.sleep(5)
-        new_filesize = os.path.getsize(to_check)
+        new_filesize = size_function(file)
         if filesize == new_filesize:
             writing  = False
         else:
             filesize = new_filesize
 
     if filesize/1024/1024 > minimum_file_size: #bytes, kbytes, mbytes
+        if file.endswith('.d'): #Check if required subfiles exist for bruker
+            for subfile in ['analysis.tdf_bin', 'analysis.tdf']:
+                if not os.path.isfile(os.path.join(file, subfile)):
+                    print(f'No {subfile} found. Skipping {file}.')
+                    return to_analyze
         to_analyze.append(file)
 
     return to_analyze
@@ -62,14 +66,23 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
 
     def on_created(event):
         print(f"New file {event.src_path} in folder.")
-
         file = event.src_path
 
         if tag != 'None':
             if tag not in file:
                 return
 
+        if os.path.split(file)[0].endswith('.d'):
+            file = os.path.split(file)[0]
+            print(f'File could belong to bruker file. Checking main folder {file}')
+            new_file = os.path.splitext(os.path.split(file)[1])[0] + '.yaml'
+            queue_file = os.path.join(QUEUE_PATH, new_file)
+            if os.path.isfile(queue_file):
+                print('File exists in queue already. Skipping.')
+                return
+
         if file.lower().endswith('.raw') or file.lower().endswith('.d'):
+
             print(f"Checking if {file} is complete")
             files = check_file_completion(file, minimum_file_size)
 
@@ -82,7 +95,7 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
                 queue_file = os.path.join(QUEUE_PATH, new_file)
 
                 if os.path.isfile(queue_file):
-                    print('File exists in Queue already. Skipping.')
+                    print('File exists in queue already. Skipping.')
                 else:
                     save_settings(settings, queue_file)
                     print(f'{datetime.datetime.now()} Added {file} as {queue_file}')
