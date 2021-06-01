@@ -168,6 +168,7 @@ class TestRun():
 
         start = time()
         if self.exe_path is not None: #call compiled exe file
+            settings = alphapept.interface.check_version_and_hardware(settings)
             dirname = os.path.dirname(settings['experiment']['results_path'])
             settings_path = os.path.join(dirname, '_.yaml')
             with open(settings_path, "w") as file:
