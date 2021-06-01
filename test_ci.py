@@ -93,7 +93,7 @@ class TestRun():
         self.run_mixed_analysis = None
         if os.path.isfile(EXE_PATH):
             self.exe_path = EXE_PATH
-            timestamp = datetime.fromtimestamp(os.path.getmtime(path_to_file))
+            timestamp = datetime.fromtimestamp(os.path.getmtime(EXE_PATH))
             logging.info(f'Using compiled exe from {timestamp}.')
         else:
             self.exe_path = None
