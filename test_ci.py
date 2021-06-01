@@ -180,7 +180,7 @@ class TestRun():
                 logging.info(line.decode('utf8'))
 
             base, ext = os.path.splitext(settings['experiment']['results_path'])
-            settings_path = os.path.join(base, '.yaml')
+            settings_path = base +'.yaml'
             settings = load_settings(settings_path)
         else:
             logging.info('Using Python version for testing')
