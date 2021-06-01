@@ -46,18 +46,18 @@ def parallel_execute(settings, step, callback=None):
             base, ext = os.path.splitext(files[0])
             if ext.lower() == '.d':
                 memory_available = psutil.virtual_memory().available/1024**3
-                n_processes = max(int(memory_available //25 )),1)
+                n_processes = max((int(memory_available //25 ),1))
                 logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}.')
             elif ext.lower() == '.raw':
                 memory_available = psutil.virtual_memory().available/1024**3
-                n_processes = max(int(memory_available //8 )), 1)
+                n_processes = max((int(memory_available //8 ), 1))
                 logging.info(f'Setting Process limit to {n_processes}')
             else:
                 raise NotImplementedError('File extension {} not understood.'.format(ext))
 
         if step.__name__ == 'search_db':
             memory_available = psutil.virtual_memory().available/1024**3
-            n_processes = max(int(memory_available //8 )), 1) # 8 gb per file: Todo: make this better
+            n_processes = max((int(memory_available //8 ), 1)) # 8 gb per file: Todo: make this better
             logging.info(f'Searching. Setting Process limit to {n_processes}.')
 
 
@@ -83,7 +83,7 @@ def parallel_execute(settings, step, callback=None):
         with alphapept.speed.AlphaPool(n_processes_) as p:
             for i, success in enumerate(p.imap(step, rerun)):
                 if success is not True:
-                    failed.append(files[rerun_map[i])
+                    failed.append(files[rerun_map[i]])
                     logging.error(f'Processing of {files[i]} for step {step.__name__} failed. Exception {success}')
 
                 if callback:
