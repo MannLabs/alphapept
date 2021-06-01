@@ -301,7 +301,7 @@ def train_RF(df,
              **kwargs):
 
 
-    if not getattr(sys, 'frozen', False):
+    if getattr(sys, 'frozen', False):
         logging.info('Using frozen pyinstaller version. Setting n_jobs to 1')
         n_jobs = 1
 
