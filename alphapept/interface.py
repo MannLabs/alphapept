@@ -612,6 +612,8 @@ def quantification(
 
             logging.info('LFQ complete.')
 
+            logging.info('Extracting protein_summary')
+
             protein_summary = pd.DataFrame(index = df['protein_group'].unique())
 
             for field in ['sequence','precursor']:
@@ -621,16 +623,15 @@ def quantification(
                 protein_summary.loc[m.index, m.columns] = m.values
 
             # Add intensity
-            new_cols = ['intensity ' + _[:-4] if _.endswith('_LFQ') else 'LFQ intensity '+_ for _ in protein_table.columns ]
+            new_cols = ['intensity ' + _ if not _.endswith('_LFQ') else 'LFQ intensity '+_[:-4] for _ in protein_table.columns ]
             protein_summary.loc[protein_table.index, new_cols] = protein_table.values
-            protein_summary.to_csv(base+'_protein_summary.csv')
-            logging.info(f'Saved df of length {len(df):,} saved to {base}')
+            ps_out = base+'_protein_summary.csv'
+            protein_summary.to_csv(ps_out)
+            logging.info(f'Saved protein_summary of length {len(protein_summary):,} saved to {ps_out}')
 
             #protein summary
-            protein_Summary.to_hdf(
-            settings['experiment']['results_path'],
-            'protein_Summary'
-                )
+            protein_summary.to_hdf(
+            settings['experiment']['results_path'],'protein_summary')
 
 
     if len(df) > 0:
