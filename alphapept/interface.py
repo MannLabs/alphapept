@@ -612,12 +612,34 @@ def quantification(
 
             logging.info('LFQ complete.')
 
+            protein_summary = pd.DataFrame(index = df['protein_group'].unique())
+
+            for field in ['sequence','precursor']:
+                col_ = 'n_'+ field+' '
+                m = df.groupby(['protein_group','filename'])[field].count().unstack()
+                m.columns = [col_ +_ for _ in m.columns]
+                protein_summary.loc[m.index, m.columns] = m.values
+
+            # Add intensity
+            new_cols = ['intensity ' + _[:-4] if _.endswith('_LFQ') else 'LFQ intensity '+_ for _ in protein_table.columns ]
+            protein_summary.loc[protein_table.index, new_cols] = protein_table.values
+            protein_summary.to_csv(base+'_protein_summary.csv')
+            logging.info(f'Saved df of length {len(df):,} saved to {base}')
+
+            #protein summary
+            protein_Summary.to_hdf(
+            settings['experiment']['results_path'],
+            'protein_Summary'
+                )
+
+
     if len(df) > 0:
         logging.info('Exporting as csv.')
         results_path = settings['experiment']['results_path']
         base, ext = os.path.splitext(results_path)
         df.to_csv(base+'.csv')
         logging.info(f'Saved df of length {len(df):,} saved to {base}')
+
     else:
         logging.info(f"No Proteins found.")
 
