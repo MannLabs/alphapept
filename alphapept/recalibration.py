@@ -62,7 +62,7 @@ def get_calibration(df, features, outlier_std = 3, calib_n_neighbors = 100, cali
         for idx, _ in enumerate(df_sub[cols].columns):
             target_points[:, idx] = transform(target_points[:, idx], _, scaling_dict)
 
-        neigh = KNeighborsRegressor(calib_n_neighbors=calib_n_neighbors, weights = 'distance')
+        neigh = KNeighborsRegressor(n_neighbors=calib_n_neighbors, weights = 'distance')
         neigh.fit(tree_points, df_sub[target].values)
 
         y_hat = neigh.predict(target_points)
