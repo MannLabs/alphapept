@@ -19,7 +19,6 @@ import numpy as np
 import psutil
 
 def parallel_execute(settings, step, callback=None):
-
     """
     Generic function to parallel execute worklow steps on a file basis
 
