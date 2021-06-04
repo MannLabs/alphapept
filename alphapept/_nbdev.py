@@ -88,7 +88,6 @@ index = {"print_settings": "00_settings.ipynb",
          "find_path_start": "04_feature_finding.ipynb",
          "find_path_length": "04_feature_finding.ipynb",
          "fill_path_matrix": "04_feature_finding.ipynb",
-         "convert_to_coord_path": "04_feature_finding.ipynb",
          "find_centroid_connections": "04_feature_finding.ipynb",
          "get_hills": "04_feature_finding.ipynb",
          "connect_centroids": "04_feature_finding.ipynb",
@@ -262,7 +261,16 @@ index = {"print_settings": "00_settings.ipynb",
          "numba": "12_speed.ipynb",
          "jit_fun": "12_speed.ipynb",
          "jit_fun_gpu": "12_speed.ipynb",
-         "speed_mode": "12_speed.ipynb"}
+         "speed_mode": "12_speed.ipynb",
+         "COMPILATION_MODE_OPTIONS": "13_performance.ipynb",
+         "is_valid_compilation_mode": "13_performance.ipynb",
+         "set_worker_count": "13_performance.ipynb",
+         "MAX_WORKER_COUNT": "13_performance.ipynb",
+         "set_compilation_mode": "13_performance.ipynb",
+         "compile_function": "13_performance.ipynb",
+         "__copy_func": "13_performance.ipynb",
+         "DYNAMIC_COMPILATION_ENABLED": "13_performance.ipynb",
+         "performance_function": "13_performance.ipynb"}
 
 modules = ["settings.py",
            "chem.py",
@@ -276,7 +284,8 @@ modules = ["settings.py",
            "matching.py",
            "constants.py",
            "interface.py",
-           "speed.py"]
+           "speed.py",
+           "performance.py"]
 
 doc_url = "https://mannlabs.github.io/alphapept/"
 
