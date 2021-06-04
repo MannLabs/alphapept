@@ -61,7 +61,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Connecting-Centroids-to-Hills">Connecting Centroids to Hills<a class="anchor-link" href="#Connecting-Centroids-to-Hills"> </a></h2><h3 id="Connecting-Centroids">Connecting Centroids<a class="anchor-link" href="#Connecting-Centroids"> </a></h3><p>In this step, we search for centroids that are connected (i.e., within a specific mass difference) over time. The connected centroids are termed hills. As we have a list of centroid lists, we ideally would have a list of tuples with indices to the centroids that describe the connected hills.</p>
-<h4 id="Pairs-of-Centroids">Pairs of Centroids<a class="anchor-link" href="#Pairs-of-Centroids"> </a></h4><p>First, we define the function <code>get_pairs_centroids</code> that checks two lists of centroids and checks for pairs of centroids. As the masses in the centroid lists are sorted, we can loop through the centroids with two indices and compare the mass difference. If the mass difference is within the defined threshold, <code>ppm_tol</code> (default is 7ppm), we have found ourselves a pair. If no match is found, we can advance either index, depending on whether the mass difference is positive or negative. A pair is a <code>tuple</code> containing the index to the first centroid list <code>i</code> and the second centroid list <code>j</code> as well as the difference in ppm <code>delta</code>. We add all found pairs to a list termed <code>pairs</code>.</p>
+<h4 id="Pairs-of-Centroids">Pairs of Centroids<a class="anchor-link" href="#Pairs-of-Centroids"> </a></h4><p>First, we define the function <code>get_pairs_centroids</code> that checks two lists of centroids and checks for pairs of centroids. As the masses in the centroid lists are sorted, we can loop through the centroids with two indices and compare the mass difference. If the mass difference is within the defined threshold, <code>centroid_tol</code> (default is 7ppm), we have found ourselves a pair. If no match is found, we can advance either index, depending on whether the mass difference is positive or negative. A pair is a <code>tuple</code> containing the index to the first centroid list <code>i</code> and the second centroid list <code>j</code> as well as the difference in ppm <code>delta</code>. We add all found pairs to a list termed <code>pairs</code>.</p>
 
 </div>
 </div>
@@ -77,7 +77,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="connect_centroids_unidirection" class="doc_header"><code>connect_centroids_unidirection</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L20" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>connect_centroids_unidirection</code>(<strong><code>idx</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>connections</code></strong>, <strong><code>scores</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>, <strong><code>ppm_tol</code></strong>)</p>
+<h4 id="connect_centroids_unidirection" class="doc_header"><code>connect_centroids_unidirection</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L20" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>connect_centroids_unidirection</code>(<strong><code>idx</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>connections</code></strong>, <strong><code>scores</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>, <strong><code>centroid_tol</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -339,7 +339,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="find_centroid_connections" class="doc_header"><code>find_centroid_connections</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L160" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_centroid_connections</code>(<strong><code>rowwise_peaks</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>ppm_tol</code></strong>=<em><code>8</code></em>)</p>
+<h4 id="find_centroid_connections" class="doc_header"><code>find_centroid_connections</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L160" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_centroid_connections</code>(<strong><code>rowwise_peaks</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>centroid_tol</code></strong>=<em><code>8</code></em>)</p>
 </blockquote>
 
 </div>
@@ -370,7 +370,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_hills" class="doc_header"><code>get_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L194" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hills</code>(<strong><code>centroids</code></strong>, <strong><code>from_idx</code></strong>, <strong><code>to_idx</code></strong>, <strong><code>min_hill_length</code></strong>=<em><code>3</code></em>)</p>
+<h4 id="get_hills" class="doc_header"><code>get_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L194" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hills</code>(<strong><code>centroids</code></strong>, <strong><code>from_idx</code></strong>, <strong><code>to_idx</code></strong>, <strong><code>hill_length_min</code></strong>=<em><code>3</code></em>)</p>
 </blockquote>
 
 </div>
@@ -401,7 +401,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="connect_centroids" class="doc_header"><code>connect_centroids</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L226" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>connect_centroids</code>(<strong><code>rowwise_peaks</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>ppm_tol</code></strong>=<em><code>8</code></em>)</p>
+<h4 id="connect_centroids" class="doc_header"><code>connect_centroids</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L226" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>connect_centroids</code>(<strong><code>rowwise_peaks</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>centroid_tol</code></strong>=<em><code>8</code></em>)</p>
 </blockquote>
 
 </div>
@@ -432,7 +432,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_hills" class="doc_header"><code>extract_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L256" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_hills</code>(<strong><code>query_data</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>ppm_tol</code></strong>=<em><code>8</code></em>)</p>
+<h4 id="extract_hills" class="doc_header"><code>extract_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L256" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_hills</code>(<strong><code>query_data</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>centroid_tol</code></strong>=<em><code>8</code></em>)</p>
 </blockquote>
 
 </div>
@@ -454,7 +454,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Hill-Splitting">Hill Splitting<a class="anchor-link" href="#Hill-Splitting"> </a></h3><p>When having a hill with two or more maxima, we would like to split it at the minimum position. For this, we use a recursive approach. First, the minimum of a hill is detected. A hill is split at this minimum if the smaller of the surrounding maxima is at least the factor <code>split_level</code> larger than the minimum. For each split, the process is repeated.</p>
+<h3 id="Hill-Splitting">Hill Splitting<a class="anchor-link" href="#Hill-Splitting"> </a></h3><p>When having a hill with two or more maxima, we would like to split it at the minimum position. For this, we use a recursive approach. First, the minimum of a hill is detected. A hill is split at this minimum if the smaller of the surrounding maxima is at least the factor <code>hill_split_level</code> larger than the minimum. For each split, the process is repeated.</p>
 
 </div>
 </div>
@@ -494,7 +494,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="split" class="doc_header"><code>split</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L303" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split</code>(<strong><code>idx</code></strong>, <strong><code>hill_ptrs_range</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>int_data</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>splits</code></strong>, <strong><code>split_level</code></strong>, <strong><code>window</code></strong>)</p>
+<h4 id="split" class="doc_header"><code>split</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L303" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split</code>(<strong><code>idx</code></strong>, <strong><code>hill_ptrs_range</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>int_data</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>splits</code></strong>, <strong><code>hill_split_level</code></strong>, <strong><code>window</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -518,7 +518,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="split_hills" class="doc_header"><code>split_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L350" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split_hills</code>(<strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>split_level</code></strong>, <strong><code>window</code></strong>)</p>
+<h4 id="split_hills" class="doc_header"><code>split_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L350" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split_hills</code>(<strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>hill_split_level</code></strong>, <strong><code>window</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -556,7 +556,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_large_hills" class="doc_header"><code>check_large_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L369" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_large_hills</code>(<strong><code>idx</code></strong>, <strong><code>large_peaks</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>to_remove</code></strong>, <strong><code>large_peak</code></strong>=<em><code>40</code></em>, <strong><code>hill_peak_factor</code></strong>=<em><code>2</code></em>, <strong><code>window</code></strong>=<em><code>1</code></em>)</p>
+<h4 id="check_large_hills" class="doc_header"><code>check_large_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L369" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_large_hills</code>(<strong><code>idx</code></strong>, <strong><code>large_peaks</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>to_remove</code></strong>, <strong><code>hill_check_large</code></strong>=<em><code>40</code></em>, <strong><code>hill_peak_factor</code></strong>=<em><code>2</code></em>, <strong><code>window</code></strong>=<em><code>1</code></em>)</p>
 </blockquote>
 
 </div>
@@ -580,7 +580,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="filter_hills" class="doc_header"><code>filter_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L403" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_hills</code>(<strong><code>hill_data</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>int_data</code></strong>, <strong><code>large_peak</code></strong>=<em><code>40</code></em>, <strong><code>window</code></strong>=<em><code>1</code></em>)</p>
+<h4 id="filter_hills" class="doc_header"><code>filter_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L403" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_hills</code>(<strong><code>hill_data</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>int_data</code></strong>, <strong><code>hill_check_large</code></strong>=<em><code>40</code></em>, <strong><code>window</code></strong>=<em><code>1</code></em>)</p>
 </blockquote>
 
 </div>
@@ -699,7 +699,7 @@ $$\left | \Delta m-\frac{\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_isotope_pattern" class="doc_header"><code>check_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L510" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_isotope_pattern</code>(<strong><code>mass1</code></strong>, <strong><code>mass2</code></strong>, <strong><code>delta_mass1</code></strong>, <strong><code>delta_mass2</code></strong>, <strong><code>charge</code></strong>, <strong><code>mass_range</code></strong>=<em><code>5</code></em>)</p>
+<h4 id="check_isotope_pattern" class="doc_header"><code>check_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L510" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_isotope_pattern</code>(<strong><code>mass1</code></strong>, <strong><code>mass2</code></strong>, <strong><code>delta_mass1</code></strong>, <strong><code>delta_mass2</code></strong>, <strong><code>charge</code></strong>, <strong><code>iso_mass_range</code></strong>=<em><code>5</code></em>)</p>
 </blockquote>
 <p>Check if two masses could belong to the same isotope pattern</p>
 
@@ -828,7 +828,7 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_edge" class="doc_header"><code>extract_edge</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L554" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_edge</code>(<strong><code>stats</code></strong>, <strong><code>idxs_upper</code></strong>, <strong><code>runner</code></strong>, <strong><code>max_index</code></strong>, <strong><code>maximum_offset</code></strong>, <strong><code>min_charge</code></strong>=<em><code>1</code></em>, <strong><code>max_charge</code></strong>=<em><code>6</code></em>, <strong><code>mass_range</code></strong>=<em><code>5</code></em>)</p>
+<h4 id="extract_edge" class="doc_header"><code>extract_edge</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L554" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_edge</code>(<strong><code>stats</code></strong>, <strong><code>idxs_upper</code></strong>, <strong><code>runner</code></strong>, <strong><code>max_index</code></strong>, <strong><code>maximum_offset</code></strong>, <strong><code>iso_charge_min</code></strong>=<em><code>1</code></em>, <strong><code>iso_charge_max</code></strong>=<em><code>6</code></em>, <strong><code>iso_mass_range</code></strong>=<em><code>5</code></em>)</p>
 </blockquote>
 
 </div>
@@ -883,7 +883,7 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_pre_isotope_patterns" class="doc_header"><code>get_pre_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L601" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_pre_isotope_patterns</code>(<strong><code>stats</code></strong>, <strong><code>idxs_upper</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>maximum_offset</code></strong>, <strong><code>min_charge</code></strong>=<em><code>1</code></em>, <strong><code>max_charge</code></strong>=<em><code>6</code></em>, <strong><code>mass_range</code></strong>=<em><code>5</code></em>, <strong><code>cc_cutoff</code></strong>=<em><code>0.6</code></em>)</p>
+<h4 id="get_pre_isotope_patterns" class="doc_header"><code>get_pre_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L601" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_pre_isotope_patterns</code>(<strong><code>stats</code></strong>, <strong><code>idxs_upper</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>maximum_offset</code></strong>, <strong><code>iso_charge_min</code></strong>=<em><code>1</code></em>, <strong><code>iso_charge_max</code></strong>=<em><code>6</code></em>, <strong><code>iso_mass_range</code></strong>=<em><code>5</code></em>, <strong><code>cc_cutoff</code></strong>=<em><code>0.6</code></em>)</p>
 </blockquote>
 
 </div>
@@ -927,7 +927,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_isotope_pattern_directed" class="doc_header"><code>check_isotope_pattern_directed</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L627" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_isotope_pattern_directed</code>(<strong><code>mass1</code></strong>, <strong><code>mass2</code></strong>, <strong><code>delta_mass1</code></strong>, <strong><code>delta_mass2</code></strong>, <strong><code>charge</code></strong>, <strong><code>index</code></strong>, <strong><code>mass_range</code></strong>)</p>
+<h4 id="check_isotope_pattern_directed" class="doc_header"><code>check_isotope_pattern_directed</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L627" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_isotope_pattern_directed</code>(<strong><code>mass1</code></strong>, <strong><code>mass2</code></strong>, <strong><code>delta_mass1</code></strong>, <strong><code>delta_mass2</code></strong>, <strong><code>charge</code></strong>, <strong><code>index</code></strong>, <strong><code>iso_mass_range</code></strong>)</p>
 </blockquote>
 <p>Check if two masses could belong to the same isotope pattern</p>
 
@@ -952,7 +952,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="grow" class="doc_header"><code>grow</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L642" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>grow</code>(<strong><code>trail</code></strong>, <strong><code>seed</code></strong>, <strong><code>direction</code></strong>, <strong><code>relative_pos</code></strong>, <strong><code>index</code></strong>, <strong><code>stats</code></strong>, <strong><code>pattern</code></strong>, <strong><code>charge</code></strong>, <strong><code>mass_range</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
+<h4 id="grow" class="doc_header"><code>grow</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L642" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>grow</code>(<strong><code>trail</code></strong>, <strong><code>seed</code></strong>, <strong><code>direction</code></strong>, <strong><code>relative_pos</code></strong>, <strong><code>index</code></strong>, <strong><code>stats</code></strong>, <strong><code>pattern</code></strong>, <strong><code>charge</code></strong>, <strong><code>iso_mass_range</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
 </blockquote>
 <p>Grows isotope pattern based on a seed and direction</p>
 
@@ -977,7 +977,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="grow_trail" class="doc_header"><code>grow_trail</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L703" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>grow_trail</code>(<strong><code>seed</code></strong>, <strong><code>pattern</code></strong>, <strong><code>stats</code></strong>, <strong><code>charge</code></strong>, <strong><code>mass_range</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
+<h4 id="grow_trail" class="doc_header"><code>grow_trail</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L703" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>grow_trail</code>(<strong><code>seed</code></strong>, <strong><code>pattern</code></strong>, <strong><code>stats</code></strong>, <strong><code>charge</code></strong>, <strong><code>iso_mass_range</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
 </blockquote>
 <p>Wrapper to grow an isotope pattern to the left and right side</p>
 
@@ -1002,7 +1002,7 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_trails" class="doc_header"><code>get_trails</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L717" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_trails</code>(<strong><code>seed</code></strong>, <strong><code>pattern</code></strong>, <strong><code>stats</code></strong>, <strong><code>charge_range</code></strong>, <strong><code>mass_range</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
+<h4 id="get_trails" class="doc_header"><code>get_trails</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L717" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_trails</code>(<strong><code>seed</code></strong>, <strong><code>pattern</code></strong>, <strong><code>stats</code></strong>, <strong><code>charge_range</code></strong>, <strong><code>iso_mass_range</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
 </blockquote>
 <p>Wrapper to extract trails for a given charge range</p>
 
@@ -1421,7 +1421,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="isolate_isotope_pattern" class="doc_header"><code>isolate_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L992" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>isolate_isotope_pattern</code>(<strong><code>pre_pattern</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>mass_range</code></strong>, <strong><code>charge_range</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>seed_masses</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
+<h4 id="isolate_isotope_pattern" class="doc_header"><code>isolate_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L992" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>isolate_isotope_pattern</code>(<strong><code>pre_pattern</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>iso_mass_range</code></strong>, <strong><code>charge_range</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>iso_n_seeds</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
 </blockquote>
 <p>Isolate isotope patterns</p>
 
@@ -1530,7 +1530,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_isotope_patterns" class="doc_header"><code>get_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1046" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isotope_patterns</code>(<strong><code>pre_isotope_patterns</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>min_charge</code></strong>=<em><code>1</code></em>, <strong><code>max_charge</code></strong>=<em><code>6</code></em>, <strong><code>mass_range</code></strong>=<em><code>5</code></em>, <strong><code>seed_masses</code></strong>=<em><code>100</code></em>, <strong><code>cc_cutoff</code></strong>=<em><code>0.6</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="get_isotope_patterns" class="doc_header"><code>get_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1046" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isotope_patterns</code>(<strong><code>pre_isotope_patterns</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>iso_charge_min</code></strong>=<em><code>1</code></em>, <strong><code>iso_charge_max</code></strong>=<em><code>6</code></em>, <strong><code>iso_mass_range</code></strong>=<em><code>5</code></em>, <strong><code>iso_n_seeds</code></strong>=<em><code>100</code></em>, <strong><code>cc_cutoff</code></strong>=<em><code>0.6</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Wrapper function to iterate over pre_isotope_patterns</p>
 
@@ -1804,7 +1804,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="map_ms2" class="doc_header"><code>map_ms2</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1591" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_ms2</code>(<strong><code>feature_table</code></strong>, <strong><code>query_data</code></strong>, <strong><code>ppm_range</code></strong>=<em><code>20</code></em>, <strong><code>rt_range</code></strong>=<em><code>0.5</code></em>, <strong><code>mob_range</code></strong>=<em><code>0.3</code></em>, <strong><code>n_neighbors</code></strong>=<em><code>5</code></em>, <strong><code>search_unidentified</code></strong>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="map_ms2" class="doc_header"><code>map_ms2</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1591" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_ms2</code>(<strong><code>feature_table</code></strong>, <strong><code>query_data</code></strong>, <strong><code>calib_mz_range</code></strong>=<em><code>20</code></em>, <strong><code>rt_range</code></strong>=<em><code>0.5</code></em>, <strong><code>calib_mob_range</code></strong>=<em><code>0.3</code></em>, <strong><code>calib_n_neighbors</code></strong>=<em><code>5</code></em>, <strong><code>search_unidentified</code></strong>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Map MS1 features to MS2 based on rt and mz
 if ccs is included also add</p>

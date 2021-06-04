@@ -267,8 +267,8 @@ def match_datasets(settings, callback = None):
 
         std_range = np.nanmedian(std_.values, axis=0)
 
-        min_match_p = settings['matching']['min_match_p']
-        min_match_d = settings['matching']['min_match_d']
+        match_p_min = settings['matching']['match_p_min']
+        match_d_min = settings['matching']['match_d_min']
 
         filenames = settings['experiment']['file_paths']
 
@@ -311,21 +311,21 @@ def match_datasets(settings, callback = None):
             for _ in extra_cols:
                 matched[_] = grouped.loc[matching_set, _].values
 
-            to_keep = dist < min_match_d
+            to_keep = dist < match_d_min
 
             matched = matched[to_keep]
 
             ref = grouped.loc[matching_set][alignment_cols][to_keep]
             sigma = std_.loc[matching_set][to_keep]
 
-            logging.info(f'{len(matched):,} possible features for matching based on distance of {min_match_d}')
+            logging.info(f'{len(matched):,} possible features for matching based on distance of {match_d_min}')
 
             matched['matching_p'] = [get_probability(matched[alignment_cols], ref, sigma, i) for i in range(len(matched))]
             matched['precursor'] = grouped.loc[matching_set][to_keep].index.values
 
-            matched = matched[matched['matching_p']< min_match_p]
+            matched = matched[matched['matching_p']< match_p_min]
 
-            logging.info(f'{len(matched):,} possible features for matching based on probability of {min_match_p}')
+            logging.info(f'{len(matched):,} possible features for matching based on probability of {match_p_min}')
 
             matched['type'] = 'matched'
 

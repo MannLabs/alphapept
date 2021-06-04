@@ -93,6 +93,8 @@ class TestRun():
         self.run_mixed_analysis = None
         if os.path.isfile(EXE_PATH):
             self.exe_path = EXE_PATH
+            timestamp = datetime.fromtimestamp(os.path.getmtime(EXE_PATH))
+            logging.info(f'Using compiled exe from {timestamp}.')
         else:
             self.exe_path = None
 
@@ -166,6 +168,7 @@ class TestRun():
 
         start = time()
         if self.exe_path is not None: #call compiled exe file
+            settings = alphapept.interface.check_version_and_hardware(settings)
             dirname = os.path.dirname(settings['experiment']['results_path'])
             settings_path = os.path.join(dirname, '_.yaml')
             with open(settings_path, "w") as file:
@@ -177,9 +180,10 @@ class TestRun():
                 logging.info(line.decode('utf8'))
 
             base, ext = os.path.splitext(settings['experiment']['results_path'])
-            settings_path = os.path.join(base, '.yaml')
+            settings_path = base +'.yaml'
             settings = load_settings(settings_path)
         else:
+            logging.info('Using Python version for testing')
             settings = alphapept.interface.run_complete_workflow(settings)
         end = time()
 
@@ -300,6 +304,10 @@ def main(runtype = None, password = None, new_files = True):
             runtype = sys.argv[2]
             password = None
 
+        elif len(sys.argv) == 2:
+            tmp_folder = os.path.join(os.getcwd(),'sandbox/temp/')
+            runtype = sys.argv[1]
+            password = None
         else:
             tmp_folder = sys.argv[1]
             runtype = sys.argv[2]

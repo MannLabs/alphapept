@@ -34,9 +34,9 @@ def parallel_execute(settings, step, callback=None):
     if 'failed' not in settings:
         settings['failed'] = {}
 
-    failed = []
-
     to_process = [(i, settings) for i in range(n_files)]
+
+    failed = []
 
     if n_files == 1:
         if not step(to_process[0], callback=callback, parallel=True):
@@ -48,24 +48,44 @@ def parallel_execute(settings, step, callback=None):
             base, ext = os.path.splitext(files[0])
             if ext.lower() == '.d':
                 memory_available = psutil.virtual_memory().available/1024**3
-                n_processes = np.max([int(np.floor(memory_available/25)),1])
+                n_processes = max((int(memory_available //25 ),1))
                 logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}.')
             elif ext.lower() == '.raw':
                 memory_available = psutil.virtual_memory().available/1024**3
-                n_processes = np.max([int(np.floor(memory_available/8)),1]) #8 Gb per File
+                n_processes = max((int(memory_available //8 ), 1))
                 logging.info(f'Setting Process limit to {n_processes}')
             else:
                 raise NotImplementedError('File extension {} not understood.'.format(ext))
 
         if step.__name__ == 'search_db':
             memory_available = psutil.virtual_memory().available/1024**3
-            n_processes = np.max([int(np.floor(memory_available/6)),1]) # 8 gb per file: Todo: make this better
+            n_processes = max((int(memory_available //8 ), 1)) # 8 gb per file: Todo: make this better
             logging.info(f'Searching. Setting Process limit to {n_processes}.')
 
+
+        failed = []
+        rerun = []
+        rerun_map = {}
         with alphapept.speed.AlphaPool(n_processes) as p:
             for i, success in enumerate(p.imap(step, to_process)):
                 if success is not True:
-                    failed.append(files[i])
+                    failed.append((i, files[i]))
+                    logging.error(f'Processing of {files[i]} for step {step.__name__} failed. Exception {success}')
+                    rerun_map[len(rerun)] = i
+                    rerun.append(to_process[i])
+
+                if callback:
+                    callback((i+1)/n_files)
+
+        ## Retry failed with more memory
+        n_processes_ = max((1, int(n_processes // 2)))
+        logging.info(f'Attempting to rerun failed runs with {n_processes_} processes')
+
+        failed = []
+        with alphapept.speed.AlphaPool(n_processes_) as p:
+            for i, success in enumerate(p.imap(step, rerun)):
+                if success is not True:
+                    failed.append(files[rerun_map[i]])
                     logging.error(f'Processing of {files[i]} for step {step.__name__} failed. Exception {success}')
 
                 if callback:
@@ -170,10 +190,10 @@ def create_database(
                     'File {} not found'.format(fasta_file)
                 )
 
-        max_fasta_size = settings['fasta']['max_fasta_size']
+        fasta_size_max = settings['fasta']['fasta_size_max']
 
-        if total_fasta_size >= max_fasta_size:
-            logging.info(f'Total FASTA size {total_fasta_size:.2f} is larger than the set maximum size of {max_fasta_size:.2f} Mb')
+        if total_fasta_size >= fasta_size_max:
+            logging.info(f'Total FASTA size {total_fasta_size:.2f} is larger than the set maximum size of {fasta_size_max:.2f} Mb')
 
             settings['experiment']['database_path'] = None
 
@@ -592,12 +612,35 @@ def quantification(
 
             logging.info('LFQ complete.')
 
+            logging.info('Extracting protein_summary')
+
+            protein_summary = pd.DataFrame(index = df['protein_group'].unique())
+
+            for field in ['sequence','precursor']:
+                col_ = 'n_'+ field+' '
+                m = df.groupby(['protein_group','filename'])[field].count().unstack()
+                m.columns = [col_ +_ for _ in m.columns]
+                protein_summary.loc[m.index, m.columns] = m.values
+
+            # Add intensity
+            new_cols = ['intensity ' + _ if not _.endswith('_LFQ') else 'LFQ intensity '+_[:-4] for _ in protein_table.columns ]
+            protein_summary.loc[protein_table.index, new_cols] = protein_table.values
+            ps_out = base+'_protein_summary.csv'
+            protein_summary.to_csv(ps_out)
+            logging.info(f'Saved protein_summary of length {len(protein_summary):,} saved to {ps_out}')
+
+            #protein summary
+            protein_summary.to_hdf(
+            settings['experiment']['results_path'],'protein_summary')
+
+
     if len(df) > 0:
         logging.info('Exporting as csv.')
         results_path = settings['experiment']['results_path']
         base, ext = os.path.splitext(results_path)
         df.to_csv(base+'.csv')
         logging.info(f'Saved df of length {len(df):,} saved to {base}')
+
     else:
         logging.info(f"No Proteins found.")
 

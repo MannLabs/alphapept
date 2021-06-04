@@ -74,7 +74,8 @@ else:
 
 
 hidden_imports = [h for h in hidden_imports if "__pycache__" not in h]
-datas = [d for d in datas if "__pycache__" not in d[0]]
+
+datas = [d for d in datas if ("__pycache__" not in d[0]) and (d[1] not in [".", "build","dist","Output"])]
 
 if sys.platform[:5] == "win32":
 	base_path = os.path.dirname(sys.executable)

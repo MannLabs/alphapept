@@ -258,6 +258,7 @@ def score_psms(df, score = 'y_hits', fdr_level = 0.01, plot = True, **kwargs):
 
 import numpy as np
 import pandas as pd
+import sys
 
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
@@ -298,6 +299,11 @@ def train_RF(df,
              plot = False,
              random_state = 42,
              **kwargs):
+
+
+    if getattr(sys, 'frozen', False):
+        logging.info('Using frozen pyinstaller version. Setting n_jobs to 1')
+        n_jobs = 1
 
     features = [_ for _ in df.columns if _ not in exclude_features]
 
