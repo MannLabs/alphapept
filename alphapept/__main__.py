@@ -8,7 +8,6 @@ from .__version__ import URL
 
 def main():
     try:
-        import quaputzi
         import alphapept.interface
         alphapept.interface.run_cli()
     except Exception as e:
