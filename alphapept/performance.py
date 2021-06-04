@@ -68,6 +68,13 @@ def is_valid_compilation_mode(compilation_mode: str) -> None:
 
 # Cell
 
+if __GPU_AVAILABLE:
+    COMPILATION_MODE = "cuda"
+else:
+    COMPILATION_MODE = "numba-multithread"
+
+# Cell
+
 MAX_WORKER_COUNT = psutil.cpu_count()
 
 def set_worker_count(worker_count: int = 1, set_global: bool = True) -> int:
