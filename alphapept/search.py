@@ -102,9 +102,9 @@ def compare_spectrum(query_idx, idxs_lower, idxs_higher, query_indices, query_fr
     score[query_idx, 0:len_] = [_[0] for _ in matches[:len_]]
 
 
-from .speed import parallel_compiled_func
+import alphapept.performance
 
-@parallel_compiled_func(cpu_only=True)
+@alphapept.performance.performance_function(compilation_mode="numba-multithread")
 def compare_spectrum_parallel(query_idx, query_masses, idxs_lower, idxs_higher, query_indices, query_frags, query_ints, db_indices, db_frags, best_hits, score, frag_tol, ppm):
     """
     Compares a spectrum and writes to best_his, score array
@@ -263,7 +263,7 @@ def get_psms(
             if callback is not None:
                 callback((query_idx+1)/n_queries)
 
-    compare_spectrum_parallel(np.arange(n_queries), idxs_lower, idxs_higher, query_indices, query_frags, query_ints, db_indices, db_frags, best_hits, score, frag_tol, ppm)
+    compare_spectrum_parallel(np.arange(n_queries), np.arange(n_queries), idxs_lower, idxs_higher, query_indices, query_frags, query_ints, db_indices, db_frags, best_hits, score, frag_tol, ppm)
 
     query_idx, db_idx_ = np.where(score > min_frag_hits)
     db_idx = best_hits[query_idx, db_idx_]

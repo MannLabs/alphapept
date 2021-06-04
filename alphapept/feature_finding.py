@@ -7,17 +7,17 @@ __all__ = ['connect_centroids_unidirection', 'convert_connections_to_array', 'el
            'check_isotope_pattern', 'DELTA_M', 'DELTA_S', 'maximum_offset', 'correlate', 'extract_edge',
            'edge_correlation', 'get_pre_isotope_patterns', 'check_isotope_pattern_directed', 'grow', 'grow_trail',
            'get_trails', 'plot_pattern', 'get_minpos', 'get_local_minima', 'is_local_minima', 'truncate',
-           'check_averagine', 'pattern_to_mz', 'cosine_averagine', 'int_list_to_array', 'mz_to_mass', 'get_minpos',
-           'get_local_minima', 'is_local_minima', 'truncate', 'M_PROTON', 'isolate_isotope_pattern',
-           'get_isotope_patterns', 'report_', 'feature_finder_report', 'plot_isotope_pattern', 'extract_bruker',
-           'convert_bruker', 'map_bruker', 'find_features', 'replace_infs', 'map_ms2']
+           'check_averagine', 'pattern_to_mz', 'cosine_averagine', 'int_list_to_array', 'mz_to_mass', 'M_PROTON',
+           'isolate_isotope_pattern', 'get_isotope_patterns', 'report_', 'feature_finder_report',
+           'plot_isotope_pattern', 'extract_bruker', 'convert_bruker', 'map_bruker', 'find_features', 'replace_infs',
+           'map_ms2']
 
 # Cell
 import numpy as np
 import alphapept.performance
 
 @alphapept.performance.performance_function
-def connect_centroids_unidirection(x, row_borders, connections, scores, centroids, max_gap, ppm_tol):
+def connect_centroids_unidirection(x, row_borders, connections, scores, centroids, max_gap, centroid_tol):
     for gap in range(max_gap + 1):
         y = x + gap + 1
         if y >= row_borders.shape[0]:
@@ -118,7 +118,7 @@ def fill_path_matrix(x, path_start, forwards, out_hill_data, out_hill_ptr):
 
 # Cell
 
-def find_centroid_connections(rowwise_peaks, row_borders, centroids, max_gap, ppm_tol):
+def find_centroid_connections(rowwise_peaks, row_borders, centroids, max_gap, centroid_tol):
     if alphapept.performance.COMPILATION_MODE == "cuda":
         import cupy
         cupy = cupy
@@ -158,7 +158,7 @@ def find_centroid_connections(rowwise_peaks, row_borders, centroids, max_gap, pp
 
 # Cell
 
-def get_hills(centroids, from_idx, to_idx, min_hill_length=3):
+def get_hills(centroids, from_idx, to_idx, hill_length_min=3):
     if alphapept.performance.COMPILATION_MODE == "cuda":
         import cupy
         cupy = cupy
@@ -197,7 +197,7 @@ def get_hills(centroids, from_idx, to_idx, min_hill_length=3):
     return hill_ptrs, hill_data, path_node_cnt
 
 # Cell
-def connect_centroids(rowwise_peaks, row_borders, centroids, max_gap, ppm_tol):
+def connect_centroids(rowwise_peaks, row_borders, centroids, max_gap, centroid_tol):
     if alphapept.performance.COMPILATION_MODE == "cuda":
         import cupy
         cupy = cupy
@@ -209,7 +209,7 @@ def connect_centroids(rowwise_peaks, row_borders, centroids, max_gap, ppm_tol):
                                                            row_borders,
                                                            centroids,
                                                            max_gap,
-                                                           ppm_tol)
+                                                           centroid_tol)
 
     from_idx = cupy.zeros(len(from_r), np.int32)
     to_idx = cupy.zeros(len(from_r), np.int32)
@@ -234,7 +234,7 @@ def connect_centroids(rowwise_peaks, row_borders, centroids, max_gap, ppm_tol):
 
 
 # Cell
-def extract_hills(query_data, max_gap, ppm_tol):
+def extract_hills(query_data, max_gap, centroid_tol):
 
     if alphapept.performance.COMPILATION_MODE == "cuda":
         import cupy
@@ -249,7 +249,7 @@ def extract_hills(query_data, max_gap, ppm_tol):
     rowwise_peaks = indices[1:] - indices[:-1]
     row_borders = indices[1:]
 
-    from_idx, to_idx, score_median, score_std = connect_centroids(rowwise_peaks, row_borders, mass_data, max_gap, ppm_tol)
+    from_idx, to_idx, score_median, score_std = connect_centroids(rowwise_peaks, row_borders, mass_data, max_gap, centroid_tol)
 
 
     hill_ptrs, hill_data, path_node_cnt = get_hills(mass_data, from_idx, to_idx)
@@ -288,7 +288,7 @@ def fast_minima(y):
     return minima
 
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
-def split(k, hill_ptrs, int_data, hill_data, splits, split_level, window):
+def split(k, hill_ptrs, int_data, hill_data, splits, hill_split_level, window):
 # def split(idx, hill_ptrs_range, hill_ptrs, int_data, hill_data, splits, split_level, window):
 
 #     k = hill_ptrs_range[idx]
@@ -331,7 +331,7 @@ def split(k, hill_ptrs, int_data, hill_data, splits, split_level, window):
             splits[k] = start+min_
             break # Split only once per iteration
 
-def split_hills(hill_ptrs, hill_data, int_data, split_level, window):
+def split_hills(hill_ptrs, hill_data, int_data, hill_split_level, window):
 
     splits = np.zeros(len(int_data), dtype=np.int32)
     to_check = np.arange(len(hill_ptrs)-1)
@@ -356,7 +356,7 @@ def split_hills(hill_ptrs, hill_data, int_data, split_level, window):
 #             splits.dtype,
 #         )
 #         split(range(len(to_check)), to_check, hill_ptrs, int_data, hill_data, splits, split_level, window)
-        split(to_check, hill_ptrs, int_data, hill_data, splits, split_level, window)
+        split(to_check, hill_ptrs, int_data, hill_data, splits, hill_split_level, window)
         splitpoints = splits.nonzero()[0]
 
         to_check = np.zeros(len(hill_ptrs))
@@ -365,7 +365,7 @@ def split_hills(hill_ptrs, hill_data, int_data, split_level, window):
         to_check = np.insert(to_check, splitpoints+1, np.ones(len(splitpoints))).nonzero()[0] #array, index, what
         hill_ptrs = np.insert(hill_ptrs, splitpoints+1, splits[splitpoints]) #array, index, what
 
-        splits = np.zeros(len(hill_ptrs), dtype=cupy.int32)
+        splits = np.zeros(len(hill_ptrs), dtype=np.int32) #was cupy np.int32
 
     return hill_ptrs
 
@@ -522,7 +522,7 @@ DELTA_S = mass_dict['delta_S']
 maximum_offset = DELTA_M + DELTA_S
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def check_isotope_pattern(mass1, mass2, delta_mass1, delta_mass2, charge, mass_range = 5):
+def check_isotope_pattern(mass1, mass2, delta_mass1, delta_mass2, charge, iso_mass_range = 5):
     """
     Check if two masses could belong to the same isotope pattern
     """
@@ -566,7 +566,7 @@ def correlate(scans_, scans_2, int_, int_2):
 
 # Cell
 @alphapept.performance.compile_function(compilation_mode="numba")
-def extract_edge(stats, idxs_upper, runner, max_index, maximum_offset,  min_charge = 1, max_charge = 6, mass_range=5):
+def extract_edge(stats, idxs_upper, runner, max_index, maximum_offset,  iso_charge_min = 1, iso_charge_max = 6, iso_mass_range=5):
     edges = []
 
     mass1 = stats[runner, 0]
@@ -635,7 +635,7 @@ def get_pre_isotope_patterns(stats, idxs_upper, sortindex_, hill_ptrs, hill_data
 # Cell
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def check_isotope_pattern_directed(mass1, mass2, delta_mass1, delta_mass2, charge, index, mass_range):
+def check_isotope_pattern_directed(mass1, mass2, delta_mass1, delta_mass2, charge, index, iso_mass_range):
     """
     Check if two masses could belong to the same isotope pattern
 
@@ -650,7 +650,7 @@ def check_isotope_pattern_directed(mass1, mass2, delta_mass1, delta_mass2, charg
 
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def grow(trail, seed, direction, relative_pos, index, stats, pattern, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
+def grow(trail, seed, direction, relative_pos, index, stats, pattern, charge, iso_mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
     """
     Grows isotope pattern based on a seed and direction
 
@@ -711,7 +711,7 @@ def grow(trail, seed, direction, relative_pos, index, stats, pattern, charge, ma
     return trail
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def grow_trail(seed, pattern, stats, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
+def grow_trail(seed, pattern, stats, charge, iso_mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
     """
     Wrapper to grow an isotope pattern to the left and right side
     """
@@ -725,7 +725,7 @@ def grow_trail(seed, pattern, stats, charge, mass_range, sortindex_, hill_ptrs, 
 
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def get_trails(seed, pattern, stats, charge_range, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
+def get_trails(seed, pattern, stats, charge_range, iso_mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
     """
     Wrapper to extract trails for a given charge range
     """
@@ -771,7 +771,7 @@ def plot_pattern(pattern, sorted_hills, centroids, hill_data):
 # Cell
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def get_minpos(y, split=5):
+def get_minpos(y, iso_split_level):
     """
     Function to get a list of minima in a trace.
     A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.
@@ -811,7 +811,7 @@ def is_local_minima(y, i):
 
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def truncate(array, intensity_profile, seedpos):
+def truncate(array, intensity_profile, seedpos, iso_split_level):
     """
     Function to truncate an intensity profile around its seedposition
     """
@@ -925,80 +925,9 @@ def mz_to_mass(mz, charge):
     return mass
 
 
-@alphapept.performance.compile_function(compilation_mode="numba")
-def get_minpos(y, split=5):
-    """
-    Function to get a list of minima in a trace.
-    A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.
-    """
-    minima = get_local_minima(y)
-    minima_list = List()
-
-    for minpos in minima:
-
-        minval = y[minpos]
-        left_side = y[:minpos]
-        right_side = y[minpos:]
-
-        left_max = np.max(left_side)
-        right_max = np.max(right_side)
-
-        minimum_max = np.min(np.array((left_max, right_max)))
-
-        if minimum_max / minval > split:
-            minima_list.append(minpos)
-
-    return minima_list
-
-@alphapept.performance.compile_function(compilation_mode="numba")
-def get_local_minima(y):
-    """
-    Function to return all local minima of a array
-    """
-    minima = List()
-    for i in range(1, len(y) - 1):
-        if is_local_minima(y, i):
-            minima.append(i)
-    return minima
-
-
-
-@alphapept.performance.compile_function(compilation_mode="numba")
-def is_local_minima(y, i):
-    return (y[i - 1] > y[i]) & (y[i + 1] > y[i])
-
-
-
-@alphapept.performance.compile_function(compilation_mode="numba")
-def truncate(array, intensity_profile, seedpos):
-    """
-    Function to truncate an intensity profile around its seedposition
-    """
-    minima = int_list_to_array(get_minpos(intensity_profile))
-
-    if len(minima) > 0:
-        left_minima = minima[minima < seedpos]
-        right_minima = minima[minima > seedpos]
-
-        # If the minimum is smaller than the seed
-        if len(left_minima) > 0:
-            minpos = left_minima[-1]
-        else:
-            minpos = 0
-
-        if len(right_minima) > 0:
-            maxpos = right_minima[0]
-        else:
-            maxpos = len(array)
-
-        array = array[minpos:maxpos+1]
-        intensity_profile = intensity_profile[minpos:maxpos+1]
-
-    return array, intensity_profile
-
 # Cell
 @alphapept.performance.compile_function(compilation_mode="numba")
-def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, mass_range, charge_range, averagine_aa, isotopes, seed_masses, cc_cutoff):
+def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, iso_mass_range, charge_range, averagine_aa, isotopes, iso_n_seeds, cc_cutoff, iso_split_level):
     """
     Isolate isotope patterns
     """
@@ -1532,9 +1461,9 @@ def find_features(to_process, callback = None, parallel = False):
 
                     logging.info('Feature finding on {}'.format(file_name))
 
-                    logging.info(f'Hill extraction with ppm_tol {ppm_tol} and max_gap {max_gap}')
+                    logging.info(f'Hill extraction with centroid_tol {centroid_tol} and max_gap {max_gap}')
 
-                    hill_ptrs, hill_data, path_node_cnt, score_median, score_std = extract_hills(query_data, max_gap, ppm_tol)
+                    hill_ptrs, hill_data, path_node_cnt, score_median, score_std = extract_hills(query_data, max_gap, centroid_tol)
                     logging.info(f'Number of hills {len(hill_ptrs):,}, len = {np.mean(path_node_cnt):.2f}')
 
                     logging.info(f'Repeating hill extraction with centroid_tol {score_median+score_std*3:.2f}')
