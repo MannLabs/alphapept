@@ -33,6 +33,7 @@ def create_folder(dir_name):
 def main():
     mode = sys.argv[1]
     print(f"Testing with mode {mode}")
+    global alphapept
     alphapept.performance.set_compilation_mode(mode)
     alphapept.performance.set_worker_count(0)
     importlib.reload(alphapept.feature_finding)
