@@ -56,18 +56,18 @@ FILE_DICT['PXD010012_CT_3_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/
 FILE_DICT['PXD010012_CT_4_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/swO523hdX1aqN3R/download'
 FILE_DICT['PXD010012_CT_5_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/Kbq97G9IzxQ8AHb/download'
 
-BASE_DIR = 'E:/test_files/' # Storarge location for test files
-TEST_DIR = 'E:/test_temp/'
-ARCHIVE_DIR = 'E:/test_archive/'
+mods = sys.modules[__name__]
 
-MONGODB_USER = 'github_actions'
-MONGODB_URL = 'ci.yue0n.mongodb.net/'
-
+def config_test_paths(BASE_DIR, TEST_DIR, ARCHIVE_DIR, MONGODB_USER, MONGODB_URL):
+    mods.BASE_DIR = BASE_DIR
+    mods.TEST_DIR = TEST_DIR
+    mods.ARCHIVE_DIR = ARCHIVE_DIR
+    mods.MONGODB_USER = MONGODB_USER
+    mods.MONGODB_URL = MONGODB_URL
 
 def delete_folder(dir_name):
     if os.path.exists(dir_name):
         shutil.rmtree(dir_name)
-
 
 def create_folder(dir_name):
     if not os.path.exists(dir_name):
@@ -85,17 +85,16 @@ class TestRun():
         self.id = id
         self.file_paths = experimental_files
         self.fasta_paths = fasta_paths
-        self.m_tol = 20
-        self.m_offset = 20
         self.new_files = new_files
 
         self.custom_settings = custom_settings
-
 
         # Flag to run mixed_species_quantification
         self.run_mixed_analysis = None
         if os.path.isfile(EXE_PATH):
             self.exe_path = EXE_PATH
+            timestamp = datetime.fromtimestamp(os.path.getmtime(EXE_PATH))
+            logging.info(f'Using compiled exe from {timestamp}.')
         else:
             self.exe_path = None
 
@@ -128,9 +127,10 @@ class TestRun():
         Downloads files to base_dir and copies to test folder for a test run
         """
         create_folder(BASE_DIR)
+        create_folder(ARCHIVE_DIR)
 
         for file in self.file_paths + self.fasta_paths:
-            self.get_file(BASE_DIR+file, FILE_DICT[file])
+            self.get_file(os.path.join(BASE_DIR, file), FILE_DICT[file])
 
         delete_folder(TEST_DIR)
         create_folder(TEST_DIR)
@@ -138,9 +138,9 @@ class TestRun():
         for file in self.file_paths + self.fasta_paths:
 
             if file.endswith('.d'):
-                shutil.copytree(BASE_DIR+file, TEST_DIR+file)
+                shutil.copytree(os.path.join(BASE_DIR, file), os.path.join(TEST_DIR, file))
             else:
-                shutil.copyfile(BASE_DIR+file, TEST_DIR+file)
+                shutil.copyfile(os.path.join(BASE_DIR, file), os.path.join(TEST_DIR, file))
 
     def prepare_settings(self):
         """
@@ -148,11 +148,8 @@ class TestRun():
         """
 
         self.settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
-        self.settings['experiment']['file_paths'] =  [TEST_DIR + _ for _ in self.file_paths]
-        self.settings['experiment']['fasta_paths'] = [TEST_DIR + _ for _ in self.fasta_paths]
-
-        self.settings['search']['m_offset'] =  self.m_offset
-        self.settings['search']['m_tol'] =  self.m_tol
+        self.settings['experiment']['file_paths'] =  [os.path.join(TEST_DIR, _) for _ in self.file_paths]
+        self.settings['experiment']['fasta_paths'] = [os.path.join(TEST_DIR, _) for _ in self.fasta_paths]
 
     def run(self, password=None):
         if self.new_files:
@@ -171,6 +168,7 @@ class TestRun():
 
         start = time()
         if self.exe_path is not None: #call compiled exe file
+            settings = alphapept.interface.check_version_and_hardware(settings)
             dirname = os.path.dirname(settings['experiment']['results_path'])
             settings_path = os.path.join(dirname, '_.yaml')
             with open(settings_path, "w") as file:
@@ -182,17 +180,21 @@ class TestRun():
                 logging.info(line.decode('utf8'))
 
             base, ext = os.path.splitext(settings['experiment']['results_path'])
-            settings_path = os.path.join(base, '.yaml')
+            settings_path = base +'.yaml'
             settings = load_settings(settings_path)
         else:
+            logging.info('Using Python version for testing')
             settings = alphapept.interface.run_complete_workflow(settings)
         end = time()
 
         report['test_id'] = self.id
         report['settings'] = settings
         report['time_elapsed_min'] = (end-start)/60
-        report['branch'] = subprocess.check_output("git branch --show-current").decode("utf-8").rstrip('\n')
-        report['commit'] = subprocess.check_output("git rev-parse --verify HEAD").decode("utf-8").rstrip('\n')
+        try:
+            report['branch'] = subprocess.check_output("git branch --show-current").decode("utf-8").rstrip('\n')
+            report['commit'] = subprocess.check_output("git rev-parse --verify HEAD").decode("utf-8").rstrip('\n')
+        except:
+            None
         report['version'] = alphapept_version
 
         if self.exe_path:
@@ -207,14 +209,14 @@ class TestRun():
             report['mixed_species_quantification'] = self.mixed_species_quantification(self.settings, species, groups)
 
 
-        report['protein_fdr_arabidopsis'] = self.mixed_species_fdr(self.settings, ('ARATH','HUMAN')) #ECO for now
+        report['peptide_fdr_arabidopsis'] = self.mixed_species_fdr(self.settings, ('ARATH','HUMAN')) #ECO for now
 
         self.report = report
         if password:
             post_id = self.upload_to_db(password)
             # Copy results file to archive location
             base, ext = os.path.splitext(settings['experiment']['results_path'])
-            shutil.copyfile(settings['experiment']['results_path'], ARCHIVE_DIR+str(post_id)+ext)
+            shutil.copyfile(settings['experiment']['results_path'], os.path.join(ARCHIVE_DIR, str(post_id)+ext))
 
     def upload_to_db(self, password):
         from pymongo import MongoClient
@@ -241,8 +243,7 @@ class TestRun():
         """
         Estimate FDR by searching against differenft FASTAs
         """
-        file_name = os.path.splitext(settings['experiment']['file_paths'][0])[0]+'.ms_data.hdf'
-        df = alphapept.io.MS_Data_File(file_name).read(dataset_name='protein_fdr')
+        df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
         fdr = len([_ for _ in df['protein_group'] if (species[0] in _) & (species[1] not in _)])/len(df)
 
         return fdr
@@ -253,6 +254,8 @@ class TestRun():
         """
 
         df = pd.read_hdf(settings['experiment']['results_path'], 'protein_table')
+
+        df.columns = [os.path.split(_)[1].replace('.ms_data.hdf','') for _ in df.columns]
         results = {}
 
         for i in ['','_LFQ']:
@@ -292,17 +295,33 @@ class TestRun():
         return results
 
 
-def main():
-    print(sys.argv, len(sys.argv))
+def main(runtype = None, password = None, new_files = True):
 
-    if len(sys.argv) == 2:
-        password = None
-        runtype = sys.argv[1]
-    else:
-        password = sys.argv[1]
-        runtype = sys.argv[2]
 
-    new_files = True
+    if runtype == None:
+        if len(sys.argv) == 3:
+            tmp_folder = sys.argv[1]
+            runtype = sys.argv[2]
+            password = None
+
+        elif len(sys.argv) == 2:
+            tmp_folder = os.path.join(os.getcwd(),'sandbox/temp/')
+            runtype = sys.argv[1]
+            password = None
+        else:
+            tmp_folder = sys.argv[1]
+            runtype = sys.argv[2]
+            password = sys.argv[3]
+
+
+        BASE_DIR = os.path.join(tmp_folder,'test_files') # Storarge location for test files
+        TEST_DIR = os.path.join(tmp_folder,'test_temp')
+        ARCHIVE_DIR = os.path.join(tmp_folder, 'test_archive')
+
+        MONGODB_USER = 'github_actions'
+        MONGODB_URL = 'ci.yue0n.mongodb.net/'
+        config_test_paths(BASE_DIR, TEST_DIR, ARCHIVE_DIR, MONGODB_USER, MONGODB_URL)
+
 
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']

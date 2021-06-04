@@ -60,10 +60,40 @@ def queue_watcher():
         else:
             time.sleep(15)
 
+def terminate_process():
+
+    with st.spinner('Terminating..'):
+
+        running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
+
+        p_ = psutil.Process(last_pid)
+        p_.terminate()
+        st.success(f'Terminated {last_pid}')
+
+        current_file = os.path.join(QUEUE_PATH, 'current_file')
+
+        with open(current_file, "r") as file:
+            cf_ = yaml.load(file, Loader=yaml.FullLoader)
+
+        cf = cf_['file']
+        file_in_process = os.path.join(QUEUE_PATH, cf)
+        target_file = os.path.join(FAILED_PATH, cf)
+
+        os.rename(file_in_process, target_file)
+        st.success(f'Moved {escape_markdown(file_in_process)} to {escape_markdown(target_file)}')
+
+        if os.path.isfile(current_file):
+            os.remove(current_file)
+        st.success(f'Cleaned up {escape_markdown(current_file)}')
+
+        time.sleep(3)
+
+        raise st.script_runner.RerunException(st.script_request_queue.RerunData(None))
+
 def status():
 
     st.write("# Status")
-    st.text(f'This page shows the status of the current analysis.\nSwitch to `New experiment` to define a new experiment')
+    st.text(f'This page shows the status of the current analysis.\nSwitch to `New experiment` to define a new experiment.\nSwitch to `Results` to see previous results.')
     status_msg = st.empty()
     failed_msg = st.empty()
 
@@ -114,6 +144,11 @@ def status():
             failed_table = st.empty()
 
         refresh = st.checkbox('Auto-Update Page')
+
+        if st.checkbox('Terminate process'):
+            st.error(f"This will abort the current run and move it to failed. Please confirm.")
+            if st.button('Confirm'):
+                terminate_process()
 
         while True:
             if os.path.isfile(current_file):

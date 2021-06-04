@@ -276,6 +276,7 @@ def AlphaPool(a, *args, **kwargs):
     if a == -1:
         a = max_processes
     new_max = min(a, 50, max_processes)
-    print(f"AlphaPool was set to {a} processes. Setting max to {new_max}.")
+
+    logging.info(f"AlphaPool was set to {a} processes. Setting max to {new_max}.")
 
     return Pool(new_max)

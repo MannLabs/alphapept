@@ -26,10 +26,10 @@ def get_missed_cleavages(sequences, n_missed_cleavages):
 
 def cleave_sequence(
     sequence="",
-    num_missed_cleavages=0,
+    n_missed_cleavages=0,
     protease="trypsin",
-    min_length=6,
-    max_length=65,
+    pep_length_min=6,
+    pep_length_max=65,
     **kwargs
 ):
     """
@@ -49,10 +49,10 @@ def cleave_sequence(
 
     sequences = base_sequences.copy()
 
-    for i in range(1, num_missed_cleavages+1):
+    for i in range(1, n_missed_cleavages+1):
         sequences.extend(get_missed_cleavages(base_sequences, i))
 
-    sequences = [_ for _ in sequences if len(_)>=min_length and len(_)<=max_length]
+    sequences = [_ for _ in sequences if len(_)>=pep_length_min and len(_)<=pep_length_max]
 
     return sequences
 
@@ -210,7 +210,7 @@ def add_variable_mod(peps, mods_variable_dict):
     return peptides
 
 
-def get_isoforms(mods_variable_dict, peptide, max_isoforms, limit_modifications=None):
+def get_isoforms(mods_variable_dict, peptide, isoforms_max, n_modifications_max=None):
     """
     Function to generate isoforms for a given peptide - returns a list of isoforms.
     The original sequence is included in the list
@@ -221,11 +221,11 @@ def get_isoforms(mods_variable_dict, peptide, max_isoforms, limit_modifications=
     new_peps = [(pep, 0)]
 
     iteration = 0
-    while len(peptides) < max_isoforms:
+    while len(peptides) < isoforms_max:
 
 
-        if limit_modifications:
-            if iteration >= limit_modifications:
+        if n_modifications_max:
+            if iteration >= n_modifications_max:
                 break
 
         new_peps = add_variable_mod(new_peps, mods_variable_dict)
@@ -237,7 +237,7 @@ def get_isoforms(mods_variable_dict, peptide, max_isoforms, limit_modifications=
                 new_peps = new_peps[0:1]
 
         for _ in new_peps:
-            if len(peptides) < max_isoforms:
+            if len(peptides) < isoforms_max:
                 peptides.append(_[0])
 
         iteration +=1
@@ -251,10 +251,10 @@ def get_isoforms(mods_variable_dict, peptide, max_isoforms, limit_modifications=
 # Cell
 from itertools import chain
 
-def add_variable_mods(peptide_list, mods_variable, max_isoforms, limit_modifications, **kwargs):
+def add_variable_mods(peptide_list, mods_variable, isoforms_max, n_modifications_max, **kwargs):
     #the peptide_list originates from one peptide already -> limit isoforms here
 
-    max_ = max_isoforms - len(peptide_list) + 1
+    max_ = isoforms_max - len(peptide_list) + 1
 
     if max_ < 0:
         max_ = 0
@@ -266,7 +266,7 @@ def add_variable_mods(peptide_list, mods_variable, max_isoforms, limit_modificat
         for _ in mods_variable:
             mods_variable_r[_[-1]] = _
 
-        peptide_list = [get_isoforms(mods_variable_r, peptide, max_, limit_modifications) for peptide in peptide_list]
+        peptide_list = [get_isoforms(mods_variable_r, peptide, max_, n_modifications_max) for peptide in peptide_list]
         return list(chain.from_iterable(peptide_list))
 
 # Cell
@@ -333,6 +333,14 @@ def get_unique_peptides(peptides):
 def generate_peptides(peptide, **kwargs):
     """
     Wrapper to get modified peptides from a peptide
+
+    TODO:
+
+    There can be some edge-cases which are not defined yet.
+    Example:
+    Setting the same fixed modification - once for all peptides and once for only terminal for the protein.
+    The modification will thenbe applied twice.
+
     """
     mod_peptide = add_fixed_mods_terminal([peptide], kwargs['mods_fixed_terminal_prot'])
     mod_peptide = add_variable_mods_terminal(mod_peptide, kwargs['mods_variable_terminal_prot'])
@@ -342,16 +350,17 @@ def generate_peptides(peptide, **kwargs):
 
     peptides = [_ for _ in peptides if check_peptide(_, constants.AAs)]
 
-    max_isoforms = kwargs['max_isoforms']
+    isoforms_max = kwargs['isoforms_max']
 
     all_peptides = []
     for peptide in peptides: #1 per, limit the number of isoforms
+
         #Regular peptides
         mod_peptides = add_fixed_mods([peptide], **kwargs)
         mod_peptides = add_fixed_mods_terminal(mod_peptides, **kwargs)
         mod_peptides = add_variable_mods_terminal(mod_peptides, **kwargs)
 
-        kwargs['max_isoforms'] = max_isoforms - len(mod_peptides)
+        kwargs['isoforms_max'] = isoforms_max - len(mod_peptides)
         mod_peptides = add_variable_mods(mod_peptides, **kwargs)
 
         all_peptides.extend(mod_peptides)
@@ -363,7 +372,7 @@ def generate_peptides(peptide, **kwargs):
         mod_peptides_decoy = add_fixed_mods_terminal(mod_peptides_decoy, **kwargs)
         mod_peptides_decoy = add_variable_mods_terminal(mod_peptides_decoy, **kwargs)
 
-        kwargs['max_isoforms'] = max_isoforms - len(mod_peptides_decoy)
+        kwargs['isoforms_max'] = isoforms_max - len(mod_peptides_decoy)
 
         mod_peptides_decoy = add_variable_mods(mod_peptides_decoy, **kwargs)
 
@@ -375,7 +384,7 @@ def generate_peptides(peptide, **kwargs):
 
 def check_peptide(peptide, AAs):
 
-    if set(peptide).issubset(AAs):
+    if set([_ for _ in peptide if _.isupper()]).issubset(AAs):
         return True
     else:
         return False
@@ -465,7 +474,10 @@ def get_spectra(peptides, mass_dict):
     spectra = List()
 
     for i in range(len(peptides)):
-        spectra.append(get_spectrum(peptides[i], mass_dict))
+        try:
+            spectra.append(get_spectrum(peptides[i], mass_dict))
+        except Exception: #TODO: This is to fix edge cases when having multiple modifications on the same AA.
+            pass
 
     return spectra
 
@@ -541,7 +553,8 @@ def add_to_pept_dict(pept_dict, new_peptides, i):
     added_peptides = List()
     for peptide in new_peptides:
         if peptide in pept_dict:
-            pept_dict[peptide].append(i)
+            if i not in pept_dict[peptide]:
+                pept_dict[peptide].append(i)
         else:
             pept_dict[peptide] = [i]
             added_peptides.append(peptide)

@@ -11,8 +11,10 @@ __all__ = ['connect_centroids_unidirection', 'convert_connections_to_array', 'el
            'M_PROTON', 'isolate_isotope_pattern', 'get_isotope_patterns', 'report_', 'feature_finder_report',
            'plot_isotope_pattern', 'extract_bruker', 'convert_bruker', 'map_bruker', 'find_features', 'map_ms2']
 
+
 # Cell
 import numpy as np
+
 import alphapept.performance
 
 @alphapept.performance.performance_function
@@ -41,7 +43,7 @@ def connect_centroids_unidirection(x, row_borders, connections, scores, centroid
             mz_sum = mz1 + mz2
             delta = 2 * 1e6 * abs(diff) / mz_sum
 
-            if delta < ppm_tol:
+            if delta < centroid_tol:
 
                 if scores[x, i, gap] > delta:
                     scores[x, i, gap] = delta
@@ -117,6 +119,7 @@ def fill_path_matrix(x, path_start, forwards, out_hill_data, out_hill_ptr):
 
 # Cell
 
+
 def find_centroid_connections(rowwise_peaks, row_borders, centroids, max_gap, ppm_tol):
     if alphapept.performance.COMPILATION_MODE == "cuda":
         import cupy
@@ -137,7 +140,7 @@ def find_centroid_connections(rowwise_peaks, row_borders, centroids, max_gap, pp
                                    score,
                                    centroids,
                                    max_gap,
-                                   ppm_tol)
+                                   centroid_tol)
 
     score = score[cupy.where(score < np.inf)]
 
@@ -178,7 +181,7 @@ def get_hills(centroids, from_idx, to_idx, min_hill_length=3):
     path_node_cnt = cupy.full(path_starts.shape[0], -1)
     find_path_length(range(len(path_starts)), path_starts, forward, path_node_cnt)
 
-    relavant_path_node = cupy.where(path_node_cnt >= min_hill_length)[0]
+    relavant_path_node = cupy.where(path_node_cnt >= hill_length_min)[0]
     path_starts = cupy.take(path_starts, relavant_path_node)
     path_node_cnt = cupy.take(path_node_cnt, relavant_path_node)
     del relavant_path_node
@@ -209,6 +212,7 @@ def connect_centroids(rowwise_peaks, row_borders, centroids, max_gap, ppm_tol):
                                                            centroids,
                                                            max_gap,
                                                            ppm_tol)
+
 
     from_idx = cupy.zeros(len(from_r), np.int32)
     to_idx = cupy.zeros(len(from_r), np.int32)
@@ -249,7 +253,6 @@ def extract_hills(query_data, max_gap, ppm_tol):
     row_borders = indices[1:]
 
     from_idx, to_idx, score_median, score_std = connect_centroids(rowwise_peaks, row_borders, mass_data, max_gap, ppm_tol)
-
 
     hill_ptrs, hill_data, path_node_cnt = get_hills(mass_data, from_idx, to_idx)
 
@@ -326,7 +329,7 @@ def split(k, hill_ptrs, int_data, hill_data, splits, split_level, window):
 
         min_max = min(left_max, right_max)
 
-        if (minval == 0) or ((min_max / minval) > split_level):
+        if (minval == 0) or ((min_max / minval) > hill_split_level):
             splits[k] = start+min_
             break # Split only once per iteration
 
@@ -364,7 +367,7 @@ def split_hills(hill_ptrs, hill_data, int_data, split_level, window):
         to_check = np.insert(to_check, splitpoints+1, np.ones(len(splitpoints))).nonzero()[0] #array, index, what
         hill_ptrs = np.insert(hill_ptrs, splitpoints+1, splits[splitpoints]) #array, index, what
 
-        splits[:] = 0
+        splits = np.zeros(len(hill_ptrs), dtype=cupy.int32)
 
     return hill_ptrs
 
@@ -399,9 +402,9 @@ def check_large_hills(idx, large_peaks, hill_ptrs, hill_data, int_data, to_remov
         to_remove[idx] = 0
 
 
-def filter_hills(hill_data, hill_ptrs, int_data, large_peak =40, window = 1):
+def filter_hills(hill_data, hill_ptrs, int_data, hill_check_large =40, window = 1):
 
-    large_peaks = np.where(np.diff(hill_ptrs)>=large_peak)[0]
+    large_peaks = np.where(np.diff(hill_ptrs)>=hill_check_large)[0]
 
     to_remove = np.ones(len(large_peaks), dtype=np.int32)
     check_large_hills(range(len(large_peaks)), large_peaks, hill_ptrs, hill_data, int_data, to_remove, window)
@@ -430,6 +433,7 @@ def filter_hills(hill_data, hill_ptrs, int_data, large_peak =40, window = 1):
 
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
 def hill_stats(idx, hill_range, hill_ptrs, hill_data, int_data, mass_data, rt_, rt_idx, stats, hill_nboot_max, hill_nboot):
+
     np.random.seed(42)
 
     start = hill_ptrs[idx]
@@ -474,6 +478,26 @@ def hill_stats(idx, hill_range, hill_ptrs, hill_data, int_data, mass_data, rt_, 
     stats[idx,4] = rt_min
     stats[idx,5] = rt_max
 
+def remove_duplicates(stats, hill_data, hill_ptrs):
+    dups = pd.DataFrame(stats).duplicated() #all duplicated hills
+
+    idx_ = np.ones(len(hill_data), dtype = np.int32) #keep all
+    keep = np.ones(len(hill_ptrs)-1, dtype = np.int32)
+
+    for _ in np.arange(len(stats))[dups]: #duplicates will be assigned zeros
+        idx_[hill_ptrs[_]:hill_ptrs[_+1]] = 0
+        keep[_] = 0
+
+    hill_lens = np.diff(hill_ptrs)
+    keep_ = hill_lens[keep.nonzero()[0]]
+
+    hill_data_ = hill_data[idx_.nonzero()[0]]
+    hill_ptrs_ = np.empty((len(keep_) + 1), dtype=np.int32)
+    hill_ptrs_[0] = 0
+    hill_ptrs_[1:] = keep_.cumsum()
+
+    return hill_data_, hill_ptrs_, stats[~dups]
+
 def get_hill_data(query_data, hill_ptrs, hill_data, hill_nboot_max = 300, hill_nboot = 150):
 
     indices_ = np.array(query_data['indices_ms1'])
@@ -485,13 +509,16 @@ def get_hill_data(query_data, hill_ptrs, hill_data, hill_nboot_max = 300, hill_n
     stats = np.zeros((len(hill_ptrs)-1, 6)) #mz, delta, rt_min, rt_max, sum_max
     hill_stats(range(len(hill_ptrs)-1), np.arange(len(hill_ptrs)-1), hill_ptrs, hill_data, int_data, mass_data, rt_, scan_idx, stats, hill_nboot_max, hill_nboot)
 
+    # Remove duplicate hills
+    hill_data, hill_ptrs, stats = remove_duplicates(stats, hill_data, hill_ptrs)
+
     # sort the stats
     sortindex = np.argsort(stats[:,4]) #Sorted by rt_min
     stats = stats[sortindex,:]
     idxs_upper = stats[:,4].searchsorted(stats[:,5], side="right")
     sortindex_ = np.arange(len(sortindex))[sortindex]
 
-    return stats, sortindex_, idxs_upper, scan_idx
+    return stats, sortindex_, idxs_upper, scan_idx, hill_data, hill_ptrs
 
 # Cell
 from .constants import mass_dict
@@ -505,8 +532,8 @@ def check_isotope_pattern(mass1, mass2, delta_mass1, delta_mass2, charge, mass_r
     """
     Check if two masses could belong to the same isotope pattern
     """
-    delta_mass1 = delta_mass1 * mass_range
-    delta_mass2 = delta_mass2 * mass_range
+    delta_mass1 = delta_mass1 * iso_mass_range
+    delta_mass2 = delta_mass2 * iso_mass_range
 
     delta_mass = np.abs(mass1 - mass2)
 
@@ -544,6 +571,7 @@ def correlate(scans_, scans_2, int_, int_2):
     return corr
 
 # Cell
+
 @alphapept.performance.compile_function(compilation_mode="numba")
 def extract_edge(stats, idxs_upper, runner, max_index, maximum_offset,  min_charge = 1, max_charge = 6, mass_range=5):
     edges = []
@@ -555,8 +583,8 @@ def extract_edge(stats, idxs_upper, runner, max_index, maximum_offset,  min_char
         mass2 = stats[j, 0]
         if np.abs(mass2 - mass1) <= maximum_offset:
             delta_mass2 = stats[j, 1]
-            for charge in range(min_charge, max_charge + 1):
-                if check_isotope_pattern(mass1, mass2, delta_mass1, delta_mass2, charge, mass_range):
+            for charge in range(iso_charge_min, iso_charge_max + 1):
+                if check_isotope_pattern(mass1, mass2, delta_mass1, delta_mass2, charge, iso_mass_range):
                     edges.append((runner, j))
                     break
 
@@ -587,12 +615,12 @@ def edge_correlation(idx, to_keep, sortindex_, pre_edges, hill_ptrs, hill_data, 
 # Cell
 import networkx as nx
 
-def get_pre_isotope_patterns(stats, idxs_upper, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, maximum_offset, min_charge=1, max_charge=6, mass_range=5, cc_cutoff=0.6):
+def get_pre_isotope_patterns(stats, idxs_upper, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, maximum_offset, iso_charge_min=1, iso_charge_max=6, iso_mass_range=5, cc_cutoff=0.6):
     pre_edges = []
 
     # Step 1
     for runner in range(len(stats)):
-        pre_edges.extend(extract_edge(stats, idxs_upper, runner, idxs_upper[runner], maximum_offset, min_charge, max_charge, mass_range))
+        pre_edges.extend(extract_edge(stats, idxs_upper, runner, idxs_upper[runner], maximum_offset, iso_charge_min, iso_charge_max, iso_mass_range))
 
     to_keep = np.zeros(len(pre_edges), dtype='int')
     pre_edges = np.array(pre_edges)
@@ -613,14 +641,15 @@ def get_pre_isotope_patterns(stats, idxs_upper, sortindex_, hill_ptrs, hill_data
 
 # Cell
 
+
 @alphapept.performance.compile_function(compilation_mode="numba")
 def check_isotope_pattern_directed(mass1, mass2, delta_mass1, delta_mass2, charge, index, mass_range):
     """
     Check if two masses could belong to the same isotope pattern
 
     """
-    delta_mass1 = delta_mass1 * mass_range
-    delta_mass2 = delta_mass2 * mass_range
+    delta_mass1 = delta_mass1 * iso_mass_range
+    delta_mass2 = delta_mass2 * iso_mass_range
 
     left_side = np.abs(mass1 - mass2 - index * DELTA_M / charge)
     right_side = np.sqrt((DELTA_S / charge) ** 2 + delta_mass1 ** 2 + delta_mass2 ** 2)
@@ -671,7 +700,7 @@ def grow(trail, seed, direction, relative_pos, index, stats, pattern, charge, ma
         scans_2 = scan_idx[idx_]
 
         if correlate(scans_, scans_2, int_, int_2) > cc_cutoff:
-            if check_isotope_pattern_directed(mass1, mass2, delta_mass1, delta_mass2, charge, -direction * index, mass_range):
+            if check_isotope_pattern_directed(mass1, mass2, delta_mass1, delta_mass2, charge, -direction * index, iso_mass_range):
                 if direction == 1:
                     trail.append(y)
                 else:
@@ -697,8 +726,8 @@ def grow_trail(seed, pattern, stats, charge, mass_range, sortindex_, hill_ptrs, 
     x = pattern[seed]
     trail = List()
     trail.append(x)
-    trail = grow(trail, seed, -1, -1, 1, stats, pattern, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
-    trail = grow(trail, seed, 1, 1, 1, stats, pattern, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
+    trail = grow(trail, seed, -1, -1, 1, stats, pattern, charge, iso_mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
+    trail = grow(trail, seed, 1, 1, 1, stats, pattern, charge, iso_mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
 
     return trail
 
@@ -710,7 +739,7 @@ def get_trails(seed, pattern, stats, charge_range, mass_range, sortindex_, hill_
     """
     trails = []
     for charge in charge_range:
-        trail = grow_trail(seed, pattern, stats, charge, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
+        trail = grow_trail(seed, pattern, stats, charge, iso_mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
 
         trails.append(trail)
 
@@ -761,15 +790,13 @@ def get_minpos(y, split=5):
     for minpos in minima:
 
         minval = y[minpos]
-        left_side = y[:minpos]
-        right_side = y[minpos:]
 
-        left_max = np.max(left_side)
-        right_max = np.max(right_side)
+        left_max = (y[:minpos]).max()
+        right_max = (y[minpos:]).max()
 
-        minimum_max = np.min(np.array((left_max, right_max)))
+        minimum_max = min(left_max, right_max)
 
-        if minimum_max / minval > split:
+        if minimum_max / minval >= iso_split_level:
             minima_list.append(minpos)
 
     return minima_list
@@ -796,7 +823,7 @@ def truncate(array, intensity_profile, seedpos):
     """
     Function to truncate an intensity profile around its seedposition
     """
-    minima = int_list_to_array(get_minpos(intensity_profile))
+    minima = int_list_to_array(get_minpos(intensity_profile, iso_split_level))
 
     if len(minima) > 0:
         left_minima = minima[minima < seedpos]
@@ -905,7 +932,6 @@ def mz_to_mass(mz, charge):
 
     return mass
 
-
 @alphapept.performance.compile_function(compilation_mode="numba")
 def get_minpos(y, split=5):
     """
@@ -992,14 +1018,14 @@ def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_id
 
     sortindex = np.argsort(stats[pre_pattern][:,0]) #intensity
     sorted_pattern = pre_pattern[sortindex]
-    massindex = np.argsort(stats[sorted_pattern][:,2])[::-1][:seed_masses]
+    massindex = np.argsort(stats[sorted_pattern][:,2])[::-1][:iso_n_seeds]
 
     # Use all the elements in the pre_pattern as seed
 
     for seed in massindex:  # Loop through all seeds
         seed_global = sorted_pattern[seed]
 
-        trails = get_trails(seed, sorted_pattern, stats, charge_range, mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
+        trails = get_trails(seed, sorted_pattern, stats, charge_range, iso_mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
 
         for index, trail in enumerate(trails):
             if len(trail) > longest_trace:  # Needs to be longer than the current champion
@@ -1009,7 +1035,7 @@ def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_id
                 seedpos = np.nonzero(arr==seed_global)[0][0]
 
                 # truncate around the seed...
-                arr, intensity_profile = truncate(arr, intensity_profile, seedpos)
+                arr, intensity_profile = truncate(arr, intensity_profile, seedpos, iso_split_level)
 
                 # Remove lower masses:
                 # Take the index of the maximum and remove all masses on the left side
@@ -1032,7 +1058,7 @@ def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_id
 
 from numba.typed import List
 
-def get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_,  averagine_aa, isotopes, min_charge = 1, max_charge = 6, mass_range = 5, seed_masses = 100, cc_cutoff=0.6, callback=None):
+def get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_,  averagine_aa, isotopes, iso_charge_min = 1, iso_charge_max = 6, iso_mass_range = 5, iso_n_seeds = 100, cc_cutoff=0.6, iso_split_level = 1.3, callback=None):
     """
     Wrapper function to iterate over pre_isotope_patterns
     """
@@ -1042,7 +1068,7 @@ def get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, s
 
     charge_range = List()
 
-    for i in range(min_charge, max_charge + 1):
+    for i in range(iso_charge_min, iso_charge_max + 1):
         charge_range.append(i)
 
     isotope_patterns = []
@@ -1051,7 +1077,7 @@ def get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, s
     for idx, pre_pattern in enumerate(pre_isotope_patterns):
         extract = True
         while extract:
-            isotope_pattern, isotope_charge = isolate_isotope_pattern(np.array(pre_pattern), hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, mass_range, charge_range, averagine_aa, isotopes, seed_masses, cc_cutoff)
+            isotope_pattern, isotope_charge = isolate_isotope_pattern(np.array(pre_pattern), hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, iso_mass_range, charge_range, averagine_aa, isotopes, iso_n_seeds, cc_cutoff, iso_split_level)
             if isotope_pattern is None:
                 length = 0
             else:
@@ -1199,6 +1225,12 @@ def feature_finder_report(query_data, isotope_patterns, isotope_charges, iso_idx
     report_(range(len(isotope_charges)), isotope_charges, isotope_patterns, iso_idx, stats, sortindex_, hill_ptrs, hill_data, int_data, rt_, rt_idx, results)
 
     df = pd.DataFrame(results, columns = ['mz','mz_std','mz_most_abundant','charge','rt_start','rt_apex','rt_end','fwhm','n_isotopes','mass','int_apex','int_area', 'int_sum'])
+
+    #Test
+    #df_ = df.copy()
+    #df_['mz'] -= 1.00286864/df_['charge']
+    #df_['mass'] = df_['mz'] * df_['charge'] - df_['charge'] * 1.00727646687
+    #df = pd.concat([df,df_])
 
     df.sort_values(['rt_start','mz'])
 
@@ -1369,7 +1401,7 @@ def convert_bruker(feature_path):
 
     M_PROTON = mass_dict['Proton']
     feature_table['Mass'] = feature_table['MZ'].values * feature_table['Charge'].values - feature_table['Charge'].values*M_PROTON
-    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "RT_lower":"rt_start", "RT_upper":"rt_end", "Mobility": "mobility", "Mobility_lower": "mobility_lower", "Mobility_upper": "mobility_upper", "Charge":"charge","Intensity":'int_sum'})
+    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "RT_lower":"rt_start", "RT_upper":"rt_end", "Mobility": "mobility", "Mobility_lower": "mobility_lower", "Mobility_upper": "mobility_upper", "Charge":"charge","Intensity":'int_sum',"ClusterCount":'n_isotopes'})
     feature_table['rt_apex'] = feature_table['rt_apex']/60
     feature_table['rt_start'] = feature_table['rt_start']/60
     feature_table['rt_end'] = feature_table['rt_end']/60
@@ -1486,50 +1518,52 @@ def find_features(to_process, callback = None, parallel = False):
 
                     f_settings = settings['features']
                     max_gap = f_settings['max_gap']
-                    ppm_tol = f_settings['ppm_tol']
-                    split_level = f_settings['split_level']
-                    window = f_settings['smoothing_window']
-                    large_peak = f_settings['large_peak']
+                    centroid_tol = f_settings['centroid_tol']
+                    hill_split_level = f_settings['hill_split_level']
+                    iso_split_level = f_settings['iso_split_level']
 
-                    min_charge = f_settings['min_charge']
-                    max_charge = f_settings['max_charge']
-                    seed_masses = f_settings['seed_masses']
+
+                    window = f_settings['hill_smoothing']
+                    hill_check_large = f_settings['hill_check_large']
+
+                    iso_charge_min = f_settings['iso_charge_min']
+                    iso_charge_max = f_settings['iso_charge_max']
+                    iso_n_seeds = f_settings['iso_n_seeds']
 
                     hill_nboot_max = f_settings['hill_nboot_max']
                     hill_nboot = f_settings['hill_nboot']
 
-                    mass_range = f_settings['mass_range']
+                    iso_mass_range = f_settings['iso_mass_range']
 
-                    min_correlation = f_settings['min_correlation']
+                    iso_corr_min = f_settings['iso_corr_min']
 
                     logging.info('Feature finding on {}'.format(file_name))
-
                     logging.info(f'Hill extraction with ppm_tol {ppm_tol} and max_gap {max_gap}')
 
                     hill_ptrs, hill_data, path_node_cnt, score_median, score_std = extract_hills(query_data, max_gap, ppm_tol)
                     logging.info(f'Number of hills {len(hill_ptrs):,}, len = {np.mean(path_node_cnt):.2f}')
 
-                    logging.info(f'Repeating hill extraction with ppm_tol {score_median+score_std*3:.2f}')
+                    logging.info(f'Repeating hill extraction with centroid_tol {score_median+score_std*3:.2f}')
 
                     hill_ptrs, hill_data, path_node_cnt, score_median, score_std = extract_hills(query_data, max_gap, score_median+score_std*3)
                     logging.info(f'Number of hills {len(hill_ptrs):,}, len = {np.mean(path_node_cnt):.2f}')
 
                     int_data = np.array(query_data['int_list_ms1'])
 
-                    hill_ptrs = split_hills(hill_ptrs, hill_data, int_data, split_level=split_level, window = window) #hill lenght is inthere already
+                    hill_ptrs = split_hills(hill_ptrs, hill_data, int_data, hill_split_level=hill_split_level, window = window) #hill lenght is inthere already
                     logging.info(f'After split hill_ptrs {len(hill_ptrs):,}')
 
-                    hill_data, hill_ptrs = filter_hills(hill_data, hill_ptrs, int_data, large_peak =large_peak, window=window)
+                    hill_data, hill_ptrs = filter_hills(hill_data, hill_ptrs, int_data, hill_check_large =hill_check_large, window=window)
 
                     logging.info(f'After filter hill_ptrs {len(hill_ptrs):,}')
 
-                    stats, sortindex_, idxs_upper, scan_idx = get_hill_data(query_data, hill_ptrs, hill_data, hill_nboot_max = hill_nboot_max, hill_nboot = hill_nboot)
+                    stats, sortindex_, idxs_upper, scan_idx, hill_data, hill_ptrs = get_hill_data(query_data, hill_ptrs, hill_data, hill_nboot_max = hill_nboot_max, hill_nboot = hill_nboot)
                     logging.info('Extracting hill stats complete')
 
-                    pre_isotope_patterns = get_pre_isotope_patterns(stats, idxs_upper, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, maximum_offset, min_charge=min_charge, max_charge=max_charge, mass_range=mass_range, cc_cutoff=min_correlation)
+                    pre_isotope_patterns = get_pre_isotope_patterns(stats, idxs_upper, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, maximum_offset, iso_charge_min=iso_charge_min, iso_charge_max=iso_charge_max, iso_mass_range=iso_mass_range, cc_cutoff=iso_corr_min)
                     logging.info('Found {:,} pre isotope patterns.'.format(len(pre_isotope_patterns)))
 
-                    isotope_patterns, iso_idx, isotope_charges = get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, averagine_aa, isotopes, min_charge = min_charge, max_charge = max_charge, mass_range = mass_range, seed_masses = seed_masses, cc_cutoff = min_correlation, callback=None)
+                    isotope_patterns, iso_idx, isotope_charges = get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, averagine_aa, isotopes, iso_charge_min = iso_charge_min, iso_charge_max = iso_charge_max, iso_mass_range = iso_mass_range, iso_n_seeds = iso_n_seeds, cc_cutoff = iso_corr_min, iso_split_level=iso_split_level, callback=None)
                     logging.info('Extracted {:,} isotope patterns.'.format(len(isotope_charges)))
 
                     feature_table = feature_finder_report(query_data, isotope_patterns, isotope_charges, iso_idx, stats, sortindex_, hill_ptrs, hill_data)
@@ -1541,6 +1575,12 @@ def find_features(to_process, callback = None, parallel = False):
                     feature_path = extract_bruker(file_name)
                     feature_table = convert_bruker(feature_path)
                     logging.info('Bruker featurer finder complete. Extracted {:,} features.'.format(len(feature_table)))
+
+                # Calculate additional params
+                feature_table['rt_length'] = feature_table['rt_end'] - feature_table['rt_start']
+                feature_table['rt_right'] = feature_table['rt_end'] - feature_table['rt_apex']
+                feature_table['rt_left'] = feature_table['rt_apex'] - feature_table['rt_start']
+                feature_table['rt_tail'] = feature_table['rt_right'] / feature_table['rt_left']
 
                 logging.info('Matching features to query data.')
                 features = map_ms2(feature_table, query_data, **settings['features'])
@@ -1564,81 +1604,63 @@ from sklearn.neighbors import KDTree
 import pandas as pd
 import numpy as np
 
-def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range = 0.3, n_neighbors=5, search_unidentified = False, **kwargs):
+
+def replace_infs(array):
+    """
+    Replace nans and infs with 0
+    """
+    array[array == -np.inf] = 0
+    array[array == np.inf] = 0
+    array[np.isnan(array)] = 0
+
+    return array
+
+def map_ms2(feature_table, query_data, map_mz_range = 1, map_rt_range = 0.5, map_mob_range = 0.3, map_n_neighbors=5, search_unidentified = False, **kwargs):
     """
     Map MS1 features to MS2 based on rt and mz
     if ccs is included also add
     """
+    feature_table['rt'] = feature_table['rt_apex']
 
-    if 'mobility' in feature_table.columns:
-        use_mob = True
-    else:
+    range_dict = {}
+    range_dict['mz'] = ('mono_mzs2', map_mz_range)
+    range_dict['rt'] = ('rt_list_ms2', map_rt_range)
+    range_dict['mobility'] = ('mobility', map_mob_range)
+
+    query_dict = {}
+    query_dict['rt'] = 'rt_list_ms2'
+    query_dict['mass'] = 'prec_mass_list2'
+    query_dict['mz'] = 'mono_mzs2'
+    query_dict['charge'] = 'charge2'
+    query_dict['mobility'] = 'mobility'
+
+    if 'mobility' not in feature_table.columns:
+        del range_dict['mobility']
+        del query_dict['mobility']
         use_mob = False
-
-    if use_mob:
-
-        tree_points = feature_table[['mz','rt_apex','mobility']].values
-
-        tree_points[:,0] = np.log(tree_points[:,0])*1e6/ppm_range #m/z -> log transform, this is in ppm then
-        tree_points[:,1] = tree_points[:,1]/rt_range # -> this is in minutes
-        tree_points[:,2] = tree_points[:,2]/mob_range
-
-        matching_tree = KDTree(tree_points, metric="minkowski")
-
-        query_mz = np.log(query_data['mono_mzs2'])*1e6/ppm_range
-        query_rt = query_data['rt_list_ms2'] / rt_range
-        query_mob = query_data['mobility'] / mob_range
-
-        ref_points = np.array([query_mz, query_rt, query_mob]).T
-
-        ref_points[ref_points == -np.inf] = 0
-        ref_points[ref_points == np.inf] = 0
-        ref_points[np.isnan(ref_points)] = 0
-
-        dist, idx = matching_tree.query(ref_points, k=n_neighbors)
-
     else:
-        tree_points = feature_table[['mz','rt_apex']].values
-        tree_points[:,0] = np.log(tree_points[:,0])*1e6/ppm_range #m/z -> log transform, this is in ppm then
-        tree_points[:,1] = tree_points[:,1]/rt_range # -> this is in minutes
+        use_mob = True
 
-        matching_tree = KDTree(tree_points, metric="minkowski")
+    tree_points = feature_table[list(range_dict.keys())].values
 
-        query_mz = np.log(query_data['mono_mzs2'])*1e6/ppm_range
-        query_rt = query_data['rt_list_ms2'] / rt_range
+    for i, key in enumerate(range_dict):
+        tree_points[:,i] = tree_points[:,i]/range_dict[key][1]
 
-        ref_points = np.array([query_mz, query_rt]).T
+    matching_tree = KDTree(tree_points, metric="minkowski")
+    ref_points = np.array([query_data[range_dict[_][0]] / range_dict[_][1] for _ in range_dict]).T
+    ref_points = replace_infs(ref_points)
 
-        ref_points[ref_points == -np.inf] = 0
-        ref_points[ref_points == np.inf] = 0
-        ref_points[np.isnan(ref_points)] = 0
-
-        dist, idx = matching_tree.query(ref_points, k=n_neighbors)
-
-
+    dist, idx = matching_tree.query(ref_points, k=map_n_neighbors)
     ref_matched = np.zeros(ref_points.shape[0], dtype=np.bool_)
 
     all_df = []
-    for neighbor in range(n_neighbors):
-        if use_mob:
-            ref_df = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2'], query_data['mobility']]).T, columns=['rt', 'mass', 'mz', 'charge','mobility'])
-        else:
-            ref_df = pd.DataFrame(np.array([query_data['rt_list_ms2'], query_data['prec_mass_list2'], query_data['mono_mzs2'], query_data['charge2']]).T, columns=['rt', 'mass', 'mz', 'charge'])
+    for neighbor in range(map_n_neighbors):
 
-        ref_df['mass_matched'] = feature_table.iloc[idx[:,neighbor]]['mass'].values
-        ref_df['mass_offset'] = ref_df['mass_matched'] - ref_df['mass']
+        ref_df = pd.DataFrame(np.array([query_data[query_dict[_]] for _ in query_dict]).T, columns = query_dict.keys())
 
-        ref_df['rt_matched'] = feature_table.iloc[idx[:,neighbor]]['rt_apex'].values
-        ref_df['rt_offset'] = ref_df['rt_matched'] - ref_df['rt']
-
-        ref_df['mz_matched'] = feature_table.iloc[idx[:,neighbor]]['mz'].values
-        ref_df['mz_offset'] = ref_df['mz_matched'] - ref_df['mz']
-
-        if use_mob:
-            ref_df['mobility_matched'] = feature_table.iloc[idx[:,neighbor]]['mobility'].values
-            ref_df['mobility_offset'] = ref_df['mobility_matched'] - ref_df['mobility']
-
-        ref_df['charge_matched'] = feature_table.iloc[idx[:,neighbor]]['charge'].values
+        for _ in query_dict:
+            ref_df[_+'_matched'] = feature_table.iloc[idx[:,neighbor]][_].values
+            ref_df[_+'_offset'] = ref_df[_+'_matched'] - ref_df[_]
 
         ref_df['query_idx'] = ref_df.index
         ref_df['feature_idx'] = idx[:,neighbor]
@@ -1660,10 +1682,6 @@ def map_ms2(feature_table, query_data, ppm_range = 20, rt_range = 0.5, mob_range
         ref_matched |= _check
         ref_df['dist'] = dist[:,neighbor]
         ref_df = ref_df[_check]
-
-        #ref_df['dist'] = dist[:,neighbor]
-        #ref_matched |= (ref_df['dist']<1)
-        #ref_df = ref_df[ref_df['dist']<1]
 
         all_df.append(ref_df)
 

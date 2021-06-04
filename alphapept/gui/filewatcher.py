@@ -8,30 +8,42 @@ import datetime
 import yaml
 import psutil
 
+def get_folder_size(start_path = '.'):
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(start_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            # skip if it is symbolic link
+            if not os.path.islink(fp):
+                total_size += os.path.getsize(fp)
+    return total_size
+
 def check_file_completion(file, minimum_file_size):
 
     to_analyze = []
 
     if file.endswith('.d'):
-        #Bruker
-        to_check = os.path.join(file, 'analysis.tdf_bin')
-        while not os.path.isfile(to_check):
-            time.sleep(1)
+        size_function = get_folder_size
     else:
-        to_check = file
+        size_function = os.path.getsize
 
-    filesize = os.path.getsize(to_check)
+    filesize = size_function(file)
 
     writing = True
     while writing:
-        time.sleep(1)
-        new_filesize = os.path.getsize(to_check)
+        time.sleep(5)
+        new_filesize = size_function(file)
         if filesize == new_filesize:
             writing  = False
         else:
             filesize = new_filesize
 
     if filesize/1024/1024 > minimum_file_size: #bytes, kbytes, mbytes
+        if file.endswith('.d'): #Check if required subfiles exist for bruker
+            for subfile in ['analysis.tdf_bin', 'analysis.tdf']:
+                if not os.path.isfile(os.path.join(file, subfile)):
+                    print(f'No {subfile} found. Skipping {file}.')
+                    return to_analyze
         to_analyze.append(file)
 
     return to_analyze
@@ -53,16 +65,25 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
     my_event_handler = PatternMatchingEventHandler(patterns, ignore_patterns, ignore_directories, case_sensitive)
 
     def on_created(event):
-        print(f"{event.src_path} has been created.")
-
+        print(f"New file {event.src_path} in folder.")
         file = event.src_path
 
         if tag != 'None':
             if tag not in file:
                 return
 
+        if os.path.split(file)[0].endswith('.d'):
+            file = os.path.split(file)[0]
+            print(f'File could belong to bruker file. Checking main folder {file}')
+            new_file = os.path.splitext(os.path.split(file)[1])[0] + '.yaml'
+            queue_file = os.path.join(QUEUE_PATH, new_file)
+            if os.path.isfile(queue_file):
+                print('File exists in queue already. Skipping.')
+                return
+
         if file.lower().endswith('.raw') or file.lower().endswith('.d'):
-            print(f"Checking {file}")
+
+            print(f"Checking if {file} is complete")
             files = check_file_completion(file, minimum_file_size)
 
             if len(files) > 0:
@@ -70,8 +91,14 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
                 settings['experiment']['file_paths'] = files
                 new_file = os.path.splitext(os.path.split(file)[1])[0] + '.yaml'
                 settings['experiment']['results_path'] = os.path.splitext(file)[0] + '.yaml'
-                save_settings(settings, os.path.join(QUEUE_PATH, new_file))
-                print(f'{datetime.datetime.now()} Added {file}')
+
+                queue_file = os.path.join(QUEUE_PATH, new_file)
+
+                if os.path.isfile(queue_file):
+                    print('File exists in queue already. Skipping.')
+                else:
+                    save_settings(settings, queue_file)
+                    print(f'{datetime.datetime.now()} Added {file} as {queue_file}')
 
     print(f'{datetime.datetime.now()} file watcher started.')
 
@@ -90,7 +117,7 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
 def filewatcher():
     st.write('# FileWatcher')
 
-    # FIleWatcher
+    # FileWatcher
     running, last_pid, p_name, status, p_init  = check_process(FILE_WATCHER_FILE)
 
     if running:
@@ -130,13 +157,33 @@ def filewatcher():
     else:
         settings_ = load_settings_as_template(settings_template)
         st.success('Valid settings file.')
-        if st.checkbox('Show'):
+        with st.beta_expander("Show settings"):
             st.write(settings_)
 
-    if valid:
-        start_watcher = st.button('Start file watcher ')
-        valid = False
+    st.write('## Start watcher')
 
-        if start_watcher:
+    if valid:
+        process_existing = st.checkbox('Process already existing files.')
+
+        if st.button('Start'):
+
+            if process_existing:
+                raw_files = [_ for _ in os.listdir(folder) if _.lower().endswith('.raw') or _.lower().endswith('.d')]
+                st.success(f'Found {len(raw_files)} existing raw files.')
+
+                current = st.progress(0)
+
+                for idx, file in enumerate(raw_files):
+                    file = os.path.join(folder, file)
+                    settings = settings_.copy()
+                    settings['experiment']['file_paths'] = [file]
+                    new_file = os.path.splitext(os.path.split(file)[1])[0] + '.yaml'
+                    settings['experiment']['results_path'] = os.path.splitext(file)[0] + '.yaml'
+                    save_settings(settings, os.path.join(QUEUE_PATH, new_file))
+                    print(f'{datetime.datetime.now()} Added {file}')
+
+                    current.progress((idx+1)/len(raw_files))
+
             start_process(target = file_watcher_process, process_file = FILE_WATCHER_FILE, args = (folder, settings_, minimum_size, tag), verbose = True)
+            valid = False
             raise st.script_runner.RerunException(st.script_request_queue.RerunData(None))
