@@ -3,18 +3,17 @@
 __all__ = ['connect_centroids_unidirection', 'convert_connections_to_array', 'eliminate_overarching_vertex',
            'path_finder', 'find_path_start', 'find_path_length', 'fill_path_matrix', 'find_centroid_connections',
            'get_hills', 'connect_centroids', 'extract_hills', 'fast_minima', 'split', 'split_hills',
-           'check_large_hills', 'filter_hills', 'hill_stats', 'get_hill_data', 'check_isotope_pattern', 'DELTA_M',
-           'DELTA_S', 'maximum_offset', 'correlate', 'extract_edge', 'edge_correlation', 'get_pre_isotope_patterns',
-           'check_isotope_pattern_directed', 'grow', 'grow_trail', 'get_trails', 'plot_pattern', 'get_minpos',
-           'get_local_minima', 'is_local_minima', 'truncate', 'check_averagine', 'pattern_to_mz', 'cosine_averagine',
-           'int_list_to_array', 'mz_to_mass', 'get_minpos', 'get_local_minima', 'is_local_minima', 'truncate',
-           'M_PROTON', 'isolate_isotope_pattern', 'get_isotope_patterns', 'report_', 'feature_finder_report',
-           'plot_isotope_pattern', 'extract_bruker', 'convert_bruker', 'map_bruker', 'find_features', 'map_ms2']
-
+           'check_large_hills', 'filter_hills', 'hill_stats', 'remove_duplicates', 'get_hill_data',
+           'check_isotope_pattern', 'DELTA_M', 'DELTA_S', 'maximum_offset', 'correlate', 'extract_edge',
+           'edge_correlation', 'get_pre_isotope_patterns', 'check_isotope_pattern_directed', 'grow', 'grow_trail',
+           'get_trails', 'plot_pattern', 'get_minpos', 'get_local_minima', 'is_local_minima', 'truncate',
+           'check_averagine', 'pattern_to_mz', 'cosine_averagine', 'int_list_to_array', 'mz_to_mass', 'get_minpos',
+           'get_local_minima', 'is_local_minima', 'truncate', 'M_PROTON', 'isolate_isotope_pattern',
+           'get_isotope_patterns', 'report_', 'feature_finder_report', 'plot_isotope_pattern', 'extract_bruker',
+           'convert_bruker', 'map_bruker', 'find_features', 'replace_infs', 'map_ms2']
 
 # Cell
 import numpy as np
-
 import alphapept.performance
 
 @alphapept.performance.performance_function
@@ -119,7 +118,6 @@ def fill_path_matrix(x, path_start, forwards, out_hill_data, out_hill_ptr):
 
 # Cell
 
-
 def find_centroid_connections(rowwise_peaks, row_borders, centroids, max_gap, ppm_tol):
     if alphapept.performance.COMPILATION_MODE == "cuda":
         import cupy
@@ -213,7 +211,6 @@ def connect_centroids(rowwise_peaks, row_borders, centroids, max_gap, ppm_tol):
                                                            max_gap,
                                                            ppm_tol)
 
-
     from_idx = cupy.zeros(len(from_r), np.int32)
     to_idx = cupy.zeros(len(from_r), np.int32)
 
@@ -253,6 +250,7 @@ def extract_hills(query_data, max_gap, ppm_tol):
     row_borders = indices[1:]
 
     from_idx, to_idx, score_median, score_std = connect_centroids(rowwise_peaks, row_borders, mass_data, max_gap, ppm_tol)
+
 
     hill_ptrs, hill_data, path_node_cnt = get_hills(mass_data, from_idx, to_idx)
 
@@ -433,7 +431,6 @@ def filter_hills(hill_data, hill_ptrs, int_data, hill_check_large =40, window = 
 
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
 def hill_stats(idx, hill_range, hill_ptrs, hill_data, int_data, mass_data, rt_, rt_idx, stats, hill_nboot_max, hill_nboot):
-
     np.random.seed(42)
 
     start = hill_ptrs[idx]
@@ -509,9 +506,6 @@ def get_hill_data(query_data, hill_ptrs, hill_data, hill_nboot_max = 300, hill_n
     stats = np.zeros((len(hill_ptrs)-1, 6)) #mz, delta, rt_min, rt_max, sum_max
     hill_stats(range(len(hill_ptrs)-1), np.arange(len(hill_ptrs)-1), hill_ptrs, hill_data, int_data, mass_data, rt_, scan_idx, stats, hill_nboot_max, hill_nboot)
 
-    # Remove duplicate hills
-    hill_data, hill_ptrs, stats = remove_duplicates(stats, hill_data, hill_ptrs)
-
     # sort the stats
     sortindex = np.argsort(stats[:,4]) #Sorted by rt_min
     stats = stats[sortindex,:]
@@ -571,7 +565,6 @@ def correlate(scans_, scans_2, int_, int_2):
     return corr
 
 # Cell
-
 @alphapept.performance.compile_function(compilation_mode="numba")
 def extract_edge(stats, idxs_upper, runner, max_index, maximum_offset,  min_charge = 1, max_charge = 6, mass_range=5):
     edges = []
@@ -640,7 +633,6 @@ def get_pre_isotope_patterns(stats, idxs_upper, sortindex_, hill_ptrs, hill_data
 
 
 # Cell
-
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def check_isotope_pattern_directed(mass1, mass2, delta_mass1, delta_mass2, charge, index, mass_range):
@@ -931,6 +923,7 @@ def mz_to_mass(mz, charge):
     mass = mz * charge - charge * M_PROTON
 
     return mass
+
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def get_minpos(y, split=5):
@@ -1538,6 +1531,7 @@ def find_features(to_process, callback = None, parallel = False):
                     iso_corr_min = f_settings['iso_corr_min']
 
                     logging.info('Feature finding on {}'.format(file_name))
+
                     logging.info(f'Hill extraction with ppm_tol {ppm_tol} and max_gap {max_gap}')
 
                     hill_ptrs, hill_data, path_node_cnt, score_median, score_std = extract_hills(query_data, max_gap, ppm_tol)
