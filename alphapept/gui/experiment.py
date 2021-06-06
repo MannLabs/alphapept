@@ -24,7 +24,7 @@ def parse_folder(file_folder):
     """
     Checks a folder for raw, fasta and db_data.hdf files
     """
-    raw_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith('.raw') or _.lower().endswith('.d') or _.lower().endswith('.ms_data.hdf')]
+    raw_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith('.raw') or _.lower().endswith('.d')] # or _.lower().endswith('.ms_data.hdf')]
     fasta_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith('.fasta')]
     db_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith('.db_data.hdf')]
     #ms_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith('.ms_data.hdf')]
