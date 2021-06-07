@@ -19,19 +19,19 @@ def filter_score(df, mode='multiple'):
     Only keep one.
 
     """
-    df["rank"] = df.groupby("query_idx")["score"].rank("dense", ascending=False).astype("int")
+    df["rank"] = df.groupby(["query_idx", "localexp"])["score"].rank("dense", ascending=False).astype("int")
     df = df[df["rank"] == 1]
 
     # in case two hits have the same score and therfore rank only accept the first one
-    df = df.drop_duplicates("query_idx")
+    df = df.drop_duplicates(["query_idx", "localexp"])
 
     if 'dist' in df.columns:
-        df["feature_rank"] = df.groupby("feature_idx")["dist"].rank("dense", ascending=True).astype("int")
-        df["raw_rank"] = df.groupby("raw_idx")["score"].rank("dense", ascending=False).astype("int")
+        df["feature_rank"] = df.groupby(["feature_idx", "localexp"])["dist"].rank("dense", ascending=True).astype("int")
+        df["raw_rank"] = df.groupby(["raw_idx", "localexp"])["score"].rank("dense", ascending=False).astype("int")
 
         if mode == 'single':
             df_filtered = df[(df["feature_rank"] == 1) & (df["raw_rank"] == 1) ]
-            df_filtered = df_filtered.drop_duplicates("raw_idx")
+            df_filtered = df_filtered.drop_duplicates(["raw_idx", "localexp"])
 
         elif mode == 'multiple':
             df_filtered = df[(df["feature_rank"] == 1)]
@@ -52,7 +52,7 @@ def filter_precursor(df):
 
     """
     df["rank_precursor"] = (
-        df.groupby("precursor")["score"].rank("dense", ascending=False).astype("int")
+        df.groupby(["precursor", "localexp"])["score"].rank("dense", ascending=False).astype("int")
     )
     df_filtered = df[df["rank_precursor"] == 1]
 
@@ -179,12 +179,12 @@ def cut_global_fdr(data, analyte_level='sequence', fdr_level=0.01, plot=True, **
 
     agg_cval, agg_cutoff = cut_fdr(agg_score, fdr_level=fdr_level, plot=plot)
 
-    agg_report = pd.merge(data,
-                          agg_cutoff,
-                          how = 'inner',
-                          on = [analyte_level,'decoy'],
-                          suffixes=('', '_'+analyte_level),
-                          validate="many_to_one")
+    agg_report = data.reset_index().merge(
+                        agg_cutoff,
+                        how = 'inner',
+                        on = [analyte_level,'decoy'],
+                        suffixes=('', '_'+analyte_level),
+                        validate="many_to_one").set_index('index') #retain the original index
     return agg_report
 
 # Cell
@@ -648,23 +648,37 @@ def ecdf(data):
 def score_hdf(to_process, callback = None, parallel=False):
     try:
         index, settings = to_process
-        file_name = settings['experiment']['file_paths'][index]
-        base_file_name, ext = os.path.splitext(file_name)
-        ms_file = base_file_name+".ms_data.hdf"
+        exp_name = sorted(settings['experiment']['fractioned_samples'].keys())[index]
+        file_names = settings['experiment']['fractioned_samples'].get(exp_name)
+        ms_file_names = [os.path.splitext(x)[0]+".ms_data.hdf" for x in file_names]
+
 
         skip = False
 
-        ms_file_ = alphapept.io.MS_Data_File(ms_file, is_overwritable=True)
+        all_dfs = []
+        ms_file2idx = {}
+        idx_start = 0
+        for ms_filename in ms_file_names:
+            ms_file_ = alphapept.io.MS_Data_File(ms_filename, is_overwritable=True)
 
-        try:
-            df = ms_file_.read(dataset_name='second_search')
-            logging.info('Found second search psms for scoring.')
-        except KeyError:
             try:
-                df = ms_file_.read(dataset_name='first_search')
-                logging.info('No second search psms for scoring found. Using first search.')
+                df = ms_file_.read(dataset_name='second_search')
+                logging.info('Found second search psms for scoring.')
             except KeyError:
-                df = pd.DataFrame()
+                try:
+                    df = ms_file_.read(dataset_name='first_search')
+                    logging.info('No second search psms for scoring found. Using first search.')
+                except KeyError:
+                    df = pd.DataFrame()
+            df["localexp"] = idx_start
+
+
+            df.index = df.index+idx_start
+            ms_file2idx[ms_file_] = df.index
+            all_dfs.append(df)
+            idx_start+=len(df.index)
+
+        df = pd.concat(all_dfs)
 
         if len(df) == 0:
             skip = True
@@ -698,35 +712,38 @@ def score_hdf(to_process, callback = None, parallel=False):
 
             logging.info('FDR on peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
 
-            # Insert here
 
-            try:
-                logging.info('Extracting ions')
-                ions = ms_file_.read(dataset_name='ions')
+            for ms_file_, idxs in ms_file2idx.items():
+                df_file = df.loc[df.index.intersection(idxs)]
+                try:
+                    logging.info('Extracting ions')
+                    ions = ms_file_.read(dataset_name='ions')
 
-                ion_list = []
-                ion_ints = []
+                    ion_list = []
+                    ion_ints = []
 
-                for i in range(len(df)):
-                    ion, ints = get_ion(i, df, ions)
-                    ion_list.append(ion)
-                    ion_ints.append(ints)
+                    for i in range(len(df_file)):
+                        ion, ints = get_ion(i, df_file, ions)
+                        ion_list.append(ion)
+                        ion_ints.append(ints)
 
-                df['ion_int'] = ion_ints
-                df['ion_types'] = ion_list
+                    df_file['ion_int'] = ion_ints
+                    df_file['ion_types'] = ion_list
 
-                logging.info('Extracting ions complete.')
+                    logging.info('Extracting ions complete.')
 
-            except KeyError:
-                logging.info('No ions present.')
+                except KeyError:
+                    logging.info('No ions present.')
 
-            ms_file_.write(df, dataset_name="peptide_fdr")
+                ms_file_.write(df_file.reset_index(), dataset_name="peptide_fdr")
 
-        logging.info(f'Scoring of file {ms_file} complete.')
-        return True
+            logging.info(f'Scoring of files {ms_file2idx.keys()} complete.')
+            return True
     except Exception as e:
-        logging.error(f'Scoring of file {ms_file} failed. Exception {e}')
+        logging.info(f'Scoring of files {ms_file2idx.keys()} failed. Exception {e}')
+
         return f"{e}" #Can't return exception object, cast as string
+
 
 # Cell
 
