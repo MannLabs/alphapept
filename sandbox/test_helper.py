@@ -7,11 +7,11 @@ import os
 import alphapept.io
 import seaborn as sns
 from tqdm.notebook import tqdm as tqdm
+import warnings
 
 def prepare_files(path1, path2):
 
-    ms_file = alphapept.io.MS_Data_File(path1)
-    df1 = ms_file.read(dataset_name='protein_fdr')
+    df1 = pd.read_hdf(path1, 'protein_fdr')
 
     # add sequence charge
     df1['missed_cleavages'] = df1['sequence'].str[:-1].str.count('K') + df1['sequence'].str[:-1].str.count('R')
@@ -193,7 +193,7 @@ def protein_rank(df1, df2, software_1, software_2):
     plt.show()
 
 
-def get_plot_df(ref, base_columns, ratio_columns, ax, id_):
+def get_plot_df(ref, base_columns, ratio_columns, ax, id_, valid_filter = True):
 
     to_plot = pd.DataFrame()
     ref[base_columns] = ref[base_columns].replace(0, np.nan)
@@ -208,7 +208,10 @@ def get_plot_df(ref, base_columns, ratio_columns, ax, id_):
     to_plot['ratio_'] = np.log2(to_plot['base'] / to_plot['ratio'])
     to_plot['sum_'] = np.log2(to_plot['ratio'])
 
-    valid = to_plot.query(f'ratio_cnt >= 2 and base_cnt >=2')
+    if valid_filter:
+        valid = to_plot.query(f'ratio_cnt >= 2 and base_cnt >=2')
+    else:
+        valid = to_plot.query(f'ratio_cnt >0 and base_cnt >0')
 
     ax = sns.scatterplot(ax = ax, x="ratio_", y="sum_", hue="Species",
     hue_order=['Homo sapiens', "Escherichia coli","X"], data=valid, alpha=0.2)
@@ -216,14 +219,18 @@ def get_plot_df(ref, base_columns, ratio_columns, ax, id_):
     homo = valid[valid['Species'] == 'Homo sapiens']['ratio_'].values
     e_coli = valid[valid['Species'] == 'Escherichia coli']['ratio_'].values
 
-    homo_ratio = np.nanmean(homo[~np.isinf(homo)])
-    e_coli_ratio = np.nanmean(e_coli[~np.isinf(e_coli)])
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        homo_ratio = np.nanmean(homo[~np.isinf(homo)])
+        e_coli_ratio = np.nanmean(e_coli[~np.isinf(e_coli)])
 
-    homo_ratio_std = np.nanstd(homo[~np.isinf(homo)])
-    e_coli_ratio_std = np.nanstd(e_coli[~np.isinf(e_coli)])
+        homo_ratio_std = np.nanstd(homo[~np.isinf(homo)])
+        e_coli_ratio_std = np.nanstd(e_coli[~np.isinf(e_coli)])
 
     nl = '\n'
     ax.set_title(f'{id_} {nl} Homo (mean, std) {homo_ratio:.2f}, {homo_ratio_std:.2f} {nl} EColi (mean, std) {e_coli_ratio:.2f}, {e_coli_ratio_std:.2f} {nl} {valid["Species"].value_counts().to_dict()}')
+
+
 
 def algorithm_test(evd, ref, base_columns, ratio_columns, base_columns2, ratio_columns2, test_id, software_1, software_2):
     spec_dict = {}
@@ -244,7 +251,7 @@ def algorithm_test(evd, ref, base_columns, ratio_columns, base_columns2, ratio_c
         field_ = 'Intensity'
 
         subset['protein'] = 'X'
-        subset['shortname'] = subset['Raw file']
+        subset['filename'] = subset['Raw file']
         subset['precursor']  = ['_'.join(_) for _ in zip(subset['Modified sequence'].values, subset['Charge'].values.astype('str'))]
         protein = 'X'
 
@@ -270,3 +277,119 @@ def algorithm_test(evd, ref, base_columns, ratio_columns, base_columns2, ratio_c
 
     id_ = f'{software_1} on {software_2} {test_id}'
     get_plot_df(df, base_columns2, ratio_columns2, axes[1], id_)
+
+
+import pandas as pd
+import numpy as np
+import random
+
+def generate_peptide_list(num_peps):
+    """simulate a list of peptide names"""
+    pepcount = 0
+    count = 0
+    peptides = []
+    while count < num_peps:
+        list = [f'pep{pepcount}']
+
+        for levelidx, level in enumerate([2]):
+            num_events = np.random.randint(1,level)
+            new_list = []
+            for elem in list:
+                for idx in range(num_events):
+                    new_list.append(elem + f"_LVL{levelidx}_mod{idx}")
+                    count+=1
+            list = new_list
+        peptides.extend(list)
+        pepcount+=1
+
+    return peptides
+
+def generate_protein_list(pepnames):
+    """simulate protein names for a list of peptide names"""
+    res = []
+    assigned = 0
+    protcount = 0
+    while assigned < len(pepnames):
+        protstring = f"P{protcount}"
+        num_peps = random.randint(2,10)
+        for i in range(num_peps):
+            res.append(protstring)
+        assigned+=num_peps
+        protcount+=1
+    res = res[:len(pepnames)]
+    return res
+
+def simulate_biased_peptides(num_pep, samplevec, fractionvec):
+    """generate a dataframe with simuated peptides belonging to different fractions and samples.
+    Systematic shifts are simulated into the samples
+
+    Args:
+        num_pep (int): number of peptides to simulate
+        samplevec (list[String]): each entry corresponds to one "fake sample"
+        fractionvec (list[int]): list of same length as above, each entry gives the number of fractions to simulate for the fake sample
+
+
+
+    Returns:
+        dataframe: dataframe in the same format as "real" peptides
+
+    Example:
+     simulate_biased_peptides(20000, ["A", "B"], [3, 5]) simulates a dataset consisting of sample A with 3 fractions and sample B with 5 fractions
+    """
+    pepnames = generate_peptide_list(num_pep) #gives uuid strings for each peptide
+    protnames = generate_protein_list(pepnames)
+    pep2prot = {pep:prot for pep, prot in zip(pepnames, protnames)}
+
+    pep_idxs = list(range(len(pepnames)))
+    pep2baseint = { name : np.abs(np.random.lognormal(5))*1000 for name in pepnames}
+
+
+    shortname = [] #sample names
+    precursor = []
+    fraction = []
+    intensity = []
+
+    for idx_samp in range(len(samplevec)):
+        sample = samplevec[idx_samp]
+        num_fractions = fractionvec[idx_samp]
+        peps_per_frac = int(len(pepnames)/num_fractions)
+        start_idx = 0
+        for frac_idx in range(num_fractions):
+            #set df columns for given fraction
+            shift_factor = np.random.uniform(low=1, high=100)
+            random.shuffle(pep_idxs)
+            selected_pep_idxs = pep_idxs[start_idx:start_idx +peps_per_frac]
+            precursors_local = [pepnames[x] for x in selected_pep_idxs]
+            shortname_local = [sample for x in precursors_local]
+            fraction_local = [frac_idx for x in precursors_local]
+            intensity_local = [(np.random.standard_normal()+shift_factor)*pep2baseint.get(x) for x in precursors_local]
+
+            #extend global lists
+            shortname.extend(shortname_local)
+            precursor.extend(precursors_local)
+            fraction.extend(fraction_local)
+            intensity.extend(intensity_local)
+
+            start_idx+= peps_per_frac
+
+
+    proteins = [pep2prot.get(x) for x in precursor]
+    species = ['X' for x in precursor]
+    df_simul = pd.DataFrame({"protein_group": proteins, "precursor": precursor, "filename" : shortname,"fraction": fraction, "Intensity" : intensity,
+    'Species' : species})
+
+    return df_simul
+
+def add_species_column(prot_df_mq):
+    if 'Species' in prot_df_mq.keys():
+        return
+    prots = prot_df_mq["Protein IDs"]
+    species = []
+    for prot in prots:
+        if "_ECO" in prot:
+            species.append('Escherichia coli')
+        elif "HUMAN" in prot:
+            species.append("Homo sapiens")
+        else:
+            species.append("X")
+    prot_df_mq['Species'] = species

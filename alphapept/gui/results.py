@@ -12,6 +12,13 @@ from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 from scipy import stats
 import numpy as np
+from sklearn.decomposition import PCA
+
+
+@st.cache
+def cached_file(file):
+    df = pd.read_hdf(file, 'protein_table')
+    return df
 
 def readable_files_from_yaml(results_yaml):
     """
@@ -19,7 +26,7 @@ def readable_files_from_yaml(results_yaml):
     """
 
     raw_files = [os.path.splitext(_)[0]+'.ms_data.hdf' for _ in results_yaml['experiment']['file_paths']]
-    raw_files = raw_files + [results_yaml['experiment']['results_path']]
+    raw_files = [results_yaml['experiment']['results_path']] + raw_files
     raw_files = [_ for _ in raw_files if os.path.exists(_)]
 
     return raw_files
@@ -72,24 +79,134 @@ def ion_plot(ms_file, options):
 
                 st.write(fig)
 
-def protein_rank(ms_file, options):
-    """
-    Displays summary statistics from matched ions
 
-    """
-    if 'protein_fdr' in options:
-        if st.button('Protein Rank'):
-            with st.spinner('Creating plot.'):
 
-                protein_fdr = ms_file.read(dataset_name='protein_fdr')
-                p_df = protein_fdr.groupby('protein').sum()['int_sum'].sort_values()[::-1].apply(np.log).to_frame().reset_index().reset_index()
-                p_df['protein_index'] =p_df['protein']
+def correlation_heatmap(file, options):
+    if '/protein_table' in options:
+        with st.beta_expander('Correlation heatmap'):
+            df = cached_file(file)
 
-                p_df = p_df.set_index('protein_index')
-                fig = px.scatter(p_df, x='index', y='int_sum', hover_data=["protein"], title='Protein Rank')
-                fig.update_layout(showlegend=False)
+            cols = [_ for _ in df.columns if 'LFQ' in _]
+            if len(cols) == 0:
+                cols = df.columns
+
+            df = np.log(df[cols])
+            corr = df.corr()
+
+            fig = make_subplots(rows=1, cols=1)
+            fig.add_trace(trace = go.Heatmap(z=corr.values,
+                              x=corr.index.values,
+                              y=corr.columns.values, colorscale='Greys'))
+            fig.update_layout(height=600, width=600)
+            st.write(fig)
+
+def pca_plot(file, options):
+    if '/protein_table' in options:
+        with st.beta_expander('PCA'):
+            df = cached_file(file)
+
+            cols = [_ for _ in df.columns if 'LFQ' in _]
+            if len(cols) == 0:
+                cols = df.columns
+
+            pca = PCA(n_components=2)
+            components = pca.fit_transform(df[cols].fillna(0).T)
+
+            plot_df = pd.DataFrame(components, columns = ['Component 1', 'Component 2'])
+            plot_df['Filename'] = cols
+            fig = px.scatter(plot_df, x='Component 1', y='Component 2', hover_data=['Filename'], title='PCA')
+            fig.update_layout(height=600, width=600)
+            fig.update_traces(marker=dict(color='#18212b'))
+            st.write(fig)
+
+
+
+def volcano_plot(file, options):
+    if '/protein_table' in options:
+        with st.beta_expander('Volcano plot'):
+            df = cached_file(file)
+
+            df_log = np.log(df.copy())
+            col1, col2 = st.beta_columns(2)
+
+            group_1 = col1.multiselect('Group1', df.columns)
+            group_2 = col2.multiselect('Group2', df.columns)
+
+            show_proteins = st.multiselect('Highlight proteins', df.index)
+
+            if (len(group_1) > 0) and (len(group_2) > 0):
+
+
+                with st.spinner('Creating plot..'):
+                    test = stats.ttest_ind(df_log[group_1].values, df_log[group_2].values, nan_policy='omit', axis=1)
+
+                    t_diff = np.nanmean(df_log[group_1].values, axis = 1) - np.nanmean(df_log[group_2].values, axis = 1)
+                    plot_df = pd.DataFrame()
+
+                    plot_df['t_test_diff'] = t_diff
+                    plot_df['-log(pvalue)'] = -np.log(test.pvalue.data)
+                    plot_df['id'] = df.index
+                    plot_df.index = df.index
+
+                    fig = make_subplots()
+
+                    fig.add_trace(
+                        go.Scatter(
+                                    x= plot_df['t_test_diff'],
+                                    y=plot_df['-log(pvalue)'],
+                                    hovertemplate ='<b>%{text}</b>' +
+                                    '<br>t_test diff: %{y:.3f}'+
+                                    '<br>-log(pvalue): %{x:.3f}',
+                                    text = plot_df.index,
+                                    opacity=0.8,
+                                    mode='markers',
+                                    marker = dict(color='#3dc5ef')))
+
+                    if len(show_proteins)> 0:
+                        fig.add_trace(go.Scatter(
+                            x=plot_df.loc[show_proteins]['t_test_diff'],
+                            y=plot_df.loc[show_proteins]['-log(pvalue)'],
+                            hovertemplate ='<b>%{text}</b>' +
+                            '<br>t_test diff: %{y:.3f}'+
+                            '<br>-log(pvalue): %{x:.3f}',
+                            text = show_proteins,
+                            mode="markers+text",
+                            textposition="top center",
+                            marker_color='#18212b',
+                            textfont=dict(
+                                family="Courier New, monospace",
+                                size=16,
+                                color="#18212b"
+                                )
+                            )
+                            )
+                    fig.update_layout(height=600, width=600)
+                    fig.update_layout(showlegend=False)
+                    st.write(fig)
+
+def scatter_plot(file, options):
+    if '/protein_table' in options:
+        with st.beta_expander('Scatter plot'):
+            df = cached_file(file)
+
+            df_log = np.log(df.copy())
+            col1, col2 = st.beta_columns(2)
+
+            all_cols = df.columns
+
+            group_1 = col1.selectbox('Group1', df.columns)
+            group_2 = col2.selectbox('Group2', df.columns)
+
+            with st.spinner('Creating plot..'):
+                df_log['id'] = df_log.index
+                fig = px.scatter(df_log, x=group_1, y=group_2, hover_data=['id'], title='Scatterplot', opacity=0.2, trendline="ols")
+                fig.update_layout(height=600, width=600)
+                fig.update_traces(marker=dict(color='#18212b'))
+
+                results = px.get_trendline_results(fig)
 
                 st.write(fig)
+                st.code(results.px_fit_results.iloc[0].summary())
 
 def parse_file_and_display(file):
     """
@@ -103,29 +220,36 @@ def parse_file_and_display(file):
         options = [_ for _ in ms_file.read() if _ != "Raw"]
     except KeyError:
         pandas_hdf = True
+        ms_file = None
 
         with pd.HDFStore(file) as hdf:
             options = list(hdf.keys())
 
-    st.write('Basic Plots')
-    ion_plot(ms_file, options)
-    protein_rank(ms_file, options)
+    if pandas_hdf:
+        volcano_plot(file, options)
+        correlation_heatmap(file, options)
+        scatter_plot(file, options)
+        pca_plot(file, options)
 
-    opt = st.selectbox('Select group', [None] + options)
-    if opt is not None:
-        if pandas_hdf:
-            df = pd.read_hdf(file, opt)
-        else:
-            df = ms_file.read(dataset_name = opt)
-        if not isinstance(df, pd.DataFrame):
-            df = pd.DataFrame(df)
+    if ms_file is not None:
+        st.write('Basic Plots')
+        ion_plot(ms_file, options)
 
-        data_range = st.slider('Data range', 0, len(df), (0,1000))
-        st.write(df.iloc[data_range[0]:data_range[1]])
+        opt = st.selectbox('Select group', [None] + options)
+        if opt is not None:
+            if pandas_hdf:
+                df = pd.read_hdf(file, opt)
+            else:
+                df = ms_file.read(dataset_name = opt)
+            if not isinstance(df, pd.DataFrame):
+                df = pd.DataFrame(df)
 
-        make_df_downloadble(df, file)
+            data_range = st.slider('Data range', 0, len(df), (0,1000))
+            st.write(df.iloc[data_range[0]:data_range[1]])
 
-def plot_summary(results_yaml):
+            make_df_downloadble(df, file)
+
+def plot_summary(results_yaml, selection):
     """
     Plot summary
     """
@@ -136,25 +260,26 @@ def plot_summary(results_yaml):
     data_df = pd.DataFrame(data)
     data_df['filename'] = files
 
-    median_features = int(data_df['feature_table'].median())
-    median_protein_groups= int(data_df['protein_fdr_n_protein_group'].median())
-    median_peptides = int(data_df['protein_fdr_n_sequence'].median())
+    for _ in ['feature_table (n in table)', 'sequence (protein_fdr, n unique)', 'protein_group (protein_fdr, n unique)']:
+        if _ not in data_df:
+            data_df[_] = 0
 
-    st.write(f"### Median: {median_features:,} features | {median_peptides:,} peptides | {median_protein_groups:,}  protein groups ")
+    median_features = int(data_df['feature_table (n in table)'].median())
+    median_peptides = int(data_df['sequence (protein_fdr, n unique)'].median())
+    median_protein_groups = int(data_df['protein_group (protein_fdr, n unique)'].median())
 
-    col1, col2, col3 = st.beta_columns(3)
+    st.write(f"### {selection}")
+    st.write(f"### {median_features:,} features | {median_peptides:,} peptides | {median_protein_groups:,}  protein groups (median)")
 
     fig = make_subplots(rows=1, cols=3, subplot_titles=("Features", "Peptides", "Protein Groups", ))
 
-    hovertext = [data_df['filename'].values]
+    hovertext = list(data_df['filename'].values)
 
-    fig.add_bar(x=data_df.index, y=data_df['feature_table'], hovertext = hovertext, row=1, col=1, marker_color='#3dc5ef')
-    fig.add_bar(x=data_df.index, y=data_df['protein_fdr_n_protein_group'], hovertext = hovertext, row=1, col=2, marker_color='#42dee1')
-    fig.add_bar(x=data_df.index, y=data_df['protein_fdr_n_sequence'], hovertext = hovertext, row=1, col=3, marker_color='#6eecb9')
+    fig.add_bar(x=data_df.index, y=data_df['feature_table (n in table)'], hovertext = hovertext, row=1, col=1, marker_color='#3dc5ef')
+    fig.add_bar(x=data_df.index, y=data_df['sequence (protein_fdr, n unique)'], hovertext = hovertext, row=1, col=2, marker_color='#42dee1')
+    fig.add_bar(x=data_df.index, y=data_df['protein_group (protein_fdr, n unique)'], hovertext = hovertext, row=1, col=3, marker_color='#6eecb9')
 
     fig.update_layout(showlegend=False)
-    #fig.update_xaxes(tickmode = 'array', ticktext=list((range(len(data_df)))))
-
     fig.update_layout(title_text="Run Summary")
 
     st.write(fig)
@@ -168,8 +293,6 @@ def results():
 
     #TOdo: include previously processed output files..
 
-    file = ''
-
     selection = st.selectbox('File selection', ('Previous results', 'Enter file'))
 
     if selection == 'Previous results':
@@ -182,7 +305,8 @@ def results():
             filepath_selection = os.path.join(PROCESSED_PATH, selection)
             results_yaml = load_settings(filepath_selection)
 
-            plot_summary(results_yaml)
+            with st.spinner('Loading data..'):
+                plot_summary(results_yaml, selection)
 
             with st.beta_expander("Run summary"):
                 st.write(results_yaml['summary'])
@@ -195,7 +319,7 @@ def results():
     elif selection == 'Enter file':
         file = st.text_input("Enter path to hdf file.", os.getcwd())
     else:
-        pass
+        file = ''
 
     if file is None:
         file = ''

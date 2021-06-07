@@ -18,7 +18,7 @@ experiment:
   database_path: null
   fasta_paths: []
 raw:
-  most_abundant: 400
+  n_most_abundant: 400
   use_profile_ms1: false
 fasta:
   mods_fixed:
@@ -30,11 +30,11 @@ fasta:
   mods_fixed_terminal_prot: []
   mods_variable_terminal_prot:
   - a<^
-  num_missed_cleavages: 2
-  min_length: 6
-  max_length: 27
-  max_isoforms: 1024
-  limit_modifications: 8
+  n_missed_cleavages: 2
+  pep_length_min: 6
+  pep_length_max: 27
+  isoforms_max: 1024
+  n_modifications_max: 8
   pseudo_reverse: true
   AL_swap: false
   KR_swap: false
@@ -42,29 +42,30 @@ fasta:
   spectra_block: 100000
   fasta_block: 1000
   save_db: true
-  max_fasta_size: 100
+  fasta_size_max: 100
 features:
   max_gap: 2
-  ppm_tol: 8
-  min_hill_length: 3
-  split_level: 1.3
-  smoothing_window: 1
-  large_peak: 40
-  min_charge: 1
-  max_charge: 6
-  seed_masses: 100
+  centroid_tol: 8
+  hill_length_min: 3
+  hill_split_level: 1.3
+  iso_split_level: 1.3
+  hill_smoothing: 1
+  hill_check_large: 40
+  iso_charge_min: 1
+  iso_charge_max: 6
+  iso_n_seeds: 100
   hill_nboot_max: 300
   hill_nboot: 150
-  mass_range: 5
-  min_correlation: 0.6
-  ppm_range: 20
-  rt_range: 0.5
-  mob_range: 0.3
-  n_neighbors: 5
+  iso_mass_range: 5
+  iso_corr_min: 0.6
+  map_mz_range: 1.5
+  map_rt_range: 0.5
+  map_mob_range: 0.3
+  map_n_neighbors: 5
   search_unidentified: false
 search:
-  m_offset: 30
-  m_tol: 30
+  prec_tol: 30
+  frag_tol: 30
   min_frag_hits: 7
   ppm: true
   calibrate: true
@@ -77,14 +78,14 @@ score:
   method: random_forest
 calibration:
   outlier_std: 3
-  n_neighbors: 100
-  ppm_range: 20
-  rt_range: 0.5
-  mob_range: 0.3
+  calib_n_neighbors: 100
+  calib_mz_range: 20
+  calib_rt_range: 0.5
+  calib_mob_range: 0.3
 matching:
-  min_match_p: 0.05
-  min_match_d: 3
+  match_p_min: 0.05
+  match_d_min: 3
 quantification:
   max_lfq: true
-  lfq_minimum_ratio: 1
+  lfq_ratio_min: 1
   mode: int_sum

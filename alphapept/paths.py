@@ -3,6 +3,7 @@ import os
 _this_file = os.path.abspath(__file__)
 _this_directory = os.path.dirname(_this_file)
 
+PLOT_SETTINGS = os.path.join(_this_directory, 'custom_plots.yaml')
 DEFAULT_SETTINGS_PATH = os.path.join(_this_directory, 'default_settings.yaml')
 SETTINGS_TEMPLATE_PATH = os.path.join(_this_directory, 'settings_template.yaml')
 

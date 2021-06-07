@@ -1,5 +1,7 @@
 # GitHub Actions to automatically test on sample files
 name: Quick Test
+env:
+  TMP_FOLDER: 'E:/test_dir/'
 
 on:
   push:
@@ -28,7 +30,7 @@ jobs:
     - name: Run Alphapept on Thermo
       run: |
         conda activate alphapept
-        python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_irt
+        python test_ci.py "${{ env.TMP_FOLDER }}" thermo_irt "${{ secrets.MONGODB_PW }}" 
   IRT_Bruker_Win:
     needs: [Install_Alphapept, IRT_Thermo_Win]
     runs-on: self-hosted
@@ -37,4 +39,4 @@ jobs:
     - name: Run Alphapept on Bruker
       run: |
         conda activate alphapept
-        python test_ci.py "${{ secrets.MONGODB_PW }}" bruker_irt
+        python test_ci.py "${{ env.TMP_FOLDER }}" bruker_irt "${{ secrets.MONGODB_PW }}"

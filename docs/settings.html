@@ -396,7 +396,7 @@ shortnames:
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>most_abundant:
+<pre>n_most_abundant:
   default: 400
   description: Number of most abundant peaks to be isolated from raw spectra.
   max: 1000
@@ -457,31 +457,31 @@ fasta_block:
   max: 10000
   min: 100
   type: spinbox
-limit_modifications:
+n_modifications_max:
   default: 8
   description: Limit the number of modifications per peptide.
   max: 4096
   min: 1
   type: spinbox
-max_fasta_size:
+fasta_size_max:
   default: 100
   description: Maximum size of FASTA (MB) when switching on-the-fly.
   max: 1000000
   min: 1
   type: spinbox
-max_isoforms:
+isoforms_max:
   default: 1024
   description: Maximum number of isoforms per peptide.
   max: 4096
   min: 1
   type: spinbox
-max_length:
+pep_length_max:
   default: 27
   description: Maximum peptide length.
   max: 99
   min: 6
   type: spinbox
-min_length:
+pep_length_min:
   default: 6
   description: Minimum peptide length.
   max: 99
@@ -586,7 +586,7 @@ mods_variable_terminal_prot:
   value:
     a&lt;^: acetylation of protein N-terminus
     am&gt;^: amidation of protein C-terminus
-num_missed_cleavages:
+n_missed_cleavages:
   default: 2
   description: Number of missed cleavages.
   max: 99
@@ -696,17 +696,17 @@ hill_nboot_max:
   max: 500
   min: 1
   type: spinbox
-large_peak:
+hill_check_large:
   default: 40
   max: 100
   min: 1
   type: spinbox
-mass_range:
+iso_mass_range:
   default: 5
   max: 10
   min: 1
   type: spinbox
-max_charge:
+iso_charge_max:
   default: 6
   max: 6
   min: 1
@@ -716,37 +716,37 @@ max_gap:
   max: 10
   min: 1
   type: spinbox
-min_charge:
+iso_charge_min:
   default: 1
   max: 6
   min: 1
   type: spinbox
-min_correlation:
+iso_corr_min:
   default: 0.6
   max: 1
   min: 0.1
   type: doublespinbox
-min_hill_length:
+hill_length_min:
   default: 3
   max: 10
   min: 1
   type: spinbox
-mob_range:
+calib_mob_range:
   default: 0.3
   max: 1
   min: 0.1
   type: doublespinbox
-n_neighbors:
+calib_n_neighbors:
   default: 5
   max: 10
   min: 1
   type: spinbox
-ppm_range:
+calib_mz_range:
   default: 20
   max: 100
   min: 1
   type: spinbox
-ppm_tol:
+centroid_tol:
   default: 8
   max: 25
   min: 1
@@ -760,17 +760,17 @@ search_unidentified:
   default: false
   description: Search MSMS w/o feature.
   type: checkbox
-seed_masses:
+iso_n_seeds:
   default: 100
   max: 500
   min: 1
   type: spinbox
-smoothing_window:
+hill_smoothing:
   default: 1
   max: 10
   min: 1
   type: spinbox
-split_level:
+hill_split_level:
   default: 1.3
   max: 10.0
   min: 0.1
@@ -822,13 +822,13 @@ calibration_std:
   max: 5
   min: 1
   type: spinbox
-m_offset:
+prec_tol:
   default: 30
   description: Precursor mass offset.
   max: 99
   min: 1
   type: spinbox
-m_tol:
+frag_tol:
   default: 30
   description: MSMS mass offset.
   max: 99
@@ -947,13 +947,13 @@ recalibration_min:
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>mob_range:
+<pre>calib_mob_range:
   default: 0.3
   description: Scaling factor for mobility axis.
   max: 1.0
   min: 0.0
   type: doublespinbox
-n_neighbors:
+calib_n_neighbors:
   default: 100
   description: Number of neighbors that are used for offset interpolation.
   max: 1000
@@ -965,7 +965,7 @@ outlier_std:
   max: 5
   min: 1
   type: spinbox
-ppm_range:
+calib_mz_range:
   default: 20
   description: Scaling factor for mz axis.
   max: 1000
@@ -1014,13 +1014,13 @@ rt_range:
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>min_match_d:
+<pre>match_d_min:
   default: 3
   description: Minimum distance cutoff for matching
   max: 10.0
   min: 0.001
   type: doublespinbox
-min_match_p:
+match_p_min:
   default: 0.05
   description: Minimum probability cutoff for matching
   max: 1.0
@@ -1063,7 +1063,7 @@ min_match_p:
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>lfq_minimum_ratio:
+<pre>lfq_ratio_min:
   default: 1
   description: Minimum number of ratios for LFQ.
   max: 10

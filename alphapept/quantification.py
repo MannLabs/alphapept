@@ -2,8 +2,8 @@
 
 __all__ = ['gaussian', 'return_elution_profile', 'simulate_sample_profiles', 'get_peptide_error',
            'get_total_error_parallel', 'get_total_error', 'normalize_experiment_SLSQP', 'normalize_experiment_BFGS',
-           'delayed_normalization', 'get_protein_ratios', 'triangle_error', 'solve_profile_LFBGSB',
-           'solve_profile_SLSQP', 'solve_profile_trf', 'get_protein_table', 'protein_profile',
+           'delayed_normalization', 'generate_dummy_data', 'get_protein_ratios', 'triangle_error',
+           'solve_profile_LFBGSB', 'solve_profile_SLSQP', 'solve_profile_trf', 'get_protein_table', 'protein_profile',
            'protein_profile_parallel', 'protein_profile_parallel_ap', 'protein_profile_parallel_mq']
 
 # Cell
@@ -153,64 +153,130 @@ def normalize_experiment_BFGS(profiles):
 
     return solution
 
+
 def delayed_normalization(df, field='int_sum', minimum_occurence=None):
     """
     Returns normalization for given peptide intensities
     """
-    files = np.sort(df['shortname'].unique()).tolist()
+    files = np.sort(df['filename'].unique()).tolist()
     n_files = len(files)
 
-    if 'fraction' in df.keys():
-        fractions = np.sort(df['fraction'].unique()).tolist()
-        n_fractions = len(fractions)
+    if 'fraction' not in df.keys():
+        df['fraction'] = [1 for x in range(len(df.index))]
 
-        df_max = df.groupby(['precursor','fraction','shortname'])[field].max() #Maximum per fraction
+    fractions = np.sort(df['fraction'].unique()).tolist()
 
-        prec_count = df_max.index.get_level_values('precursor').value_counts()
+    n_fractions = len(fractions)
 
-        if not minimum_occurence:
-            minimum_occurence = np.percentile(prec_count[prec_count>1].values, 75) #Take the 25% best datapoints
-            logging.info('Setting minimum occurence to {}'.format(minimum_occurence))
+    df_max = df.groupby(['precursor','fraction','filename'])[field].max() #Maximum per fraction
 
-        shared_precs = prec_count[prec_count >= minimum_occurence]
-        precs = prec_count[prec_count > minimum_occurence].index.tolist()
+    prec_count = df_max.index.get_level_values('precursor').value_counts()
 
-        n_profiles = len(precs)
+    if not minimum_occurence:
+        minimum_occurence = np.percentile(prec_count[prec_count>1].values, 75) #Take the 25% best datapoints
+        logging.info('Setting minimum occurence to {}'.format(minimum_occurence))
 
-        selected_precs = df_max.loc[precs]
-        selected_precs = selected_precs.reset_index()
-
-        profiles = np.empty((n_fractions, n_files, n_profiles))
-        profiles[:] = np.nan
-
-        #get dictionaries
-        fraction_dict = {_:i for i,_ in enumerate(fractions)}
-        filename_dict = {_:i for i,_ in enumerate(files)}
-        precursor_dict = {_:i for i,_ in enumerate(precs)}
-
-        prec_id = [precursor_dict[_] for _ in selected_precs['precursor']]
-        frac_id = [fraction_dict[_] for _ in selected_precs['fraction']]
-        file_id = [filename_dict[_] for _ in selected_precs['shortname']]
-
-        profiles[frac_id,file_id, prec_id] = selected_precs[field]
-
-        try:
-            normalization = normalize_experiment_SLSQP(profiles)
-        except ValueError: # SLSQP error in scipy https://github.com/scipy/scipy/issues/11403
-            logging.info('Normalization with SLSQP failed. Trying BFGS')
-            normalization = normalize_experiment_BFGS(profiles)
+    shared_precs = prec_count[prec_count >= minimum_occurence]
 
 
-        #intensity normalization: total intensity to remain unchanged
+    precs = shared_precs.index.tolist()
 
-        df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [filename_dict[_] for _ in df['shortname']]]
-        df[field+'_dn'] *= df[field].sum()/df[field+'_dn'].sum()
 
-    else:
-        logging.info('No fractions present. Skipping delayed normalization.')
-        normalization = None
+    n_profiles = len(precs)
+
+    selected_precs = df_max.loc[precs]
+    selected_precs = selected_precs.reset_index()
+
+    profiles = np.empty((n_fractions, n_files, n_profiles))
+    profiles[:] = np.nan
+
+    #get dictionaries
+    fraction_dict = {_:i for i,_ in enumerate(fractions)}
+    filename_dict = {_:i for i,_ in enumerate(files)}
+    precursor_dict = {_:i for i,_ in enumerate(precs)}
+
+    prec_id = [precursor_dict[_] for _ in selected_precs['precursor']]
+    frac_id = [fraction_dict[_] for _ in selected_precs['fraction']]
+    file_id = [filename_dict[_] for _ in selected_precs['filename']]
+
+    profiles[frac_id,file_id, prec_id] = selected_precs[field]
+
+    try:
+        normalization = normalize_experiment_SLSQP(profiles)
+        norm1d = np.ravel(normalization)
+        if sum((norm1d!=1))==0:
+            raise ValueError("optimization with SLSQP terminated at initial values. Trying BFGS")
+    except ValueError: # SLSQP error in scipy https://github.com/scipy/scipy/issues/11403
+        logging.info('Normalization with SLSQP failed. Trying BFGS')
+        normalization = normalize_experiment_BFGS(profiles)
+        norm1d = np.ravel(normalization)
+        if sum((norm1d!=1))==0:
+            logging.warn('No normalization factors could be determined. Continuing with non-normalized data.')
+
+
+    #intensity normalization: total intensity to remain unchanged
+
+    df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [filename_dict[_] for _ in df['filename']]]
+    df[field+'_dn'] *= df[field].sum()/df[field+'_dn'].sum()
+
+    # else:
+    #     logging.info('No fractions present. Skipping delayed normalization.')
+    #     normalization = None
 
     return df, normalization
+
+# Cell
+import numpy as np
+import string
+from time import time
+import pandas as pd
+
+def generate_dummy_data(n_sequences, n_samples, noise=True, remove = True, peptide_ratio = True, abundance=True, signal_level=100, noise_divider=10, keep=0.8):
+
+    species = ['P'+str(_) for _ in range(1,n_sequences+1)]
+    sample = [string.ascii_uppercase[_%26]+str(_//26) for _ in range(n_samples)]
+
+    if peptide_ratio:
+        peptide_ratio = np.random.rand(n_sequences)
+        peptide_ratio = peptide_ratio/np.sum(peptide_ratio)
+    else:
+        peptide_ratio = np.ones(n_sequences)
+
+    if abundance:
+        abundance_profile = np.random.rand(n_samples,1)
+    else:
+        abundance_profile = np.ones((n_samples,1))
+
+    original_signal = np.ones((n_samples, n_sequences))
+
+    noise_sim = (np.random.rand(n_samples, n_sequences)-0.5)/noise_divider
+
+    if noise:
+        noisy_signal = original_signal+noise_sim
+        noisy_signal = noisy_signal*signal_level*peptide_ratio*abundance_profile
+    else:
+        noisy_signal = original_signal*signal_level*peptide_ratio*abundance_profile
+
+    if remove:
+        #Remove points
+        keep_probability = keep #keep 60% of the points
+        to_remove = np.random.rand(n_samples, n_sequences)
+        to_remove = to_remove>=keep_probability
+
+        dummy_data = noisy_signal.copy()
+
+        dummy_data[to_remove] = 0
+
+    else:
+        dummy_data = noisy_signal
+
+
+    dummy_data = pd.DataFrame(dummy_data, index = sample, columns = species).T
+
+    ground_truth = abundance_profile.flatten()
+    ground_truth = ground_truth/np.max(ground_truth)
+
+    return dummy_data, sample, ground_truth
 
 # Cell
 from numba import njit
@@ -286,8 +352,8 @@ from numba.typed import List
 from itertools import combinations
 
 def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None):
-    unique_proteins = df['protein'].unique()
-    files = df['shortname'].unique().tolist()
+    unique_proteins = df['protein_group'].unique()
+    files = df['filename'].unique().tolist()
     files.sort()
 
     if len(files) == 1:
@@ -308,8 +374,8 @@ def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None
         raise ValueError('Negative intensity values present.')
 
     for idx, protein in enumerate(unique_proteins):
-        subset = df[df['protein'] == protein].copy()
-        per_protein = subset.groupby(['shortname','precursor'])[field_].sum().unstack().T
+        subset = df[df['protein_group'] == protein].copy()
+        per_protein = subset.groupby(['filename','precursor'])[field_].sum().unstack().T
 
         for _ in files:
             if _ not in per_protein.columns:
@@ -398,20 +464,20 @@ from functools import partial
 
 def protein_profile_parallel(df, minimum_ratios, field, callback=None):
 
-    unique_proteins = df['protein'].unique().tolist()
+    unique_proteins = df['protein_group'].unique().tolist()
 
-    files = df['shortname'].unique().tolist()
+    files = df['filename'].unique().tolist()
     files.sort()
 
     columnes_ext = [_+'_LFQ' for _ in files]
     protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + files)
 
-    grouped = df[[field, 'shortname','precursor','protein']].groupby(['protein','shortname','precursor']).sum()
+    grouped = df[[field, 'filename','precursor','protein_group']].groupby(['protein_group','filename','precursor']).sum()
 
     column_combinations = List()
     [column_combinations.append(_) for _ in combinations(range(len(files)), 2)]
 
-    files = df['shortname'].unique().tolist()
+    files = df['filename'].unique().tolist()
     files.sort()
 
     results = []
@@ -443,8 +509,8 @@ def protein_profile_parallel(df, minimum_ratios, field, callback=None):
         protein_table[protein_table == 0] = np.nan
         protein_table = protein_table.astype('float')
     else:
-        protein_table = df.groupby(['protein'])[field].sum().to_frame().reset_index()
-        protein_table = protein_table.set_index('protein')
+        protein_table = df.groupby(['protein_group'])[field].sum().to_frame().reset_index()
+        protein_table = protein_table.set_index('protein_group')
         protein_table.index.name = None
         protein_table.columns=[files[0]]
 
@@ -456,7 +522,7 @@ def protein_profile_parallel(df, minimum_ratios, field, callback=None):
 
 def protein_profile_parallel_ap(settings, df, callback=None):
 
-    minimum_ratios = settings['quantification']['lfq_minimum_ratio']
+    minimum_ratios = settings['quantification']['lfq_ratio_min']
     field = settings['quantification']['mode']
 
     if field+'_dn' in df.columns:
@@ -493,8 +559,8 @@ def protein_profile_parallel_mq(evidence_path, protein_groups_path, callback=Non
         evd_ids = [int(_) for _ in investigate['Evidence IDs'].split(';')]
         subset = evd.loc[evd_ids].copy()
 
-        subset['protein'] =  investigate['Protein IDs']
-        subset['shortname'] = subset['Raw file']
+        subset['protein_group'] =  investigate['Protein IDs']
+        subset['filename'] = subset['Raw file']
         subset['precursor']  = ['_'.join(_) for _ in zip(subset['Sequence'].values, subset['Charge'].values.astype('str'))]
 
         protein_df.append(subset)
@@ -505,6 +571,7 @@ def protein_profile_parallel_mq(evidence_path, protein_groups_path, callback=Non
     logging.info(f'A total of {max_:,} proteins.')
 
     df = pd.concat(protein_df)
+    df, normed = delayed_normalization(df, field ='Intensity')
     protein_table = protein_profile_parallel(df, minimum_ratios=1, field='Intensity', callback=callback)
 
     return protein_table
