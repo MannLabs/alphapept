@@ -2,8 +2,8 @@
 
 __all__ = ['gaussian', 'return_elution_profile', 'simulate_sample_profiles', 'get_peptide_error',
            'get_total_error_parallel', 'get_total_error', 'normalize_experiment_SLSQP', 'normalize_experiment_BFGS',
-           'delayed_normalization', 'get_protein_ratios', 'triangle_error', 'solve_profile_LFBGSB',
-           'solve_profile_SLSQP', 'solve_profile_trf', 'get_protein_table', 'protein_profile',
+           'delayed_normalization', 'generate_dummy_data', 'get_protein_ratios', 'triangle_error',
+           'solve_profile_LFBGSB', 'solve_profile_SLSQP', 'solve_profile_trf', 'get_protein_table', 'protein_profile',
            'protein_profile_parallel', 'protein_profile_parallel_ap', 'protein_profile_parallel_mq']
 
 # Cell
@@ -224,6 +224,59 @@ def delayed_normalization(df, field='int_sum', minimum_occurence=None):
     #     normalization = None
 
     return df, normalization
+
+# Cell
+import numpy as np
+import string
+from time import time
+import pandas as pd
+
+def generate_dummy_data(n_sequences, n_samples, noise=True, remove = True, peptide_ratio = True, abundance=True, signal_level=100, noise_divider=10, keep=0.8):
+
+    species = ['P'+str(_) for _ in range(1,n_sequences+1)]
+    sample = [string.ascii_uppercase[_%26]+str(_//26) for _ in range(n_samples)]
+
+    if peptide_ratio:
+        peptide_ratio = np.random.rand(n_sequences)
+        peptide_ratio = peptide_ratio/np.sum(peptide_ratio)
+    else:
+        peptide_ratio = np.ones(n_sequences)
+
+    if abundance:
+        abundance_profile = np.random.rand(n_samples,1)
+    else:
+        abundance_profile = np.ones((n_samples,1))
+
+    original_signal = np.ones((n_samples, n_sequences))
+
+    noise_sim = (np.random.rand(n_samples, n_sequences)-0.5)/noise_divider
+
+    if noise:
+        noisy_signal = original_signal+noise_sim
+        noisy_signal = noisy_signal*signal_level*peptide_ratio*abundance_profile
+    else:
+        noisy_signal = original_signal*signal_level*peptide_ratio*abundance_profile
+
+    if remove:
+        #Remove points
+        keep_probability = keep #keep 60% of the points
+        to_remove = np.random.rand(n_samples, n_sequences)
+        to_remove = to_remove>=keep_probability
+
+        dummy_data = noisy_signal.copy()
+
+        dummy_data[to_remove] = 0
+
+    else:
+        dummy_data = noisy_signal
+
+
+    dummy_data = pd.DataFrame(dummy_data, index = sample, columns = species).T
+
+    ground_truth = abundance_profile.flatten()
+    ground_truth = ground_truth/np.max(ground_truth)
+
+    return dummy_data, sample, ground_truth
 
 # Cell
 from numba import njit

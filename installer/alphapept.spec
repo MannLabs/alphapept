@@ -74,7 +74,21 @@ else:
 
 
 hidden_imports = [h for h in hidden_imports if "__pycache__" not in h]
+
 datas = [d for d in datas if ("__pycache__" not in d[0]) and (d[1] not in [".", "build","dist","Output"])]
+
+if sys.platform[:5] == "win32":
+	base_path = os.path.dirname(sys.executable)
+	library_path = os.path.join(base_path, "Library", "bin")
+	dll_path = os.path.join(base_path, "DLLs")
+	libcrypto_dll_path = os.path.join(dll_path, "libcrypto-1_1-x64.dll")
+	libssl_dll_path = os.path.join(dll_path, "libssl-1_1-x64.dll")
+	libcrypto_lib_path = os.path.join(library_path, "libcrypto-1_1-x64.dll")
+	libssl_lib_path = os.path.join(library_path, "libssl-1_1-x64.dll")
+	if not os.path.exists(libcrypto_dll_path):
+		datas.append((libcrypto_lib_path, "."))
+	if not os.path.exists(libssl_dll_path):
+		datas.append((libssl_lib_path, "."))
 
 a = Analysis(
 	[script_name],
