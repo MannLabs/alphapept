@@ -202,6 +202,8 @@ def get_x_tandem_score(df):
     return x_tandem
 
 def score_x_tandem(df, fdr_level = 0.01, plot = True, **kwargs):
+    if 'localexp' not in df.columns:
+        df['localexp'] =0
     logging.info('Scoring using X-Tandem')
     df['score'] = get_x_tandem_score(df)
     df['decoy'] = df['sequence'].str[-1].str.islower()
