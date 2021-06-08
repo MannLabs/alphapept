@@ -649,8 +649,14 @@ def score_hdf(to_process, callback = None, parallel=False):
     try:
         index, settings = to_process
         exp_name = sorted(settings['experiment']['fractioned_samples'].keys())[index]
-        file_names = settings['experiment']['fractioned_samples'].get(exp_name)
-        ms_file_names = [os.path.splitext(x)[0]+".ms_data.hdf" for x in file_names]
+        shortnames = settings['experiment']['fractioned_samples'].get(exp_name)
+        file_paths = settings['experiment']['file_paths']
+        relevant_files = []
+        for shortname in shortnames:
+            for file_path in file_paths:
+                if shortname in file_path:
+                    relevant_files.append(file_path)
+                    break
 
 
         skip = False
