@@ -5,6 +5,7 @@ import datetime
 from alphapept.paths import SETTINGS_TEMPLATE_PATH, QUEUE_PATH, DEFAULT_SETTINGS_PATH, FASTA_PATH
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
 from alphapept.gui.utils import escape_markdown, files_in_folder
+import yaml 
 
 # Dict to match workflow
 WORKFLOW_DICT = {}
@@ -163,7 +164,7 @@ def experiment():
 
                 fasta_files_home_dir = files_in_folder(FASTA_PATH, '.fasta')
                 fasta_files_home_dir = [os.path.join(FASTA_PATH, _) for _ in fasta_files_home_dir]
-                
+
                 fasta_files_home_dir += fasta_files
 
                 selection = st.multiselect(f'Select FASTA files', options=fasta_files_home_dir, default = fasta_files)
