@@ -1,5 +1,5 @@
 # GitHub Actions to automatically test on sample files
-name: GPU Test
+name: GPU Test Cupy 11.1
 
 on:
   workflow_dispatch:
@@ -14,16 +14,21 @@ jobs:
         conda create --name alphapept_gpu python=3.8 -y
         conda activate alphapept_gpu
         pip install .
-        pip install -r requirements.txt
-        pip install cupy-cuda110
+        pip install .
         pip install pymongo
         pip install dnspython
         pip install wget
+        pip install cupy-cuda111
   GPU_Test:
     needs: Install_Alphapept
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
+    - name: Run CPU test script
+      run: |
+        conda activate alphapept_gpu
+        python test_gpu_.py numba-multithread
     - name: Run GPU test script
       run: |
-        python test_gpu.py
+        conda activate alphapept_gpu
+        python test_gpu_.py cuda

@@ -70,7 +70,9 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     # TODO: Modifying this should allow to remove the MAINFEST.in
     include_package_data=True,
-    install_requires=requirements,
+    install_requires=requirements + [
+        "pywin32==225; sys_platform=='win32'"
+    ],
     python_requires=f'>={cfg["min_python"]},<{cfg["max_python"]}',
     long_description=long_description,
     long_description_content_type='text/markdown',
