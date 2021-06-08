@@ -739,12 +739,13 @@ def score_hdf(to_process, callback = None, parallel=False):
                     df_file['ion_int'] = ion_ints
                     df_file['ion_types'] = ion_list
 
+
                     logging.info('Extracting ions complete.')
 
                 except KeyError:
                     logging.info('No ions present.')
 
-                ms_file_.write(df_file.reset_index(), dataset_name="peptide_fdr")
+                ms_file_.write(df_file.reset_index().drop(columns=['localexp']), dataset_name="peptide_fdr")
 
             logging.info(f'Scoring of files {ms_file2idx.keys()} complete.')
             return True
