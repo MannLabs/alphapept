@@ -658,6 +658,7 @@ def score_hdf(to_process, callback = None, parallel=False):
                     relevant_files.append(file_path)
                     break
 
+        ms_file_names = [os.path.splitext(x)[0]+".ms_data.hdf" for x in relevant_files]
 
         skip = False
 
