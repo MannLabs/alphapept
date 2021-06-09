@@ -62,12 +62,21 @@ def queue_watcher():
 
 def terminate_process():
 
-    with st.spinner('Terminating..'):
+    with st.spinner('Terminating processes..'):
 
         running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
 
-        p_ = psutil.Process(last_pid)
-        p_.terminate()
+        parent = psutil.Process(last_pid)
+        procs = parent.children(recursive=True):
+        for p in procs:
+            p.terminate()
+        gone, alive = psutil.wait_procs(procs, timeout=3)
+        for p in alive:
+            p.kill()
+        
+        parent.terminate()
+        parent.kill()
+
         st.success(f'Terminated {last_pid}')
 
         current_file = os.path.join(QUEUE_PATH, 'current_file')
