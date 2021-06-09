@@ -67,13 +67,13 @@ def terminate_process():
         running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
 
         parent = psutil.Process(last_pid)
-        procs = parent.children(recursive=True):
+        procs = parent.children(recursive=True)
         for p in procs:
             p.terminate()
         gone, alive = psutil.wait_procs(procs, timeout=3)
         for p in alive:
             p.kill()
-        
+
         parent.terminate()
         parent.kill()
 
