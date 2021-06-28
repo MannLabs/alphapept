@@ -72,6 +72,31 @@ nb_path: "nbs/05_search.ipynb"
     
 <div class="cell border-box-sizing code_cell rendered">
 
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="compare_frags_python" class="doc_header"><code>compare_frags_python</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L45" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_frags_python</code>(<strong><code>query_frag</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>mtol</code></strong>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
+</blockquote>
+<p>Compare query and database frags and find hits (python function for benchmarking)</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 </div>
     {% endraw %}
 
@@ -183,19 +208,14 @@ nb_path: "nbs/05_search.ipynb"
 
 <div class="output_area">
 
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-6-84fbbf7c6838&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-green-fg">import</span> matplotlib<span class="ansi-blue-fg">.</span>pyplot <span class="ansi-green-fg">as</span> plt
-<span class="ansi-green-fg">----&gt; 2</span><span class="ansi-red-fg"> </span><span class="ansi-green-fg">from</span> alphapept <span class="ansi-green-fg">import</span> constants
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-green-fg">from</span> alphapept<span class="ansi-blue-fg">.</span>fasta <span class="ansi-green-fg">import</span> get_frag_dict<span class="ansi-blue-fg">,</span> parse
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-green-fg">import</span> alphapept<span class="ansi-blue-fg">.</span>io
-<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-green-fg">import</span> numpy <span class="ansi-green-fg">as</span> np
 
-<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named &#39;alphapept&#39;</pre>
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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f7Fsbxp6vxYuXMhZZ53F8ccfz7HHHlvyfW6u/2+++Wbuv/9+brzxxvpf8PagoT58+umnqa6uZsiQIdTU1PDTn/6Unj17Nunr3S2hob6vra3lV7/6FYcddhg9evTghRde4M477+S0007Lrc6G+vRLX/rSBv9ZnXzyyZx77rkccMABudUJDfdp7969+b//+7/6dR544AHuv/9+Lr/88jZ/yoaG+v7555+nR48e7LrrrqxYsYLLLruM/fbbr2SHtTf3b8LDDz/MyJEjqays5JlnnuG+++7jiiuuKMk+26q3336b7t27U1ZWxuLFi+nZsyddfv5z1lRX817nznSNYF337qzu2pWeDz4In/zkNu+rS5cuTJs2rf7xLbfc0qhrX5eVldGjRw/mzp1Lly5d6r9gU11dzaJFi6iqqqJTp04sWbKk5FMftt//jVvA4Ycfztlnn82iRYv41Kc+xemnnw7Asccey/z58wHqJw3ec889uR1+GD16NL/61a82+IvgN7/5DRdffHH94wMOOIDRo0czfvz4HCpsHQ29X5MnT2bu3LlMmjRpg3OxPfHEEyXbb0P9f80111BRUcExxxxT33baaaflPhl+axrqwyeffJIf/ehHLFy4kM6dO7PPPvtw9dVXb/EbR62lob7//e9/z8SJE1m7di39+vXjhBNO4IQTTsitxob6dOO/vsvLy+nZsyddu3bNqcr3bdynO+ywA3369Klf3r17dzp16rRBW1vVUN8/9thjXHPNNbz99tt069aNj3/84/zwhz8s6X4b+lzefvvt/OAHPyClxC677ML3vve9NnkOy1KqqqrijTfeYN26dXTv3p2+ffsSb75J9112YcW771JTU0NZWRnd+ven09y5udVZXV3NO++8s8Fnurq6mrVr1/L3v/8dKHzu68J1qUR7HiIdMWJEakzi7WgWLFjAscceywMPPNBuDo1tT+z//Nj3pWefNl9H68OZM2c2/gsf48cXDlf26vV+W93jZgwYdO/efYM5XnUjZBMnTmT8+PF0796dcePGceSRR3Luuefy6U9/un7dtWvXMnv2bIYMGdKs01k11A8R8WxKaURD67ft8WU1WW1tLbfddhuf+cxnOsQvfltj/+fHvi89+7T57MOtGDOmEMCWLoXa2vfvjxnTKrs/9dRTOeuss+on9dedZb9nz56tfm5RR8i2IzU1NYwa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
+"
+>
 </div>
+
 </div>
 
 </div>
@@ -208,7 +228,7 @@ nb_path: "nbs/05_search.ipynb"
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Comparing-Spectra">Comparing Spectra<a class="anchor-link" href="#Comparing-Spectra"> </a></h2><p>To compare multiple spectra against a database, we first need some helper functions. Per default, AlphaPept calculates in Dalton. To use ppm boundaries, we need the function <a href="/search.html#ppm_to_dalton"><code>ppm_to_dalton</code></a> for conversion.</p>
 <p>To minimize the search space, we typically only compare spectra with precursors in the same mass range as defined by <code>prec_tol</code>. To look up the limits for search, we define the function <a href="/search.html#get_idxs"><code>get_idxs</code></a>, which is a wrapper to the fast <code>searchsorted</code> method from NumPy.</p>
-<p>The actual search takes place in <a href="/search.html#compare_specs_single"><code>compare_specs_single</code></a> and <a href="/search.html#compare_specs_parallel"><code>compare_specs_parallel</code></a>, a single-core and multicore method for comparing spectra.</p>
+<p>The actual search takes place in <code>compare_specs_single</code> and <code>compare_specs_parallel</code>, a single-core and multicore method for comparing spectra.</p>
 
 </div>
 </div>
@@ -224,7 +244,7 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="ppm_to_dalton" class="doc_header"><code>ppm_to_dalton</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L47" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>ppm_to_dalton</code>(<strong><code>mass</code></strong>, <strong><code>prec_tol</code></strong>)</p>
+<h4 id="ppm_to_dalton" class="doc_header"><code>ppm_to_dalton</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L85" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>ppm_to_dalton</code>(<strong><code>mass</code></strong>, <strong><code>prec_tol</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -248,7 +268,7 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_idxs" class="doc_header"><code>get_idxs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L55" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_idxs</code>(<strong><code>db_masses</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>prec_tol</code></strong>, <strong><code>ppm</code></strong>)</p>
+<h4 id="get_idxs" class="doc_header"><code>get_idxs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L93" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_idxs</code>(<strong><code>db_masses</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>prec_tol</code></strong>, <strong><code>ppm</code></strong>)</p>
 </blockquote>
 <p>Function to get upper and lower limits to define search range.</p>
 
@@ -273,9 +293,9 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="compare_specs_parallel" class="doc_header"><code>compare_specs_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L70" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_specs_parallel</code>(<strong><code>frag_hits</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>idxs_lower</code></strong>, <strong><code>idxs_higher</code></strong>, <strong><code>mtol</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>chunk</code></strong>=<em><code>(0, 1)</code></em>, <strong><code>offset</code></strong>=<em><code>False</code></em>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="compare_spectrum" class="doc_header"><code>compare_spectrum</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L108" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_spectrum</code>(<strong><code>query_idx</code></strong>, <strong><code>idxs_lower</code></strong>, <strong><code>idxs_higher</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>best_hits</code></strong>, <strong><code>score</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>ppm</code></strong>)</p>
 </blockquote>
-<p>Compare spectra, parallelized version</p>
+<p>Compares a spectrum and writes to best_his, score array</p>
 
 </div>
 
@@ -298,9 +318,34 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="compare_specs_single" class="doc_header"><code>compare_specs_single</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L126" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_specs_single</code>(<strong><code>frag_hits</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>idxs_lower</code></strong>, <strong><code>idxs_higher</code></strong>, <strong><code>mtol</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>chunk</code></strong>=<em><code>(0, 1)</code></em>, <strong><code>offset</code></strong>=<em><code>False</code></em>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="compare_spectrum_parallel_" class="doc_header"><code>compare_spectrum_parallel_</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L146" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_spectrum_parallel_</code>(<strong><code>query_idx</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>idxs_lower</code></strong>, <strong><code>idxs_higher</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>best_hits</code></strong>, <strong><code>score</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>ppm</code></strong>)</p>
 </blockquote>
-<p>Compare spectra, single core version</p>
+<p>Compares a spectrum and writes to best_his, score array</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="compare_spectrum_parallel" class="doc_header"><code>compare_spectrum_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L182" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_spectrum_parallel</code>(<strong><code>query_idx</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>idxs_lower</code></strong>, <strong><code>idxs_higher</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>best_hits</code></strong>, <strong><code>score</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>ppm</code></strong>)</p>
+</blockquote>
+<p>Compares a spectrum and writes to best_his, score array</p>
 
 </div>
 
@@ -336,7 +381,7 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="query_data_to_features" class="doc_header"><code>query_data_to_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L190" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>query_data_to_features</code>(<strong><code>query_data</code></strong>)</p>
+<h4 id="query_data_to_features" class="doc_header"><code>query_data_to_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L266" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>query_data_to_features</code>(<strong><code>query_data</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -360,7 +405,7 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_psms" class="doc_header"><code>get_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L207" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_psms</code>(<strong><code>query_data</code></strong>, <strong><code>db_data</code></strong>, <strong><code>features</code></strong>, <strong><code>parallel</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>prec_tol</code></strong>, <strong><code>ppm</code></strong>, <strong><code>min_frag_hits</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>m_offset_calibrated</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_psms" class="doc_header"><code>get_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L283" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_psms</code>(<strong><code>query_data</code></strong>, <strong><code>db_data</code></strong>, <strong><code>features</code></strong>, <strong><code>parallel</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>prec_tol</code></strong>, <strong><code>ppm</code></strong>, <strong><code>min_frag_hits</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>m_offset_calibrated</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Wrapper function to extract psms from dataset</p>
 <p>Args:
@@ -416,7 +461,7 @@ Raises:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="frag_delta" class="doc_header"><code>frag_delta</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L389" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>frag_delta</code>(<strong><code>query_frag</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>hits</code></strong>)</p>
+<h4 id="frag_delta" class="doc_header"><code>frag_delta</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L423" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>frag_delta</code>(<strong><code>query_frag</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>hits</code></strong>)</p>
 </blockquote>
 <p>Calculate the mass difference for a given array of hits in Dalton and ppm</p>
 
@@ -454,7 +499,7 @@ Raises:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="intensity_fraction" class="doc_header"><code>intensity_fraction</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L403" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_fraction</code>(<strong><code>query_int</code></strong>, <strong><code>hits</code></strong>)</p>
+<h4 id="intensity_fraction" class="doc_header"><code>intensity_fraction</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L437" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_fraction</code>(<strong><code>query_int</code></strong>, <strong><code>hits</code></strong>)</p>
 </blockquote>
 <p>Calculate the fraction of matched intensity</p>
 
@@ -492,7 +537,7 @@ Raises:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="intensity_product" class="doc_header"><code>intensity_product</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L418" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_product</code>(<strong><code>query_int</code></strong>, <strong><code>hits</code></strong>, <strong><code>db_int</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="intensity_product" class="doc_header"><code>intensity_product</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L452" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_product</code>(<strong><code>query_int</code></strong>, <strong><code>hits</code></strong>, <strong><code>db_int</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Calculate the dot product of matched query intensity to db intensity</p>
 
@@ -530,7 +575,7 @@ Raises:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="b_y_hits" class="doc_header"><code>b_y_hits</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L434" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>b_y_hits</code>(<strong><code>frag_type</code></strong>, <strong><code>hits</code></strong>)</p>
+<h4 id="b_y_hits" class="doc_header"><code>b_y_hits</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L468" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>b_y_hits</code>(<strong><code>frag_type</code></strong>, <strong><code>hits</code></strong>)</p>
 </blockquote>
 <p>Count the number of b and y hits
 hits usually start with b-ions &gt; 0, then y-ions &lt; 1</p>
@@ -580,7 +625,7 @@ hits usually start with b-ions &gt; 0, then y-ions &lt; 1</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_column" class="doc_header"><code>add_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L453" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_column</code>(<strong><code>recarray</code></strong>, <strong><code>column</code></strong>, <strong><code>name</code></strong>)</p>
+<h4 id="add_column" class="doc_header"><code>add_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L487" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_column</code>(<strong><code>recarray</code></strong>, <strong><code>column</code></strong>, <strong><code>name</code></strong>)</p>
 </blockquote>
 <p>Function to add a column with given name to recarray</p>
 
@@ -605,7 +650,7 @@ hits usually start with b-ions &gt; 0, then y-ions &lt; 1</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="remove_column" class="doc_header"><code>remove_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L465" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>remove_column</code>(<strong><code>recarray</code></strong>, <strong><code>name</code></strong>)</p>
+<h4 id="remove_column" class="doc_header"><code>remove_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L499" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>remove_column</code>(<strong><code>recarray</code></strong>, <strong><code>name</code></strong>)</p>
 </blockquote>
 <p>Function to remove a column from recarray</p>
 
@@ -653,7 +698,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_hits" class="doc_header"><code>get_hits</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L475" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hits</code>(<strong><code>query_frag</code></strong>, <strong><code>query_int</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>db_int</code></strong>, <strong><code>frag_type</code></strong>, <strong><code>mtol</code></strong>, <strong><code>ppm</code></strong>, <strong><code>losses</code></strong>)</p>
+<h4 id="get_hits" class="doc_header"><code>get_hits</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L509" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hits</code>(<strong><code>query_frag</code></strong>, <strong><code>query_int</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>db_int</code></strong>, <strong><code>frag_type</code></strong>, <strong><code>mtol</code></strong>, <strong><code>ppm</code></strong>, <strong><code>losses</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -677,7 +722,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="score" class="doc_header"><code>score</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L512" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score</code>(<strong><code>psms</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_masses_raw</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>mtol</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>ppm</code></strong>, <strong><code>psms_dtype</code></strong>, <strong><code>db_ints</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="score" class="doc_header"><code>score</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L546" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score</code>(<strong><code>psms</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_masses_raw</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>mtol</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>ppm</code></strong>, <strong><code>psms_dtype</code></strong>, <strong><code>db_ints</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 
 </div>
@@ -708,7 +753,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_sequences" class="doc_header"><code>get_sequences</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L593" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_sequences</code>(<strong><code>psms</code></strong>, <strong><code>db_seqs</code></strong>)</p>
+<h4 id="get_sequences" class="doc_header"><code>get_sequences</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L627" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_sequences</code>(<strong><code>psms</code></strong>, <strong><code>db_seqs</code></strong>)</p>
 </blockquote>
 <p>Get sequences to add them to a recarray</p>
 
@@ -733,7 +778,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_score_columns" class="doc_header"><code>get_score_columns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L602" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_score_columns</code>(<strong><code>psms</code></strong>, <strong><code>query_data</code></strong>, <strong><code>db_data</code></strong>, <strong><code>features</code></strong>, <strong><code>parallel</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>prec_tol</code></strong>, <strong><code>ppm</code></strong>, <strong><code>m_offset_calibrated</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_score_columns" class="doc_header"><code>get_score_columns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L636" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_score_columns</code>(<strong><code>psms</code></strong>, <strong><code>query_data</code></strong>, <strong><code>db_data</code></strong>, <strong><code>features</code></strong>, <strong><code>parallel</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>prec_tol</code></strong>, <strong><code>ppm</code></strong>, <strong><code>m_offset_calibrated</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -770,7 +815,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="plot_hit" class="doc_header"><code>plot_hit</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L768" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_hit</code>(<strong><code>df</code></strong>, <strong><code>index</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>ppm</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>db_ints</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="plot_hit" class="doc_header"><code>plot_hit</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L802" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_hit</code>(<strong><code>df</code></strong>, <strong><code>index</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>ppm</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>db_ints</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -794,7 +839,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="plot_psms" class="doc_header"><code>plot_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L842" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_psms</code>(<strong><code>query_data</code></strong>, <strong><code>df</code></strong>, <strong><code>index</code></strong>, <strong><code>mass_dict</code></strong>, <strong><code>ppm</code></strong>=<em><code>True</code></em>, <strong><code>frag_tol</code></strong>=<em><code>20</code></em>)</p>
+<h4 id="plot_psms" class="doc_header"><code>plot_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L876" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_psms</code>(<strong><code>query_data</code></strong>, <strong><code>df</code></strong>, <strong><code>index</code></strong>, <strong><code>mass_dict</code></strong>, <strong><code>ppm</code></strong>=<em><code>True</code></em>, <strong><code>frag_tol</code></strong>=<em><code>20</code></em>)</p>
 </blockquote>
 <p>Plot a psms</p>
 
@@ -832,7 +877,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="perform_search" class="doc_header"><code>perform_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L923" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>perform_search</code>(<strong><code>query_files</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>db_seqs</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>plot</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="perform_search" class="doc_header"><code>perform_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L957" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>perform_search</code>(<strong><code>query_files</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>db_seqs</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>plot</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to search and score one or multiple MS runs by the X!Tandem approach.</p>
 
@@ -871,7 +916,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="store_hdf" class="doc_header"><code>store_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L951" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>store_hdf</code>(<strong><code>df</code></strong>, <strong><code>path</code></strong>, <strong><code>key</code></strong>, <strong><code>replace</code></strong>=<em><code>False</code></em>, <strong><code>swmr</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="store_hdf" class="doc_header"><code>store_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L985" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>store_hdf</code>(<strong><code>df</code></strong>, <strong><code>path</code></strong>, <strong><code>key</code></strong>, <strong><code>replace</code></strong>=<em><code>False</code></em>, <strong><code>swmr</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Stores in hdf</p>
 
@@ -896,7 +941,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="search_db" class="doc_header"><code>search_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L972" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_db</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>, <strong><code>first_search</code></strong>=<em><code>True</code></em>)</p>
+<h4 id="search_db" class="doc_header"><code>search_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1006" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_db</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>, <strong><code>first_search</code></strong>=<em><code>True</code></em>)</p>
 </blockquote>
 <p>Perform a databse search. One file at a time.</p>
 
@@ -934,7 +979,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="search_fasta_block" class="doc_header"><code>search_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1049" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_fasta_block</code>(<strong><code>to_process</code></strong>)</p>
+<h4 id="search_fasta_block" class="doc_header"><code>search_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1083" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_fasta_block</code>(<strong><code>to_process</code></strong>)</p>
 </blockquote>
 <p>Search fasta block
 For searches with big fasta files or unspecific searches</p>
@@ -960,7 +1005,7 @@ For searches with big fasta files or unspecific searches</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="filter_top_n" class="doc_header"><code>filter_top_n</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1150" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_top_n</code>(<strong><code>temp</code></strong>, <strong><code>top_n</code></strong>=<em><code>10</code></em>)</p>
+<h4 id="filter_top_n" class="doc_header"><code>filter_top_n</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1184" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_top_n</code>(<strong><code>temp</code></strong>, <strong><code>top_n</code></strong>=<em><code>10</code></em>)</p>
 </blockquote>
 <p>Takes a dataframe and keeps only the top n entries.
 Combines fasta indices for sequences.</p>
@@ -986,7 +1031,7 @@ Combines fasta indices for sequences.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="search_parallel" class="doc_header"><code>search_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1177" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_parallel</code>(<strong><code>settings</code></strong>, <strong><code>calibration</code></strong>=<em><code>None</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="search_parallel" class="doc_header"><code>search_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1211" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_parallel</code>(<strong><code>settings</code></strong>, <strong><code>calibration</code></strong>=<em><code>None</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Function to generate a database from a fasta file</p>
 
