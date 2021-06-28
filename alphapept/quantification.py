@@ -2,9 +2,9 @@
 
 __all__ = ['gaussian', 'return_elution_profile', 'simulate_sample_profiles', 'get_peptide_error',
            'get_total_error_parallel', 'get_total_error', 'normalize_experiment_SLSQP', 'normalize_experiment_BFGS',
-           'delayed_normalization', 'generate_dummy_data', 'get_protein_ratios', 'triangle_error',
-           'solve_profile_LFBGSB', 'solve_profile_SLSQP', 'solve_profile_trf', 'get_protein_table', 'protein_profile',
-           'protein_profile_parallel', 'protein_profile_parallel_ap', 'protein_profile_parallel_mq']
+           'delayed_normalization', 'generate_dummy_data', 'get_protein_ratios', 'triangle_error', 'solve_profile',
+           'get_protein_table', 'protein_profile', 'protein_profile_parallel', 'protein_profile_parallel_ap',
+           'protein_profile_parallel_mq']
 
 # Cell
 import random
@@ -30,6 +30,7 @@ def simulate_sample_profiles(n_peptides, n_runs, n_samples, threshold=0.2, use_n
     """
     Generate random profiles to serve as test_data
     """
+    np.random.seed(42)
     abundances = np.random.rand(n_peptides)*10e7
 
     true_normalization = np.random.normal(loc=1, scale=0.1, size=(n_runs, n_samples))
@@ -231,6 +232,8 @@ import string
 from time import time
 import pandas as pd
 
+np.random.seed(42)
+
 def generate_dummy_data(n_sequences, n_samples, noise=True, remove = True, peptide_ratio = True, abundance=True, signal_level=100, noise_divider=10, keep=0.8):
 
     species = ['P'+str(_) for _ in range(1,n_sequences+1)]
@@ -320,31 +323,23 @@ from scipy.optimize import minimize, least_squares
 
 # LFBGSB
 
-def solve_profile_LFBGSB(ratios):
+def solve_profile(ratios, method):
+
+    if method not in ['L-BFGS-B', 'SLSQP', 'Powell', 'trust-constr','trf']:
+        raise NotImplementedError(method)
+
     x0 = np.ones(ratios.shape[1])
     bounds = [(min(np.nanmin(ratios), 1/np.nanmax(ratios)), 1) for _ in x0]
-    res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = 'L-BFGS-B')
-    solution = res_wrapped.x
+
+    if method == 'trf':
+        bounds = (x0*0+0.01, x0)
+        res_wrapped = least_squares(triangle_error, args = [ratios] , x0 = x0, bounds=bounds, verbose=0, method = 'trf')
+        solution = res_wrapped.x
+    else:
+        res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = method)
+        solution = res_wrapped.x
     solution = solution/np.max(solution)
-    return solution, res_wrapped.success
 
-
-def solve_profile_SLSQP(ratios):
-    x0 = np.ones(ratios.shape[1])
-    bounds = [(min(np.nanmin(ratios), 1/np.nanmax(ratios)), 1) for _ in x0]
-    res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = 'SLSQP', options={'maxiter':10000})
-    solution = res_wrapped.x
-    solution = solution/np.max(solution)
-    return solution, res_wrapped.success
-
-
-# TRF
-def solve_profile_trf(ratios):
-    x0 = np.ones(ratios.shape[1])
-    bounds = (x0*0+0.01, x0)
-    res_wrapped = least_squares(triangle_error, args = [ratios] , x0 = x0*0.5, bounds=bounds, verbose=0, method = 'trf')
-    solution = res_wrapped.x
-    solution = solution/np.max(solution)
     return solution, res_wrapped.success
 
 # Cell
@@ -385,11 +380,16 @@ def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None
         per_protein = per_protein.replace(0, np.nan)
 
         ratios = get_protein_ratios(per_protein.values, column_combinations, minimum_ratios)
+
+        retry = False
         try:
-            solution, success = solve_profile_SLSQP(ratios)
+            solution, success = solve_profile(ratios, 'L-BFGS-B')
         except ValueError:
-            logging.info('Normalization with SLSQP failed. Trying BFGS')
-            solution, success = solve_profile_LFBGSB(ratios)
+            retry = True
+
+        if retry or not success:
+            logging.info('Normalization with L-BFGS-B failed. Trying Powell')
+            solution, success = solve_profile(ratios, 'Powell')
 
         file_ids = per_protein.columns.tolist()
 
@@ -434,11 +434,15 @@ def protein_profile(files, minimum_ratios, chunk):
 
     ratios = get_protein_ratios(selection.values, column_combinations, minimum_ratios)
 
+    retry = False
     try:
-        solution, success = solve_profile_SLSQP(ratios)
+        solution, success = solve_profile(ratios, 'L-BFGS-B')
     except ValueError:
-        logging.info('Normalization with SLSQP failed. Trying BFGS')
-        solution, success = solve_profile_LFBGSB(ratios)
+        retry = True
+
+    if retry or not success:
+        logging.info('Normalization with L-BFGS-B failed. Trying Powell')
+        solution, success = solve_profile(ratios, 'Powell')
 
     pre_lfq = selection.sum().values
 
