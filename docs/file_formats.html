@@ -21,14 +21,34 @@ nb_path: "nbs/file_formats.ipynb"
 -->
 
 <div class="container" id="notebook-container">
-        
+
     {% raw %}
-    
+
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}
 
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Core">Core<a class="anchor-link" href="#Core"> </a></h2><p>The core function of Alphapept is <code>interface.run_complete_workflow()</code>. This function requires a settings file (a dictionary containing the settings and file paths). Filewise, we store settings files as <code>*.yaml</code> file. When calling the core function, it will run a complete workflow based on the settings given.</p>
+<p>{% include image.html align="center" file="/images/workflow/scheme_core.png" %}</p>
+<h2 id="GUI">GUI<a class="anchor-link" href="#GUI"> </a></h2><p>When starting the AlphaPept GUI via the shortcut that the one-click installer created or via python (<code>python -m alphapept gui</code>), the AlphaPept server will be started. It can be accessed via a browser and provides a graphical user interface (GUI) to the AlphaPept functionality. The server extends the core function to a processing framework.
+The server is centered around three folders, <code>Queue</code>, <code>Failed</code>, and <code>Finished,</code> which will be created in the <code>.alphapept</code>-folder in the user's home directory.  Whenever a new <code>*.yaml</code>-file is found in the <code>Queue</code>-folder, the server will start handing this over to the core function and start processing. There are three ways to add files to the <code>Queue</code>-folder:</p>
+<ol>
+<li>Via the <code>New experiment</code>-tab in the GUI</li>
+<li>Manually copying a <code>*.yaml</code>-file into the <code>Queue</code>-folder</li>
+<li>Automatically via the <code>File watcher.</code></li>
+</ol>
+<p>The <code>File watcher</code> can be set up to monitor a folder; whenever a new file matching pre-defined settings is copied to the folder, it will create a <code>*.yaml</code>-file and add it to the <code>Queue</code>-folder.</p>
+<p>Whenever an experiment succeeds, the <code>*.yaml</code>-file will be appended by summary information of the experiment and moved to the <code>Finished</code>-folder. As the <code>*.yaml</code>-file is only very small in size (~kB), it is intended to serve as a history of processed files.</p>
+<p>Whenever an experiment fails, the <code>*.yaml</code>-file will be moved to the <code>Failed</code>-folder. It can be moved from there to the <code>Queue</code>-folder for reprocessing.</p>
+<h3 id="History-and-Results">History and Results<a class="anchor-link" href="#History-and-Results"> </a></h3><p>AlphaPept screens all <code>*.yaml</code>-files in the finished folder and plots a run history based on the summary information. This is especially useful for QC or comparison purposes. Additionally, the <code>*.yaml</code>-files can be used to investigate the results of a run.</p>
+<p>{% include image.html align="center" file="/images/workflow/scheme_gui.png" %}</p>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Output-Files">Output Files<a class="anchor-link" href="#Output-Files"> </a></h2><p>For each run, AlphaPept creates several output files:</p>
@@ -366,5 +386,3 @@ nb_path: "nbs/file_formats.ipynb"
 </div>
 </div>
 </div>
- 
-
