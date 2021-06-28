@@ -1,6 +1,7 @@
 import setuptools
 from configparser import ConfigParser
 from pkg_resources import parse_version
+import os
 assert parse_version(setuptools.__version__) >= parse_version('36.2')
 
 config = ConfigParser(delimiters=['='])
@@ -46,6 +47,14 @@ with open("requirements.txt") as requirements_file:
     #         requirements.append(strict_requirements[requirement])
     for line in requirements_file:
         requirements.append(line)
+
+def is_tool(name):
+    """Check whether `name` is on PATH and marked as executable."""
+    from shutil import which
+    return which(name) is not None
+if os.name == 'posix':
+    if not is_tool('mono'): #Do not try to install pythonnet if mono is not installed.
+        requirements = [_ for _ in requirements if not _.startswith('pythonnet')]
 
 setuptools.setup(
     name=cfg["lib_name"],

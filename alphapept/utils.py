@@ -101,6 +101,8 @@ def check_file(file):
     if not os.path.isfile(file):
         raise FileNotFoundError(f"{file}")
 
+def get_size_mb(file):
+    return os.path.getsize(file)/(1024*2)
 
 def check_dir(dir):
     if not os.path.isdir(dir):
@@ -212,8 +214,12 @@ def check_settings(settings):
         else:
             check_file(file)
 
+    fasta_size = 0
     for file in settings['experiment']['fasta_paths']:
         check_file(file)
+        fasta_size += get_size_mb(file)
+
+    logging.info(f'FASTA Files have a total size of {fasta_size:.2f} Mb')
 
     if not settings['experiment']['results_path']:
         file_dir = os.path.dirname(settings['experiment']['file_paths'][0])
@@ -245,17 +251,18 @@ def check_settings(settings):
                 'No database path set and save_db option checked. Using default path {}'.format(settings['experiment']['database_path'])
             )
 
-    if settings['fasta']['save_db']:
-        var_id = ['mods_variable_terminal', 'mods_variable', 'mods_variable_terminal_prot']
-        n_var_mods = sum([len(settings['fasta'][_]) for _ in var_id])
-        if n_var_mods > 2:
-            logging.info(f'Number of variable modifications {n_var_mods} is larger than 2, possibly causing a very large search space. Database will be generated on the fly for the second search.')
-            settings['fasta']['save_db'] = False
+    if fasta_size > 1: #Only for larger fasta files 
+        if settings['fasta']['save_db']:
+            var_id = ['mods_variable_terminal', 'mods_variable', 'mods_variable_terminal_prot']
+            n_var_mods = sum([len(settings['fasta'][_]) for _ in var_id])
+            if n_var_mods > 2:
+                logging.info(f'Number of variable modifications {n_var_mods} is larger than 2, possibly causing a very large search space. Database will be generated on the fly for the second search.')
+                settings['fasta']['save_db'] = False
 
-        protease = settings['fasta']['protease']
-        if protease == 'non-specific':
-            logging.info(f'Protease is {protease}, possibly causing a very large search space. Database will be generated on the fly.')
-            settings['fasta']['save_db'] = False
+            protease = settings['fasta']['protease']
+            if protease == 'non-specific':
+                logging.info(f'Protease is {protease}, possibly causing a very large search space. Database will be generated on the fly.')
+                settings['fasta']['save_db'] = False
 
     return settings
 

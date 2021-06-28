@@ -5,6 +5,7 @@ import datetime
 from alphapept.paths import SETTINGS_TEMPLATE_PATH, QUEUE_PATH, DEFAULT_SETTINGS_PATH, FASTA_PATH
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
 from alphapept.gui.utils import escape_markdown, files_in_folder
+import yaml 
 
 # Dict to match workflow
 WORKFLOW_DICT = {}
