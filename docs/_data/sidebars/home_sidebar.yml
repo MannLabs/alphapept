@@ -56,7 +56,7 @@ entries:
       url: performance.html
     - output: web,pdf
       title: AlphaPept workflow and files
-      url: XX_file_formats.html
+      url: file_formats.html
     output: web
     title: alphapept
   output: web
