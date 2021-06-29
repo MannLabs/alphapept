@@ -1,5 +1,5 @@
 import streamlit as st
-from alphapept.gui.utils import files_in_folder, read_log
+from alphapept.gui.utils import files_in_folder, read_log, escape_markdown
 from alphapept.paths import PROCESSED_PATH
 from alphapept.settings import load_settings
 import os
@@ -268,7 +268,7 @@ def plot_summary(results_yaml, selection):
     median_peptides = int(data_df['sequence (protein_fdr, n unique)'].median())
     median_protein_groups = int(data_df['protein_group (protein_fdr, n unique)'].median())
 
-    st.write(f"### {selection}")
+    st.write(f"### {escape_markdown(selection)}")
     st.write(f"### {median_features:,} features | {median_peptides:,} peptides | {median_protein_groups:,}  protein groups (median)")
 
     fig = make_subplots(rows=1, cols=3, subplot_titles=("Features", "Peptides", "Protein Groups", ))
