@@ -79,6 +79,12 @@ def ion_plot(ms_file, options):
 
                 st.write(fig)
 
+def multiple_file_check(param):
+    if len(param) > 1:
+        return True
+    else:
+        st.info("Only one file present, can't perform operation.")
+        return False
 
 
 def correlation_heatmap(file, options):
@@ -90,15 +96,16 @@ def correlation_heatmap(file, options):
             if len(cols) == 0:
                 cols = df.columns
 
-            df = np.log(df[cols])
-            corr = df.corr()
+            if multiple_file_check(cols):
+                df = np.log(df[cols])
+                corr = df.corr()
 
-            fig = make_subplots(rows=1, cols=1)
-            fig.add_trace(trace = go.Heatmap(z=corr.values,
-                              x=corr.index.values,
-                              y=corr.columns.values, colorscale='Greys'))
-            fig.update_layout(height=600, width=600)
-            st.write(fig)
+                fig = make_subplots(rows=1, cols=1)
+                fig.add_trace(trace = go.Heatmap(z=corr.values,
+                                  x=corr.index.values,
+                                  y=corr.columns.values, colorscale='Greys'))
+                fig.update_layout(height=600, width=600)
+                st.write(fig)
 
 def pca_plot(file, options):
     if '/protein_table' in options:
@@ -109,15 +116,16 @@ def pca_plot(file, options):
             if len(cols) == 0:
                 cols = df.columns
 
-            pca = PCA(n_components=2)
-            components = pca.fit_transform(df[cols].fillna(0).T)
+            if multiple_file_check(cols):
+                pca = PCA(n_components=2)
+                components = pca.fit_transform(df[cols].fillna(0).T)
 
-            plot_df = pd.DataFrame(components, columns = ['Component 1', 'Component 2'])
-            plot_df['Filename'] = cols
-            fig = px.scatter(plot_df, x='Component 1', y='Component 2', hover_data=['Filename'], title='PCA')
-            fig.update_layout(height=600, width=600)
-            fig.update_traces(marker=dict(color='#18212b'))
-            st.write(fig)
+                plot_df = pd.DataFrame(components, columns = ['Component 1', 'Component 2'])
+                plot_df['Filename'] = cols
+                fig = px.scatter(plot_df, x='Component 1', y='Component 2', hover_data=['Filename'], title='PCA')
+                fig.update_layout(height=600, width=600)
+                fig.update_traces(marker=dict(color='#18212b'))
+                st.write(fig)
 
 
 
@@ -129,60 +137,62 @@ def volcano_plot(file, options):
             df_log = np.log(df.copy())
             col1, col2 = st.beta_columns(2)
 
-            group_1 = col1.multiselect('Group1', df.columns)
-            group_2 = col2.multiselect('Group2', df.columns)
+            if multiple_file_check(df.columns):
 
-            show_proteins = st.multiselect('Highlight proteins', df.index)
+                group_1 = col1.multiselect('Group1', df.columns)
+                group_2 = col2.multiselect('Group2', df.columns)
 
-            if (len(group_1) > 0) and (len(group_2) > 0):
+                show_proteins = st.multiselect('Highlight proteins', df.index)
+
+                if (len(group_1) > 0) and (len(group_2) > 0):
 
 
-                with st.spinner('Creating plot..'):
-                    test = stats.ttest_ind(df_log[group_1].values, df_log[group_2].values, nan_policy='omit', axis=1)
+                    with st.spinner('Creating plot..'):
+                        test = stats.ttest_ind(df_log[group_1].values, df_log[group_2].values, nan_policy='omit', axis=1)
 
-                    t_diff = np.nanmean(df_log[group_1].values, axis = 1) - np.nanmean(df_log[group_2].values, axis = 1)
-                    plot_df = pd.DataFrame()
+                        t_diff = np.nanmean(df_log[group_1].values, axis = 1) - np.nanmean(df_log[group_2].values, axis = 1)
+                        plot_df = pd.DataFrame()
 
-                    plot_df['t_test_diff'] = t_diff
-                    plot_df['-log(pvalue)'] = -np.log(test.pvalue.data)
-                    plot_df['id'] = df.index
-                    plot_df.index = df.index
+                        plot_df['t_test_diff'] = t_diff
+                        plot_df['-log(pvalue)'] = -np.log(test.pvalue.data)
+                        plot_df['id'] = df.index
+                        plot_df.index = df.index
 
-                    fig = make_subplots()
+                        fig = make_subplots()
 
-                    fig.add_trace(
-                        go.Scatter(
-                                    x= plot_df['t_test_diff'],
-                                    y=plot_df['-log(pvalue)'],
-                                    hovertemplate ='<b>%{text}</b>' +
-                                    '<br>t_test diff: %{y:.3f}'+
-                                    '<br>-log(pvalue): %{x:.3f}',
-                                    text = plot_df.index,
-                                    opacity=0.8,
-                                    mode='markers',
-                                    marker = dict(color='#3dc5ef')))
+                        fig.add_trace(
+                            go.Scatter(
+                                        x= plot_df['t_test_diff'],
+                                        y=plot_df['-log(pvalue)'],
+                                        hovertemplate ='<b>%{text}</b>' +
+                                        '<br>t_test diff: %{y:.3f}'+
+                                        '<br>-log(pvalue): %{x:.3f}',
+                                        text = plot_df.index,
+                                        opacity=0.8,
+                                        mode='markers',
+                                        marker = dict(color='#3dc5ef')))
 
-                    if len(show_proteins)> 0:
-                        fig.add_trace(go.Scatter(
-                            x=plot_df.loc[show_proteins]['t_test_diff'],
-                            y=plot_df.loc[show_proteins]['-log(pvalue)'],
-                            hovertemplate ='<b>%{text}</b>' +
-                            '<br>t_test diff: %{y:.3f}'+
-                            '<br>-log(pvalue): %{x:.3f}',
-                            text = show_proteins,
-                            mode="markers+text",
-                            textposition="top center",
-                            marker_color='#18212b',
-                            textfont=dict(
-                                family="Courier New, monospace",
-                                size=16,
-                                color="#18212b"
+                        if len(show_proteins)> 0:
+                            fig.add_trace(go.Scatter(
+                                x=plot_df.loc[show_proteins]['t_test_diff'],
+                                y=plot_df.loc[show_proteins]['-log(pvalue)'],
+                                hovertemplate ='<b>%{text}</b>' +
+                                '<br>t_test diff: %{y:.3f}'+
+                                '<br>-log(pvalue): %{x:.3f}',
+                                text = show_proteins,
+                                mode="markers+text",
+                                textposition="top center",
+                                marker_color='#18212b',
+                                textfont=dict(
+                                    family="Courier New, monospace",
+                                    size=16,
+                                    color="#18212b"
+                                    )
                                 )
-                            )
-                            )
-                    fig.update_layout(height=600, width=600)
-                    fig.update_layout(showlegend=False)
-                    st.write(fig)
+                                )
+                        fig.update_layout(height=600, width=600)
+                        fig.update_layout(showlegend=False)
+                        st.write(fig)
 
 def scatter_plot(file, options):
     if '/protein_table' in options:
@@ -194,19 +204,21 @@ def scatter_plot(file, options):
 
             all_cols = df.columns
 
-            group_1 = col1.selectbox('Group1', df.columns)
-            group_2 = col2.selectbox('Group2', df.columns)
+            if multiple_file_check(all_cols):
+                group_1 = col1.selectbox('Group1', all_cols)
+                group_2 = col2.selectbox('Group2', all_cols)
 
-            with st.spinner('Creating plot..'):
-                df_log['id'] = df_log.index
-                fig = px.scatter(df_log, x=group_1, y=group_2, hover_data=['id'], title='Scatterplot', opacity=0.2, trendline="ols")
-                fig.update_layout(height=600, width=600)
-                fig.update_traces(marker=dict(color='#18212b'))
+                with st.spinner('Creating plot..'):
+                    df_log['id'] = df_log.index
+                    fig = px.scatter(df_log, x=group_1, y=group_2, hover_data=['id'], title='Scatterplot', opacity=0.2, trendline="ols")
+                    fig.update_layout(height=600, width=600)
+                    fig.update_traces(marker=dict(color='#18212b'))
 
-                results = px.get_trendline_results(fig)
+                    results = px.get_trendline_results(fig)
 
-                st.write(fig)
-                st.code(results.px_fit_results.iloc[0].summary())
+                    st.write(fig)
+                    st.code(results.px_fit_results.iloc[0].summary())
+
 
 def parse_file_and_display(file):
     """
