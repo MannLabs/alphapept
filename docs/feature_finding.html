@@ -281,9 +281,7 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 <ul>
 <li>c-&gt; d</li>
 </ul>
-<p><img src="/images/undirected.png" alt="undirected"></p>
 <p>The resulting hill would have a branch to the c centroid, which is obviously intended. To circumvent this, we additionally perform the search backwards. (Note the functions <code>connect_centroids_forward</code> and <code>connect_centroids_backward</code>).  Now, as we only store, the best connection between two centroids  <code>d</code> will only be connected to <code>b</code>. To, therefore, remove branches, we remove all connections that are not double.</p>
-<p><img src="/images/directed.png" alt="directed"></p>
 <p>We define a wrapper function named <a href="/feature_finding.html#connect_centroids"><code>connect_centroids</code></a> that allows to search with a gaps ize and returns lists of indices of the connected centroids.</p>
 
 </div>
@@ -734,21 +732,6 @@ $$\left | \Delta m-\frac{\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}
 </pre></div>
 
     </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>True
-False
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
