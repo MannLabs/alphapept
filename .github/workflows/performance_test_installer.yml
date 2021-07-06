@@ -1,11 +1,15 @@
 name: Performance test pyinstaller
 
+env:
+  TMP_FOLDER: E:/test_dir/
+
 on:
   workflow_dispatch:
 jobs:
   Pyinstaller:
     runs-on: self-hosted
     steps:
+      - uses: actions/checkout@v2
       - name: Freezing code
         run: |
           conda deactivate
@@ -15,7 +19,6 @@ jobs:
     needs: [Pyinstaller]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Install package
       run: |
         conda activate alphapeptinstaller
@@ -23,56 +26,50 @@ jobs:
         pip install dnspython
         pip install wget
   HeLa_Thermo_Win:
-    needs: Pyinstaller
+    needs: [Pyinstaller, Prepare_Environment_for_testing]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
         conda activate alphapeptinstaller
-        python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela
+        python test_ci.py "${{ env.TMP_FOLDER }}" thermo_hela "${{ secrets.MONGODB_PW }}"
   HeLa_Thermo_Win_LargeFasta:
-    needs: [Pyinstaller, HeLa_Thermo_Win]
+    needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
         conda activate alphapeptinstaller
-        python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela_large_fasta
+        python test_ci.py "${{ env.TMP_FOLDER }}" thermo_hela_large_fasta "${{ secrets.MONGODB_PW }}"
   HeLa_Thermo_Win_Modifications:
-    needs: [Pyinstaller, HeLa_Thermo_Win]
+    needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Run Alphapept on Thermo
       run: |
         conda activate alphapeptinstaller
-        python test_ci.py "${{ secrets.MONGODB_PW }}" thermo_hela_modifications
+        python test_ci.py "${{ env.TMP_FOLDER }}" thermo_hela_modifications "${{ secrets.MONGODB_PW }}"
   HeLa_Bruker_Win:
-    needs: [Pyinstaller, HeLa_Thermo_Win]
+    needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Run Alphapept on Bruker
       run: |
         conda activate alphapeptinstaller
-        python test_ci.py "${{ secrets.MONGODB_PW }}" bruker_hela
+        python test_ci.py "${{ env.TMP_FOLDER }}" bruker_hela "${{ secrets.MONGODB_PW }}"
   PXD006109:
-    needs: [Pyinstaller, HeLa_Thermo_Win]
+    needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Run Alphapept on PXD006109
       run: |
         conda activate alphapeptinstaller
-        python test_ci.py "${{ secrets.MONGODB_PW }}" PXD006109
+        python test_ci.py "${{ env.TMP_FOLDER }}" PXD006109 "${{ secrets.MONGODB_PW }}"
   PXD010012:
-    needs: [Pyinstaller, HeLa_Bruker_Win]
+    needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Bruker_Win]
     runs-on: self-hosted
     steps:
-    - uses: actions/checkout@v2
     - name: Run Alphapept on PXD010012
       run: |
         conda activate alphapeptinstaller
-        python test_ci.py "${{ secrets.MONGODB_PW }}" PXD010012
+        python test_ci.py "${{ env.TMP_FOLDER }}" PXD010012 "${{ secrets.MONGODB_PW }}"

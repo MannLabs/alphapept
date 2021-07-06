@@ -35,7 +35,7 @@ nb_path: "nbs/02_io.ipynb"
 <ul>
 <li><code>.raw</code> files describing <code>Thermo</code> raw data.</li>
 <li><code>.d</code> folders describing <code>Bruker</code> raw data.</li>
-<li><code>.mzML</code> and <code>.mzXML</code> files describing generic input.</li>
+<li><code>.mzML</code> files describing generic input.</li>
 </ul>
 <p>All reading functions return a <code>query_data</code> dictionary similar to the following structure:</p>
 
@@ -61,7 +61,7 @@ nb_path: "nbs/02_io.ipynb"
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Thermo">Thermo<a class="anchor-link" href="#Thermo"> </a></h3><p>To read Thermo files, AlphaPept uses the <code>pyrawfilereader</code> package, a Python implementation of the commonly used <code>rawfilereader</code> tool. By using the custom python version, Thermo files can be read on all operating systems.</p>
+<h3 id="Thermo">Thermo<a class="anchor-link" href="#Thermo"> </a></h3><p>To read Thermo files, AlphaPept uses the <code>pyrawfilereader</code> package, a Python implementation of the commonly used <code>rawfilereader</code> tool. By using the custom python version, Thermo files can be read without having to install <code>MSFileReader</code>.</p>
 
 </div>
 </div>
@@ -77,7 +77,7 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="load_thermo_raw" class="doc_header"><code>load_thermo_raw</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L9" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_thermo_raw</code>(<strong><code>raw_file</code></strong>, <strong><code>most_abundant</code></strong>, <strong><code>use_profile_ms1</code></strong>=<em><code>False</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="load_thermo_raw" class="doc_header"><code>load_thermo_raw</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L9" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_thermo_raw</code>(<strong><code>raw_file</code></strong>, <strong><code>n_most_abundant</code></strong>, <strong><code>use_profile_ms1</code></strong>=<em><code>False</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Load thermo raw file and extract spectra</p>
 
@@ -100,7 +100,7 @@ nb_path: "nbs/02_io.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Bruker">Bruker<a class="anchor-link" href="#Bruker"> </a></h3><p>To access Bruker files, AlphaPept relies on the external <code>timsdata</code> library from Bruker (available in the <code>alphatims\ext</code> folder, licenses are applicable). Unfortunately, these libraries are only available on Windows and Linux. As a result, the reading of raw data is not available on MacOS. However, once raw data is converted to <code>.ms_data.hdf</code> output, other workflow steps (besides feature feating) are possible without problems on MacOS.</p>
+<h3 id="Bruker">Bruker<a class="anchor-link" href="#Bruker"> </a></h3><p>To access Bruker files, AlphaPept relies on the external <code>timsdata</code> library from Bruker (available in the <code>alphatims\ext</code> folder, licenses are applicable). Unfortunately, these libraries are only available on Windows and Linux. As a result, the reading of raw data is not available on macOS. However, once raw data is converted to <code>.ms_data.hdf</code> output, other workflow steps (besides feature feating) are possible without problems on macOS.</p>
 
 </div>
 </div>
@@ -116,7 +116,7 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="load_bruker_raw" class="doc_header"><code>load_bruker_raw</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L128" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_bruker_raw</code>(<strong><code>raw_file</code></strong>, <strong><code>most_abundant</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="load_bruker_raw" class="doc_header"><code>load_bruker_raw</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L128" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_bruker_raw</code>(<strong><code>raw_file</code></strong>, <strong><code>n_most_abundant</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Load bruker raw file and extract spectra</p>
 
@@ -155,7 +155,7 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="one_over_k0_to_CCS" class="doc_header"><code>one_over_k0_to_CCS</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L200" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>one_over_k0_to_CCS</code>(<strong><code>one_over_k0s</code></strong>, <strong><code>charges</code></strong>, <strong><code>mzs</code></strong>)</p>
+<h4 id="one_over_k0_to_CCS" class="doc_header"><code>one_over_k0_to_CCS</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L191" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>one_over_k0_to_CCS</code>(<strong><code>one_over_k0s</code></strong>, <strong><code>charges</code></strong>, <strong><code>mzs</code></strong>)</p>
 </blockquote>
 <p>convert one_over_k0 to CCS</p>
 
@@ -185,7 +185,7 @@ nb_path: "nbs/02_io.ipynb"
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Generic-.mzML-and-.mzXML-files">Generic <code>.mzML</code> and <code>.mzXML</code> files<a class="anchor-link" href="#Generic-.mzML-and-.mzXML-files"> </a></h3><p>To access <code>.mzXML</code> and <code>.mzML</code> files, we rely on the pyteomics package.</p>
+<h3 id="Generic-.mzML-files">Generic <code>.mzML</code> files<a class="anchor-link" href="#Generic-.mzML-files"> </a></h3><p>To access <code>.mzML</code> files, we rely on the <code>pyteomics</code> package. For using an mzml format for performing a search, Peak Picking (data centroiding) should be applied to all MS levels of the data.</p>
 
 </div>
 </div>
@@ -201,7 +201,7 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_sanity" class="doc_header"><code>check_sanity</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L218" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_sanity</code>(<strong><code>mass_list</code></strong>)</p>
+<h4 id="check_sanity" class="doc_header"><code>check_sanity</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L208" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_sanity</code>(<strong><code>mass_list</code></strong>)</p>
 </blockquote>
 <p>Sanity check for mass list to make sure the masses are sorted</p>
 
@@ -226,7 +226,7 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_mzml_info" class="doc_header"><code>extract_mzml_info</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L229" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mzml_info</code>(<strong><code>input_dict</code></strong>)</p>
+<h4 id="extract_mzml_info" class="doc_header"><code>extract_mzml_info</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L218" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mzml_info</code>(<strong><code>input_dict</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -250,58 +250,9 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_mzxml_info" class="doc_header"><code>extract_mzxml_info</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L246" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mzxml_info</code>(<strong><code>input_dict</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_mzML" class="doc_header"><code>read_mzML</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L259" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_mzML</code>(<strong><code>filename</code></strong>, <strong><code>most_abundant</code></strong>)</p>
+<h4 id="load_mzml_data" class="doc_header"><code>load_mzml_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L234" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_mzml_data</code>(<strong><code>filename</code></strong>, <strong><code>n_most_abundant</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Read spectral data from an mzML file and return various lists separately for ms1 and ms2 data.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_mzXML" class="doc_header"><code>read_mzXML</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L332" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_mzXML</code>(<strong><code>filename</code></strong>, <strong><code>most_abundant</code></strong>)</p>
-</blockquote>
-<p>Read spectral data from an mzXML file and return various lists separately for ms1 and ms2 data.</p>
 
 </div>
 
@@ -322,7 +273,7 @@ nb_path: "nbs/02_io.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Reading-other-files">Reading other files<a class="anchor-link" href="#Reading-other-files"> </a></h2><p>Benchmarking proteomics software against each other is not straightforward as various naming conventions exist, and different algorithms are implemented. In this section, we define some helper functions that allow us to read results from other tools and facilitate the comparison of different tools against Alphapept.</p>
+<h2 id="Reading-other-files">Reading other files<a class="anchor-link" href="#Reading-other-files"> </a></h2><p>Benchmarking proteomics software against each other is not straightforward as various naming conventions exist and different algorithms are implemented. In this section, we define some helper functions that allow us to read results from other tools and facilitate the comparison of different tools against AlphaPept.</p>
 
 </div>
 </div>
@@ -345,7 +296,7 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_nested" class="doc_header"><code>extract_nested</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L408" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_nested</code>(<strong><code>child</code></strong>)</p>
+<h4 id="extract_nested" class="doc_header"><code>extract_nested</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L343" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_nested</code>(<strong><code>child</code></strong>)</p>
 </blockquote>
 <p>Helper function to extract nested entries</p>
 
@@ -370,7 +321,7 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_mq_settings" class="doc_header"><code>extract_mq_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L426" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mq_settings</code>(<strong><code>path</code></strong>)</p>
+<h4 id="extract_mq_settings" class="doc_header"><code>extract_mq_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L361" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mq_settings</code>(<strong><code>path</code></strong>)</p>
 </blockquote>
 <p>Function to return MaxQuant values as a dictionary for a given xml file</p>
 
@@ -449,7 +400,7 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="parse_mq_seq" class="doc_header"><code>parse_mq_seq</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L445" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>parse_mq_seq</code>(<strong><code>peptide</code></strong>)</p>
+<h4 id="parse_mq_seq" class="doc_header"><code>parse_mq_seq</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L380" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>parse_mq_seq</code>(<strong><code>peptide</code></strong>)</p>
 </blockquote>
 <p>Replaces maxquant convention to alphapept convention
 ToDo: include more sequences</p>
@@ -516,7 +467,7 @@ ToDo: include more sequences</p>
 <h2 id="Preprocessing-data">Preprocessing data<a class="anchor-link" href="#Preprocessing-data"> </a></h2><p>Raw data needs to be preprocessed to simplify it for AlphaPept analysis. Currently, this requires:</p>
 <ul>
 <li>Profiling of the data</li>
-<li>Trimming of spectra to retain only the 'n' nmost intense peaks</li>
+<li>Trimming of spectra to retain only the 'n'-most intense peaks</li>
 </ul>
 
 </div>
@@ -524,7 +475,7 @@ ToDo: include more sequences</p>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Centroiding-profile-data">Centroiding profile data<a class="anchor-link" href="#Centroiding-profile-data"> </a></h3><p>Importing raw data frequently results in profile data. When having profile data, Alphapept first needs to perform centroiding to use this data properly. For this, it needs to search local maxima ("peaks") of the intensity as a function of m/z. For this AlphaPept uses the function <a href="/io.html#get_peaks"><code>get_peaks</code></a>. A peak is described by three points, the <code>start</code> of the peak, the <code>center</code> and the <code>end</code>. The function accepts an intensity array and calculates the delta (gradient) between consecutive datapoints to determine the start, center and end.</p>
+<h3 id="Centroiding-profile-data">Centroiding profile data<a class="anchor-link" href="#Centroiding-profile-data"> </a></h3><p>Importing raw data frequently results in profile data. When having profile data, Alphapept first needs to perform centroiding to use this data properly. For this, it needs to search local maxima ("peaks") of the intensity as a function of m/z. For this AlphaPept uses the function <a href="/io.html#get_peaks"><code>get_peaks</code></a>. A peak is described by three points, the <code>start</code> of the peak, the <code>center</code>, and the <code>end</code>. The function accepts an intensity array and calculates the delta (gradient) between consecutive data points to determine the start, center, and end.</p>
 
 </div>
 </div>
@@ -540,9 +491,9 @@ ToDo: include more sequences</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_peaks" class="doc_header"><code>get_peaks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L462" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_peaks</code>(<strong><code>int_array</code></strong>)</p>
+<h4 id="get_peaks" class="doc_header"><code>get_peaks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L397" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_peaks</code>(<strong><code>int_array</code></strong>)</p>
 </blockquote>
-<p>Detects peaks in an array.</p>
+<p>Detects peaks in an array</p>
 
 </div>
 
@@ -627,7 +578,7 @@ ToDo: include more sequences</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_centroid" class="doc_header"><code>get_centroid</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L503" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_centroid</code>(<strong><code>peak</code></strong>, <strong><code>mz_array</code></strong>, <strong><code>int_array</code></strong>)</p>
+<h4 id="get_centroid" class="doc_header"><code>get_centroid</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L440" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_centroid</code>(<strong><code>peak</code></strong>, <strong><code>mz_array</code></strong>, <strong><code>int_array</code></strong>)</p>
 </blockquote>
 <p>Wrapper to estimate centroid center positions</p>
 
@@ -652,7 +603,7 @@ ToDo: include more sequences</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="gaussian_estimator" class="doc_header"><code>gaussian_estimator</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L525" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>gaussian_estimator</code>(<strong><code>peak</code></strong>, <strong><code>mz_array</code></strong>, <strong><code>int_array</code></strong>)</p>
+<h4 id="gaussian_estimator" class="doc_header"><code>gaussian_estimator</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L462" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>gaussian_estimator</code>(<strong><code>peak</code></strong>, <strong><code>mz_array</code></strong>, <strong><code>int_array</code></strong>)</p>
 </blockquote>
 <p>Three-point gaussian estimator.</p>
 
@@ -799,7 +750,7 @@ ToDo: include more sequences</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="centroid_data" class="doc_header"><code>centroid_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L552" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>centroid_data</code>(<strong><code>mz_array</code></strong>, <strong><code>int_array</code></strong>)</p>
+<h4 id="centroid_data" class="doc_header"><code>centroid_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L489" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>centroid_data</code>(<strong><code>mz_array</code></strong>, <strong><code>int_array</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -821,7 +772,7 @@ ToDo: include more sequences</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Trimming-spectra-to-retain-the-n-most-intense-peaks">Trimming spectra to retain the <code>n</code> most intense peaks<a class="anchor-link" href="#Trimming-spectra-to-retain-the-n-most-intense-peaks"> </a></h3><p><a href="/io.html#get_most_abundant"><code>get_most_abundant</code></a>: In order to save spectra in a more memory efficient form, we only keep the n most abundant peaks. This allows us to save data in a fast accessible matrix format.</p>
+<h3 id="Trimming-spectra-to-retain-the-n-most-intense-peaks">Trimming spectra to retain the <code>n</code> most intense peaks<a class="anchor-link" href="#Trimming-spectra-to-retain-the-n-most-intense-peaks"> </a></h3><p><a href="/io.html#get_most_abundant"><code>get_most_abundant</code></a>: In order to save spectra in a more memory-efficient form, we only keep the n most abundant peaks. This allows us to save data in a fast, accessible matrix format.</p>
 
 </div>
 </div>
@@ -837,7 +788,7 @@ ToDo: include more sequences</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_most_abundant" class="doc_header"><code>get_most_abundant</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L579" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_most_abundant</code>(<strong><code>mass</code></strong>, <strong><code>intensity</code></strong>, <strong><code>n_max</code></strong>)</p>
+<h4 id="get_most_abundant" class="doc_header"><code>get_most_abundant</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L516" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_most_abundant</code>(<strong><code>mass</code></strong>, <strong><code>intensity</code></strong>, <strong><code>n_max</code></strong>)</p>
 </blockquote>
 <p>Returns the n_max most abundant peaks of a spectrum.
 Setting <code>n_max</code> to -1 returns all peaks.</p>
@@ -878,7 +829,7 @@ Setting <code>n_max</code> to -1 returns all peaks.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="list_to_numpy_f32" class="doc_header"><code>list_to_numpy_f32</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L595" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>list_to_numpy_f32</code>(<strong><code>long_list</code></strong>)</p>
+<h4 id="list_to_numpy_f32" class="doc_header"><code>list_to_numpy_f32</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L532" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>list_to_numpy_f32</code>(<strong><code>long_list</code></strong>)</p>
 </blockquote>
 <p>Function to convert a list to float32 array</p>
 
@@ -908,7 +859,7 @@ Setting <code>n_max</code> to -1 returns all peaks.</p>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="HDF-containers-in-general">HDF containers in general<a class="anchor-link" href="#HDF-containers-in-general"> </a></h3><p>In general, an HDF container can be viewed as compressed folder with metadata (i.e. attributes) associated to each single subfolder or file (i.e. data arrays of various types and sizes) within this container. A container might for instance have contents that look like e.g.:</p>
+<h3 id="HDF-containers-in-general">HDF containers in general<a class="anchor-link" href="#HDF-containers-in-general"> </a></h3><p>In general, an HDF container can be viewed as a compressed folder with metadata (i.e., attributes) associated to each single subfolder or file (i.e., data arrays of various types and sizes) within this container. A container might, for instance have contents that look like, e.g.:</p>
 
 <pre><code>HDF_Container
     {
@@ -934,16 +885,16 @@ Setting <code>n_max</code> to -1 returns all peaks.</p>
         ...
     subfolder_n
     ...</code></pre>
-<p>A few of the advantages of HDF are e.g.:</p>
+<p>A few of the advantages of HDF are, e.g.:</p>
 <ul>
 <li>It has no upper limit with regards to file size</li>
 <li>It can be used on disk without consuming RAM memory</li>
 <li>It is fully portable on different machines and systems</li>
 <li>It is capable of fast IO operations</li>
-<li>It allows data to be structured very transparent, while still providing a flexible way to store metadata</li>
+<li>It allows data to be structured very transparent while still providing a flexible way to store metadata</li>
 <li>...</li>
 </ul>
-<p>For these reasons, HDF containers have gained popularity in several scientific fields, including (astro)physics and geology. It is therefore no surprise that python has excellent support for HDF containers. The two most used packages are <code>h5py</code> and <code>tables</code>, where the former has a generic API and the second is frequently used with <code>pandas</code> dataframes. An excellent viewer for HDF files is <a href="https://support.hdfgroup.org/projects/compass/">HDF Compass</a>.</p>
+<p>For these reasons, HDF containers have gained popularity in several scientific fields, including (astro)physics and geology. It is, therefore, no surprise that Python has excellent support for HDF containers. The two most used packages are <code>h5py</code> and <code>tables</code>, where the former has a generic API and the second is frequently used with <code>pandas</code> dataframes. An excellent viewer for HDF files is <a href="https://support.hdfgroup.org/projects/compass/">HDF Compass</a>.</p>
 
 </div>
 </div>
@@ -952,10 +903,10 @@ Setting <code>n_max</code> to -1 returns all peaks.</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Using-HDF-containers-in-AlphaPept">Using HDF containers in AlphaPept<a class="anchor-link" href="#Using-HDF-containers-in-AlphaPept"> </a></h3><p>AlphaPept uses the python <code>h5py</code> package to store MS data in HDF containers, inspired by the <a href="https://github.com/swillems/ion_networks">ion_networks</a> repository.</p>
 <ul>
-<li>First a generic class is defined that will serve as an API for HDF containers. To ensure full transparancy, this will include immutable metadata such as <code>creation time</code>, <code>original_file_name</code> and <code>version</code>.</li>
+<li>First, a generic class is defined that will serve as an API for HDF containers. To ensure full transparency, this will include immutable metadata such as <code>creation time</code>, <code>original_file_name</code> and <code>version</code>.</li>
 <li>The constructor of an HDF_File will be passed the <code>file_name</code> of an HDF container, an <code>is_read_only</code> flag, an <code>is_overwritable</code> flag and <code>is_new_file</code> flag.</li>
 <li>To compare HDF_Files, several (magic) functions need to be defined.</li>
-<li>Traceabilty and reproducibility are ensured by storing a <code>last_updated</code> and a <code>check</code> function to warn users about potential compatability issues.</li>
+<li>Traceability and reproducibility are ensured by storing a <code>last_updated</code> and a <code>check</code> function to warn users about potential compatibility issues.</li>
 </ul>
 
 </div>
@@ -972,7 +923,7 @@ Setting <code>n_max</code> to -1 returns all peaks.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="HDF_File" class="doc_header"><code>class</code> <code>HDF_File</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L619" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>HDF_File</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>is_read_only</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>is_new_file</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>is_overwritable</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
+<h2 id="HDF_File" class="doc_header"><code>class</code> <code>HDF_File</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L556" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>HDF_File</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>is_read_only</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>is_new_file</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>is_overwritable</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>A generic class to store and retrieve on-disk
 data with an HDF container.</p>
@@ -1000,9 +951,9 @@ data with an HDF container.</p>
 <ol>
 <li><code>Groups</code>: folders</li>
 <li><code>Datasets</code>: arrays</li>
-<li><code>Attributes</code>: metadata associated to individual datasets or groups (with the root folder also considered as a normal group)</li>
+<li><code>Attributes</code>: metadata associated with individual datasets or groups (with the root folder also considered as a normal group)</li>
 </ol>
-<p>These contents can be accessed with <code>read</code> and <code>write</code> funtions.</p>
+<p>These contents can be accessed with <code>read</code> and <code>write</code> functions.</p>
 
 </div>
 </div>
@@ -1066,7 +1017,7 @@ data with an HDF container.</p>
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>Unit tests for this generic HDF class include:</p>
 <ul>
-<li>Creation and truncation of file with various access.</li>
+<li>Creation and truncation of files with various access.</li>
 <li>Writing and reading data from the container.</li>
 </ul>
 
@@ -1091,7 +1042,7 @@ data with an HDF container.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="MS_Data_File" class="doc_header"><code>class</code> <code>MS_Data_File</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L984" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>MS_Data_File</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>is_read_only</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>is_new_file</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>is_overwritable</code></strong>:<code>bool</code>=<em><code>False</code></em>) :: <a href="/io.html#HDF_File"><code>HDF_File</code></a></p>
+<h2 id="MS_Data_File" class="doc_header"><code>class</code> <code>MS_Data_File</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L921" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>MS_Data_File</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>is_read_only</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>is_new_file</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>is_overwritable</code></strong>:<code>bool</code>=<em><code>False</code></em>) :: <a href="/io.html#HDF_File"><code>HDF_File</code></a></p>
 </blockquote>
 <p>A generic class to store and retrieve on-disk
 data with an HDF container.</p>
@@ -1131,7 +1082,7 @@ data with an HDF container.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="MS_Data_File.import_raw_DDA_data" class="doc_header"><code>MS_Data_File.import_raw_DDA_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L988" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>MS_Data_File.import_raw_DDA_data</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>most_abundant</code></strong>:<code>int</code>=<em><code>-1</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>query_data</code></strong>:<code>dict</code>=<em><code>None</code></em>, <strong><code>vendor</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
+<h4 id="MS_Data_File.import_raw_DDA_data" class="doc_header"><code>MS_Data_File.import_raw_DDA_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L925" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>MS_Data_File.import_raw_DDA_data</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>n_most_abundant</code></strong>:<code>int</code>=<em><code>-1</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>query_data</code></strong>:<code>dict</code>=<em><code>None</code></em>, <strong><code>vendor</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Import centroided data and store it in the MS_Data_File as
 /Raw/{file_name} with the appropriate metadata and relevant
@@ -1179,7 +1130,7 @@ coordinates.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="MS_Data_File.read_DDA_query_data" class="doc_header"><code>MS_Data_File.read_DDA_query_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L1116" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>MS_Data_File.read_DDA_query_data</code>(<strong><code>calibrated_fragments</code></strong>=<em><code>False</code></em>, <strong><code>force_recalibrate</code></strong>=<em><code>False</code></em>, <strong><code>swmr</code></strong>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="MS_Data_File.read_DDA_query_data" class="doc_header"><code>MS_Data_File.read_DDA_query_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L1060" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>MS_Data_File.read_DDA_query_data</code>(<strong><code>calibrated_fragments</code></strong>=<em><code>False</code></em>, <strong><code>force_recalibrate</code></strong>=<em><code>False</code></em>, <strong><code>swmr</code></strong>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1217,7 +1168,7 @@ coordinates.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="raw_conversion" class="doc_header"><code>raw_conversion</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L1178" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>raw_conversion</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="raw_conversion" class="doc_header"><code>raw_conversion</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L1122" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>raw_conversion</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Wrapper function to convert raw to ms_data_file hdf</p>
 

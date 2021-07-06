@@ -48,6 +48,15 @@ entries:
     - output: web,pdf
       title: Speed
       url: speed.html
+    - output: web,pdf
+      title: Export
+      url: export.html
+    - output: web,pdf
+      title: Performance
+      url: performance.html
+    - output: web,pdf
+      title: AlphaPept workflow and files
+      url: file_formats.html
     output: web
     title: alphapept
   output: web

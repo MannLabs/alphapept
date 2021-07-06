@@ -112,3 +112,7 @@ def init_process(process_path, **kwargs):
             break
         else:
             time.sleep(1)
+
+def markdown_link(description, link):
+    _ = f'[{description}]({link})'
+    st.markdown(_, unsafe_allow_html=True)
