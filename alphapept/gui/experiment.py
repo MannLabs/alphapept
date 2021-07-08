@@ -2,11 +2,11 @@ import streamlit as st
 import os
 import pandas as pd
 import datetime
+import time
 from alphapept.paths import SETTINGS_TEMPLATE_PATH, QUEUE_PATH, DEFAULT_SETTINGS_PATH, FASTA_PATH
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
 from alphapept.gui.utils import escape_markdown, files_in_folder
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, JsCode
-
 import yaml
 
 # Dict to match workflow
@@ -71,6 +71,8 @@ def widget_from_setting(recorder, key, group, element, override=None, indent=Fal
         recorder[key][element] = c2.multiselect(label = element, options = opts, default = value, help = help)
     elif _['type'] == 'combobox':
         recorder[key][element] = c2.selectbox(label = element, options = _['value'], index = _['value'].index(value),  help = help)
+    elif _['type'] == 'string':
+        recorder[key][element] = c2.text_input(label=element, default = value, help = help)
     else:
         st.write(f"Not understood {_}")
 
@@ -131,6 +133,19 @@ def customize_settings(recorder, uploaded_settings, loaded):
 
     return recorder
 
+def file_df_from_files(raw_files, file_folder):
+    """
+    From a list of files, get creation data and filesize and convert to a pandas dataframe.
+    """
+    raw_files.sort()
+    sizes = [round(os.stat(os.path.join(file_folder, _)).st_size/1024**3,2) for _ in raw_files]
+    created = [datetime.datetime.fromtimestamp(os.path.getctime(os.path.join(file_folder, _))) for _ in raw_files]
+    file_df = pd.DataFrame(list(zip(range(1, len(raw_files)+1), raw_files, created, sizes)), columns =['#', 'Filename', 'Creation date', 'Size (GB)'])
+    file_df['Shortname'] = [os.path.splitext(_)[0] for _ in raw_files]
+
+    return file_df
+
+
 def experiment():
     error = 0
     st.write("# New experiment")
@@ -161,18 +176,13 @@ def experiment():
 
             else:
                 exclude = st.multiselect('Exclude files', raw_files)
-
                 raw_files = [_ for _ in raw_files if _ not in exclude]
-                sizes = [round(os.stat(os.path.join(file_folder, _)).st_size/1024**3,2) for _ in raw_files]
 
-                file_df = pd.DataFrame(list(zip(range(1, len(raw_files)+1), raw_files, sizes)), columns =['#', 'Filename', 'Size (GB)'])
-
-                file_df['Shortname'] = [os.path.splitext(_)[0] for _ in raw_files]
+                file_df = file_df_from_files(raw_files, file_folder)
                 file_df['Fraction'] = ''
-                file_df['Matching Group'] = ''
+                file_df['Matching group'] = ''
 
                 gb = GridOptionsBuilder.from_dataframe(file_df)
-                #customize gridOptions
                 gb.configure_default_column(groupable=True, value=True, enableRowGroup=True, aggFunc='sum', editable=True)
                 gb.configure_grid_options(domLayout='normal')
                 gridOptions = gb.build()
@@ -188,12 +198,13 @@ def experiment():
 
                 with st.beta_expander('Additional info'):
                     st.write('- Filename: Name of the file.'
+                            ' \n- Creation date of file.'
                             ' \n- Size (GB): Size in GB of the file.'
                             ' \n- Shortname: Unique shortname for each file.'
                             ' \n- Fraction: Fraction of each file.'
                             ' \n- Matching Group: Match-between-runs only among members of this group.')
 
-                shortnames = file_df_selected['Shortname']
+                shortnames = file_df_selected['Shortname'].values.tolist()
                 if len(shortnames) != len(set(shortnames)):
                     st.warning(f'Warning: Shortnames are not unique.')
                     error+=1
@@ -206,24 +217,10 @@ def experiment():
                 selection = st.multiselect(f'Select FASTA files', options=fasta_files_home_dir, default = fasta_files)
                 recorder['experiment']['fasta_paths'] = selection
 
-                #TODO: Include databse files
-                #if len(fasta_files) > 0:
-                #    with st.beta_expander(f"FASTA files ({len(fasta_files)})"):
-                #        st.table(pd.DataFrame(fasta_files, columns=['File']))
-
-                with st.beta_expander("Fractions"):
-                    st.write('Fractions are currently not supported.')
-                    if False:
-                        st.write('Fractions can be automatically assigned based on the filename.',
-                                'Enter the string that preceds the fraction identifier and the string that comes after.')
-                        prec = st.text_input('Preceding')
-                        after = st.text_input('After')
-
-                        if st.button('Apply'):
-                            with st.spinner('Parsing folder'):
-                                files = pd.DataFrame(raw_files, columns=['File'])
-                                files['Fraction'] = files['File'].apply(lambda x: x.split(prec)[1].split(after)[0])
-                                st.table(files)
+                recorder['experiment']['shortnames'] = shortnames
+                recorder['experiment']['file_paths'] = [os.path.join(file_folder, _) for _ in file_df_selected['Filename'].values.tolist()]
+                recorder['experiment']['fractions'] = file_df_selected['Fraction'].values.tolist()
+                recorder['experiment']['matching_groups'] = file_df_selected['Matching group'].values.tolist()
 
                 st.write(f"## Workflow")
 
@@ -243,8 +240,7 @@ def experiment():
                     if uploaded_file is not None:
                         uploaded_settings =  yaml.load(uploaded_file, Loader=yaml.FullLoader)
                         loaded=True
-
-
+                        
                 recorder = customize_settings(recorder, uploaded_settings, loaded)
 
                 st.write("## Submit experiment")
