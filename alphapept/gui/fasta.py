@@ -9,6 +9,7 @@ proteomes = {}
 proteomes['Homo_sapiens_UP000005640'] = 'UP000005640'
 proteomes['Escherichia_coli_UP000000625'] = 'UP000000625'
 proteomes['Saccharomyces_cerevisiae_UP000002311'] = 'UP000002311'
+proteomes['Arabidopsis_thaliana_UP000006548'] = 'UP000006548'
 
 def fasta():
     st.write('# FASTA')
