@@ -278,9 +278,7 @@ index = {"print_settings": "00_settings.ipynb",
          "compile_function": "13_performance.ipynb",
          "__copy_func": "13_performance.ipynb",
          "DYNAMIC_COMPILATION_ENABLED": "13_performance.ipynb",
-         "performance_function": "13_performance.ipynb",
-         "new_function": "19_qc.ipynb",
-         "new_function2": "19_qc.ipynb"}
+         "performance_function": "13_performance.ipynb"}
 
 modules = ["settings.py",
            "chem.py",
@@ -296,8 +294,7 @@ modules = ["settings.py",
            "interface.py",
            "speed.py",
            "export.py",
-           "performance.py",
-           "qc.py"]
+           "performance.py"]
 
 doc_url = "https://mannlabs.github.io/alphapept/"
 
