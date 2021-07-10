@@ -62,6 +62,7 @@ nb_path: "nbs/02_io.ipynb"
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Thermo">Thermo<a class="anchor-link" href="#Thermo"> </a></h3><p>To read Thermo files, AlphaPept uses the <code>pyrawfilereader</code> package, a Python implementation of the commonly used <code>rawfilereader</code> tool. By using the custom python version, Thermo files can be read without having to install <code>MSFileReader</code>.</p>
+<p>The user can pass an additional flag <code>use_profile_ms1</code>. This will then use the profile data which is not centroided already an peform centroiding. Note that this will lead to slightly different intensities, as the centroided data uses the apex and the centroid algorithm the summed intensity.</p>
 
 </div>
 </div>
