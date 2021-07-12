@@ -442,7 +442,7 @@ def hill_stats(idx, hill_range, hill_ptrs, hill_data, int_data, mass_data, rt_, 
     mz_ = mass_data[idx_]
 
     int_sum = np.sum(int_)
-    int_area = np.trapz(rt_[rt_idx[idx_]], int_) #Area
+    int_area = np.abs(np.trapz(rt_[rt_idx[idx_]], int_)) #Area
 
     rt_min = rt_[rt_idx[idx_]].min()
     rt_max = rt_[rt_idx[idx_]].max()
@@ -834,7 +834,7 @@ def truncate(array, intensity_profile, seedpos, iso_split_level):
 
         array = array[minpos:maxpos+1]
 
-    return array, intensity_profile
+    return array
 
 # Cell
 from .chem import mass_to_dist
@@ -935,6 +935,7 @@ def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_id
     longest_trace = 0
     champion_trace = None
     champion_charge = 0
+    champion_intensity = 0
 
     # Sort patterns by mass
 
@@ -950,22 +951,23 @@ def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_id
         trails = get_trails(seed, sorted_pattern, stats, charge_range, iso_mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff)
 
         for index, trail in enumerate(trails):
-            if len(trail) > longest_trace:  # Needs to be longer than the current champion
-
+            if len(trail) >= longest_trace:  # Needs to be longer than the current champion
                 arr = int_list_to_array(trail)
                 intensity_profile = stats[arr][:,2]
                 seedpos = np.nonzero(arr==seed_global)[0][0]
 
                 # truncate around the seed...
-                arr, intensity_profile = truncate(arr, intensity_profile, seedpos, iso_split_level)
+                arr = truncate(arr, intensity_profile, seedpos, iso_split_level)
+                intensity_profile = stats[arr][:,2]
 
                 # Remove lower masses:
                 # Take the index of the maximum and remove all masses on the left side
                 if charge_range[index] * stats[seed_global, 0] < 1000:
                     maxpos = np.argmax(intensity_profile)
                     arr = arr[maxpos:]
+                    intensity_profile = stats[arr][:,2]
 
-                if len(arr) > longest_trace:
+                if (len(arr) > longest_trace) | ((len(arr) == longest_trace) & (intensity_profile.sum() > champion_intensity)):
                     # Averagine check
                     cc = check_averagine(stats, arr, charge_range[index], averagine_aa, isotopes)
                     if cc > 0.6:
@@ -973,6 +975,7 @@ def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_id
                         champion_trace = arr
                         champion_charge = charge_range[index]
                         longest_trace = len(arr)
+                        champion_intensity = intensity_profile.sum()
 
     return champion_trace, champion_charge
 
@@ -1055,8 +1058,6 @@ def report_(idx, isotope_charges, isotope_patterns, iso_idx, stats, sortindex_, 
     rt_start = isotope_data[int_max_idx, 4] # This is the start of the most abundant trace
     rt_end = isotope_data[int_max_idx, 5]
 
-    int_sum = np.sum(isotope_data[:, 2])
-
     # better measurement of the peak with interpolation
 
     rt_min_ = min(isotope_data[:, 4])
@@ -1126,7 +1127,7 @@ def report_(idx, isotope_charges, isotope_patterns, iso_idx, stats, sortindex_, 
     rt_start = rt_range[rt_min_idx]
     rt_end = rt_range[rt_max_idx]
 
-    int_area = np.trapz(trace_sum[rt_min_idx:rt_max_idx], rt_range[rt_min_idx:rt_max_idx])
+    int_area = np.abs(np.trapz(trace_sum[rt_min_idx:rt_max_idx], rt_range[rt_min_idx:rt_max_idx]))
     int_sum = trace_sum.sum()
 
     results[idx,:] = np.array([mz, mz_std, mz_most_abundant, charge, rt_start, rt_apex, rt_end, fwhm, n_isotopes, mass, int_apex, int_area, int_sum])

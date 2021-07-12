@@ -132,18 +132,13 @@ index = {"print_settings": "00_settings.ipynb",
          "replace_infs": "04_feature_finding.ipynb",
          "map_ms2": "04_feature_finding.ipynb",
          "compare_frags": "05_search.ipynb",
-         "compare_frags_python": "05_search.ipynb",
          "ppm_to_dalton": "05_search.ipynb",
          "get_idxs": "05_search.ipynb",
-         "compare_spectrum": "05_search.ipynb",
-         "compare_spectrum_parallel_": "05_search.ipynb",
          "compare_spectrum_parallel": "05_search.ipynb",
          "query_data_to_features": "05_search.ipynb",
          "get_psms": "05_search.ipynb",
          "frag_delta": "05_search.ipynb",
          "intensity_fraction": "05_search.ipynb",
-         "intensity_product": "05_search.ipynb",
-         "b_y_hits": "05_search.ipynb",
          "add_column": "05_search.ipynb",
          "remove_column": "05_search.ipynb",
          "get_hits": "05_search.ipynb",
@@ -283,7 +278,8 @@ index = {"print_settings": "00_settings.ipynb",
          "compile_function": "13_performance.ipynb",
          "__copy_func": "13_performance.ipynb",
          "DYNAMIC_COMPILATION_ENABLED": "13_performance.ipynb",
-         "performance_function": "13_performance.ipynb"}
+         "performance_function": "13_performance.ipynb",
+         "sample_function": "contributing.ipynb"}
 
 modules = ["settings.py",
            "chem.py",
@@ -299,7 +295,8 @@ modules = ["settings.py",
            "interface.py",
            "speed.py",
            "export.py",
-           "performance.py"]
+           "performance.py",
+           "contributing.py"]
 
 doc_url = "https://mannlabs.github.io/alphapept/"
 

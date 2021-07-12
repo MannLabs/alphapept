@@ -1134,7 +1134,7 @@ def cli_gui():
     theme.append("--theme.backgroundColor=#FFFFFF")
     theme.append("--theme.secondaryBackgroundColor=#f0f2f6")
     theme.append("--theme.textColor=#262730")
-    theme.append("--theme.font='sans serif'")
+    theme.append("--theme.font=sans serif")
     theme.append("--theme.primaryColor=#18212b")
 
     args = ["streamlit", "run", file_path, "--global.developmentMode=false", "--server.port=8501", "--browser.gatherUsageStats=False"]

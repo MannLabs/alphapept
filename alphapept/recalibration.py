@@ -47,10 +47,9 @@ def get_calibration(df, features, outlier_std = 3, calib_n_neighbors = 100, cali
 
         # Remove outliers for calibration
         o_mass_std = np.abs(df['o_mass_ppm'].std())
-        o_mass_mean = df['o_mass_ppm'].mean()
+        o_mass_median = df['o_mass_ppm'].median()
 
-        #df_sub = df[~df['feature_idx'].isna()].copy() #Remove unmatched features
-        df_sub = df.query('o_mass_ppm < @o_mass_mean+@outlier_std*@o_mass_std and o_mass_ppm > @o_mass_mean-@outlier_std*@o_mass_std').copy()
+        df_sub = df.query('o_mass_ppm < @o_mass_median+@outlier_std*@o_mass_std and o_mass_ppm > @o_mass_median-@outlier_std*@o_mass_std').copy()
 
         tree_points = df_sub[cols].values
 
@@ -171,7 +170,6 @@ def calibrate_hdf(to_process, callback = None, parallel=False):
         return f"{e}" #Can't return exception object, cast as string
 
 # Cell
-
 
 import alphapept.io
 import pandas as pd

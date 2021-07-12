@@ -64,6 +64,11 @@ experiment:
     type: list
     default: []
     description: List of fractions for the raw files.
+  matching_groups:
+    type: list
+    default: []
+    description: List of macthing groups for the raw files. This only allows match-between-runs
+      of files within the same groups.
   database_path:
     type: path
     default: null

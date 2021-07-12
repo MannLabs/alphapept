@@ -31,34 +31,28 @@ nb_path: "nbs/07_recalibration.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This notebook contains everything to perform a recalibration.</p>
-<p>Current ToDo here:</p>
-<ul>
-<li>Write introduction / comment more on functions</li>
-<li>Describe approach</li>
-<li>Cite relevant papers</li>
-</ul>
+<p>This notebook contains evertyhing related to recalibration of data.</p>
 
 </div>
 </div>
 </div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Recalibration-after-search">Recalibration after search<a class="anchor-link" href="#Recalibration-after-search"> </a></h2><h3 id="Precursor-mass-calibration">Precursor mass calibration<a class="anchor-link" href="#Precursor-mass-calibration"> </a></h3><p>Recalibration refers to the computational step where masses are recalibrated after a first search. The identified peptides are used to calculate the deviations of experimental masses to their theoretical masses. After recalibration, a second search with decreased precursor tolerance is performed.</p>
+<p>The recalibration is largely motivated by the software lock mass paper:</p>
+<p><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3231580/">Cox J, Michalski A, Mann M. Software lock mass by two-dimensional minimization of peptide mass errors. J Am Soc Mass Spectrom. 2011;22(8):1373-1380. doi:10.1007/s13361-011-0142-8</a></p>
+<p>Here, mass offsets are piecewise linearly approximated. The positions for approximation need to fulfill a number of criteria (e.g., a minimum number of samples and a minimum distance). The AlphaPept implementation is slightly modified by employing a more general <code>KNeighborsRegressor</code>-approach. In brief, the calibration is calculated for each point individually by estimating the deviation from its identified neighbors in n-dimensional space (e.g., retention time, mass, mobility).</p>
+<p>Mor specifically, the algorithm consists of the following steps:</p>
+<ol>
+<li>Outlier removal: We remove outliers from the identified peptides by only accepting identifications with a mass offset that is within three standard deviations to the mean.</li>
+<li>For each point, we perform a neighbors lookup of the next n (default 100) neighbors.</li>
+<li>Next, we perform a regression based on the neighbors to determine the mass offset. The contribution of each neighbor is weighted by their distance.</li>
+</ol>
+<h3 id="Fragment-mass-calibration">Fragment mass calibration<a class="anchor-link" href="#Fragment-mass-calibration"> </a></h3><p>The fragment mass calibration is based on the identified ions (i.e., b-hits and y-hits). For each hit, we calculate the offset to its theoretical mass. The correction is then applied by taking the median offset in ppm and applying it globally.</p>
 
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</pre></div>
-
-    </div>
 </div>
 </div>
-
 </div>
-    {% endraw %}
-
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -119,7 +113,7 @@ nb_path: "nbs/07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calibrate_hdf" class="doc_header"><code>calibrate_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L80" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_hdf</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="calibrate_hdf" class="doc_header"><code>calibrate_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L79" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_hdf</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 
 </div>
@@ -141,7 +135,7 @@ nb_path: "nbs/07_recalibration.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Calbration with regards to database</p>
+<h4 id="Database-calibration">Database calibration<a class="anchor-link" href="#Database-calibration"> </a></h4><p>Another way to calibrate the fragment and precursor masses is by directly comparing them to a previously generated theoretical mass database. Here, peaks in the distribution of databases are used to align the experimental masses.</p>
 
 </div>
 </div>
@@ -157,7 +151,7 @@ nb_path: "nbs/07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_db_targets" class="doc_header"><code>get_db_targets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L186" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_db_targets</code>(<strong><code>db_file_name</code></strong>, <strong><code>max_ppm</code></strong>=<em><code>100</code></em>, <strong><code>min_distance</code></strong>=<em><code>0.5</code></em>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
+<h4 id="get_db_targets" class="doc_header"><code>get_db_targets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L184" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_db_targets</code>(<strong><code>db_file_name</code></strong>, <strong><code>max_ppm</code></strong>=<em><code>100</code></em>, <strong><code>min_distance</code></strong>=<em><code>0.5</code></em>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
 </blockquote>
 
 </div>
@@ -188,7 +182,7 @@ nb_path: "nbs/07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="align_run_to_db" class="doc_header"><code>align_run_to_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L230" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_run_to_db</code>(<strong><code>ms_data_file_name</code></strong>, <strong><code>db_array</code></strong>, <strong><code>max_ppm_distance</code></strong>=<em><code>1000000</code></em>, <strong><code>rt_step_size</code></strong>=<em><code>0.1</code></em>, <strong><code>plot_ppms</code></strong>=<em><code>False</code></em>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
+<h4 id="align_run_to_db" class="doc_header"><code>align_run_to_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L228" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_run_to_db</code>(<strong><code>ms_data_file_name</code></strong>, <strong><code>db_array</code></strong>, <strong><code>max_ppm_distance</code></strong>=<em><code>1000000</code></em>, <strong><code>rt_step_size</code></strong>=<em><code>0.1</code></em>, <strong><code>plot_ppms</code></strong>=<em><code>False</code></em>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
 </blockquote>
 
 </div>
@@ -219,7 +213,7 @@ nb_path: "nbs/07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calibrate_fragments" class="doc_header"><code>calibrate_fragments</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L317" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_fragments</code>(<strong><code>db_file_name</code></strong>, <strong><code>ms_data_file_name</code></strong>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
+<h4 id="calibrate_fragments" class="doc_header"><code>calibrate_fragments</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L315" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_fragments</code>(<strong><code>db_file_name</code></strong>, <strong><code>ms_data_file_name</code></strong>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
 </blockquote>
 
 </div>

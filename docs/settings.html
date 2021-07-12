@@ -152,15 +152,16 @@ nb_path: "nbs/00_settings.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Settings-Template">Settings Template<a class="anchor-link" href="#Settings-Template"> </a></h2><p>The settings template defines individual settings. The idea is to provide a template so that a graphical user interface can be automatically generated. The list below represents what each item would be when using PyQt. This could be adapted for any kind of GUI library.</p>
+<h2 id="Settings-Template">Settings Template<a class="anchor-link" href="#Settings-Template"> </a></h2><p>The settings template defines individual settings. The idea is to provide a template so that a graphical user interface can be automatically generated. The list below represents what each item would be when using <code>streamlit</code>. This could be adapted for any kind of GUI library.</p>
 <p>Each entry has a type, default values, and a description.</p>
 <ul>
-<li>spinbox -&gt; QSpinBox with minimum and maximum values (int)</li>
-<li>doublespinbox -&gt; QDoubleSpinBox with minimum and maximum values (float)</li>
-<li>path -&gt; Clickable button to select a path to save / load files.</li>
-<li>combobox -&gt; QComboBox, dropdown menu with values to choose from</li>
-<li>checkbox -&gt; QCheckBox, checkbox that can be selected</li>
-<li>checkgroup -&gt; Creates a list of QCheckBox options that can be selected</li>
+<li>spinbox -&gt; <code>st.range</code>, range with minimum and maximum values (int)</li>
+<li>doublespinbox -&gt; <code>st.range</code>, range with minimum and maximum values (float)</li>
+<li>path -&gt; <code>st.button</code>, clickable button to select a path to save / load files.</li>
+<li>combobox -&gt; <code>st.selectbox</code>, dropdown menu with values to choose from</li>
+<li>checkbox -&gt; <code>st.checkbox</code>, checkbox that can be selected</li>
+<li>checkgroup -&gt; <code>st.multiselect</code>, creates a list of options that can be selected</li>
+<li>string -&gt; <code>st.text_input</code>, generic string input</li>
 <li>list -&gt; Creates a list that is displayed</li>
 <li>placeholder -&gt; This just prints the parameter and cannot be changed</li>
 </ul>
@@ -347,6 +348,11 @@ file_paths:
 fractions:
   default: []
   description: List of fractions for the raw files.
+  type: list
+matching_groups:
+  default: []
+  description: List of macthing groups for the raw files. This only allows match-between-runs
+    of files within the same groups.
   type: list
 results_path:
   default: null
