@@ -115,39 +115,23 @@ are welcome :)</li>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Docstring-convention">Docstring convention<a class="anchor-link" href="#Docstring-convention"> </a></h3><p>The docstring convention we adhere to is from the <a href="https://google.github.io/styleguide/pyguide.html">Google stylegyuide</a>.</p>
-<p>Below a modified sample docstring from the styleguide:</p>
+<p>Below a sample docstring (Note the empty space after Args/Returns/Raises):</p>
 
-<pre><code>def fetch_smalltable_rows(table_handle: str,
-                          keys: str,
-                          require_all_keys: bool = False,
-) -&gt; str:
-    """Fetches rows from a Smalltable.
-
-    Retrieves rows pertaining to the given keys from the Table instance
-    represented by table_handle.  String keys will be UTF-8 encoded.
+<pre><code>def sample_function(a_string: str, a_int: int, a_flag: bool) -&gt; str:
+    """
+    Sample function that performs a sample calculation.
 
     Args:
-        table_handle: An open smalltable.Table instance.
-        keys: A sequence of strings representing the key of each table
-          row to fetch.  String keys will be UTF-8 encoded.
-        require_all_keys: Optional; If require_all_keys is True only
-          rows with values set for all keys will be returned.
+        a_string: A string.
+        a_int: An integer.
+        a_flag: A flag.
 
     Returns:
-        A dict mapping keys to the corresponding table row data
-        fetched. Each row is represented as a tuple of strings. For
-        example:
-
-        {b'Serak': ('Rigel VII', 'Preparer'),
-         b'Zim': ('Irk', 'Invader'),
-         b'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-        Returned keys are always bytes.  If a key from the keys argument is
-        missing from the dictionary, then that row was not found in the
-        table (and require_all_keys must have been False).
+        A string based on the input.  
 
     Raises:
-        IOError: An error occurred accessing the smalltable.
+        ValueError: An error occured when the integer is negative.
+
     """</code></pre>
 <blockquote><p>Note that type hints are highly recommended but not mandatory (see also <a href="https://www.python.org/dev/peps/pep-0484/">PEP484</a>). As the Legacy codebase had no type hints we are slowly moving towards more type hinting coverage.
 Note that adding additional elements to the docstring could break how the documentation is displayed. Below is the function from above but exported to show how it would appear in the documentation.</p>
@@ -167,33 +151,17 @@ Note that adding additional elements to the docstring could break how the docume
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="fetch_smalltable_rows" class="doc_header"><code>fetch_smalltable_rows</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/contributing.py#L6" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fetch_smalltable_rows</code>(<strong><code>table_handle</code></strong>:<code>str</code>, <strong><code>keys</code></strong>:<code>str</code>, <strong><code>require_all_keys</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
+<h4 id="sample_function" class="doc_header"><code>sample_function</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/contributing.py#L6" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>sample_function</code>(<strong><code>a_string</code></strong>:<code>str</code>, <strong><code>a_int</code></strong>:<code>int</code>, <strong><code>a_flag</code></strong>:<code>bool</code>)</p>
 </blockquote>
-<p>Fetches rows from a Smalltable.</p>
-<p>Retrieves rows pertaining to the given keys from the Table instance
-represented by table_handle.  String keys will be UTF-8 encoded.</p>
+<p>Sample function that performs a sample calculation.</p>
 <p>Args:
-    table_handle: An open smalltable.Table instance.
-    keys: A sequence of strings representing the key of each table
-      row to fetch.  String keys will be UTF-8 encoded.
-    require_all_keys: Optional; If require_all_keys is True only
-      rows with values set for all keys will be returned.</p>
+    a_string: A string.
+    a_int: An integer.
+    a_flag: A flag.</p>
 <p>Returns:
-    A dict mapping keys to the corresponding table row data
-    fetched. Each row is represented as a tuple of strings. For
-    example:</p>
-
-<pre><code>{b'Serak': ('Rigel VII', 'Preparer'),
- b'Zim': ('Irk', 'Invader'),
- b'Lrrr': ('Omicron Persei 8', 'Emperor')}
-
-Returned keys are always bytes.  If a key from the keys argument is
-missing from the dictionary, then that row was not found in the
-table (and require_all_keys must have been False).
-
-</code></pre>
+    A string based on the input.</p>
 <p>Raises:
-    IOError: An error occurred accessing the smalltable.</p>
+    ValueError: An error occured when the integer is negative.</p>
 
 </div>
 
