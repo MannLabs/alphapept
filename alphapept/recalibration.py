@@ -45,6 +45,18 @@ def transform(
     scaling_dict: dict) -> np.ndarray:
     """Helper function to transform an input array for neighbors lookup used for calibration
 
+    Note: The scaling_dict stores information about how scaling is applied and is defined in get_calibration
+
+    Relative transformation: Compare distances relatively, for mz that is ppm, for mobility %.
+    Absolute transformation: Compare distance absolute, for RT it is the timedelta.
+
+    An example definition is below:
+
+    scaling_dict = {}
+    scaling_dict['mz'] = ('relative', calib_mz_range/1e6)
+    scaling_dict['rt'] = ('absolute', calib_rt_range)
+    scaling_dict['mobility'] = ('relative', calib_mob_range)
+
     Args:
         x (np.ndarray): Input array.
         column (str): String to lookup what scaling should be applied.
@@ -57,7 +69,6 @@ def transform(
     Returns:
         np.ndarray: A scaled array.
     """
-
     if column not in scaling_dict:
         raise KeyError(f"Column {_} not in scaling_dict")
     else:
@@ -283,7 +294,7 @@ import scipy.signal
 import scipy.interpolate
 import alphapept.fasta
 
-
+#The following function does not have an own unit test but is run by test_calibrate_fragments.
 def get_db_targets(
     db_file_name: str,
     max_ppm: int=100,
@@ -343,6 +354,7 @@ def get_db_targets(
 
 # Cell
 
+#The following function does not have an own unit test but is run by test_calibrate_fragments.
 def align_run_to_db(
     ms_data_file_name: str,
     db_array: np.ndarray,
