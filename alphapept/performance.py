@@ -52,6 +52,7 @@ def is_valid_compilation_mode(compilation_mode: str) -> None:
     Raises:
         ModuleNotFoundError: When trying to use an unavailable GPU.
         NotImplementedError: When the compilation mode is not valid.
+
     """
     if compilation_mode.startswith("cuda") and not __GPU_AVAILABLE:
         raise ModuleNotFoundError('Cuda functions are not available.')
@@ -87,6 +88,7 @@ def set_worker_count(worker_count: int = 1, set_global: bool = True) -> int:
 
     Returns:
         int: The parsed worker_count.
+
     """
     max_cpu_count = psutil.cpu_count()
     if worker_count > max_cpu_count:
@@ -118,6 +120,7 @@ def set_compilation_mode(
             be called from within a compiled function anymore, as they are compiled at runtime.
             WARNING: Enabling this is strongly disadvised in almost all cases!
             Default is None.
+
     """
     if enable_dynamic_compilation is not None:
         global DYNAMIC_COMPILATION_ENABLED
@@ -152,6 +155,10 @@ def compile_function(
             If COMPILATION_MODE is Python and not DYNAMIC_COMPILATION_ENABLED, no compilation will be used.
             Default is None
         **decorator_kwargs: Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.
+
+    Returns:
+        callable: A decorated function that is compiled.
+
     """
     if compilation_mode is None:
         if DYNAMIC_COMPILATION_ENABLED:
@@ -234,6 +241,10 @@ def performance_function(
             Default is None.
         compilation_mode (str): The compilation mode to use. Will be forwarded to the `compile_function` decorator.
         **decorator_kwargs: Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.
+
+    Returns:
+        callable: A decorated function that is compiled and parallelized.
+
     """
     if worker_count is not None:
         worker_count = set_worker_count(worker_count, set_global=False)
