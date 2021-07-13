@@ -70,12 +70,12 @@ nb_path: "nbs/07_recalibration.ipynb"
 Outliers are removed based on the precursor offset mass (o_mass).
 All values within x standard deviations to the median are kept.</p>
 <p>Args:
-    df: Input dataframe that contains a o_mass_ppm-column.
-    outlier_std: Range of standard deviations to filter outliers</p>
-<p>Returns:
-    A dataframe w/o outliers.</p>
+    df (pd.DataFrame): Input dataframe that contains a o_mass_ppm-column.
+    outlier_std (float): Range of standard deviations to filter outliers</p>
 <p>Raises:
     ValueError: An error if the column is not present in the dataframe.</p>
+<p>Returns:
+    pd.DataFrame: A dataframe w/o outliers.</p>
 
 </div>
 
@@ -105,18 +105,18 @@ All values within x standard deviations to the median are kept.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="transform" class="doc_header"><code>transform</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L45" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>transform</code>(<strong><code>x</code></strong>:<code>ndarray</code>, <strong><code>column</code></strong>:<code>str</code>, <strong><code>scaling_dict</code></strong>:<code>dict</code>)</p>
+<h4 id="transform" class="doc_header"><code>transform</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L42" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>transform</code>(<strong><code>x</code></strong>:<code>ndarray</code>, <strong><code>column</code></strong>:<code>str</code>, <strong><code>scaling_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Helper function to transform an input array for neighbors lookup used for calibration</p>
 <p>Args:
-    x: Input array.
-    column: String to lookup what scaling should be applied.
-    scaling_dict: Lookup dict to retrieve the scaling operation and factor for the column.</p>
-<p>Returns:
-    A scaled array.</p>
+    x (np.ndarray): Input array.
+    column (str): String to lookup what scaling should be applied.
+    scaling_dict (dict): Lookup dict to retrieve the scaling operation and factor for the column.</p>
 <p>Raises:
-    ValueError: An error if the column is not present in the dict.
-    NotImplementedError: An error if column exists but it is not implemented how to scale.</p>
+    KeyError: An error if the column is not present in the dict.
+    NotImplementedError: An error if the column is not present in the dict.</p>
+<p>Returns:
+    np.ndarray: A scaled array.</p>
 
 </div>
 
@@ -146,20 +146,20 @@ All values within x standard deviations to the median are kept.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="kneighbors_calibration" class="doc_header"><code>kneighbors_calibration</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L83" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>kneighbors_calibration</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>features</code></strong>:<code>DataFrame</code>, <strong><code>cols</code></strong>:<code>list</code>, <strong><code>target</code></strong>:<code>str</code>, <strong><code>scaling_dict</code></strong>:<code>dict</code>, <strong><code>calib_n_neighbors</code></strong>:<code>int</code>)</p>
+<h4 id="kneighbors_calibration" class="doc_header"><code>kneighbors_calibration</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L78" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>kneighbors_calibration</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>features</code></strong>:<code>DataFrame</code>, <strong><code>cols</code></strong>:<code>list</code>, <strong><code>target</code></strong>:<code>str</code>, <strong><code>scaling_dict</code></strong>:<code>dict</code>, <strong><code>calib_n_neighbors</code></strong>:<code>int</code>)</p>
 </blockquote>
 <p>Calibration using a KNeighborsRegressor.
-Input arrays from are transformed to be used with a nearest-neihbor approach.
-Based on neighboring points a calibration is calcualted for each input point.</p>
+Input arrays from are transformed to be used with a nearest-neighbor approach.
+Based on neighboring points a calibration is calculated for each input point.</p>
 <p>Args:
-    df: Input dataframe that contains identified peptides (w/o outliers).
-    features: Features dataframe for which the masses are calibrated.
-    cols: List of input columns for the calibration.
-    scaling_dict: A dictionary that contains how scaling operations are applied.
-    calib_n_neighbors: Number of neighbors for calibration.</p>
+    df (pd.DataFrame): Input dataframe that contains identified peptides (w/o outliers).
+    features (pd.DataFrame): Features dataframe for which the masses are calibrated.
+    cols (list): List of input columns for the calibration.
+    target (str): Target column on which offset is calculated.
+    scaling_dict (dict): A dictionary that contains how scaling operations are applied.
+    calib_n_neighbors (int): Number of neighbors for calibration.</p>
 <p>Returns:
-    A numpy array with calibrated masses</p>
-<p>Raises:</p>
+    np.ndarray: A numpy array with calibrated masses.</p>
 
 </div>
 
@@ -189,22 +189,21 @@ Based on neighboring points a calibration is calcualted for each input point.</p
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_calibration" class="doc_header"><code>get_calibration</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L125" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_calibration</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>features</code></strong>:<code>DataFrame</code>, <strong><code>outlier_std</code></strong>:<code>int</code>=<em><code>3</code></em>, <strong><code>calib_n_neighbors</code></strong>:<code>int</code>=<em><code>100</code></em>, <strong><code>calib_mz_range</code></strong>:<code>int</code>=<em><code>20</code></em>, <strong><code>calib_rt_range</code></strong>:<code>float</code>=<em><code>0.5</code></em>, <strong><code>calib_mob_range</code></strong>:<code>float</code>=<em><code>0.3</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_calibration" class="doc_header"><code>get_calibration</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L116" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_calibration</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>features</code></strong>:<code>DataFrame</code>, <strong><code>outlier_std</code></strong>:<code>float</code>=<em><code>3</code></em>, <strong><code>calib_n_neighbors</code></strong>:<code>int</code>=<em><code>100</code></em>, <strong><code>calib_mz_range</code></strong>:<code>int</code>=<em><code>20</code></em>, <strong><code>calib_rt_range</code></strong>:<code>float</code>=<em><code>0.5</code></em>, <strong><code>calib_mob_range</code></strong>:<code>float</code>=<em><code>0.3</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Wrapper function to get calibrated values for the precursor mass.</p>
 <p>Args:
-    df: Input dataframe that contains identified peptides.
-    features: Features dataframe for which the masses are calibrated.
-    outlier_std: Range in standard deviations for outlier removal.
-    calib_n_neighbors: Number of neighbors used for regression.
-    calib_mz_range: Scaling factor for mz range.
-    calib_rt_range: Scaling factor for rt_range.
-    calib_mob_range: Scaling factor for mobility range.
+    df (pd.DataFrame): Input dataframe that contains identified peptides.
+    features (pd.DataFrame): Features dataframe for which the masses are calibrated.
+    outlier_std (float, optional): Range in standard deviations for outlier removal. Defaults to 3.
+    calib_n_neighbors (int, optional): Number of neighbors used for regression. Defaults to 100.
+    calib_mz_range (int, optional): Scaling factor for mz range. Defaults to 20.
+    calib_rt_range (float, optional): Scaling factor for rt_range. Defaults to 0.5.
+    calib_mob_range (float, optional): Scaling factor for mobility range. Defaults to 0.3.
     **kwargs: Arbitrary keyword arguments so that settings can be passes as whole.</p>
 <p>Returns:
-    corrected_mass: The calibrated mass
-    y_hat_std: The standard deviation of the precursor offset after calibration</p>
-<p>Raises:</p>
+    corrected_mass (np.ndarray): The calibrated mass
+    y_hat_std (float): The standard deviation of the precursor offset after calibration</p>
 
 </div>
 
@@ -234,17 +233,16 @@ Based on neighboring points a calibration is calcualted for each input point.</p
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calibrate_hdf" class="doc_header"><code>calibrate_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L190" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_hdf</code>(<strong><code>to_process</code></strong>:<code>tuple</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>True</code></em>)</p>
+<h4 id="calibrate_hdf" class="doc_header"><code>calibrate_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L177" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_hdf</code>(<strong><code>to_process</code></strong>:<code>tuple</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>True</code></em>)</p>
 </blockquote>
 <p>Wrapper function to get calibrate a hdf file when using the parallel executor.
 The function loads the respective dataframes from the hdf, calls the calibration function and applies the offset.</p>
 <p>Args:
-    to_process: Tuple that contains the file index and the settings dicionary
-    callback: Placeholder for callback (unused)
-    parallel: Placeholder for parallel usage (unused)</p>
+    to_process (tuple): Tuple that contains the file index and the settings dictionary.
+    callback ([type], optional): Placeholder for callback (unused).
+    parallel (bool, optional): Placeholder for parallel usage (unused).</p>
 <p>Returns:
-    Either True as boolean when calibration is successfull or the Error message as string.</p>
-<p>Raises:</p>
+    Union[str,bool]: Either True as boolean when calibration is successfull or the Error message as string.</p>
 
 </div>
 
@@ -282,19 +280,19 @@ The function loads the respective dataframes from the hdf, calls the calibration
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_db_targets" class="doc_header"><code>get_db_targets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L304" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_db_targets</code>(<strong><code>db_file_name</code></strong>:<code>str</code>, <strong><code>max_ppm</code></strong>:<code>int</code>=<em><code>100</code></em>, <strong><code>min_distance</code></strong>:<code>float</code>=<em><code>0.5</code></em>, <strong><code>ms_level</code></strong>:<code>int</code>=<em><code>2</code></em>)</p>
+<h4 id="get_db_targets" class="doc_header"><code>get_db_targets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L287" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_db_targets</code>(<strong><code>db_file_name</code></strong>:<code>str</code>, <strong><code>max_ppm</code></strong>:<code>int</code>=<em><code>100</code></em>, <strong><code>min_distance</code></strong>:<code>float</code>=<em><code>0.5</code></em>, <strong><code>ms_level</code></strong>:<code>int</code>=<em><code>2</code></em>)</p>
 </blockquote>
 <p>Function to extract database targets for database-calibration.
 Based on the FASTA database it finds masses that occur often. These will be used for calibration.</p>
 <p>Args:
-    db_file_name: Path to the database.
-    max_ppm: Maximum distance in ppm between two peaks.
-    min_distance: Minimum distance between two calibration peaks.
-    ms_level: MS-Level used for calibration, either precursors (1) or fragmasses (2).</p>
-<p>Returns:
-    numpy array with calibration masses.</p>
+    db_file_name (str): Path to the database.
+    max_ppm (int, optional): Maximum distance in ppm between two peaks. Defaults to 100.
+    min_distance (float, optional): Minimum distance between two calibration peaks. Defaults to 0.5.
+    ms_level (int, optional): MS-Level used for calibration, either precursors (1) or fragmasses (2). Defaults to 2.</p>
 <p>Raises:
     ValueError: When ms_level is not valid.</p>
+<p>Returns:
+    np.ndarray: Numpy array with calibration masses.</p>
 
 </div>
 
@@ -324,20 +322,20 @@ Based on the FASTA database it finds masses that occur often. These will be used
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="align_run_to_db" class="doc_header"><code>align_run_to_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L365" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_run_to_db</code>(<strong><code>ms_data_file_name</code></strong>:<code>str</code>, <strong><code>db_array</code></strong>:<code>array</code>, <strong><code>max_ppm_distance</code></strong>:<code>int</code>=<em><code>1000000</code></em>, <strong><code>rt_step_size</code></strong>:<code>float</code>=<em><code>0.1</code></em>, <strong><code>plot_ppms</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>ms_level</code></strong>:<code>int</code>=<em><code>2</code></em>)</p>
+<h4 id="align_run_to_db" class="doc_header"><code>align_run_to_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L346" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_run_to_db</code>(<strong><code>ms_data_file_name</code></strong>:<code>str</code>, <strong><code>db_array</code></strong>:<code>ndarray</code>, <strong><code>max_ppm_distance</code></strong>:<code>int</code>=<em><code>1000000</code></em>, <strong><code>rt_step_size</code></strong>:<code>float</code>=<em><code>0.1</code></em>, <strong><code>plot_ppms</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>ms_level</code></strong>:<code>int</code>=<em><code>2</code></em>)</p>
 </blockquote>
-<p>Function align a run to it's database.</p>
+<p>Function align a run to it's theoretical FASTA database.</p>
 <p>Args:
-    ms_data_file_name: Path to the run.
-    db_array: Numpy array containing the database targets.
-    max_ppm_distance: Maximium distance in ppm.
-    rt_step_size: Stepsize for rt calibration.
-    plot_ppms: boolean Flag to indicate plotting.
-    ms_level: ms_level for calibration.</p>
-<p>Returns:
-    Estimated errors</p>
+    ms_data_file_name (str): Path to the run.
+    db_array (np.ndarray): Numpy array containing the database targets.
+    max_ppm_distance (int, optional): Maximum distance in ppm. Defaults to 1000000.
+    rt_step_size (float, optional): Stepsize for rt calibration. Defaults to 0.1.
+    plot_ppms (bool, optional): Flag to indicate plotting. Defaults to False.
+    ms_level (int, optional): ms_level for calibration. Defaults to 2.</p>
 <p>Raises:
     ValueError: When ms_level is not valid.</p>
+<p>Returns:
+    np.ndarray: Estimated errors</p>
 
 </div>
 
@@ -367,18 +365,16 @@ Based on the FASTA database it finds masses that occur often. These will be used
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calibrate_fragments" class="doc_header"><code>calibrate_fragments</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L470" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_fragments</code>(<strong><code>db_file_name</code></strong>:<code>str</code>, <strong><code>ms_data_file_name</code></strong>:<code>str</code>, <strong><code>ms_level</code></strong>:<code>int</code>=<em><code>2</code></em>, <strong><code>write</code></strong>=<em><code>True</code></em>, <strong><code>plot_ppms</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="calibrate_fragments" class="doc_header"><code>calibrate_fragments</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L450" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_fragments</code>(<strong><code>db_file_name</code></strong>:<code>str</code>, <strong><code>ms_data_file_name</code></strong>:<code>str</code>, <strong><code>ms_level</code></strong>:<code>int</code>=<em><code>2</code></em>, <strong><code>write</code></strong>=<em><code>True</code></em>, <strong><code>plot_ppms</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Wrapper function to calibrate fragments.
 Calibrated values are saved to corrected_fragment_mzs</p>
 <p>Args:
-    db_file_name: Path to database
-    ms_data_file_name: Path to ms_data file
-    ms_level: MS-level for calibration
-    write: Boolean flag for test purposes to avoid writing to testfile.
-    plot_ppms: Boolean flag to plot the calibration.</p>
-<p>Returns:</p>
-<p>Raises:</p>
+    db_file_name (str): Path to database
+    ms_data_file_name (str): Path to ms_data file
+    ms_level (int, optional): MS-level for calibration. Defaults to 2.
+    write (bool, optional): Boolean flag for test purposes to avoid writing to testfile. Defaults to True.
+    plot_ppms (bool, optional):  Boolean flag to plot the calibration. Defaults to False.</p>
 
 </div>
 

@@ -11,21 +11,19 @@ import pandas as pd
 def remove_outliers(
     df:  pd.DataFrame,
     outlier_std: float) -> pd.DataFrame:
-    """
-    Helper function to remove outliers from a dataframe.
+    """Helper function to remove outliers from a dataframe.
     Outliers are removed based on the precursor offset mass (o_mass).
     All values within x standard deviations to the median are kept.
 
     Args:
-        df: Input dataframe that contains a o_mass_ppm-column.
-        outlier_std: Range of standard deviations to filter outliers
-
-    Returns:
-        A dataframe w/o outliers.
+        df (pd.DataFrame): Input dataframe that contains a o_mass_ppm-column.
+        outlier_std (float): Range of standard deviations to filter outliers
 
     Raises:
         ValueError: An error if the column is not present in the dataframe.
 
+    Returns:
+        pd.DataFrame: A dataframe w/o outliers.
     """
 
     if 'o_mass_ppm' not in df.columns:
@@ -39,32 +37,29 @@ def remove_outliers(
 
         return df_sub
 
-
 # Cell
 
 def transform(
     x:  np.ndarray,
     column: str,
     scaling_dict: dict) -> np.ndarray:
-    """
-    Helper function to transform an input array for neighbors lookup used for calibration
+    """Helper function to transform an input array for neighbors lookup used for calibration
 
     Args:
-        x: Input array.
-        column: String to lookup what scaling should be applied.
-        scaling_dict: Lookup dict to retrieve the scaling operation and factor for the column.
-
-    Returns:
-        A scaled array.
+        x (np.ndarray): Input array.
+        column (str): String to lookup what scaling should be applied.
+        scaling_dict (dict): Lookup dict to retrieve the scaling operation and factor for the column.
 
     Raises:
-        ValueError: An error if the column is not present in the dict.
-        NotImplementedError: An error if column exists but it is not implemented how to scale.
+        KeyError: An error if the column is not present in the dict.
+        NotImplementedError: An error if the column is not present in the dict.
 
+    Returns:
+        np.ndarray: A scaled array.
     """
 
     if column not in scaling_dict:
-        raise ValueError(f"Column {_} not in scaling_dict")
+        raise KeyError(f"Column {_} not in scaling_dict")
     else:
         type_, scale_ = scaling_dict[column]
 
@@ -80,24 +75,21 @@ def transform(
 from sklearn.neighbors import KNeighborsRegressor
 
 
-def kneighbors_calibration(df: pd.DataFrame, features: pd.DataFrame, cols: list, target: str, scaling_dict: dict, calib_n_neighbors: int):
-    """
-    Calibration using a KNeighborsRegressor.
-    Input arrays from are transformed to be used with a nearest-neihbor approach.
-    Based on neighboring points a calibration is calcualted for each input point.
+def kneighbors_calibration(df: pd.DataFrame, features: pd.DataFrame, cols: list, target: str, scaling_dict: dict, calib_n_neighbors: int) -> np.ndarray:
+    """Calibration using a KNeighborsRegressor.
+    Input arrays from are transformed to be used with a nearest-neighbor approach.
+    Based on neighboring points a calibration is calculated for each input point.
 
     Args:
-        df: Input dataframe that contains identified peptides (w/o outliers).
-        features: Features dataframe for which the masses are calibrated.
-        cols: List of input columns for the calibration.
-        scaling_dict: A dictionary that contains how scaling operations are applied.
-        calib_n_neighbors: Number of neighbors for calibration.
+        df (pd.DataFrame): Input dataframe that contains identified peptides (w/o outliers).
+        features (pd.DataFrame): Features dataframe for which the masses are calibrated.
+        cols (list): List of input columns for the calibration.
+        target (str): Target column on which offset is calculated.
+        scaling_dict (dict): A dictionary that contains how scaling operations are applied.
+        calib_n_neighbors (int): Number of neighbors for calibration.
 
     Returns:
-        A numpy array with calibrated masses
-
-    Raises:
-
+        np.ndarray: A numpy array with calibrated masses.
     """
 
     data = df[cols]
@@ -118,38 +110,34 @@ def kneighbors_calibration(df: pd.DataFrame, features: pd.DataFrame, cols: list,
 
     return y_hat
 
-
 # Cell
 import logging
 
 def get_calibration(
     df: pd.DataFrame,
     features:pd.DataFrame,
-    outlier_std: int = 3,
+    outlier_std: float = 3,
     calib_n_neighbors: int = 100,
     calib_mz_range: int = 20,
     calib_rt_range: float = 0.5,
     calib_mob_range: float = 0.3,
-    **kwargs) -> (np.array, float):
-    """
-    Wrapper function to get calibrated values for the precursor mass.
+    **kwargs) -> (np.ndarray, float):
+    """Wrapper function to get calibrated values for the precursor mass.
 
     Args:
-        df: Input dataframe that contains identified peptides.
-        features: Features dataframe for which the masses are calibrated.
-        outlier_std: Range in standard deviations for outlier removal.
-        calib_n_neighbors: Number of neighbors used for regression.
-        calib_mz_range: Scaling factor for mz range.
-        calib_rt_range: Scaling factor for rt_range.
-        calib_mob_range: Scaling factor for mobility range.
+        df (pd.DataFrame): Input dataframe that contains identified peptides.
+        features (pd.DataFrame): Features dataframe for which the masses are calibrated.
+        outlier_std (float, optional): Range in standard deviations for outlier removal. Defaults to 3.
+        calib_n_neighbors (int, optional): Number of neighbors used for regression. Defaults to 100.
+        calib_mz_range (int, optional): Scaling factor for mz range. Defaults to 20.
+        calib_rt_range (float, optional): Scaling factor for rt_range. Defaults to 0.5.
+        calib_mob_range (float, optional): Scaling factor for mobility range. Defaults to 0.3.
         **kwargs: Arbitrary keyword arguments so that settings can be passes as whole.
 
 
     Returns:
-        corrected_mass: The calibrated mass
-        y_hat_std: The standard deviation of the precursor offset after calibration
-
-    Raises:
+        corrected_mass (np.ndarray): The calibrated mass
+        y_hat_std (float): The standard deviation of the precursor offset after calibration
 
     """
 
@@ -178,7 +166,6 @@ def get_calibration(
         logging.info('Not enough data points present. Skipping recalibration.')
         return features['mass_matched'], np.abs(df['o_mass_ppm'].std())
 
-
 # Cell
 
 from typing import Union
@@ -189,20 +176,16 @@ import os
 
 def calibrate_hdf(
     to_process: tuple, callback=None, parallel=True) -> Union[str,bool]:
-    """
-    Wrapper function to get calibrate a hdf file when using the parallel executor.
+    """Wrapper function to get calibrate a hdf file when using the parallel executor.
     The function loads the respective dataframes from the hdf, calls the calibration function and applies the offset.
 
     Args:
-        to_process: Tuple that contains the file index and the settings dicionary
-        callback: Placeholder for callback (unused)
-        parallel: Placeholder for parallel usage (unused)
+        to_process (tuple): Tuple that contains the file index and the settings dictionary.
+        callback ([type], optional): Placeholder for callback (unused).
+        parallel (bool, optional): Placeholder for parallel usage (unused).
 
     Returns:
-        Either True as boolean when calibration is successfull or the Error message as string.
-
-    Raises:
-
+        Union[str,bool]: Either True as boolean when calibration is successfull or the Error message as string.
     """
 
     try:
@@ -306,24 +289,22 @@ def get_db_targets(
     max_ppm: int=100,
     min_distance: float=0.5,
     ms_level: int=2,
-) ->np.array:
-
-    """
-    Function to extract database targets for database-calibration.
+) ->np.ndarray:
+    """Function to extract database targets for database-calibration.
     Based on the FASTA database it finds masses that occur often. These will be used for calibration.
 
-    Args:
-        db_file_name: Path to the database.
-        max_ppm: Maximum distance in ppm between two peaks.
-        min_distance: Minimum distance between two calibration peaks.
-        ms_level: MS-Level used for calibration, either precursors (1) or fragmasses (2).
 
-    Returns:
-        numpy array with calibration masses.
+    Args:
+        db_file_name (str): Path to the database.
+        max_ppm (int, optional): Maximum distance in ppm between two peaks. Defaults to 100.
+        min_distance (float, optional): Minimum distance between two calibration peaks. Defaults to 0.5.
+        ms_level (int, optional): MS-Level used for calibration, either precursors (1) or fragmasses (2). Defaults to 2.
 
     Raises:
         ValueError: When ms_level is not valid.
 
+    Returns:
+        np.ndarray: Numpy array with calibration masses.
     """
 
     if ms_level == 1:
@@ -364,30 +345,29 @@ def get_db_targets(
 
 def align_run_to_db(
     ms_data_file_name: str,
-    db_array: np.array,
+    db_array: np.ndarray,
     max_ppm_distance: int=1000000,
     rt_step_size:float =0.1,
     plot_ppms: bool=False,
     ms_level: int=2,
-):
-    """
-    Function align a run to it's database.
+) ->np.ndarray:
+    """Function align a run to it's theoretical FASTA database.
 
     Args:
-        ms_data_file_name: Path to the run.
-        db_array: Numpy array containing the database targets.
-        max_ppm_distance: Maximium distance in ppm.
-        rt_step_size: Stepsize for rt calibration.
-        plot_ppms: boolean Flag to indicate plotting.
-        ms_level: ms_level for calibration.
-
-    Returns:
-        Estimated errors
+        ms_data_file_name (str): Path to the run.
+        db_array (np.ndarray): Numpy array containing the database targets.
+        max_ppm_distance (int, optional): Maximum distance in ppm. Defaults to 1000000.
+        rt_step_size (float, optional): Stepsize for rt calibration. Defaults to 0.1.
+        plot_ppms (bool, optional): Flag to indicate plotting. Defaults to False.
+        ms_level (int, optional): ms_level for calibration. Defaults to 2.
 
     Raises:
         ValueError: When ms_level is not valid.
 
+    Returns:
+        np.ndarray: Estimated errors
     """
+
     ms_data = alphapept.io.MS_Data_File(ms_data_file_name)
     if ms_level == 1:
         mzs = ms_data.read(dataset_name="mass_matched", group_name="features")
@@ -474,24 +454,17 @@ def calibrate_fragments(
     write = True,
     plot_ppms = False,
 ):
-    """
-    Wrapper function to calibrate fragments.
+    """Wrapper function to calibrate fragments.
     Calibrated values are saved to corrected_fragment_mzs
 
     Args:
-        db_file_name: Path to database
-        ms_data_file_name: Path to ms_data file
-        ms_level: MS-level for calibration
-        write: Boolean flag for test purposes to avoid writing to testfile.
-        plot_ppms: Boolean flag to plot the calibration.
-
-    Returns:
-
-
-    Raises:
-
-
+        db_file_name (str): Path to database
+        ms_data_file_name (str): Path to ms_data file
+        ms_level (int, optional): MS-level for calibration. Defaults to 2.
+        write (bool, optional): Boolean flag for test purposes to avoid writing to testfile. Defaults to True.
+        plot_ppms (bool, optional):  Boolean flag to plot the calibration. Defaults to False.
     """
+
     db_array = get_db_targets(
         db_file_name,
         max_ppm=100,
