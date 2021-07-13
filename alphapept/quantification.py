@@ -11,24 +11,47 @@ import random
 import numpy as np
 import logging
 
-def gaussian(mu, sigma, grid):
-    """
-    Gaussian function
+def gaussian(mu: float, sigma: float, grid : np.ndarray) -> np.ndarray:
+    """Calculates normally distributed probability densities along an input array
+
+    Args:
+        mu (float): mean of ND
+        sigma (float): standard deviation of ND
+        grid (np.ndarray): input array np.int[:]. For each element of the array, the  probability density is calculated
+
+    Returns:
+        np.ndarray: probability density array, np.float[:]
     """
     norm = 0.3989422804014327 / sigma
     return norm * np.exp(-0.5 * ((grid - mu) / sigma) ** 2)
 
 
-def return_elution_profile(timepoint, sigma, n_runs):
-    """
-    Returns a gaussian elution profile for a given timepoint
+def return_elution_profile(timepoint: float, sigma : float, n_runs : int) -> np.ndarray:
+    """Simulates a gaussian elution profile
+
+    Args:
+        timepoint (float): coordinate of the peak apex
+        sigma (float): standard deviation of the gaussian
+        n_runs (int): number of points along which the density is calculated
+
+    Returns:
+        np.ndarray: probability density array, np.float[:]
     """
     return gaussian(timepoint, sigma, np.arange(0, n_runs))
 
 
-def simulate_sample_profiles(n_peptides, n_runs, n_samples, threshold=0.2, use_noise=True):
-    """
-    Generate random profiles to serve as test_data
+def simulate_sample_profiles(n_peptides : int, n_runs : int, n_samples : int, threshold=0.2, use_noise=True) -> [np.ndarray, np.ndarray]:
+    """Generates random profiles to serve as test_data
+
+    Args:
+        n_peptides (int): number of peptides to be simulated
+        n_runs (int): number of runs to be simulated
+        n_samples (int): number of samples to be simulated
+        threshold (float, optional): threshold below which a simulated intensity will be diregarded. Defaults to 0.2.
+        use_noise (bool, optional): add simulated noise to the profile values. Defaults to True.
+
+    Returns:
+        Tuple[np.ndarray, np.ndarray]: profiles: np.float[:,:,:] array containing the simulated profiles, true_normalization: np.float[:,:,:] array containing the ground truth
     """
     np.random.seed(42)
     abundances = np.random.rand(n_peptides)*10e7
@@ -77,8 +100,16 @@ def simulate_sample_profiles(n_peptides, n_runs, n_samples, threshold=0.2, use_n
 from numba import njit, prange
 
 @njit
-def get_peptide_error(profile, normalization):
+def get_peptide_error(profile : np.ndarray, normalization : np.ndarray) -> float:
+    """Distance function for least squares optimization. Calculates the peptide ratios between samples. Smaller ratios mean better normalization
 
+    Args:
+        profile (np.ndarray): peptide intensity values
+        normalization (np.ndarray): per sample normalization factors
+
+    Returns:
+        float: summed squared error
+    """
     pep_ints = np.zeros(profile.shape[1])
 
     normalized_profile = profile*normalization
@@ -112,8 +143,16 @@ def get_total_error_parallel(normalization, profiles):
     return total_error
 
 
-def get_total_error(normalization, profiles):
+def get_total_error(normalization : np.ndarray, profiles : np.ndarray) -> float:
+    """Computes the summed peptide errors over the whole dataset
 
+    Args:
+        normalization (np.ndarray): per sample normalization factors
+        profiles (np.ndarray): peptide intensity profiles over the dataset
+
+    Returns:
+        float: summed peptide error
+    """
     normalization = normalization.reshape(profiles.shape[:2])
 
     total_error = 0
@@ -128,9 +167,14 @@ from scipy.optimize import minimize
 import pandas as pd
 import numpy as np
 
-def normalize_experiment_SLSQP(profiles):
-    """
-    Calculate normalization with SLSQP approach
+def normalize_experiment_SLSQP(profiles : np.ndarray) -> np.ndarray:
+    """Calculates normalization with SLSQP approach
+
+    Args:
+        profiles (np.ndarray): peptide intensities
+
+    Returns:
+        np.ndarray: normalization factors
     """
     x0 = np.ones(profiles.shape[0] * profiles.shape[1])
     bounds = [(0.1, 1) for _ in x0]
@@ -141,9 +185,14 @@ def normalize_experiment_SLSQP(profiles):
 
     return solution
 
-def normalize_experiment_BFGS(profiles):
-    """
-    Calculate normalization with BFGS approach
+def normalize_experiment_BFGS(profiles : np.ndarray) -> np.ndarray:
+    """Calculates normalization with BFGS approach
+
+    Args:
+        profiles (np.ndarray): peptide intensities
+
+    Returns:
+        np.ndarray: normalization factors
     """
     x0 = np.ones(profiles.shape[0] * profiles.shape[1])
     bounds = [(0.1, 1) for _ in x0]
@@ -155,9 +204,19 @@ def normalize_experiment_BFGS(profiles):
     return solution
 
 
-def delayed_normalization(df, field='int_sum', minimum_occurence=None):
-    """
-    Returns normalization for given peptide intensities
+def delayed_normalization(df : pd.DataFrame, field='int_sum', minimum_occurence=None) -> [pd.DataFrame, np.ndarray]:
+    """Returns normalization factors for given peptide intensities
+
+    Args:
+        df (pd.DataFrame): alphapept quantified features table
+        field (str, optional): The column in df containing the quantitative peptide information (i.e. precursor intensities).
+        minimum_occurence ([type], optional): minimum number of replicates the peptide must be observed in. Defaults to None.
+
+    Raises:
+        ValueError: if no optimization happens with the given solver
+
+    Returns:
+        [pd.DataFrame, np.ndarray]: pd.DataFrame: alphapept quantified features table extended with the normalized intensities, np.ndarray: normalized intensities
     """
     files = np.sort(df['filename'].unique()).tolist()
     n_files = len(files)
@@ -234,8 +293,23 @@ import pandas as pd
 
 np.random.seed(42)
 
-def generate_dummy_data(n_sequences, n_samples, noise=True, remove = True, peptide_ratio = True, abundance=True, signal_level=100, noise_divider=10, keep=0.8):
+def generate_dummy_data(n_sequences : int, n_samples : int, noise=True, remove = True, peptide_ratio = True, abundance=True, signal_level=100, noise_divider=10, keep=0.8) -> [pd.DataFrame, list, np.ndarray]:
+    """Simulate an input dataset of peptide intensities
 
+    Args:
+        n_sequences (int): number of peptides to simulate
+        n_samples (int): number of samples to simulate
+        noise (bool, optional): add random signal to distort the simulated intensity levels. Defaults to True.
+        remove (bool, optional): remove intensities (i.e. add missing values). Defaults to True.
+        peptide_ratio (bool, optional): simulate different peptide intensities. Defaults to True.
+        abundance (bool, optional): simulate different abundances for each sample (i.e. systematic shifts). Defaults to True.
+        signal_level (int, optional): signal level for simulated intensity. Defaults to 100.
+        noise_divider (int, optional): the factor through which the noise is divided (higher factor -> higher signal to noise). Defaults to 10.
+        keep (float, optional): aimed-at fraction of non-missing values, applies if 'remove' is set. Defaults to 0.8.
+
+    Returns:
+        [pd.DataFrame, list, np.ndarray]: pd.DataFrame: simulated dataset with peptide intensities, list: sample names: np.ndarray: shift factors of each sample
+    """
     species = ['P'+str(_) for _ in range(1,n_sequences+1)]
     sample = [string.ascii_uppercase[_%26]+str(_//26) for _ in range(n_samples)]
 
@@ -285,7 +359,17 @@ def generate_dummy_data(n_sequences, n_samples, noise=True, remove = True, pepti
 from numba import njit
 
 @njit
-def get_protein_ratios(signal, column_combinations, minimum_ratios = 1):
+def get_protein_ratios(signal : np.ndarray, column_combinations : list, minimum_ratios = 1) -> np.ndarray:
+    """Calculates the protein ratios between samples for one protein
+
+    Args:
+        signal (np.ndarray): np.array[:,:] containing peptide intensities for each sample
+        column_combinations (list): list of all index combinations to compare (usually all sample combinations)
+        minimum_ratios (int, optional): minimum number of peptide ratios necessary to calculate a protein ratio. Defaults to 1.
+
+    Returns:
+        np.ndarray: np.array[:,:] matrix comparing the ratios for all column combinations
+    """
     n_samples = signal.shape[1]
     ratios = np.empty((n_samples, n_samples))
     ratios[:] = np.nan
@@ -309,7 +393,16 @@ def get_protein_ratios(signal, column_combinations, minimum_ratios = 1):
 
 # Cell
 @njit
-def triangle_error(normalization, ratios):
+def triangle_error(normalization, ratios) -> float:
+    """Calculates the difference between calculated ratios and expected ratios
+
+    Args:
+        normalization ([type]): [description]
+        ratios ([type]): [description]
+
+    Returns:
+        float: summed quadratic difference
+    """
     int_matrix = np.repeat(normalization, len(normalization)).reshape((len(normalization), len(normalization))).transpose()
     x = (np.log(ratios) - np.log(int_matrix.T) + np.log(int_matrix))**2
 
@@ -323,8 +416,19 @@ from scipy.optimize import minimize, least_squares
 
 # LFBGSB
 
-def solve_profile(ratios, method):
+def solve_profile(ratios : np.ndarray, method: str) -> [np.ndarray, bool]:
+    """Calculates protein pseudointensities with a specified solver
 
+    Args:
+        ratios (np.ndarray): np.array[:,:] matrix containing all estimated protein ratios between samples
+        method (str): string specifying which solver to use
+
+    Raises:
+        NotImplementedError: if the solver is not implemented
+
+    Returns:
+        [np.ndarray, bool]: np.ndarray: the protein pseudointensities, bool: wether the solver was successful
+    """
     if method not in ['L-BFGS-B', 'SLSQP', 'Powell', 'trust-constr','trf']:
         raise NotImplementedError(method)
 
@@ -345,8 +449,25 @@ def solve_profile(ratios, method):
 # Cell
 from numba.typed import List
 from itertools import combinations
+import pandas as pd
 
-def get_protein_table(df, field = 'int_sum', minimum_ratios = 1, callback = None):
+def get_protein_table(df : pd.DataFrame, field = 'int_sum', minimum_ratios = 1, callback = None) -> pd.DataFrame:
+    """Derives LFQ intensities from identified and quantified features over different runs
+
+    Args:
+        df (pd.DataFrame): Feature table by alphapept
+
+        field (str, optional): The column in df containing the quantitative peptide information (i.e. precursor intensities). Defaults to 'int_sum'.
+        minimum_ratios (int, optional): Minimum number of peptide ratios necessary to derive a protein ratio. Defaults to 1.
+        callback ([type], optional): [description]. Defaults to None.
+
+    Raises:
+        ValueError: if the input does not contain multiple files, the LFQ procedure does not apply
+        ValueError: if negative intensities are observed
+
+    Returns:
+        pd.DataFrame: table containing the LFQ intensities of each protein in each sample
+    """
     unique_proteins = df['protein_group'].unique()
     files = df['filename'].unique().tolist()
     files.sort()
@@ -466,8 +587,18 @@ import alphapept.speed
 from functools import partial
 
 
-def protein_profile_parallel(df, minimum_ratios, field, callback=None):
+def protein_profile_parallel(df : pd.DataFrame, minimum_ratios : int, field : str, callback=None) -> pd.DataFrame:
+    """Derives LFQ intensities from the feature table
 
+    Args:
+        df (pd.DataFrame): Feature table by alphapept
+        minimum_ratios (int): Minimum number of peptide ratios necessary to derive a protein ratio.
+        field (str): The field containing the quantitative peptide information (i.e. precursor intensities).
+        callback ([type], optional): [description]. Defaults to None.
+
+    Returns:
+        pd.DataFrame: table containing the LFQ intensities of each protein in each sample
+    """
     unique_proteins = df['protein_group'].unique().tolist()
 
     files = df['filename'].unique().tolist()
@@ -524,8 +655,20 @@ def protein_profile_parallel(df, minimum_ratios, field, callback=None):
     return protein_table
 
 
-def protein_profile_parallel_ap(settings, df, callback=None):
+def protein_profile_parallel_ap(settings : dict, df : pd.DataFrame, callback=None) -> pd.DataFrame:
+    """Derives protein LFQ intensities from the alphapept quantified feature table
 
+    Args:
+        settings (dict): alphapept settings dictionary
+        df (pd.DataFrame): alphapept feature table
+        callback ([type], optional): [description]. Defaults to None.
+
+    Raises:
+        ValueError: raised in case of observed negative intensities
+
+    Returns:
+        pd.DataFrame: table containing the LFQ intensities of each protein in each sample
+    """
     minimum_ratios = settings['quantification']['lfq_ratio_min']
     field = settings['quantification']['mode']
 
@@ -542,7 +685,20 @@ def protein_profile_parallel_ap(settings, df, callback=None):
     return protein_table
 
 
-def protein_profile_parallel_mq(evidence_path, protein_groups_path, callback=None):
+def protein_profile_parallel_mq(evidence_path : str, protein_groups_path: str, callback=None) -> pd.DataFrame:
+    """Derives protein LFQ intensities from Maxquant quantified features
+
+    Args:
+        evidence_path (str): path to the Maxquant standard output table evidence.txt
+        protein_groups_path (str): path to the Maxquant standard output table proteinGroups.txt
+        callback ([type], optional): [description]. Defaults to None.
+
+    Raises:
+        FileNotFoundError: if Maxquant files cannot be found
+
+    Returns:
+        pd.DataFrame: table containing the LFQ intensities of each protein in each sample
+    """
     logging.info('Loading files')
 
     for file in [evidence_path, protein_groups_path]:
