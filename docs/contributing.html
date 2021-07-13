@@ -133,7 +133,8 @@ are welcome :)</li>
         ValueError: An error occured when the integer is negative.
 
     """</code></pre>
-<p>{% include note.html content='Type hints are highly recommended but not mandatory (see also <a href="https://www.python.org/dev/peps/pep-0484/">PEP484</a>). As the Legacy codebase had no type hints we are slowly moving towards more type hinting coverage.' %}{% include note.html content='Adding additional elements (e.g lines like -------) to the docstring could break how the documentation is displayed. Below is the function from above but exported to show how it would appear in the documentation.' %}</p>
+<p>Type hints for pandas dataframes are <code>df: pd.DataFrame</code> and  for numpy arrays <code>x: np.ndarray</code>.
+{% include note.html content='Type hints are highly recommended but not mandatory (see also <a href="https://www.python.org/dev/peps/pep-0484/">PEP484</a>). As the Legacy codebase had no type hints we are slowly moving towards more type hinting coverage.' %}{% include note.html content='Adding additional elements (e.g lines like -------) to the docstring could break how the documentation is displayed. Below is the function from above but exported to show how it would appear in the documentation.' %}</p>
 
 </div>
 </div>
@@ -200,6 +201,7 @@ def function_a():
     assert function_a() == 5
 
 test_function_a()</code></pre>
+<p>{% include note.html content='AlphaPept contains a testfolder <code>testfiles</code> with testfiles which are used for some functions to perform tests on files.' %}</p>
 
 </div>
 </div>
