@@ -118,23 +118,22 @@ are welcome :)</li>
 <p>Below a sample docstring (Note the empty space after Args/Returns/Raises):</p>
 
 <pre><code>def sample_function(a_string: str, a_int: int, a_flag: bool) -&gt; str:
-    """
-    Sample function that performs a sample calculation.
+    """Sample function that performs a sample calculation.
 
     Args:
-        a_string: A string.
-        a_int: An integer.
-        a_flag: A flag.
+        a_string (str): A string.
+        a_int (int): An integer.
+        a_flag (bool): A flag.
 
     Returns:
-        A string based on the input.  
-
-    Raises:
-        ValueError: An error occured when the integer is negative.
-
+        str: A string based on the input
     """</code></pre>
-<p>Type hints for pandas dataframes are <code>df: pd.DataFrame</code> and  for numpy arrays <code>x: np.ndarray</code>.
-{% include note.html content='Type hints are highly recommended but not mandatory (see also <a href="https://www.python.org/dev/peps/pep-0484/">PEP484</a>). As the Legacy codebase had no type hints we are slowly moving towards more type hinting coverage.' %}{% include note.html content='Adding additional elements (e.g lines like -------) to the docstring could break how the documentation is displayed. Below is the function from above but exported to show how it would appear in the documentation.' %}</p>
+<p>Type hints for pandas dataframes are <code>df: pd.DataFrame</code> and  for numpy arrays <code>x:np.ndarray</code>. You can further specify the dimension (e.g. of numpy arrays) in the docstring. For args use a list, for kwargs a dictionary, however, it is generally not needed to type-hint these but state in the Args what they are and what can be done with them.</p>
+<h4 id="Useful-tricks:">Useful tricks:<a class="anchor-link" href="#Useful-tricks:"> </a></h4><ul>
+<li>When using Visual Studio Code, you can use the <code>Python Docstring Generator</code> to automatically generate the docstrings with this format.</li>
+<li>When changing the docstrings in the code, you can propagate the changes back to the notebooks with <code>nbdev_update_lib [filename]</code>.
+{% include note.html content='Type hints are highly recommended but not mandatory (see also <a href="https://www.python.org/dev/peps/pep-0484/">PEP484</a>). As the Legacy codebase had no type hints, we are slowly moving towards more type hinting coverage.' %}{% include note.html content='Adding additional elements (e.g lines like -------) to the docstring could break how the documentation is displayed. Below is the function from above but exported to show how it would appear in the documentation.' %}</li>
+</ul>
 
 </div>
 </div>
@@ -154,13 +153,11 @@ are welcome :)</li>
 </blockquote>
 <p>Sample function that performs a sample calculation.</p>
 <p>Args:
-    a_string: A string.
-    a_int: An integer.
-    a_flag: A flag.</p>
+    a_string (str): A string.
+    a_int (int): An integer.
+    a_flag (bool): A flag.</p>
 <p>Returns:
-    A string based on the input.</p>
-<p>Raises:
-    ValueError: An error occured when the integer is negative.</p>
+    str: A string based on the input</p>
 
 </div>
 
