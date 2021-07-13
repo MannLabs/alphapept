@@ -128,7 +128,12 @@ are welcome :)</li>
     Returns:
         str: A string based on the input
     """</code></pre>
-<p>Type hints for pandas dataframes are <code>df: pd.DataFrame</code> and  for numpy arrays <code>x:np.ndarray</code>. You can further specify the dimension (e.g. of numpy arrays) in the docstring. For args use a list, for kwargs a dictionary, however, it is generally not needed to type-hint these but state in the Args what they are and what can be done with them.</p>
+<h4 id="Examples:">Examples:<a class="anchor-link" href="#Examples:"> </a></h4><ul>
+<li>pandas dataframes: <code>df: pd.DataFrame</code></li>
+<li>numpy arrays: <code>x:np.ndarray</code>. You can further specify the dimension (e.g. of numpy arrays) in the docstring. </li>
+<li>args and kwargs: list and dict. It is generally not needed to type-hint these but state in the Args what they are and what can be done with them.</li>
+<li>callbacks: typing.Callable, e.g. Callable[[Arg1Type, Arg2Type], ReturnType]</li>
+</ul>
 <h4 id="Useful-tricks:">Useful tricks:<a class="anchor-link" href="#Useful-tricks:"> </a></h4><ul>
 <li>When using Visual Studio Code, you can use the <code>Python Docstring Generator</code> to automatically generate the docstrings with this format.</li>
 <li>When changing the docstrings in the code, you can propagate the changes back to the notebooks with <code>nbdev_update_lib [filename]</code>.
