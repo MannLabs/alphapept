@@ -213,38 +213,6 @@ field1: 0
 </div>
     {% endraw %}
 
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">test_settings_utils</span><span class="p">():</span>
-    <span class="n">settings</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;field1&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span><span class="s1">&#39;summary&#39;</span><span class="p">:</span><span class="mi">123</span><span class="p">}</span>
-    <span class="n">dummy_path</span> <span class="o">=</span> <span class="s1">&#39;to_delete.yaml&#39;</span>
-
-    <span class="n">save_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">dummy_path</span><span class="p">)</span>
-
-    <span class="n">s</span> <span class="o">=</span> <span class="n">load_settings</span><span class="p">(</span><span class="n">dummy_path</span><span class="p">)</span>
-
-    <span class="k">assert</span> <span class="n">s</span><span class="o">==</span><span class="n">settings</span>
-
-    <span class="n">s_</span> <span class="o">=</span> <span class="n">load_settings_as_template</span><span class="p">(</span><span class="n">dummy_path</span><span class="p">)</span>
-
-    <span class="k">assert</span> <span class="s1">&#39;summary&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s_</span>
-    <span class="k">assert</span> <span class="s1">&#39;failed&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">s_</span>
-    
-<span class="n">test_settings_utils</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Settings-Template">Settings Template<a class="anchor-link" href="#Settings-Template"> </a></h2><p>The settings template defines individual settings. The idea is to provide a template so that a graphical user interface can be automatically generated. The list below represents what each item would be when using <code>streamlit</code>. This could be adapted for any kind of GUI library.</p>
