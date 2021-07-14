@@ -41,7 +41,7 @@ To calculate the isotope distribution for the averagine model, we define the fun
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="IsotopeDistributions">IsotopeDistributions<a class="anchor-link" href="#IsotopeDistributions"> </a></h2><p>The calculation of isotope distributions is based on the algorithm introduced in the paper <em>Calculation of isotope distributions in mass spectrometry. A trivial solution for a non-trivial problem</em> by <em>Hugo Kubinyi</em>. 
-A more detailed description of the algorithm can be found in the <a href="https://doi.org/10.1016/S0003-2670(00">paper</a>83059-7).</p>
+A more detailed description of the algorithm can be found in the <a href="https://doi.org/10.1016/1044-0305(95)00017-8">paper</a>.</p>
 <p>The implementation is a Python port of the Java version of the <a href="https://github.com/fickludd/proteomicore/blob/c5e311c21c3191fc007798391ce77066531f1932/Proteins/src/main/java/se/lth/immun/chem/IsotopeDistribution.java">proteomicore - implementation</a> from Johan Teleman</p>
 <p>In brief,  the approach avoids expanding polynomial expressions by combining precalculated patterns of hypothetical atom clusters and pruning low-intensity peaks. <br>
 To calculate the isotope distribution for a given isotope, we define the function <code>dict_to_dist,</code> which accepts a dictionary of amino acids and returns the isotope distribution.</p>
