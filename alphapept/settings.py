@@ -45,7 +45,7 @@ def load_settings_as_template(path: str):
     return settings
 
 
-def save_settings(settings, path):
+def save_settings(settings: dict, path: str):
     """Save settings file to path
 
     Args:
