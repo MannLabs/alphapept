@@ -45,7 +45,7 @@ class IsotopeDistribution:
         self.intensities = np.array([1.0])
 
     def add(self, x:IsotopeDistribution):
-        """Add another isotope distribution
+        """Add another isotope distribution.
 
         Args:
             x (IsotopeDistribution): IsotopeDistribution.
@@ -95,22 +95,22 @@ class IsotopeDistribution:
 
 @njit
 def fast_add(m0: int, dm0: int, int0: np.ndarray, m1: int, dm1: int, int1: np.ndarray, prune_level: float=0.000001) ->(int, int, np.ndarray):
-    """Helper function to quickly add isotope patterns
+    """Helper function to quickly add isotope patterns.
 
     Args:
-        m0 (int): Mass of pattern 1
-        dm0 (int): dm of pattern 1 (number of isotopes)
-        int0 (float): Intensities of pattern 1
-        m1 (int): Mass of pattern 2
-        dm1 (int): dm of pattern 2 (number of isotopes)
-        int1 (float): Intensities of pattern 2
+        m0 (int): Mass of pattern 1.
+        dm0 (int): dm of pattern 1 (number of isotopes).
+        int0 (float): Intensities of pattern 1.
+        m1 (int): Mass of pattern 2.
+        dm1 (int): dm of pattern 2 (number of isotopes).
+        int1 (float): Intensities of pattern 2.
         prune_level (float): Precision threshold. Defaults to 0.000001.
 
 
     Returns:
-        int: Mass of new pattern
-        int: Number of isotopes in new pattern
-        np.ndarray: Intensity of new pattern
+        int: Mass of new pattern.
+        int: Number of isotopes in new pattern.
+        np.ndarray: Intensity of new pattern.
 
     """
     m0 += m1
@@ -131,13 +131,13 @@ def fast_add(m0: int, dm0: int, int0: np.ndarray, m1: int, dm1: int, int1: np.nd
 
 @njit
 def numba_bin(decimal:int)->list:
-    """Numba compatible function to convert a decimal number to a binary (list)
+    """Numba compatible function to convert a decimal number to a binary (list).
 
     Args:
-        decimal (int): Decimal number
+        decimal (int): Decimal number.
 
     Returns:
-        list: Number in binary
+        list: Number in binary.
     """
 
     binary = []
@@ -154,11 +154,11 @@ def dict_to_dist(counted_AA:Dict, isotopes:Dict)->IsotopeDistribution:
     """Function to convert a dictionary with counts of atoms to an isotope distribution.
 
     Args:
-        counted_AA (Dict): Numba-typed dict with counts of atoms
-        isotopes (Dict): Numba-typed lookup dict with isotopes
+        counted_AA (Dict): Numba-typed dict with counts of atoms.
+        isotopes (Dict): Numba-typed lookup dict with isotopes.
 
     Returns:
-        IsotopeDistribution: The calculated sotope distribution for the chemical compound
+        IsotopeDistribution: The calculated sotope distribution for the chemical compound.
     """
 
     dist = IsotopeDistribution()
@@ -182,16 +182,16 @@ def get_average_formula(molecule_mass:float, averagine_aa:Dict, isotopes:Dict, s
     """Function to calculate the averagine formula for a molecule mass.
 
     Args:
-        molecule_mass (float): Input molecule mass for which the averagine model should be calculated
-        averagine_aa (Dict): Numba-typed dictionary with averagine masses
-        isotopes (Dict): Numba-typed lookup dict with isotopes
+        molecule_mass (float): Input molecule mass for which the averagine model should be calculated.
+        averagine_aa (Dict): Numba-typed dictionary with averagine masses.
+        isotopes (Dict): Numba-typed lookup dict with isotopes.
         sulphur (bool, optional): Flag to consider sulphur. Defaults to True.
 
     Raises:
         NotImplementedError: If mode w/o sulphur is selected.
 
     Returns:
-        Dict: Numba-typed dict with averagine composition
+        Dict: Numba-typed dict with averagine composition.
     """
 
 
@@ -226,8 +226,8 @@ def mass_to_dist(molecule_mass: float, averagine_aa:Dict, isotopes:Dict)-> (np.n
         isotopes (Dict): Numba-typed lookup dict with isotopes.
 
     Returns:
-        np.ndarray: isotope masses
-        np.ndarray: isotope intensity
+        np.ndarray: isotope masses.
+        np.ndarray: isotope intensity.
     """
     counted_AA = get_average_formula(molecule_mass, averagine_aa, isotopes)
 
@@ -245,14 +245,14 @@ M_PROTON = mass_dict['Proton']
 
 @njit
 def calculate_mass(mono_mz:float, charge:int) -> float:
-    """Calculate the precursor mass from mono mz and charge
+    """Calculate the precursor mass from mono mz and charge.
 
     Args:
-        mono_mz (float): mono m/z
-        charge (int): charge
+        mono_mz (float): mono m/z.
+        charge (int): charge.
 
     Returns:
-        float: precursor mass
+        float: precursor mass.
     """
     prec_mass = mono_mz * abs(charge) - charge * M_PROTON
 
