@@ -416,7 +416,7 @@ def __extract_nested(child):
     if len(child) > 0:
         temp_dict = {}
         for xx in child:
-            temp_dict[xx.tag] = extract_nested(xx)
+            temp_dict[xx.tag] = __extract_nested(xx)
         return temp_dict
     else:
         if child.text == 'True':
