@@ -14,10 +14,17 @@ import alphapept.io
 
 def filter_score(df, mode='multiple'):
     """
-    Filter df by score
-    TODO: PSMS could still have the same score when having modifications at multiple positions that are not distinguishable.
+    Filter psms feature table by keeping only the best scoring psm per experimental spectrum.
+
+    TODO: psms could still have the same score when having modifications at multiple positions that are not distinguishable.
     Only keep one.
 
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        mode (str, optional): string specifying which mode to use for psms filtering. The two options are 'single' and 'multiple'. 'single' will only keep one feature per experimental spectrum. 'multiple' will allow multiple features per experimental spectrum. In either option, each feature can only occur once. Defaults to 'multiple'.
+
+    Returns:
+        pd.DataFrame: table containing the filtered psms results.
     """
     df["rank"] = df.groupby("query_idx")["score"].rank("dense", ascending=False).astype("int")
     df = df[df["rank"] == 1]
@@ -47,8 +54,14 @@ def filter_score(df, mode='multiple'):
 
 def filter_precursor(df):
     """
-    Filter df by precursor
+    Filter psms feature table by precursor.
     Allow each precursor only once.
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+
+    Returns:
+        pd.DataFrame: table containing the filtered psms results.
 
     """
     df["rank_precursor"] = (
@@ -61,9 +74,15 @@ def filter_precursor(df):
 # Cell
 from numba import njit
 @njit
-def get_q_values(fdr_values):
+def get_q_values(fdr_values: np.ndarray):
     """
-    Calculate q values from fdr_values
+    Calculate q-values from fdr_values.
+
+    Args:
+        fdr_values (np.ndarray): np.ndarray of fdr values.
+
+    Returns:
+        np.ndarray: np.ndarray of q-values.
     """
     q_values = np.zeros_like(fdr_values)
     min_q_value = np.max(fdr_values)
@@ -80,19 +99,17 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def cut_fdr(df, fdr_level=0.01, plot=True):
+def cut_fdr(df, fdr_level:float=0.01, plot:bool=True):
     """
     Cuts a dataframe with a given fdr level
 
     Args:
-        fdr_level: fdr level that should be used
-        plot: flag to enable plot
+        df (pd.DataFrame): psms table of search results from alphapept.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+        plot (bool, optional): flag to enable plot. Defaults to 'True'.
 
     Returns:
-        cutoff: df with psms within fdr
-        cutoff_value: numerical value of score cutoff
-
-    Raises:
+        [float, pd.DataFrame]: float: numerical value of the applied score cutoff, pd.DataFrame: df with psms within fdr
 
     """
 
@@ -164,6 +181,15 @@ def cut_fdr(df, fdr_level=0.01, plot=True):
 def cut_global_fdr(data, analyte_level='sequence', fdr_level=0.01, plot=True, **kwargs):
     """
     Function to estimate and filter by global peptide or protein fdr
+
+    Args:
+        data (pd.DataFrame): psms table of search results from alphapept.
+        analyte_level (str, optional): string specifying the analyte level to apply the fdr threshold. Options include: 'precursor', 'sequence', 'protein_group' and 'protein'. Defaults to 'sequence'.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+        plot (bool, optional): flag to enable plot. Defaults to 'True'.
+
+    Returns:
+        pd.DataFrame: df with filtered results
 
     """
     logging.info('Global FDR on {}'.format(analyte_level))
@@ -242,6 +268,19 @@ def filter_with_score(df, fdr_level = 0.01):
 # Cell
 
 def score_psms(df, score = 'y_hits', fdr_level = 0.01, plot = True, **kwargs):
+    """
+    Uses the specified score in df to filter psms and to apply the fdr_level threshold.
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        score (str, optional): string specifying the column in df to use as score. Defaults to 'y_hits'.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+        plot (bool, optional): flag to enable plot. Defaults to 'True'.
+
+    Returns:
+        pd.DataFrame: filtered df with psms within fdr
+
+    """
     if score in df.columns:
         df['score'] = df[score]
     else:
