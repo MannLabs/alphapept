@@ -18,9 +18,24 @@ import sys
 import numpy as np
 import psutil
 
-def parallel_execute(settings, step, callback=None):
-    """
-    Generic function to parallel execute worklow steps on a file basis
+
+def parallel_execute(
+    settings: dict,
+    step: callable,
+    callback: callable = None,
+) -> dict:
+    """Generic function to execute worklow steps in parallel on a per-file basis.
+
+    Args:
+        settings (dict): The settings for processing the step function.
+        step (callable): A function that accepts settings as input parameter.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+
+    Returns:
+        dict: The settings after processing.
+
+    Raises:
+        NotImplementedError: When the step is feature finding on files other then Thermo or Bruker.
 
     """
     n_processes = settings['general']['n_processes']
@@ -103,14 +118,30 @@ def parallel_execute(settings, step, callback=None):
 
 import tqdm
 
-def tqdm_wrapper(pbar, update):
+def tqdm_wrapper(pbar, update: float) -> None:
+    """Update a qdm progress bar.
+
+    Args:
+        pbar (type): a tqd,.tqdm objet.
+        update (float): The new value for the progressbar.
+
+    """
     current_value = pbar.n
     delta = update - current_value
     pbar.update(delta)
 
 # Cell
 
-def check_version_and_hardware(settings):
+def check_version_and_hardware(settings: dict) -> dict:
+    """Show platform and python information and parse settings.
+
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+
+    Returns:
+        dict: The parsed settings.
+
+    """
     import alphapept.utils
     #alphapept.utils.check_hardware()
     #alphapept.utils.check_python_env()
@@ -128,11 +159,26 @@ import functools
 import copy
 
 def create_database(
-    settings,
-    logger_set=False,
-    settings_parsed=False,
-    callback=None
-):
+    settings: dict,
+    logger_set: bool = False,
+    settings_parsed: bool = False,
+    callback: callable = None
+) -> dict:
+    """Create the search database.
+
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        logger_set (bool): If False, reset the default logger. Defaults to False.
+        settings_parsed (bool): If True, reparse the settings. Defaults to False.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+
+    Returns:
+        dict: the parsed settings.
+
+    Raises:
+        FileNotFoundError: If the FASTA file is not found.
+
+    """
     import alphapept.fasta
     if not logger_set:
         set_logger()
@@ -242,11 +288,23 @@ def create_database(
 # Cell
 
 def import_raw_data(
-    settings,
-    logger_set=False,
-    settings_parsed=False,
-    callback=None
-):
+    settings: dict,
+    logger_set: bool = False,
+    settings_parsed: bool = False,
+    callback: callable = None
+) -> dict:
+    """Import raw data.
+
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        logger_set (bool): If False, reset the default logger. Defaults to False.
+        settings_parsed (bool): If True, reparse the settings. Defaults to False.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+
+    Returns:
+        dict: the parsed settings.
+
+    """
     if not logger_set:
         set_logger()
     if not settings_parsed:
@@ -266,12 +324,23 @@ def import_raw_data(
 # Cell
 
 def feature_finding(
-    settings,
-    logger_set=False,
-    settings_parsed=False,
-    callback=None
-):
+    settings: dict,
+    logger_set: bool = False,
+    settings_parsed: bool = False,
+    callback: callable = None
+) -> dict:
+    """Find features.
 
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        logger_set (bool): If False, reset the default logger. Defaults to False.
+        settings_parsed (bool): If True, reparse the settings. Defaults to False.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+
+    Returns:
+        dict: the parsed settings.
+
+    """
     if not logger_set:
         set_logger()
     if not settings_parsed:
@@ -290,18 +359,47 @@ def feature_finding(
 
 # Cell
 
-def wrapped_partial(func, *args, **kwargs):
+def wrapped_partial(func: callable, *args, **kwargs) -> callable:
+    """Wrap a function with partial args and kwargs.
+
+    Args:
+        func (callable): The function to be wrapped.
+        *args (type): Args to be wrapped.
+        **kwargs (type): Kwargs to be wrapped.
+
+    Returns:
+        callable: The wrapped function.
+
+    """
     partial_func = functools.partial(func, *args, **kwargs)
     functools.update_wrapper(partial_func, func)
     return partial_func
 
 def search_data(
-    settings,
-    first_search=True,
-    logger_set=False,
-    settings_parsed=False,
-    callback=None
-):
+    settings: dict,
+    first_search: bool = True,
+    logger_set: bool = False,
+    settings_parsed: bool = False,
+    callback: callable = None
+) -> dict:
+    """Create the search database.
+
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        first_search (bool): If True, save the intermediary results as `first search`.
+            Otherwise, calibrate mz_values are used and results are saved as `second search`.
+            Defaults to True.
+        logger_set (bool): If False, reset the default logger. Defaults to False.
+        settings_parsed (bool): If True, reparse the settings. Defaults to False.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+
+    Returns:
+        dict: the parsed settings.
+
+    Raises:
+        FileNotFoundError: If the FASTA file is not found.
+
+    """
     if not logger_set:
         set_logger()
     if not settings_parsed:
@@ -387,11 +485,23 @@ def search_data(
 # Cell
 
 def recalibrate_data(
-    settings,
-    logger_set=False,
-    settings_parsed=False,
-    callback=None
-):
+    settings: dict,
+    logger_set: bool = False,
+    settings_parsed: bool = False,
+    callback: callable = None
+) -> dict:
+    """Recalibrate mz values.
+
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        logger_set (bool): If False, reset the default logger. Defaults to False.
+        settings_parsed (bool): If True, reparse the settings. Defaults to False.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+
+    Returns:
+        dict: the parsed settings.
+
+    """
     if not logger_set:
         set_logger()
     if not settings_parsed:
@@ -412,13 +522,27 @@ def recalibrate_data(
 # Cell
 
 def score(
-    settings,
-    pept_dict=None,
-    fasta_dict=None,
-    logger_set=False,
-    settings_parsed=False,
-    callback=None
-):
+    settings: dict,
+    pept_dict: dict = None,
+    fasta_dict: dict = None,
+    logger_set: bool = False,
+    settings_parsed: bool = False,
+    callback: callable = None
+) -> dict:
+    """Score PSMs and calculate FDR.
+
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        pept_dict (dict): A dictionary with peptides. Defaults to None.
+        fasta_dict (dict): A dictionary with fasta sequences. Defaults to None.
+        logger_set (bool): If False, reset the default logger. Defaults to False.
+        settings_parsed (bool): If True, reparse the settings. Defaults to False.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+
+    Returns:
+        dict: the parsed settings.
+
+    """
     if not logger_set:
         set_logger()
     if not settings_parsed:
@@ -447,13 +571,27 @@ def score(
 # Cell
 
 def protein_grouping(
-    settings,
-    pept_dict=None,
-    fasta_dict=None,
-    logger_set=False,
-    settings_parsed=False,
-    callback=None
-):
+    settings: dict,
+    pept_dict: dict = None,
+    fasta_dict: dict = None,
+    logger_set: bool = False,
+    settings_parsed: bool = False,
+    callback: callable = None
+) -> dict:
+    """Group peptides into proteins.
+
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        pept_dict (dict): A dictionary with peptides. Defaults to None.
+        fasta_dict (dict): A dictionary with fasta sequences. Defaults to None.
+        logger_set (bool): If False, reset the default logger. Defaults to False.
+        settings_parsed (bool): If True, reparse the settings. Defaults to False.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+
+    Returns:
+        dict: the parsed settings.
+
+    """
     if not logger_set:
         set_logger()
     if not settings_parsed:
@@ -501,12 +639,23 @@ import pandas as pd
 
 
 def align(
-    settings,
-    logger_set=False,
-    settings_parsed=False,
-    callback=None
-):
+    settings: dict,
+    logger_set: bool = False,
+    settings_parsed: bool = False,
+    callback: callable = None
+) -> dict:
+    """Align multiple samples.
 
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        logger_set (bool): If False, reset the default logger. Defaults to False.
+        settings_parsed (bool): If True, reparse the settings. Defaults to False.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+
+    Returns:
+        dict: the parsed settings.
+
+    """
     if not logger_set:
         set_logger()
     if not settings_parsed:
@@ -519,11 +668,23 @@ def align(
     return settings
 
 def match(
-    settings,
-    logger_set=False,
-    settings_parsed=False,
-    callback=None
-):
+    settings: dict,
+    logger_set: bool = False,
+    settings_parsed: bool = False,
+    callback: callable = None
+) -> dict:
+    """Match datasets.
+
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        logger_set (bool): If False, reset the default logger. Defaults to False.
+        settings_parsed (bool): If True, reparse the settings. Defaults to False.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+
+    Returns:
+        dict: the parsed settings.
+
+    """
     if not logger_set:
         set_logger()
     if not settings_parsed:
@@ -542,11 +703,23 @@ import pandas as pd
 
 
 def quantification(
-    settings,
-    logger_set=False,
-    settings_parsed=False,
-    callback=None
-):
+    settings: dict,
+    logger_set: bool = False,
+    settings_parsed: bool = False,
+    callback: callable = None
+) -> dict:
+    """Normalize and quantify datasets.
+
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        logger_set (bool): If False, reset the default logger. Defaults to False.
+        settings_parsed (bool): If True, reparse the settings. Defaults to False.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+
+    Returns:
+        dict: the parsed settings.
+
+    """
     if not logger_set:
         set_logger()
     if not settings_parsed:
@@ -650,11 +823,23 @@ def quantification(
 import yaml
 
 def export(
-    settings,
-    logger_set=False,
-    settings_parsed=False,
-    callback=None
-):
+    settings: dict,
+    logger_set: bool = False,
+    settings_parsed: bool = False,
+    callback: callable = None
+) -> dict:
+    """Export settings.
+
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        logger_set (bool): If False, reset the default logger. Defaults to False.
+        settings_parsed (bool): If True, reparse the settings. Defaults to False.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+
+    Returns:
+        dict: the parsed settings.
+
+    """
     if not logger_set:
         set_logger()
     if not settings_parsed:
@@ -677,7 +862,16 @@ import datetime
 import alphapept.utils
 
 
-def extract_median_unique(settings):
+def extract_median_unique(settings: dict) -> tuple:
+    """Extract the medion protein FDR and number of unique proteins.
+
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+
+    Returns:
+        tuple: Two arrays with the median protein FDR per file and the unique number of protein hits
+
+    """
     protein_fdr = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
     cols = [_ for _ in ['protein','protein_group','precursor','naked_sequence','sequence'] if _ in protein_fdr.columns]
     n_unique = protein_fdr.groupby('filename')[cols].nunique()
@@ -689,8 +883,16 @@ def extract_median_unique(settings):
     return median, n_unique
 
 
+def get_file_summary(ms_data: alphapept.io.MS_Data_File) -> dict:
+    """Get summarize statitics from an MS_Data file.
 
-def get_file_summary(ms_data):
+    Args:
+        ms_data (alphapept.io.MS_Data_File): An MS_Data file which has been fully identified and quantified.
+
+    Returns:
+        dict: A dictionary with summary statistics.
+
+    """
     f_summary = {}
 
     f_summary['acquisition_date_time'] = ms_data.read(group_name = 'Raw', attr_name = 'acquisition_date_time')
@@ -716,7 +918,18 @@ def get_file_summary(ms_data):
 
     return f_summary
 
-def get_summary(settings, summary):
+
+def get_summary(settings: dict, summary: dict) -> dict:
+    """Append file summary statistics to a summary dictionary.
+
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        summary (dict): A dictionary with summary statistics of the experiment.
+
+    Returns:
+        dict: The summary in which file summary statistcs are appended.
+
+    """
 
     summary['file_sizes'] = {}
 
@@ -751,16 +964,30 @@ def get_summary(settings, summary):
 
 
 def run_complete_workflow(
-    settings,
-    progress = False,
-    logger_set=False,
-    settings_parsed=False,
-    callback=None,
-    callback_overall = None,
-    callback_task = None,
-    logfile = None
-):
+    settings: dict,
+    progress: bool = False,
+    logger_set: bool = False,
+    settings_parsed: bool = False,
+    callback: callable = None,
+    callback_overall: callable = None,
+    callback_task: callable = None,
+    logfile: str = None
+) -> dict:
+    """Run all AlphaPept steps from a settings dict.
 
+    Args:
+        settings (dict): A dictionary with settings how to process the data.
+        progress (bool): Track progress. Defaults to False.
+        logger_set (bool): If False, reset the default logger. Defaults to False.
+        settings_parsed (bool): If True, reparse the settings. Defaults to False.
+        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+        callback_overall (callable): Same as callback, but for the overall progress. Defaults to None.
+        callback_task (callable): Same as callback, but for the task progress. Defaults to None.
+        logfile (str): The name of a logfile. Defaults to None.
+
+    Returns:
+        dict: the parsed settings.
+    """
     if not logger_set:
         set_logger()
 
@@ -912,7 +1139,8 @@ CLICK_SETTINGS_OPTION = click.argument(
 )
 
 
-def run_cli():
+def run_cli() -> None:
+    """Run the command line interface."""
     print(
         "\n".join(
             [
@@ -1091,7 +1319,6 @@ def cli_workflow(settings_file, progress):
     "gui",
     help="Start graphical user interface for AlphaPept.",
 )
-
 def cli_gui():
     print('Starting AlphaPept Server')
     print('This may take a second..')
