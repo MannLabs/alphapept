@@ -113,7 +113,6 @@ def parallel_execute(
 
     return settings
 
-
 # Cell
 
 import tqdm
