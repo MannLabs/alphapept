@@ -55,6 +55,9 @@ entries:
       title: Performance
       url: performance.html
     - output: web,pdf
+      title: How to contribute
+      url: contributing.html
+    - output: web,pdf
       title: AlphaPept workflow and files
       url: file_formats.html
     output: web
