@@ -49,6 +49,7 @@ def save_settings(settings: dict, path: str):
     """Save settings file to path
 
     Args:
+        settings (dict): A yaml dictionary
         path (str): Path to the settings file.
     """
     with open(path, "w") as file:
