@@ -16,7 +16,9 @@
     "Speed": "speed.html",
     "Export": "export.html",
     "Performance": "performance.html",
+    "Additional code": "additional_code.html",
     "How to contribute": "contributing.html",
-    "AlphaPept workflow and files": "file_formats.html"
+    "AlphaPept workflow and files": "file_formats.html",
+    "Utils": "utils.html"
   }
 }
