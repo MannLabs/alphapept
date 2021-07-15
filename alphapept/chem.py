@@ -55,7 +55,7 @@ class IsotopeDistribution:
             self.m0, self.dm, self.intensities, x[0], np.int(x[1]), x[2:]
         )
 
-    def copy(self)->IsotopeDistribution:
+    def copy(self):
         """
         Copy this instance
         """
@@ -66,7 +66,7 @@ class IsotopeDistribution:
 
         return i
 
-    def mult(self, n)->IsotopeDistribution:
+    def mult(self, n):
         """
         Convolute this instance for n times. Using "binary search"-like strategy to accelerate the convolution.
         Args:
