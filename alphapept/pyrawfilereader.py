@@ -52,7 +52,7 @@ def DotNetArrayToNPArray(arr, dtype):
     return np.array(list(arr), dtype=dtype)
 
 '''
-APIs are similar to [pymsfilereader](https://github.com/frallain/pymsfilereader), but some APIs have not be implemented yet."
+APIs are similar to [pymsfilereader](https://github.com/frallain/pymsfilereader), but some APIs have not been implemented yet."
 '''
 class RawFileReader(object):
     # static class members
@@ -167,14 +167,17 @@ class RawFileReader(object):
                     self.filename))
         self.source.SelectInstrument(ThermoFisher.CommonCore.Data.Business.Device.MS, 1)
 
-        self.StartTime = self.GetStartTime()
-        self.EndTime = self.GetEndTime()
-        self.FirstSpectrumNumber = self.GetFirstSpectrumNumber()
-        self.LastSpectrumNumber = self.GetLastSpectrumNumber()
-        self.LowMass = self.GetLowMass()
-        self.HighMass = self.GetHighMass()
-        self.MassResolution = self.GetMassResolution()
-        self.NumSpectra = self.GetNumSpectra()
+        try:
+            self.StartTime = self.GetStartTime()
+            self.EndTime = self.GetEndTime()
+            self.FirstSpectrumNumber = self.GetFirstSpectrumNumber()
+            self.LastSpectrumNumber = self.GetLastSpectrumNumber()
+            self.LowMass = self.GetLowMass()
+            self.HighMass = self.GetHighMass()
+            self.MassResolution = self.GetMassResolution()
+            self.NumSpectra = self.GetNumSpectra()
+        except Exception as e:
+            raise IOError(f'{e}')
 
     def Close(self):
         """Closes a raw file and frees the associated memory."""
@@ -194,6 +197,13 @@ class RawFileReader(object):
         # https://msdn.microsoft.com/en-us/library/82ab7w69.aspx
         # The DATE type is implemented using an 8-byte floating-point number
         return self.source.CreationDate.ToString('o')
+
+    def GetStatusLogForRetentionTime(self, rt):
+        logEntry = self.source.GetStatusLogForRetentionTime(rt)
+        return dict(zip(logEntry.Labels, logEntry.Values))
+
+    def GetStatusLogForScanNum(self, scan):
+        return self.GetStatusLogForRetentionTime(self.RTFromScanNum(scan))
 
     def IsError(self):
         """Returns the error state flag of the raw file. A return value of TRUE indicates that an error has
@@ -367,6 +377,7 @@ class RawFileReader(object):
         return self.source.RunHeaderEx.StartTime
 
     def GetEndTime(self):
+        """See GetStartTime()"""
         return self.source.RunHeaderEx.EndTime
 
     def GetNumSpectra(self):
@@ -488,16 +499,17 @@ class RawFileReader(object):
         return np.array([DotNetArrayToNPArray(segmentedScan.Positions, float), DotNetArrayToNPArray(segmentedScan.Intensities, float)])
 
     def GetCentroidMassListFromScanNum(self, scanNumber):
-        scan = ThermoFisher.CommonCore.Data.Business.Scan.FromFile(self.source, scanNumber)
         scanStatistics = self.source.GetScanStatsForScanNumber(scanNumber)
         if scanStatistics.IsCentroidScan:
             segmentedScan = self.source.GetSegmentedScanFromScanNumber(scanNumber, scanStatistics)
             return np.array([DotNetArrayToNPArray(segmentedScan.Positions, float), DotNetArrayToNPArray(segmentedScan.Intensities, float)])
-        elif scan.HasCentroidStream:
-            stream = self.source.GetCentroidStream(scanNumber, False)
-            return np.array([DotNetArrayToNPArray(stream.Masses, float), DotNetArrayToNPArray(stream.Intensities, float)])
         else:
-            print("Profile scan {0} cannot be centroided!".format(scanNumber))
-            segmentedScan = self.source.GetSegmentedScanFromScanNumber(scanNumber, scanStatistics)
-            return np.array([DotNetArrayToNPArray(segmentedScan.Positions, float), DotNetArrayToNPArray(segmentedScan.Intensities, float)])
+            scan = ThermoFisher.CommonCore.Data.Business.Scan.FromFile(self.source, scanNumber) 
+            if scan.HasCentroidStream:
+                stream = self.source.GetCentroidStream(scanNumber, False)
+                return np.array([DotNetArrayToNPArray(stream.Masses, float), DotNetArrayToNPArray(stream.Intensities, float)])
+            else:
+                print("Profile scan {0} cannot be centroided!".format(scanNumber))
+                segmentedScan = self.source.GetSegmentedScanFromScanNumber(scanNumber, scanStatistics)
+                return np.array([DotNetArrayToNPArray(segmentedScan.Positions, float), DotNetArrayToNPArray(segmentedScan.Intensities, float)])
 
