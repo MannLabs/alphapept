@@ -81,12 +81,11 @@ nb_path: "nbs/13_performance.ipynb"
 <h4 id="is_valid_compilation_mode" class="doc_header"><code>is_valid_compilation_mode</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/performance.py#L46" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>is_valid_compilation_mode</code>(<strong><code>compilation_mode</code></strong>:<code>str</code>)</p>
 </blockquote>
 <p>Check if the provided string is a valid compilation mode.</p>
-<h2 id="Parameters">Parameters<a class="anchor-link" href="#Parameters"> </a></h2><p>compilation_mode : str
-    The compilation mode to verify.</p>
-<h2 id="Raises">Raises<a class="anchor-link" href="#Raises"> </a></h2><p>ModuleNotFoundError
-    When trying to use an unavailable GPU.
-NotImplementedError
-    When the compilation mode is not valid.</p>
+<p>Args:
+    compilation_mode (str): The compilation mode to verify.</p>
+<p>Raises:
+    ModuleNotFoundError: When trying to use an unavailable GPU.
+    NotImplementedError: When the compilation mode is not valid.</p>
 
 </div>
 
@@ -137,21 +136,20 @@ NotImplementedError
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="set_worker_count" class="doc_header"><code>set_worker_count</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/performance.py#L80" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>set_worker_count</code>(<strong><code>worker_count</code></strong>:<code>int</code>=<em><code>1</code></em>, <strong><code>set_global</code></strong>:<code>bool</code>=<em><code>True</code></em>)</p>
+<h4 id="set_worker_count" class="doc_header"><code>set_worker_count</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/performance.py#L76" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>set_worker_count</code>(<strong><code>worker_count</code></strong>:<code>int</code>=<em><code>1</code></em>, <strong><code>set_global</code></strong>:<code>bool</code>=<em><code>True</code></em>)</p>
 </blockquote>
 <p>Parse and set the (global) number of threads.</p>
-<h2 id="Parameters">Parameters<a class="anchor-link" href="#Parameters"> </a></h2><p>worker_count : int
-    The number of workers.
-    If larger than available cores, it is trimmed to the available maximum.
-    If 0, it is set to the maximum cores available.
-    If negative, it indicates how many cores NOT to use.
-    Default is 1
-set_global : bool
-    If False, the number of workers is only parsed to a valid value.
-    If True, the number of workers is saved as a global variable.
-    Default is True.</p>
-<h2 id="Returns">Returns<a class="anchor-link" href="#Returns"> </a></h2><p>: int
-    The parsed worker_count.</p>
+<p>Args:
+    worker_count (int): The number of workers.
+        If larger than available cores, it is trimmed to the available maximum.
+        If 0, it is set to the maximum cores available.
+        If negative, it indicates how many cores NOT to use.
+        Default is 1
+    set_global (bool): If False, the number of workers is only parsed to a valid value.
+        If True, the number of workers is saved as a global variable.
+        Default is True.</p>
+<p>Returns:
+    int: The parsed worker_count.</p>
 
 </div>
 
@@ -195,19 +193,18 @@ importlib.reload(imported_module)</code></pre>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="set_compilation_mode" class="doc_header"><code>set_compilation_mode</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/performance.py#L116" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>set_compilation_mode</code>(<strong><code>compilation_mode</code></strong>:<code>str</code>=<em><code>None</code></em>, <strong><code>enable_dynamic_compilation</code></strong>:<code>bool</code>=<em><code>None</code></em>)</p>
+<h4 id="set_compilation_mode" class="doc_header"><code>set_compilation_mode</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/performance.py#L108" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>set_compilation_mode</code>(<strong><code>compilation_mode</code></strong>:<code>str</code>=<em><code>None</code></em>, <strong><code>enable_dynamic_compilation</code></strong>:<code>bool</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Set the global compilation mode to use.</p>
-<h2 id="Parameters">Parameters<a class="anchor-link" href="#Parameters"> </a></h2><p>compilation_mode : str
-    The compilation mode to use.
-    Will be checked with <a href="/performance.html#is_valid_compilation_mode"><code>is_valid_compilation_mode</code></a>.
-    Default is None
-enable_dynamic_compilation : bool
-    Enable dynamic compilation.
-    If enabled, code will generally be slower and no other functions can
-    be called from within a compiled function anymore, as they are compiled at runtime.
-    WARNING: Enabling this is strongly disadvised in almost all cases!
-    Default is None.</p>
+<p>Args:
+    compilation_mode (str): The compilation mode to use.
+        Will be checked with <a href="/performance.html#is_valid_compilation_mode"><code>is_valid_compilation_mode</code></a>.
+        Default is None
+    enable_dynamic_compilation (bool): Enable dynamic compilation.
+        If enabled, code will generally be slower and no other functions can
+        be called from within a compiled function anymore, as they are compiled at runtime.
+        WARNING: Enabling this is strongly disadvised in almost all cases!
+        Default is None.</p>
 
 </div>
 
@@ -230,25 +227,26 @@ enable_dynamic_compilation : bool
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="compile_function" class="doc_header"><code>compile_function</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/performance.py#L144" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compile_function</code>(<strong><code>_func</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong><code>compilation_mode</code></strong>:<code>str</code>=<em><code>None</code></em>, <strong>**<code>decorator_kwargs</code></strong>)</p>
+<h4 id="compile_function" class="doc_header"><code>compile_function</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/performance.py#L134" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compile_function</code>(<strong><code>_func</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong><code>compilation_mode</code></strong>:<code>str</code>=<em><code>None</code></em>, <strong>**<code>decorator_kwargs</code></strong>)</p>
 </blockquote>
 <p>A decorator to compile a given function.</p>
 <p>Numba functions are by default set to use <code>nogil=True</code> and <code>nopython=True</code>,
 unless explicitly defined otherwise.
 Cuda functions are by default set to use <code>device=True</code>,
 unless explicitly defined otherwise..</p>
-<h2 id="Parameters">Parameters<a class="anchor-link" href="#Parameters"> </a></h2><p>compilation_mode : str
-    The compilation mode to use.
-    Will be checked with <a href="/performance.html#is_valid_compilation_mode"><code>is_valid_compilation_mode</code></a>.
-    If None, the global COMPILATION_MODE will be used as soon as the function is decorated for static compilation.
-    If DYNAMIC_COMPILATION_ENABLED, the function will always be compiled at runtime and
-    thus by default returns a Python function.
-    Static recompilation can be enforced by reimporting a module containing
-    the function with importlib.reload(imported_module).
-    If COMPILATION_MODE is Python and not DYNAMIC_COMPILATION_ENABLED, no compilation will be used.
-    Default is None
-**decorator_kwargs
-    Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.</p>
+<p>Args:
+    compilation_mode (str): The compilation mode to use.
+        Will be checked with <a href="/performance.html#is_valid_compilation_mode"><code>is_valid_compilation_mode</code></a>.
+        If None, the global COMPILATION_MODE will be used as soon as the function is decorated for static compilation.
+        If DYNAMIC_COMPILATION_ENABLED, the function will always be compiled at runtime and
+        thus by default returns a Python function.
+        Static recompilation can be enforced by reimporting a module containing
+        the function with importlib.reload(imported_module).
+        If COMPILATION_MODE is Python and not DYNAMIC_COMPILATION_ENABLED, no compilation will be used.
+        Default is None
+    **decorator_kwargs: Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.</p>
+<p>Returns:
+    callable: A decorated function that is compiled.</p>
 
 </div>
 
@@ -271,7 +269,7 @@ unless explicitly defined otherwise..</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="__copy_func" class="doc_header"><code>__copy_func</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/performance.py#L219" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>__copy_func</code>(<strong><code>f</code></strong>)</p>
+<h4 id="__copy_func" class="doc_header"><code>__copy_func</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/performance.py#L210" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>__copy_func</code>(<strong><code>f</code></strong>)</p>
 </blockquote>
 <p>Based on <a href="http://stackoverflow.com/a/6528148/190597">http://stackoverflow.com/a/6528148/190597</a> (Glenn Maynard)</p>
 
@@ -422,7 +420,7 @@ unless explicitly defined otherwise..</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="performance_function" class="doc_header"><code>performance_function</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/performance.py#L230" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>performance_function</code>(<strong><code>_func</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong><code>worker_count</code></strong>:<code>int</code>=<em><code>None</code></em>, <strong><code>compilation_mode</code></strong>:<code>str</code>=<em><code>None</code></em>, <strong>**<code>decorator_kwargs</code></strong>)</p>
+<h4 id="performance_function" class="doc_header"><code>performance_function</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/performance.py#L221" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>performance_function</code>(<strong><code>_func</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong><code>worker_count</code></strong>:<code>int</code>=<em><code>None</code></em>, <strong><code>compilation_mode</code></strong>:<code>str</code>=<em><code>None</code></em>, <strong>**<code>decorator_kwargs</code></strong>)</p>
 </blockquote>
 <p>A decorator to compile a given function and allow multithreading over an multiple indices.</p>
 <p>NOTE This should only be used on functions that are compilable.
@@ -432,14 +430,14 @@ the original (compiled) function will be applied to all elements of this iterabl
 The most efficient way to provide iterables are with ranges, but numpy arrays work as well.
 Functions can not return values,
 results should be stored in buffer arrays inside thge function instead.</p>
-<h2 id="Parameters">Parameters<a class="anchor-link" href="#Parameters"> </a></h2><p>worker_count : int
-    The number of workers to use for multithreading.
-    If None, the global MAX_WORKER_COUNT is used at runtime.
-    Default is None.
-compilation_mode : str
-    The compilation mode to use. Will be forwarded to the <a href="/performance.html#compile_function"><code>compile_function</code></a> decorator.
-**decorator_kwargs
-    Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.</p>
+<p>Args:
+    worker_count (int): The number of workers to use for multithreading.
+        If None, the global MAX_WORKER_COUNT is used at runtime.
+        Default is None.
+    compilation_mode (str): The compilation mode to use. Will be forwarded to the <a href="/performance.html#compile_function"><code>compile_function</code></a> decorator.
+    **decorator_kwargs: Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.</p>
+<p>Returns:
+    callable: A decorated function that is compiled and parallelized.</p>
 
 </div>
 
