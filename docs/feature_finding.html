@@ -735,6 +735,21 @@ $$\left | \Delta m-\frac{\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>True
+False
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
     {% endraw %}
 
@@ -1407,7 +1422,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_isotope_patterns" class="doc_header"><code>get_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L983" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isotope_patterns</code>(<strong><code>pre_isotope_patterns</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>iso_charge_min</code></strong>=<em><code>1</code></em>, <strong><code>iso_charge_max</code></strong>=<em><code>6</code></em>, <strong><code>iso_mass_range</code></strong>=<em><code>5</code></em>, <strong><code>iso_n_seeds</code></strong>=<em><code>100</code></em>, <strong><code>cc_cutoff</code></strong>=<em><code>0.6</code></em>, <strong><code>iso_split_level</code></strong>=<em><code>1.3</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="get_isotope_patterns" class="doc_header"><code>get_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L986" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isotope_patterns</code>(<strong><code>pre_isotope_patterns</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>iso_charge_min</code></strong>=<em><code>1</code></em>, <strong><code>iso_charge_max</code></strong>=<em><code>6</code></em>, <strong><code>iso_mass_range</code></strong>=<em><code>5</code></em>, <strong><code>iso_n_seeds</code></strong>=<em><code>100</code></em>, <strong><code>cc_cutoff</code></strong>=<em><code>0.6</code></em>, <strong><code>iso_split_level</code></strong>=<em><code>1.3</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Wrapper function to iterate over pre_isotope_patterns</p>
 
@@ -1439,7 +1454,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="report_" class="doc_header"><code>report_</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1040" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>report_</code>(<strong><code>idx</code></strong>, <strong><code>isotope_charges</code></strong>, <strong><code>isotope_patterns</code></strong>, <strong><code>iso_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>rt_</code></strong>, <strong><code>rt_idx</code></strong>, <strong><code>results</code></strong>)</p>
+<h4 id="report_" class="doc_header"><code>report_</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1043" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>report_</code>(<strong><code>idx</code></strong>, <strong><code>isotope_charges</code></strong>, <strong><code>isotope_patterns</code></strong>, <strong><code>iso_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>rt_</code></strong>, <strong><code>rt_idx</code></strong>, <strong><code>results</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1470,7 +1485,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="feature_finder_report" class="doc_header"><code>feature_finder_report</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1137" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>feature_finder_report</code>(<strong><code>query_data</code></strong>, <strong><code>isotope_patterns</code></strong>, <strong><code>isotope_charges</code></strong>, <strong><code>iso_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>)</p>
+<h4 id="feature_finder_report" class="doc_header"><code>feature_finder_report</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1138" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>feature_finder_report</code>(<strong><code>query_data</code></strong>, <strong><code>isotope_patterns</code></strong>, <strong><code>isotope_charges</code></strong>, <strong><code>iso_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1515,7 +1530,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="plot_isotope_pattern" class="doc_header"><code>plot_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1163" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_isotope_pattern</code>(<strong><code>index</code></strong>, <strong><code>df</code></strong>, <strong><code>sorted_stats</code></strong>, <strong><code>centroids</code></strong>, <strong><code>scan_range</code></strong>=<em><code>100</code></em>, <strong><code>mz_range</code></strong>=<em><code>2</code></em>, <strong><code>plot_hills</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="plot_isotope_pattern" class="doc_header"><code>plot_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1164" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_isotope_pattern</code>(<strong><code>index</code></strong>, <strong><code>df</code></strong>, <strong><code>sorted_stats</code></strong>, <strong><code>centroids</code></strong>, <strong><code>scan_range</code></strong>=<em><code>100</code></em>, <strong><code>mz_range</code></strong>=<em><code>2</code></em>, <strong><code>plot_hills</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Plot an isotope pattern in its local environment</p>
 
@@ -1554,7 +1569,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_bruker" class="doc_header"><code>extract_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1256" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_bruker</code>(<strong><code>file</code></strong>, <strong><code>base_dir</code></strong>=<em><code>'ext/bruker/FF'</code></em>, <strong><code>config</code></strong>=<em><code>'proteomics_4d.config'</code></em>)</p>
+<h4 id="extract_bruker" class="doc_header"><code>extract_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1257" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_bruker</code>(<strong><code>file</code></strong>, <strong><code>base_dir</code></strong>=<em><code>'ext/bruker/FF'</code></em>, <strong><code>config</code></strong>=<em><code>'proteomics_4d.config'</code></em>)</p>
 </blockquote>
 <p>Call Bruker Feautre Finder via subprocess</p>
 
@@ -1579,7 +1594,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="convert_bruker" class="doc_header"><code>convert_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1314" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_bruker</code>(<strong><code>feature_path</code></strong>)</p>
+<h4 id="convert_bruker" class="doc_header"><code>convert_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1315" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_bruker</code>(<strong><code>feature_path</code></strong>)</p>
 </blockquote>
 <p>Reads feature table and converts to feature table to be used with AlphaPept</p>
 
@@ -1604,7 +1619,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="map_bruker" class="doc_header"><code>map_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1334" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_bruker</code>(<strong><code>feature_path</code></strong>, <strong><code>feature_table</code></strong>, <strong><code>query_data</code></strong>)</p>
+<h4 id="map_bruker" class="doc_header"><code>map_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1335" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_bruker</code>(<strong><code>feature_path</code></strong>, <strong><code>feature_table</code></strong>, <strong><code>query_data</code></strong>)</p>
 </blockquote>
 <p>Map Ms1 to Ms2 via Table FeaturePrecursorMapping from Bruker FF</p>
 
@@ -1642,7 +1657,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="find_features" class="doc_header"><code>find_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1395" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_features</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="find_features" class="doc_header"><code>find_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1396" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_features</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Wrapper for feature finding</p>
 
@@ -1681,7 +1696,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="replace_infs" class="doc_header"><code>replace_infs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1531" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>replace_infs</code>(<strong><code>array</code></strong>)</p>
+<h4 id="replace_infs" class="doc_header"><code>replace_infs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1532" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>replace_infs</code>(<strong><code>array</code></strong>)</p>
 </blockquote>
 <p>Replace nans and infs with 0</p>
 
@@ -1706,7 +1721,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="map_ms2" class="doc_header"><code>map_ms2</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1541" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_ms2</code>(<strong><code>feature_table</code></strong>, <strong><code>query_data</code></strong>, <strong><code>map_mz_range</code></strong>=<em><code>1</code></em>, <strong><code>map_rt_range</code></strong>=<em><code>0.5</code></em>, <strong><code>map_mob_range</code></strong>=<em><code>0.3</code></em>, <strong><code>map_n_neighbors</code></strong>=<em><code>5</code></em>, <strong><code>search_unidentified</code></strong>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="map_ms2" class="doc_header"><code>map_ms2</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1542" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_ms2</code>(<strong><code>feature_table</code></strong>, <strong><code>query_data</code></strong>, <strong><code>map_mz_range</code></strong>=<em><code>1</code></em>, <strong><code>map_rt_range</code></strong>=<em><code>0.5</code></em>, <strong><code>map_mob_range</code></strong>=<em><code>0.3</code></em>, <strong><code>map_n_neighbors</code></strong>=<em><code>5</code></em>, <strong><code>search_unidentified</code></strong>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Map MS1 features to MS2 based on rt and mz
 if ccs is included also add</p>

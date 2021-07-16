@@ -4,18 +4,13 @@ __all__ = ['sample_function']
 
 # Cell
 def sample_function(a_string: str, a_int: int, a_flag: bool) -> str:
-    """
-    Sample function that performs a sample calculation.
+    """Sample function that performs a sample calculation.
 
     Args:
-        a_string: A string.
-        a_int: An integer.
-        a_flag: A flag.
+        a_string (str): A string.
+        a_int (int): An integer.
+        a_flag (bool): A flag.
 
     Returns:
-        A string based on the input.
-
-    Raises:
-        ValueError: An error occured when the integer is negative.
-
+        str: A string based on the input
     """

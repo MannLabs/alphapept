@@ -31,8 +31,8 @@ nb_path: "nbs/09_matching.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Dataset-Alignment">Dataset Alignment<a class="anchor-link" href="#Dataset-Alignment"> </a></h2><p>Align datasets via comparing shared precursors and calculating the median offset.
-All files will be compared with each other, and a linear equation system is used to calculate the best offset.</p>
+<h2 id="Dataset-Alignment">Dataset Alignment<a class="anchor-link" href="#Dataset-Alignment"> </a></h2><p>For matching MS2-identifications to MS1-features, we first need to align the datasets on top of each other to be able to correctly transfer identifications. Datasets are aligned by comparing shared precursors and calculating the median offset.
+When comparing all files to each other we get an overdetermined linear equation system. By solving this, we find offset parameters that minimize hte shift of all files to each other.</p>
 <p>Offset is either applied relative (mz, mobility) or absolute (rt).</p>
 
 </div>
@@ -49,10 +49,18 @@ All files will be compared with each other, and a linear equation system is used
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calculate_distance" class="doc_header"><code>calculate_distance</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L17" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_distance</code>(<strong><code>table_1</code></strong>, <strong><code>table_2</code></strong>, <strong><code>offset_cols</code></strong>, <strong><code>calib</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="calculate_distance" class="doc_header"><code>calculate_distance</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L11" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_distance</code>(<strong><code>table_1</code></strong>:<code>DataFrame</code>, <strong><code>table_2</code></strong>:<code>DataFrame</code>, <strong><code>offset_dict</code></strong>:<code>dict</code>, <strong><code>calib</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
-<p>Calculate the distance, either relative or absolute
-TODO: We could use a weighting factor</p>
+<p>Calculate the distance between two precursors for different columns
+Distance can either be relative or absolute.</p>
+<p>An example for a minimal offset_dict is: offset_dict = {'mass':'absolute'}</p>
+<p>Args:
+    table_1 (pd.DataFrame): Dataframe with precusor data.
+    table_2 (pd.DataFrame): Dataframe with precusor data.
+    offset_dict (dict): Dictionary with column names and how the distance should be calculated.
+    calib (bool): Flag to indicate that distances should be calculated on calibrated columns. Defaults to False.</p>
+<p>Raises:
+    KeyError: If either table_1 or table_2 is not indexed by precursor</p>
 
 </div>
 
@@ -68,6 +76,13 @@ TODO: We could use a weighting factor</p>
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -75,7 +90,7 @@ TODO: We could use a weighting factor</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calib_table" class="doc_header"><code>calib_table</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L48" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calib_table</code>(<strong><code>table</code></strong>, <strong><code>delta</code></strong>, <strong><code>offset_cols</code></strong>)</p>
+<h4 id="calib_table" class="doc_header"><code>calib_table</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L61" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calib_table</code>(<strong><code>table</code></strong>:<code>DataFrame</code>, <strong><code>delta</code></strong>:<code>Series</code>, <strong><code>offset_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Apply offset to a table
 If not _calib table exist, create a new one.</p>
@@ -94,6 +109,13 @@ If not _calib table exist, create a new one.</p>
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -101,9 +123,90 @@ If not _calib table exist, create a new one.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="align" class="doc_header"><code>align</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L68" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align</code>(<strong><code>deltas</code></strong>, <strong><code>filenames</code></strong>, <strong><code>weights</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="align" class="doc_header"><code>align</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L85" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align</code>(<strong><code>deltas</code></strong>:<code>DataFrame</code>, <strong><code>filenames</code></strong>:<code>list</code>, <strong><code>weights</code></strong>:<code>ndarray</code>=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Solve equation system</p>
+<p>Align multiple datasets.
+This function creates a matrix to represent the shifts from each dataset to another.
+This effectively is an overdetermined equation system and is solved with a linear regression.</p>
+<p>Args:
+    deltas (pd.DataFrame): Distances from each dataset to another.
+    filenames (list): The filenames of the datasts that were compared.
+    weights (np.ndarray, optional): Distances can be weighted by their number of shared elements. Defaults to None.</p>
+<p>Returns:
+    np.ndarray: alignment values.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="calculate_deltas" class="doc_header"><code>calculate_deltas</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L137" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_deltas</code>(<strong><code>combos</code></strong>:<code>list</code>, <strong><code>calib</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>Callable</code>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Wrapper function to calculate the distances of multiple files.</p>
+<p>In here, we define the offset_dict to make a relative comparison for mz and mobility and absolute for rt.</p>
+<p>TODO: This function could be speed-up by parallelization</p>
+<p>Args:
+    combos (list): A list containing tuples of filenames that should be compared.
+    calib (bool): Boolean flag to indicate distance should be calculated on calibrated data.
+    callback (Callable): A callback function to track progress.</p>
+<p>Returns:
+    pd.DataFrame: Dataframe containing the deltas of the files
+    np.ndarray: Numpy array containing the weights of each comparison (i.e. number of shared elements)
+    dict: Offset dictionary whicch was used for comparing.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="align_files" class="doc_header"><code>align_files</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L195" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_files</code>(<strong><code>filenames</code></strong>:<code>list</code>, <strong><code>alignment</code></strong>:<code>DataFrame</code>, <strong><code>offset_dict</code></strong>:<code>dict</code>)</p>
+</blockquote>
 
 </div>
 
@@ -126,57 +229,7 @@ If not _calib table exist, create a new one.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calculate_deltas" class="doc_header"><code>calculate_deltas</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L110" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_deltas</code>(<strong><code>combos</code></strong>, <strong><code>calib</code></strong>=<em><code>False</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
-</blockquote>
-<p>Calculate offsets for multiple files
-TODO: Parallelize</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="align_files" class="doc_header"><code>align_files</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L153" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_files</code>(<strong><code>filenames</code></strong>, <strong><code>alignment</code></strong>, <strong><code>offset_cols</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="align_datasets" class="doc_header"><code>align_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L168" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_datasets</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="align_datasets" class="doc_header"><code>align_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L210" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_datasets</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 
 </div>
@@ -198,19 +251,8 @@ TODO: Parallelize</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Matching">Matching<a class="anchor-link" href="#Matching"> </a></h2><p>Transfer MS2 identifications to similar MS1 fatures.</p>
-<p>Brief outline of the computational task</p>
-<ul>
-<li>Start with aligned datasets</li>
-<li>Combine all datasets in one dataframe</li>
-<li>Group by percursor and calculate expected location (rt, mz, mobility) and standard deviation to calculate a reference</li>
-<li>For each dataset, calculate the subset of precursors that were not identified but are present in the reference</li>
-<li>Search for the closest neighbor for each element in the subset in the identified features</li>
-<li>The distance is calculated using the median standard deviation of the reference</li>
-<li>Use the <code>Mahalanobis</code> distance to calculate a probability that one featue belongs to the distribution</li>
-</ul>
-<p>For Mahalanobis distance, see here:
-<a href="https://stats.stackexchange.com/questions/331283/how-to-calculate-the-probability-of-a-data-point-belonging-to-a-multivariate-nor">https://stats.stackexchange.com/questions/331283/how-to-calculate-the-probability-of-a-data-point-belonging-to-a-multivariate-nor</a></p>
+<h2 id="Matching">Matching<a class="anchor-link" href="#Matching"> </a></h2><p>Transfer MS2 identifications to similar MS1 features.</p>
+<p>For "match-between-runs" we start with aligning datasets. To create a reference we use for matching, we combine all datasets of a matching group. When using the default settings, the matching group consists of all files. We then group the dataset by precursor and calculate it's average properties (rt, mz, mobility). By combining several files we further are able to calculate a standard deviation. This allows us to know where and with what deviation we would expect an MS1 feature and have the corresponding identification. This is our matching reference. In the matching step, we go through each dataset individually and check if there are precursors in the reference that were not identified in this dataset. We then perform a nearest-neighbor lookup to find if any MS1 features exist that are in close proximity to the reference. The distance metric we use is normed by the median standard of the deviation. Lastly we assess the confidence in a transfered identifcation by using the <code>Mahalanobis</code> distance.</p>
 
 </div>
 </div>
@@ -226,11 +268,66 @@ TODO: Parallelize</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_probability" class="doc_header"><code>get_probability</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L230" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_probability</code>(<strong><code>df</code></strong>, <strong><code>ref</code></strong>, <strong><code>sigma</code></strong>, <strong><code>index</code></strong>)</p>
+<h4 id="get_probability" class="doc_header"><code>get_probability</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L268" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_probability</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>ref</code></strong>:<code>DataFrame</code>, <strong><code>sigma</code></strong>:<code>DataFrame</code>, <strong><code>index</code></strong>:<code>int</code>)</p>
 </blockquote>
+<p>Probablity estimate of a transfered identification using the Mahalanobis distance.
+This functions that the dataframes are matched, meaning that the first entry in df matches to the first entry in ref</p>
+<p>Args:
+    df (pd.DataFrame): Dataset containing transferered features
+    ref (pd.DataFrame): Dataset containing reference features
+    sigma (pd.DataFrame): Dataset containing the standard deviations of the reference features
+    index (int): Index to the datframes that should be compared</p>
+<p>Returns:
+    float: Mahalanobis distance</p>
 
 </div>
 
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">a</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;mass&#39;</span><span class="p">:[</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">300</span><span class="p">],</span><span class="s1">&#39;rt&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]})</span>
+<span class="n">b</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;mass&#39;</span><span class="p">:[</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">302</span><span class="p">],</span><span class="s1">&#39;rt&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mf">2.5</span><span class="p">,</span><span class="mi">3</span><span class="p">]})</span>
+<span class="n">std</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;mass&#39;</span><span class="p">:[</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.1</span><span class="p">],</span><span class="s1">&#39;rt&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]})</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;First element: (ideal match): </span><span class="si">{</span><span class="n">get_probability</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Second element: (rt slightly off): </span><span class="si">{</span><span class="n">get_probability</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Third element: (mass completely off): </span><span class="si">{</span><span class="n">get_probability</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">std</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>First element: (ideal match): 0.00
+Second element: (rt slightly off): 0.12
+Third element: (mass completely off): 1.00
+</pre>
+</div>
 </div>
 
 </div>
@@ -250,8 +347,12 @@ TODO: Parallelize</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="match_datasets" class="doc_header"><code>match_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L248" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>match_datasets</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="match_datasets" class="doc_header"><code>match_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L303" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>match_datasets</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>:<code>Callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
+<p>Match datasets: Wrapper function to match datasets based on a settings file.</p>
+<p>Args:
+    settings (dict): Dictionary containg specifications of the run
+    callback (Callable): Callback function to indicate progress.</p>
 
 </div>
 

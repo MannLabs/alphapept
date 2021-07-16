@@ -12,12 +12,19 @@ import pandas as pd
 import logging
 import alphapept.io
 
-def filter_score(df, mode='multiple'):
+def filter_score(df: pd.DataFrame, mode: str='multiple'):
     """
-    Filter df by score
-    TODO: PSMS could still have the same score when having modifications at multiple positions that are not distinguishable.
+    Filter psms feature table by keeping only the best scoring psm per experimental spectrum.
+
+    TODO: psms could still have the same score when having modifications at multiple positions that are not distinguishable.
     Only keep one.
 
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        mode (str, optional): string specifying which mode to use for psms filtering. The two options are 'single' and 'multiple'. 'single' will only keep one feature per experimental spectrum. 'multiple' will allow multiple features per experimental spectrum. In either option, each feature can only occur once. Defaults to 'multiple'.
+
+    Returns:
+        pd.DataFrame: table containing the filtered psms results.
     """
     df["rank"] = df.groupby("query_idx")["score"].rank("dense", ascending=False).astype("int")
     df = df[df["rank"] == 1]
@@ -45,10 +52,16 @@ def filter_score(df, mode='multiple'):
     # TOD: this needs to be sorted out, for modifications -> What if we have MoxM -> oxMM, this will screw up with the filter sequence part
     return df_filtered
 
-def filter_precursor(df):
+def filter_precursor(df: pd.DataFrame):
     """
-    Filter df by precursor
+    Filter psms feature table by precursor.
     Allow each precursor only once.
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+
+    Returns:
+        pd.DataFrame: table containing the filtered psms results.
 
     """
     df["rank_precursor"] = (
@@ -61,9 +74,15 @@ def filter_precursor(df):
 # Cell
 from numba import njit
 @njit
-def get_q_values(fdr_values):
+def get_q_values(fdr_values: np.ndarray):
     """
-    Calculate q values from fdr_values
+    Calculate q-values from fdr_values.
+
+    Args:
+        fdr_values (np.ndarray): np.ndarray of fdr values.
+
+    Returns:
+        np.ndarray: np.ndarray of q-values.
     """
     q_values = np.zeros_like(fdr_values)
     min_q_value = np.max(fdr_values)
@@ -80,19 +99,17 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def cut_fdr(df, fdr_level=0.01, plot=True):
+def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True):
     """
     Cuts a dataframe with a given fdr level
 
     Args:
-        fdr_level: fdr level that should be used
-        plot: flag to enable plot
+        df (pd.DataFrame): psms table of search results from alphapept.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+        plot (bool, optional): flag to enable plot. Defaults to 'True'.
 
     Returns:
-        cutoff: df with psms within fdr
-        cutoff_value: numerical value of score cutoff
-
-    Raises:
+        [float, pd.DataFrame]: float: numerical value of the applied score cutoff, pd.DataFrame: df with psms within fdr
 
     """
 
@@ -161,9 +178,18 @@ def cut_fdr(df, fdr_level=0.01, plot=True):
 
 # Cell
 
-def cut_global_fdr(data, analyte_level='sequence', fdr_level=0.01, plot=True, **kwargs):
+def cut_global_fdr(data: pd.DataFrame, analyte_level: str='sequence', fdr_level: float=0.01, plot: bool=True, **kwargs):
     """
     Function to estimate and filter by global peptide or protein fdr
+
+    Args:
+        data (pd.DataFrame): psms table of search results from alphapept.
+        analyte_level (str, optional): string specifying the analyte level to apply the fdr threshold. Options include: 'precursor', 'sequence', 'protein_group' and 'protein'. Defaults to 'sequence'.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+        plot (bool, optional): flag to enable plot. Defaults to 'True'.
+
+    Returns:
+        pd.DataFrame: df with filtered results
 
     """
     logging.info('Global FDR on {}'.format(analyte_level))
@@ -191,8 +217,17 @@ def cut_global_fdr(data, analyte_level='sequence', fdr_level=0.01, plot=True, **
 
 import networkx as nx
 
-def get_x_tandem_score(df):
+def get_x_tandem_score(df: pd.DataFrame):
+    """
+    Function to calculate the x tandem score
 
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+
+    Returns:
+        np.ndarray: np.ndarray with x_tandem scores
+
+    """
     b = df['b_hits'].astype('int').apply(lambda x: np.math.factorial(x)).values
     y = df['y_hits'].astype('int').apply(lambda x: np.math.factorial(x)).values
     x_tandem = np.log(b.astype('float')*y.astype('float')*df['matched_int'].values)
@@ -201,7 +236,17 @@ def get_x_tandem_score(df):
 
     return x_tandem
 
-def score_x_tandem(df, fdr_level = 0.01, plot = True, **kwargs):
+def score_x_tandem(df: pd.DataFrame, fdr_level: float = 0.01, plot: bool = True, **kwargs):
+    """
+    Filters the psms table by using the x_tandem score and filtering the results for fdr_level.
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+
+    Returns:
+        pd.DataFrame: psms table with an extra 'score' column for x_tandem, filtered for no feature or precursor to be assigned multiple times.
+    """
     logging.info('Scoring using X-Tandem')
     df['score'] = get_x_tandem_score(df)
     df['decoy'] = df['sequence'].str[-1].str.islower()
@@ -212,9 +257,16 @@ def score_x_tandem(df, fdr_level = 0.01, plot = True, **kwargs):
 
     return cutoff
 
-def filter_with_x_tandem(df, fdr_level = 0.01):
+def filter_with_x_tandem(df: pd.DataFrame):
     """
-    Filters a dataframe using an x_tandem score
+    Filters the psms table by using the x_tandem score, no fdr filter.
+    TODO: Remove redundancy with score functions, see issue: #275
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+
+    Returns:
+        pd.DataFrame: psms table with an extra 'score' column for x_tandem, filtered for no feature or precursor to be assigned multiple times.
     """
     logging.info('Filter df with x_tandem score')
 
@@ -226,9 +278,16 @@ def filter_with_x_tandem(df, fdr_level = 0.01):
 
     return df
 
-def filter_with_score(df, fdr_level = 0.01):
+def filter_with_score(df: pd.DataFrame):
     """
-    Filters a dataframe using an custom score
+    Filters the psms table by using the score column, no fdr filter.
+    TODO: Remove redundancy with score functions, see issue: #275
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+
+    Returns:
+        pd.DataFrame: psms table filtered for no feature or precursor to be assigned multiple times.
     """
     logging.info('Filter df with custom score')
 
@@ -241,7 +300,20 @@ def filter_with_score(df, fdr_level = 0.01):
 
 # Cell
 
-def score_psms(df, score = 'y_hits', fdr_level = 0.01, plot = True, **kwargs):
+def score_psms(df: pd.DataFrame, score: str='y_hits', fdr_level: float=0.01, plot: bool=True, **kwargs):
+    """
+    Uses the specified score in df to filter psms and to apply the fdr_level threshold.
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        score (str, optional): string specifying the column in df to use as score. Defaults to 'y_hits'.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+        plot (bool, optional): flag to enable plot. Defaults to 'True'.
+
+    Returns:
+        pd.DataFrame: filtered df with psms within fdr
+
+    """
     if score in df.columns:
         df['score'] = df[score]
     else:
@@ -271,7 +343,18 @@ import matplotlib.pyplot as plt
 from .fasta import count_missed_cleavages, count_internal_cleavages
 
 
-def get_ML_features(df, protease='trypsin', **kwargs):
+def get_ML_features(df: pd.DataFrame, protease: str='trypsin', **kwargs):
+    """
+    Uses the specified score in df to filter psms and to apply the fdr_level threshold.
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        protease (str, optional): string specifying the protease that was used for proteolytic digestion. Defaults to 'trypsin'.
+
+    Returns:
+        pd.DataFrame: df including additional scores for subsequent ML.
+
+    """
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
     df['abs_delta_m_ppm'] = np.abs(df['delta_m_ppm'])
@@ -286,20 +369,41 @@ def get_ML_features(df, protease='trypsin', **kwargs):
 
     return df
 
-def train_RF(df,
-             exclude_features = ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence','target'],
-             train_fdr_level = 0.1,
-             ini_score = 'x_tandem',
-             min_train = 1000,
-             test_size = 0.8,
-             max_depth = [5,25,50],
-             max_leaf_nodes = [150,200,250],
-             n_jobs=-1,
-             scoring='accuracy',
-             plot = False,
-             random_state = 42,
+def train_RF(df: pd.DataFrame,
+             exclude_features: list = ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence','target'],
+             train_fdr_level:  float = 0.1,
+             ini_score: str = 'x_tandem',
+             min_train: int = 1000,
+             test_size: float = 0.8,
+             max_depth: list = [5,25,50],
+             max_leaf_nodes: list = [150,200,250],
+             n_jobs: int = -1,
+             scoring: str = 'accuracy',
+             plot:bool = False,
+             random_state: int = 42,
              **kwargs):
 
+    """
+    Function to train a random forest classifier to separate targets from decoys via semi-supervised learning.
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        exclude_features (list, optional): list with features to exclude for ML. Defaults to ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence','target'].
+        train_fdr_level (float, optional): Only targets below the train_fdr_level cutoff are considered for training the classifier. Defaults to 0.1.
+        ini_score (str, optional): Initial score to select psms set for semi-supervised learning. Defaults to 'x_tandem'.
+        min_train (int, optional): Minimum number of psms in the training set. Defaults to 1000.
+        test_size (float, optional): Fraction of psms used for testing. Defaults to 0.8.
+        max_depth (list, optional): List of clf__max_depth parameters to test in the grid search. Defaults to [5,25,50].
+        max_leaf_nodes (list, optional): List of clf__max_leaf_nodes parameters to test in the grid search. Defaults to [150,200,250].
+        n_jobs (int, optional): Number of jobs to use for parallelizing the gridsearch. Defaults to -1.
+        scoring (str, optional): Scoring method for the gridsearch. Defaults to'accuracy'.
+        plot (bool, optional): flag to enable plot. Defaults to 'False'.
+        random_state (int, optional): Random state for initializing the RandomForestClassifier. Defaults to 42.
+
+    Returns:
+        [GridSearchCV, list]: GridSearchCV: GridSearchCV object with trained RandomForestClassifier. list: list of features used for training the classifier.
+
+    """
 
     if getattr(sys, 'frozen', False):
         logging.info('Using frozen pyinstaller version. Setting n_jobs to 1')
@@ -380,13 +484,26 @@ def train_RF(df,
 
     return cv, features
 
-def score_ML(df,
-             trained_classifier,
-             features = None,
-            fdr_level = 0.01,
-            plot=True,
+def score_ML(df: pd.DataFrame,
+             trained_classifier: GridSearchCV,
+             features: list = None,
+             fdr_level: float = 0.01,
+             plot: bool = True,
              **kwargs):
+    """
+    Applies a trained ML classifier to df and uses the ML score to filter psms and to apply the fdr_level threshold.
 
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        trained_classifier (GridSearchCV): GridSearchCV object returned by train_RF.
+        features (list): list with features returned by train_RF. Defaults to 'None'.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+        plot (bool, optional): flag to enable plot. Defaults to 'True'.
+
+    Returns:
+        pd.DataFrame: filtered df with psms within fdr
+
+    """
     logging.info('Scoring using Machine Learning')
     # Apply the classifier to the entire dataset
     df_new = df.copy()
@@ -398,15 +515,22 @@ def score_ML(df,
     return cutoff
 
 
-def filter_with_ML(df,
-             trained_classifier,
-             features = None,
-            fdr_level = 0.01,
-            plot=True,
+def filter_with_ML(df: pd.DataFrame,
+             trained_classifier: GridSearchCV,
+             features: list = None,
              **kwargs):
 
     """
-    Filters a dataframe using ML
+    Filters the psms table by using the x_tandem score, no fdr filter.
+    TODO: Remove redundancy with score functions, see issue: #275
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        trained_classifier (GridSearchCV): GridSearchCV object returned by train_RF.
+        features (list): list with features returned by train_RF. Defaults to 'None'.
+
+    Returns:
+        pd.DataFrame: psms table with an extra 'score' column from the trained_classifier by ML, filtered for no feature or precursor to be assigned multiple times.
     """
     logging.info('Filter df with x_tandem score')
     # Apply the classifier to the entire dataset
@@ -676,7 +800,7 @@ def score_hdf(to_process, callback = None, parallel=False):
             if settings["score"]["method"] == 'random_forest':
                 try:
                     cv, features = train_RF(df)
-                    df = filter_with_ML(df_, cv, features = features, fdr_level = settings["search"]["peptide_fdr"])
+                    df = filter_with_ML(df_, cv, features = features)
                 except ValueError as e:
                     logging.info('ML failed. Defaulting to x_tandem score')
                     logging.info(f"{e}")
@@ -687,10 +811,10 @@ def score_hdf(to_process, callback = None, parallel=False):
                     f = interp1d(x_, y_, bounds_error = False, fill_value=(y_.min(), y_.max()))
 
                     df_['score'] = df_['score'].apply(lambda x: f(x))
-                    df = filter_with_score(df_,  fdr_level = settings["search"]["peptide_fdr"])
+                    df = filter_with_score(df_)
 
             elif settings["score"]["method"] == 'x_tandem':
-                df = filter_with_x_tandem(df, fdr_level = settings["search"]["peptide_fdr"])
+                df = filter_with_x_tandem(df)
             else:
                 raise NotImplementedError('Scoring method {} not implemented.'.format(settings["score"]["method"]))
 
