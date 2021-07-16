@@ -28,7 +28,7 @@ class IsotopeDistribution:
     """Class to represent isotope distributions.
 
     Attributes:
-        m0 (int): base mass.
+        m0 (int): the mono-isotopic mass.
         dm (int): number of isotopes.
         intensities (np.ndarray): isotope intensities.
 
@@ -98,12 +98,12 @@ def fast_add(m0: int, dm0: int, int0: np.ndarray, m1: int, dm1: int, int1: np.nd
     """Helper function to quickly add isotope patterns.
 
     Args:
-        m0 (int): Mass of pattern 1.
-        dm0 (int): dm of pattern 1 (number of isotopes).
-        int0 (float): Intensities of pattern 1.
-        m1 (int): Mass of pattern 2.
-        dm1 (int): dm of pattern 2 (number of isotopes).
-        int1 (float): Intensities of pattern 2.
+        m0 (float): the mono-isotopic mass of the first isotope distribution.
+        dm0 (int): the number of isotope intensities in the first isotope distribution.
+        int0 (np.ndarray:float): the intensity pattern of the first isotope distribution.
+        m1 (float): the mono-isotopic mass of the second isotope distribution.
+        dm1 (int): the number of isotope intensities in the second isotope distribution.
+        int1 (np.ndarray:float): the intensity pattern of the second isotope distribution.
         prune_level (float): Precision threshold. Defaults to 0.000001.
 
 
@@ -183,7 +183,7 @@ def get_average_formula(molecule_mass:float, averagine_aa:Dict, isotopes:Dict, s
 
     Args:
         molecule_mass (float): Input molecule mass for which the averagine model should be calculated.
-        averagine_aa (Dict): Numba-typed dictionary with averagine masses.
+        averagine_aa (Dict): Numba-typed dictionary with averagine masses. See alphapept.constants.averagine_aa.
         isotopes (Dict): Numba-typed lookup dict with isotopes.
         sulphur (bool, optional): Flag to consider sulphur. Defaults to True.
 
