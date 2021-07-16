@@ -63,9 +63,6 @@ entries:
     - output: web,pdf
       title: AlphaPept workflow and files
       url: file_formats.html
-    - output: web,pdf
-      title: Utils
-      url: utils.html
     output: web
     title: alphapept
   output: web
