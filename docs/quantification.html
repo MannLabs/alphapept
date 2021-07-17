@@ -65,9 +65,15 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="gaussian" class="doc_header"><code>gaussian</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L14" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>gaussian</code>(<strong><code>mu</code></strong>, <strong><code>sigma</code></strong>, <strong><code>grid</code></strong>)</p>
+<h4 id="gaussian" class="doc_header"><code>gaussian</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L13" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>gaussian</code>(<strong><code>mu</code></strong>:<code>float</code>, <strong><code>sigma</code></strong>:<code>float</code>, <strong><code>grid</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-<p>Gaussian function</p>
+<p>Calculates normally distributed probability densities along an input array.</p>
+<p>Args:
+    mu (float): mean of ND.
+    sigma (float): standard deviation of ND.
+    grid (np.ndarray): input array np.int[:]. For each element of the array, the  probability density is calculated.</p>
+<p>Returns:
+    np.ndarray: probability density array, np.float[:].</p>
 
 </div>
 
@@ -83,6 +89,13 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -90,9 +103,15 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="return_elution_profile" class="doc_header"><code>return_elution_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L22" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>return_elution_profile</code>(<strong><code>timepoint</code></strong>, <strong><code>sigma</code></strong>, <strong><code>n_runs</code></strong>)</p>
+<h4 id="return_elution_profile" class="doc_header"><code>return_elution_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L28" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>return_elution_profile</code>(<strong><code>timepoint</code></strong>:<code>float</code>, <strong><code>sigma</code></strong>:<code>float</code>, <strong><code>n_runs</code></strong>:<code>int</code>)</p>
 </blockquote>
-<p>Returns a gaussian elution profile for a given timepoint</p>
+<p>Simulates a gaussian elution profile.</p>
+<p>Args:
+    timepoint (float): coordinate of the peak apex.
+    sigma (float): standard deviation of the gaussian.
+    n_runs (int): number of points along which the density is calculated.</p>
+<p>Returns:
+    np.ndarray: probability density array, np.float[:].</p>
 
 </div>
 
@@ -108,6 +127,13 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -115,9 +141,17 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="simulate_sample_profiles" class="doc_header"><code>simulate_sample_profiles</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L29" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>simulate_sample_profiles</code>(<strong><code>n_peptides</code></strong>, <strong><code>n_runs</code></strong>, <strong><code>n_samples</code></strong>, <strong><code>threshold</code></strong>=<em><code>0.2</code></em>, <strong><code>use_noise</code></strong>=<em><code>True</code></em>)</p>
+<h4 id="simulate_sample_profiles" class="doc_header"><code>simulate_sample_profiles</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L42" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>simulate_sample_profiles</code>(<strong><code>n_peptides</code></strong>:<code>int</code>, <strong><code>n_runs</code></strong>:<code>int</code>, <strong><code>n_samples</code></strong>:<code>int</code>, <strong><code>threshold</code></strong>:<code>float</code>=<em><code>0.2</code></em>, <strong><code>use_noise</code></strong>:<code>bool</code>=<em><code>True</code></em>)</p>
 </blockquote>
-<p>Generate random profiles to serve as test_data</p>
+<p>Generates random profiles to serve as test_data.</p>
+<p>Args:
+    n_peptides (int): number of peptides to be simulated.
+    n_runs (int): number of runs to be simulated.
+    n_samples (int): number of samples to be simulated.
+    threshold (float, optional): threshold below which a simulated intensity will be diregarded. Defaults to 0.2.
+    use_noise (bool, optional): add simulated noise to the profile values. Defaults to True.</p>
+<p>Returns:
+    Tuple[np.ndarray, np.ndarray]: profiles: np.float[:,:,:] array containing the simulated profiles, true_normalization: np.float[:,:,:] array containing the ground truth.</p>
 
 </div>
 
@@ -153,56 +187,14 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_peptide_error" class="doc_header"><code>get_peptide_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L79" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_peptide_error</code>(<strong><code>profile</code></strong>, <strong><code>normalization</code></strong>)</p>
+<h4 id="get_peptide_error" class="doc_header"><code>get_peptide_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L97" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_peptide_error</code>(<strong><code>profile</code></strong>:<code>ndarray</code>, <strong><code>normalization</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_total_error_parallel" class="doc_header"><code>get_total_error_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L102" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_total_error_parallel</code>(<strong><code>normalization</code></strong>, <strong><code>profiles</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_total_error" class="doc_header"><code>get_total_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L115" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_total_error</code>(<strong><code>normalization</code></strong>, <strong><code>profiles</code></strong>)</p>
-</blockquote>
+<p>Distance function for least squares optimization. Calculates the peptide ratios between samples. Smaller ratios mean better normalization.</p>
+<p>Args:
+    profile (np.ndarray): peptide intensity values.
+    normalization (np.ndarray): per sample normalization factors.</p>
+<p>Returns:
+    float: summed squared error.</p>
 
 </div>
 
@@ -232,10 +224,161 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="normalize_experiment_SLSQP" class="doc_header"><code>normalize_experiment_SLSQP</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L131" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>normalize_experiment_SLSQP</code>(<strong><code>profiles</code></strong>)</p>
+<h4 id="get_total_error" class="doc_header"><code>get_total_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L128" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_total_error</code>(<strong><code>normalization</code></strong>:<code>ndarray</code>, <strong><code>profiles</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-<p>Calculate normalization with SLSQP approach</p>
+<p>Computes the summed peptide errors over the whole dataset.</p>
+<p>Args:
+    normalization (np.ndarray): per sample normalization factors.
+    profiles (np.ndarray): peptide intensity profiles over the dataset.</p>
+<p>Returns:
+    float: summed peptide error.</p>
 
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Benchmarking-different-optimiziers">Benchmarking different optimiziers<a class="anchor-link" href="#Benchmarking-different-optimiziers"> </a></h2><p>The normalization step is in principle a quadratic minimization of the normalization factors. Such minimization problems can be solved in various ways and a variety of approaches are realized in python community packages. We compare different solvers using our benchmarking set and uncover substantial differences in precision and runtime. We observe that the <em>Sequential Least Squares Quadratic Programming</em> (SLSQP) approach is a robust solution in our benchmarking, which gives substantial speed improvements.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
+<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">least_squares</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">n_peptides</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">n_runs</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">profiles</span><span class="p">,</span> <span class="n">true_normalization</span> <span class="o">=</span> <span class="n">simulate_sample_profiles</span><span class="p">(</span><span class="n">n_peptides</span><span class="p">,</span> <span class="n">n_runs</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
+
+<span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;L-BFGS-B&#39;</span><span class="p">,</span> <span class="s1">&#39;TNC&#39;</span><span class="p">,</span> <span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span><span class="s1">&#39;trf&#39;</span><span class="p">]</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
+    
+    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">RuntimeWarning</span><span class="p">)</span>
+    
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;trf&#39;</span><span class="p">]:</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">x0</span><span class="o">*</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">least_squares</span><span class="p">(</span><span class="n">get_total_error</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">profiles</span><span class="p">],</span> <span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="o">*</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">bounds</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">x0</span><span class="p">]</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">get_total_error</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">profiles</span> <span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="o">*</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
+
+    <span class="n">solution</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">solution</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
+    
+    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
+    
+    <span class="n">time_elapsed_min</span> <span class="o">=</span> <span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span>
+
+    <span class="n">optimality</span> <span class="o">=</span> <span class="n">get_total_error</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span> <span class="n">profiles</span><span class="p">)</span> <span class="o">/</span><span class="n">get_total_error</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">profiles</span><span class="p">)</span>
+    <span class="n">optimality_</span> <span class="o">=</span> <span class="n">get_total_error</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span> <span class="n">profiles</span><span class="p">)</span> <span class="o">/</span> <span class="n">get_total_error</span><span class="p">(</span><span class="n">true_normalization</span><span class="p">,</span> <span class="n">profiles</span><span class="p">)</span>
+    
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">method</span><span class="p">,</span> <span class="n">time_elapsed_min</span><span class="p">,</span> <span class="n">optimality</span><span class="p">,</span> <span class="n">optimality_</span><span class="p">))</span>
+    
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Method&#39;</span><span class="p">,</span> <span class="s1">&#39;Time Elapsed (min)&#39;</span><span class="p">,</span><span class="s1">&#39;Error / Baseline Error&#39;</span><span class="p">,</span><span class="s1">&#39;Error / Ground Truth&#39;</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Method</th>
+      <th>Time Elapsed (min)</th>
+      <th>Error / Baseline Error</th>
+      <th>Error / Ground Truth</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>L-BFGS-B</td>
+      <td>0.019457</td>
+      <td>0.665086</td>
+      <td>0.515222</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>TNC</td>
+      <td>0.022019</td>
+      <td>0.701324</td>
+      <td>0.543295</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>SLSQP</td>
+      <td>0.002983</td>
+      <td>0.665086</td>
+      <td>0.515222</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>trf</td>
+      <td>0.218378</td>
+      <td>0.665323</td>
+      <td>0.515406</td>
+    </tr>
+  </tbody>
+</table>
+</div>
 </div>
 
 </div>
@@ -257,9 +400,13 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="normalize_experiment_BFGS" class="doc_header"><code>normalize_experiment_BFGS</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L144" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>normalize_experiment_BFGS</code>(<strong><code>profiles</code></strong>)</p>
+<h4 id="normalize_experiment_SLSQP" class="doc_header"><code>normalize_experiment_SLSQP</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L153" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>normalize_experiment_SLSQP</code>(<strong><code>profiles</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-<p>Calculate normalization with BFGS approach</p>
+<p>Calculates normalization with SLSQP approach.</p>
+<p>Args:
+    profiles (np.ndarray): peptide intensities.</p>
+<p>Returns:
+    np.ndarray: normalization factors.</p>
 
 </div>
 
@@ -275,6 +422,13 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -282,9 +436,52 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="delayed_normalization" class="doc_header"><code>delayed_normalization</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L158" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>delayed_normalization</code>(<strong><code>df</code></strong>, <strong><code>field</code></strong>=<em><code>'int_sum'</code></em>, <strong><code>minimum_occurence</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="normalize_experiment_BFGS" class="doc_header"><code>normalize_experiment_BFGS</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L172" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>normalize_experiment_BFGS</code>(<strong><code>profiles</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-<p>Returns normalization for given peptide intensities</p>
+<p>Calculates normalization with BFGS approach.</p>
+<p>Args:
+    profiles (np.ndarray): peptide intensities.</p>
+<p>Returns:
+    np.ndarray: normalization factors.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="delayed_normalization" class="doc_header"><code>delayed_normalization</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L191" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>delayed_normalization</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>field</code></strong>:<code>str</code>=<em><code>'int_sum'</code></em>, <strong><code>minimum_occurence</code></strong>:<code>bool</code>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Returns normalization factors for given peptide intensities.
+If the solver does not converge, the unnormalized data will be used.</p>
+<p>Args:
+    df (pd.DataFrame): alphapept quantified features table.
+    field (str, optional): The column in df containing the quantitative peptide information (i.e. precursor intensities).
+    minimum_occurence (bool, optional): minimum number of replicates the peptide must be observed in. Defaults to None.</p>
+<p>Returns:
+    [pd.DataFrame, np.ndarray]: pd.DataFrame: alphapept quantified features table extended with the normalized intensities, np.ndarray: normalized intensities</p>
 
 </div>
 
@@ -318,7 +515,7 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
 
 <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
-<span class="n">test_df</span><span class="p">,</span> <span class="n">normalization</span> <span class="o">=</span> <span class="n">delayed_normalization</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="n">minimum_occurence</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">test_df</span><span class="p">,</span> <span class="n">normalization</span> <span class="o">=</span> <span class="n">delayed_normalization</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="n">minimum_occurence</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">normalization</span><span class="p">))</span>
 <span class="n">display</span><span class="p">(</span><span class="n">test_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
@@ -330,15 +527,6 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 <div class="output_wrapper">
 <div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>C:\Users\admin\.conda\envs\alphapept\lib\site-packages\scipy\optimize\optimize.py:282: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
-  warnings.warn(&#34;Values in x were outside bounds during a &#34;
-</pre>
-</div>
-</div>
 
 <div class="output_area">
 
@@ -477,165 +665,16 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Benchmarking-different-optimiziers">Benchmarking different optimiziers<a class="anchor-link" href="#Benchmarking-different-optimiziers"> </a></h2><p>The normalization step is in principle a quadratic minimization of the normalization factors. Such minimization problems can be solved in various ways and a variety of approaches are realized in python community packages. We compare different solvers using our benchmarking set and uncover substantial differences in precision and runtime. We observe that the <em>Sequential Least Squares Quadratic Programming</em> (SLSQP) approach is a robust solution in our benchmarking, which gives substantial speed improvements.</p>
-
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">minimize</span>
-<span class="kn">from</span> <span class="nn">time</span> <span class="kn">import</span> <span class="n">time</span>
-<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="kn">import</span> <span class="n">least_squares</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
-
-<span class="n">n_peptides</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">n_runs</span> <span class="o">=</span> <span class="mi">10</span>
-<span class="n">n_samples</span> <span class="o">=</span> <span class="mi">3</span>
-
-<span class="n">profiles</span><span class="p">,</span> <span class="n">true_normalization</span> <span class="o">=</span> <span class="n">simulate_sample_profiles</span><span class="p">(</span><span class="n">n_peptides</span><span class="p">,</span> <span class="n">n_runs</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span>
-
-<span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;L-BFGS-B&#39;</span><span class="p">,</span> <span class="s1">&#39;TNC&#39;</span><span class="p">,</span> <span class="s1">&#39;SLSQP&#39;</span><span class="p">,</span><span class="s1">&#39;trf&#39;</span><span class="p">]</span>
-
-<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
-
-<span class="k">for</span> <span class="n">method</span> <span class="ow">in</span> <span class="n">methods</span><span class="p">:</span>
-    
-    <span class="n">start</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-    
-    <span class="k">if</span> <span class="n">method</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;trf&#39;</span><span class="p">]:</span>
-        <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">x0</span><span class="o">*</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">x0</span><span class="p">)</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">least_squares</span><span class="p">(</span><span class="n">get_total_error</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="n">profiles</span><span class="p">],</span> <span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span><span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="o">*</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="p">)</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">bounds</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">x0</span><span class="p">]</span>
-        <span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">get_total_error</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">profiles</span> <span class="p">,</span> <span class="n">x0</span> <span class="o">=</span> <span class="n">x0</span><span class="o">*</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)</span>
-
-    <span class="n">solution</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
-    <span class="n">solution</span> <span class="o">=</span> <span class="n">solution</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span>
-    
-    <span class="n">end</span> <span class="o">=</span> <span class="n">time</span><span class="p">()</span>
-    
-    <span class="n">time_elapsed_min</span> <span class="o">=</span> <span class="p">(</span><span class="n">end</span><span class="o">-</span><span class="n">start</span><span class="p">)</span><span class="o">/</span><span class="mi">60</span>
-
-    <span class="n">optimality</span> <span class="o">=</span> <span class="n">get_total_error</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span> <span class="n">profiles</span><span class="p">)</span> <span class="o">/</span><span class="n">get_total_error</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">profiles</span><span class="p">)</span>
-    <span class="n">optimality_</span> <span class="o">=</span> <span class="n">get_total_error</span><span class="p">(</span><span class="n">solution</span><span class="p">,</span> <span class="n">profiles</span><span class="p">)</span> <span class="o">/</span> <span class="n">get_total_error</span><span class="p">(</span><span class="n">true_normalization</span><span class="p">,</span> <span class="n">profiles</span><span class="p">)</span>
-    
-    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">method</span><span class="p">,</span> <span class="n">time_elapsed_min</span><span class="p">,</span> <span class="n">optimality</span><span class="p">,</span> <span class="n">optimality_</span><span class="p">))</span>
-    
-<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Method&#39;</span><span class="p">,</span> <span class="s1">&#39;Time Elapsed (min)&#39;</span><span class="p">,</span><span class="s1">&#39;Error / Baseline Error&#39;</span><span class="p">,</span><span class="s1">&#39;Error / Ground Truth&#39;</span><span class="p">])</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>C:\Users\admin\.conda\envs\alphapept\lib\site-packages\scipy\optimize\optimize.py:282: RuntimeWarning: Values in x were outside bounds during a minimize step, clipping to bounds
-  warnings.warn(&#34;Values in x were outside bounds during a &#34;
-</pre>
-</div>
-</div>
-
-<div class="output_area">
-
-
-<div class="output_html rendered_html output_subarea output_execute_result">
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Method</th>
-      <th>Time Elapsed (min)</th>
-      <th>Error / Baseline Error</th>
-      <th>Error / Ground Truth</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>L-BFGS-B</td>
-      <td>0.031872</td>
-      <td>0.715340</td>
-      <td>0.601306</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>TNC</td>
-      <td>0.022016</td>
-      <td>0.784979</td>
-      <td>0.659844</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>SLSQP</td>
-      <td>0.003123</td>
-      <td>0.715340</td>
-      <td>0.601306</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>trf</td>
-      <td>0.231510</td>
-      <td>0.716653</td>
-      <td>0.602410</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Implementation">Implementation<a class="anchor-link" href="#Implementation"> </a></h2>
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Constructing-protein-intensity-profiles">Constructing protein intensity profiles<a class="anchor-link" href="#Constructing-protein-intensity-profiles"> </a></h2><p>Protein intensity profiles are constructed for each protein individually. All possible protein fold changes between the samples are derived from the median peptide fold changes. Subsequently, pseudointensities are chosen such that the fold changes between the pseudointensities ideally reconstruct the actually observed fold changes. Similar to the delayed normalization, this is formulated as a quadratic minimization, which we solve with the SLSQP solver.</p>
+<p>Codewise, we start with simulating in-silico test data to serve as a ground-truth for assessing solvers for the optimization problem. For the algorithmic optimization, we define the function <a href="/quantification.html#get_protein_ratios"><code>get_protein_ratios</code></a> that allows to quickly calculate the protein ratios. Next, we define an error function <a href="/quantification.html#triangle_error"><code>triangle_error</code></a> that we use for the optimization problem. Lastly, we have several wrapper functions to access the functions.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Test-Data">Test Data<a class="anchor-link" href="#Test-Data"> </a></h2>
+<h2 id="In-silico-test-data">In-silico test data<a class="anchor-link" href="#In-silico-test-data"> </a></h2><p>Create a simulated input dataset of peptide intensities.</p>
+
 </div>
 </div>
 </div>
@@ -650,8 +689,21 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_dummy_data" class="doc_header"><code>generate_dummy_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L237" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_dummy_data</code>(<strong><code>n_sequences</code></strong>, <strong><code>n_samples</code></strong>, <strong><code>noise</code></strong>=<em><code>True</code></em>, <strong><code>remove</code></strong>=<em><code>True</code></em>, <strong><code>peptide_ratio</code></strong>=<em><code>True</code></em>, <strong><code>abundance</code></strong>=<em><code>True</code></em>, <strong><code>signal_level</code></strong>=<em><code>100</code></em>, <strong><code>noise_divider</code></strong>=<em><code>10</code></em>, <strong><code>keep</code></strong>=<em><code>0.8</code></em>)</p>
+<h4 id="generate_dummy_data" class="doc_header"><code>generate_dummy_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L276" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_dummy_data</code>(<strong><code>n_sequences</code></strong>:<code>int</code>, <strong><code>n_samples</code></strong>:<code>int</code>, <strong><code>noise</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>remove</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>peptide_ratio</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>abundance</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>signal_level</code></strong>:<code>int</code>=<em><code>100</code></em>, <strong><code>noise_divider</code></strong>:<code>int</code>=<em><code>10</code></em>, <strong><code>keep</code></strong>:<code>float</code>=<em><code>0.8</code></em>)</p>
 </blockquote>
+<p>Simulate an input dataset of peptide intensities.</p>
+<p>Args:
+    n_sequences (int): number of peptides to simulate.
+    n_samples (int): number of samples to simulate.
+    noise (bool, optional): add random signal to distort the simulated intensity levels. Defaults to True.
+    remove (bool, optional): remove intensities (i.e. add missing values). Defaults to True.
+    peptide_ratio (bool, optional): simulate different peptide intensities. Defaults to True.
+    abundance (bool, optional): simulate different abundances for each sample (i.e. systematic shifts). Defaults to True.
+    signal_level (int, optional): signal level for simulated intensity. Defaults to 100.
+    noise_divider (int, optional): the factor through which the noise is divided (higher factor -&gt; higher signal to noise). Defaults to 10.
+    keep (float, optional): aimed-at fraction of non-missing values, applies if 'remove' is set. Defaults to 0.8.</p>
+<p>Returns:
+    [pd.DataFrame, list, np.ndarray]: pd.DataFrame: simulated dataset with peptide intensities, list: sample names: np.ndarray: shift factors of each sample</p>
 
 </div>
 
@@ -688,8 +740,15 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_protein_ratios" class="doc_header"><code>get_protein_ratios</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L287" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_protein_ratios</code>(<strong><code>signal</code></strong>, <strong><code>column_combinations</code></strong>, <strong><code>minimum_ratios</code></strong>=<em><code>1</code></em>)</p>
+<h4 id="get_protein_ratios" class="doc_header"><code>get_protein_ratios</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L341" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_protein_ratios</code>(<strong><code>signal</code></strong>:<code>ndarray</code>, <strong><code>column_combinations</code></strong>:<code>list</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>=<em><code>1</code></em>)</p>
 </blockquote>
+<p>Calculates the protein ratios between samples for one protein.</p>
+<p>Args:
+    signal (np.ndarray): np.array[:,:] containing peptide intensities for each sample.
+    column_combinations (list): list of all index combinations to compare (usually all sample combinations).
+    minimum_ratios (int, optional): minimum number of peptide ratios necessary to calculate a protein ratio. Defaults to 1.</p>
+<p>Returns:
+    np.ndarray: np.array[:,:] matrix comparing the ratios for all column combinations.</p>
 
 </div>
 
@@ -710,7 +769,7 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Error-Function">Error Function<a class="anchor-link" href="#Error-Function"> </a></h2><p>The error function evaluates the difference between the actually observed fold change and the fold change that is derived from the pseudointensities.</p>
+<h2 id="Error-Function">Error Function<a class="anchor-link" href="#Error-Function"> </a></h2><p>The error function evaluates the difference between the actual observed fold change and the fold change that is derived from the pseudointensities.</p>
 
 </div>
 </div>
@@ -726,8 +785,14 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="triangle_error" class="doc_header"><code>triangle_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L311" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>triangle_error</code>(<strong><code>normalization</code></strong>, <strong><code>ratios</code></strong>)</p>
+<h4 id="triangle_error" class="doc_header"><code>triangle_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L375" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>triangle_error</code>(<strong><code>normalization</code></strong>:<code>ndarray</code>, <strong><code>ratios</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
+<p>Calculates the difference between calculated ratios and expected ratios.</p>
+<p>Args:
+    normalization (np.ndarray): Used normalization.
+    ratios (np.ndarray): Peptide ratios.</p>
+<p>Returns:
+    float: summed quadratic difference.</p>
 
 </div>
 
@@ -748,7 +813,7 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Different-ways-to-solve">Different ways to solve<a class="anchor-link" href="#Different-ways-to-solve"> </a></h2><p>Different quadratic solving strategies are tested.</p>
+<h2 id="Solver-implementation">Solver implementation<a class="anchor-link" href="#Solver-implementation"> </a></h2><p>As with the delayed normalization we implement multiple solvers from scipy.</p>
 
 </div>
 </div>
@@ -764,8 +829,16 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="solve_profile" class="doc_header"><code>solve_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L326" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>solve_profile</code>(<strong><code>ratios</code></strong>, <strong><code>method</code></strong>)</p>
+<h4 id="solve_profile" class="doc_header"><code>solve_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L395" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>solve_profile</code>(<strong><code>ratios</code></strong>:<code>ndarray</code>, <strong><code>method</code></strong>:<code>str</code>)</p>
 </blockquote>
+<p>Calculates protein pseudointensities with a specified solver.</p>
+<p>Args:
+    ratios (np.ndarray): np.array[:,:] matrix containing all estimated protein ratios between samples.
+    method (str): string specifying which solver to use.</p>
+<p>Raises:
+    NotImplementedError: if the solver is not implemented.</p>
+<p>Returns:
+    [np.ndarray, bool]: np.ndarray: the protein pseudointensities, bool: wether the solver was successful.</p>
 
 </div>
 
@@ -786,7 +859,7 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Wrapper-function">Wrapper function<a class="anchor-link" href="#Wrapper-function"> </a></h2>
+<h2 id="Solving-single-profiles">Solving single profiles<a class="anchor-link" href="#Solving-single-profiles"> </a></h2>
 </div>
 </div>
 </div>
@@ -801,104 +874,14 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_protein_table" class="doc_header"><code>get_protein_table</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L349" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_protein_table</code>(<strong><code>df</code></strong>, <strong><code>field</code></strong>=<em><code>'int_sum'</code></em>, <strong><code>minimum_ratios</code></strong>=<em><code>1</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="protein_profile" class="doc_header"><code>protein_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L435" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile</code>(<strong><code>files</code></strong>:<code>list</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>, <strong><code>chunk</code></strong>:<code>tuple</code>)</p>
 </blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile" class="doc_header"><code>protein_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L420" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile</code>(<strong><code>files</code></strong>, <strong><code>minimum_ratios</code></strong>, <strong><code>chunk</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile_parallel" class="doc_header"><code>protein_profile_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L469" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel</code>(<strong><code>df</code></strong>, <strong><code>minimum_ratios</code></strong>, <strong><code>field</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile_parallel_ap" class="doc_header"><code>protein_profile_parallel_ap</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L527" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_ap</code>(<strong><code>settings</code></strong>, <strong><code>df</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile_parallel_mq" class="doc_header"><code>protein_profile_parallel_mq</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L545" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_mq</code>(<strong><code>evidence_path</code></strong>, <strong><code>protein_groups_path</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
-</blockquote>
+<p>Function to extract optimal protein ratios for a given input of peptides.</p>
+<p>Note for the chunk argument: This construction is needed to call this function from a parallel pool.</p>
+<p>Args:
+    files (list): A list of files for which the profile shall be extracted.
+    minimum_ratios (int): A minimum number of peptide ratios to be considered for optimization.
+    chunk: (tuple[pd.DataFrame, str]): A pandas dataframe with the peptide information and a string to identify the protein.</p>
 
 </div>
 
@@ -924,27 +907,175 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
-    <span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein_group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
-    <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span>
+<span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;C&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein_group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">9</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">]</span>
 
-    <span class="n">display</span><span class="p">(</span><span class="n">test_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
+<span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
 
-    <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+<span class="n">display</span><span class="p">(</span><span class="n">test_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
 
-    <span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+<span class="n">grouped</span> <span class="o">=</span> <span class="n">test_df</span><span class="o">.</span><span class="n">groupby</span><span class="p">([</span><span class="s1">&#39;protein_group&#39;</span><span class="p">,</span><span class="s1">&#39;filename&#39;</span><span class="p">,</span><span class="s1">&#39;precursor&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span>
+<span class="n">files</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;C&#39;</span><span class="p">]</span>
+<span class="n">minimum_ratios</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">chunk</span> <span class="o">=</span> <span class="p">(</span><span class="n">grouped</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="n">profile</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">pre_lfq</span><span class="p">)</span>
+<span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">minimum_ratios</span><span class="p">,</span> <span class="n">chunk</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Protein ratio&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pre_lfq</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;before optimization&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">profile</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;after optimization&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 
     </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea ">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>precursor</th>
+      <th>filename</th>
+      <th>protein_group</th>
+      <th>int_sum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Prec_1</td>
+      <td>A</td>
+      <td>X</td>
+      <td>0.6</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Prec_1</td>
+      <td>B</td>
+      <td>X</td>
+      <td>0.8</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Prec_1</td>
+      <td>C</td>
+      <td>X</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Prec_2</td>
+      <td>A</td>
+      <td>X</td>
+      <td>0.6</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Prec_2</td>
+      <td>B</td>
+      <td>X</td>
+      <td>1.2</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Prec_2</td>
+      <td>C</td>
+      <td>X</td>
+      <td>1.4</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAUIAAAE/CAYAAAAzEcqDAAAAOXRFWHRTb2Z0d2FyZQBNYXRwbG90bGliIHZlcnNpb24zLjMuMywgaHR0cHM6Ly9tYXRwbG90bGliLm9yZy/Il7ecAAAACXBIWXMAAAsTAAALEwEAmpwYAAAmV0lEQVR4nO3de3xU1b338c+PGAFBASVaBOTS0yIQQgKRapVyVTgiCFUUi1bUSrVa23oejnBqgfJ4emzxKZbTnqN4eYl3kAoHrR68gYqKGBRBuXgDhWAlgqBI1CT8nj/2TjoJCZnJTEgm+/t+veaVPWuvvdfaGfJl771m1pi7IyISZc0augMiIg1NQSgikacgFJHIUxCKSOQpCEUk8hSEIhJ5CkJJG2b2tpkNbsD2nzSzSxuqfak/pvcRSiLMbCtwAlAGfAk8CVzr7vvqsC8HvuPu76W0kylgZjOBf3L3ixu6L1L/dEYodTHa3VsD/YB84MaqFczsiMPeqzg15r5Jw1AQSp25eyHBGWE2BGd4ZnaNmb0LvBuWXWlm75nZbjNbamYnhuUvhLt508z2mdmFYfk5ZrbWzPaY2ctmllPenpltNbPh4fJMM1toZvea2RfhZXN+TX2toW9/MrNtZva5ma0xs4Fh+Ujg34ALw769GZavMLOfhMvNzOxGM/vQzHaG/WiTsl+uHFYKQqkzM+sMnA28EVM8Fvge0MvMhgL/AVwAdAA+BB4GcPcfhPX7untrd19gZnnA3cBPgeOA24GlZta8hi6MCffXFlgK/LmWLlf0LXz+GpALHAs8CDxiZi3c/X+B3wELwr71rWZfk8LHEKA70DqO9qWRUhBKXSwxsz3ASuB5gtAo9x/uvtvdi4GJwN3u/rq7fw1MA04zs6417HcycLu7v+ruZe4+H/gaOLWG+ivd/Ql3LwPuA6oLrFixfcPd73f3Xe5e6u7/D2gO9Kjt4EMTgT+6+wfh/dFpwARddqcnBaHUxVh3b+vuXdz9Z+XBEtoWs3wiwVkgAGFg7AI61rDfLsC/hJfFe8Kw7Rzupzp/j1neD7SoJYhi+4aZ/R8z22hme8O22gDtD7F9rErHFi4fQTCQJGlG/3tJqsW+DWEHQbgBYGatCC55C2vYdhvw7+7+7/Xdt/B+4L8Cw4C33f2AmX0GWNW6Nah0bMBJQCnwSeq6K4eLzgilPj0EXGZmueF9vt8Br7r71nD9JwT318rdAVxlZt+zQCszG2VmR9dD344mCK4i4Agzmw4cE7P+E6CrmdX0N/IQ8Csz62ZmrfnHPcXSeuir1DMFodQbd38G+A3wV+Bj4NvAhJgqM4H54WXwBe5eAFxJMOjwGfAewYBEfVgG/C/wDsFl7VdUvnR+JPy5y8xer2b7uwnuS74AbAm3/3k99VXqmd5QLSKRpzNCEYk8BaGIRJ6CUEQiT0EoIpGnIBSRyGuUb6hu3769d+3ataG7ISJNzJo1az5196yq5Y0yCLt27UpBQUFDd0NEmhgz+7C6cl0ai0jkKQhFJPIUhCISeY3yHmF1SkpK2L59O1999VVDd0UagRYtWtCpUycyMzMbuivSBKRNEG7fvp2jjz6arl27Yma1byBNlruza9cutm/fTrdu3Rq6O9IEpM2l8VdffcVxxx2nEBTMjOOOO05XB5IyaROEgEJQKujfgqRS3EFoZhlm9oaZPV7NuuvNbIOZrTOzZ80sdlbisvBbydaa2dJUdfxw27p1K9nZ2Qlts2nTJnJzc8nLy+P999+vp57F55577mHHjh0Vz3/yk5+wYcOGuLcvKCjguuuuS7jdrVu38uCDDya9H5EK6xbCnGyY2Tb4uW5h0rtM5B7hL4CNVJ7Ft9wbQL677zezq4E/ABeG64rdPTepXqapJUuWcP7553PjjQd97W+13B13p1mz1J+o33PPPWRnZ3PiicHXf9x5550JbZ+fn09+fo3fllmj8iD80Y9+lNR+RIAg9B67DkrCr8nZuy14DpBzQZ13G9dfnJl1AkYB1f71uPtyd98fPl0FdKpzj1JkyRuFnH7zc3Sb+jdOv/k5lrxR09dkxK+0tJSJEyfSs2dPzj//fPbvDw55zZo1DBo0iP79+zNixAg+/vhjnnjiCW699Vb++7//myFDhgDwxz/+kezsbLKzs7n11luBICh69OjBj3/8Y7Kzs9m2bRuzZ8/mlFNOIScnhxkzZlTbl4ceeog+ffqQnZ3NDTfcUFHeunVrfvWrX9G7d2+GDRtGUVERixYtoqCggIkTJ5Kbm0txcTGDBw+u+PRO69atmTJlCr1792b48OGsXr2awYMH0717d5YuDU7iV6xYwTnnnAPA2WefTW5uLrm5ubRp04b58+ezdetWBg4cSL9+/ejXrx8vv/wyAFOnTuXFF18kNzeXOXPmVNrP7t27GTt2LDk5OZx66qmsW7cOgJkzZ3L55ZdX9GHu3LlJv3bSRDw76x8hWK6kOChPRvlZyKEewCKgPzAYeLyWun8Gbox5XgoUEATk2ENsNzmsV3DSSSd5VRs2bDiorCaLX9/uJ9/4pHe54fGKx8k3PumLX98e9z6q2rJliwO+cuVKd3e/7LLLfPbs2f7NN9/4aaed5jt37nR394cfftgvu+wyd3efMWOGz549293dCwoKPDs72/ft2+dffPGF9+rVy19//XXfsmWLm5m/8sor7u6+bNkyv/LKK/3AgQNeVlbmo0aN8ueff75SXwoLC71z586+c+dOLykp8SFDhvjixYvd3R3w+++/393df/vb3/o111zj7u6DBg3y1157rWIfsc8Bf+KJJ9zdfezYsX7mmWf6N99842vXrvW+ffu6u/vy5ct91KhRlfpRUFDgffr08T179viXX37pxcXF7u7+zjvveP/+/avdLvb5tdde6zNnznR392effbairRkzZvhpp53mX331lRcVFfmxxx7r33zzzUGvSSL/JqSJmNHGfcYx1TzaxLU5UODV5E+tZ4Rmdg6w093XxFH3YiAfmB1T3MXd84EfAbea2bdrCOR57p7v7vlZWQd9Jjohs5dtprikrFJZcUkZs5dtTmq/nTt35vTTTwfg4osvZuXKlWzevJm33nqLM888k9zcXG666Sa2b99+0LYrV65k3LhxtGrVitatW/PDH/6QF198EYAuXbpw6qnBV/c+9dRTPPXUU+Tl5dGvXz82bdrEu+++W2lfr732GoMHDyYrK4sjjjiCiRMn8sILLwDQrFkzLrzwwkp9rM2RRx7JyJEjAejTpw+DBg0iMzOTPn36sHXr1mq3+fTTT7nkkkt48MEHadOmDSUlJVx55ZX06dOH8ePHx3X/ceXKlVxyySUADB06lF27dvH5558DMGrUKJo3b0779u05/vjj+eQTfTmcAG1quNisqTxO8dwjPB0YY2ZnAy2AY8zsfne/OLaSmQ0Hfg0M8uDLvAFw98Lw5wdmtgLIA+p15GDHnuKEyuNVdaTSzHB3evfuzSuvvFLn/bZq1api2d2ZNm0aP/3pT+u8v1jxjK5mZmZW1GvWrBnNmzevWC4tPfhL2crKypgwYQLTp0+vGECaM2cOJ5xwAm+++SYHDhygRYsWSfW7vA8AGRkZ1fZDImjY9Mr3CAEyWwblSaj1jNDdp7l7J3fvSvANZM9VE4J5wO3AGHffGVPeLvwaR8ysPUGoxj9UWUcntm2ZUHm8Pvroo4rAe/DBBznjjDPo0aMHRUVFFeUlJSW8/fbbB207cOBAlixZwv79+/nyyy9ZvHgxAwcOPKjeiBEjuPvuu9m3bx8AhYWF7Ny5s1KdAQMG8Pzzz/Ppp59SVlbGQw89xKBBgwA4cOAAixYtqtRHgKOPPpovvvgiqeMvN3XqVHJycpgw4R9fSLd37146dOhAs2bNuO+++ygrK6u13YEDB/LAAw8AwT3I9u3bc8wx1Y3FiYRyLoDRc6FNZ8CCn6PnJjVQAkl8ssTMZhFcby8luBRuDTwSnll85O5jgJ7A7WZ2gCB0b3b3eg/CKSN6MO3R9ZUuj1tmZjBlRI+k9tujRw/+8pe/cPnll9OrVy+uvvpqjjzySBYtWsR1113H3r17KS0t5Ze//CW9e/eutG2/fv2YNGkSAwYMAIK3r+Tl5R106XnWWWexceNGTjvtNCAYyLj//vs5/vjjK+p06NCBm2++mSFDhuDujBo1inPPPRcIzi5Xr17NTTfdxPHHH8+CBQsAmDRpEldddRUtW7ZM6uwV4JZbbqF3797k5uYCMGvWLH72s59x3nnnce+99zJy5MiKs9ycnBwyMjLo27cvkyZNIi8vr2I/5YMiOTk5HHXUUcyfPz+pfklE5FyQdPBV1Si/zjM/P9+rzke4ceNGevbsGfc+lrxRyOxlm9mxp5gT27ZkyogejM3rmOquNjqtW7euOJts6hL9NyFNQzJ/22a2JhyzqCRtPmucqLF5HSMRfCJRsuSNwkpXe4V7ipn26HqApP7e0+ojdlK7qJwNSjTV1ztCFIQikjbq6x0hCkIRSRv19Y4QBaGIpI0pI3rQMjOjUlkq3hHSZAdLRKTpKR8QSfU7QnRGmAKPPPIIPXv2ZMiQIaxYsaJiwoHD6Xe/+12l59///vcT2v62227j3nvvTbjdqsdb1/2IxGtsXkdemjqULTeP4qWpQ1Py7hAFYQrcdddd3HHHHSxfvrxOQZiKj49VDcJE+3DVVVfx4x//OOF2qx5vXfcj0pCabhDWw+SNY8eOpX///vTu3Zt58+YBwacqVq5cyRVXXMH48eO57bbbmDNnDrm5ubz44osUFRVx3nnnccopp3DKKafw0ksvAcGnKi655BJOP/30iokHyrk7U6ZMITs7mz59+lR8OmTFihX84Ac/YNSoUfTo0YOrrrqKAwcOMHXqVIqLi8nNzWXixIlA8Mbq8m0GDRrEueeeS/fu3Zk6dSoPPPAAAwYMoE+fPhUTxs6cOZNbbrmFHTt2VEyxlZubS0ZGBh9++CGPPfYY3/ve98jLy2P48OF88sknbN269aDjLd8PwNq1azn11FPJyclh3LhxfPbZZwAMHjyYG264gQEDBvDd7363YvIJkQZT3ZQ0Df0on8IpVkJTLr25wP2mEypP03PTCUF5Enbt2uXu7vv37/fevXv7p59+6u6Vp7SKnXrL3f2iiy7yF1980d3dP/zwQz/55JMr6vXr18/3799/UDuLFi3y4cOHe2lpqf/973/3zp07+44dO3z58uXevHlzf//99720tNSHDx/ujzzyiLu7t2rVqtI+yp8vX77c27Rp4zt27PCvvvrKTzzxRJ8+fbq7u996663+i1/8otp+u7v/+c9/9vHjx7u7++7du/3AgQPu7n7HHXf49ddfX+12sc/79OnjK1ascHf33/zmNxVtDRo0qGL7v/3tbz5s2LBD/t5romm4JFHUMA1X0xwsOdTkjUl8RnHu3LksXrwYgG3btvHuu+9y3HHHHXKbZ555ptKUVJ9//nnFm57HjBlDy5YHD/uvXLmSiy66iIyMDE444QQGDRrEa6+9xjHHHMOAAQPo3r07ABdddBErV67k/PPPP2QfTjnlFDp06ADAt7/9bc466ywgmHJr+fLl1W7z0ksvcccdd1RM47V9+3YuvPBCPv74Y7755ptavz1u79697Nmzp2IyiEsvvZTx48dXrP/hD38IQP/+/Wuc6kvkcGmaQbj34PkAD1kehxUrVvDMM8/wyiuvcNRRRzF48OC4vkXtwIEDrFq1qtppqWKn34pXdVOB1SZ2Sqt4ptn6+OOPueKKK1i6dGnFJfbPf/5zrr/+esaMGcOKFSuYOXNmwn2vrk+aYksag6Z5j7AeJm/cu3cv7dq146ijjmLTpk2sWrWq2npVp50666yz+M///M+K52vXrq21rYEDB7JgwQLKysooKirihRdeqJi1ZvXq1WzZsoUDBw6wYMGCimm2MjMzKSkpqfPxlSspKWH8+PH8/ve/57vf/W5F+d69e+nYMRidi50lpqZpttq0aUO7du0q7v/dd999FWeHIo1N0wzCYdODyRpjJTl548iRIyktLaVnz55MnTq1YkbpqkaPHs3ixYsrBg/mzp1LQUEBOTk59OrVi9tuu63WtsaNG0dOTg59+/Zl6NCh/OEPf+Bb3/oWEFzmXnvttfTs2ZNu3boxbtw4ACZPnkxOTk7FYEldvfzyyxQUFDBjxoyKAZMdO3Ywc+ZMxo8fT//+/Wnfvn2Nxxtr/vz5TJkyhZycHNauXcv06clNnilSX5rsNFysWxjcE9y7PTgTHDY95XOYHW4rVqzglltu4fHHD/pG1UjSNFySqMhNw1UfkzeKSNPUdIOwCRo8eDCDBw9u6G6INDlN8x6hiEgC0ioIG+P9TGkY+rcgqZQ2QdiiRQt27dqlPwDB3dm1a1fSXxkqUi5t7hF26tSJ7du3U1RU1NBdkUagRYsWdOqU3Jd6i5RLmyDMzMys9WNdIiJ1kTaXxiIi9UVBKCKRpyAUkchTEIpI5CkIRSTy4g5CM8swszfM7KBP/JtZczNbYGbvmdmrZtY1Zt20sHyzmY1IUb9FRFImkTPCXwAba1h3BfCZu/8TMAf4PYCZ9QImAL2BkcB/mVlGDfsQEWkQcQWhmXUCRgF31lDlXKB8ts5FwDALpk4+F3jY3b929y3Ae8CA5LosIpJa8Z4R3gr8K3CghvUdgW0A7l4K7AWOiy0PbQ/LREQajVqD0MzOAXa6+5r67IiZTTazAjMr0MfoRORwiueM8HRgjJltBR4GhprZ/VXqFAKdAczsCKANsCu2PNQpLDuIu89z93x3z8/KykroIEREklFrELr7NHfv5O5dCQY+nnP3i6tUWwpcGi6fH9bxsHxCOKrcDfgOsDplvRcRSYE6T7pgZrMIvix5KXAXcJ+ZvQfsJghM3P1tM1sIbABKgWvcvSz5bouIpE7afHmTiEiyavryJn2yREQiT0EoIpGnIBSRyFMQikjkKQhFJPIUhCISeQpCEYk8BaGIRJ6CUEQiT0EoIpGnIBSRyFMQikjkKQhFJPIUhCISeQpCEYk8BaGIRJ6CUEQiT0EoIpGnIBSRyFMQikjkKQhFJPIUhCISeQpCEYk8BaGIRJ6CUEQiT0EoIpGnIBSRyDuitgpm1gJ4AWge1l/k7jOq1JkDDAmfHgUc7+5tw3VlwPpw3UfuPiY1XRcRSY1agxD4Ghjq7vvMLBNYaWZPuvuq8gru/qvyZTP7OZAXs32xu+emqsMiIqlW66WxB/aFTzPDhx9ik4uAh1LQNxGRwyKue4RmlmFma4GdwNPu/moN9boA3YDnYopbmFmBma0ys7FJ9ldEJOXiCkJ3LwsvbzsBA8wsu4aqEwjuIZbFlHVx93zgR8CtZvbt6jY0s8lhYBYUFRXFfwQiIklKaNTY3fcAy4GRNVSZQJXLYncvDH9+AKyg8v3D2Hrz3D3f3fOzsrIS6ZaISFJqDUIzyzKztuFyS+BMYFM19U4G2gGvxJS1M7Pm4XJ74HRgQ0p6LiKSIvGMGncA5ptZBkFwLnT3x81sFlDg7kvDehOAh909diClJ3C7mR0It73Z3RWEItKoWOXcahzy8/O9oKCgobshIk2Mma0Jxywq0SdLRCTyFIQiEnkKQhGJPAWhiESeglBEIk9BKCKRpyAUkchTEIpI5CkIRSTyFIQiEnkKQhGJPAWhiESeglBEIk9BKCKRpyAUkchTEIpI5CkIRSTyFIQiEnkKQhGJPAWhiESeglBEIk9BKCKRpyAUkchTEIpI5CkIRSTyFIQiEnkKQhGJPAWhiERerUFoZi3MbLWZvWlmb5vZb6upM8nMisxsbfj4Scy6S83s3fBxaaoPQEQkWUfEUedrYKi77zOzTGClmT3p7quq1Fvg7tfGFpjZscAMIB9wYI2ZLXX3z1LReRGRVKj1jNAD+8KnmeHD49z/COBpd98dht/TwMg69VREpJ7EdY/QzDLMbC2wkyDYXq2m2nlmts7MFplZ57CsI7Atps72sKy6NiabWYGZFRQVFcV/BCIiSYorCN29zN1zgU7AADPLrlLlMaCru+cQnPXNT7Qj7j7P3fPdPT8rKyvRzUVE6iyhUWN33wMsp8rlrbvvcvevw6d3Av3D5UKgc0zVTmGZiEijEc+ocZaZtQ2XWwJnApuq1OkQ83QMsDFcXgacZWbtzKwdcFZYJiLSaMQzatwBmG9mGQTBudDdHzezWUCBuy8FrjOzMUApsBuYBODuu83s/wKvhfua5e67U30QIiLJMPd4B4APn/z8fC8oKGjobohIE2Nma9w9v2q5PlkiIpGnIBSRyFMQikjkKQhFJPIUhCISeQpCEYk8BaGkp3ULYU42zGwb/Fy3sKF7JGksnjdUizQu6xbCY9dBSXHwfO+24DlAzgUN1y9JWzojlPTz7Kx/hGC5kuKgXKQOFISSfvZuT6xcpBYKQkk/bTolVi5SCwWhpJ9h0yGzZeWyzJZBuUgdKAgl/eRcAKPnQpvOgAU/R8/VQInUmUaNJT3lXKDgk5TRGaGIRJ6CUEQiT0EoIpGnIBSRyFMQikjkKQhFJPIUhCISeQpCEYk8BaGIRJ6CUEQiT0EoIpGnIBSRyFMQikjk1RqEZtbCzFab2Ztm9raZ/baaOteb2QYzW2dmz5pZl5h1ZWa2NnwsTfUBiIgkK55puL4Ghrr7PjPLBFaa2ZPuviqmzhtAvrvvN7OrgT8AF4brit09N6W9FhFJoVrPCD2wL3yaGT68Sp3l7r4/fLoK0JzpIpI24rpHaGYZZrYW2Ak87e6vHqL6FcCTMc9bmFmBma0ys7F17qmISD2Ja4Zqdy8Dcs2sLbDYzLLd/a2q9czsYiAfGBRT3MXdC82sO/Ccma139/er2XYyMBngpJNOSvxIRETqKKFRY3ffAywHRlZdZ2bDgV8DY9z965htCsOfHwArgLwa9j3P3fPdPT8rKyuRbomIJCWeUeOs8EwQM2sJnAlsqlInD7idIAR3xpS3M7Pm4XJ74HRgQ8p6LyKSAvFcGncA5ptZBkFwLnT3x81sFlDg7kuB2UBr4BEzA/jI3ccAPYHbzexAuO3N7q4gFJFGpdYgdPd1VHM56+7TY5aH17Dty0CfZDooUp0lbxQye9lmduwp5sS2LZkyogdj8zo2dLckTenrPCXtLHmjkGmPrqe4pAyAwj3FTHt0PYDCUOpEH7GTtDN72eaKECxXXFLG7GWbG6hHku4UhJJ2duwpTqhcpDYKQkk7J7ZtmVC5SG0UhJJ2pozoQcvMjEplLTMzmDKiRwP1SNKdBksk7ZQPiGjUWFJFQShpaWxeRwWfpIwujUUk8hSEIhJ5CkIRiTwFoYhEnoJQRCJPQSgikacgFJHIUxCKSOQpCEUk8hSEIhJ5CkIRiTwFoYhEnoJQRCJPQSgikacgFJHIUxCKSOQpCEUk8hSEIhJ5CkIRiTwFoYhEXq1BaGYtzGy1mb1pZm+b2W+rqdPczBaY2Xtm9qqZdY1ZNy0s32xmI1LcfxGRpMVzRvg1MNTd+wK5wEgzO7VKnSuAz9z9n4A5wO8BzKwXMAHoDYwE/svMMhARaURqDUIP7AufZoYPr1LtXGB+uLwIGGZmFpY/7O5fu/sW4D1gQEp6LiKSInHdIzSzDDNbC+wEnnb3V6tU6QhsA3D3UmAvcFxseWh7WCYi0mjEFYTuXubuuUAnYICZZae6I2Y22cwKzKygqKgo1bsXEalRQqPG7r4HWE5wvy9WIdAZwMyOANoAu2LLQ53Csur2Pc/d8909PysrK5FuiYgkJZ5R4ywzaxsutwTOBDZVqbYUuDRcPh94zt09LJ8Qjip3A74DrE5R30VEUuKIOOp0AOaHo73NgIXu/riZzQIK3H0pcBdwn5m9B+wmGCnG3d82s4XABqAUuMbdy+rjQERE6sqCE7fGJT8/3wsKChq6GyLSxJjZGnfPr1quT5aISOQpCEUk8hSEIhJ5CkIRiTwFoYhEnoJQRCJPQSgikacgFJHIUxCKSOQpCEUk8hSEIhJ5CkIRiTwFoYhEnoJQRCJPQSgikacgFJHIUxCKSOQpCEUk8hSEIhJ5CkIRiTwFoYhEXjxf59loLXmjkNnLNrNjTzEntm3JlBE9GJvXsaG7JSJpJm2DcMkbhUx7dD3FJcHXJBfuKWbao+sBFIYikpC0vTSevWxzRQiWKy4pY/ayzQ3UIxFJV2kbhDv2FCdULiJSk7QNwhPbtkyoXESkJmkbhFNG9KBlZkalspaZGUwZ0aOBeiQi6SptB0vKB0Q0aiwiyao1CM2sM3AvcALgwDx3/1OVOlOAiTH77AlkuftuM9sKfAGUAaXunp+qzo/N66jgE5GkxXNGWAr8i7u/bmZHA2vM7Gl331Bewd1nA7MBzGw08Ct33x2zjyHu/mkqOy4ikiq13iN094/d/fVw+QtgI3Co07CLgIdS0z0RkfqX0GCJmXUF8oBXa1h/FDAS+GtMsQNPmdkaM5t8iH1PNrMCMysoKipKpFsiIkmJOwjNrDVBwP3S3T+vodpo4KUql8VnuHs/4J+Ba8zsB9Vt6O7z3D3f3fOzsrLi7ZaISNLiCkIzyyQIwQfc/dFDVJ1Alctidy8Mf+4EFgMD6tZVEZH6UWsQmpkBdwEb3f2Ph6jXBhgE/E9MWatwgAUzawWcBbyVbKdFRFIpnlHj04FLgPVmtjYs+zfgJAB3vy0sGwc85e5fxmx7ArA4yFKOAB509/9NQb9FRFKm1iB095WAxVHvHuCeKmUfAH3r2DcRkcMibT9iJyKSKgpCEYk8BaGIRJ6CUEQiT0EoIpGnIBSRyFMQikjkKQhFJPIUhCISeQpCEYk8BaGIRJ6CUEQiT0EoIpGnIBSRyFMQikjkKQhFJPIUhCISeQpCEYk8BaGIRJ6CUEQiL72DcN1CmJMNM9sGP9ctbOgeiUgaiufrPBundQvhseugpDh4vndb8Bwg54KG65eIpJ30PSN8dtY/QrBcSXFQLiKSgPQNwr3bEysXEalB+gZhm06JlYuI1CB9g3DYdMhsWbkss2VQLiKSgPQNwpwLYPRcaNMZsODn6LkaKBGRhNU6amxmnYF7gRMAB+a5+5+q1BkM/A+wJSx61N1nhetGAn8CMoA73f3mVHWenAsUfCKStHjePlMK/Iu7v25mRwNrzOxpd99Qpd6L7n5ObIGZZQB/Ac4EtgOvmdnSarYVEWkwtV4au/vH7v56uPwFsBHoGOf+BwDvufsH7v4N8DBwbl07KyJSHxK6R2hmXYE84NVqVp9mZm+a2ZNm1jss6whsi6mznfhDVETksIj7kyVm1hr4K/BLd/+8yurXgS7uvs/MzgaWAN9JpCNmNhmYDHDSSSclsqmISFLiOiM0s0yCEHzA3R+tut7dP3f3feHyE0CmmbUHCoHOMVU7hWUHcfd57p7v7vlZWVkJHoaISN3VGoRmZsBdwEZ3/2MNdb4V1sPMBoT73QW8BnzHzLqZ2ZHABGBpqjovIpIK8Vwanw5cAqw3s7Vh2b8BJwG4+23A+cDVZlYKFAMT3N2BUjO7FlhG8PaZu9397dQegohIcizIq8YlPz/fCwoKGrobItLEmNkad88/qLwxBqGZFQEfJrBJe+DTeuqO2m+8bUe9/Sgfe13b7+LuBw1CNMogTJSZFVSX8mq/abcd9fajfOypbj99P2ssIpIiCkIRibymEoTz1H4k2456+1E+9pS23yTuEYqIJKOpnBGKiNRZow9CMxtpZpvN7D0zm1rN+uZmtiBc/2o4MUT5umlh+WYzG1EPbV9vZhvMbJ2ZPWtmXWLWlZnZ2vBRp0/TxNH+JDMrimnnJzHrLjWzd8PHpfXU/pyYtt8xsz0x65I6fjO728x2mtlbNaw3M5sb9m2dmfWLWZeKY6+t/Ylhu+vN7GUz6xuzbmtYvtbMEn5DbBxtDzazvTG/3+kx6w75mqWo/Skxbb8VvtbHhuuSOvZwH53NbHn4t/W2mf2imjqpff3dvdE+CD6N8j7QHTgSeBPoVaXOz4DbwuUJwIJwuVdYvznQLdxPRorbHgIcFS5fXd52+HzfYTj2ScCfq9n2WOCD8Ge7cLldqtuvUv/nBJ8cStXx/wDoB7xVw/qzgScBA04FXk3VscfZ/vfL9wv8c3n74fOtQPt6PPbBwOPJvmZ1bb9K3dHAc6k69nAfHYB+4fLRwDvV/NtP6evf2M8I45nP8Fxgfri8CBhmZhaWP+zuX7v7FuC9cH8pa9vdl7v7/vDpKoJJJVIlmbkcRwBPu/tud/8MeBoYWc/tXwQ8lGAbNXL3F4Ddh6hyLnCvB1YBbc2sA6k59lrbd/eXw/1Dil/7OI69JimZ/zPB9lP6uoftxzMHakpf/8YehPHMZ1hRx91Lgb3AcXFum2zbsa4g+B+qXAszKzCzVWY2NoF2E23/vPDSYJEFX6uQyLapaJ/wlkA34LmY4mSPv679a4g5MKu+9g48ZWZrLJherj40+PyfZnYUQcj8NaY4pcduNc+BmtLXP+75CKVmZnYxkA8Miinu4u6FZtYdeM7M1rv7+ylu+jHgIXf/2sx+SnBmPDTFbcRjArDI3ctiyg7H8Tc4MxtCEIRnxBSfER778cDTZrYpPMtKlaTn/0yR0cBL7h579piyY7dDz4GaUo39jDCe+Qwr6pjZEUAbginA4p4LMYm2MbPhwK+BMe7+dXm5uxeGPz8AVhD8r5aIWtt3910xbd4J9E+k78m2H2MCVS6PUnD8de1fKo49LmaWQ/B7P9fdd5WXxxz7TmAxid2SqZWnYP7PFDnU657UsVstc6CS6tc/mZua9f0gOGP9gOCyq/zmb+8qda6h8mDJwnC5N5UHSz4gscGSeNrOI7g5/Z0q5e2A5uFye+BdErxpHWf7HWKWxwGr/B83jLeE/WgXLh+b6vbDeicT3CC3VB5/uG1Xah4wGEXlm+WrU3XscbZ/EsF95+9XKW8FHB2z/DIwMsVtf6v8900QNB+Fv4e4XrNk2w/XtyG4j9iqHo7dCL4589ZD1Enp65/wL+hwPwhGh94hCJxfh2WzCM7AAFoAj4T/KFcD3WO2/XW43Wbgn+uh7WeAT4C14WNpWP59YH34D3E9cEU9Hft/AG+H7SwHTo7Z9vLwd/IecFl9tB8+nwncXGW7pI+f4EzjY6CE4D7PFcBVwFUxfyx/Cfu2HshP8bHX1v6dwGcxr31BWN49PO43w9fm1/XQ9rUxr/sqYsK4utcs1e2HdSYRDEbGbpf0sYf7OYPgXuO6mN/v2fX5+uuTJSISeY39HqGISL1TEIpI5CkIRSTyFIQiEnkKQhGJPAWhiESeglBEIk9BKCKR9/8BWARoFjf3lqAAAAAASUVORK5CYII=
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Wrapper-functions">Wrapper functions<a class="anchor-link" href="#Wrapper-functions"> </a></h2><p>To be compatible with interface, we have three wrapper functions:</p>
+<ul>
+<li>protein_profile_parallel: A wrapper that executes protein_profile in parallel</li>
+<li>protein_profile_parallel_ap: A wrapper function to calculate protein ratios based on AlphaPept tabular data</li>
+<li>protein_profile_prallalel_mq: A wrapper function to calculate protein ratios based on MaxQuant tabular data</li>
+</ul>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="protein_profile_parallel" class="doc_header"><code>protein_profile_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L495" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>, <strong><code>field</code></strong>:<code>str</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Derives LFQ intensities from the feature table.</p>
+<p>Args:
+    df (pd.DataFrame): Feature table by alphapept.
+    minimum_ratios (int): Minimum number of peptide ratios necessary to derive a protein ratio.
+    field (str): The field containing the quantitative peptide information (i.e. precursor intensities).
+    callback ([type], optional): Callback function. Defaults to None.</p>
+<p>Returns:
+    pd.DataFrame: table containing the LFQ intensities of each protein in each sample.</p>
+
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -954,51 +1085,79 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
 
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">test_protein_profile</span><span class="p">():</span>
+</div>
+    {% endraw %}
 
-        <span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
 
-        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
-        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;fraction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="mi">6</span>
-        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
-        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein_group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">18</span>
-        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+<div class="output_wrapper">
+<div class="output">
 
-        <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
+<div class="output_area">
 
-        <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
 
-        <span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="protein_profile_parallel_ap" class="doc_header"><code>protein_profile_parallel_ap</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L565" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_ap</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Derives protein LFQ intensities from the alphapept quantified feature table</p>
+<p>Args:
+    settings (dict): alphapept settings dictionary.
+    df (pd.DataFrame): alphapept feature table.
+    callback ([type], optional): [description]. Defaults to None.</p>
+<p>Raises:
+    ValueError: raised in case of observed negative intensities.</p>
+<p>Returns:
+    pd.DataFrame: table containing the LFQ intensities of each protein in each sample.</p>
 
-        <span class="c1"># total intensity should be preserved</span>
-        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">pre_lfq</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+</div>
 
-        <span class="n">sample_data</span> <span class="o">=</span> <span class="p">{}</span>
+</div>
 
-        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span>
-        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
-        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein_group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
-        <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span>
-
-        <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
-
-        <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
-
-        <span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">file_ids</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">],</span> <span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
-
-        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">profile</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">pre_lfq</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
-
-    <span class="n">test_protein_profile</span><span class="p">()</span>
-</pre></div>
-
-    </div>
 </div>
 </div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="protein_profile_parallel_mq" class="doc_header"><code>protein_profile_parallel_mq</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L595" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_mq</code>(<strong><code>evidence_path</code></strong>:<code>str</code>, <strong><code>protein_groups_path</code></strong>:<code>str</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Derives protein LFQ intensities from Maxquant quantified features.</p>
+<p>Args:
+    evidence_path (str): path to the Maxquant standard output table evidence.txt.
+    protein_groups_path (str): path to the Maxquant standard output table proteinGroups.txt.
+    callback ([type], optional): [description]. Defaults to None.</p>
+<p>Raises:
+    FileNotFoundError: if Maxquant files cannot be found.</p>
+<p>Returns:
+    pd.DataFrame: table containing the LFQ intensities of each protein in each sample.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}

@@ -32,8 +32,8 @@ nb_path: "nbs/01_chem.ipynb"
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p>This notebook contains all chemistry-related functionality.  Here, a major part is functionality to generate isotope patterns and the averagine model. This is required for feature finding, where an isotope pattern is validated by being compared to its averagine model. We use the data structure <code>Isotopes</code> from constants to handle Isotopes. Next, we define the class <a href="/chem.html#IsotopeDistribution"><code>IsotopeDistribution</code></a> to calculate isotope distributions for a given Isotope. The core of the calculation is the function <a href="/chem.html#fast_add"><code>fast_add</code></a>, which allows the fast estimation of isotope distributions. <br>
-To calculate the isotope distribution for the averagine model, we define the function <a href="/chem.html#get_average_formula"><code>get_average_formula</code></a>, which calculates the amino acid composition of the averagine molecule for the given mass.</p>
-<p><em>Implementation note: Ideally, we would like to have constants such as isotopes as global variables to not overload functions with parameters. However, currently, numba is not able to handle typed dictionaries or jitclasses as globals. We, therefore, pass them as arguments.</em></p>
+To calculate the isotope distribution for the averagine model, we define the function <a href="/chem.html#get_average_formula"><code>get_average_formula</code></a>, which calculates the amino acid composition of the averagine molecule for the given mass.
+{% include note.html content='Ideally, we would like to have constants such as isotopes as global variables to not overload functions with parameters. However, currently, numba is not able to handle typed dictionaries or jitclasses as globals. We, therefore, pass them as arguments.*' %}</p>
 
 </div>
 </div>
@@ -41,7 +41,8 @@ To calculate the isotope distribution for the averagine model, we define the fun
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="IsotopeDistributions">IsotopeDistributions<a class="anchor-link" href="#IsotopeDistributions"> </a></h2><p>The calculation of isotope distributions is based on the algorithm introduced in the paper <em>Calculation of isotope distributions in mass spectrometry. A trivial solution for a non-trivial problem</em> by <em>Hugo Kubinyi</em>. 
-The algorithm itself can be found in the <a href="https://doi.org/10.1016/1044-0305(95)00017-8">paper</a>.</p>
+A more detailed description of the algorithm can be found in the <a href="https://doi.org/10.1016/1044-0305(95)00017-8">paper</a>.</p>
+<p>The implementation is a Python port of the Java version of the <a href="https://github.com/fickludd/proteomicore/blob/c5e311c21c3191fc007798391ce77066531f1932/Proteins/src/main/java/se/lth/immun/chem/IsotopeDistribution.java">proteomicore - implementation</a> from Johan Teleman</p>
 <p>In brief,  the approach avoids expanding polynomial expressions by combining precalculated patterns of hypothetical atom clusters and pruning low-intensity peaks. <br>
 To calculate the isotope distribution for a given isotope, we define the function <code>dict_to_dist,</code> which accepts a dictionary of amino acids and returns the isotope distribution.</p>
 
@@ -61,7 +62,15 @@ To calculate the isotope distribution for a given isotope, we define the functio
 <div class="output_markdown rendered_html output_subarea ">
 <h2 id="IsotopeDistribution" class="doc_header"><code>class</code> <code>IsotopeDistribution</code><a href="" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>IsotopeDistribution</code>(<strong>*<code>args</code></strong>, <strong>**<code>kwargs</code></strong>) :: <a href="/chem.html#IsotopeDistribution"><code>IsotopeDistribution</code></a></p>
 </blockquote>
-<p>Class to calculate Isotope Distributions.</p>
+<p>Class to represent isotope distributions.</p>
+<p>Attributes:
+    m0 (int): the mono-isotopic mass.
+    dm (int): number of isotopes.
+    intensities (np.ndarray): isotope intensities.</p>
+<p>Metnods:
+    add: dd another isotope distribution.
+    copy: create a copy of the current isotope distribution.
+    mult: multiply the current isotope distribution.</p>
 
 </div>
 
@@ -84,9 +93,21 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="fast_add" class="doc_header"><code>fast_add</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L66" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fast_add</code>(<strong><code>m0</code></strong>, <strong><code>dm0</code></strong>, <strong><code>int0</code></strong>, <strong><code>m1</code></strong>, <strong><code>dm1</code></strong>, <strong><code>int1</code></strong>, <strong><code>PRUNE_LEVEL</code></strong>=<em><code>1e-06</code></em>)</p>
+<h4 id="fast_add" class="doc_header"><code>fast_add</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L96" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fast_add</code>(<strong><code>m0</code></strong>:<code>int</code>, <strong><code>dm0</code></strong>:<code>int</code>, <strong><code>int0</code></strong>:<code>ndarray</code>, <strong><code>m1</code></strong>:<code>int</code>, <strong><code>dm1</code></strong>:<code>int</code>, <strong><code>int1</code></strong>:<code>ndarray</code>, <strong><code>prune_level</code></strong>:<code>float</code>=<em><code>1e-06</code></em>)</p>
 </blockquote>
-<p>Function for fast estimation of masses</p>
+<p>Helper function to quickly add isotope patterns.</p>
+<p>Args:
+    m0 (float): the mono-isotopic mass of the first isotope distribution.
+    dm0 (int): the number of isotope intensities in the first isotope distribution.
+    int0 (np.ndarray:float): the intensity pattern of the first isotope distribution.
+    m1 (float): the mono-isotopic mass of the second isotope distribution.
+    dm1 (int): the number of isotope intensities in the second isotope distribution.
+    int1 (np.ndarray:float): the intensity pattern of the second isotope distribution.
+    prune_level (float): Precision threshold. Defaults to 0.000001.</p>
+<p>Returns:
+    int: Mass of new pattern.
+    int: Number of isotopes in new pattern.
+    np.ndarray: Intensity of new pattern.</p>
 
 </div>
 
@@ -109,9 +130,13 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="numba_bin" class="doc_header"><code>numba_bin</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L88" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>numba_bin</code>(<strong><code>decimal</code></strong>)</p>
+<h4 id="numba_bin" class="doc_header"><code>numba_bin</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L132" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>numba_bin</code>(<strong><code>decimal</code></strong>:<code>int</code>)</p>
 </blockquote>
-<p>Numba compatibale function to convert decimal to binary as list</p>
+<p>Numba compatible function to convert a decimal number to a binary (list).</p>
+<p>Args:
+    decimal (int): Decimal number.</p>
+<p>Returns:
+    list: Number in binary.</p>
 
 </div>
 
@@ -134,9 +159,14 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="dict_to_dist" class="doc_header"><code>dict_to_dist</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L103" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>dict_to_dist</code>(<strong><code>counted_AA</code></strong>, <strong><code>isotopes</code></strong>)</p>
+<h4 id="dict_to_dist" class="doc_header"><code>dict_to_dist</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L152" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>dict_to_dist</code>(<strong><code>counted_AA</code></strong>:<code>Dict</code>, <strong><code>isotopes</code></strong>:<code>Dict</code>)</p>
 </blockquote>
-<p>Function to convert a dictionary with numbers of amino acids to a isotope distribution.</p>
+<p>Function to convert a dictionary with counts of atoms to an isotope distribution.</p>
+<p>Args:
+    counted_AA (Dict): Numba-typed dict with counts of atoms.
+    isotopes (Dict): Numba-typed lookup dict with isotopes.</p>
+<p>Returns:
+    IsotopeDistribution: The calculated sotope distribution for the chemical compound.</p>
 
 </div>
 
@@ -208,7 +238,7 @@ To calculate the isotope distribution for a given isotope, we define the functio
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stderr output_text">
-<pre>C:\ProgramData\Anaconda3\envs\alphapept\lib\site-packages\numba\typed\typeddict.py:34: NumbaTypeSafetyWarning: <span class="ansi-bold">unsafe cast from int64 to int32. Precision may be lost.</span>
+<pre>/opt/miniconda3/envs/alphapept/lib/python3.8/site-packages/numba/typed/typeddict.py:34: NumbaTypeSafetyWarning: unsafe cast from int64 to int32. Precision may be lost.
   d[key] = value
 </pre>
 </div>
@@ -250,9 +280,18 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_average_formula" class="doc_header"><code>get_average_formula</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L124" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_average_formula</code>(<strong><code>molecule_mass</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>sulphur</code></strong>=<em><code>True</code></em>)</p>
+<h4 id="get_average_formula" class="doc_header"><code>get_average_formula</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L180" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_average_formula</code>(<strong><code>molecule_mass</code></strong>:<code>float</code>, <strong><code>averagine_aa</code></strong>:<code>Dict</code>, <strong><code>isotopes</code></strong>:<code>Dict</code>, <strong><code>sulphur</code></strong>:<code>bool</code>=<em><code>True</code></em>)</p>
 </blockquote>
 <p>Function to calculate the averagine formula for a molecule mass.</p>
+<p>Args:
+    molecule_mass (float): Input molecule mass for which the averagine model should be calculated.
+    averagine_aa (Dict): Numba-typed dictionary with averagine masses. See alphapept.constants.averagine_aa.
+    isotopes (Dict): Numba-typed lookup dict with isotopes.
+    sulphur (bool, optional): Flag to consider sulphur. Defaults to True.</p>
+<p>Raises:
+    NotImplementedError: If mode w/o sulphur is selected.</p>
+<p>Returns:
+    Dict: Numba-typed dict with averagine composition.</p>
 
 </div>
 
@@ -322,9 +361,16 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="mass_to_dist" class="doc_header"><code>mass_to_dist</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L151" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>mass_to_dist</code>(<strong><code>molecule_mass</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>)</p>
+<h4 id="mass_to_dist" class="doc_header"><code>mass_to_dist</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L219" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>mass_to_dist</code>(<strong><code>molecule_mass</code></strong>:<code>float</code>, <strong><code>averagine_aa</code></strong>:<code>Dict</code>, <strong><code>isotopes</code></strong>:<code>Dict</code>)</p>
 </blockquote>
 <p>Function to calculate an isotope distribution from a molecule mass using the averagine model.</p>
+<p>Args:
+    molecule_mass (float, averagine_aa): input molecule mass.
+    averagine_aa (Dict): Numba-typed dictionary with averagine masses.
+    isotopes (Dict): Numba-typed lookup dict with isotopes.</p>
+<p>Returns:
+    np.ndarray: isotope masses.
+    np.ndarray: isotope intensity.</p>
 
 </div>
 
@@ -458,9 +504,14 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calculate_mass" class="doc_header"><code>calculate_mass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L170" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_mass</code>(<strong><code>mono_mz</code></strong>, <strong><code>charge</code></strong>)</p>
+<h4 id="calculate_mass" class="doc_header"><code>calculate_mass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/chem.py#L246" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_mass</code>(<strong><code>mono_mz</code></strong>:<code>float</code>, <strong><code>charge</code></strong>:<code>int</code>)</p>
 </blockquote>
-<p>Calculate the precursor mass from mono mz and charge</p>
+<p>Calculate the precursor mass from mono mz and charge.</p>
+<p>Args:
+    mono_mz (float): mono m/z.
+    charge (int): charge.</p>
+<p>Returns:
+    float: precursor mass.</p>
 
 </div>
 

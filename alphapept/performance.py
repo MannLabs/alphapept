@@ -46,17 +46,13 @@ except cuda.CudaSupportError:
 def is_valid_compilation_mode(compilation_mode: str) -> None:
     """Check if the provided string is a valid compilation mode.
 
-    Parameters
-    ----------
-    compilation_mode : str
-        The compilation mode to verify.
+    Args:
+        compilation_mode (str): The compilation mode to verify.
 
-    Raises
-    ------
-    ModuleNotFoundError
-        When trying to use an unavailable GPU.
-    NotImplementedError
-        When the compilation mode is not valid.
+    Raises:
+        ModuleNotFoundError: When trying to use an unavailable GPU.
+        NotImplementedError: When the compilation mode is not valid.
+
     """
     if compilation_mode.startswith("cuda") and not __GPU_AVAILABLE:
         raise ModuleNotFoundError('Cuda functions are not available.')
@@ -80,23 +76,19 @@ MAX_WORKER_COUNT = psutil.cpu_count()
 def set_worker_count(worker_count: int = 1, set_global: bool = True) -> int:
     """Parse and set the (global) number of threads.
 
-    Parameters
-    ----------
-    worker_count : int
-        The number of workers.
-        If larger than available cores, it is trimmed to the available maximum.
-        If 0, it is set to the maximum cores available.
-        If negative, it indicates how many cores NOT to use.
-        Default is 1
-    set_global : bool
-        If False, the number of workers is only parsed to a valid value.
-        If True, the number of workers is saved as a global variable.
-        Default is True.
+    Args:
+        worker_count (int): The number of workers.
+            If larger than available cores, it is trimmed to the available maximum.
+            If 0, it is set to the maximum cores available.
+            If negative, it indicates how many cores NOT to use.
+            Default is 1
+        set_global (bool): If False, the number of workers is only parsed to a valid value.
+            If True, the number of workers is saved as a global variable.
+            Default is True.
 
-    Returns
-    -------
-    : int
-        The parsed worker_count.
+    Returns:
+        int: The parsed worker_count.
+
     """
     max_cpu_count = psutil.cpu_count()
     if worker_count > max_cpu_count:
@@ -119,18 +111,16 @@ def set_compilation_mode(
 ) -> None:
     """Set the global compilation mode to use.
 
-    Parameters
-    ----------
-    compilation_mode : str
-        The compilation mode to use.
-        Will be checked with `is_valid_compilation_mode`.
-        Default is None
-    enable_dynamic_compilation : bool
-        Enable dynamic compilation.
-        If enabled, code will generally be slower and no other functions can
-        be called from within a compiled function anymore, as they are compiled at runtime.
-        WARNING: Enabling this is strongly disadvised in almost all cases!
-        Default is None.
+    Args:
+        compilation_mode (str): The compilation mode to use.
+            Will be checked with `is_valid_compilation_mode`.
+            Default is None
+        enable_dynamic_compilation (bool): Enable dynamic compilation.
+            If enabled, code will generally be slower and no other functions can
+            be called from within a compiled function anymore, as they are compiled at runtime.
+            WARNING: Enabling this is strongly disadvised in almost all cases!
+            Default is None.
+
     """
     if enable_dynamic_compilation is not None:
         global DYNAMIC_COMPILATION_ENABLED
@@ -154,20 +144,21 @@ def compile_function(
     Cuda functions are by default set to use `device=True`,
     unless explicitly defined otherwise..
 
-    Parameters
-    ----------
-    compilation_mode : str
-        The compilation mode to use.
-        Will be checked with `is_valid_compilation_mode`.
-        If None, the global COMPILATION_MODE will be used as soon as the function is decorated for static compilation.
-        If DYNAMIC_COMPILATION_ENABLED, the function will always be compiled at runtime and
-        thus by default returns a Python function.
-        Static recompilation can be enforced by reimporting a module containing
-        the function with importlib.reload(imported_module).
-        If COMPILATION_MODE is Python and not DYNAMIC_COMPILATION_ENABLED, no compilation will be used.
-        Default is None
-    **decorator_kwargs
-        Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.
+    Args:
+        compilation_mode (str): The compilation mode to use.
+            Will be checked with `is_valid_compilation_mode`.
+            If None, the global COMPILATION_MODE will be used as soon as the function is decorated for static compilation.
+            If DYNAMIC_COMPILATION_ENABLED, the function will always be compiled at runtime and
+            thus by default returns a Python function.
+            Static recompilation can be enforced by reimporting a module containing
+            the function with importlib.reload(imported_module).
+            If COMPILATION_MODE is Python and not DYNAMIC_COMPILATION_ENABLED, no compilation will be used.
+            Default is None
+        **decorator_kwargs: Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.
+
+    Returns:
+        callable: A decorated function that is compiled.
+
     """
     if compilation_mode is None:
         if DYNAMIC_COMPILATION_ENABLED:
@@ -244,16 +235,16 @@ def performance_function(
     Functions can not return values,
     results should be stored in buffer arrays inside thge function instead.
 
-    Parameters
-    ----------
-    worker_count : int
-        The number of workers to use for multithreading.
-        If None, the global MAX_WORKER_COUNT is used at runtime.
-        Default is None.
-    compilation_mode : str
-        The compilation mode to use. Will be forwarded to the `compile_function` decorator.
-    **decorator_kwargs
-        Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.
+    Args:
+        worker_count (int): The number of workers to use for multithreading.
+            If None, the global MAX_WORKER_COUNT is used at runtime.
+            Default is None.
+        compilation_mode (str): The compilation mode to use. Will be forwarded to the `compile_function` decorator.
+        **decorator_kwargs: Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.
+
+    Returns:
+        callable: A decorated function that is compiled and parallelized.
+
     """
     if worker_count is not None:
         worker_count = set_worker_count(worker_count, set_global=False)
