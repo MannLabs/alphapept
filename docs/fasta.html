@@ -60,9 +60,14 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_missed_cleavages" class="doc_header"><code>get_missed_cleavages</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L16" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_missed_cleavages</code>(<strong><code>sequences</code></strong>, <strong><code>n_missed_cleavages</code></strong>)</p>
+<h4 id="get_missed_cleavages" class="doc_header"><code>get_missed_cleavages</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L16" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_missed_cleavages</code>(<strong><code>sequences</code></strong>:<code>list</code>, <strong><code>n_missed_cleavages</code></strong>:<code>int</code>)</p>
 </blockquote>
-<p>Combine cleaved sequences to get sequences with missed cleavages</p>
+<p>Combine cleaved sequences to get sequences with missed cleavages
+Args:
+    seqeuences (list of str): the list of cleaved sequences, no missed cleavages are there.
+    n_missed_cleavages (int): the number of miss cleavage sites.
+Returns:
+    list (of str): the sequences with missed cleavages.</p>
 
 </div>
 
@@ -85,9 +90,17 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="cleave_sequence" class="doc_header"><code>cleave_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L27" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cleave_sequence</code>(<strong><code>sequence</code></strong>=<em><code>''</code></em>, <strong><code>n_missed_cleavages</code></strong>=<em><code>0</code></em>, <strong><code>protease</code></strong>=<em><code>'trypsin'</code></em>, <strong><code>pep_length_min</code></strong>=<em><code>6</code></em>, <strong><code>pep_length_max</code></strong>=<em><code>65</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="cleave_sequence" class="doc_header"><code>cleave_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L32" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cleave_sequence</code>(<strong><code>sequence</code></strong>:<code>str</code>=<em><code>''</code></em>, <strong><code>n_missed_cleavages</code></strong>:<code>int</code>=<em><code>0</code></em>, <strong><code>protease</code></strong>:<code>str</code>=<em><code>'trypsin'</code></em>, <strong><code>pep_length_min</code></strong>:<code>int</code>=<em><code>6</code></em>, <strong><code>pep_length_max</code></strong>:<code>int</code>=<em><code>65</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Cleave a sequence with a given protease. Filters to have a minimum and maximum length.</p>
+<p>Cleave a sequence with a given protease. Filters to have a minimum and maximum length.
+Args:
+    sequence (str): the given (protein) sequence.
+    n_missed_cleavages (int): the number of max missed cleavages.
+    protease (str): the protease/enzyme name, the regular expression can be found in alphapept.constants.protease_dict.
+    pep_length_min (int): min peptide length.
+    pep_length_max (int): max peptide length.
+Returns:
+    list (of str): cleaved peptide sequences with missed cleavages.</p>
 
 </div>
 
@@ -161,9 +174,14 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="count_missed_cleavages" class="doc_header"><code>count_missed_cleavages</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L63" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>count_missed_cleavages</code>(<strong><code>sequence</code></strong>=<em><code>''</code></em>, <strong><code>protease</code></strong>=<em><code>'trypsin'</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="count_missed_cleavages" class="doc_header"><code>count_missed_cleavages</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L76" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>count_missed_cleavages</code>(<strong><code>sequence</code></strong>:<code>str</code>=<em><code>''</code></em>, <strong><code>protease</code></strong>:<code>str</code>=<em><code>'trypsin'</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Counts the number of missed cleavages for a given sequence and protease</p>
+<p>Counts the number of missed cleavages for a given sequence and protease
+Args:
+    sequence (str): the given (peptide) sequence.
+    protease (str): the protease/enzyme name, the regular expression can be found in alphapept.constants.protease_dict.
+Returns:
+    int: the number of miss cleavages</p>
 
 </div>
 
@@ -186,9 +204,14 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="count_internal_cleavages" class="doc_header"><code>count_internal_cleavages</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L73" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>count_internal_cleavages</code>(<strong><code>sequence</code></strong>=<em><code>''</code></em>, <strong><code>protease</code></strong>=<em><code>'trypsin'</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="count_internal_cleavages" class="doc_header"><code>count_internal_cleavages</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L91" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>count_internal_cleavages</code>(<strong><code>sequence</code></strong>:<code>str</code>=<em><code>''</code></em>, <strong><code>protease</code></strong>:<code>str</code>=<em><code>'trypsin'</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Counts the number of internal cleavage sites for a given sequence and protease</p>
+<p>Counts the number of internal cleavage sites for a given sequence and protease
+Args:
+    sequence (str): the given (peptide) sequence.
+    protease (str): the protease/enzyme name, the regular expression can be found in alphapept.constants.protease_dict.
+Returns:
+    int (0 or 1): if the sequence is from internal cleavage.</p>
 
 </div>
 
@@ -261,9 +284,13 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="parse" class="doc_header"><code>parse</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L90" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>parse</code>(<strong><code>peptide</code></strong>)</p>
+<h4 id="parse" class="doc_header"><code>parse</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L113" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>parse</code>(<strong><code>peptide</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Parser to parse peptide strings</p>
+<p>Parser to parse peptide strings
+Args:
+    peptide (str): modified peptide sequence.
+Return:
+    List (numba.typed.List): a list of animo acids and modified amono acids</p>
 
 </div>
 
@@ -286,8 +313,9 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="list_to_numba" class="doc_header"><code>list_to_numba</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L108" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>list_to_numba</code>(<strong><code>a_list</code></strong>)</p>
+<h4 id="list_to_numba" class="doc_header"><code>list_to_numba</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L135" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>list_to_numba</code>(<strong><code>a_list</code></strong>)</p>
 </blockquote>
+<p>Convert python list to numba.typed.List</p>
 
 </div>
 
@@ -357,9 +385,16 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_decoy_sequence" class="doc_header"><code>get_decoy_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L117" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_decoy_sequence</code>(<strong><code>peptide</code></strong>, <strong><code>pseudo_reverse</code></strong>=<em><code>False</code></em>, <strong><code>AL_swap</code></strong>=<em><code>False</code></em>, <strong><code>KR_swap</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="get_decoy_sequence" class="doc_header"><code>get_decoy_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L147" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_decoy_sequence</code>(<strong><code>peptide</code></strong>:<code>str</code>, <strong><code>pseudo_reverse</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>AL_swap</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>KR_swap</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
-<p>Reverses a sequence and adds the '_decoy' tag.</p>
+<p>Reverses a sequence and adds the '_decoy' tag.
+Args:
+    peptide (str): modified peptide to be reversed.
+    pseudo_reverse (bool): If True, reverse the peptide bug keep the C-terminal amino acid; otherwise reverse the whole peptide. (Default: False)
+    AL_swap (bool): replace A with L, and vice versa. (Default: False)
+    KR_swap (bool): replace K with R at the C-terminal, and vice versa. (Default: False)
+Returns:
+    str: reversed peptide ending with the '_decoy' tag.</p>
 
 </div>
 
@@ -382,7 +417,7 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="swap_KR" class="doc_header"><code>swap_KR</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L141" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>swap_KR</code>(<strong><code>peptide</code></strong>)</p>
+<h4 id="swap_KR" class="doc_header"><code>swap_KR</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L177" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>swap_KR</code>(<strong><code>peptide</code></strong>)</p>
 </blockquote>
 <p>Swaps a terminal K or R. Note: Only if AA is not modified.</p>
 
@@ -407,7 +442,7 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="swap_AL" class="doc_header"><code>swap_AL</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L154" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>swap_AL</code>(<strong><code>peptide</code></strong>)</p>
+<h4 id="swap_AL" class="doc_header"><code>swap_AL</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L190" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>swap_AL</code>(<strong><code>peptide</code></strong>)</p>
 </blockquote>
 <p>Swaps a A with L. Note: Only if AA is not modified.</p>
 
@@ -432,9 +467,16 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_decoys" class="doc_header"><code>get_decoys</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L173" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_decoys</code>(<strong><code>peptide_list</code></strong>, <strong><code>pseudo_reverse</code></strong>=<em><code>False</code></em>, <strong><code>AL_swap</code></strong>=<em><code>False</code></em>, <strong><code>KR_swap</code></strong>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_decoys" class="doc_header"><code>get_decoys</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L209" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_decoys</code>(<strong><code>peptide_list</code></strong>, <strong><code>pseudo_reverse</code></strong>=<em><code>False</code></em>, <strong><code>AL_swap</code></strong>=<em><code>False</code></em>, <strong><code>KR_swap</code></strong>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Wrapper to get decoys for lists of peptides</p>
+<p>Wrapper to get decoys for lists of peptides
+Args:
+    peptide_list (list): the list of peptides to be reversed.
+    pseudo_reverse (bool): If True, reverse the peptide bug keep the C-terminal amino acid; otherwise reverse the whole peptide. (Default: False)
+    AL_swap (bool): replace A with L, and vice versa. (Default: False)
+    KR_swap (bool): replace K with R at the C-terminal, and vice versa. (Default: False)
+Returns:
+    list (of str): a list of decoy peptides</p>
 
 </div>
 
@@ -457,9 +499,9 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_decoy_tag" class="doc_header"><code>add_decoy_tag</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L181" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_decoy_tag</code>(<strong><code>peptides</code></strong>)</p>
+<h4 id="add_decoy_tag" class="doc_header"><code>add_decoy_tag</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L224" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_decoy_tag</code>(<strong><code>peptides</code></strong>)</p>
 </blockquote>
-<p>Adds a _decoy tag to a list of peptides</p>
+<p>Adds a '_decoy' tag to a list of peptides</p>
 
 </div>
 
@@ -592,9 +634,14 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_fixed_mods" class="doc_header"><code>add_fixed_mods</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L188" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mods</code>(<strong><code>seqs</code></strong>, <strong><code>mods_fixed</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="add_fixed_mods" class="doc_header"><code>add_fixed_mods</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L231" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mods</code>(<strong><code>seqs</code></strong>:<code>list</code>, <strong><code>mods_fixed</code></strong>:<code>list</code>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Adds fixed modifications to sequences.</p>
+<p>Adds fixed modifications to sequences.
+Args:
+    seqs (list of str): sequences to add fixed modifications
+    mods_fixed (list of str): the string list of fixed modifications. Each modification string must be in lower case, except for that the last letter must be the modified amino acid (e.g. oxidation on M should be oxM).
+Returns:
+    list (of str): the list of the modified sequences. 'ABCDEF' with fixed mod 'cC' will be 'ABcCDEF'.</p>
 
 </div>
 
@@ -703,7 +750,7 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_variable_mod" class="doc_header"><code>add_variable_mod</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L200" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mod</code>(<strong><code>peps</code></strong>, <strong><code>mods_variable_dict</code></strong>)</p>
+<h4 id="add_variable_mod" class="doc_header"><code>add_variable_mod</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L248" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mod</code>(<strong><code>peps</code></strong>:<code>list</code>, <strong><code>mods_variable_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
 
 </div>
@@ -727,10 +774,17 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_isoforms" class="doc_header"><code>get_isoforms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L213" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isoforms</code>(<strong><code>mods_variable_dict</code></strong>, <strong><code>peptide</code></strong>, <strong><code>isoforms_max</code></strong>, <strong><code>n_modifications_max</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="get_isoforms" class="doc_header"><code>get_isoforms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L261" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isoforms</code>(<strong><code>mods_variable_dict</code></strong>:<code>dict</code>, <strong><code>peptide</code></strong>:<code>str</code>, <strong><code>isoforms_max</code></strong>:<code>int</code>, <strong><code>n_modifications_max</code></strong>:<code>int</code>=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Function to generate isoforms for a given peptide - returns a list of isoforms.
-The original sequence is included in the list</p>
+<p>Function to generate modified forms (with variable modifications) for a given peptide - returns a list of modified forms.
+The original sequence is included in the list
+Args:
+    mods_variable_dict (dict): the key is AA, and value is the modified form (e.g. oxM).
+    peptide (str): the peptide sequence to generate modified forms.
+    isoforms_max (int): max number of modified forms to generate per peptide.
+    n_modifications_max (int, optional): max number of variable modifications per peptide.
+Returns:
+    list (of str): the list of peptide forms for the given peptide</p>
 
 </div>
 
@@ -805,8 +859,16 @@ The original sequence is included in the list</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_variable_mods" class="doc_header"><code>add_variable_mods</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L254" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mods</code>(<strong><code>peptide_list</code></strong>, <strong><code>mods_variable</code></strong>, <strong><code>isoforms_max</code></strong>, <strong><code>n_modifications_max</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="add_variable_mods" class="doc_header"><code>add_variable_mods</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L309" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mods</code>(<strong><code>peptide_list</code></strong>:<code>list</code>, <strong><code>mods_variable</code></strong>:<code>list</code>, <strong><code>isoforms_max</code></strong>:<code>int</code>, <strong><code>n_modifications_max</code></strong>:<code>int</code>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
+<p>Add variable modifications to the peptide list
+Args:
+    peptide_list (list of str): peptide list.
+    mods_variable (list of str): modification list.
+    isoforms_max (int): max number of modified forms per peptide sequence.
+    n_modifications_max (int): max number of variable modifications per peptide.
+Returns:
+    list (of str): list of modified sequences for the given peptide list.</p>
 
 </div>
 
@@ -886,9 +948,16 @@ The original sequence is included in the list</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_fixed_mod_terminal" class="doc_header"><code>add_fixed_mod_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L273" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mod_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mod</code></strong>)</p>
+<h4 id="add_fixed_mod_terminal" class="doc_header"><code>add_fixed_mod_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L339" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mod_terminal</code>(<strong><code>peptides</code></strong>:<code>list</code>, <strong><code>mod</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Adds fixed terminal modifications</p>
+<p>Adds fixed terminal modifications
+Args:
+    peptides (list of str): peptide list.
+    mod (str): n-term mod contains '&lt;^' (e.g. a&lt;^ for Acetyl@N-term); c-term mod contains '&gt;^'.
+Raises:
+    "Invalid fixed terminal modification 'mod name'" for the given mod.
+Returns:
+    list (of str): list of peptides with modification added.</p>
 
 </div>
 
@@ -911,9 +980,16 @@ The original sequence is included in the list</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_fixed_mods_terminal" class="doc_header"><code>add_fixed_mods_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L291" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mods_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mods_fixed_terminal</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="add_fixed_mods_terminal" class="doc_header"><code>add_fixed_mods_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L364" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mods_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mods_fixed_terminal</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Wrapper to add fixed mods on sequences and lists of mods</p>
+<p>Wrapper to add fixed mods on sequences and lists of mods
+Args:
+    peptides (list of str): peptide list.
+    mods_fixed_terminal (list of str): list of fixed terminal mods.
+Raises:
+    "Invalid fixed terminal modification {mod}" exception for the given mod.
+Returns:
+    list (of str): list of peptides with modification added.</p>
 
 </div>
 
@@ -991,9 +1067,14 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_variable_mods_terminal" class="doc_header"><code>add_variable_mods_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L304" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mods_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mods_variable_terminal</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="add_variable_mods_terminal" class="doc_header"><code>add_variable_mods_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L384" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mods_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mods_variable_terminal</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Function to add variable terminal modifications</p>
+<p>Function to add variable terminal modifications.
+Args:
+    peptides (list of str): peptide list.
+    mods_variable_terminal (list of str): list of variable terminal mods.
+Returns:
+    list (of str): list of peptides with modification added.</p>
 
 </div>
 
@@ -1016,7 +1097,7 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_unique_peptides" class="doc_header"><code>get_unique_peptides</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L329" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_unique_peptides</code>(<strong><code>peptides</code></strong>)</p>
+<h4 id="get_unique_peptides" class="doc_header"><code>get_unique_peptides</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L416" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_unique_peptides</code>(<strong><code>peptides</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -1088,14 +1169,18 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_peptides" class="doc_header"><code>generate_peptides</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L333" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_peptides</code>(<strong><code>peptide</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="generate_peptides" class="doc_header"><code>generate_peptides</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L420" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_peptides</code>(<strong><code>peptide</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Wrapper to get modified peptides from a peptide</p>
-<p>TODO:</p>
-<p>There can be some edge-cases which are not defined yet.
-Example:
-Setting the same fixed modification - once for all peptides and once for only terminal for the protein.
-The modification will thenbe applied twice.</p>
+<p>Wrapper to get modified peptides (fixed and variable mods) from a peptide.</p>
+<p>Args:
+    peptide (str): the given peptide sequence.
+Returns:
+    list (of str): all modified peptides.</p>
+<p>TODO:
+    There can be some edge-cases which are not defined yet.
+    Example:
+    Setting the same fixed modification - once for all peptides and once for only terminal for the protein.
+    The modification will then be applied twice.</p>
 
 </div>
 
@@ -1118,8 +1203,14 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_peptide" class="doc_header"><code>check_peptide</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L385" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_peptide</code>(<strong><code>peptide</code></strong>, <strong><code>AAs</code></strong>)</p>
+<h4 id="check_peptide" class="doc_header"><code>check_peptide</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L475" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_peptide</code>(<strong><code>peptide</code></strong>, <strong><code>AAs</code></strong>)</p>
 </blockquote>
+<p>Check if the peptide contains non-AA letters.
+Args:
+    peptide (str): peptide sequence.
+    AAs (set): the set of legal amino acids. See alphapept.constants.AAs
+Returns:
+    bool: True if all letters in the peptide is the subset of AAs, otherwise False</p>
 
 </div>
 
@@ -1212,9 +1303,14 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_precmass" class="doc_header"><code>get_precmass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L397" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_precmass</code>(<strong><code>parsed_pep</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_precmass" class="doc_header"><code>get_precmass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L495" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_precmass</code>(<strong><code>parsed_pep</code></strong>:<code>list</code>, <strong><code>mass_dict</code></strong>:<code>Dict</code>)</p>
 </blockquote>
-<p>Calculate the mass of the neutral precursor</p>
+<p>Calculate the mass of the neutral precursor
+Args:
+    parsed_pep (list or numba.typed.List of str): the list of amino acids and modified amono acids.
+    mass_dict (numba.typed.Dict): key is the amino acid or the modified amino acid, and the value is the mass.
+Returns:
+    float: the peptide neutral mass.</p>
 
 </div>
 
@@ -1286,9 +1382,16 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_fragmass" class="doc_header"><code>get_fragmass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L410" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_fragmass</code>(<strong><code>parsed_pep</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_fragmass" class="doc_header"><code>get_fragmass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L514" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_fragmass</code>(<strong><code>parsed_pep</code></strong>:<code>list</code>, <strong><code>mass_dict</code></strong>:<code>Dict</code>)</p>
 </blockquote>
-<p>Calculate the masses of the fragment ions</p>
+<p>Calculate the masses of the fragment ions
+Args:
+    parsed_pep (numba.typed.List of str): the list of amino acids and modified amono acids.
+    mass_dict (numba.typed.Dict): key is the amino acid or the modified amino acid, and the value is the mass.
+Returns:
+    Tuple[np.ndarray(np.float64), np.ndarray(np.int8)]: the fragment masses and the fragment types (represented as np.int8).
+    For a fragment type, positive value means the b-ion, the value indicates the position (b1, b2, b3...); the negative value means
+    the y-ion, the absolute value indicates the position (y1, y2, ...).</p>
 
 </div>
 
@@ -1354,8 +1457,14 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_frag_dict" class="doc_header"><code>get_frag_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L441" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_frag_dict</code>(<strong><code>parsed_pep</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_frag_dict" class="doc_header"><code>get_frag_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L552" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_frag_dict</code>(<strong><code>parsed_pep</code></strong>:<code>list</code>, <strong><code>mass_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
+<p>Calculate the masses of the fragment ions
+Args:
+    parsed_pep (list or numba.typed.List of str): the list of amino acids and modified amono acids.
+    mass_dict (numba.typed.Dict): key is the amino acid or the modified amino acid, and the value is the mass.
+Returns:
+    dict{str:float}: key is the fragment type (b1, b2, ..., y1, y2, ...), value is fragment mass.</p>
 
 </div>
 
@@ -1466,8 +1575,7 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_png output_subarea ">
-<img src="data:image/png;base64,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zc9//vMcccQRHbrNzui73/0u8+fP59prr6Vfv3488cQTpUt6j2nTpnHSSScxduxYtttuO/75z3/yyiuvtOs2HCFrgylTpvDpT3+a3XbbjbFjxzJv3jx69erFZz7zGbbaaqsO/2Ve1FVXXcVxxx33rnlnnXUWZ599Nttuuy0f+9jHGDiwxcufrJBa2l877LADe+yxB6uuuiq9e/fmgAMO4KGHHmqX7S2p/1/5ylcYMmQIK620EltuuSVbb701Dz/8cLtst5Fa6uHqq6/OeuutR0SQmay00ko8++yzRetcUu/f97730adPn4XzI4Lp06d3dIkLtdTTZmeccQZHH300vXr1KlZfsyX1FODhhx/mqaeeYp999ilR3jJZUu8bYWk97G5a6v/TTz/NPffcw0knncSaa67JSiutxL/+678WqW9J++vSSy/lk5/8JDvssAM9evSgX79+rL/++u26fQNZG9x6661ccMEF3HDDDTzzzDMdMqzdFiNGjOB3v/vdwtQ+f/58br/9dvbee+/ClZXRmv31xz/+kY033rhdttfa/r/55ptMmTKl3bbbSEvq4a677srQoUM566yz+OIXv1iwyqX3/oorrmCnnXZixIgRvP766+y5557Fal1cT++44w569erFjjvuWKy2ekvq6YIFCzjjjDM47rjjiIjClbbekt7PI0eOZMSIEYwdO5aXXnqpXba3tPfltddey+67785nP/tZfvWrX7XLNjuzlvo/ZcoUBg0axMUXX8ywYcMYPXp0sV4saX898sgjAIwePZqPf/zj/Nd//Rdz585t1+0byNpg9OjRrLPOOqyxxhqMGTOGX/7yl6VLepcBAwawzTbbcMcddwDwu9/9jv79+xf7a6O0pe2vqVOncskll3DMMce0y/Za2//TTjuND3zgAwwdOrRdtttIS+rh3XffzT333MNxxx3HZpttVrDKpff+C1/4Ar/+9a+5+uqr2XvvvVlttdWK1dpST1977TUuvPBCjj322GJ1LWpJPR0/fjxbbrlll/u3paXe9+/fn6uuuoqbbrqJH//4x7z66qucfPLJ7bK9JfXwwAMP5Prrr2fixIl89atf5dRTT2230frOqqX+z5o1i6eeeorVVluN2267jeOPP55vfvOb/PWvf+3w+pa0v2bPns0tt9zCWWedxfXXX8+bb77JmWee2a7bN5C1wTrrrLPw/qBBg5gzZ07Balo2cuRIbr31VqD218iIESMKV1TOkvbXs88+y9FHH82xxx7L1ltv3W7bXFr/zzvvPJ566ilOP/30LjGysLT3fJ8+fRg1ahSnnHIKL774YkeX9y5L631EsNlmm7HKKqvwwx/+sESJQMs9vfjiixkxYgTrrbdesbpa0lJP58yZw/jx4znyyCMLV9d2LfW+b9++bL755vTo0YO11lqL448/nvvuu4/XXnutXba5uPflBz/4Qfr160ePHj3Ycccd2XPPPVf4UbKW+t+7d2969uzJmDFj6NWrF9tssw1NTU3cd999RWpc3P5aZZVV2Geffdhwww3p27cvhx56KPfee2+7bttA1gazZs1aeH/mzJmd8nysXXfdlalTp/LUU0/xm9/8hr322qt0ScUsbn/NmDGDI444gi996UvtHliX1P+LL76Ye++9lwsvvJBVV121XbfbKK15z2cmb7zxRvE/UFr73p8/f37Rc8ha6ukf/vAHxo8fz/Dhwxk+fDizZs3ihBNO4MorryxWJ7Tc0ylTpvDCCy/wqU99iuHDh3P22WczZcoUhg8f3ulP7m/N+7n5D6X2ei2tfV82n5O5Imup/5tsssl71iv5x+ri9temm276rroaUaOBrA0mTJjA7NmzmTt3LpdeeinDhw8HYN68eQtPDn3rrbeYN29esV+slVdemWHDhnHSSSexxRZbsO666wK1f1zmzZvH/PnzyUzmzZvH22+/XaTGjtLS/po9ezaHH344BxxwAKNGjWr3bS6u/5dffjm33XYbF110Ef369Wv37TZKSz28//77eeKJJ1iwYAGvvvoq55xzDmussQYbbbRR0Vpb6v2CBQu47rrrmDt3LpnJlClTmDBhAttuu22xOlvq6UUXXcSECRO45ppruOaaaxgwYAAnnngin/70p4vVCS33dIcdduAXv/jFwloPP/xwNttsM6655hpWWqlz/5fSUu8fffRRnnnmGRYsWMDLL7/MWWedxUc+8pF2O6y9uH8T7rzzTl577TUWLFjAfffdx6233souu+zSLtvsrFrq/zbbbMO6667L5Zdfzvz583nooYeYNGlSsVM6Fre/9t13X37xi1/w3HPP8cYbbyw8L7U9edmLNthzzz058sgjmTNnDrvsssvCa++MGjWKGTNmAHDUUUcBcOONNxY7/DBy5Eh+/vOfc8oppyyc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
-"
+<img src="data:image/png;base64,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zc9//vMcccQRHbrNzui73/0u8+fP59prr6Vfv3488cQTpUt6j2nTpnHSSScxduxYtttuO/75z3/yyiuvtOs2HCFrgylTpvDpT3+a3XbbjbFjxzJv3jx69erFZz7zGbbaaqsO/2Ve1FVXXcVxxx33rnlnnXUWZ599Nttuuy0f+9jHGDiwxcufrJBa2l877LADe+yxB6uuuiq9e/fmgAMO4KGHHmqX7S2p/1/5ylcYMmQIK620EltuuSVbb701Dz/8cLtst5Fa6uHqq6/OeuutR0SQmay00ko8++yzRetcUu/f97730adPn4XzI4Lp06d3dIkLtdTTZmeccQZHH300vXr1KlZfsyX1FODhhx/mqaeeYp999ilR3jJZUu8bYWk97G5a6v/TTz/NPffcw0knncSaa67JSiutxL/+678WqW9J++vSSy/lk5/8JDvssAM9evSgX79+rL/++u26fQNZG9x6661ccMEF3HDDDTzzzDMdMqzdFiNGjOB3v/vdwtQ+f/58br/9dvbee+/ClZXRmv31xz/+kY033rhdttfa/r/55ptMmTKl3bbbSEvq4a677srQoUM566yz+OIXv1iwyqX3/oorrmCnnXZixIgRvP766+y5557Fal1cT++44w569erFjjvuWKy2ekvq6YIFCzjjjDM47rjjiIjClbbekt7PI0eOZMSIEYwdO5aXXnqpXba3tPfltddey+67785nP/tZfvWrX7XLNjuzlvo/ZcoUBg0axMUXX8ywYcMYPXp0sV4saX898sgjAIwePZqPf/zj/Nd//Rdz585t1+0byNpg9OjRrLPOOqyxxhqMGTOGX/7yl6VLepcBAwawzTbbcMcddwDwu9/9jv79+xf7a6O0pe2vqVOncskll3DMMce0y/Za2//TTjuND3zgAwwdOrRdtttIS+rh3XffzT333MNxxx3HZpttVrDKpff+C1/4Ar/+9a+5+uqr2XvvvVlttdWK1dpST1977TUuvPBCjj322GJ1LWpJPR0/fjxbbrlll/u3paXe9+/fn6uuuoqbbrqJH//4x7z66qucfPLJ7bK9JfXwwAMP5Prrr2fixIl89atf5dRTT2230frOqqX+z5o1i6eeeorVVluN2267jeOPP55vfvOb/PWvf+3w+pa0v2bPns0tt9zCWWedxfXXX8+bb77JmWee2a7bN5C1wTrrrLPw/qBBg5gzZ07Balo2cuRIbr31VqD218iIESMKV1TOkvbXs88+y9FHH82xxx7L1ltv3W7bXFr/zzvvPJ566ilOP/30LjGysLT3fJ8+fRg1ahSnnHIKL774YkeX9y5L631EsNlmm7HKKqvwwx/+sESJQMs9vfjiixkxYgTrrbdesbpa0lJP58yZw/jx4znyyCMLV9d2LfW+b9++bL755vTo0YO11lqL448/nvvuu4/XXnutXba5uPflBz/4Qfr160ePHj3Ycccd2XPPPVf4UbKW+t+7d2969uzJmDFj6NWrF9tssw1NTU3cd999RWpc3P5aZZVV2Geffdhwww3p27cvhx56KPfee2+7bttA1gazZs1aeH/mzJmd8nysXXfdlalTp/LUU0/xm9/8hr322qt0ScUsbn/NmDGDI444gi996UvtHliX1P+LL76Ye++9lwsvvJBVV121XbfbKK15z2cmb7zxRvE/UFr73p8/f37Rc8ha6ukf/vAHxo8fz/Dhwxk+fDizZs3ihBNO4MorryxWJ7Tc0ylTpvDCCy/wqU99iuHDh3P22WczZcoUhg8f3ulP7m/N+7n5D6X2ei2tfV82n5O5Imup/5tsssl71iv5x+ri9temm276rroaUaOBrA0mTJjA7NmzmTt3LpdeeinDhw8HYN68eQtPDn3rrbeYN29esV+slVdemWHDhnHSSSexxRZbsO666wK1f1zmzZvH/PnzyUzmzZvH22+/XaTGjtLS/po9ezaHH344BxxwAKNGjWr3bS6u/5dffjm33XYbF110Ef369Wv37TZKSz28//77eeKJJ1iwYAGvvvoq55xzDmussQYbbbRR0Vpb6v2CBQu47rrrmDt3LpnJlClTmDBhAttuu22xOlvq6UUXXcSECRO45ppruOaaaxgwYAAnnngin/70p4vVCS33dIcdduAXv/jFwloPP/xwNttsM6655hpWWqlz/5fSUu8fffRRnnnmGRYsWMDLL7/MWWedxUc+8pF2O6y9uH8T7rzzTl577TUWLFjAfffdx6233souu+zSLtvsrFrq/zbbbMO6667L5Zdfzvz583nooYeYNGlSsVM6Fre/9t13X37xi1/w3HPP8cYbbyw8L7U9edmLNthzzz058sgjmTNnDrvsssvCa++MGjWKGTNmAHDUUUcBcOONNxY7/DBy5Eh+/vOfc8oppyyc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"
 >
 </div>
 
@@ -1504,8 +1612,14 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_spectrum" class="doc_header"><code>get_spectrum</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L459" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_spectrum</code>(<strong><code>peptide</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_spectrum" class="doc_header"><code>get_spectrum</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L577" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_spectrum</code>(<strong><code>peptide</code></strong>:<code>str</code>, <strong><code>mass_dict</code></strong>:<code>Dict</code>)</p>
 </blockquote>
+<p>Get neutral peptide mass, fragment masses and fragment types for a peptide
+Args:
+    peptide (str): the (modified) peptide.
+    mass_dict (numba.typed.Dict): key is the amino acid or modified amino acid, and the value is the mass.
+Returns:
+    Tuple[float, str, np.ndarray(np.float64), np.ndarray(np.int8)]: (peptide mass, peptide, fragment masses, fragment_types), for fragment types, see get_fragmass.</p>
 
 </div>
 
@@ -1528,8 +1642,16 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_spectra" class="doc_header"><code>get_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L472" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_spectra</code>(<strong><code>peptides</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_spectra" class="doc_header"><code>get_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L598" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_spectra</code>(<strong><code>peptides</code></strong>:<code>List</code>, <strong><code>mass_dict</code></strong>:<code>Dict</code>)</p>
 </blockquote>
+<p>Get neutral peptide mass, fragment masses and fragment types for a list of peptides
+Args:
+    peptides (list of str): the (modified) peptide list.
+    mass_dict (numba.typed.Dict): key is the amino acid or modified amino acid, and the value is the mass.
+Raises:
+    Unknown exception and pass.
+Returns:
+    list of Tuple[float, str, np.ndarray(np.float64), np.ndarray(np.int8)]: See get_spectrum.</p>
 
 </div>
 
@@ -1600,9 +1722,13 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_fasta_file" class="doc_header"><code>read_fasta_file</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L490" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_fasta_file</code>(<strong><code>fasta_filename</code></strong>=<em><code>''</code></em>)</p>
+<h4 id="read_fasta_file" class="doc_header"><code>read_fasta_file</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L626" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_fasta_file</code>(<strong><code>fasta_filename</code></strong>:<code>str</code>=<em><code>''</code></em>)</p>
 </blockquote>
-<p>Read a FASTA file line by line</p>
+<p>Read a FASTA file line by line
+Args:
+    fasta_filename (str): fasta.
+Yields:
+    dict {id:str, name:str, description:str, sequence:str}: protein information.</p>
 
 </div>
 
@@ -1625,9 +1751,13 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_fasta_file_entries" class="doc_header"><code>read_fasta_file_entries</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L517" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_fasta_file_entries</code>(<strong><code>fasta_filename</code></strong>=<em><code>''</code></em>)</p>
+<h4 id="read_fasta_file_entries" class="doc_header"><code>read_fasta_file_entries</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L657" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_fasta_file_entries</code>(<strong><code>fasta_filename</code></strong>=<em><code>''</code></em>)</p>
 </blockquote>
-<p>Function to count entries in fasta file</p>
+<p>Function to count entries in fasta file
+Args:
+    fasta_filename (str): fasta.
+Returns:
+    int: number of entries.</p>
 
 </div>
 
@@ -1650,9 +1780,15 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_sequence" class="doc_header"><code>check_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L534" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_sequence</code>(<strong><code>element</code></strong>, <strong><code>AAs</code></strong>, <strong><code>verbose</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="check_sequence" class="doc_header"><code>check_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L678" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_sequence</code>(<strong><code>element</code></strong>:<code>dict</code>, <strong><code>AAs</code></strong>:<code>set</code>, <strong><code>verbose</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
-<p>Checks wheter a sequence from a FASTA entry contains valid AAs</p>
+<p>Checks wheter a sequence from a FASTA entry contains valid AAs
+Args:
+    element (dict): fasta entry of the protein information.
+    AAs (set): a set of amino acid letters.
+    verbose (bool): logging the invalid amino acids.
+Returns:
+    bool: False if the protein sequence contains non-AA letters, otherwise True.</p>
 
 </div>
 
@@ -1727,9 +1863,16 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_to_pept_dict" class="doc_header"><code>add_to_pept_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L549" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_to_pept_dict</code>(<strong><code>pept_dict</code></strong>, <strong><code>new_peptides</code></strong>, <strong><code>i</code></strong>)</p>
+<h4 id="add_to_pept_dict" class="doc_header"><code>add_to_pept_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L699" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_to_pept_dict</code>(<strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>new_peptides</code></strong>:<code>list</code>, <strong><code>i</code></strong>:<code>int</code>)</p>
 </blockquote>
-<p>Add peptides to the peptide dictionary</p>
+<p>Add peptides to the peptide dictionary
+Args:
+    pept_dict (dict): the key is peptide sequence, and the value is protein id list indicating where the peptide is from.
+    new_peptides (list): the list of peptides to be added to pept_dict.
+    i (int): the protein id where new_peptides are from.
+Returns:
+    dict: same as the pept_dict in the arguments.
+    list (of str): the peptides from new_peptides that not in the pept_dict.</p>
 
 </div>
 
@@ -1799,8 +1942,13 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="merge_pept_dicts" class="doc_header"><code>merge_pept_dicts</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L566" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>merge_pept_dicts</code>(<strong><code>list_of_pept_dicts</code></strong>)</p>
+<h4 id="merge_pept_dicts" class="doc_header"><code>merge_pept_dicts</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L723" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>merge_pept_dicts</code>(<strong><code>list_of_pept_dicts</code></strong>:<code>list</code>)</p>
 </blockquote>
+<p>Merge a list of peptide dict into a single dict.
+Args:
+    list_of_pept_dicts (list of dict): the key of the pept_dict is peptide sequence, and the value is protein id list indicating where the peptide is from.
+Returns:
+    dict: the key is peptide sequence, and the value is protein id list indicating where the peptide is from.</p>
 
 </div>
 
@@ -1897,9 +2045,15 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_fasta_list" class="doc_header"><code>generate_fasta_list</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L587" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_fasta_list</code>(<strong><code>fasta_paths</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="generate_fasta_list" class="doc_header"><code>generate_fasta_list</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L750" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_fasta_list</code>(<strong><code>fasta_paths</code></strong>:<code>list</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Function to generate a database from a fasta file</p>
+<p>Function to generate a database from a fasta file
+Args:
+    fasta_paths (str or list of str): fasta path or a list of fasta paths.
+    callback (function, optional): callback function.
+Returns:
+    fasta_list (list of dict): list of protein entry dict {id:str, name:str, description:str, sequence:str}.
+    fasta_dict (dict{int:dict}): the key is the protein id, the value is the protein entry dict.</p>
 
 </div>
 
@@ -1922,9 +2076,17 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_database" class="doc_header"><code>generate_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L619" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database</code>(<strong><code>mass_dict</code></strong>, <strong><code>fasta_paths</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="generate_database" class="doc_header"><code>generate_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L788" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database</code>(<strong><code>mass_dict</code></strong>, <strong><code>fasta_paths</code></strong>:<code>list</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Function to generate a database from a fasta file</p>
+<p>Function to generate a database from a fasta file
+Args:
+    mass_dict (dict): not used, will be removed in the future.
+    fasta_paths (str or list of str): fasta path or a list of fasta paths.
+    callback (function, optional): callback function.
+Returns:
+    to_add (list of str): non-redundant (modified) peptides to be added.
+    pept_dict (dict{str:list of int}): the key is peptide sequence, and the value is protein id list indicating where the peptide is from.
+    fasta_dict (dict{int:dict}): the key is the protein id, the value is the protein entry dict {id:str, name:str, description:str, sequence:str}.</p>
 
 </div>
 
@@ -1947,9 +2109,15 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_spectra" class="doc_header"><code>generate_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L657" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_spectra</code>(<strong><code>to_add</code></strong>, <strong><code>mass_dict</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="generate_spectra" class="doc_header"><code>generate_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L834" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_spectra</code>(<strong><code>to_add</code></strong>:<code>list</code>, <strong><code>mass_dict</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Function to generate a database from a fasta file</p>
+<p>Function to generate spectra list database from a fasta file
+Args:
+    to_add (list):
+    mass_dict (dict{str:float}): amino acid mass dict.
+    callback (function, optional): callback function. (Default: None)
+Returns:
+    list (of tuple): list of (peptide mass, peptide, fragment masses, fragment_types), see get_fragmass.</p>
 
 </div>
 
@@ -1986,9 +2154,14 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="block_idx" class="doc_header"><code>block_idx</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L686" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>block_idx</code>(<strong><code>len_list</code></strong>, <strong><code>block_size</code></strong>=<em><code>1000</code></em>)</p>
+<h4 id="block_idx" class="doc_header"><code>block_idx</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L869" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>block_idx</code>(<strong><code>len_list</code></strong>:<code>int</code>, <strong><code>block_size</code></strong>:<code>int</code>=<em><code>1000</code></em>)</p>
 </blockquote>
-<p>Create indices for a list of length len_list</p>
+<p>Split length into blocks
+Args:
+    len_list (int): list length.
+    block_size (int, optional, default 1000): size per block.
+Returns:
+    list[(int, int)]: list of (start, end) positions of blocks.</p>
 
 </div>
 
@@ -2011,9 +2184,14 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="blocks" class="doc_header"><code>blocks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L701" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>blocks</code>(<strong><code>l</code></strong>, <strong><code>n</code></strong>)</p>
+<h4 id="blocks" class="doc_header"><code>blocks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L889" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>blocks</code>(<strong><code>l</code></strong>:<code>int</code>, <strong><code>n</code></strong>:<code>int</code>)</p>
 </blockquote>
-<p>Create blocks from a given list</p>
+<p>Create blocks from a given list
+Args:
+    l (list): the list
+    n (int): size per block
+Returns:
+    tuple: tuple of split blocks</p>
 
 </div>
 
@@ -2036,9 +2214,9 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="digest_fasta_block" class="doc_header"><code>digest_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L708" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>digest_fasta_block</code>(<strong><code>to_process</code></strong>)</p>
+<h4 id="digest_fasta_block" class="doc_header"><code>digest_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L901" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>digest_fasta_block</code>(<strong><code>to_process</code></strong>)</p>
 </blockquote>
-<p>Digest and create spectra for a whole fasta_block</p>
+<p>Digest and create spectra for a whole fasta_block for multiprocessing. See generate_database_parallel.</p>
 
 </div>
 
@@ -2061,9 +2239,15 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_database_parallel" class="doc_header"><code>generate_database_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L737" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database_parallel</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="generate_database_parallel" class="doc_header"><code>generate_database_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L930" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database_parallel</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Function to generate a database from a fasta file</p>
+<p>Function to generate a database from a fasta file in parallel.
+Args:
+    settings: alphapept settings.
+Returns:
+    list: theoretical spectra. See generate_spectra()
+    dict: peptide dict. See add_to_pept_dict()
+    dict: fasta_dict. See generate_fasta_list()</p>
 
 </div>
 
@@ -2102,9 +2286,9 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="pept_dict_from_search" class="doc_header"><code>pept_dict_from_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L772" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pept_dict_from_search</code>(<strong><code>settings</code></strong>)</p>
+<h4 id="pept_dict_from_search" class="doc_header"><code>pept_dict_from_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L971" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pept_dict_from_search</code>(<strong><code>settings</code></strong>)</p>
 </blockquote>
-<p>Generates a peptide dict from a large search</p>
+<p>Generates a peptide dict from a large search.</p>
 
 </div>
 
@@ -2153,9 +2337,13 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="save_database" class="doc_header"><code>save_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L817" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_database</code>(<strong><code>spectra</code></strong>, <strong><code>pept_dict</code></strong>, <strong><code>fasta_dict</code></strong>, <strong><code>database_path</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="save_database" class="doc_header"><code>save_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L1016" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_database</code>(<strong><code>spectra</code></strong>:<code>list</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>fasta_dict</code></strong>:<code>dict</code>, <strong><code>database_path</code></strong>:<code>str</code>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Function to save a database to the *.hdf format.</p>
+<p>Function to save a database to the *.hdf format. Write the database into hdf.
+Args:
+    spectra (list): list: theoretical spectra. See generate_spectra()
+    pept_dict (dict): peptide dict. See add_to_pept_dict()
+    fasta_dict (dict): fasta_dict. See generate_fasta_list()</p>
 
 </div>
 
@@ -2185,8 +2373,14 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_database" class="doc_header"><code>read_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L887" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_database</code>(<strong><code>database_path</code></strong>:<code>str</code>, <strong><code>array_name</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
+<h4 id="read_database" class="doc_header"><code>read_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L1090" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_database</code>(<strong><code>database_path</code></strong>:<code>str</code>, <strong><code>array_name</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
 </blockquote>
+<p>Read database from hdf file.
+Args:
+    database_path (str): hdf database file generate by alphapept.
+    array_name (str): the dataset name to read
+return:
+    dict: key is the dataset_name in hdf file, value is the python object read from the dataset_name</p>
 
 </div>
 
