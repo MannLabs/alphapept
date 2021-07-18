@@ -490,6 +490,7 @@ def check_peptide(peptide, AAs)->bool:
 from numba import njit
 from numba.typed import List
 import numpy as np
+import numba
 
 @njit
 def get_precmass(parsed_pep:list, mass_dict:numba.typed.Dict)->float:
