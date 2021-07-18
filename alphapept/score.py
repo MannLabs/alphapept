@@ -546,10 +546,16 @@ import networkx as nx
 
 def assign_proteins(data, pept_dict):
     """
-    Assign proteins to psms.
-    This functions requires a dataframe and a peptide dictionary (that matches sequences to proteins).
-    It will append the dataframe with the column 'n_possible_proteins' which indicate how many proteins could belong to the PSMs.
-    It will return a dictionary `found_proteins` where each protein is mapped to the indices of PSMs.
+    Assign psms to proteins.
+    This function appends the dataframe with a column 'n_possible_proteins' which indicates how many proteins a psm could be matched to.
+    It returns the appended dataframe and a dictionary `found_proteins` where each protein is mapped to the psms indices.
+
+    Args:
+        data (pd.DataFrame): psms table of scored and filtered search results from alphapept.
+        pept_dict (dict): dictionary that matches peptide sequences to proteins
+
+    Returns:
+        [pd.DataFrame, dict]: pd.DataFrame: psms table of search results from alphapept appended with the number of matched proteins. dict: dictionary mapping psms indices to proteins.
 
     """
 
@@ -576,6 +582,18 @@ def assign_proteins(data, pept_dict):
     return data, found_proteins
 
 def get_shared_proteins(data, found_proteins, pept_dict):
+    """
+    Assign peptides to razor proteins.
+
+    Args:
+        data (pd.DataFrame): psms table of scored and filtered search results from alphapept, appended with `n_possible_proteins`.
+        found_proteins (dict): dictionary mapping psms indices to proteins
+        pept_dict (dict): dictionary mapping peptide indices to the originating proteins as a list
+
+    Returns:
+        dict: dictionary mapping peptides to razor proteins
+
+    """
 
     G = nx.Graph()
 
@@ -654,9 +672,20 @@ def get_shared_proteins(data, found_proteins, pept_dict):
 
 def get_protein_groups(data, pept_dict, fasta_dict, decoy = False, callback = None, **kwargs):
     """
-    Function to perform protein grouping by razor approach
+    Function to perform protein grouping by razor approach.
+    This function calls `assign_proteins` and `get_shared_proteins`.
     ToDo: implement callback for solving
     Each protein is indicated with a p -> protein index
+
+    Args:
+        data (pd.DataFrame): psms table of scored and filtered search results from alphapept.
+        pept_dict (dict): A dictionary mapping peptide indices to the originating proteins as a list.
+        fasta_dict (dict): A dictionary with fasta sequences.
+        decoy (bool, optional): Defaults to False.
+        callback (bool, optional): Defaults to None.
+
+    Returns:
+        pd.DataFrame: alphapept results table now including protein level information.
     """
     data, found_proteins = assign_proteins(data, pept_dict)
     found_proteins_razor = get_shared_proteins(data, found_proteins, pept_dict)
@@ -714,6 +743,13 @@ def perform_protein_grouping(data, pept_dict, fasta_dict, **kwargs):
     """
     Wrapper function to perform protein grouping by razor approach
 
+    Args:
+        data (pd.DataFrame): psms table of scored and filtered search results from alphapept.
+        pept_dict (dict): A dictionary mapping peptide indices to the originating proteins as a list.
+        fasta_dict (dict): A dictionary with fasta sequences.
+
+    Returns:
+        pd.DataFrame: alphapept results table now including protein level information.
     """
     data_sub = data[['sequence','score','decoy']]
     data_sub_unique = data_sub.groupby(['sequence','decoy'], as_index=False).agg({"score": "max"})
