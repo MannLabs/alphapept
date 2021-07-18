@@ -3,7 +3,7 @@
 __all__ = ['filter_score', 'filter_precursor', 'get_q_values', 'cut_fdr', 'cut_global_fdr', 'get_x_tandem_score',
            'score_x_tandem', 'filter_with_x_tandem', 'filter_with_score', 'score_psms', 'get_ML_features', 'train_RF',
            'score_ML', 'filter_with_ML', 'assign_proteins', 'get_shared_proteins', 'get_protein_groups',
-           'perform_protein_grouping', 'get_ion', 'ecdf', 'score_hdf', 'ion_dict', 'protein_groups_hdf',
+           'perform_protein_grouping', 'get_ion', 'ion_dict', 'ecdf', 'score_hdf', 'protein_groups_hdf',
            'protein_grouping_all', 'protein_groups_hdf_parallel']
 
 # Cell
@@ -12,7 +12,7 @@ import pandas as pd
 import logging
 import alphapept.io
 
-def filter_score(df: pd.DataFrame, mode: str='multiple'):
+def filter_score(df: pd.DataFrame, mode: str='multiple') -> pd.DataFrame:
     """
     Filter psms feature table by keeping only the best scoring psm per experimental spectrum.
 
@@ -52,7 +52,7 @@ def filter_score(df: pd.DataFrame, mode: str='multiple'):
     # TOD: this needs to be sorted out, for modifications -> What if we have MoxM -> oxMM, this will screw up with the filter sequence part
     return df_filtered
 
-def filter_precursor(df: pd.DataFrame):
+def filter_precursor(df: pd.DataFrame) -> pd.DataFrame:
     """
     Filter psms feature table by precursor.
     Allow each precursor only once.
@@ -74,7 +74,7 @@ def filter_precursor(df: pd.DataFrame):
 # Cell
 from numba import njit
 @njit
-def get_q_values(fdr_values: np.ndarray):
+def get_q_values(fdr_values: np.ndarray) -> np.ndarray:
     """
     Calculate q-values from fdr_values.
 
@@ -99,7 +99,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True):
+def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True) -> (float, pd.DataFrame):
     """
     Cuts a dataframe with a given fdr level
 
@@ -109,7 +109,8 @@ def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True):
         plot (bool, optional): flag to enable plot. Defaults to 'True'.
 
     Returns:
-        [float, pd.DataFrame]: float: numerical value of the applied score cutoff, pd.DataFrame: df with psms within fdr
+        float: numerical value of the applied score cutoff
+        pd.DataFrame: df with psms within fdr
 
     """
 
@@ -151,7 +152,6 @@ def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True):
 
     if plot:
         import matplotlib.pyplot as plt
-        import seaborn as sns
         plt.figure(figsize=(10, 5))
         plt.plot(df["score"], df["fdr"])
         plt.axhline(0.01, color="k", linestyle="--")
@@ -165,8 +165,8 @@ def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True):
 
         bins = np.linspace(np.min(df["score"]), np.max(df["score"]), 100)
         plt.figure(figsize=(10, 5))
-        sns.distplot(df[df["decoy"]]["score"].values, label="decoy", bins=bins)
-        sns.distplot(df[~df["decoy"]]["score"].values, label="target", bins=bins)
+        plt.hist(df[df["decoy"]]["score"].values, label="decoy", bins=bins, alpha=0.5)
+        plt.hist(df[~df["decoy"]]["score"].values, label="target", bins=bins, alpha=0.5)
         plt.xlabel("Score")
         plt.ylabel("Frequency")
         plt.title("Score vs Class")
@@ -178,7 +178,7 @@ def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True):
 
 # Cell
 
-def cut_global_fdr(data: pd.DataFrame, analyte_level: str='sequence', fdr_level: float=0.01, plot: bool=True, **kwargs):
+def cut_global_fdr(data: pd.DataFrame, analyte_level: str='sequence', fdr_level: float=0.01, plot: bool=True, **kwargs) -> pd.DataFrame:
     """
     Function to estimate and filter by global peptide or protein fdr
 
@@ -217,7 +217,7 @@ def cut_global_fdr(data: pd.DataFrame, analyte_level: str='sequence', fdr_level:
 
 import networkx as nx
 
-def get_x_tandem_score(df: pd.DataFrame):
+def get_x_tandem_score(df: pd.DataFrame) -> np.ndarray:
     """
     Function to calculate the x tandem score
 
@@ -236,7 +236,7 @@ def get_x_tandem_score(df: pd.DataFrame):
 
     return x_tandem
 
-def score_x_tandem(df: pd.DataFrame, fdr_level: float = 0.01, plot: bool = True, **kwargs):
+def score_x_tandem(df: pd.DataFrame, fdr_level: float = 0.01, plot: bool = True, **kwargs) -> pd.DataFrame:
     """
     Filters the psms table by using the x_tandem score and filtering the results for fdr_level.
 
@@ -257,7 +257,7 @@ def score_x_tandem(df: pd.DataFrame, fdr_level: float = 0.01, plot: bool = True,
 
     return cutoff
 
-def filter_with_x_tandem(df: pd.DataFrame):
+def filter_with_x_tandem(df: pd.DataFrame) -> pd.DataFrame:
     """
     Filters the psms table by using the x_tandem score, no fdr filter.
     TODO: Remove redundancy with score functions, see issue: #275
@@ -300,7 +300,7 @@ def filter_with_score(df: pd.DataFrame):
 
 # Cell
 
-def score_psms(df: pd.DataFrame, score: str='y_hits', fdr_level: float=0.01, plot: bool=True, **kwargs):
+def score_psms(df: pd.DataFrame, score: str='y_hits', fdr_level: float=0.01, plot: bool=True, **kwargs) -> pd.DataFrame:
     """
     Uses the specified score in df to filter psms and to apply the fdr_level threshold.
 
@@ -343,7 +343,7 @@ import matplotlib.pyplot as plt
 from .fasta import count_missed_cleavages, count_internal_cleavages
 
 
-def get_ML_features(df: pd.DataFrame, protease: str='trypsin', **kwargs):
+def get_ML_features(df: pd.DataFrame, protease: str='trypsin', **kwargs) -> pd.DataFrame:
     """
     Uses the specified score in df to filter psms and to apply the fdr_level threshold.
 
@@ -381,7 +381,7 @@ def train_RF(df: pd.DataFrame,
              scoring: str = 'accuracy',
              plot:bool = False,
              random_state: int = 42,
-             **kwargs):
+             **kwargs) -> (GridSearchCV, list):
 
     """
     Function to train a random forest classifier to separate targets from decoys via semi-supervised learning.
@@ -489,7 +489,7 @@ def score_ML(df: pd.DataFrame,
              features: list = None,
              fdr_level: float = 0.01,
              plot: bool = True,
-             **kwargs):
+             **kwargs) -> pd.DataFrame:
     """
     Applies a trained ML classifier to df and uses the ML score to filter psms and to apply the fdr_level threshold.
 
@@ -518,7 +518,7 @@ def score_ML(df: pd.DataFrame,
 def filter_with_ML(df: pd.DataFrame,
              trained_classifier: GridSearchCV,
              features: list = None,
-             **kwargs):
+             **kwargs) -> pd.DataFrame:
 
     """
     Filters the psms table by using the x_tandem score, no fdr filter.
@@ -544,7 +544,7 @@ def filter_with_ML(df: pd.DataFrame,
 # Cell
 import networkx as nx
 
-def assign_proteins(data, pept_dict):
+def assign_proteins(data: pd.DataFrame, pept_dict: dict) -> (pd.DataFrame, dict):
     """
     Assign psms to proteins.
     This function appends the dataframe with a column 'n_possible_proteins' which indicates how many proteins a psm could be matched to.
@@ -555,7 +555,8 @@ def assign_proteins(data, pept_dict):
         pept_dict (dict): dictionary that matches peptide sequences to proteins
 
     Returns:
-        [pd.DataFrame, dict]: pd.DataFrame: psms table of search results from alphapept appended with the number of matched proteins. dict: dictionary mapping psms indices to proteins.
+        pd.DataFrame: psms table of search results from alphapept appended with the number of matched proteins.
+        dict: dictionary mapping psms indices to proteins.
 
     """
 
@@ -581,7 +582,7 @@ def assign_proteins(data, pept_dict):
 
     return data, found_proteins
 
-def get_shared_proteins(data, found_proteins, pept_dict):
+def get_shared_proteins(data: pd.DataFrame, found_proteins: dict, pept_dict: dict) -> dict:
     """
     Assign peptides to razor proteins.
 
@@ -670,7 +671,7 @@ def get_shared_proteins(data, found_proteins, pept_dict):
 
 
 
-def get_protein_groups(data, pept_dict, fasta_dict, decoy = False, callback = None, **kwargs):
+def get_protein_groups(data: pd.DataFrame, pept_dict: dict, fasta_dict: dict, decoy = False, callback = None, **kwargs) -> pd.DataFrame:
     """
     Function to perform protein grouping by razor approach.
     This function calls `assign_proteins` and `get_shared_proteins`.
@@ -739,7 +740,7 @@ def get_protein_groups(data, pept_dict, fasta_dict, decoy = False, callback = No
 
     return report
 
-def perform_protein_grouping(data, pept_dict, fasta_dict, **kwargs):
+def perform_protein_grouping(data: pd.DataFrame, pept_dict: dict, fasta_dict: dict, **kwargs) -> pd.DataFrame:
     """
     Wrapper function to perform protein grouping by razor approach
 
@@ -778,16 +779,27 @@ def perform_protein_grouping(data, pept_dict, fasta_dict, **kwargs):
     return protein_report
 
 # Cell
-import os
-from multiprocessing import Pool
-from scipy.interpolate import interp1d
 
 ion_dict = {}
 ion_dict[0] = ''
 ion_dict[1] = '-H20'
 ion_dict[2] = '-NH3'
 
-def get_ion(i, df, ions):
+def get_ion(i: int, df: pd.DataFrame, ions: pd.DataFrame)-> (list, np.ndarray):
+    """
+    Helper function to extract the ion-hits for a given DataFrame index.
+    This function extracts the hit type and the intensities.
+    E.g.: ['b1','y1'], np.array([10,20]).
+
+    Args:
+        i (int): Row index for the DataFrame
+        df (pd.DataFrame): DataFrame with PSMs
+        ions (pd.DataFrame): DataFrame with ion hits
+
+    Returns:
+        list: List with strings that describe the ion type.
+        np.ndarray: Array with intensity information
+    """
     start = df['ion_idx'].iloc[i]
     end = df['n_ions'].iloc[i]+start
 
@@ -798,14 +810,34 @@ def get_ion(i, df, ions):
 
     return ion, ints
 
-def ecdf(data):
-    """ Compute ECDF """
+# Cell
+def ecdf(data:np.ndarray)-> (np.ndarray, np.ndarray):
+    """Compute ECDF .
+    Helper function to calculate the ECDF of a score distribution.
+    This is later used to normalize the score from an arbitrary range to [0,1].
+
+    Args:
+        data (np.ndarray): Array containting the score.
+
+    Returns:
+        np.ndarray: Array containg the score, sorted.
+        np.ndarray: Noramalized counts.
+
+    """
     x = np.sort(data)
     n = x.size
     y = np.arange(1, n+1) / n
-    return(x,y)
 
-def score_hdf(to_process, callback = None, parallel=False):
+    return (x,y)
+
+# Cell
+import os
+from multiprocessing import Pool
+from scipy.interpolate import interp1d
+from typing import Callable
+
+#This function has no unit test and is covered by the quick_test
+def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False):
     try:
         index, settings = to_process
         file_name = settings['experiment']['file_paths'][index]
@@ -888,10 +920,10 @@ def score_hdf(to_process, callback = None, parallel=False):
         logging.error(f'Scoring of file {ms_file} failed. Exception {e}')
         return f"{e}" #Can't return exception object, cast as string
 
-# Cell
 
 import alphapept.utils
 
+#This function has no unit test and is covered by the quick_test
 def protein_groups_hdf(to_process):
 
     skip = False
@@ -934,7 +966,7 @@ def protein_groups_hdf(to_process):
 
         logging.info('Saving complete.')
 
-
+#This function has no unit test and is covered by the quick_test
 def protein_grouping_all(settings, pept_dict, fasta_dict, callback=None):
     """
     Perform protein grouping on everything
@@ -960,7 +992,7 @@ def protein_grouping_all(settings, pept_dict, fasta_dict, callback=None):
 
     logging.info('Saving complete.')
 
-
+#This function has no unit test and is covered by the quick_test
 def protein_groups_hdf_parallel(settings, pept_dict, fasta_dict, callback=None):
 
     paths = []
