@@ -46,7 +46,7 @@ def simulate_sample_profiles(n_peptides: int, n_runs: int, n_samples: int, thres
         n_peptides (int): number of peptides to be simulated.
         n_runs (int): number of runs to be simulated.
         n_samples (int): number of samples to be simulated.
-        threshold (float, optional): threshold below which a simulated intensity will be diregarded. Defaults to 0.2.
+        threshold (float, optional): threshold below which a simulated intensity will be discarded. Defaults to 0.2.
         use_noise (bool, optional): add simulated noise to the profile values. Defaults to True.
 
     Returns:
@@ -442,6 +442,10 @@ def protein_profile(files: list, minimum_ratios: int, chunk:tuple) -> (np.ndarra
         minimum_ratios (int): A minimum number of peptide ratios to be considered for optimization.
         chunk: (tuple[pd.DataFrame, str]): A pandas dataframe with the peptide information and a string to identify the protein.
 
+    Returns:
+        np.ndarray: optimized profile
+        np.ndarray: profile w/o optimization
+        str: protein identifier
     """
     grouped, protein = chunk
 
