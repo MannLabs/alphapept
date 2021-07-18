@@ -16,7 +16,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install package
       run: |
-        DEL /F/Q/S 'C:/ProgramData/Miniconda3/envs/alphapept/' > NUL
+        DEL /F/Q/S 'C:/ProgramData/Miniconda3/envs/alphapept' > NUL
         conda create --name alphapept python=3.8 -y
         conda activate alphapept
         pip install .
