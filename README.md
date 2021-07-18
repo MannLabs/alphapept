@@ -89,7 +89,7 @@ For macOS Catalina, open the configuration of zsh via the terminal:
 
 
 ### Standalone Windows Installer
-To use AlphaPept as a stand-alone program for end-users, it can be installed on Windows machines via a one-click installer. Download the latest version [here](http://alphapept.org).
+To use AlphaPept as a stand-alone program for end-users, it can be installed on Windows machines via a one-click installer. Download the latest version [here](https://github.com/MannLabs/alphapept/releases/latest).
 
 
 ### Additional Notes
