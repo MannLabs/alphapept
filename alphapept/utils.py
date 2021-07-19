@@ -293,7 +293,7 @@ def check_file(file):
         raise FileNotFoundError(f"{file}")
 
 def get_size_mb(file):
-    return os.path.getsize(file)/(1024*2)
+    return os.path.getsize(file)/(1024**2)
 
 def check_dir(dir):
     if not os.path.isdir(dir):
