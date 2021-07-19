@@ -619,7 +619,7 @@ from typing import Union
 def get_score_columns(
     psms: np.recarray,
     query_data: dict,
-    db_data: Union(dict, str),
+    db_data: Union[dict, str],
     features: pd.DataFrame,
     parallel:bool,
     frag_tol:float,
@@ -633,7 +633,7 @@ def get_score_columns(
     Args:
         psms (np.recarray): Recordarray containing PSMs.
         query_data (dict): Data structure containing the query data.
-        db_data (dict): Data structure containing the database data.
+        db_data: Union[dict, str]: Data structure containing the database data or path to database.
         features (pd.DataFrame): Pandas dataframe containing feature data.
         parallel (bool): Flag to use parallel processing.
         frag_tol (float): Fragment tolerance for search.
