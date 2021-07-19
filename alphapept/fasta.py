@@ -361,7 +361,7 @@ def add_fixed_mod_terminal(peptides:list, mod:str)->list:
         raise ("Invalid fixed terminal modification {}.".format(mod))
     return peptides
 
-def add_fixed_mods_terminal(peptides, mods_fixed_terminal, **kwargs)->list:
+def add_fixed_mods_terminal(peptides:list, mods_fixed_terminal:list, **kwargs)->list:
     """
     Wrapper to add fixed mods on sequences and lists of mods
     Args:
@@ -381,7 +381,7 @@ def add_fixed_mods_terminal(peptides, mods_fixed_terminal, **kwargs)->list:
         return peptides
 
 # Cell
-def add_variable_mods_terminal(peptides, mods_variable_terminal, **kwargs)->list:
+def add_variable_mods_terminal(peptides:list, mods_variable_terminal:list, **kwargs)->list:
     """
     Function to add variable terminal modifications.
     Args:
@@ -413,11 +413,18 @@ def add_variable_mods_terminal(peptides, mods_variable_terminal, **kwargs)->list
 
         return get_unique_peptides(new_peptides_c)
 
-def get_unique_peptides(peptides):
+def get_unique_peptides(peptides:list) -> list:
+    """
+    Function to return unique elements from list.
+    Args:
+        peptides (list of str): peptide list.
+    Returns:
+        list (of str): list of peptides (unique).
+    """
     return list(set(peptides))
 
 # Cell
-def generate_peptides(peptide, **kwargs)->list:
+def generate_peptides(peptide:str, **kwargs)->list:
     """
     Wrapper to get modified peptides (fixed and variable mods) from a peptide.
 
@@ -472,7 +479,7 @@ def generate_peptides(peptide, **kwargs)->list:
 
     return all_peptides
 
-def check_peptide(peptide, AAs)->bool:
+def check_peptide(peptide:str, AAs:set)->bool:
     """
     Check if the peptide contains non-AA letters.
     Args:
@@ -785,7 +792,7 @@ def generate_fasta_list(fasta_paths:list, callback = None, **kwargs)->tuple:
     return fasta_list, fasta_dict
 
 
-def generate_database(mass_dict, fasta_paths:list, callback = None, **kwargs)->tuple:
+def generate_database(mass_dict:dict, fasta_paths:list, callback = None, **kwargs)->tuple:
     """
     Function to generate a database from a fasta file
     Args:
@@ -898,7 +905,7 @@ def blocks(l:int, n:int)->tuple:
     n = max(1, n)
     return (l[i:i+n] for i in range(0, len(l), n))
 
-def digest_fasta_block(to_process):
+def digest_fasta_block(to_process:tuple)-> (list, dict):
     """
     Digest and create spectra for a whole fasta_block for multiprocessing. See generate_database_parallel.
     """
@@ -927,7 +934,7 @@ def digest_fasta_block(to_process):
 
 import alphapept.speed
 
-def generate_database_parallel(settings, callback = None):
+def generate_database_parallel(settings:dict, callback = None):
     """
     Function to generate a database from a fasta file in parallel.
     Args:
@@ -968,7 +975,7 @@ def generate_database_parallel(settings, callback = None):
     return spectra_set, pept_dict, fasta_dict
 
 # Cell
-def pept_dict_from_search(settings):
+def pept_dict_from_search(settings:dict):
     """
     Generates a peptide dict from a large search.
     """
