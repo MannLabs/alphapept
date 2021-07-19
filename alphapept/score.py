@@ -3,8 +3,7 @@
 __all__ = ['filter_score', 'filter_precursor', 'get_q_values', 'cut_fdr', 'cut_global_fdr', 'get_x_tandem_score',
            'score_x_tandem', 'filter_with_x_tandem', 'filter_with_score', 'score_psms', 'get_ML_features', 'train_RF',
            'score_ML', 'filter_with_ML', 'assign_proteins', 'get_shared_proteins', 'get_protein_groups',
-           'perform_protein_grouping', 'get_ion', 'ion_dict', 'ecdf', 'score_hdf', 'protein_groups_hdf',
-           'protein_grouping_all', 'protein_groups_hdf_parallel']
+           'perform_protein_grouping', 'get_ion', 'ion_dict', 'ecdf', 'score_hdf', 'protein_grouping_all']
 
 # Cell
 import numpy as np
@@ -812,7 +811,7 @@ def get_ion(i: int, df: pd.DataFrame, ions: pd.DataFrame)-> (list, np.ndarray):
 
 # Cell
 def ecdf(data:np.ndarray)-> (np.ndarray, np.ndarray):
-    """Compute ECDF .
+    """Compute ECDF.
     Helper function to calculate the ECDF of a score distribution.
     This is later used to normalize the score from an arbitrary range to [0,1].
 
@@ -834,10 +833,21 @@ def ecdf(data:np.ndarray)-> (np.ndarray, np.ndarray):
 import os
 from multiprocessing import Pool
 from scipy.interpolate import interp1d
-from typing import Callable
+from typing import Callable, Union
 
 #This function has no unit test and is covered by the quick_test
-def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False):
+def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False) -> Union[bool, str]:
+    """Apply scoring on an hdf file to be called from a parallel pool.
+    This function does not raise errors but returns the exception as a string.
+    Args:
+        to_process: (int, dict): Tuple containg a file index and the settings.
+        callback: (Callable): Optional callback
+        parallel: (bool): Parallel flag (unused).
+
+    Returns:
+        Union[bool, str]: True if no eo exception occured, the exception if things failed.
+
+    """
     try:
         index, settings = to_process
         file_name = settings['experiment']['file_paths'][index]
@@ -924,52 +934,15 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
 import alphapept.utils
 
 #This function has no unit test and is covered by the quick_test
-def protein_groups_hdf(to_process):
+def protein_grouping_all(settings:dict, pept_dict:dict, fasta_dict:dict, callback=None):
+    """Apply protein grouping on all files in an experiment.
+    This function will load all dataframes (peptide_fdr level) and perform protein grouping.
 
-    skip = False
-    path, pept_dict, fasta_dict, settings = to_process
-    ms_file = alphapept.io.MS_Data_File(path, is_overwritable=True)
-    try:
-        df = ms_file.read(dataset_name='peptide_fdr')
-    except KeyError:
-        skip = True
-
-    if not skip:
-        df_pg = perform_protein_grouping(df, pept_dict, fasta_dict, callback = None)
-
-        df_pg = cut_global_fdr(df_pg, analyte_level='protein_group',  plot=False, fdr_level = settings["search"]["protein_fdr"], **settings['search'])
-        logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
-
-        try:
-            logging.info('Extracting ions')
-            ions = ms_file.read(dataset_name='ions')
-
-            ion_list = []
-            ion_ints = []
-
-            for i in range(len(df_pg)):
-                ion, ints = get_ion(i, df_pg, ions)
-                ion_list.append(ion)
-                ion_ints.append(ints)
-
-            df_pg['ion_int'] = ion_ints
-            df_pg['ion_types'] = ion_list
-
-            logging.info('Extracting ions complete.')
-
-        except KeyError:
-            logging.info('No ions present.')
-
-        ms_file.write(df_pg, dataset_name="protein_fdr")
-        base, ext = os.path.splitext(path)
-        df_pg.to_csv(base+'_protein_fdr.csv')
-
-        logging.info('Saving complete.')
-
-#This function has no unit test and is covered by the quick_test
-def protein_grouping_all(settings, pept_dict, fasta_dict, callback=None):
-    """
-    Perform protein grouping on everything
+    Args:
+        settings: (dict): Settings file for the experiment
+        pept_dict: (dict): A peptide dictionary.
+        fast_dict: (dict): A FASTA dictionary.
+        callback: (Callable): Optional callback.
     """
 
     df = alphapept.utils.assemble_df(settings, field = 'peptide_fdr', callback=None)
@@ -991,27 +964,3 @@ def protein_grouping_all(settings, pept_dict, fasta_dict, callback=None):
     )
 
     logging.info('Saving complete.')
-
-#This function has no unit test and is covered by the quick_test
-def protein_groups_hdf_parallel(settings, pept_dict, fasta_dict, callback=None):
-
-    paths = []
-
-    for _ in settings['experiment']['file_paths']:
-        base, ext = os.path.splitext(_)
-        hdf_path = base+'.ms_data.hdf'
-        paths.append(hdf_path)
-
-    to_process = [(path, pept_dict.copy(), fasta_dict.copy(), settings) for path in paths]
-
-    n_processes = settings['general']['n_processes']
-
-    if len(to_process) == 1:
-        protein_groups_hdf(to_process[0])
-    else:
-
-        with Pool(n_processes) as p:
-            max_ = len(to_process)
-            for i, _ in enumerate(p.imap_unordered(protein_groups_hdf, to_process)):
-                if callback:
-                    callback((i+1)/max_)
