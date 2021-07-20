@@ -3,7 +3,7 @@
 __all__ = ['compare_frags', 'ppm_to_dalton', 'get_idxs', 'compare_spectrum_parallel', 'query_data_to_features',
            'get_psms', 'frag_delta', 'intensity_fraction', 'add_column', 'remove_column', 'get_hits', 'score',
            'get_sequences', 'get_score_columns', 'plot_psms', 'store_hdf', 'search_db', 'search_fasta_block',
-           'filter_top_n', 'search_parallel', 'mass_dict']
+           'mass_dict', 'filter_top_n', 'search_parallel']
 
 # Cell
 import logging
@@ -495,6 +495,10 @@ def get_hits(query_frag:np.ndarray, query_int:np.ndarray, db_frag:np.ndarray, db
 
     return ions
 
+
+# Cell
+
+#This function is a wrapper and ist tested by the quick_test
 @njit
 def score(
     psms: np.recarray,
@@ -597,7 +601,6 @@ def score(
 
 # Cell
 
-
 from numba.typed import Dict
 def get_sequences(psms: np.recarray, db_seqs:np.ndarray)-> np.ndarray:
     """Get sequences to add them to a recarray
@@ -616,6 +619,7 @@ def get_sequences(psms: np.recarray, db_seqs:np.ndarray)-> np.ndarray:
 # Cell
 from typing import Union
 
+#This function is a wrapper and ist tested by the quick_test
 def get_score_columns(
     psms: np.recarray,
     query_data: dict,
@@ -840,6 +844,7 @@ def plot_psms(
 
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
+    query_indices = query_data['indices_ms2']
 
     query_idx_start = query_indices[query_idx]
     query_idx_end = query_indices[query_idx + 1]
@@ -902,6 +907,7 @@ import alphapept.io
 import alphapept.fasta
 from typing import Callable
 
+#This function is a wrapper and ist tested by the quick_test
 def store_hdf(df: pd.DataFrame, path: str, key:str, replace:bool=False, swmr:bool = False):
     """Wrapper function to store a DataFrame in an hdf.
 
@@ -928,7 +934,7 @@ def store_hdf(df: pd.DataFrame, path: str, key:str, replace:bool=False, swmr:boo
             except KeyError: # File is created new
                 ms_file.write(df, dataset_name=key, swmr = swmr)
 
-
+#This function is a wrapper and ist tested by the quick_test
 def search_db(to_process:tuple, callback:Callable = None, parallel:bool=False, first_search:bool = True) -> Union[bool, str]:
     """Wrapper function to perform database search to be used by a parallel pool.
 
@@ -1014,6 +1020,7 @@ mass_dict = constants.mass_dict
 import os
 import alphapept.speed
 
+#This function is a wrapper and ist tested by the quick_test
 def search_fasta_block(to_process:tuple) -> (list, int):
     """Search fasta block. This file digests per block and does not use a saved database.
     For searches with big fasta files or unspecific searches.
@@ -1119,11 +1126,10 @@ def search_fasta_block(to_process:tuple) -> (list, int):
 
     return psms_container, len(to_add)
 
-from multiprocessing import Pool
-
+# Cell
 
 def filter_top_n(temp:pd.DataFrame, top_n:int = 10)-> pd.DataFrame:
-    """Takes a dataframe and keeps only the top n entries.
+    """Takes a dataframe and keeps only the top n entries (based on hits).
     Combines fasta indices for sequences.
 
     Args:
@@ -1153,6 +1159,9 @@ def filter_top_n(temp:pd.DataFrame, top_n:int = 10)-> pd.DataFrame:
     return temp
 
 
+# Cell
+
+#This function is a wrapper and ist tested by the quick_test
 def search_parallel(settings: dict, calibration:Union[list, None] = None, callback: Union[Callable, None] = None) -> dict:
     """Function to search multiple ms_data files in parallel.
 
