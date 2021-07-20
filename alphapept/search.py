@@ -803,100 +803,61 @@ def get_score_columns(
 
 # Cell
 
-from .fasta import get_frag_dict, parse
 import matplotlib.pyplot as plt
 
-def plot_psms(
-    query_data: dict,
-    df: pd.DataFrame,
-    index: int,
-    mass_dict: dict, ppm:bool=True, frag_tol:float=20):
-    """Helper function to plot as PSMs
+def plot_psms(index, ms_file):
 
-    Args:
-        query_data (dict): Data structure containing the query data.
-        df (pd.DataFrame): DataFrame contianing PSMs.
-        index (int): Index to DataFrame.
-        mass_dict (dict): Dictionary containing masses.
-        ppm (bool, optional): Flag to use ppm instead of Dalton. Defaults to True.
-        frag_tol (float, optional): Fragment tolerance. Defaults to 20.
-    """
+    df = ms_file.read(dataset_name='peptide_fdr')
+
+    ion_dict = {}
+    ion_dict[0] = ''
+    ion_dict[1] = '-H20'
+    ion_dict[2] = '-NH3'
 
     spectrum = df.iloc[index]
+    start = spectrum['ion_idx']
+    end = spectrum['n_ions'] + start
 
-    sequence = spectrum["sequence"]
-    db_idx = spectrum["db_idx"]
-    query_idx = spectrum["query_idx"]
+    query_data = ms_file.read_DDA_query_data()
+    ions = ms_file.read(dataset_name="ions")
 
-    if 'matched_int' in spectrum.index:
-        intensity_fraction = spectrum["matched_int"] / spectrum["total_int"]
-    else:
-        intensity_fraction = np.nan
-        matched_int = np.nan
+    ion = [('b'+str(int(_))).replace('b-','y') for _ in ions.iloc[start:end]['ion_index']]
+    losses = [ion_dict[int(_)] for _ in ions.iloc[start:end]['ion_type']]
+    ion = [a+b for a,b in zip(ion, losses)]
+    ints = ions.iloc[start:end]['ion_int'].astype('int').values
+    masses = ions.iloc[start:end]['ion_mass'].astype('float').values
+    ion_type = ions.iloc[start:end]['ion_type'].abs().values
 
-    frag_dict = get_frag_dict(parse(sequence), mass_dict)
-    frag_dict_r = {v: k for k, v in frag_dict.items()}
+    query_idx = spectrum['raw_idx']
 
-    db_frag = list(frag_dict.values())
-    db_frag.sort()
-
-    db_int = [100 for _ in db_frag]
-
+    query_indices = query_data["indices_ms2"]
+    query_charges = query_data['charge2']
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
-    query_indices = query_data['indices_ms2']
 
     query_idx_start = query_indices[query_idx]
     query_idx_end = query_indices[query_idx + 1]
     query_frag = query_frags[query_idx_start:query_idx_end]
     query_int = query_ints[query_idx_start:query_idx_end]
 
-    query_int = query_int / np.max(query_int) * 100
+    ax = plt.figure(figsize=(15, 5))
 
-    hits = compare_frags(query_frag, db_frag, frag_tol, ppm)
+    plt.vlines(query_frag, 0, query_int, "k", label="Query", alpha=0.5)
 
-    n_hits = np.sum(hits > 0)
+    plt.vlines(masses, ints, max(query_int)*(1+0.1*ion_type), "k", label="Hits", alpha=0.5, linestyle=':')
 
-    hitpos = hits[hits > 0] - 1
+    plt.vlines(masses, 0, ints, "r", label="Hits", alpha=0.5)
 
-    hit_x = query_frag[hitpos]
-    hit_y = query_int[hitpos]
+    for i in range(len(masses)):
+        plt.text(masses[i], (1+0.1*ion_type[i])*max(query_int), ion[i])
 
-    # create an axis
-    ax = plt.figure(figsize=(10, 5))
+    figure_title = f"{spectrum['precursor']} - b-hits {spectrum['b_hits']}, y-hits {spectrum['y_hits']}, matched int {spectrum['matched_int_ratio']*100:.2f} %"
 
-    plt.vlines(db_frag, 0, db_int, "k", label="DB", alpha=0.2)
-
-    plt.vlines(query_frag, 0, query_int, "r", label="Query", alpha=0.5)
-
-    plt.plot(hit_x, hit_y, "ro", label="Hit", alpha=0.5)
-
-    figure_title = "Peptide-Spectrum-Match for Spectra: {} - sequence {} \nHits {} - Intensity Fraction {:.2f} %".format(
-        query_idx, sequence, n_hits, intensity_fraction * 100
-    )
-
-    db_hits = np.array(db_frag)[hits>0]
-    ion_hits = [frag_dict_r[_] for _ in db_hits]
-
-    for _ in frag_dict.keys():
-
-        if _ in ion_hits:
-            color = 'r'
-        else:
-            color = 'k'
-
-        if _[0] == 'y':
-            plt.text(frag_dict[_], 110, _, fontsize=12, alpha = 0.8, color=color)
-        else:
-            plt.text(frag_dict[_], 104, _, fontsize=12, alpha = 0.8, color=color)
-
+    plt.xlabel("m/z")
+    plt.ylabel('Intensity')
+    plt.ylim([0, (1+0.1*max(ion_type)+0.1)*max(query_int)])
+    plt.legend()
     plt.title(figure_title)
-
-    plt.xlabel("Mass")
-    plt.ylabel("Relative Intensity (%)")
-    plt.ylim([0, 120])
-
-    plt.legend(loc='lower right')
     plt.show()
 
 # Cell
