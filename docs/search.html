@@ -54,9 +54,16 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="compare_frags" class="doc_header"><code>compare_frags</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L13" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_frags</code>(<strong><code>query_frag</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="compare_frags" class="doc_header"><code>compare_frags</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L13" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_frags</code>(<strong><code>query_frag</code></strong>:<code>ndarray</code>, <strong><code>db_frag</code></strong>:<code>ndarray</code>, <strong><code>frag_tol</code></strong>:<code>float</code>, <strong><code>ppm</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Compare query and database frags and find hits</p>
+<p>Args:
+    query_frag (np.ndarray): Array with query fragments.
+    db_frag (np.ndarray): Array with database fragments.
+    frag_tol (float): Fragment tolerance for search.
+    ppm (bool, optional): Use ppm as unit or Dalton. Defaults to False.</p>
+<p>Returns:
+    np.ndarray: Array with reported hits.</p>
 
 </div>
 
@@ -219,8 +226,14 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="ppm_to_dalton" class="doc_header"><code>ppm_to_dalton</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L46" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>ppm_to_dalton</code>(<strong><code>mass</code></strong>, <strong><code>prec_tol</code></strong>)</p>
+<h4 id="ppm_to_dalton" class="doc_header"><code>ppm_to_dalton</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L54" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>ppm_to_dalton</code>(<strong><code>mass</code></strong>:<code>float</code>, <strong><code>prec_tol</code></strong>:<code>int</code>)</p>
 </blockquote>
+<p>Function to convert ppm tolerances to Dalton.</p>
+<p>Args:
+    mass (float): Base mass.
+    prec_tol (int): Tolerance.</p>
+<p>Returns:
+    float: Tolerance in Dalton.</p>
 
 </div>
 
@@ -236,6 +249,13 @@ nb_path: "nbs/05_search.ipynb"
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -243,9 +263,16 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_idxs" class="doc_header"><code>get_idxs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L54" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_idxs</code>(<strong><code>db_masses</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>prec_tol</code></strong>, <strong><code>ppm</code></strong>)</p>
+<h4 id="get_idxs" class="doc_header"><code>get_idxs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L69" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_idxs</code>(<strong><code>db_masses</code></strong>:<code>ndarray</code>, <strong><code>query_masses</code></strong>:<code>ndarray</code>, <strong><code>prec_tol</code></strong>:<code>float</code>, <strong><code>ppm</code></strong>:<code>bool</code>)</p>
 </blockquote>
-<p>Function to get upper and lower limits to define search range.</p>
+<p>Function to get upper and lower limits to define search range for a given precursor tolerance.</p>
+<p>Args:
+    db_masses (np.ndarray): Array containing database masses.
+    query_masses (np.ndarray): Array containing query masses.
+    prec_tol (float): Precursor tolerance for search.
+    ppm: Flag to use ppm instead of Dalton.</p>
+<p>Returns:
+    (np.ndarray, np.ndarray): Indices to lower and upper bounds.</p>
 
 </div>
 
@@ -261,6 +288,13 @@ nb_path: "nbs/05_search.ipynb"
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -268,9 +302,23 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="compare_spectrum_parallel" class="doc_header"><code>compare_spectrum_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L72" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_spectrum_parallel</code>(<strong><code>query_idx</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>idxs_lower</code></strong>, <strong><code>idxs_higher</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>best_hits</code></strong>, <strong><code>score</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>ppm</code></strong>)</p>
+<h4 id="compare_spectrum_parallel" class="doc_header"><code>compare_spectrum_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L96" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_spectrum_parallel</code>(<strong><code>query_idx</code></strong>:<code>int</code>, <strong><code>query_masses</code></strong>:<code>ndarray</code>, <strong><code>idxs_lower</code></strong>:<code>ndarray</code>, <strong><code>idxs_higher</code></strong>:<code>ndarray</code>, <strong><code>query_indices</code></strong>:<code>ndarray</code>, <strong><code>query_frags</code></strong>:<code>ndarray</code>, <strong><code>query_ints</code></strong>:<code>ndarray</code>, <strong><code>db_indices</code></strong>:<code>ndarray</code>, <strong><code>db_frags</code></strong>:<code>ndarray</code>, <strong><code>best_hits</code></strong>:<code>ndarray</code>, <strong><code>score</code></strong>:<code>ndarray</code>, <strong><code>frag_tol</code></strong>:<code>float</code>, <strong><code>ppm</code></strong>:<code>bool</code>)</p>
 </blockquote>
-<p>Compares a spectrum and writes to best_his, score array</p>
+<p>Compares a spectrum and writes to the best_hits and score.</p>
+<p>Args:
+    query_idx (int): Integer to the query_spectrum that should be compared.
+    query_masses (np.ndarray): Array with query masses.
+    idxs_lower (np.ndarray): Array with indices for lower search boundary.
+    idxs_higher (np.ndarray): Array with indices for upper search boundary.
+    query_indices (np.ndarray): Array with indices to the query data.
+    query_frags (np.ndarray): Array with frag types of the query data.
+    query_ints (np.ndarray): Array with fragment intensities from the query.
+    db_indices (np.ndarray):  Array with indices to the database data.
+    db_frags (np.ndarray): Array with frag types of the db data.
+    best_hits (np.ndarray): Reporting array which stores indices to the best hits.
+    score (np.ndarray): Reporting array that stores the scores of the best hits.
+    frag_tol (float): Fragment tolerance for search.
+    ppm (bool): Flag to use ppm instead of Dalton.</p>
 
 </div>
 
@@ -307,8 +355,14 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="query_data_to_features" class="doc_header"><code>query_data_to_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L156" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>query_data_to_features</code>(<strong><code>query_data</code></strong>)</p>
+<h4 id="query_data_to_features" class="doc_header"><code>query_data_to_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L194" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>query_data_to_features</code>(<strong><code>query_data</code></strong>:<code>dict</code>)</p>
 </blockquote>
+<p>Helper function to extract features from query data.
+This is used when the feature finder will not be used.</p>
+<p>Args:
+    query_data (dict): Data structure containing the query data.</p>
+<p>Returns:
+    pd.DataFrame: Pandas dataframe so that it can be used for subsequent processing.</p>
 
 </div>
 
@@ -324,6 +378,13 @@ nb_path: "nbs/05_search.ipynb"
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -331,19 +392,23 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_psms" class="doc_header"><code>get_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L173" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_psms</code>(<strong><code>query_data</code></strong>, <strong><code>db_data</code></strong>, <strong><code>features</code></strong>, <strong><code>parallel</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>prec_tol</code></strong>, <strong><code>ppm</code></strong>, <strong><code>min_frag_hits</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>m_offset_calibrated</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_psms" class="doc_header"><code>get_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L221" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_psms</code>(<strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>db_data</code></strong>:<code>dict</code>, <strong><code>features</code></strong>:<code>DataFrame</code>, <strong><code>parallel</code></strong>:<code>bool</code>, <strong><code>frag_tol</code></strong>:<code>float</code>, <strong><code>prec_tol</code></strong>:<code>float</code>, <strong><code>ppm</code></strong>:<code>bool</code>, <strong><code>min_frag_hits</code></strong>:<code>int</code>, <strong><code>callback</code></strong>:<code>Callable</code>=<em><code>None</code></em>, <strong><code>m_offset_calibrated</code></strong>:<code>float</code>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Wrapper function to extract psms from dataset</p>
+<p>[summary]</p>
 <p>Args:
-    db_masses: database precursor masses
-    query_masses: query precursor masses
-    prec_tol: mass offset in dalton or ppm
-    ppm: flag for ppm or dalton
-    callback: Callback function, e.g. for progress bar
-Returns:
-    idxs_lower: lower search range
-    idxs_higher: upper search range
-Raises:</p>
+    query_data (dict): Data structure containing the query data.
+    db_data (dict): Data structure containing the database data.
+    features (pd.DataFrame): Pandas dataframe containing feature data.
+    parallel (bool): Flag to use parallel processing.
+    frag_tol (float): Fragment tolerance for search.
+    prec_tol (float): Precursor tolerance for search.
+    ppm (bool): Flag to use ppm instead of Dalton.
+    min_frag_hits (int): Minimum number of frag hits to report a PSMs.
+    callback (Callable, optional): Optional callback. Defaults to None.
+    m_offset_calibrated (float, optional): Precursor tolerance if calibration exists. Defaults to None.</p>
+<p>Returns:
+    np.ndarray: Numpy recordarray storing the PSMs.
+    int: 0</p>
 
 </div>
 
@@ -387,9 +452,16 @@ Raises:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="frag_delta" class="doc_header"><code>frag_delta</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L313" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>frag_delta</code>(<strong><code>query_frag</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>hits</code></strong>)</p>
+<h4 id="frag_delta" class="doc_header"><code>frag_delta</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L355" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>frag_delta</code>(<strong><code>query_frag</code></strong>:<code>ndarray</code>, <strong><code>db_frag</code></strong>:<code>ndarray</code>, <strong><code>hits</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-<p>Calculate the mass difference for a given array of hits in Dalton and ppm</p>
+<p>Calculates the mass difference for a given array of hits in Dalton and ppm.</p>
+<p>Args:
+    query_frag (np.ndarray): Array with query fragments.
+    db_frag (np.ndarray): Array with database fragments.
+    hits (np.ndarray): Array with reported hits.</p>
+<p>Returns:
+    float: Fragment deltas in Dalton.
+    float: Fragment deltas in ppm.</p>
 
 </div>
 
@@ -426,9 +498,14 @@ Raises:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="intensity_fraction" class="doc_header"><code>intensity_fraction</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L327" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_fraction</code>(<strong><code>query_int</code></strong>, <strong><code>hits</code></strong>)</p>
+<h4 id="intensity_fraction" class="doc_header"><code>intensity_fraction</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L376" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_fraction</code>(<strong><code>query_int</code></strong>:<code>ndarray</code>, <strong><code>hits</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Calculate the fraction of matched intensity</p>
+<p>Args:
+    query_int (np.ndarray): Array with query intensities.
+    hits (np.ndarray): Array with reported hits.</p>
+<p>Returns:
+    float: Fraction of the matched intensity to the total intensity.</p>
 
 </div>
 
@@ -465,9 +542,15 @@ Raises:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_column" class="doc_header"><code>add_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L345" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_column</code>(<strong><code>recarray</code></strong>, <strong><code>column</code></strong>, <strong><code>name</code></strong>)</p>
+<h4 id="add_column" class="doc_header"><code>add_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L401" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_column</code>(<strong><code>recarray</code></strong>:<code>ndarray</code>, <strong><code>column</code></strong>:<code>ndarray</code>, <strong><code>name</code></strong>:<code>str</code>)</p>
 </blockquote>
 <p>Function to add a column with given name to recarray</p>
+<p>Args:
+    recarray (np.ndarray): NumPy record array.
+    column (np.ndarray): Data column that should be added to the record array.
+    name (str): Name of the column in the new recordarray.</p>
+<p>Returns:
+    np.ndarray: NumPy recordarray with new field.</p>
 
 </div>
 
@@ -490,9 +573,14 @@ Raises:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="remove_column" class="doc_header"><code>remove_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L357" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>remove_column</code>(<strong><code>recarray</code></strong>, <strong><code>name</code></strong>)</p>
+<h4 id="remove_column" class="doc_header"><code>remove_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L420" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>remove_column</code>(<strong><code>recarray</code></strong>:<code>ndarray</code>, <strong><code>name</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Function to remove a column from recarray</p>
+<p>Function to remove a column from a recarray.</p>
+<p>Args:
+    recarray (np.ndarray): NumPy record array.
+    name (str): Column name of the column to be removed.</p>
+<p>Returns:
+    np.ndarray: NumPy record array with removed column.</p>
 
 </div>
 
@@ -539,8 +627,29 @@ We distinguish three indices:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_hits" class="doc_header"><code>get_hits</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L367" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hits</code>(<strong><code>query_frag</code></strong>, <strong><code>query_int</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>db_int</code></strong>, <strong><code>frag_type</code></strong>, <strong><code>mtol</code></strong>, <strong><code>ppm</code></strong>, <strong><code>losses</code></strong>)</p>
+<h4 id="get_hits" class="doc_header"><code>get_hits</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L436" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hits</code>(<strong><code>query_frag</code></strong>:<code>ndarray</code>, <strong><code>query_int</code></strong>:<code>ndarray</code>, <strong><code>db_frag</code></strong>:<code>ndarray</code>, <strong><code>db_int</code></strong>:<code>ndarray</code>, <strong><code>frag_type</code></strong>:<code>ndarray</code>, <strong><code>mtol</code></strong>:<code>float</code>, <strong><code>ppm</code></strong>:<code>bool</code>, <strong><code>losses</code></strong>:<code>list</code>)</p>
 </blockquote>
+<p>Function to extract the types of hits based on a single PSMs.</p>
+<p>The reporting array stores information about the matched ions column wise:</p>
+<p>Column 0: Type of the ion.
+Column 1: Ion-index refering to what ion type was matched.
+Column 2: Intensity of the matched ion.
+Column 3: Intensity of the database ion.
+Column 4: Experimental mass of the ion.
+Column 5: Theoretical mass of the ion.
+Column 6: Index to the query_frag of the ion.
+Column 7: Index to the database_frag of the ion.</p>
+<p>Args:
+    query_frag (np.ndarray): Array with query fragments.
+    query_int (np.ndarray): Array with query intensities.
+    db_frag (np.ndarray): Array with database fragments.
+    db_int (np.ndarray): Array with database intensities.
+    frag_type (np.ndarray): Array with fragment types.
+    mtol (float): Mass tolerance.
+    ppm (bool): Flag to use ppm instead of Dalton.
+    losses (list): List of losses.</p>
+<p>Returns:
+    np.ndarray: NumPy array that stores ion information.</p>
 
 </div>
 
@@ -563,8 +672,28 @@ We distinguish three indices:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="score" class="doc_header"><code>score</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L404" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score</code>(<strong><code>psms</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_masses_raw</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>mtol</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>ppm</code></strong>, <strong><code>psms_dtype</code></strong>, <strong><code>db_ints</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="score" class="doc_header"><code>score</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L498" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score</code>(<strong><code>psms</code></strong>:<code>recarray</code>, <strong><code>query_masses</code></strong>:<code>ndarray</code>, <strong><code>query_masses_raw</code></strong>:<code>ndarray</code>, <strong><code>query_frags</code></strong>:<code>ndarray</code>, <strong><code>query_ints</code></strong>:<code>ndarray</code>, <strong><code>query_indices</code></strong>:<code>ndarray</code>, <strong><code>db_masses</code></strong>:<code>ndarray</code>, <strong><code>db_frags</code></strong>:<code>ndarray</code>, <strong><code>frag_types</code></strong>:<code>ndarray</code>, <strong><code>mtol</code></strong>:<code>float</code>, <strong><code>db_indices</code></strong>:<code>ndarray</code>, <strong><code>ppm</code></strong>:<code>bool</code>, <strong><code>psms_dtype</code></strong>:<code>list</code>, <strong><code>db_ints</code></strong>:<code>ndarray</code>=<em><code>None</code></em>, <strong><code>parallel</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
+<p>Function to extract score columns when giving a recordarray with PSMs.</p>
+<p>Args:
+    psms (np.recarray): Recordarray containing PSMs.
+    query_masses (np.ndarray): Array with query masses.
+    query_masses_raw (np.ndarray): Array with raw query masses.
+    query_frags (np.ndarray): Array with frag types of the query data.
+    query_ints (np.ndarray): Array with fragment intensities from the query.
+    query_indices (np.ndarray): Array with indices to the query data.
+    db_masses (np.ndarray): Array with database masses.
+    db_frags (np.ndarray): Array with fragment masses.
+    frag_types (np.ndarray): Array with fragment types.
+    mtol (float): Mass tolerance.
+    db_indices (np.ndarray): Array with indices to the database array.
+    ppm (bool): Flag to use ppm instead of Dalton.
+    psms_dtype (list): List describing the dtype of the PSMs record array.
+    db_ints (np.ndarray, optional): Array with database intensities. Defaults to None.
+    parallel (bool, optional): Flag to use parallel processing. Defaults to False.</p>
+<p>Returns:
+    np.recarray: Recordarray containing PSMs with additional columns.
+    np.ndarray: NumPy array containing ion information.</p>
 
 </div>
 
@@ -594,9 +723,14 @@ We distinguish three indices:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_sequences" class="doc_header"><code>get_sequences</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L485" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_sequences</code>(<strong><code>psms</code></strong>, <strong><code>db_seqs</code></strong>)</p>
+<h4 id="get_sequences" class="doc_header"><code>get_sequences</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L602" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_sequences</code>(<strong><code>psms</code></strong>:<code>recarray</code>, <strong><code>db_seqs</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Get sequences to add them to a recarray</p>
+<p>Args:
+    psms (np.recarray): Recordarray containing PSMs.
+    db_seqs (np.ndarray): NumPy array containing sequences.</p>
+<p>Returns:
+    np.ndarray: NumPy array containing a subset of sequences.</p>
 
 </div>
 
@@ -612,6 +746,13 @@ We distinguish three indices:</p>
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -619,8 +760,22 @@ We distinguish three indices:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_score_columns" class="doc_header"><code>get_score_columns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L494" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_score_columns</code>(<strong><code>psms</code></strong>, <strong><code>query_data</code></strong>, <strong><code>db_data</code></strong>, <strong><code>features</code></strong>, <strong><code>parallel</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>prec_tol</code></strong>, <strong><code>ppm</code></strong>, <strong><code>m_offset_calibrated</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_score_columns" class="doc_header"><code>get_score_columns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L619" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_score_columns</code>(<strong><code>psms</code></strong>:<code>recarray</code>, <strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>db_data</code></strong>:<code>Union</code>[<code>dict</code>, <code>str</code>], <strong><code>features</code></strong>:<code>DataFrame</code>, <strong><code>parallel</code></strong>:<code>bool</code>, <strong><code>frag_tol</code></strong>:<code>float</code>, <strong><code>prec_tol</code></strong>:<code>float</code>, <strong><code>ppm</code></strong>:<code>bool</code>, <strong><code>m_offset_calibrated</code></strong>:<code>Union</code>[<code>NoneType</code>, <code>float</code>]=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
+<p>Wrapper function to extract score columns.</p>
+<p>Args:
+    psms (np.recarray): Recordarray containing PSMs.
+    query_data (dict): Data structure containing the query data.
+    db_data: Union[dict, str]: Data structure containing the database data or path to database.
+    features (pd.DataFrame): Pandas dataframe containing feature data.
+    parallel (bool): Flag to use parallel processing.
+    frag_tol (float): Fragment tolerance for search.
+    prec_tol (float): Precursor tolerance for search.
+    ppm (bool): Flag to use ppm instead of Dalton.
+    m_offset_calibrated (Union[None, float], optional): Calibrated offset mass. Defaults to None.</p>
+<p>Returns:
+    np.recarray: Recordarray containing PSMs with additional columns.
+    np.ndarray: NumPy array containing ion information.</p>
 
 </div>
 
@@ -656,71 +811,16 @@ We distinguish three indices:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="plot_hit" class="doc_header"><code>plot_hit</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L660" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_hit</code>(<strong><code>df</code></strong>, <strong><code>index</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>ppm</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>db_ints</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="plot_psms" class="doc_header"><code>plot_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L805" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_psms</code>(<strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>index</code></strong>:<code>int</code>, <strong><code>mass_dict</code></strong>:<code>dict</code>, <strong><code>ppm</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>frag_tol</code></strong>:<code>float</code>=<em><code>20</code></em>)</p>
 </blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="plot_psms" class="doc_header"><code>plot_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L734" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_psms</code>(<strong><code>query_data</code></strong>, <strong><code>df</code></strong>, <strong><code>index</code></strong>, <strong><code>mass_dict</code></strong>, <strong><code>ppm</code></strong>=<em><code>True</code></em>, <strong><code>frag_tol</code></strong>=<em><code>20</code></em>)</p>
-</blockquote>
-<p>Plot a psms</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Wrapper">Wrapper<a class="anchor-link" href="#Wrapper"> </a></h2>
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="perform_search" class="doc_header"><code>perform_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L815" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>perform_search</code>(<strong><code>query_files</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>db_seqs</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>plot</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
-</blockquote>
-<p>Function to search and score one or multiple MS runs by the X!Tandem approach.</p>
+<p>Helper function to plot as PSMs</p>
+<p>Args:
+    query_data (dict): Data structure containing the query data.
+    df (pd.DataFrame): DataFrame contianing PSMs.
+    index (int): Index to DataFrame.
+    mass_dict (dict): Dictionary containing masses.
+    ppm (bool, optional): Flag to use ppm instead of Dalton. Defaults to True.
+    frag_tol (float, optional): Fragment tolerance. Defaults to 20.</p>
 
 </div>
 
@@ -757,9 +857,15 @@ We distinguish three indices:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="store_hdf" class="doc_header"><code>store_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L843" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>store_hdf</code>(<strong><code>df</code></strong>, <strong><code>path</code></strong>, <strong><code>key</code></strong>, <strong><code>replace</code></strong>=<em><code>False</code></em>, <strong><code>swmr</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="store_hdf" class="doc_header"><code>store_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L905" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>store_hdf</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>path</code></strong>:<code>str</code>, <strong><code>key</code></strong>:<code>str</code>, <strong><code>replace</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>swmr</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
-<p>Stores in hdf</p>
+<p>Wrapper function to store a DataFrame in an hdf.</p>
+<p>Args:
+    df (pd.DataFrame): DataFrame to be stored.
+    path (str): Target path of the hdf file.
+    key (str): Name of the field to be saved.
+    replace (bool, optional): Flag whether the field should be replaced.. Defaults to False.
+    swmr (bool, optional): Flag to use swmr(single write multiple read)-mode. Defaults to False.</p>
 
 </div>
 
@@ -782,9 +888,16 @@ We distinguish three indices:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="search_db" class="doc_header"><code>search_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L864" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_db</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>, <strong><code>first_search</code></strong>=<em><code>True</code></em>)</p>
+<h4 id="search_db" class="doc_header"><code>search_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L932" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_db</code>(<strong><code>to_process</code></strong>:<code>tuple</code>, <strong><code>callback</code></strong>:<code>Callable</code>=<em><code>None</code></em>, <strong><code>parallel</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>first_search</code></strong>:<code>bool</code>=<em><code>True</code></em>)</p>
 </blockquote>
-<p>Perform a databse search. One file at a time.</p>
+<p>Wrapper function to perform database search to be used by a parallel pool.</p>
+<p>Args:
+    to_process (tuple): Tuple containing an index to the file and the experiment settings.
+    callback (Callable, optional): Callback function to indicate progress. Defaults to None.
+    parallel (bool, optional): Flag to use parallel processing. Defaults to False.
+    first_search (bool, optional): Flag to indicate this is the first search. Defaults to True.</p>
+<p>Returns:
+    Union[bool, str]: Returns True if the search was successfull, otherwise returns a string containing the Exception.</p>
 
 </div>
 
@@ -820,10 +933,15 @@ We distinguish three indices:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="search_fasta_block" class="doc_header"><code>search_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L941" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_fasta_block</code>(<strong><code>to_process</code></strong>)</p>
+<h4 id="search_fasta_block" class="doc_header"><code>search_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1017" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_fasta_block</code>(<strong><code>to_process</code></strong>:<code>tuple</code>)</p>
 </blockquote>
-<p>Search fasta block
-For searches with big fasta files or unspecific searches</p>
+<p>Search fasta block. This file digests per block and does not use a saved database.
+For searches with big fasta files or unspecific searches.</p>
+<p>Args:
+    to_process (tuple): Tuple containing a fasta_index, fasta_block, a list of files and a list of experimental settings.</p>
+<p>Returns:
+    list: A list of dataframes when searching the respective file.
+    int: Number of new peptides that were generated in this iteration.</p>
 
 </div>
 
@@ -846,10 +964,15 @@ For searches with big fasta files or unspecific searches</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="filter_top_n" class="doc_header"><code>filter_top_n</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1042" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_top_n</code>(<strong><code>temp</code></strong>, <strong><code>top_n</code></strong>=<em><code>10</code></em>)</p>
+<h4 id="filter_top_n" class="doc_header"><code>filter_top_n</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1125" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_top_n</code>(<strong><code>temp</code></strong>:<code>DataFrame</code>, <strong><code>top_n</code></strong>:<code>int</code>=<em><code>10</code></em>)</p>
 </blockquote>
 <p>Takes a dataframe and keeps only the top n entries.
 Combines fasta indices for sequences.</p>
+<p>Args:
+    temp (pd.DataFrame): Pandas DataFrame containing PSMs.
+    top_n (int, optional): Number of top-n entries to be kept. Defaults to 10.</p>
+<p>Returns:
+    pd.DataFrame: Filtered DataFrame.</p>
 
 </div>
 
@@ -872,9 +995,15 @@ Combines fasta indices for sequences.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="search_parallel" class="doc_header"><code>search_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1069" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_parallel</code>(<strong><code>settings</code></strong>, <strong><code>calibration</code></strong>=<em><code>None</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="search_parallel" class="doc_header"><code>search_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1156" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_parallel</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>calibration</code></strong>:<code>Optional</code>[<code>list</code>]=<em><code>None</code></em>, <strong><code>callback</code></strong>:<code>Optional</code>[<code>Callable</code>]=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Function to generate a database from a fasta file</p>
+<p>Function to search multiple ms_data files in parallel.</p>
+<p>Args:
+    settings (dict): Settings file containg the experimental definitions.
+    calibration (Union[list, None], optional): List of calibrated offsets.. Defaults to None.
+    callback (Union[Callable, None], optional): Callback function. Defaults to None.</p>
+<p>Returns:
+    dict: FASTA dictionary.</p>
 
 </div>
 

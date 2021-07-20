@@ -441,11 +441,11 @@ More specifically, a global needs to be typed at runtime.</p>
 <div class="output_markdown rendered_html output_subarea ">
 <h2 id="Isotope" class="doc_header"><code>class</code> <code>Isotope</code><a href="" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Isotope</code>(<strong>*<code>args</code></strong>, <strong>**<code>kwargs</code></strong>) :: <a href="/constants.html#Isotope"><code>Isotope</code></a></p>
 </blockquote>
-<p>Jit-compatible class to store istopes</p>
+<p>Jit-compatible class to store isotopes</p>
 <p>Attributes:
     m0 (int): Mass of pattern
     dm0 (int): dm of pattern (number of isotopes)
-    int0 (float): Intensities of pattern</p>
+    int0 (np.float32[:]): Intensities of pattern</p>
 
 </div>
 
@@ -554,7 +554,7 @@ S 0.0417
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Protease-dict">Protease dict<a class="anchor-link" href="#Protease-dict"> </a></h2><p>A numba compatible dictionary that stores different regular expressions neeeded for digestion. The dictionary was largely taken from the <a href="https://pyteomics.readthedocs.io/en/latest/_modules/pyteomics/parser.html">Pyteomics</a> website which in turn derived the rules are from <a href="https://web.expasy.org/peptide_cutter/peptidecutter_enzymes.html">expasy</a>.</p>
+<h2 id="Protease-dict">Protease dict<a class="anchor-link" href="#Protease-dict"> </a></h2><p>A numba compatible dictionary that stores different regular expressions needed for digestion. The dictionary was largely taken from the <a href="https://pyteomics.readthedocs.io/en/latest/_modules/pyteomics/parser.html">Pyteomics</a> website which in turn derived the rules are from <a href="https://web.expasy.org/peptide_cutter/peptidecutter_enzymes.html">expasy</a>.</p>
 
 </div>
 </div>

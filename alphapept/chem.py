@@ -32,8 +32,8 @@ class IsotopeDistribution:
         dm (int): number of isotopes.
         intensities (np.ndarray): isotope intensities.
 
-    Metnods:
-        add: dd another isotope distribution.
+    Methods:
+        add: add another isotope distribution.
         copy: create a copy of the current isotope distribution.
         mult: multiply the current isotope distribution.
 
@@ -158,7 +158,7 @@ def dict_to_dist(counted_AA:Dict, isotopes:Dict)->IsotopeDistribution:
         isotopes (Dict): Numba-typed lookup dict with isotopes.
 
     Returns:
-        IsotopeDistribution: The calculated sotope distribution for the chemical compound.
+        IsotopeDistribution: The calculated isotope distribution for the chemical compound.
     """
 
     dist = IsotopeDistribution()

@@ -16,6 +16,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install package
       run: |
+        remove-item -path "C:\ProgramData\Miniconda3\envs\alphapept" -Force -Recurse -ErrorAction SilentlyContinue
         conda create --name alphapept python=3.8 -y
         conda activate alphapept
         pip install .
@@ -30,7 +31,7 @@ jobs:
     - name: Run Alphapept on Thermo
       run: |
         conda activate alphapept
-        python test_ci.py "${{ env.TMP_FOLDER }}" thermo_irt "${{ secrets.MONGODB_PW }}" 
+        python test_ci.py "${{ env.TMP_FOLDER }}" thermo_irt "${{ secrets.MONGODB_PW }}"
   IRT_Bruker_Win:
     needs: [Install_Alphapept, IRT_Thermo_Win]
     runs-on: self-hosted

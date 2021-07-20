@@ -67,8 +67,8 @@ To calculate the isotope distribution for a given isotope, we define the functio
     m0 (int): the mono-isotopic mass.
     dm (int): number of isotopes.
     intensities (np.ndarray): isotope intensities.</p>
-<p>Metnods:
-    add: dd another isotope distribution.
+<p>Methods:
+    add: add another isotope distribution.
     copy: create a copy of the current isotope distribution.
     mult: multiply the current isotope distribution.</p>
 
@@ -166,7 +166,7 @@ To calculate the isotope distribution for a given isotope, we define the functio
     counted_AA (Dict): Numba-typed dict with counts of atoms.
     isotopes (Dict): Numba-typed lookup dict with isotopes.</p>
 <p>Returns:
-    IsotopeDistribution: The calculated sotope distribution for the chemical compound.</p>
+    IsotopeDistribution: The calculated isotope distribution for the chemical compound.</p>
 
 </div>
 
@@ -212,7 +212,7 @@ To calculate the isotope distribution for a given isotope, we define the functio
 <span class="n">masses</span> <span class="o">=</span> <span class="p">[</span><span class="n">mass</span> <span class="o">+</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">abundances</span><span class="p">))]</span>
 
 <span class="c1"># Calculation with own function</span>
-<span class="n">counted_AA</span> <span class="o">=</span> <span class="n">Dict</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">key_type</span><span class="o">=</span><span class="n">types</span><span class="o">.</span><span class="n">unicode_type</span><span class="p">,</span> <span class="n">value_type</span><span class="o">=</span><span class="n">types</span><span class="o">.</span><span class="n">int32</span><span class="p">)</span>
+<span class="n">counted_AA</span> <span class="o">=</span> <span class="n">Dict</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">key_type</span><span class="o">=</span><span class="n">types</span><span class="o">.</span><span class="n">unicode_type</span><span class="p">,</span> <span class="n">value_type</span><span class="o">=</span><span class="n">types</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
 <span class="n">counted_AA</span><span class="p">[</span><span class="s2">&quot;K&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">23</span>
 <span class="n">counted_AA</span><span class="p">[</span><span class="s2">&quot;I&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">22</span>
 <span class="n">dist</span> <span class="o">=</span> <span class="n">dict_to_dist</span><span class="p">(</span><span class="n">counted_AA</span><span class="p">,</span> <span class="n">isotopes</span><span class="p">)</span>
@@ -234,15 +234,6 @@ To calculate the isotope distribution for a given isotope, we define the functio
 
 <div class="output_wrapper">
 <div class="output">
-
-<div class="output_area">
-
-<div class="output_subarea output_stream output_stderr output_text">
-<pre>/opt/miniconda3/envs/alphapept/lib/python3.8/site-packages/numba/typed/typeddict.py:34: NumbaTypeSafetyWarning: unsafe cast from int64 to int32. Precision may be lost.
-  d[key] = value
-</pre>
-</div>
-</div>
 
 <div class="output_area">
 

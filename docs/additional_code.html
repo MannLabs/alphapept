@@ -51,13 +51,13 @@ nb_path: "nbs/additional_code.ipynb"
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Sandbox">Sandbox<a class="anchor-link" href="#Sandbox"> </a></h2><p>The sandbox folder contains multiple sample notebooks that show how AlphaPept can be interfaced. Furthermore, the underlying notebooks for the paper figures are present.</p>
-<p>The folder <code>/figures</code> contains the output of the figure notebooks, which are indicated with a <code>P</code>.
+<p>The folder <code>/figures</code> contains the output of the figure notebooks, which are indicated with a <code>P</code>. These rely on a helper file named <code>test_files.py</code>.
 The folder <code>/timings</code> contains timing documents from different machines. They were created running <code>timing_test.py.</code></p>
 <p>Some notebooks create/download files, which are stored in <code>/temp</code></p>
 <h3 id="Misc-Notebooks">Misc Notebooks<a class="anchor-link" href="#Misc-Notebooks"> </a></h3><ul>
 <li><strong>Test_Run</strong>: Notebook that runs a small thermo_IRT-file. It shows how the pipeline can be run from within a notebook, how the data can be accessed and how spectra can be plotted</li>
 <li><strong>ParameterScreen</strong>: The settings of AlphaPept are defined in the <code>settings_template.yaml</code>. This can be used to screen to parameters and check their influence on performance.</li>
-<li><strong>Systems_check</strong>: This notebooks contains all larger tests from the continuous integration. It is meant to have more in-depth access to the data of the test runs. </li>
+<li><strong>Systems_check</strong>: This notebooks contains all larger tests from the continuous integration. It is meant to have more in-depth access to the data of the test runs. This notebook relies on the <code>test_helper.py</code> file.</li>
 </ul>
 
 </div>
