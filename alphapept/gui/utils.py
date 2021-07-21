@@ -6,20 +6,47 @@ from multiprocessing import Process
 import psutil
 import time
 import pandas as pd
+from typing import Callable, Union
 
-def escape_markdown(text):
-    """
-    Escape markdown
-    """
+def escape_markdown(text:str)->str:
+    """Helper function to escape markdown in text.
+
+    Args:
+        text (str): Input text.
+
+    Returns:
+        str: Converted text to be used in markdown.
+    """    
     MD_SPECIAL_CHARS = "\`*_{}[]()#+-.!"
     for char in MD_SPECIAL_CHARS:
         text = text.replace(char, "\\"+char)
     return text
 
-def files_in_folder(folder, ending, sort='name'):
-    """
-    Reads a folder and returns all files that have this ending. Sorts the files by name or creation date.
-    """
+def markdown_link(description:str, link:str):
+    """Creates a markdown compatible link.
+
+    Args:
+        description (str): Description.
+        link (str): Target URL.
+    """    
+    _ = f'[{description}]({link})'
+    st.markdown(_, unsafe_allow_html=True)
+
+
+def files_in_folder(folder:str, ending:str, sort:str='name')->list:
+    """Reads a folder and returns all files that have this ending. Sorts the files by name or creation date.
+
+    Args:
+        folder (str): Path to folder.
+        ending (str): Ending.
+        sort (str, optional): How files should be sorted. Defaults to 'name'.
+
+    Raises:
+        NotImplementedError: If a sorting mode is called that is not implemented.
+
+    Returns:
+        list: List of files.
+    """    
     files = [_ for _ in os.listdir(folder) if _.endswith(ending)]
 
     if sort == 'name':
@@ -33,9 +60,13 @@ def files_in_folder(folder, ending, sort='name'):
 
     return files
 
-def files_in_folder_pandas(folder):
-    """
-    Reads a folder and returns pandas dataframe
+def files_in_folder_pandas(folder:str)->pd.DataFrame:
+    """Reads a folder and returns a pandas dataframe containing the files and additional information.
+    Args:
+        folder (str): Path to folder.
+
+    Returns:
+        pd.DataFrame: PandasDataFrame.
     """
     files = os.listdir(folder)
     created = [time.ctime(os.path.getctime(os.path.join(folder, _))) for _ in files]
@@ -46,9 +77,11 @@ def files_in_folder_pandas(folder):
 
     return df
 
-def read_log(log_path):
-    """
-    Reads logfile cleanly (i.e. removing lines with __ which are used for progress)
+def read_log(log_path:str):
+    """Reads logfile and removes lines with __.
+    Lines with __ are used to indicate progress for the AlphaPept GUI.
+    Args:
+        log_path (str): Path to the logile.
     """
     if os.path.isfile(log_path):
         with st.beta_expander("Run log"):
@@ -59,7 +92,15 @@ def read_log(log_path):
                     st.code(''.join(lines))
 
 
-def start_process(target, process_file, args = None, verbose = True):
+def start_process(target:Callable, process_file:str, args:Union[list, None] = None, verbose:bool = True):
+    """Function to initiate a process. It will launch the process and save the process id to a yaml file.
+
+    Args:
+        target (Callable): Target function for the process.
+        process_file (str): Path to the yaml file where the process information will be stored.
+        args (Union[list, None], optional): Additional arguments for the process. Defaults to None.
+        verbose (bool, optional): Flag to show a stramlit message. Defaults to True.
+    """
     process = {}
     now = datetime.datetime.now()
     process['created'] = now
@@ -76,7 +117,22 @@ def start_process(target, process_file, args = None, verbose = True):
     with open(process_file, "w") as file:
         yaml.dump(process, file, sort_keys=False)
 
-def check_process(process_path):
+
+
+def check_process(process_path:str)->(bool, Union[str, None], Union[str, None], Union[str, None], bool):
+    """Function to check the status of a process.
+    Reads the process file from the yaml and checks the process id.
+
+    Args:
+        process_path (str): Path to the process file.
+
+    Returns:
+        bool: Flag if process exists.
+        Union ([str, None]): Process id if process exists, else None.
+        Union ([str, None]): Process name if process exists, else None.
+        Union ([str, None]): Process status if process exists, else None.
+        bool ([type]): Flag if process was initialized.
+    """
     if os.path.isfile(process_path):
         with open(process_path, "r") as process_file:
             process = yaml.load(process_file, Loader=yaml.FullLoader)
@@ -96,9 +152,11 @@ def check_process(process_path):
 
     return False, None, None, None, False
 
-def init_process(process_path, **kwargs):
-    """
-    Waits until a process file is created and then writes an init flag to the file
+def init_process(process_path:str, **kwargs:dict):
+    """Waits until a process file is created and then writes an init flag to the file
+
+    Args:
+        process_path (str): Path to process yaml.
     """
     while True:
         if os.path.isfile(process_path):
@@ -112,7 +170,3 @@ def init_process(process_path, **kwargs):
             break
         else:
             time.sleep(1)
-
-def markdown_link(description, link):
-    _ = f'[{description}]({link})'
-    st.markdown(_, unsafe_allow_html=True)
