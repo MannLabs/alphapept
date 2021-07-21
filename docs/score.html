@@ -95,6 +95,13 @@ Only keep one.</p>
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -102,7 +109,7 @@ Only keep one.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="filter_precursor" class="doc_header"><code>filter_precursor</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L54" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_precursor</code>(<strong><code>df</code></strong>:<code>DataFrame</code>)</p>
+<h4 id="filter_precursor" class="doc_header"><code>filter_precursor</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L56" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_precursor</code>(<strong><code>df</code></strong>:<code>DataFrame</code>)</p>
 </blockquote>
 <p>Filter psms feature table by precursor.
 Allow each precursor only once.</p>
@@ -152,7 +159,7 @@ Allow each precursor only once.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_q_values" class="doc_header"><code>get_q_values</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L75" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_q_values</code>(<strong><code>fdr_values</code></strong>:<code>ndarray</code>)</p>
+<h4 id="get_q_values" class="doc_header"><code>get_q_values</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L77" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_q_values</code>(<strong><code>fdr_values</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Calculate q-values from fdr_values.</p>
 <p>Args:
@@ -205,7 +212,7 @@ Allow each precursor only once.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="cut_fdr" class="doc_header"><code>cut_fdr</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L101" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cut_fdr</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>fdr_level</code></strong>:<code>float</code>=<em><code>0.01</code></em>, <strong><code>plot</code></strong>:<code>bool</code>=<em><code>True</code></em>)</p>
+<h4 id="cut_fdr" class="doc_header"><code>cut_fdr</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L104" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cut_fdr</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>fdr_level</code></strong>:<code>float</code>=<em><code>0.01</code></em>, <strong><code>plot</code></strong>:<code>bool</code>=<em><code>True</code></em>)</p>
 </blockquote>
 <p>Cuts a dataframe with a given fdr level</p>
 <p>Args:
@@ -372,7 +379,7 @@ The concept here is based on selecting the best scoring precursor, peptide or pr
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="cut_global_fdr" class="doc_header"><code>cut_global_fdr</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L180" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cut_global_fdr</code>(<strong><code>data</code></strong>:<code>DataFrame</code>, <strong><code>analyte_level</code></strong>:<code>str</code>=<em><code>'sequence'</code></em>, <strong><code>fdr_level</code></strong>:<code>float</code>=<em><code>0.01</code></em>, <strong><code>plot</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="cut_global_fdr" class="doc_header"><code>cut_global_fdr</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L183" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cut_global_fdr</code>(<strong><code>data</code></strong>:<code>DataFrame</code>, <strong><code>analyte_level</code></strong>:<code>str</code>=<em><code>'sequence'</code></em>, <strong><code>fdr_level</code></strong>:<code>float</code>=<em><code>0.01</code></em>, <strong><code>plot</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to estimate and filter by global peptide or protein fdr</p>
 <p>Args:
@@ -513,7 +520,7 @@ The concept here is based on selecting the best scoring precursor, peptide or pr
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_x_tandem_score" class="doc_header"><code>get_x_tandem_score</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L219" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_x_tandem_score</code>(<strong><code>df</code></strong>:<code>DataFrame</code>)</p>
+<h4 id="get_x_tandem_score" class="doc_header"><code>get_x_tandem_score</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L222" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_x_tandem_score</code>(<strong><code>df</code></strong>:<code>DataFrame</code>)</p>
 </blockquote>
 <p>Function to calculate the x tandem score</p>
 <p>Args:
@@ -542,7 +549,7 @@ The concept here is based on selecting the best scoring precursor, peptide or pr
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="score_x_tandem" class="doc_header"><code>score_x_tandem</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L238" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score_x_tandem</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>fdr_level</code></strong>:<code>float</code>=<em><code>0.01</code></em>, <strong><code>plot</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="score_x_tandem" class="doc_header"><code>score_x_tandem</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L241" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score_x_tandem</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>fdr_level</code></strong>:<code>float</code>=<em><code>0.01</code></em>, <strong><code>plot</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Filters the psms table by using the x_tandem score and filtering the results for fdr_level.</p>
 <p>Args:
@@ -572,7 +579,7 @@ The concept here is based on selecting the best scoring precursor, peptide or pr
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="filter_with_x_tandem" class="doc_header"><code>filter_with_x_tandem</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L259" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_with_x_tandem</code>(<strong><code>df</code></strong>:<code>DataFrame</code>)</p>
+<h4 id="filter_with_x_tandem" class="doc_header"><code>filter_with_x_tandem</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L262" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_with_x_tandem</code>(<strong><code>df</code></strong>:<code>DataFrame</code>)</p>
 </blockquote>
 <p>Filters the psms table by using the x_tandem score, no fdr filter.
 TODO: Remove redundancy with score functions, see issue: #275</p>
@@ -602,7 +609,7 @@ TODO: Remove redundancy with score functions, see issue: #275</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="filter_with_score" class="doc_header"><code>filter_with_score</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L280" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_with_score</code>(<strong><code>df</code></strong>:<code>DataFrame</code>)</p>
+<h4 id="filter_with_score" class="doc_header"><code>filter_with_score</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L283" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_with_score</code>(<strong><code>df</code></strong>:<code>DataFrame</code>)</p>
 </blockquote>
 <p>Filters the psms table by using the score column, no fdr filter.
 TODO: Remove redundancy with score functions, see issue: #275</p>
@@ -646,7 +653,7 @@ TODO: Remove redundancy with score functions, see issue: #275</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="score_psms" class="doc_header"><code>score_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L302" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score_psms</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>score</code></strong>:<code>str</code>=<em><code>'y_hits'</code></em>, <strong><code>fdr_level</code></strong>:<code>float</code>=<em><code>0.01</code></em>, <strong><code>plot</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="score_psms" class="doc_header"><code>score_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L305" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score_psms</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>score</code></strong>:<code>str</code>=<em><code>'y_hits'</code></em>, <strong><code>fdr_level</code></strong>:<code>float</code>=<em><code>0.01</code></em>, <strong><code>plot</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Uses the specified score in df to filter psms and to apply the fdr_level threshold.</p>
 <p>Args:
@@ -709,7 +716,7 @@ TODO: Remove redundancy with score functions, see issue: #275</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_ML_features" class="doc_header"><code>get_ML_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L345" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_ML_features</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>protease</code></strong>:<code>str</code>=<em><code>'trypsin'</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_ML_features" class="doc_header"><code>get_ML_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L348" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_ML_features</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>protease</code></strong>:<code>str</code>=<em><code>'trypsin'</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Uses the specified score in df to filter psms and to apply the fdr_level threshold.</p>
 <p>Args:
@@ -739,7 +746,7 @@ TODO: Remove redundancy with score functions, see issue: #275</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="train_RF" class="doc_header"><code>train_RF</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L371" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>train_RF</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>exclude_features</code></strong>:<code>list</code>=<em><code>['precursor_idx', 'ion_idx', 'fasta_index', 'feature_rank', 'raw_rank', 'rank', 'db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx', 'sequence', 'decoy', 'naked_sequence', 'target']</code></em>, <strong><code>train_fdr_level</code></strong>:<code>float</code>=<em><code>0.1</code></em>, <strong><code>ini_score</code></strong>:<code>str</code>=<em><code>'x_tandem'</code></em>, <strong><code>min_train</code></strong>:<code>int</code>=<em><code>1000</code></em>, <strong><code>test_size</code></strong>:<code>float</code>=<em><code>0.8</code></em>, <strong><code>max_depth</code></strong>:<code>list</code>=<em><code>[5, 25, 50]</code></em>, <strong><code>max_leaf_nodes</code></strong>:<code>list</code>=<em><code>[150, 200, 250]</code></em>, <strong><code>n_jobs</code></strong>:<code>int</code>=<em><code>-1</code></em>, <strong><code>scoring</code></strong>:<code>str</code>=<em><code>'accuracy'</code></em>, <strong><code>plot</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>random_state</code></strong>:<code>int</code>=<em><code>42</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="train_RF" class="doc_header"><code>train_RF</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L374" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>train_RF</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>exclude_features</code></strong>:<code>list</code>=<em><code>['precursor_idx', 'ion_idx', 'fasta_index', 'feature_rank', 'raw_rank', 'rank', 'db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx', 'sequence', 'decoy', 'naked_sequence', 'target']</code></em>, <strong><code>train_fdr_level</code></strong>:<code>float</code>=<em><code>0.1</code></em>, <strong><code>ini_score</code></strong>:<code>str</code>=<em><code>'x_tandem'</code></em>, <strong><code>min_train</code></strong>:<code>int</code>=<em><code>1000</code></em>, <strong><code>test_size</code></strong>:<code>float</code>=<em><code>0.8</code></em>, <strong><code>max_depth</code></strong>:<code>list</code>=<em><code>[5, 25, 50]</code></em>, <strong><code>max_leaf_nodes</code></strong>:<code>list</code>=<em><code>[150, 200, 250]</code></em>, <strong><code>n_jobs</code></strong>:<code>int</code>=<em><code>-1</code></em>, <strong><code>scoring</code></strong>:<code>str</code>=<em><code>'accuracy'</code></em>, <strong><code>plot</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>random_state</code></strong>:<code>int</code>=<em><code>42</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to train a random forest classifier to separate targets from decoys via semi-supervised learning.</p>
 <p>Args:
@@ -779,7 +786,7 @@ TODO: Remove redundancy with score functions, see issue: #275</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="score_ML" class="doc_header"><code>score_ML</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L486" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score_ML</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>trained_classifier</code></strong>:<code>GridSearchCV</code>, <strong><code>features</code></strong>:<code>list</code>=<em><code>None</code></em>, <strong><code>fdr_level</code></strong>:<code>float</code>=<em><code>0.01</code></em>, <strong><code>plot</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="score_ML" class="doc_header"><code>score_ML</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L489" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score_ML</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>trained_classifier</code></strong>:<code>GridSearchCV</code>, <strong><code>features</code></strong>:<code>list</code>=<em><code>None</code></em>, <strong><code>fdr_level</code></strong>:<code>float</code>=<em><code>0.01</code></em>, <strong><code>plot</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Applies a trained ML classifier to df and uses the ML score to filter psms and to apply the fdr_level threshold.</p>
 <p>Args:
@@ -812,7 +819,7 @@ TODO: Remove redundancy with score functions, see issue: #275</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="filter_with_ML" class="doc_header"><code>filter_with_ML</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L517" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_with_ML</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>trained_classifier</code></strong>:<code>GridSearchCV</code>, <strong><code>features</code></strong>:<code>list</code>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="filter_with_ML" class="doc_header"><code>filter_with_ML</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L520" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_with_ML</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>trained_classifier</code></strong>:<code>GridSearchCV</code>, <strong><code>features</code></strong>:<code>list</code>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Filters the psms table by using the x_tandem score, no fdr filter.
 TODO: Remove redundancy with score functions, see issue: #275</p>
@@ -869,7 +876,7 @@ First, we check whether a peptide is proteotypic, meaning that the peptide can o
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="assign_proteins" class="doc_header"><code>assign_proteins</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L546" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>assign_proteins</code>(<strong><code>data</code></strong>:<code>DataFrame</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>)</p>
+<h4 id="assign_proteins" class="doc_header"><code>assign_proteins</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L549" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>assign_proteins</code>(<strong><code>data</code></strong>:<code>DataFrame</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Assign psms to proteins.
 This function appends the dataframe with a column 'n_possible_proteins' which indicates how many proteins a psm could be matched to.
@@ -902,7 +909,7 @@ It returns the appended dataframe and a dictionary <code>found_proteins</code> w
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_shared_proteins" class="doc_header"><code>get_shared_proteins</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L584" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_shared_proteins</code>(<strong><code>data</code></strong>:<code>DataFrame</code>, <strong><code>found_proteins</code></strong>:<code>dict</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>)</p>
+<h4 id="get_shared_proteins" class="doc_header"><code>get_shared_proteins</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L587" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_shared_proteins</code>(<strong><code>data</code></strong>:<code>DataFrame</code>, <strong><code>found_proteins</code></strong>:<code>dict</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Assign peptides to razor proteins.</p>
 <p>Args:
@@ -933,7 +940,7 @@ It returns the appended dataframe and a dictionary <code>found_proteins</code> w
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_protein_groups" class="doc_header"><code>get_protein_groups</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L673" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_protein_groups</code>(<strong><code>data</code></strong>:<code>DataFrame</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>fasta_dict</code></strong>:<code>dict</code>, <strong><code>decoy</code></strong>=<em><code>False</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_protein_groups" class="doc_header"><code>get_protein_groups</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L676" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_protein_groups</code>(<strong><code>data</code></strong>:<code>DataFrame</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>fasta_dict</code></strong>:<code>dict</code>, <strong><code>decoy</code></strong>=<em><code>False</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to perform protein grouping by razor approach.
 This function calls <a href="/score.html#assign_proteins"><code>assign_proteins</code></a> and <a href="/score.html#get_shared_proteins"><code>get_shared_proteins</code></a>.
@@ -969,7 +976,7 @@ Each protein is indicated with a p -&gt; protein index</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="perform_protein_grouping" class="doc_header"><code>perform_protein_grouping</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L742" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>perform_protein_grouping</code>(<strong><code>data</code></strong>:<code>DataFrame</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>fasta_dict</code></strong>:<code>dict</code>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="perform_protein_grouping" class="doc_header"><code>perform_protein_grouping</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L745" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>perform_protein_grouping</code>(<strong><code>data</code></strong>:<code>DataFrame</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>fasta_dict</code></strong>:<code>dict</code>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Wrapper function to perform protein grouping by razor approach</p>
 <p>Args:
@@ -1007,7 +1014,7 @@ Each protein is indicated with a p -&gt; protein index</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_ion" class="doc_header"><code>get_ion</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L787" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_ion</code>(<strong><code>i</code></strong>:<code>int</code>, <strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>ions</code></strong>:<code>DataFrame</code>)</p>
+<h4 id="get_ion" class="doc_header"><code>get_ion</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L790" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_ion</code>(<strong><code>i</code></strong>:<code>int</code>, <strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>ions</code></strong>:<code>DataFrame</code>)</p>
 </blockquote>
 <p>Helper function to extract the ion-hits for a given DataFrame index.
 This function extracts the hit type and the intensities.
@@ -1048,7 +1055,7 @@ E.g.: ['b1','y1'], np.array([10,20]).</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="ecdf" class="doc_header"><code>ecdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L813" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>ecdf</code>(<strong><code>data</code></strong>:<code>ndarray</code>)</p>
+<h4 id="ecdf" class="doc_header"><code>ecdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L816" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>ecdf</code>(<strong><code>data</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Compute ECDF.
 Helper function to calculate the ECDF of a score distribution.
@@ -1094,7 +1101,7 @@ This is later used to normalize the score from an arbitrary range to [0,1].</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="score_hdf" class="doc_header"><code>score_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L839" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score_hdf</code>(<strong><code>to_process</code></strong>:<code>tuple</code>, <strong><code>callback</code></strong>:<code>Callable</code>=<em><code>None</code></em>, <strong><code>parallel</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
+<h4 id="score_hdf" class="doc_header"><code>score_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L842" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score_hdf</code>(<strong><code>to_process</code></strong>:<code>tuple</code>, <strong><code>callback</code></strong>:<code>Callable</code>=<em><code>None</code></em>, <strong><code>parallel</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Apply scoring on an hdf file to be called from a parallel pool.
 This function does not raise errors but returns the exception as a string.
@@ -1126,7 +1133,7 @@ Args:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_grouping_all" class="doc_header"><code>protein_grouping_all</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L937" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_grouping_all</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>fasta_dict</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="protein_grouping_all" class="doc_header"><code>protein_grouping_all</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/score.py#L940" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_grouping_all</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>fasta_dict</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Apply protein grouping on all files in an experiment.
 This function will load all dataframes (peptide_fdr level) and perform protein grouping.</p>

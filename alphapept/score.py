@@ -28,7 +28,7 @@ def filter_score(df: pd.DataFrame, mode: str='multiple') -> pd.DataFrame:
     df["rank"] = df.groupby("query_idx")["score"].rank("dense", ascending=False).astype("int")
     df = df[df["rank"] == 1]
 
-    # in case two hits have the same score and therfore rank only accept the first one
+    # in case two hits have the same score and therfore the same rank only accept the first one
     df = df.drop_duplicates("query_idx")
 
     if 'dist' in df.columns:
@@ -50,6 +50,8 @@ def filter_score(df: pd.DataFrame, mode: str='multiple') -> pd.DataFrame:
 
     # TOD: this needs to be sorted out, for modifications -> What if we have MoxM -> oxMM, this will screw up with the filter sequence part
     return df_filtered
+
+# Cell
 
 def filter_precursor(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -98,6 +100,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+#Note that the test function for cut_fdr is further down in the notebook to also test protein-level FDR.
 def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True) -> (float, pd.DataFrame):
     """
     Cuts a dataframe with a given fdr level
