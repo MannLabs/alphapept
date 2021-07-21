@@ -183,7 +183,7 @@ def file_df_from_files(raw_files:list, file_folder:str)->pd.DataFrame:
 
 
 def experiment():
-    """Main widget to display the experiment tab.
+    """Streamlit page to display the experiment tab.
     """    
     error = 0
     st.write("# New experiment")

@@ -3,6 +3,8 @@ from alphapept.gui.utils import markdown_link
 from alphapept.__version__ import VERSION_NO
 
 def start():
+    """Streamlit page that displays information on how to get started.
+    """      
     st.write('# Getting started')
     st.text('Welcome to AlphaPept.')
 
