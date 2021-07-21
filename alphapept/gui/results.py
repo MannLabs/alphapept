@@ -13,16 +13,30 @@ import plotly.graph_objects as go
 from scipy import stats
 import numpy as np
 from sklearn.decomposition import PCA
+from alphapept.io import MS_Data_File
 
 
 @st.cache
-def cached_file(file):
+def cached_file(file:str)->pd.DataFrame:
+    """Helper function to cache a file and not reload it.
+    Args:
+        file (str): Path to file
+
+    Returns:
+        pd.DataFrame: Pandas Dataframe.
+    """    
     df = pd.read_hdf(file, 'protein_table')
     return df
 
-def readable_files_from_yaml(results_yaml):
-    """
-    Returns all readable files from results yaml
+def readable_files_from_yaml(results_yaml:dict)->list:
+    """Returns all file paths from a results.yaml.
+    Filters out files that do not exist.
+
+    Args:
+        results_yaml (dict): Results dictionary.
+
+    Returns:
+        list: List of raw files.
     """
 
     raw_files = [os.path.splitext(_)[0]+'.ms_data.hdf' for _ in results_yaml['experiment']['file_paths']]
@@ -31,10 +45,12 @@ def readable_files_from_yaml(results_yaml):
 
     return raw_files
 
-def get_table_download_link(df, name):
-    """Generates a link allowing the data in a given panda dataframe to be downloaded
-    in:  dataframe
-    out: href string
+def get_table_download_link(df:pd.DataFrame, name:str):
+    """Generates a streamlit link allowing the data in a given panda dataframe to be downloaded.
+
+    Args:
+        df (pd.DataFrame): Pandas DataFrame to be downloaded.
+        name (str): Name of link.
     """
     csv = df.to_csv(index=False)
     b64 = base64.b64encode(
@@ -46,20 +62,24 @@ def get_table_download_link(df, name):
     st.markdown(href, unsafe_allow_html=True)
 
 
-def make_df_downloadble(df, file):
-    """
-    Creates checkbox to make displayed data downloadable
-    """
+def make_df_downloadble(df:pd.DataFrame, file:str):
+    """Creates streamlit checkbox to make displayed data downloadable.
+
+    Args:
+        df (pd.DataFrame): Pandas DataFrame to be downloaded.
+        file (str): Filename.
+    """    
     if st.button('Create download link'):
         file_name = os.path.splitext(os.path.split(file)[-1])[0] + '.csv'
         get_table_download_link(df, file_name)
 
-def ion_plot(ms_file, options):
-    """
-    Displays summary statistics from matched ions
+def ion_plot(ms_file:MS_Data_File, options:list):
+    """Displays summary statistics from matched ions.
 
+    Args:
+        ms_file (MS_Data_File): Ms data file to be read.
+        options (list): List of plot options.
     """
-
     if 'ions' in options:
         if st.button('Ion calibration'):
             with st.spinner('Creating plot.'):
@@ -79,7 +99,16 @@ def ion_plot(ms_file, options):
 
                 st.write(fig)
 
-def multiple_file_check(param):
+def multiple_file_check(param:list)->bool:
+    """Helper function to check if multiple files are present.
+    Displays a streamlit info if only one file is present.
+
+    Args:
+        param (list): list
+
+    Returns:
+        bool: Boolean flag if only one file is present or not.
+    """
     if len(param) > 1:
         return True
     else:
@@ -87,7 +116,13 @@ def multiple_file_check(param):
         return False
 
 
-def correlation_heatmap(file, options):
+def correlation_heatmap(file:str, options:list):
+    """Plots a correlation heatmap of the proteins.
+
+    Args:
+        file (str): Path to file.
+        options (list): List of plot options. 
+    """
     if '/protein_table' in options:
         with st.beta_expander('Correlation heatmap'):
             df = cached_file(file)
@@ -107,7 +142,14 @@ def correlation_heatmap(file, options):
                 fig.update_layout(height=600, width=600)
                 st.write(fig)
 
-def pca_plot(file, options):
+
+def pca_plot(file:str, options:list):
+    """Plots a PCA plot of the proteins.
+
+    Args:
+        file (str): Path to file.
+        options (list): List of plot options. 
+    """
     if '/protein_table' in options:
         with st.beta_expander('PCA'):
             df = cached_file(file)
@@ -129,7 +171,14 @@ def pca_plot(file, options):
 
 
 
-def volcano_plot(file, options):
+def volcano_plot(file:str, options:list):
+    """Plots a volcano plot of the proteins.
+    Shows streamlit widgets to select the groups.
+
+    Args:
+        file (str): Path to file.
+        options (list): List of plot options. 
+    """
     if '/protein_table' in options:
         with st.beta_expander('Volcano plot'):
             df = cached_file(file)
@@ -194,7 +243,14 @@ def volcano_plot(file, options):
                         fig.update_layout(showlegend=False)
                         st.write(fig)
 
-def scatter_plot(file, options):
+def scatter_plot(file:str, options:list):
+    """Plots a scatter plot of the proteins.
+    Shows streamlit widgets to select the files.
+
+    Args:
+        file (str): Path to file.
+        options (list): List of plot options. 
+    """
     if '/protein_table' in options:
         with st.beta_expander('Scatter plot'):
             df = cached_file(file)
@@ -220,9 +276,11 @@ def scatter_plot(file, options):
                     st.code(results.px_fit_results.iloc[0].summary())
 
 
-def parse_file_and_display(file):
-    """
-    Loads file and displays dataframe in streamlit
+def parse_file_and_display(file:str):
+    """Wrapper function to load file and displays dataframe in streamlit.
+
+    Args:
+        file (str): Path to file. 
     """
 
     pandas_hdf = False
@@ -261,11 +319,13 @@ def parse_file_and_display(file):
 
             make_df_downloadble(df, file)
 
-def plot_summary(results_yaml, selection):
-    """
-    Plot summary
-    """
+def plot_summary(results_yaml:dict, selection:str):
+    """Plot summary information of a selected resutlts.yaml
 
+    Args:
+        results_yaml (dict): Results yaml dict.
+        selection (str): Selected file.
+    """
     files = [os.path.splitext(_)[0] for _ in results_yaml['summary']['processed_files']]
     data = [results_yaml['summary'][_] for _ in files]
 
@@ -296,14 +356,12 @@ def plot_summary(results_yaml, selection):
 
     st.write(fig)
 
-#42dee1
-
 def results():
+    """Streamlit page that displays information on how to get started.
+    """    
     st.write("# Results")
 
     st.text("This page allows to explore the analysis results.\nAlphaPept uses the HDF container format which can be accessed here.")
-
-    #TOdo: include previously processed output files..
 
     selection = st.selectbox('File selection', ('Previous results', 'Enter file'))
 
