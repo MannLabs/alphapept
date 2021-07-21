@@ -792,6 +792,9 @@ def generate_fasta_list(fasta_paths:list, callback = None, **kwargs)->tuple:
     return fasta_list, fasta_dict
 
 
+
+# Cell
+
 def generate_database(mass_dict:dict, fasta_paths:list, callback = None, **kwargs)->tuple:
     """
     Function to generate a database from a fasta file
@@ -837,6 +840,7 @@ def generate_database(mass_dict:dict, fasta_paths:list, callback = None, **kwarg
 
     return to_add, pept_dict, fasta_dict
 
+# Cell
 
 def generate_spectra(to_add:list, mass_dict:dict, callback = None)->list:
     """
@@ -869,13 +873,10 @@ def generate_spectra(to_add:list, mass_dict:dict, callback = None)->list:
     return spectra
 
 # Cell
-from multiprocessing import Pool
-from alphapept import constants
-mass_dict = constants.mass_dict
 
 def block_idx(len_list:int, block_size:int = 1000)->list:
     """
-    Split length into blocks
+    Helper function to split length into blocks
     Args:
         len_list (int): list length.
         block_size (int, optional, default 1000): size per block.
@@ -895,7 +896,7 @@ def block_idx(len_list:int, block_size:int = 1000)->list:
 
 def blocks(l:int, n:int)->tuple:
     """
-    Create blocks from a given list
+    Helper function to reate blocks from a given list
     Args:
         l (list): the list
         n (int): size per block
@@ -905,6 +906,13 @@ def blocks(l:int, n:int)->tuple:
     n = max(1, n)
     return (l[i:i+n] for i in range(0, len(l), n))
 
+# Cell
+
+from multiprocessing import Pool
+from alphapept import constants
+mass_dict = constants.mass_dict
+
+#This function is a wrapper function and to be tested by the integration test
 def digest_fasta_block(to_process:tuple)-> (list, dict):
     """
     Digest and create spectra for a whole fasta_block for multiprocessing. See generate_database_parallel.
@@ -934,6 +942,7 @@ def digest_fasta_block(to_process:tuple)-> (list, dict):
 
 import alphapept.speed
 
+#This function is a wrapper function and to be tested by the integration test
 def generate_database_parallel(settings:dict, callback = None):
     """
     Function to generate a database from a fasta file in parallel.
@@ -975,6 +984,7 @@ def generate_database_parallel(settings:dict, callback = None):
     return spectra_set, pept_dict, fasta_dict
 
 # Cell
+#This function is a wrapper function and to be tested by the integration test
 def pept_dict_from_search(settings:dict):
     """
     Generates a peptide dict from a large search.

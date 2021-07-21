@@ -1271,14 +1271,14 @@ Returns:
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[&#39;aPEPTIDEM&#39;,
- &#39;aPEPTIDEoxM&#39;,
- &#39;MEDITPEaP_decoy&#39;,
- &#39;oxMEDITPEaP_decoy&#39;,
- &#39;PEPTIDEM&#39;,
+<pre>[&#39;PEPTIDEM&#39;,
  &#39;PEPTIDEoxM&#39;,
  &#39;MEDITPEP_decoy&#39;,
- &#39;oxMEDITPEP_decoy&#39;]</pre>
+ &#39;oxMEDITPEP_decoy&#39;,
+ &#39;aPEPTIDEM&#39;,
+ &#39;aPEPTIDEoxM&#39;,
+ &#39;MEDITPEaP_decoy&#39;,
+ &#39;oxMEDITPEaP_decoy&#39;]</pre>
 </div>
 
 </div>
@@ -2009,29 +2009,6 @@ Returns:
 </div>
     {% endraw %}
 
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">test_merge_pept_dicts</span><span class="p">():</span>
-    <span class="n">pept_dict_1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ABC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;DEF&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;GHI&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
-    <span class="n">pept_dict_2</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ABC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;JKL&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="s1">&#39;MNO&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">7</span><span class="p">]}</span>
-
-    <span class="k">assert</span> <span class="n">merge_pept_dicts</span><span class="p">([</span><span class="n">pept_dict_1</span><span class="p">,</span> <span class="n">pept_dict_2</span><span class="p">])</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;ABC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;DEF&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;GHI&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;JKL&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="s1">&#39;MNO&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">7</span><span class="p">]}</span>
-    
-<span class="n">test_merge_pept_dicts</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Generating-a-database">Generating a database<a class="anchor-link" href="#Generating-a-database"> </a></h2><p>To wrap everything up, we employ two functions, <a href="/fasta.html#generate_database"><code>generate_database</code></a> and <a href="/fasta.html#generate_spectra"><code>generate_spectra</code></a>. The first one reads a FASTA file and generates a list of peptides, as well as the peptide dictionary and an ordered FASTA dictionary to be able to look up the protein indices later. For the <code>callback</code> we first read the whole FASTA file to determine the total number of entries in the FASTA file.  For a typical FASTA file of 30 Mb with 40k entries, this should take less than a second. The progress of the digestion is monitored by processing the FASTA file one by one.
@@ -2075,6 +2052,13 @@ Returns:
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -2082,7 +2066,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_database" class="doc_header"><code>generate_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L795" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database</code>(<strong><code>mass_dict</code></strong>:<code>dict</code>, <strong><code>fasta_paths</code></strong>:<code>list</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="generate_database" class="doc_header"><code>generate_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L798" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database</code>(<strong><code>mass_dict</code></strong>:<code>dict</code>, <strong><code>fasta_paths</code></strong>:<code>list</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to generate a database from a fasta file
 Args:
@@ -2108,6 +2092,13 @@ Returns:
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -2115,7 +2106,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_spectra" class="doc_header"><code>generate_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L841" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_spectra</code>(<strong><code>to_add</code></strong>:<code>list</code>, <strong><code>mass_dict</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="generate_spectra" class="doc_header"><code>generate_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L845" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_spectra</code>(<strong><code>to_add</code></strong>:<code>list</code>, <strong><code>mass_dict</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Function to generate spectra list database from a fasta file
 Args:
@@ -2160,9 +2151,9 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="block_idx" class="doc_header"><code>block_idx</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L876" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>block_idx</code>(<strong><code>len_list</code></strong>:<code>int</code>, <strong><code>block_size</code></strong>:<code>int</code>=<em><code>1000</code></em>)</p>
+<h4 id="block_idx" class="doc_header"><code>block_idx</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L877" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>block_idx</code>(<strong><code>len_list</code></strong>:<code>int</code>, <strong><code>block_size</code></strong>:<code>int</code>=<em><code>1000</code></em>)</p>
 </blockquote>
-<p>Split length into blocks
+<p>Helper function to split length into blocks
 Args:
     len_list (int): list length.
     block_size (int, optional, default 1000): size per block.
@@ -2190,9 +2181,9 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="blocks" class="doc_header"><code>blocks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L896" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>blocks</code>(<strong><code>l</code></strong>:<code>int</code>, <strong><code>n</code></strong>:<code>int</code>)</p>
+<h4 id="blocks" class="doc_header"><code>blocks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L897" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>blocks</code>(<strong><code>l</code></strong>:<code>int</code>, <strong><code>n</code></strong>:<code>int</code>)</p>
 </blockquote>
-<p>Create blocks from a given list
+<p>Helper function to reate blocks from a given list
 Args:
     l (list): the list
     n (int): size per block
@@ -2213,6 +2204,13 @@ Returns:
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -2220,7 +2218,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="digest_fasta_block" class="doc_header"><code>digest_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L908" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>digest_fasta_block</code>(<strong><code>to_process</code></strong>:<code>tuple</code>)</p>
+<h4 id="digest_fasta_block" class="doc_header"><code>digest_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L916" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>digest_fasta_block</code>(<strong><code>to_process</code></strong>:<code>tuple</code>)</p>
 </blockquote>
 <p>Digest and create spectra for a whole fasta_block for multiprocessing. See generate_database_parallel.</p>
 
@@ -2245,7 +2243,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_database_parallel" class="doc_header"><code>generate_database_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L937" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database_parallel</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="generate_database_parallel" class="doc_header"><code>generate_database_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L946" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database_parallel</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Function to generate a database from a fasta file in parallel.
 Args:
@@ -2292,7 +2290,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="pept_dict_from_search" class="doc_header"><code>pept_dict_from_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L978" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pept_dict_from_search</code>(<strong><code>settings</code></strong>:<code>dict</code>)</p>
+<h4 id="pept_dict_from_search" class="doc_header"><code>pept_dict_from_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L988" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pept_dict_from_search</code>(<strong><code>settings</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Generates a peptide dict from a large search.</p>
 
@@ -2325,9 +2323,8 @@ Returns:
 <li><code>fragtypes:</code>: An array containing the fragment types. 0 equals b-ions, and 1 equals y-ions. Unoccupied cells are filled with -1</li>
 <li><code>bounds</code>: An integer array containing the upper bounds for the fragment masses/types array. This is needed to quickly slice the data.</li>
 </ul>
-<p>All arrays are sorted according to the precursor mass.</p>
-<blockquote><p>To access the dictionaries such as <code>pept_dict</code> or <code>fasta_dict</code>, one needs to extract them using the <code>.item()</code> method like so:<code>container['pept_dict'].item()</code>.</p>
-</blockquote>
+<p>All arrays are sorted according to the precursor mass.
+{% include note.html content='To access the dictionaries such as <code>pept_dict</code> or <code>fasta_dict</code>, one needs to extract them using the <code>.item()</code> method like so: <code>container["pept_dict"].item()</code>.' %}</p>
 
 </div>
 </div>
@@ -2343,7 +2340,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="save_database" class="doc_header"><code>save_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L1023" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_database</code>(<strong><code>spectra</code></strong>:<code>list</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>fasta_dict</code></strong>:<code>dict</code>, <strong><code>database_path</code></strong>:<code>str</code>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="save_database" class="doc_header"><code>save_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L1033" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_database</code>(<strong><code>spectra</code></strong>:<code>list</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>fasta_dict</code></strong>:<code>dict</code>, <strong><code>database_path</code></strong>:<code>str</code>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to save a database to the *.hdf format. Write the database into hdf.
 Args:
@@ -2379,7 +2376,7 @@ Args:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_database" class="doc_header"><code>read_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L1097" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_database</code>(<strong><code>database_path</code></strong>:<code>str</code>, <strong><code>array_name</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
+<h4 id="read_database" class="doc_header"><code>read_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L1107" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_database</code>(<strong><code>database_path</code></strong>:<code>str</code>, <strong><code>array_name</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Read database from hdf file.
 Args:
