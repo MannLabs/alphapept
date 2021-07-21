@@ -37,7 +37,7 @@ nb_path: "nbs/03_fasta.ipynb"
 <li>For each peptide, calculate a theoretical spectrum and precursor mass</li>
 <li>Save spectra</li>
 </ol>
-<p>Currently, <a href="/speed.html#numba"><code>numba</code></a> has only limited string support. A lot of the functions are therefore Python-native.</p>
+<p>Currently, <code>numba</code> has only limited string support. A lot of the functions are therefore Python-native.</p>
 
 </div>
 </div>
@@ -268,7 +268,7 @@ Returns:
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Parsing">Parsing<a class="anchor-link" href="#Parsing"> </a></h2><p>Peptides are composed out of amino acids that are written in capital letters - <code>PEPTIDE</code>. To distinguish modifications, they are written in lowercase such as <code>PEPTIoxDE</code> and can be of arbitrary length. For a modified amino acid (AA), the modification precedes the letter of the amino acid. Decoys are indicated with an underscore. Therefore, the <a href="/fasta.html#parse"><code>parse</code></a> function splits after <code>_</code>. When parsing, the peptide string is converted into a <a href="/speed.html#numba"><code>numba</code></a>-compatible list, like so: <code>PEPoxTIDE</code> -&gt; <code>[P, E, P, oxT, I, D, E]</code>. This allows that we can use the <a href="/constants.html#mass_dict"><code>mass_dict</code></a> from <code>alphapept.constants</code> to directly determine the masses for the corresponding amino acids.</p>
+<h2 id="Parsing">Parsing<a class="anchor-link" href="#Parsing"> </a></h2><p>Peptides are composed out of amino acids that are written in capital letters - <code>PEPTIDE</code>. To distinguish modifications, they are written in lowercase such as <code>PEPTIoxDE</code> and can be of arbitrary length. For a modified amino acid (AA), the modification precedes the letter of the amino acid. Decoys are indicated with an underscore. Therefore, the <a href="/fasta.html#parse"><code>parse</code></a> function splits after <code>_</code>. When parsing, the peptide string is converted into a <code>numba</code>-compatible list, like so: <code>PEPoxTIDE</code> -&gt; <code>[P, E, P, oxT, I, D, E]</code>. This allows that we can use the <a href="/constants.html#mass_dict"><code>mass_dict</code></a> from <code>alphapept.constants</code> to directly determine the masses for the corresponding amino acids.</p>
 
 </div>
 </div>
@@ -1370,8 +1370,8 @@ Returns:
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h3 id="Fragments">Fragments<a class="anchor-link" href="#Fragments"> </a></h3><p>Likewise, we can calculate the masses of the fragment ions. We employ two functions: <a href="/fasta.html#get_fragmass"><code>get_fragmass</code></a> and <a href="/fasta.html#get_frag_dict"><code>get_frag_dict</code></a>.</p>
-<p><a href="/fasta.html#get_fragmass"><code>get_fragmass</code></a> is a fast, <a href="/speed.html#numba"><code>numba</code></a>-compatible function that calculates the fragment masses and returns an array indicating whether the ion-type was <code>b</code> or <code>y</code>.</p>
-<p><a href="/fasta.html#get_frag_dict"><code>get_frag_dict</code></a> instead is not <a href="/speed.html#numba"><code>numba</code></a>-compatible and hence a bit slower. It returns a dictionary with the respective ion and can be used for plotting theoretical spectra.</p>
+<p><a href="/fasta.html#get_fragmass"><code>get_fragmass</code></a> is a fast, <code>numba</code>-compatible function that calculates the fragment masses and returns an array indicating whether the ion-type was <code>b</code> or <code>y</code>.</p>
+<p><a href="/fasta.html#get_frag_dict"><code>get_frag_dict</code></a> instead is not <code>numba</code>-compatible and hence a bit slower. It returns a dictionary with the respective ion and can be used for plotting theoretical spectra.</p>
 
 </div>
 </div>
@@ -2290,7 +2290,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="pept_dict_from_search" class="doc_header"><code>pept_dict_from_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L988" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pept_dict_from_search</code>(<strong><code>settings</code></strong>:<code>dict</code>)</p>
+<h4 id="pept_dict_from_search" class="doc_header"><code>pept_dict_from_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L990" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pept_dict_from_search</code>(<strong><code>settings</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Generates a peptide dict from a large search.</p>
 
@@ -2340,7 +2340,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="save_database" class="doc_header"><code>save_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L1033" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_database</code>(<strong><code>spectra</code></strong>:<code>list</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>fasta_dict</code></strong>:<code>dict</code>, <strong><code>database_path</code></strong>:<code>str</code>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="save_database" class="doc_header"><code>save_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L1035" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_database</code>(<strong><code>spectra</code></strong>:<code>list</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>fasta_dict</code></strong>:<code>dict</code>, <strong><code>database_path</code></strong>:<code>str</code>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Function to save a database to the *.hdf format. Write the database into hdf.
 Args:
@@ -2376,7 +2376,7 @@ Args:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_database" class="doc_header"><code>read_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L1107" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_database</code>(<strong><code>database_path</code></strong>:<code>str</code>, <strong><code>array_name</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
+<h4 id="read_database" class="doc_header"><code>read_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L1109" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_database</code>(<strong><code>database_path</code></strong>:<code>str</code>, <strong><code>array_name</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Read database from hdf file.
 Args:

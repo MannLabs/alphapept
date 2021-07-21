@@ -46,14 +46,11 @@ entries:
       title: Interface
       url: interface.html
     - output: web,pdf
-      title: Speed
-      url: speed.html
+      title: Performance
+      url: performance.html
     - output: web,pdf
       title: Export
       url: export.html
-    - output: web,pdf
-      title: Performance
-      url: performance.html
     - output: web,pdf
       title: Additional code
       url: additional_code.html

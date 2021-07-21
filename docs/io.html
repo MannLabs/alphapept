@@ -171,7 +171,7 @@ nb_path: "nbs/02_io.ipynb"
 <div class="output_markdown rendered_html output_subarea ">
 <h4 id="one_over_k0_to_CCS" class="doc_header"><code>one_over_k0_to_CCS</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L219" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>one_over_k0_to_CCS</code>(<strong><code>one_over_k0s</code></strong>:<code>ndarray</code>, <strong><code>charges</code></strong>:<code>ndarray</code>, <strong><code>mzs</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-<p>Retrieve colliosonal cross section (CCS) values from (mobility, charge, mz) arrays.</p>
+<p>Retrieve collisional cross section (CCS) values from (mobility, charge, mz) arrays.</p>
 <p>Args:
     one_over_k0s (np.ndarray): The ion mobilities (1D-np.float).
     charges (np.ndarray): The charges (1D-np.int).
@@ -1221,10 +1221,10 @@ data with an HDF container.</p>
 <p>Read query data from this ms_data object and return it as a query_dict.</p>
 <p>Args:
     calibrated_fragments (bool): If True, calibrated fragments are retrieved.
-        Calihration offsets can already be present in the ms_data or recalculated.
+        Calibration offsets can already be present in the ms_data or recalculated.
         Defaults to False.
     force_recalibrate (bool): If calibrated fragments is True,
-        recalibrate mzs values even if a reclaibration is already provided.
+        recalibrate mzs values even if a recalibration is already provided.
         Defaults to False.
     swmr (bool): Open the file in swmr mode. Defaults to False.
     **kwargs (type): Can contain a database file name that was used for recalibration.</p>
@@ -1250,7 +1250,7 @@ data with an HDF container.</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Usage-in-workflows">Usage in workflows<a class="anchor-link" href="#Usage-in-workflows"> </a></h2><p>Tio use all the above functionality from a workflow with several parameters, the following functions are defined. These functions also allow parallel processing.</p>
+<h2 id="Usage-in-workflows">Usage in workflows<a class="anchor-link" href="#Usage-in-workflows"> </a></h2><p>To use all the above functionality from a workflow with several parameters, the following functions are defined. These functions also allow parallel processing.</p>
 
 </div>
 </div>

@@ -13,9 +13,8 @@
     "Matching": "matching.html",
     "Constants": "constants.html",
     "Interface": "interface.html",
-    "Speed": "speed.html",
-    "Export": "export.html",
     "Performance": "performance.html",
+    "Export": "export.html",
     "Additional code": "additional_code.html",
     "How to contribute": "contributing.html",
     "AlphaPept workflow and files": "file_formats.html"
