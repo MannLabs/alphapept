@@ -118,24 +118,27 @@ are welcome :)</li>
 <p>Below a sample docstring (Note the empty space after Args/Returns/Raises):</p>
 
 <pre><code>def sample_function(a_string: str, a_int: int, a_flag: bool) -&gt; str:
-    """
-    Sample function that performs a sample calculation.
+    """Sample function that performs a sample calculation.
 
     Args:
-        a_string: A string.
-        a_int: An integer.
-        a_flag: A flag.
+        a_string (str): A string.
+        a_int (int): An integer.
+        a_flag (bool): A flag.
 
     Returns:
-        A string based on the input.  
-
-    Raises:
-        ValueError: An error occured when the integer is negative.
-
+        str: A string based on the input
     """</code></pre>
-<blockquote><p>Note that type hints are highly recommended but not mandatory (see also <a href="https://www.python.org/dev/peps/pep-0484/">PEP484</a>). As the Legacy codebase had no type hints we are slowly moving towards more type hinting coverage.
-Note that adding additional elements to the docstring could break how the documentation is displayed. Below is the function from above but exported to show how it would appear in the documentation.</p>
-</blockquote>
+<h4 id="Examples:">Examples:<a class="anchor-link" href="#Examples:"> </a></h4><ul>
+<li>pandas dataframes: <code>df: pd.DataFrame</code></li>
+<li>numpy arrays: <code>x:np.ndarray</code>. You can further specify the dimension (e.g. of numpy arrays) in the docstring. </li>
+<li>args and kwargs: list and dict. It is generally not needed to type-hint these but state in the Args what they are and what can be done with them.</li>
+<li>callbacks: typing.Callable, e.g. Callable[[Arg1Type, Arg2Type], ReturnType]</li>
+</ul>
+<h4 id="Useful-tricks:">Useful tricks:<a class="anchor-link" href="#Useful-tricks:"> </a></h4><ul>
+<li>When using Visual Studio Code, you can use the <code>Python Docstring Generator</code> to automatically generate the docstrings with this format.</li>
+<li>When changing the docstrings in the code, you can propagate the changes back to the notebooks with <code>nbdev_update_lib [filename]</code>.
+{% include note.html content='Type hints are highly recommended but not mandatory (see also <a href="https://www.python.org/dev/peps/pep-0484/">PEP484</a>). As the Legacy codebase had no type hints, we are slowly moving towards more type hinting coverage.' %}{% include note.html content='Adding additional elements (e.g lines like -------) to the docstring could break how the documentation is displayed. Below is the function from above but exported to show how it would appear in the documentation.' %}</li>
+</ul>
 
 </div>
 </div>
@@ -155,13 +158,11 @@ Note that adding additional elements to the docstring could break how the docume
 </blockquote>
 <p>Sample function that performs a sample calculation.</p>
 <p>Args:
-    a_string: A string.
-    a_int: An integer.
-    a_flag: A flag.</p>
+    a_string (str): A string.
+    a_int (int): An integer.
+    a_flag (bool): A flag.</p>
 <p>Returns:
-    A string based on the input.</p>
-<p>Raises:
-    ValueError: An error occured when the integer is negative.</p>
+    str: A string based on the input</p>
 
 </div>
 
@@ -202,6 +203,7 @@ def function_a():
     assert function_a() == 5
 
 test_function_a()</code></pre>
+<p>{% include note.html content='AlphaPept contains a testfolder <code>testfiles</code> with testfiles which are used for some functions to perform tests on files.' %}</p>
 
 </div>
 </div>
@@ -221,9 +223,10 @@ test_function_a()</code></pre>
 </ul>
 <p>The <code>quick_test</code> and <code>performance_test</code> are hooked to the MongoDB, so results are reported here.</p>
 <p>Some actions are executed on each push (e.g. <code>quick_test</code>, others need to be triggered manually (e.g. <code>release</code>).</p>
-<h3 id="Adding-an-integration-test">Adding an integration test<a class="anchor-link" href="#Adding-an-integration-test"> </a></h3><p>The best way to add an integration test is by specifying a new test in <code>test_ci.py</code> and then adding a job to the <code>performance_test</code> action. <code>test_ci.py</code> contains a file dictionary with links to files. The idea here is as follows: On the local machine, there should be a <code>BASE_DIR</code> that contains all files used for running the test cases. If the files are not present, the script will download them with the URL from the file dictionary. To define a test case, one needs to initiate a <code>TestRun</code>-class and provide the files to be used. Running a test will always take the current <code>default_settings.yaml</code> and modifying the respective files. You can add subsequent analysis (e.g., such as calculating the false discovery FDR for a mixed species experiment by adding a function to the test class.</p>
+<h3 id="Adding-an-integration-test">Adding an integration test<a class="anchor-link" href="#Adding-an-integration-test"> </a></h3><p>{% include note.html content='Unless you are a core developer, there should not be the need to add integration tests. Feel free to create a PR in case.' %}
+The best way to add an integration test is by specifying a new test in <code>test_ci.py</code> and then adding a job to the <code>performance_test</code> action. <code>test_ci.py</code> contains a file dictionary with links to files. The idea here is as follows: On the local machine, there should be a <code>BASE_DIR</code> that contains all files used for running the test cases. If the files are not present, the script will download them with the URL from the file dictionary. To define a test case, one needs to initiate a <code>TestRun</code>-class and provide the files to be used. Running a test will always take the current <code>default_settings.yaml</code> and modifying the respective files. You can add subsequent analysis (e.g., such as calculating the false discovery FDR for a mixed species experiment by adding a function to the test class.</p>
 <p>To test an integration test locally, simply call the <code>test_ci.py</code> with the respective test (e.g. thermo_irt) like so: <code>python test_ci.py thermo_irt</code>.</p>
-<h3 id="Integrating-Actions">Integrating Actions<a class="anchor-link" href="#Integrating-Actions"> </a></h3><p>{% include note.html content='Unless you are a core developer, there should not be the need to add actions.' %}
+<h3 id="Integrating-Actions">Integrating Actions<a class="anchor-link" href="#Integrating-Actions"> </a></h3><p>{% include note.html content='Unless you are a core developer, there should not be the need to add GitHub Actions. Feel free to create a PR in case.' %}
 New actions can be added by creating a <code>.yml</code> file and placing it in the workflows folder.
 We can distinguish local actions, which run on our self-hosted <a href="https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners">runners</a>  and cloud actions that run on GitHub servers.</p>
 <p>The local runners are meant to run computationally intensive tasks such as the <code>performance_test</code> and the <code>quick_test</code>, whereas the cloud actions are meant for unit tests.

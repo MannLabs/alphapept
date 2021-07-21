@@ -54,9 +54,11 @@ nb_path: "nbs/00_settings.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="print_settings" class="doc_header"><code>print_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L8" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>print_settings</code>(<strong><code>settings</code></strong>)</p>
+<h4 id="print_settings" class="doc_header"><code>print_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L8" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>print_settings</code>(<strong><code>settings</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Print a yaml settings file</p>
+<p>Args:
+    settings (dict): A yaml dictionary</p>
 
 </div>
 
@@ -79,9 +81,11 @@ nb_path: "nbs/00_settings.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="load_settings" class="doc_header"><code>load_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L15" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_settings</code>(<strong><code>path</code></strong>)</p>
+<h4 id="load_settings" class="doc_header"><code>load_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L17" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_settings</code>(<strong><code>path</code></strong>:<code>str</code>)</p>
 </blockquote>
 <p>Load a yaml settings file</p>
+<p>Args:
+    path (str): Path to the settings file.</p>
 
 </div>
 
@@ -104,9 +108,11 @@ nb_path: "nbs/00_settings.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="load_settings_as_template" class="doc_header"><code>load_settings_as_template</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L24" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_settings_as_template</code>(<strong><code>path</code></strong>)</p>
+<h4 id="load_settings_as_template" class="doc_header"><code>load_settings_as_template</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L28" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_settings_as_template</code>(<strong><code>path</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Loads settings but removes run specific fields</p>
+<p>Loads settings but removes fields that contain summary information.</p>
+<p>Args:
+    path (str): Path to the settings file.</p>
 
 </div>
 
@@ -129,9 +135,12 @@ nb_path: "nbs/00_settings.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="save_settings" class="doc_header"><code>save_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L42" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_settings</code>(<strong><code>settings</code></strong>, <strong><code>path</code></strong>)</p>
+<h4 id="save_settings" class="doc_header"><code>save_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L48" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_settings</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>path</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Save a yaml settings file to path</p>
+<p>Save settings file to path</p>
+<p>Args:
+    settings (dict): A yaml dictionary
+    path (str): Path to the settings file.</p>
 
 </div>
 
@@ -146,6 +155,61 @@ nb_path: "nbs/00_settings.ipynb"
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">settings</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;field1&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span><span class="s1">&#39;summary&#39;</span><span class="p">:</span><span class="mi">123</span><span class="p">}</span>
+<span class="n">dummy_path</span> <span class="o">=</span> <span class="s1">&#39;to_delete.yaml&#39;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--- print_settings ---&#39;</span><span class="p">)</span>
+<span class="n">print_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+
+<span class="n">save_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">dummy_path</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--- load_settings ---&#39;</span><span class="p">)</span>
+
+<span class="n">print_settings</span><span class="p">(</span><span class="n">load_settings</span><span class="p">(</span><span class="n">dummy_path</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--- load_settings_as_template ---&#39;</span><span class="p">)</span>
+
+<span class="n">print_settings</span><span class="p">(</span><span class="n">load_settings_as_template</span><span class="p">(</span><span class="n">dummy_path</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>--- print_settings ---
+field1: 0
+summary: 123
+
+--- load_settings ---
+field1: 0
+summary: 123
+
+--- load_settings_as_template ---
+field1: 0
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
 
 </div>
     {% endraw %}

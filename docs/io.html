@@ -78,9 +78,16 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="load_thermo_raw" class="doc_header"><code>load_thermo_raw</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L9" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_thermo_raw</code>(<strong><code>raw_file</code></strong>, <strong><code>n_most_abundant</code></strong>, <strong><code>use_profile_ms1</code></strong>=<em><code>False</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="load_thermo_raw" class="doc_header"><code>load_thermo_raw</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L9" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_thermo_raw</code>(<strong><code>raw_file_name</code></strong>:<code>str</code>, <strong><code>n_most_abundant</code></strong>:<code>int</code>, <strong><code>use_profile_ms1</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Load thermo raw file and extract spectra</p>
+<p>Load raw thermo data as a dictionary.</p>
+<p>Args:
+    raw_file_name (str): The name of a Thermo .raw file.
+    n_most_abundant (int): The maximum number of peaks to retain per MS2 spectrum.
+    use_profile_ms1 (bool): Use profile data or centroid it beforehand. Defaults to False.
+    callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns:
+    tuple: A dictionary with all the raw data and a string with the acquisition_date_time</p>
 
 </div>
 
@@ -117,9 +124,15 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="load_bruker_raw" class="doc_header"><code>load_bruker_raw</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L128" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_bruker_raw</code>(<strong><code>raw_file</code></strong>, <strong><code>n_most_abundant</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="load_bruker_raw" class="doc_header"><code>load_bruker_raw</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L141" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_bruker_raw</code>(<strong><code>d_folder_name</code></strong>:<code>str</code>, <strong><code>n_most_abundant</code></strong>:<code>int</code>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Load bruker raw file and extract spectra</p>
+<p>Load raw Bruker data as a dictionary.</p>
+<p>Args:
+    d_folder_name (str): The name of a Bruker .d folder.
+    n_most_abundant (int): The maximum number of peaks to retain per MS2 spectrum.
+    callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns:
+    tuple: A dictionary with all the raw data and a string with the acquisition_date_time</p>
 
 </div>
 
@@ -156,9 +169,15 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="one_over_k0_to_CCS" class="doc_header"><code>one_over_k0_to_CCS</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L191" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>one_over_k0_to_CCS</code>(<strong><code>one_over_k0s</code></strong>, <strong><code>charges</code></strong>, <strong><code>mzs</code></strong>)</p>
+<h4 id="one_over_k0_to_CCS" class="doc_header"><code>one_over_k0_to_CCS</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L219" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>one_over_k0_to_CCS</code>(<strong><code>one_over_k0s</code></strong>:<code>ndarray</code>, <strong><code>charges</code></strong>:<code>ndarray</code>, <strong><code>mzs</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-<p>convert one_over_k0 to CCS</p>
+<p>Retrieve colliosonal cross section (CCS) values from (mobility, charge, mz) arrays.</p>
+<p>Args:
+    one_over_k0s (np.ndarray): The ion mobilities (1D-np.float).
+    charges (np.ndarray): The charges (1D-np.int).
+    mzs (np.ndarray): The mz values (1D-np.float).</p>
+<p>Returns:
+    np.ndarray: The CCS values.</p>
 
 </div>
 
@@ -202,9 +221,13 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_sanity" class="doc_header"><code>check_sanity</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L208" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_sanity</code>(<strong><code>mass_list</code></strong>)</p>
+<h4 id="check_sanity" class="doc_header"><code>check_sanity</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L248" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_sanity</code>(<strong><code>mass_list</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-<p>Sanity check for mass list to make sure the masses are sorted</p>
+<p>Sanity check for mass list to make sure the masses are sorted.</p>
+<p>Args:
+    mass_list (np.ndarray): The mz values (1D-np.float).</p>
+<p>Raises:
+    ValueError: When the mz values are not sorted.</p>
 
 </div>
 
@@ -227,8 +250,14 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_mzml_info" class="doc_header"><code>extract_mzml_info</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L218" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mzml_info</code>(<strong><code>input_dict</code></strong>)</p>
+<h4 id="extract_mzml_info" class="doc_header"><code>extract_mzml_info</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L264" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mzml_info</code>(<strong><code>input_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
+<p>Extract basic MS coordinate arrays from a dictionary.</p>
+<p>Args:
+    input_dict (dict): A dictionary obtained by iterating over a Pyteomics mzml.read function.</p>
+<p>Returns:
+    tuple: The rt, masses, intensities, ms_order, prec_mass, mono_mz, charge arrays retrieved from the input_dict.
+        If the <code>ms level</code> in the input dict does not equal 2, the charge, mono_mz and prec_mass will be equal to 0.</p>
 
 </div>
 
@@ -251,9 +280,15 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="load_mzml_data" class="doc_header"><code>load_mzml_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L234" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_mzml_data</code>(<strong><code>filename</code></strong>, <strong><code>n_most_abundant</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="load_mzml_data" class="doc_header"><code>load_mzml_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L290" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_mzml_data</code>(<strong><code>filename</code></strong>:<code>str</code>, <strong><code>n_most_abundant</code></strong>:<code>int</code>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Read spectral data from an mzML file and return various lists separately for ms1 and ms2 data.</p>
+<p>Load data from an mzml file as a dictionary.</p>
+<p>Args:
+    filename (str): The name of a .mzml file.
+    n_most_abundant (int): The maximum number of peaks to retain per MS2 spectrum.
+    callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns:
+    tuple: A dictionary with all the raw data, a string with the acquisition_date_time and a string with the vendor.</p>
 
 </div>
 
@@ -297,7 +332,7 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_nested" class="doc_header"><code>extract_nested</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L343" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_nested</code>(<strong><code>child</code></strong>)</p>
+<h4 id="__extract_nested" class="doc_header"><code>__extract_nested</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L412" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>__extract_nested</code>(<strong><code>child</code></strong>)</p>
 </blockquote>
 <p>Helper function to extract nested entries</p>
 
@@ -322,9 +357,15 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_mq_settings" class="doc_header"><code>extract_mq_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L361" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mq_settings</code>(<strong><code>path</code></strong>)</p>
+<h4 id="extract_mq_settings" class="doc_header"><code>extract_mq_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L430" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_mq_settings</code>(<strong><code>path</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Function to return MaxQuant values as a dictionary for a given xml file</p>
+<p>Function to return MaxQuant values as a dictionary for a given xml file.</p>
+<p>Args:
+    path (str): File name of an xml file.</p>
+<p>Returns:
+    dict: A dictionary with MaxQuant info.</p>
+<p>Raises:
+    ValueError: When path is not a valid xml file.</p>
 
 </div>
 
@@ -401,10 +442,14 @@ nb_path: "nbs/02_io.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="parse_mq_seq" class="doc_header"><code>parse_mq_seq</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L380" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>parse_mq_seq</code>(<strong><code>peptide</code></strong>)</p>
+<h4 id="parse_mq_seq" class="doc_header"><code>parse_mq_seq</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L458" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>parse_mq_seq</code>(<strong><code>peptide</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Replaces maxquant convention to alphapept convention
-ToDo: include more sequences</p>
+<p>Replaces maxquant convention to alphapept convention.</p>
+<p>ToDo: include more sequences</p>
+<p>Args:
+    peptide (str): A peptide sequence from MaxQuant.</p>
+<p>Returns:
+    str: A parsed peptide sequence compatible with AlphaPept.</p>
 
 </div>
 
@@ -492,9 +537,14 @@ ToDo: include more sequences</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_peaks" class="doc_header"><code>get_peaks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L397" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_peaks</code>(<strong><code>int_array</code></strong>)</p>
+<h4 id="get_peaks" class="doc_header"><code>get_peaks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L482" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_peaks</code>(<strong><code>int_array</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-<p>Detects peaks in an array</p>
+<p>Detects peaks in an array.</p>
+<p>Args:
+    int_array (np.ndarray): An array with intensity values.</p>
+<p>Returns:
+    list: A regular Python list with all peaks.
+        A peak is a triplet of the form (start, center, end)</p>
 
 </div>
 
@@ -579,9 +629,15 @@ ToDo: include more sequences</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_centroid" class="doc_header"><code>get_centroid</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L440" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_centroid</code>(<strong><code>peak</code></strong>, <strong><code>mz_array</code></strong>, <strong><code>int_array</code></strong>)</p>
+<h4 id="get_centroid" class="doc_header"><code>get_centroid</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L531" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_centroid</code>(<strong><code>peak</code></strong>:<code>tuple</code>, <strong><code>mz_array</code></strong>:<code>ndarray</code>, <strong><code>int_array</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-<p>Wrapper to estimate centroid center positions</p>
+<p>Wrapper to estimate centroid center positions.</p>
+<p>Args:
+    peak (tuple): A triplet of the form (start, center, end)
+    mz_array (np.ndarray): An array with mz values.
+    int_array (np.ndarray): An array with intensity values.</p>
+<p>Returns:
+    tuple: A tuple of the form (center, intensity)</p>
 
 </div>
 
@@ -604,9 +660,15 @@ ToDo: include more sequences</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="gaussian_estimator" class="doc_header"><code>gaussian_estimator</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L462" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>gaussian_estimator</code>(<strong><code>peak</code></strong>, <strong><code>mz_array</code></strong>, <strong><code>int_array</code></strong>)</p>
+<h4 id="gaussian_estimator" class="doc_header"><code>gaussian_estimator</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L564" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>gaussian_estimator</code>(<strong><code>peak</code></strong>:<code>tuple</code>, <strong><code>mz_array</code></strong>:<code>ndarray</code>, <strong><code>int_array</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Three-point gaussian estimator.</p>
+<p>Args:
+    peak (tuple): A triplet of the form (start, center, end)
+    mz_array (np.ndarray): An array with mz values.
+    int_array (np.ndarray): An array with intensity values.</p>
+<p>Returns:
+    float: The gaussian estimate of the center.</p>
 
 </div>
 
@@ -751,8 +813,14 @@ ToDo: include more sequences</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="centroid_data" class="doc_header"><code>centroid_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L489" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>centroid_data</code>(<strong><code>mz_array</code></strong>, <strong><code>int_array</code></strong>)</p>
+<h4 id="centroid_data" class="doc_header"><code>centroid_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L602" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>centroid_data</code>(<strong><code>mz_array</code></strong>:<code>ndarray</code>, <strong><code>int_array</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
+<p>Estimate centroids and intensities from profile data.</p>
+<p>Args:
+    mz_array (np.ndarray): An array with mz values.
+    int_array (np.ndarray): An array with intensity values.</p>
+<p>Returns:
+    tuple: A tuple of the form (mz_array_centroided, int_array_centroided)</p>
 
 </div>
 
@@ -789,10 +857,16 @@ ToDo: include more sequences</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_most_abundant" class="doc_header"><code>get_most_abundant</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L516" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_most_abundant</code>(<strong><code>mass</code></strong>, <strong><code>intensity</code></strong>, <strong><code>n_max</code></strong>)</p>
+<h4 id="get_most_abundant" class="doc_header"><code>get_most_abundant</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L641" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_most_abundant</code>(<strong><code>mass</code></strong>:<code>ndarray</code>, <strong><code>intensity</code></strong>:<code>ndarray</code>, <strong><code>n_max</code></strong>:<code>int</code>)</p>
 </blockquote>
-<p>Returns the n_max most abundant peaks of a spectrum.
-Setting <code>n_max</code> to -1 returns all peaks.</p>
+<p>Returns the n_max most abundant peaks of a spectrum.</p>
+<p>Args:
+    mass (np.ndarray): An array with mz values.
+    intensity (np.ndarray): An array with intensity values.
+    n_max (int): The maximum number of peaks to retain.
+        Setting <code>n_max</code> to -1 returns all peaks.</p>
+<p>Returns:
+    tuple: the filtered mass and intensity arrays.</p>
 
 </div>
 
@@ -830,9 +904,13 @@ Setting <code>n_max</code> to -1 returns all peaks.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="list_to_numpy_f32" class="doc_header"><code>list_to_numpy_f32</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L532" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>list_to_numpy_f32</code>(<strong><code>long_list</code></strong>)</p>
+<h4 id="list_to_numpy_f32" class="doc_header"><code>list_to_numpy_f32</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L669" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>list_to_numpy_f32</code>(<strong><code>long_list</code></strong>:<code>list</code>)</p>
 </blockquote>
-<p>Function to convert a list to float32 array</p>
+<p>Function to convert a list to np.float32 array.</p>
+<p>Args:
+    long_list (list): A regular Python list with values that can be converted to floats.</p>
+<p>Returns:
+    np.ndarray: A np.float32 array.</p>
 
 </div>
 
@@ -924,7 +1002,7 @@ Setting <code>n_max</code> to -1 returns all peaks.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="HDF_File" class="doc_header"><code>class</code> <code>HDF_File</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L556" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>HDF_File</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>is_read_only</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>is_new_file</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>is_overwritable</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
+<h2 id="HDF_File" class="doc_header"><code>class</code> <code>HDF_File</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L701" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>HDF_File</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>is_read_only</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>is_new_file</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>is_overwritable</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>A generic class to store and retrieve on-disk
 data with an HDF container.</p>
@@ -1043,10 +1121,9 @@ data with an HDF container.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h2 id="MS_Data_File" class="doc_header"><code>class</code> <code>MS_Data_File</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L921" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>MS_Data_File</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>is_read_only</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>is_new_file</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>is_overwritable</code></strong>:<code>bool</code>=<em><code>False</code></em>) :: <a href="/io.html#HDF_File"><code>HDF_File</code></a></p>
+<h2 id="MS_Data_File" class="doc_header"><code>class</code> <code>MS_Data_File</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L1115" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>MS_Data_File</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>is_read_only</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>is_new_file</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>is_overwritable</code></strong>:<code>bool</code>=<em><code>False</code></em>) :: <a href="/io.html#HDF_File"><code>HDF_File</code></a></p>
 </blockquote>
-<p>A generic class to store and retrieve on-disk
-data with an HDF container.</p>
+<p>A class to store and retrieve on-disk MS data with an HDF container.</p>
 
 </div>
 
@@ -1083,11 +1160,19 @@ data with an HDF container.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="MS_Data_File.import_raw_DDA_data" class="doc_header"><code>MS_Data_File.import_raw_DDA_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L925" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>MS_Data_File.import_raw_DDA_data</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>n_most_abundant</code></strong>:<code>int</code>=<em><code>-1</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>query_data</code></strong>:<code>dict</code>=<em><code>None</code></em>, <strong><code>vendor</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
+<h4 id="MS_Data_File.import_raw_DDA_data" class="doc_header"><code>MS_Data_File.import_raw_DDA_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L1121" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>MS_Data_File.import_raw_DDA_data</code>(<strong><code>file_name</code></strong>:<code>str</code>, <strong><code>n_most_abundant</code></strong>:<code>int</code>=<em><code>-1</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong><code>query_data</code></strong>:<code>dict</code>=<em><code>None</code></em>, <strong><code>vendor</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Import centroided data and store it in the MS_Data_File as
-/Raw/{file_name} with the appropriate metadata and relevant
-coordinates.</p>
+<p>Load centroided data and save it to this object.</p>
+<p>Args:
+    file_name (str): The file name with raw data (Thermo, Bruker or mzml).
+    n_most_abundant (int): The maximum number of peaks to retain per MS2 spectrum.            Defaults to -1.
+    callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+    query_data (dict):
+        A dictionary with raw data.
+        If this is not None, data will only be saved and not imported.
+        Defaults to None.
+    vendor (str): The vendor name, must be Thermo or Bruker if provided.
+        Defaults to None.</p>
 
 </div>
 
@@ -1131,8 +1216,20 @@ coordinates.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="MS_Data_File.read_DDA_query_data" class="doc_header"><code>MS_Data_File.read_DDA_query_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L1060" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>MS_Data_File.read_DDA_query_data</code>(<strong><code>calibrated_fragments</code></strong>=<em><code>False</code></em>, <strong><code>force_recalibrate</code></strong>=<em><code>False</code></em>, <strong><code>swmr</code></strong>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="MS_Data_File.read_DDA_query_data" class="doc_header"><code>MS_Data_File.read_DDA_query_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L1296" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>MS_Data_File.read_DDA_query_data</code>(<strong><code>calibrated_fragments</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>force_recalibrate</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>swmr</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
+<p>Read query data from this ms_data object and return it as a query_dict.</p>
+<p>Args:
+    calibrated_fragments (bool): If True, calibrated fragments are retrieved.
+        Calihration offsets can already be present in the ms_data or recalculated.
+        Defaults to False.
+    force_recalibrate (bool): If calibrated fragments is True,
+        recalibrate mzs values even if a reclaibration is already provided.
+        Defaults to False.
+    swmr (bool): Open the file in swmr mode. Defaults to False.
+    **kwargs (type): Can contain a database file name that was used for recalibration.</p>
+<p>Returns:
+    dict: A query_dict with data for MS1 and MS2 scans.</p>
 
 </div>
 
@@ -1169,9 +1266,17 @@ coordinates.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="raw_conversion" class="doc_header"><code>raw_conversion</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L1122" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>raw_conversion</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="raw_conversion" class="doc_header"><code>raw_conversion</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/io.py#L1374" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>raw_conversion</code>(<strong><code>to_process</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong><code>parallel</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
-<p>Wrapper function to convert raw to ms_data_file hdf</p>
+<p>Wrapper function to convert raw to ms_data_file hdf.</p>
+<p>Args:
+    to_process (dict): A dictionary with settings indicating which files are to be processed and how.
+    callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
+    parallel (bool): If True, process multiple files in parallel.
+        This is not implemented yet!
+        Defaults to False.</p>
+<p>Returns:
+    bool: True if and only if the conversion was succesful.</p>
 
 </div>
 

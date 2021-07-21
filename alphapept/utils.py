@@ -11,7 +11,6 @@ BASE_PATH = os.path.dirname(__file__)
 HOME = os.path.expanduser("~")
 LOG_PATH = os.path.join(HOME, "alphapept", "logs")
 
-
 def set_logger(
     *,
     log_file_name: str = "",
@@ -96,31 +95,6 @@ def set_logger(
     logging.info(f"Logging to {log_file_name}.")
     return log_file_name
 
-
-def check_file(file):
-    if not os.path.isfile(file):
-        raise FileNotFoundError(f"{file}")
-
-def get_size_mb(file):
-    return os.path.getsize(file)/(1024*2)
-
-def check_dir(dir):
-    if not os.path.isdir(dir):
-        raise FileNotFoundError(f"{dir}")
-
-
-def log_me(given_function):
-    """
-    Decorator to track function execution
-    """
-    def wrapper(*args, **kwargs):
-        logging.debug("FUNCTION `{}` EXECUTED".format(given_function.__name__))
-        result = given_function(*args, **kwargs)
-        logging.debug("FUNCTION `{}` FINISHED".format(given_function.__name__))
-        return result
-    return wrapper
-
-
 def show_platform_info() -> None:
     """Log all platform information.
     This is done in the following format:
@@ -165,26 +139,32 @@ def show_python_info() -> None:
         - ...
         - [timestamp]> [required package] - [current_version]
     """
-    import importlib.metadata
-    import platform
-    module_versions = {
-        "python": platform.python_version(),
-        "alphapept": VERSION_NO
-    }
-    requirements = importlib.metadata.requires("alphapept")
-    for requirement in requirements:
-        module_name = requirement.split()[0].split(";")[0].split("=")[0]
-        try:
-            module_version = importlib.metadata.version(module_name)
-        except importlib.metadata.PackageNotFoundError:
-            module_version = ""
-        module_versions[module_name] = module_version
-    max_len = max(len(key) for key in module_versions)
-    logging.info("Python information:")
-    for key, value in sorted(module_versions.items()):
-        logging.info(f"{key:<{max_len}} - {value}")
-    logging.info("")
 
+    try:
+        import importlib.metadata
+        skip = False
+    except ModuleNotFoundError:
+        skip = True
+
+    if not skip:
+        import platform
+        module_versions = {
+            "python": platform.python_version(),
+            "alphapept": VERSION_NO
+        }
+        requirements = importlib.metadata.requires("alphapept")
+        for requirement in requirements:
+            module_name = requirement.split()[0].split(";")[0].split("=")[0]
+            try:
+                module_version = importlib.metadata.version(module_name)
+            except importlib.metadata.PackageNotFoundError:
+                module_version = ""
+            module_versions[module_name] = module_version
+        max_len = max(len(key) for key in module_versions)
+        logging.info("Python information:")
+        for key, value in sorted(module_versions.items()):
+            logging.info(f"{key:<{max_len}} - {value}")
+        logging.info("")
 
 
 def check_python_env():
@@ -196,7 +176,6 @@ def check_python_env():
         raise RuntimeError(
             'Numba version {} not sufficient'.format(numba.__version__)
         )
-
 
 def check_settings(settings):
     # _this_file = os.path.abspath(__file__)
@@ -251,7 +230,7 @@ def check_settings(settings):
                 'No database path set and save_db option checked. Using default path {}'.format(settings['experiment']['database_path'])
             )
 
-    if fasta_size > 1: #Only for larger fasta files 
+    if fasta_size > 1: #Only for larger fasta files
         if settings['fasta']['save_db']:
             var_id = ['mods_variable_terminal', 'mods_variable', 'mods_variable_terminal_prot']
             n_var_mods = sum([len(settings['fasta'][_]) for _ in var_id])
@@ -308,7 +287,31 @@ def assemble_df(settings, field = 'protein_fdr', callback=None):
 
     return xx
 
+
+def check_file(file):
+    if not os.path.isfile(file):
+        raise FileNotFoundError(f"{file}")
+
+def get_size_mb(file):
+    return os.path.getsize(file)/(1024**2)
+
+def check_dir(dir):
+    if not os.path.isdir(dir):
+        raise FileNotFoundError(f"{dir}")
+
 def delete_file(filename):
     if os.path.isfile(filename):
         os.remove(filename)
         logging.info(f'Deleted {filename}')
+
+
+def log_me(given_function):
+    """
+    Decorator to track function execution
+    """
+    def wrapper(*args, **kwargs):
+        logging.debug("FUNCTION `{}` EXECUTED".format(given_function.__name__))
+        result = given_function(*args, **kwargs)
+        logging.debug("FUNCTION `{}` FINISHED".format(given_function.__name__))
+        return result
+    return wrapper

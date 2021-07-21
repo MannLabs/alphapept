@@ -38,7 +38,6 @@ sidebar = {'Start': start.start,
            'Results': results.results,
            'History': history.history,
            'FileWatcher': filewatcher.filewatcher}
-           #'Compare': compare.compare}
 
 menu = st.sidebar.radio("", list(sidebar.keys()))
 

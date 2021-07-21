@@ -7,14 +7,28 @@ from alphapept.paths import PROCESSED_PATH, AP_PATH, PLOT_SETTINGS
 from alphapept.gui.utils import files_in_folder
 import numpy as np
 from alphapept.settings import load_settings
+from typing import Callable, Union
 
-def load_plot_settings():
+
+def load_plot_settings() -> dict:
+    """Helper function to load customized plot settings.
+
+    Returns:
+        dict: A dictionary containing plot_settings loaded from a defined location.
+    """
     plot_settings = load_settings(PLOT_SETTINGS)
     return plot_settings
 
-def load_files(file_list, callback = None):
-    """
-    Read multiple yaml files and return a dict with results
+
+def load_files(file_list: list, callback: Union[Callable, None] = None) -> dict:
+    """Read multiple results.yaml files and combine them into a dict.
+
+    Args:
+        file_list (list): List of file paths.
+        callback (Union[Callable, None], optional): Callback function to report progress. Defaults to None.
+
+    Returns:
+        dict: A dictionary containing the summary of all results.yaml files.
     """
     all_results = {}
 
@@ -25,15 +39,21 @@ def load_files(file_list, callback = None):
             all_results[base] = results
 
         if callback:
-            callback.progress((idx+1)/len(file_list))
+            callback.progress((idx + 1) / len(file_list))
 
     return all_results
 
-def filter_by_tag(files):
+
+def filter_by_tag(files: list) -> list:
+    """Streamlit widget to filter a list based on a user input.
+
+    Args:
+        files (list): List of files to be filtered.
+
+    Returns:
+        list: Reduced file list with files containing the tag.
     """
-    Streamlit text input to filter filenames by tag
-    """
-    filter = st.text_input('Filter')
+    filter = st.text_input("Filter")
 
     if filter:
         filtered = [_ for _ in files if filter in _]
@@ -45,20 +65,44 @@ def filter_by_tag(files):
 
     return filtered
 
-def check_group(filename, groups):
+
+def check_group(filename: str, groups: list) -> Union[str, None]:
+    """Helper function to check if a group exists for a given filename.
+
+    Args:
+        filename (str): Name of file to be checked.
+        groups (list): List of groups.
+
+    Returns:
+        Union[str, None]: Returns None if group is not present, else the group name.
+    """
     for group in groups:
         if group in filename:
             return group
-    return 'None'
+    return "None"
 
 
-def create_single_plot(all_results, files, acquisition_date_times, mode, groups, plot):
-    """
-    Creates single plotly express plot
+def create_single_plot(
+    all_results: dict,
+    files: list,
+    acquisition_date_times: list,
+    mode: str,
+    groups: list,
+    plot: str,
+):
+    """Helper function to create a plotly express plot based on the all_results dict and the specified fields.
+
+    Args:
+        all_results (dict): A dictionary containing the summary of all results.yaml files.
+        files (list): List of files.
+        acquisition_date_times (list): List of acquisition date times.
+        mode (str): Plotting mode. Values will be sorted according to this field.
+        groups (list): List of groups.
+        plot (str): Name of the column that should be plotted.
     """
     vals = []
     for idx, _ in enumerate(all_results.keys()):
-        if plot == 'timing (min)':
+        if plot == "timing (min)":
             try:
                 vals.append(all_results[_]["summary"]["timing"]["total (min)"])
             except KeyError:
@@ -70,92 +114,126 @@ def create_single_plot(all_results, files, acquisition_date_times, mode, groups,
                 vals.append(np.nan)
 
     plot_df = pd.DataFrame([files, acquisition_date_times, vals]).T
-    plot_df.columns = ['Filename', 'AcquisitionDateTime', plot]
+    plot_df.columns = ["Filename", "AcquisitionDateTime", plot]
 
     if groups != []:
-        plot_df['group'] = plot_df['Filename'].apply(lambda x: check_group(x, groups))
+        plot_df["group"] = plot_df["Filename"].apply(lambda x: check_group(x, groups))
     else:
-        plot_df['group'] = 'None'
+        plot_df["group"] = "None"
 
     median_ = plot_df[plot].median()
     plot_df = plot_df.sort_values(mode)
 
-    if mode == 'Filename':
+    if mode == "Filename":
         height = 800
     else:
         height = 400
 
-    fig = px.scatter(plot_df, x=mode, y=plot, color = 'group', hover_name='Filename', hover_data=['AcquisitionDateTime'], title=f'{plot} - median {median_:.2f}', height=height).update_traces(mode='lines+markers')
+    fig = px.scatter(
+        plot_df,
+        x=mode,
+        y=plot,
+        color="group",
+        hover_name="Filename",
+        hover_data=["AcquisitionDateTime"],
+        title=f"{plot} - median {median_:.2f}",
+        height=height,
+    ).update_traces(mode="lines+markers")
     fig.add_hline(y=median_, line_dash="dash")
     st.plotly_chart(fig)
 
-def create_multiple_plots(all_results, groups, to_plot):
-    """
-    Creates multiple plotly express plots
 
+def create_multiple_plots(all_results: dict, groups: list, to_plot: list):
+    """Creates multiple plotly express plots.
+
+    Args:
+        all_results (dict): A dictionary containing the summary of all results.yaml files.
+        groups (list): List of groups.
+        to_plot (list): Name of the column that should be plotted.
     """
     # Get filename and acquisition_date_time
-    files = [os.path.splitext(all_results[_]['summary']['processed_files'][0])[0] for _ in all_results.keys()]
-    acquisition_date_times = [all_results[_]["summary"][files[idx]]['acquisition_date_time'] for idx, _ in enumerate(all_results.keys())]
+    files = [
+        os.path.splitext(all_results[_]["summary"]["processed_files"][0])[0]
+        for _ in all_results.keys()
+    ]
+    acquisition_date_times = [
+        all_results[_]["summary"][files[idx]]["acquisition_date_time"]
+        for idx, _ in enumerate(all_results.keys())
+    ]
 
     fields = set()
-    [fields.update(all_results[_]["summary"][files[idx]].keys()) for idx, _ in enumerate(all_results.keys())]
-    fields.remove('acquisition_date_time')
+    [
+        fields.update(all_results[_]["summary"][files[idx]].keys())
+        for idx, _ in enumerate(all_results.keys())
+    ]
+    fields.remove("acquisition_date_time")
     fields = list(fields)
     fields.sort()
 
     if to_plot == []:
-        plot_types = fields + ['timing (min)']
+        plot_types = fields + ["timing (min)"]
     else:
         plot_types = [_ for _ in to_plot if _ in fields]
 
-    mode = st.selectbox('X-Axis', options = ['AcquisitionDateTime','Filename'])
+    mode = st.selectbox("X-Axis", options=["AcquisitionDateTime", "Filename"])
 
-    with st.spinner('Creating plots..'):
+    with st.spinner("Creating plots.."):
         # Get filename and acquisition_date_time
-        files = [os.path.splitext(all_results[_]['summary']['processed_files'][0])[0] for _ in all_results.keys()]
-        acquisition_date_times = [all_results[_]["summary"][files[idx]]['acquisition_date_time'] for idx, _ in enumerate(all_results.keys())]
+        files = [
+            os.path.splitext(all_results[_]["summary"]["processed_files"][0])[0]
+            for _ in all_results.keys()
+        ]
+        acquisition_date_times = [
+            all_results[_]["summary"][files[idx]]["acquisition_date_time"]
+            for idx, _ in enumerate(all_results.keys())
+        ]
 
         for plot in plot_types:
-            create_single_plot(all_results, files, acquisition_date_times, mode, groups, plot)
+            create_single_plot(
+                all_results, files, acquisition_date_times, mode, groups, plot
+            )
 
 
 def history():
-    """
-    Plot history of previous experiments
-    """
+    """Streamlit page to plot a historical overview of previous results."""
     st.write("# History")
-    st.text(f'History allows to visualize summary information from multiple previous analysis.'
-    f'\nIt checks {PROCESSED_PATH} for *.yaml files.'
-    '\nFiles can be filtered to only include a subset.')
+    st.text(
+        f"History allows to visualize summary information from multiple previous analysis."
+        f"\nIt checks {PROCESSED_PATH} for *.yaml files."
+        "\nFiles can be filtered to only include a subset."
+    )
 
-    processed_files = files_in_folder(PROCESSED_PATH, '.yaml')
+    processed_files = files_in_folder(PROCESSED_PATH, ".yaml")
 
     with st.beta_expander(f"Processed files ({len(processed_files)})"):
         st.table(processed_files)
 
     plot_settings = load_plot_settings()
-    if 'history' in plot_settings:
-        history_settings = plot_settings['history']
+    if "history" in plot_settings:
+        history_settings = plot_settings["history"]
     else:
         history_settings = {}
 
-    if 'groups' in history_settings:
-        groups = history_settings['groups']
+    if "groups" in history_settings:
+        groups = history_settings["groups"]
     else:
         groups = []
-    if 'plots' in history_settings:
-        to_plot = history_settings['plots']
+    if "plots" in history_settings:
+        to_plot = history_settings["plots"]
     else:
         to_plot = []
 
     with st.beta_expander("Customize plots"):
-        st.text(f"Plots can be modified by changing {PLOT_SETTINGS}, set groups to group plots according to filename, set plots to define the plots.")
+        st.text(
+            f"Plots can be modified by changing {PLOT_SETTINGS}, set groups to group plots according to filename, set plots to define the plots."
+        )
         st.write(history_settings)
 
     filtered = filter_by_tag(processed_files)
     if len(filtered) > 1:
-        filtered = filtered[:st.slider('Preview', 1, len(filtered), min(len(filtered), 50))]
+        filtered = filtered[
+            : st.slider("Preview", 1, len(filtered), min(len(filtered), 50))
+        ]
     all_results = load_files(filtered, callback=st.progress(0))
 
     if len(all_results) > 0:

@@ -60,9 +60,14 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_missed_cleavages" class="doc_header"><code>get_missed_cleavages</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L16" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_missed_cleavages</code>(<strong><code>sequences</code></strong>, <strong><code>n_missed_cleavages</code></strong>)</p>
+<h4 id="get_missed_cleavages" class="doc_header"><code>get_missed_cleavages</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L16" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_missed_cleavages</code>(<strong><code>sequences</code></strong>:<code>list</code>, <strong><code>n_missed_cleavages</code></strong>:<code>int</code>)</p>
 </blockquote>
-<p>Combine cleaved sequences to get sequences with missed cleavages</p>
+<p>Combine cleaved sequences to get sequences with missed cleavages
+Args:
+    seqeuences (list of str): the list of cleaved sequences, no missed cleavages are there.
+    n_missed_cleavages (int): the number of miss cleavage sites.
+Returns:
+    list (of str): the sequences with missed cleavages.</p>
 
 </div>
 
@@ -85,9 +90,17 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="cleave_sequence" class="doc_header"><code>cleave_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L27" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cleave_sequence</code>(<strong><code>sequence</code></strong>=<em><code>''</code></em>, <strong><code>n_missed_cleavages</code></strong>=<em><code>0</code></em>, <strong><code>protease</code></strong>=<em><code>'trypsin'</code></em>, <strong><code>pep_length_min</code></strong>=<em><code>6</code></em>, <strong><code>pep_length_max</code></strong>=<em><code>65</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="cleave_sequence" class="doc_header"><code>cleave_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L32" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cleave_sequence</code>(<strong><code>sequence</code></strong>:<code>str</code>=<em><code>''</code></em>, <strong><code>n_missed_cleavages</code></strong>:<code>int</code>=<em><code>0</code></em>, <strong><code>protease</code></strong>:<code>str</code>=<em><code>'trypsin'</code></em>, <strong><code>pep_length_min</code></strong>:<code>int</code>=<em><code>6</code></em>, <strong><code>pep_length_max</code></strong>:<code>int</code>=<em><code>65</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Cleave a sequence with a given protease. Filters to have a minimum and maximum length.</p>
+<p>Cleave a sequence with a given protease. Filters to have a minimum and maximum length.
+Args:
+    sequence (str): the given (protein) sequence.
+    n_missed_cleavages (int): the number of max missed cleavages.
+    protease (str): the protease/enzyme name, the regular expression can be found in alphapept.constants.protease_dict.
+    pep_length_min (int): min peptide length.
+    pep_length_max (int): max peptide length.
+Returns:
+    list (of str): cleaved peptide sequences with missed cleavages.</p>
 
 </div>
 
@@ -161,9 +174,14 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="count_missed_cleavages" class="doc_header"><code>count_missed_cleavages</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L63" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>count_missed_cleavages</code>(<strong><code>sequence</code></strong>=<em><code>''</code></em>, <strong><code>protease</code></strong>=<em><code>'trypsin'</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="count_missed_cleavages" class="doc_header"><code>count_missed_cleavages</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L76" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>count_missed_cleavages</code>(<strong><code>sequence</code></strong>:<code>str</code>=<em><code>''</code></em>, <strong><code>protease</code></strong>:<code>str</code>=<em><code>'trypsin'</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Counts the number of missed cleavages for a given sequence and protease</p>
+<p>Counts the number of missed cleavages for a given sequence and protease
+Args:
+    sequence (str): the given (peptide) sequence.
+    protease (str): the protease/enzyme name, the regular expression can be found in alphapept.constants.protease_dict.
+Returns:
+    int: the number of miss cleavages</p>
 
 </div>
 
@@ -186,9 +204,14 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="count_internal_cleavages" class="doc_header"><code>count_internal_cleavages</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L73" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>count_internal_cleavages</code>(<strong><code>sequence</code></strong>=<em><code>''</code></em>, <strong><code>protease</code></strong>=<em><code>'trypsin'</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="count_internal_cleavages" class="doc_header"><code>count_internal_cleavages</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L91" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>count_internal_cleavages</code>(<strong><code>sequence</code></strong>:<code>str</code>=<em><code>''</code></em>, <strong><code>protease</code></strong>:<code>str</code>=<em><code>'trypsin'</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Counts the number of internal cleavage sites for a given sequence and protease</p>
+<p>Counts the number of internal cleavage sites for a given sequence and protease
+Args:
+    sequence (str): the given (peptide) sequence.
+    protease (str): the protease/enzyme name, the regular expression can be found in alphapept.constants.protease_dict.
+Returns:
+    int (0 or 1): if the sequence is from internal cleavage.</p>
 
 </div>
 
@@ -261,9 +284,13 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="parse" class="doc_header"><code>parse</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L90" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>parse</code>(<strong><code>peptide</code></strong>)</p>
+<h4 id="parse" class="doc_header"><code>parse</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L113" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>parse</code>(<strong><code>peptide</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Parser to parse peptide strings</p>
+<p>Parser to parse peptide strings
+Args:
+    peptide (str): modified peptide sequence.
+Return:
+    List (numba.typed.List): a list of animo acids and modified amono acids</p>
 
 </div>
 
@@ -286,8 +313,9 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="list_to_numba" class="doc_header"><code>list_to_numba</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L108" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>list_to_numba</code>(<strong><code>a_list</code></strong>)</p>
+<h4 id="list_to_numba" class="doc_header"><code>list_to_numba</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L135" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>list_to_numba</code>(<strong><code>a_list</code></strong>)</p>
 </blockquote>
+<p>Convert python list to numba.typed.List</p>
 
 </div>
 
@@ -327,8 +355,8 @@ nb_path: "nbs/03_fasta.ipynb"
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>[P, E, P, T, I, D, E, ...]
-[P, E, P, oxT, I, D, E, ...]
+<pre>[P, E, P, T, I, D, E]
+[P, E, P, oxT, I, D, E]
 </pre>
 </div>
 </div>
@@ -357,9 +385,16 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_decoy_sequence" class="doc_header"><code>get_decoy_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L117" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_decoy_sequence</code>(<strong><code>peptide</code></strong>, <strong><code>pseudo_reverse</code></strong>=<em><code>False</code></em>, <strong><code>AL_swap</code></strong>=<em><code>False</code></em>, <strong><code>KR_swap</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="get_decoy_sequence" class="doc_header"><code>get_decoy_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L147" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_decoy_sequence</code>(<strong><code>peptide</code></strong>:<code>str</code>, <strong><code>pseudo_reverse</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>AL_swap</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>KR_swap</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
-<p>Reverses a sequence and adds the '_decoy' tag.</p>
+<p>Reverses a sequence and adds the '_decoy' tag.
+Args:
+    peptide (str): modified peptide to be reversed.
+    pseudo_reverse (bool): If True, reverse the peptide bug keep the C-terminal amino acid; otherwise reverse the whole peptide. (Default: False)
+    AL_swap (bool): replace A with L, and vice versa. (Default: False)
+    KR_swap (bool): replace K with R at the C-terminal, and vice versa. (Default: False)
+Returns:
+    str: reversed peptide ending with the '_decoy' tag.</p>
 
 </div>
 
@@ -382,7 +417,7 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="swap_KR" class="doc_header"><code>swap_KR</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L141" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>swap_KR</code>(<strong><code>peptide</code></strong>)</p>
+<h4 id="swap_KR" class="doc_header"><code>swap_KR</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L177" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>swap_KR</code>(<strong><code>peptide</code></strong>)</p>
 </blockquote>
 <p>Swaps a terminal K or R. Note: Only if AA is not modified.</p>
 
@@ -407,7 +442,7 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="swap_AL" class="doc_header"><code>swap_AL</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L154" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>swap_AL</code>(<strong><code>peptide</code></strong>)</p>
+<h4 id="swap_AL" class="doc_header"><code>swap_AL</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L190" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>swap_AL</code>(<strong><code>peptide</code></strong>)</p>
 </blockquote>
 <p>Swaps a A with L. Note: Only if AA is not modified.</p>
 
@@ -432,9 +467,16 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_decoys" class="doc_header"><code>get_decoys</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L173" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_decoys</code>(<strong><code>peptide_list</code></strong>, <strong><code>pseudo_reverse</code></strong>=<em><code>False</code></em>, <strong><code>AL_swap</code></strong>=<em><code>False</code></em>, <strong><code>KR_swap</code></strong>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_decoys" class="doc_header"><code>get_decoys</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L209" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_decoys</code>(<strong><code>peptide_list</code></strong>, <strong><code>pseudo_reverse</code></strong>=<em><code>False</code></em>, <strong><code>AL_swap</code></strong>=<em><code>False</code></em>, <strong><code>KR_swap</code></strong>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Wrapper to get decoys for lists of peptides</p>
+<p>Wrapper to get decoys for lists of peptides
+Args:
+    peptide_list (list): the list of peptides to be reversed.
+    pseudo_reverse (bool): If True, reverse the peptide bug keep the C-terminal amino acid; otherwise reverse the whole peptide. (Default: False)
+    AL_swap (bool): replace A with L, and vice versa. (Default: False)
+    KR_swap (bool): replace K with R at the C-terminal, and vice versa. (Default: False)
+Returns:
+    list (of str): a list of decoy peptides</p>
 
 </div>
 
@@ -457,9 +499,9 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_decoy_tag" class="doc_header"><code>add_decoy_tag</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L181" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_decoy_tag</code>(<strong><code>peptides</code></strong>)</p>
+<h4 id="add_decoy_tag" class="doc_header"><code>add_decoy_tag</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L224" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_decoy_tag</code>(<strong><code>peptides</code></strong>)</p>
 </blockquote>
-<p>Adds a _decoy tag to a list of peptides</p>
+<p>Adds a '_decoy' tag to a list of peptides</p>
 
 </div>
 
@@ -499,8 +541,8 @@ nb_path: "nbs/03_fasta.ipynb"
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>[K, K, K, L, A, K, K, K, ...]
-[A, A, A, K, R, A, A, A, ...]
+<pre>[K, K, K, L, A, K, K, K]
+[A, A, A, K, R, A, A, A]
 </pre>
 </div>
 </div>
@@ -592,9 +634,14 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_fixed_mods" class="doc_header"><code>add_fixed_mods</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L188" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mods</code>(<strong><code>seqs</code></strong>, <strong><code>mods_fixed</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="add_fixed_mods" class="doc_header"><code>add_fixed_mods</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L231" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mods</code>(<strong><code>seqs</code></strong>:<code>list</code>, <strong><code>mods_fixed</code></strong>:<code>list</code>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Adds fixed modifications to sequences.</p>
+<p>Adds fixed modifications to sequences.
+Args:
+    seqs (list of str): sequences to add fixed modifications
+    mods_fixed (list of str): the string list of fixed modifications. Each modification string must be in lower case, except for that the last letter must be the modified amino acid (e.g. oxidation on M should be oxM).
+Returns:
+    list (of str): the list of the modified sequences. 'ABCDEF' with fixed mod 'cC' will be 'ABcCDEF'.</p>
 
 </div>
 
@@ -703,7 +750,7 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_variable_mod" class="doc_header"><code>add_variable_mod</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L200" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mod</code>(<strong><code>peps</code></strong>, <strong><code>mods_variable_dict</code></strong>)</p>
+<h4 id="add_variable_mod" class="doc_header"><code>add_variable_mod</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L248" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mod</code>(<strong><code>peps</code></strong>:<code>list</code>, <strong><code>mods_variable_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
 
 </div>
@@ -727,10 +774,17 @@ nb_path: "nbs/03_fasta.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_isoforms" class="doc_header"><code>get_isoforms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L213" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isoforms</code>(<strong><code>mods_variable_dict</code></strong>, <strong><code>peptide</code></strong>, <strong><code>isoforms_max</code></strong>, <strong><code>n_modifications_max</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="get_isoforms" class="doc_header"><code>get_isoforms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L261" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isoforms</code>(<strong><code>mods_variable_dict</code></strong>:<code>dict</code>, <strong><code>peptide</code></strong>:<code>str</code>, <strong><code>isoforms_max</code></strong>:<code>int</code>, <strong><code>n_modifications_max</code></strong>:<code>int</code>=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Function to generate isoforms for a given peptide - returns a list of isoforms.
-The original sequence is included in the list</p>
+<p>Function to generate modified forms (with variable modifications) for a given peptide - returns a list of modified forms.
+The original sequence is included in the list
+Args:
+    mods_variable_dict (dict): the key is AA, and value is the modified form (e.g. oxM).
+    peptide (str): the peptide sequence to generate modified forms.
+    isoforms_max (int): max number of modified forms to generate per peptide.
+    n_modifications_max (int, optional): max number of variable modifications per peptide.
+Returns:
+    list (of str): the list of peptide forms for the given peptide</p>
 
 </div>
 
@@ -805,8 +859,16 @@ The original sequence is included in the list</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_variable_mods" class="doc_header"><code>add_variable_mods</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L254" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mods</code>(<strong><code>peptide_list</code></strong>, <strong><code>mods_variable</code></strong>, <strong><code>isoforms_max</code></strong>, <strong><code>n_modifications_max</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="add_variable_mods" class="doc_header"><code>add_variable_mods</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L309" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mods</code>(<strong><code>peptide_list</code></strong>:<code>list</code>, <strong><code>mods_variable</code></strong>:<code>list</code>, <strong><code>isoforms_max</code></strong>:<code>int</code>, <strong><code>n_modifications_max</code></strong>:<code>int</code>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
+<p>Add variable modifications to the peptide list
+Args:
+    peptide_list (list of str): peptide list.
+    mods_variable (list of str): modification list.
+    isoforms_max (int): max number of modified forms per peptide sequence.
+    n_modifications_max (int): max number of variable modifications per peptide.
+Returns:
+    list (of str): list of modified sequences for the given peptide list.</p>
 
 </div>
 
@@ -886,9 +948,16 @@ The original sequence is included in the list</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_fixed_mod_terminal" class="doc_header"><code>add_fixed_mod_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L273" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mod_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mod</code></strong>)</p>
+<h4 id="add_fixed_mod_terminal" class="doc_header"><code>add_fixed_mod_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L339" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mod_terminal</code>(<strong><code>peptides</code></strong>:<code>list</code>, <strong><code>mod</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Adds fixed terminal modifications</p>
+<p>Adds fixed terminal modifications
+Args:
+    peptides (list of str): peptide list.
+    mod (str): n-term mod contains '&lt;^' (e.g. a&lt;^ for Acetyl@N-term); c-term mod contains '&gt;^'.
+Raises:
+    "Invalid fixed terminal modification 'mod name'" for the given mod.
+Returns:
+    list (of str): list of peptides with modification added.</p>
 
 </div>
 
@@ -911,9 +980,16 @@ The original sequence is included in the list</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_fixed_mods_terminal" class="doc_header"><code>add_fixed_mods_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L291" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mods_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mods_fixed_terminal</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="add_fixed_mods_terminal" class="doc_header"><code>add_fixed_mods_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L364" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_fixed_mods_terminal</code>(<strong><code>peptides</code></strong>:<code>list</code>, <strong><code>mods_fixed_terminal</code></strong>:<code>list</code>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Wrapper to add fixed mods on sequences and lists of mods</p>
+<p>Wrapper to add fixed mods on sequences and lists of mods
+Args:
+    peptides (list of str): peptide list.
+    mods_fixed_terminal (list of str): list of fixed terminal mods.
+Raises:
+    "Invalid fixed terminal modification {mod}" exception for the given mod.
+Returns:
+    list (of str): list of peptides with modification added.</p>
 
 </div>
 
@@ -991,9 +1067,14 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_variable_mods_terminal" class="doc_header"><code>add_variable_mods_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L304" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mods_terminal</code>(<strong><code>peptides</code></strong>, <strong><code>mods_variable_terminal</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="add_variable_mods_terminal" class="doc_header"><code>add_variable_mods_terminal</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L384" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_variable_mods_terminal</code>(<strong><code>peptides</code></strong>:<code>list</code>, <strong><code>mods_variable_terminal</code></strong>:<code>list</code>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Function to add variable terminal modifications</p>
+<p>Function to add variable terminal modifications.
+Args:
+    peptides (list of str): peptide list.
+    mods_variable_terminal (list of str): list of variable terminal mods.
+Returns:
+    list (of str): list of peptides with modification added.</p>
 
 </div>
 
@@ -1016,8 +1097,13 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_unique_peptides" class="doc_header"><code>get_unique_peptides</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L329" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_unique_peptides</code>(<strong><code>peptides</code></strong>)</p>
+<h4 id="get_unique_peptides" class="doc_header"><code>get_unique_peptides</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L416" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_unique_peptides</code>(<strong><code>peptides</code></strong>:<code>list</code>)</p>
 </blockquote>
+<p>Function to return unique elements from list.
+Args:
+    peptides (list of str): peptide list.
+Returns:
+    list (of str): list of peptides (unique).</p>
 
 </div>
 
@@ -1088,14 +1174,18 @@ Only A on c-term modified with x (x&lt;A): [&#39;AMAMxA&#39;]
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_peptides" class="doc_header"><code>generate_peptides</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L333" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_peptides</code>(<strong><code>peptide</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="generate_peptides" class="doc_header"><code>generate_peptides</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L427" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_peptides</code>(<strong><code>peptide</code></strong>:<code>str</code>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Wrapper to get modified peptides from a peptide</p>
-<p>TODO:</p>
-<p>There can be some edge-cases which are not defined yet.
-Example:
-Setting the same fixed modification - once for all peptides and once for only terminal for the protein.
-The modification will thenbe applied twice.</p>
+<p>Wrapper to get modified peptides (fixed and variable mods) from a peptide.</p>
+<p>Args:
+    peptide (str): the given peptide sequence.
+Returns:
+    list (of str): all modified peptides.</p>
+<p>TODO:
+    There can be some edge-cases which are not defined yet.
+    Example:
+    Setting the same fixed modification - once for all peptides and once for only terminal for the protein.
+    The modification will then be applied twice.</p>
 
 </div>
 
@@ -1118,8 +1208,14 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_peptide" class="doc_header"><code>check_peptide</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L385" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_peptide</code>(<strong><code>peptide</code></strong>, <strong><code>AAs</code></strong>)</p>
+<h4 id="check_peptide" class="doc_header"><code>check_peptide</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L482" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_peptide</code>(<strong><code>peptide</code></strong>:<code>str</code>, <strong><code>AAs</code></strong>:<code>set</code>)</p>
 </blockquote>
+<p>Check if the peptide contains non-AA letters.
+Args:
+    peptide (str): peptide sequence.
+    AAs (set): the set of legal amino acids. See alphapept.constants.AAs
+Returns:
+    bool: True if all letters in the peptide is the subset of AAs, otherwise False</p>
 
 </div>
 
@@ -1175,14 +1271,14 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[&#39;aPEPTIDEM&#39;,
- &#39;aPEPTIDEoxM&#39;,
- &#39;MEDITPEaP_decoy&#39;,
- &#39;oxMEDITPEaP_decoy&#39;,
- &#39;PEPTIDEM&#39;,
+<pre>[&#39;PEPTIDEM&#39;,
  &#39;PEPTIDEoxM&#39;,
  &#39;MEDITPEP_decoy&#39;,
- &#39;oxMEDITPEP_decoy&#39;]</pre>
+ &#39;oxMEDITPEP_decoy&#39;,
+ &#39;aPEPTIDEM&#39;,
+ &#39;aPEPTIDEoxM&#39;,
+ &#39;MEDITPEaP_decoy&#39;,
+ &#39;oxMEDITPEaP_decoy&#39;]</pre>
 </div>
 
 </div>
@@ -1212,9 +1308,14 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_precmass" class="doc_header"><code>get_precmass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L397" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_precmass</code>(<strong><code>parsed_pep</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_precmass" class="doc_header"><code>get_precmass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L502" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_precmass</code>(<strong><code>parsed_pep</code></strong>:<code>list</code>, <strong><code>mass_dict</code></strong>:<code>Dict</code>)</p>
 </blockquote>
-<p>Calculate the mass of the neutral precursor</p>
+<p>Calculate the mass of the neutral precursor
+Args:
+    parsed_pep (list or numba.typed.List of str): the list of amino acids and modified amono acids.
+    mass_dict (numba.typed.Dict): key is the amino acid or the modified amino acid, and the value is the mass.
+Returns:
+    float: the peptide neutral mass.</p>
 
 </div>
 
@@ -1286,9 +1387,16 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_fragmass" class="doc_header"><code>get_fragmass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L410" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_fragmass</code>(<strong><code>parsed_pep</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_fragmass" class="doc_header"><code>get_fragmass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L521" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_fragmass</code>(<strong><code>parsed_pep</code></strong>:<code>list</code>, <strong><code>mass_dict</code></strong>:<code>Dict</code>)</p>
 </blockquote>
-<p>Calculate the masses of the fragment ions</p>
+<p>Calculate the masses of the fragment ions
+Args:
+    parsed_pep (numba.typed.List of str): the list of amino acids and modified amono acids.
+    mass_dict (numba.typed.Dict): key is the amino acid or the modified amino acid, and the value is the mass.
+Returns:
+    Tuple[np.ndarray(np.float64), np.ndarray(np.int8)]: the fragment masses and the fragment types (represented as np.int8).
+    For a fragment type, positive value means the b-ion, the value indicates the position (b1, b2, b3...); the negative value means
+    the y-ion, the absolute value indicates the position (y1, y2, ...).</p>
 
 </div>
 
@@ -1354,8 +1462,14 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_frag_dict" class="doc_header"><code>get_frag_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L441" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_frag_dict</code>(<strong><code>parsed_pep</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_frag_dict" class="doc_header"><code>get_frag_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L559" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_frag_dict</code>(<strong><code>parsed_pep</code></strong>:<code>list</code>, <strong><code>mass_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
+<p>Calculate the masses of the fragment ions
+Args:
+    parsed_pep (list or numba.typed.List of str): the list of amino acids and modified amono acids.
+    mass_dict (numba.typed.Dict): key is the amino acid or the modified amino acid, and the value is the mass.
+Returns:
+    dict{str:float}: key is the fragment type (b1, b2, ..., y1, y2, ...), value is fragment mass.</p>
 
 </div>
 
@@ -1504,8 +1618,14 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_spectrum" class="doc_header"><code>get_spectrum</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L459" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_spectrum</code>(<strong><code>peptide</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_spectrum" class="doc_header"><code>get_spectrum</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L584" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_spectrum</code>(<strong><code>peptide</code></strong>:<code>str</code>, <strong><code>mass_dict</code></strong>:<code>Dict</code>)</p>
 </blockquote>
+<p>Get neutral peptide mass, fragment masses and fragment types for a peptide
+Args:
+    peptide (str): the (modified) peptide.
+    mass_dict (numba.typed.Dict): key is the amino acid or modified amino acid, and the value is the mass.
+Returns:
+    Tuple[float, str, np.ndarray(np.float64), np.ndarray(np.int8)]: (peptide mass, peptide, fragment masses, fragment_types), for fragment types, see get_fragmass.</p>
 
 </div>
 
@@ -1528,8 +1648,16 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_spectra" class="doc_header"><code>get_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L472" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_spectra</code>(<strong><code>peptides</code></strong>, <strong><code>mass_dict</code></strong>)</p>
+<h4 id="get_spectra" class="doc_header"><code>get_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L605" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_spectra</code>(<strong><code>peptides</code></strong>:<code>List</code>, <strong><code>mass_dict</code></strong>:<code>Dict</code>)</p>
 </blockquote>
+<p>Get neutral peptide mass, fragment masses and fragment types for a list of peptides
+Args:
+    peptides (list of str): the (modified) peptide list.
+    mass_dict (numba.typed.Dict): key is the amino acid or modified amino acid, and the value is the mass.
+Raises:
+    Unknown exception and pass.
+Returns:
+    list of Tuple[float, str, np.ndarray(np.float64), np.ndarray(np.int8)]: See get_spectrum.</p>
 
 </div>
 
@@ -1570,7 +1698,7 @@ The modification will thenbe applied twice.</p>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>[(799.35996420346, &#39;PEPTIDE&#39;, array([ 98.06004033, 148.06043425, 227.10263343, 263.08737735,
        324.15539729, 376.17144135, 425.20307579, 477.21911985,
-       538.28713979, 574.27188371, 653.31408289, 703.31447681]), array([ 1, -1,  2, -2,  3, -3,  4, -4,  5, -5,  6, -6], dtype=int8)), ...]
+       538.28713979, 574.27188371, 653.31408289, 703.31447681]), array([ 1, -1,  2, -2,  3, -3,  4, -4,  5, -5,  6, -6], dtype=int8))]
 </pre>
 </div>
 </div>
@@ -1600,9 +1728,13 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_fasta_file" class="doc_header"><code>read_fasta_file</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L490" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_fasta_file</code>(<strong><code>fasta_filename</code></strong>=<em><code>''</code></em>)</p>
+<h4 id="read_fasta_file" class="doc_header"><code>read_fasta_file</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L633" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_fasta_file</code>(<strong><code>fasta_filename</code></strong>:<code>str</code>=<em><code>''</code></em>)</p>
 </blockquote>
-<p>Read a FASTA file line by line</p>
+<p>Read a FASTA file line by line
+Args:
+    fasta_filename (str): fasta.
+Yields:
+    dict {id:str, name:str, description:str, sequence:str}: protein information.</p>
 
 </div>
 
@@ -1625,9 +1757,13 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_fasta_file_entries" class="doc_header"><code>read_fasta_file_entries</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L517" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_fasta_file_entries</code>(<strong><code>fasta_filename</code></strong>=<em><code>''</code></em>)</p>
+<h4 id="read_fasta_file_entries" class="doc_header"><code>read_fasta_file_entries</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L664" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_fasta_file_entries</code>(<strong><code>fasta_filename</code></strong>=<em><code>''</code></em>)</p>
 </blockquote>
-<p>Function to count entries in fasta file</p>
+<p>Function to count entries in fasta file
+Args:
+    fasta_filename (str): fasta.
+Returns:
+    int: number of entries.</p>
 
 </div>
 
@@ -1650,9 +1786,15 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_sequence" class="doc_header"><code>check_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L534" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_sequence</code>(<strong><code>element</code></strong>, <strong><code>AAs</code></strong>, <strong><code>verbose</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="check_sequence" class="doc_header"><code>check_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L685" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_sequence</code>(<strong><code>element</code></strong>:<code>dict</code>, <strong><code>AAs</code></strong>:<code>set</code>, <strong><code>verbose</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
-<p>Checks wheter a sequence from a FASTA entry contains valid AAs</p>
+<p>Checks wheter a sequence from a FASTA entry contains valid AAs
+Args:
+    element (dict): fasta entry of the protein information.
+    AAs (set): a set of amino acid letters.
+    verbose (bool): logging the invalid amino acids.
+Returns:
+    bool: False if the protein sequence contains non-AA letters, otherwise True.</p>
 
 </div>
 
@@ -1727,9 +1869,16 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_to_pept_dict" class="doc_header"><code>add_to_pept_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L549" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_to_pept_dict</code>(<strong><code>pept_dict</code></strong>, <strong><code>new_peptides</code></strong>, <strong><code>i</code></strong>)</p>
+<h4 id="add_to_pept_dict" class="doc_header"><code>add_to_pept_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L706" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_to_pept_dict</code>(<strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>new_peptides</code></strong>:<code>list</code>, <strong><code>i</code></strong>:<code>int</code>)</p>
 </blockquote>
-<p>Add peptides to the peptide dictionary</p>
+<p>Add peptides to the peptide dictionary
+Args:
+    pept_dict (dict): the key is peptide sequence, and the value is protein id list indicating where the peptide is from.
+    new_peptides (list): the list of peptides to be added to pept_dict.
+    i (int): the protein id where new_peptides are from.
+Returns:
+    dict: same as the pept_dict in the arguments.
+    list (of str): the peptides from new_peptides that not in the pept_dict.</p>
 
 </div>
 
@@ -1799,8 +1948,13 @@ The modification will thenbe applied twice.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="merge_pept_dicts" class="doc_header"><code>merge_pept_dicts</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L566" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>merge_pept_dicts</code>(<strong><code>list_of_pept_dicts</code></strong>)</p>
+<h4 id="merge_pept_dicts" class="doc_header"><code>merge_pept_dicts</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L730" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>merge_pept_dicts</code>(<strong><code>list_of_pept_dicts</code></strong>:<code>list</code>)</p>
 </blockquote>
+<p>Merge a list of peptide dict into a single dict.
+Args:
+    list_of_pept_dicts (list of dict): the key of the pept_dict is peptide sequence, and the value is protein id list indicating where the peptide is from.
+Returns:
+    dict: the key is peptide sequence, and the value is protein id list indicating where the peptide is from.</p>
 
 </div>
 
@@ -1855,29 +2009,6 @@ The modification will thenbe applied twice.</p>
 </div>
     {% endraw %}
 
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">def</span> <span class="nf">test_merge_pept_dicts</span><span class="p">():</span>
-    <span class="n">pept_dict_1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ABC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;DEF&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;GHI&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">]}</span>
-    <span class="n">pept_dict_2</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;ABC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;JKL&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="s1">&#39;MNO&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">7</span><span class="p">]}</span>
-
-    <span class="k">assert</span> <span class="n">merge_pept_dicts</span><span class="p">([</span><span class="n">pept_dict_1</span><span class="p">,</span> <span class="n">pept_dict_2</span><span class="p">])</span> <span class="o">==</span> <span class="p">{</span><span class="s1">&#39;ABC&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="s1">&#39;DEF&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;GHI&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;JKL&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span> <span class="s1">&#39;MNO&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">7</span><span class="p">]}</span>
-    
-<span class="n">test_merge_pept_dicts</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Generating-a-database">Generating a database<a class="anchor-link" href="#Generating-a-database"> </a></h2><p>To wrap everything up, we employ two functions, <a href="/fasta.html#generate_database"><code>generate_database</code></a> and <a href="/fasta.html#generate_spectra"><code>generate_spectra</code></a>. The first one reads a FASTA file and generates a list of peptides, as well as the peptide dictionary and an ordered FASTA dictionary to be able to look up the protein indices later. For the <code>callback</code> we first read the whole FASTA file to determine the total number of entries in the FASTA file.  For a typical FASTA file of 30 Mb with 40k entries, this should take less than a second. The progress of the digestion is monitored by processing the FASTA file one by one.
@@ -1897,9 +2028,15 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_fasta_list" class="doc_header"><code>generate_fasta_list</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L587" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_fasta_list</code>(<strong><code>fasta_paths</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="generate_fasta_list" class="doc_header"><code>generate_fasta_list</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L757" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_fasta_list</code>(<strong><code>fasta_paths</code></strong>:<code>list</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Function to generate a database from a fasta file</p>
+<p>Function to generate a database from a fasta file
+Args:
+    fasta_paths (str or list of str): fasta path or a list of fasta paths.
+    callback (function, optional): callback function.
+Returns:
+    fasta_list (list of dict): list of protein entry dict {id:str, name:str, description:str, sequence:str}.
+    fasta_dict (dict{int:dict}): the key is the protein id, the value is the protein entry dict.</p>
 
 </div>
 
@@ -1915,6 +2052,13 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -1922,9 +2066,17 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_database" class="doc_header"><code>generate_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L619" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database</code>(<strong><code>mass_dict</code></strong>, <strong><code>fasta_paths</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="generate_database" class="doc_header"><code>generate_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L798" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database</code>(<strong><code>mass_dict</code></strong>:<code>dict</code>, <strong><code>fasta_paths</code></strong>:<code>list</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Function to generate a database from a fasta file</p>
+<p>Function to generate a database from a fasta file
+Args:
+    mass_dict (dict): not used, will be removed in the future.
+    fasta_paths (str or list of str): fasta path or a list of fasta paths.
+    callback (function, optional): callback function.
+Returns:
+    to_add (list of str): non-redundant (modified) peptides to be added.
+    pept_dict (dict{str:list of int}): the key is peptide sequence, and the value is protein id list indicating where the peptide is from.
+    fasta_dict (dict{int:dict}): the key is the protein id, the value is the protein entry dict {id:str, name:str, description:str, sequence:str}.</p>
 
 </div>
 
@@ -1940,6 +2092,13 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -1947,9 +2106,15 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_spectra" class="doc_header"><code>generate_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L657" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_spectra</code>(<strong><code>to_add</code></strong>, <strong><code>mass_dict</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="generate_spectra" class="doc_header"><code>generate_spectra</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L845" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_spectra</code>(<strong><code>to_add</code></strong>:<code>list</code>, <strong><code>mass_dict</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Function to generate a database from a fasta file</p>
+<p>Function to generate spectra list database from a fasta file
+Args:
+    to_add (list):
+    mass_dict (dict{str:float}): amino acid mass dict.
+    callback (function, optional): callback function. (Default: None)
+Returns:
+    list (of tuple): list of (peptide mass, peptide, fragment masses, fragment_types), see get_fragmass.</p>
 
 </div>
 
@@ -1986,9 +2151,14 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="block_idx" class="doc_header"><code>block_idx</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L686" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>block_idx</code>(<strong><code>len_list</code></strong>, <strong><code>block_size</code></strong>=<em><code>1000</code></em>)</p>
+<h4 id="block_idx" class="doc_header"><code>block_idx</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L877" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>block_idx</code>(<strong><code>len_list</code></strong>:<code>int</code>, <strong><code>block_size</code></strong>:<code>int</code>=<em><code>1000</code></em>)</p>
 </blockquote>
-<p>Create indices for a list of length len_list</p>
+<p>Helper function to split length into blocks
+Args:
+    len_list (int): list length.
+    block_size (int, optional, default 1000): size per block.
+Returns:
+    list[(int, int)]: list of (start, end) positions of blocks.</p>
 
 </div>
 
@@ -2011,9 +2181,46 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="blocks" class="doc_header"><code>blocks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L701" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>blocks</code>(<strong><code>l</code></strong>, <strong><code>n</code></strong>)</p>
+<h4 id="blocks" class="doc_header"><code>blocks</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L897" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>blocks</code>(<strong><code>l</code></strong>:<code>int</code>, <strong><code>n</code></strong>:<code>int</code>)</p>
 </blockquote>
-<p>Create blocks from a given list</p>
+<p>Helper function to reate blocks from a given list
+Args:
+    l (list): the list
+    n (int): size per block
+Returns:
+    tuple: tuple of split blocks</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="digest_fasta_block" class="doc_header"><code>digest_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L916" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>digest_fasta_block</code>(<strong><code>to_process</code></strong>:<code>tuple</code>)</p>
+</blockquote>
+<p>Digest and create spectra for a whole fasta_block for multiprocessing. See generate_database_parallel.</p>
 
 </div>
 
@@ -2036,34 +2243,15 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="digest_fasta_block" class="doc_header"><code>digest_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L708" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>digest_fasta_block</code>(<strong><code>to_process</code></strong>)</p>
+<h4 id="generate_database_parallel" class="doc_header"><code>generate_database_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L946" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database_parallel</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Digest and create spectra for a whole fasta_block</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_database_parallel" class="doc_header"><code>generate_database_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L737" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_database_parallel</code>(<strong><code>settings</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
-</blockquote>
-<p>Function to generate a database from a fasta file</p>
+<p>Function to generate a database from a fasta file in parallel.
+Args:
+    settings: alphapept settings.
+Returns:
+    list: theoretical spectra. See generate_spectra()
+    dict: peptide dict. See add_to_pept_dict()
+    dict: fasta_dict. See generate_fasta_list()</p>
 
 </div>
 
@@ -2102,9 +2290,9 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="pept_dict_from_search" class="doc_header"><code>pept_dict_from_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L772" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pept_dict_from_search</code>(<strong><code>settings</code></strong>)</p>
+<h4 id="pept_dict_from_search" class="doc_header"><code>pept_dict_from_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L988" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pept_dict_from_search</code>(<strong><code>settings</code></strong>:<code>dict</code>)</p>
 </blockquote>
-<p>Generates a peptide dict from a large search</p>
+<p>Generates a peptide dict from a large search.</p>
 
 </div>
 
@@ -2135,9 +2323,8 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 <li><code>fragtypes:</code>: An array containing the fragment types. 0 equals b-ions, and 1 equals y-ions. Unoccupied cells are filled with -1</li>
 <li><code>bounds</code>: An integer array containing the upper bounds for the fragment masses/types array. This is needed to quickly slice the data.</li>
 </ul>
-<p>All arrays are sorted according to the precursor mass.</p>
-<blockquote><p>To access the dictionaries such as <code>pept_dict</code> or <code>fasta_dict</code>, one needs to extract them using the <code>.item()</code> method like so:<code>container['pept_dict'].item()</code>.</p>
-</blockquote>
+<p>All arrays are sorted according to the precursor mass.
+{% include note.html content='To access the dictionaries such as <code>pept_dict</code> or <code>fasta_dict</code>, one needs to extract them using the <code>.item()</code> method like so: <code>container["pept_dict"].item()</code>.' %}</p>
 
 </div>
 </div>
@@ -2153,9 +2340,13 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="save_database" class="doc_header"><code>save_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L817" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_database</code>(<strong><code>spectra</code></strong>, <strong><code>pept_dict</code></strong>, <strong><code>fasta_dict</code></strong>, <strong><code>database_path</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="save_database" class="doc_header"><code>save_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L1033" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_database</code>(<strong><code>spectra</code></strong>:<code>list</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>, <strong><code>fasta_dict</code></strong>:<code>dict</code>, <strong><code>database_path</code></strong>:<code>str</code>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
-<p>Function to save a database to the *.hdf format.</p>
+<p>Function to save a database to the *.hdf format. Write the database into hdf.
+Args:
+    spectra (list): list: theoretical spectra. See generate_spectra()
+    pept_dict (dict): peptide dict. See add_to_pept_dict()
+    fasta_dict (dict): fasta_dict. See generate_fasta_list()</p>
 
 </div>
 
@@ -2185,8 +2376,14 @@ The function <a href="/fasta.html#generate_spectra"><code>generate_spectra</code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="read_database" class="doc_header"><code>read_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L887" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_database</code>(<strong><code>database_path</code></strong>:<code>str</code>, <strong><code>array_name</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
+<h4 id="read_database" class="doc_header"><code>read_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/fasta.py#L1107" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>read_database</code>(<strong><code>database_path</code></strong>:<code>str</code>, <strong><code>array_name</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
 </blockquote>
+<p>Read database from hdf file.
+Args:
+    database_path (str): hdf database file generate by alphapept.
+    array_name (str): the dataset name to read
+return:
+    dict: key is the dataset_name in hdf file, value is the python object read from the dataset_name</p>
 
 </div>
 

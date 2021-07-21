@@ -55,6 +55,9 @@ entries:
       title: Performance
       url: performance.html
     - output: web,pdf
+      title: Additional code
+      url: additional_code.html
+    - output: web,pdf
       title: How to contribute
       url: contributing.html
     - output: web,pdf

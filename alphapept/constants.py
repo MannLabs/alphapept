@@ -233,29 +233,29 @@ mass_dict["delta_S"] = 0.0109135
 # Cell
 
 #generates the mass dictionary from table
-def get_mass_dict(modfile="../modifications.tsv", aasfile="../amino_acids.tsv"):
+def get_mass_dict(modfile:str="../modifications.tsv", aasfile: str="../amino_acids.tsv", verbose:bool=True):
     """
-    Creates a mass_dict based on tsv files
+    Function to create a mass dict based on tsv files.
+    This is used to create the hardcoded dict in the constants notebook.
+    The dict needs to be hardcoded because of importing restrictions when using numba.
+    More specifically, a global needs to be typed at runtime.
 
     Args:
-        modfile: Filename of modifications file
-        aasfile: Filename of AAs file
+        modfile (str): Filename of modifications file.
+        aasfile (str): Filename of AAs file.
+        verbose (bool, optional): Flag to print dict.
 
     Returns:
-        Returns a numba compatible dictionary with masses
+        Returns a numba compatible dictionary with masses.
 
     Raises:
-        FileNotFoundError: If files are not found
+        FileNotFoundError: If files are not found.
+
     """
     import pandas as pd
 
-    #for file in [modfile, aasfile]:
-        #if not check_file(file):
-        #    raise FileNotFoundError("File {} not found.".format(file))
-
     mods = pd.read_csv(modfile, delimiter="\t")
     aas = pd.read_csv(aasfile, delimiter="\t")
-
 
     mass_dict = Dict.empty(key_type=types.unicode_type, value_type=types.float64)
 
@@ -280,8 +280,7 @@ def get_mass_dict(modfile="../modifications.tsv", aasfile="../amino_acids.tsv"):
         else:
             mass_dict[identifier] = float(mass) + mass_dict[aar]
 
-    # Manually add some other masses
-    # TODO: Move to file
+    # Manually add other masses
     mass_dict[
         "Electron"
     ] = (
@@ -294,8 +293,14 @@ def get_mass_dict(modfile="../modifications.tsv", aasfile="../amino_acids.tsv"):
     mass_dict["OH"] = mass_dict["Oxygen"] + mass_dict["Hydrogen"]  # OH mass
     mass_dict["H2O"] = mass_dict["Oxygen"] + 2 * mass_dict["Hydrogen"]  # H2O mass
 
-    for element in mass_dict:
-        print('mass_dict["{}"] = {}'.format(element, mass_dict[element]))
+    mass_dict["NH3"] = 17.03052
+    mass_dict["delta_M"] = 1.00286864
+    mass_dict["delta_S"] = 0.0109135
+
+    if verbose:
+
+        for element in mass_dict:
+            print('mass_dict["{}"] = {}'.format(element, mass_dict[element]))
 
     return mass_dict
 
@@ -313,7 +318,15 @@ spec = [
 
 @jitclass(spec)
 class Isotope:
-    def __init__(self, m0, dm, intensities):
+    """
+    Jit-compatible class to store isotopes
+
+    Attributes:
+        m0 (int): Mass of pattern
+        dm0 (int): dm of pattern (number of isotopes)
+        int0 (np.float32[:]): Intensities of pattern
+    """
+    def __init__(self, m0:int, dm:int, intensities:np.ndarray):
         self.m0 = m0
         self.dm = dm
         self.intensities = intensities
@@ -380,5 +393,3 @@ protease_dict["trypsin_full"] = "([KR](?=[^P]))|((?<=W)K(?=P))|((?<=M)R(?=P))"
 protease_dict["trypsin_exception"] = "((?<=[CD])K(?=D))|((?<=C)K(?=[HY]))|((?<=C)R(?=K))|((?<=R)R(?=[HR]))"
 protease_dict["non-specific"] = "()"
 protease_dict["trypsin"] = "([KR](?=[^P]))"
-
-
