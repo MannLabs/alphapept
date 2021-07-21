@@ -979,7 +979,7 @@ from .fasta import block_idx, generate_fasta_list, generate_spectra, check_pepti
 from alphapept import constants
 mass_dict = constants.mass_dict
 import os
-import alphapept.speed
+import alphapept.performance
 
 #This function is a wrapper and ist tested by the quick_test
 def search_fasta_block(to_process:tuple) -> (list, int):
@@ -1157,7 +1157,10 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, callba
     logging.info(f"Number of FASTA entries: {len(fasta_list):,} - FASTA settings {settings['fasta']}")
     to_process = [(idx_start, fasta_list[idx_start:idx_end], ms_file_path, custom_settings) for idx_start, idx_end in block_idx(len(fasta_list), fasta_block)]
 
-    n_processes = settings['general']['n_processes']
+    n_processes = alphapept.performance.set_worker_count(
+        worker_count=settings['general']['n_processes'],
+        set_global=False
+    )
 
     n_seqs_ = 0
 
@@ -1166,7 +1169,7 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, callba
 
     df_cache = {}
 
-    with alphapept.speed.AlphaPool(n_processes) as p:
+    with alphapept.performance.AlphaPool(n_processes) as p:
         max_ = len(to_process)
 
         for i, (_, n_seqs) in enumerate(p.imap_unordered(search_fasta_block, to_process)):

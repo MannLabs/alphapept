@@ -492,7 +492,7 @@ def protein_profile(files: list, minimum_ratios: int, chunk:tuple) -> (np.ndarra
 # Cell
 
 import os
-import alphapept.speed
+import alphapept.performance
 from functools import partial
 
 # This function invokes a parallel pool and has therfore no dedicated test in the notebook
@@ -538,7 +538,11 @@ def protein_profile_parallel(df: pd.DataFrame, minimum_ratios: int, field: str, 
         results = []
 
         logging.info(f'Starting protein extraction for {len(split_df)} proteins.')
-        with alphapept.speed.AlphaPool(-1) as p:
+        n_processes = alphapept.performance.set_worker_count(
+            worker_count=0,
+            set_global=False
+        )
+        with alphapept.performance.AlphaPool(n_processes) as p:
             max_ = len(split_df)
             for i, _ in enumerate(p.imap_unordered(partial(protein_profile, files, minimum_ratios), split_df)):
                 results.append(_)

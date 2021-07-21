@@ -221,7 +221,7 @@ def one_over_k0_to_CCS(
     charges: np.ndarray,
     mzs: np.ndarray,
 ) -> np.ndarray:
-    """Retrieve colliosonal cross section (CCS) values from (mobility, charge, mz) arrays.
+    """Retrieve collisional cross section (CCS) values from (mobility, charge, mz) arrays.
 
     Args:
         one_over_k0s (np.ndarray): The ion mobilities (1D-np.float).
@@ -1231,7 +1231,7 @@ def _save_DDA_query_data(
 
     Raises:
         KeyError: If the query_dict contains keys that do not end with 1 or 2.
-            i.e. are not MS! or MS2 spectra.
+            i.e. are not MS1 or MS2 spectra.
 
     """
 #     if vendor == "Bruker":
@@ -1305,10 +1305,10 @@ def read_DDA_query_data(
 
     Args:
         calibrated_fragments (bool): If True, calibrated fragments are retrieved.
-            Calihration offsets can already be present in the ms_data or recalculated.
+            Calibration offsets can already be present in the ms_data or recalculated.
             Defaults to False.
         force_recalibrate (bool): If calibrated fragments is True,
-            recalibrate mzs values even if a reclaibration is already provided.
+            recalibrate mzs values even if a recalibration is already provided.
             Defaults to False.
         swmr (bool): Open the file in swmr mode. Defaults to False.
         **kwargs (type): Can contain a database file name that was used for recalibration.

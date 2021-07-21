@@ -940,7 +940,7 @@ def digest_fasta_block(to_process:tuple)-> (list, dict):
 
     return (spectra, pept_dict)
 
-import alphapept.speed
+import alphapept.performance
 
 #This function is a wrapper function and to be tested by the integration test
 def generate_database_parallel(settings:dict, callback = None):
@@ -953,9 +953,11 @@ def generate_database_parallel(settings:dict, callback = None):
         dict: peptide dict. See add_to_pept_dict()
         dict: fasta_dict. See generate_fasta_list()
     """
-    n_processes = settings['general']['n_processes']
 
-    n_processes = alphapept.speed.set_max_process(n_processes)
+    n_processes = alphapept.performance.set_worker_count(
+        worker_count=settings['general']['n_processes'],
+        set_global=False
+    )
 
     fasta_list, fasta_dict = generate_fasta_list(fasta_paths = settings['experiment']['fasta_paths'], **settings['fasta'])
 
