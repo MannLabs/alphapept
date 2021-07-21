@@ -8,7 +8,16 @@ import datetime
 import yaml
 import psutil
 
-def get_folder_size(start_path = '.'):
+def get_folder_size(start_path:str = '.')->float:
+    """Returns the total size of a given folder.
+
+    Args:
+        start_path (str): Path to the folder that should be checked. Defaults to '.'.
+
+    Returns:
+        float: Total size in Mb.
+    """    
+
     total_size = 0
     for dirpath, dirnames, filenames in os.walk(start_path):
         for f in filenames:
@@ -18,7 +27,17 @@ def get_folder_size(start_path = '.'):
                 total_size += os.path.getsize(fp)
     return total_size
 
-def check_file_completion(file, minimum_file_size):
+
+def check_file_completion(file:str, minimum_file_size:float)->list:
+    """Checks if a file is being written or complete.
+
+    Args:
+        file (str): Path to the file that should be checked.
+        minimum_file_size (float): Minimum file size in Mb.
+
+    Returns:
+        list: A list of files that are considered complete.
+    """    
 
     to_analyze = []
 
@@ -50,11 +69,16 @@ def check_file_completion(file, minimum_file_size):
 
 
 
-def file_watcher_process(folder, settings_template, minimum_file_size, tag):
-    """
-    Start the filewatcher process
-    """
+def file_watcher_process(folder:str, settings_template:dict, minimum_file_size:float, tag:str):
+    """Function to start a filewatcher process.
+    It uses the PatternMatchEventHandler to look for new files.
 
+    Args:
+        folder (str): Path to the folder to be checked.
+        settings_template (dict): Dictionary containing settings.
+        minimum_file_size (fliat): Minimum file size.
+        tag (str): Dedicated tag to only watch for files with the tag.
+    """    
     from watchdog.observers import Observer
     from watchdog.events import PatternMatchingEventHandler
 
@@ -115,6 +139,8 @@ def file_watcher_process(folder, settings_template, minimum_file_size, tag):
         time.sleep(1)
 
 def filewatcher():
+    """Streamlit page to launch the file watcher.
+    """    
     st.write('# FileWatcher')
 
     # FileWatcher
