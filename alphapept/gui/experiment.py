@@ -3,11 +3,13 @@ import os
 import pandas as pd
 import datetime
 import time
+import yaml
+from typing import Union
+
 from alphapept.paths import SETTINGS_TEMPLATE_PATH, QUEUE_PATH, DEFAULT_SETTINGS_PATH, FASTA_PATH
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
 from alphapept.gui.utils import escape_markdown, files_in_folder
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, JsCode
-import yaml
 
 # Dict to match workflow
 WORKFLOW_DICT = {}
@@ -19,27 +21,44 @@ WORKFLOW_DICT['recalibrate_data'] = ['calibration']
 WORKFLOW_DICT['align'] = []
 WORKFLOW_DICT['match'] = ['matching']
 WORKFLOW_DICT['lfq_quantification'] = ['quantification']
-
-
 SETTINGS_TEMPLATE = load_settings(SETTINGS_TEMPLATE_PATH)
 
-def parse_folder(file_folder):
-    """
-    Checks a folder for raw, fasta and db_data.hdf files
-    """
-    raw_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith('.raw') or _.lower().endswith('.d')] # or _.lower().endswith('.ms_data.hdf')]
+
+def parse_folder(file_folder:str)-> (list, list, list):
+    """Checks a folder for raw, fasta and db_data.hdf files.
+
+    Args:
+        file_folder (str): Path to folder.
+
+    Returns:
+        list: List of raw files in folder.
+        list: List of FASTA files in folder.
+        list: List of db_files in folder.
+    """    
+
+    raw_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith('.raw') or _.lower().endswith('.d')]
     fasta_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith('.fasta')]
     db_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith('.db_data.hdf')]
-    #ms_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith('.ms_data.hdf')]
 
     return raw_files, fasta_files, db_files
 
 
-def widget_from_setting(recorder, key, group, element, override=None, indent=False):
-    """
-    Creates streamlit widgets from settigns
-    Returns a recorder to extract set values
-    """
+def widget_from_setting(recorder:dict, key:str, group:str, element:str, override:Union[float, None]=None, indent:bool=False)->dict:
+    """Creates streamlit widgets from settings.
+    Returns a recorder to extract set values.
+
+    Args:
+        recorder (dict): A dictionary that stores all widgets.
+        key (str): Key to the widget that should be created.
+        group (str): Groupname of the widget that should be created.
+        element (str): Element of thw widget that should be created.
+        override (Union[float, None], optional): Override value for the default value. Defaults to None.
+        indent (bool, optional): Flag to indent the widget via the st.beta_columns widget. Defaults to False.
+
+    Returns:
+        dict: A dictionary that stores all widgets.
+    """    
+
     _ = group[element]
 
     if key not in recorder:
@@ -78,10 +97,13 @@ def widget_from_setting(recorder, key, group, element, override=None, indent=Fal
 
     return recorder
 
-def submit_experiment(recorder):
-    """
-    Asks for an experiment name and creates a button to submit.
-    """
+
+def submit_experiment(recorder:dict):
+    """Widget that asks for an experiment name, extracts all current values and saves the experiment.
+
+    Args:
+        recorder (dict): A dictionary that stores all widgets.
+    """    
     name = st.text_input('Enter experiment name and press enter.', datetime.datetime.today().strftime('%Y_%m_%d_'))
 
     long_name = name + '.yaml'
@@ -102,10 +124,17 @@ def submit_experiment(recorder):
             st.success(f'Experiment {escape_markdown(long_name)} submitted. Switch to Status tab to track progress.')
 
 
-def customize_settings(recorder, uploaded_settings, loaded):
+
+def customize_settings(recorder:dict, uploaded_settings:dict:, loaded:bool)->dict:
+    """Widget to customize the settings with respect to the settings template.
+
+    Args:
+        recorder (dict): A dictionary that stores all widgets.
+        uploaded_settings (dict): A dictionary that has uploaded settings.
+        loaded (bool): Flag to indicate that data was uploaded.
+    """    
 
     with st.beta_expander("Settings", loaded):
-
         checked = [_ for _ in recorder['workflow'] if not recorder['workflow'][_]]
         checked_ = []
         [checked_.extend(WORKFLOW_DICT[_]) for _ in checked if _ in WORKFLOW_DICT]
@@ -133,10 +162,17 @@ def customize_settings(recorder, uploaded_settings, loaded):
 
     return recorder
 
-def file_df_from_files(raw_files, file_folder):
-    """
-    From a list of files, get creation data and filesize and convert to a pandas dataframe.
-    """
+def file_df_from_files(raw_files:list, file_folder:str)->pd.DataFrame:
+    """Helper function that creates a pandas dataframe from a list of files.
+    This function also adds the size of the files and the creation date.
+
+    Args:
+        raw_files (list): List of raw files.
+        file_folder (str): Folder that contained the raw files.
+
+    Returns:
+        pd.DataFrame: DataFrame with file information.
+    """    
     raw_files.sort()
     sizes = [round(os.stat(os.path.join(file_folder, _)).st_size/1024**3,2) for _ in raw_files]
     created = [datetime.datetime.fromtimestamp(os.path.getctime(os.path.join(file_folder, _))) for _ in raw_files]
@@ -147,6 +183,8 @@ def file_df_from_files(raw_files, file_folder):
 
 
 def experiment():
+    """Main widget to display the experiment tab.
+    """    
     error = 0
     st.write("# New experiment")
     st.write('## Files')
