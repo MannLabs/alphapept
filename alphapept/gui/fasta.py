@@ -12,7 +12,7 @@ proteomes['Saccharomyces_cerevisiae_UP000002311'] = 'UP000002311'
 proteomes['Arabidopsis_thaliana_UP000006548'] = 'UP000006548'
 
 def fasta():
-    """Main widget to display the FASTA tab.
+    """Streamlit page to display the FASTA tab.
     """    
     st.write('# FASTA')
 
