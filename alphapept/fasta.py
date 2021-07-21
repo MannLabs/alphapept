@@ -732,15 +732,17 @@ def digest_fasta_block(to_process):
 
     return (spectra, pept_dict)
 
-import alphapept.speed
+import alphapept.performance
 
 def generate_database_parallel(settings, callback = None):
     """
     Function to generate a database from a fasta file
     """
-    n_processes = settings['general']['n_processes']
 
-    n_processes = alphapept.speed.set_max_process(n_processes)
+    n_processes = alphapept.performance.set_worker_count(
+        worker_count=settings['general']['n_processes'],
+        set_global=False
+    )
 
     fasta_list, fasta_dict = generate_fasta_list(fasta_paths = settings['experiment']['fasta_paths'], **settings['fasta'])
 
