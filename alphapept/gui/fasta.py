@@ -12,6 +12,8 @@ proteomes['Saccharomyces_cerevisiae_UP000002311'] = 'UP000002311'
 proteomes['Arabidopsis_thaliana_UP000006548'] = 'UP000006548'
 
 def fasta():
+    """Main widget to display the FASTA tab.
+    """    
     st.write('# FASTA')
 
     st.text(f'AlphaPept looks for FASTA files in {FASTA_PATH}.\nThese can be selected in the new experiment tab.\nYou can add own FASTA files to this folder.')
