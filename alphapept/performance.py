@@ -377,6 +377,7 @@ def performance_function(
         return _decorated_function(_func)
 
 # Cell
+from multiprocessing import Pool
 
 def AlphaPool(process_count: int) -> multiprocessing.Pool:
     """Create a multiprocessing.Pool object.
