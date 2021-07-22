@@ -25,7 +25,7 @@ def connect_centroids_unidirection(x:np.ndarray, row_borders:np.ndarray, connect
         row_borders (np.ndarray): Row borders of the centroids array.
         connections (np.ndarray): Connections matrix to store the connections
         scores (np.ndarray):  Score matrix to store the connections
-        centroids (np.ndarray): Array containing the centroids data.
+        centroids (np.ndarray): 1D Array containing the masses of the centroids data.
         max_gap (int): Maximum gap when connecting centroids.
         centroid_tol (float): Centroid tolerance.
     """
@@ -114,8 +114,17 @@ def find_centroid_connections(rowwise_peaks:np.ndarray, row_borders:np.ndarray, 
 #the performance functions are tested with the wrapper function connect_centroids
 @alphapept.performance.performance_function
 def convert_connections_to_array(x:np.ndarray, from_r:np.ndarray, from_c:np.ndarray, to_r:np.ndarray, to_c:np.ndarray, row_borders:np.ndarray, out_from_idx:np.ndarray, out_to_idx:np.ndarray):
-    """
-    convert the integer of the matrix to coordinates
+    """Convert integer indices of a matrix to coordinates.
+
+    Args:
+        x (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+        from_r (np.ndarray): From array with row coordinates.
+        from_c (np.ndarray): From array with column coordinates.
+        to_r (np.ndarray): To array with row coordinates.
+        to_c (np.ndarray): To array with column coordinates.
+        row_borders (np.ndarray): Row borders (for indexing).
+        out_from_idx (np.ndarray): Reporting array: 1D index from.
+        out_to_idx (np.ndarray): Reporting array: 1D index to.
     """
     row = from_r[x]
     col = from_c[x]
@@ -133,10 +142,13 @@ def convert_connections_to_array(x:np.ndarray, from_r:np.ndarray, from_c:np.ndar
 
 @alphapept.performance.performance_function
 def eliminate_overarching_vertex(x:np.ndarray, from_idx:np.ndarray, to_idx:np.ndarray):
-    """
-    Eliminate overacrhing vertex.
-    """
+    """Eliminate overacrhing vertex.
 
+    Args:
+        x (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+        from_idx (np.ndarray): From index.
+        to_idx (np.ndarray): To index.
+    """
     if x == 0:
         return
 
@@ -144,6 +156,20 @@ def eliminate_overarching_vertex(x:np.ndarray, from_idx:np.ndarray, to_idx:np.nd
         to_idx[x] = -1
 
 def connect_centroids(rowwise_peaks:np.ndarray, row_borders:np.ndarray, centroids:np.ndarray, max_gap:int, centroid_tol:float)-> (np.ndarray, np.ndarray, float, float):
+    """Function to connect centroids.
+
+    Args:
+        rowwise_peaks (np.ndarray): Indexes for centroids.
+        row_borders (np.ndarray): Row borders (for indexing).
+        centroids (np.ndarray): Centroid data.
+        max_gap: Maximum gap.
+        centroid_tol: Centroid tol for matching centroids.
+    Returns:
+        np.ndarray: From index.
+        np.ndarray: To index.
+        float: Median score.
+        float: Std deviation of the score.
+    """
     if alphapept.performance.COMPILATION_MODE == "cuda":
         import cupy
         cupy = cupy
@@ -181,9 +207,16 @@ def connect_centroids(rowwise_peaks:np.ndarray, row_borders:np.ndarray, centroid
 # Cell
 @alphapept.performance.performance_function
 def path_finder(x:np.ndarray, from_idx:np.ndarray, to_idx:np.ndarray, forward:np.ndarray, backward:np.ndarray):
+    """Extracts path information and writes to path matrix.
+
+    Args:
+        x (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+        from_idx (np.ndarray): Array containing from indices.
+        to_idx (np.ndarray): Array containing to indices.
+        forward (np.ndarray): Array to report forward connection.
+        backward (np.ndarray): Array to report backward connection.
     """
-    Extracts path information and writes to path matrix.
-    """
+
     fr = from_idx[x]
     to =  to_idx[x]
 
@@ -192,16 +225,26 @@ def path_finder(x:np.ndarray, from_idx:np.ndarray, to_idx:np.ndarray, forward:np
 
 @alphapept.performance.performance_function
 def find_path_start(x:np.ndarray, forward:np.ndarray, backward:np.ndarray, path_starts:np.ndarray):
-    """
-    Find the start of a path.
+    """Function to find the start of a path.
+
+    Args:
+        x (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+        forward (np.ndarray):  Array to report forward connection.
+        backward (np.ndarray):  Array to report backward connection.
+        path_starts (np.ndarray): Array to report path starts.
     """
     if forward[x] > -1 and backward[x] == -1:
         path_starts[x] = 0
 
 @alphapept.performance.performance_function
 def find_path_length(x:np.ndarray, path_starts:np.ndarray, forward:np.ndarray, path_cnt:np.ndarray):
-    """
-    Extract path length
+    """Function to extract the length of a path.
+
+    Args:
+        x (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+        path_starts (np.ndarray): Array that stores the starts of the paths.
+        forward (np.ndarray): Array that stores forward information.
+        path_cnt (np.ndarray): Reporting array to count the paths.
     """
     ctr = 1
     idx = path_starts[x]
@@ -212,8 +255,14 @@ def find_path_length(x:np.ndarray, path_starts:np.ndarray, forward:np.ndarray, p
 
 @alphapept.performance.performance_function
 def fill_path_matrix(x:np.ndarray, path_start:np.ndarray, forwards:np.ndarray, out_hill_data:np.ndarray, out_hill_ptr:np.ndarray):
-    """
-    Fill the path matrix
+    """Function to fill the path matrix.
+
+    Args:
+        x (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+        path_starts (np.ndarray): Array that stores the starts of the paths.
+        forwards (np.ndarray): Forward array.
+        out_hill_data (np.ndarray): Array containing the indices to hills.
+        out_hill_ptr (np.ndarray): Array containing the bounds to out_hill_data.
     """
     path_position = 0
     idx = path_start[x]
@@ -223,6 +272,19 @@ def fill_path_matrix(x:np.ndarray, path_start:np.ndarray, forwards:np.ndarray, o
         path_position += 1
 
 def get_hills(centroids:np.ndarray, from_idx:np.ndarray, to_idx:np.ndarray, hill_length_min:int=3)-> (np.ndarray, np.ndarray, int):
+    """Function to get hills from centroid connections.
+
+    Args:
+        centroids (np.ndarray): 1D Array containing the masses of the centroids.
+        from_idx (np.ndarray): From index.
+        to_idx (np.ndarray): To index.
+        hill_length_min (int): Minimum hill length:
+
+    Returns:
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        path_node_cnt (int): Number of elements in this path.
+    """
     if alphapept.performance.COMPILATION_MODE == "cuda":
         import cupy
         cupy = cupy
@@ -261,7 +323,21 @@ def get_hills(centroids:np.ndarray, from_idx:np.ndarray, to_idx:np.ndarray, hill
     return hill_ptrs, hill_data, path_node_cnt
 
 
-def extract_hills(query_data:dict, max_gap:int, centroid_tol:float) -> (np.ndarray, np.ndarray, int, float, float):
+def extract_hills(query_data:dict, max_gap:int, centroid_tol:float)-> (np.ndarray, np.ndarray, int, float, float):
+    """[summary]
+
+    Args:
+        query_data (dict): Data structure containing the query data.
+        max_gap (int): Maximum gap when connecting centroids.
+        centroid_tol (float): Centroid tolerance.
+
+    Returns:
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        path_node_cnt (int): Number of elements in this path.
+        score_median (float): Median score.
+        score_std (float): Std deviation of the score.
+    """
 
     if alphapept.performance.COMPILATION_MODE == "cuda":
         import cupy
@@ -297,6 +373,14 @@ def extract_hills(query_data:dict, max_gap:int, centroid_tol:float) -> (np.ndarr
 # Cell
 @alphapept.performance.compile_function(compilation_mode="numba")
 def fast_minima(y:np.ndarray)->np.ndarray:
+    """Function to calculate the local minimas of an array.
+
+    Args:
+        y (np.ndarray): Input array.
+
+    Returns:
+        np.ndarray: Array containing minima positions.
+    """
     minima = np.zeros(len(y))
 
     start = 0
@@ -314,15 +398,22 @@ def fast_minima(y:np.ndarray)->np.ndarray:
 
     return minima
 
-
 # Cell
 
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
 def split(k:np.ndarray, hill_ptrs:np.ndarray, int_data:np.ndarray, hill_data:np.ndarray, splits:np.ndarray, hill_split_level:float, window:int):
-    """
-    Split
+    """Function to split hills.
 
+    Args:
+        k (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        splits (np.ndarray): Array containing splits.
+        hill_split_level (float): Split level for hills.
+        window (int): Smoothing window.
     """
+
     start = hill_ptrs[k]
     end = hill_ptrs[k + 1]
 
@@ -362,8 +453,17 @@ def split(k:np.ndarray, hill_ptrs:np.ndarray, int_data:np.ndarray, hill_data:np.
             break # Split only once per iteration
 
 def split_hills(hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, hill_split_level:float, window:int)->np.ndarray:
-    """
-    Wrapper function to split hills
+    """Wrapper function to split hills
+
+    Args:
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        hill_split_level (float): Split level for hills.
+        window (int): Smoothing window.
+
+    Returns:
+        np.ndarray: Array containing the bounds to the hill_data with splits.
     """
 
     splits = np.zeros(len(int_data), dtype=np.int32)
@@ -386,7 +486,19 @@ def split_hills(hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray,
 # Cell
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
 def check_large_hills(idx:np.ndarray, large_peaks:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, to_remove:np.ndarray, large_peak:int = 40, hill_peak_factor:float = 2, window:int=1):
+    """Function to check large hills and flag them for removal.
 
+    Args:
+        idx (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+        large_peaks (np.ndarray): Array containing large peaks.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        to_remove (np.ndarray): Array with indexes to remove.
+        large_peak (int, optional): Length criterion when a peak is large. Defaults to 40.
+        hill_peak_factor (float, optional): Hill maximum criterion. Defaults to 2.
+        window (int, optional): Smoothing window.. Defaults to 1.
+    """
     k = large_peaks[idx]
 
     start = hill_ptrs[k]
@@ -414,7 +526,20 @@ def check_large_hills(idx:np.ndarray, large_peaks:np.ndarray, hill_ptrs:np.ndarr
         to_remove[idx] = 0
 
 
-def filter_hills(hill_data:np.ndarray, hill_ptrs:np.ndarray, int_data:np.ndarray, hill_check_large:int =40, window:int = 1):
+def filter_hills(hill_data:np.ndarray, hill_ptrs:np.ndarray, int_data:np.ndarray, hill_check_large:int =40, window:int = 1) -> (np.ndarray, np.ndarray):
+    """Filters large hills.
+
+    Args:
+        hill_data (np.ndarray): Array containing the indices to hills.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        hill_check_large (int, optional): Length criterion when a hill is considered large.. Defaults to 40.
+        window (int, optional): Smoothing window. Defaults to 1.
+
+    Returns:
+        np.ndarray: Filtered hill data.
+        np.ndarray: Filtered hill points.
+    """
 
     large_peaks = np.where(np.diff(hill_ptrs)>=hill_check_large)[0]
 
@@ -444,6 +569,21 @@ def filter_hills(hill_data:np.ndarray, hill_ptrs:np.ndarray, int_data:np.ndarray
 
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
 def hill_stats(idx:np.ndarray, hill_range:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, mass_data:np.ndarray, rt_:np.ndarray, rt_idx:np.ndarray, stats:np.ndarray, hill_nboot_max:int, hill_nboot:int):
+    """Function to calculate hill stats.
+
+    Args:
+        idx (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+        hill_range (np.ndarray): Hill range.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        mass_data (np.ndarray): Array containing mass data.
+        rt_ (np.ndarray): Array with retention time information for each scan.
+        rt_idx (np.ndarray): Lookup array to match centroid idx to rt.
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        hill_nboot_max (int): Maximum number of bootstrap comparisons.
+        hill_nboot (int): Number of bootstrap comparisons
+    """
     np.random.seed(42)
 
     start = hill_ptrs[idx]
@@ -489,6 +629,19 @@ def hill_stats(idx:np.ndarray, hill_range:np.ndarray, hill_ptrs:np.ndarray, hill
     stats[idx,5] = rt_max
 
 def remove_duplicates(stats:np.ndarray, hill_data:np.ndarray, hill_ptrs:np.ndarray)-> (np.ndarray, np.ndarray, np.ndarray):
+    """Remove duplicate hills.
+
+    Args:
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+
+    Returns:
+        np.ndarray: Filtered hill data.
+        np.ndarray: Filtered hill points.
+        np.ndarray: Filtered hill stats.
+    """
+
     dups = pd.DataFrame(stats).duplicated() #all duplicated hills
 
     idx_ = np.ones(len(hill_data), dtype = np.int32) #keep all
@@ -508,8 +661,24 @@ def remove_duplicates(stats:np.ndarray, hill_data:np.ndarray, hill_ptrs:np.ndarr
 
     return hill_data_, hill_ptrs_, stats[~dups]
 
-def get_hill_data(query_data:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, hill_nboot_max:int = 300, hill_nboot:int = 150) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray):
+def get_hill_data(query_data:dict, hill_ptrs:np.ndarray, hill_data:np.ndarray, hill_nboot_max:int = 300, hill_nboot:int = 150) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray):
+    """Wrapper function to get the hill data.
 
+    Args:
+        query_data (dict): Data structure containing the query data.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        hill_nboot_max (int): Maximum number of bootstrap comparisons.
+        hill_nboot (int): Number of bootstrap comparisons
+
+    Returns:
+        np.ndarray: Hill stats.
+        np.ndarray: Sortindex.
+        np.ndarray: Upper index.
+        np.ndarray: Scan index.
+        np.ndarray: Hill data.
+        np.ndarray: Hill points.
+    """
     indices_ = np.array(query_data['indices_ms1'])
     rt_ = np.array(query_data['rt_list_ms1'])
     mass_data = np.array(query_data['mass_list_ms1'])
@@ -536,8 +705,18 @@ maximum_offset = DELTA_M + DELTA_S
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def check_isotope_pattern(mass1:float, mass2:float, delta_mass1:float, delta_mass2:float, charge:int, iso_mass_range:int = 5)-> bool:
-    """
-    Check if two masses could belong to the same isotope pattern
+    """Check if two masses could belong to the same isotope pattern.
+
+    Args:
+        mass1 (float): Mass of the first pattern.
+        mass2 (float): Mass of the second pattern.
+        delta_mass1 (float): Delta mass of the first pattern.
+        delta_mass2 (float): Delta mass of the second pattern.
+        charge (int): Charge.
+        iso_mass_range (int, optional): Mass range. Defaults to 5.
+
+    Returns:
+        bool: Flag to see if pattern belongs to the same pattern.
     """
     delta_mass1 = delta_mass1 * iso_mass_range
     delta_mass2 = delta_mass2 * iso_mass_range
@@ -553,6 +732,17 @@ def check_isotope_pattern(mass1:float, mass2:float, delta_mass1:float, delta_mas
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def correlate(scans_:np.ndarray, scans_2:np.ndarray, int_:np.ndarray, int_2:np.ndarray)->float:
+    """Correlate two scans.
+
+    Args:
+        scans_ (np.ndarray): Masses of the first scan.
+        scans_2 (np.ndarray): Masses of the second scan.
+        int_ (np.ndarray): Intensity of the first scan.
+        int_2 (np.ndarray): Intensity of the second scan.
+
+    Returns:
+        float: Correlation.
+    """
 
     min_one, max_one = scans_[0], scans_[-1]
     min_two, max_two = scans_2[0], scans_2[-1]
@@ -579,7 +769,22 @@ def correlate(scans_:np.ndarray, scans_2:np.ndarray, int_:np.ndarray, int_2:np.n
 
 # Cell
 @alphapept.performance.compile_function(compilation_mode="numba")
-def extract_edge(stats:np.ndarray, idxs_upper:np.ndarray, runner:int, max_index:int, maximum_offset:float,  iso_charge_min:int = 1, iso_charge_max:int = 6, iso_mass_range:int=5)->np.ndarray:
+def extract_edge(stats:np.ndarray, idxs_upper:np.ndarray, runner:int, max_index:int, maximum_offset:float,  iso_charge_min:int = 1, iso_charge_max:int = 6, iso_mass_range:int=5)->list:
+    """Extract edges.
+
+    Args:
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        idxs_upper (np.ndarray): Upper index for comparing.
+        runner (int): Index.
+        max_index (int): Unused.
+        maximum_offset (float): Maximum offset when comparing edges.
+        iso_charge_min (int, optional): Minimum isotope charge. Defaults to 1.
+        iso_charge_max (int, optional): Maximum isotope charge. Defaults to 6.
+        iso_mass_range (float, optional): Mass search range. Defaults to 5.
+
+    Returns:
+        list: List of edges.
+    """
     edges = []
 
     mass1 = stats[runner, 0]
@@ -598,7 +803,19 @@ def extract_edge(stats:np.ndarray, idxs_upper:np.ndarray, runner:int, max_index:
 
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
 def edge_correlation(idx:np.ndarray, to_keep:np.ndarray, sortindex_:np.ndarray, pre_edges:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, cc_cutoff:float):
+    """Correlates two edges and flag them it they should be kept.
 
+    Args:
+        idx (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+        to_keep (np.ndarray): Array with indices which edges should be kept.
+        sortindex_ (np.ndarray): Sortindex to access the hills from stats.
+        pre_edges (np.ndarray): Array with pre edges.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        scan_idx (np.ndarray): Array containing the scan index for a centroid.
+        cc_cutoff (float): Cutoff value for what is considered correlating.
+    """
     edge = pre_edges[idx,:]
 
     y = sortindex_[edge[0]]
@@ -621,7 +838,26 @@ def edge_correlation(idx:np.ndarray, to_keep:np.ndarray, sortindex_:np.ndarray, 
 # Cell
 import networkx as nx
 
-def get_pre_isotope_patterns(stats:np.ndarray, idxs_upper:np.ndarray, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, maximum_offset:float, iso_charge_min:int=1, iso_charge_max:int=6, iso_mass_range:float=5, cc_cutoff:float=0.6):
+def get_pre_isotope_patterns(stats:np.ndarray, idxs_upper:np.ndarray, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, maximum_offset:float, iso_charge_min:int=1, iso_charge_max:int=6, iso_mass_range:float=5, cc_cutoff:float=0.6)->list:
+    """Function to extract pre isotope patterns.
+
+    Args:
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        idxs_upper (np.ndarray): Upper index for comparison.
+        sortindex_ (np.ndarray): Sortindex to access the hills from stats.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        scan_idx (np.ndarray): Array containing the scan index for a centroid.
+        maximum_offset (float): Maximum offset when matching.
+        iso_charge_min (int, optional): Minimum isotope charge. Defaults to 1.
+        iso_charge_max (int, optional): Maximum isotope charge. Defaults to 6.
+        iso_mass_range (float, optional): Mass search range. Defaults to 5.
+        cc_cutoff (float, optional): Correlation cutoff. Defaults to 0.6.
+
+    Returns:
+        list: List of pre isotope patterns.
+    """
     pre_edges = []
 
     # Step 1
@@ -649,9 +885,18 @@ from numba.typed import List
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def check_isotope_pattern_directed(mass1:float, mass2:float, delta_mass1:float, delta_mass2:float, charge:int, index:int, iso_mass_range:float)->bool:
-    """
-    Check if two masses could belong to the same isotope pattern
+    """Check if two masses could belong to the same isotope pattern.
 
+    Args:
+        mass1 (float): Mass of the first pattern.
+        mass2 (float): Mass of the second pattern.
+        delta_mass1 (float): Delta mass of the first pattern.
+        delta_mass2 (float): Delta mass of the second pattern.
+        charge (int): Charge.
+        index (int): Index (unused).
+        iso_mass_range (float): Isotope mass ranges.
+    Returns:
+        bool: Flag if two isotope patterns belong together.
     """
     delta_mass1 = delta_mass1 * iso_mass_range
     delta_mass2 = delta_mass2 * iso_mass_range
@@ -664,9 +909,27 @@ def check_isotope_pattern_directed(mass1:float, mass2:float, delta_mass1:float, 
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def grow(trail:List, seed:int, direction:int, relative_pos:int, index:int, stats:np.ndarray, pattern:np.ndarray, charge:int, iso_mass_range:float, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, cc_cutoff:float)->List:
-    """
-    Grows isotope pattern based on a seed and direction
+    """Grows isotope pattern based on a seed and direction.
 
+    Args:
+        trail (List): List of hills belonging to a pattern.
+        seed (int): Seed position.
+        direction (int): Direction in which to grow the trail
+        relative_pos (int): Relative position.
+        index (int): Index.
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        pattern (np.ndarray): Isotope pattern.
+        charge (int): Charge.
+        iso_mass_range (float): Mass range for checking isotope patterns.
+        sortindex_ (np.ndarray): Sortindex to access the hills from stats.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        scan_idx (np.ndarray): Array containing the scan index for a centroid.
+        cc_cutoff (float): Cutoff value for what is considered correlating.
+
+    Returns:
+        List: List of hills belonging to a pattern.
     """
     x = pattern[seed]  # This is the seed
     mass1 = stats[x,0]
@@ -725,8 +988,23 @@ def grow(trail:List, seed:int, direction:int, relative_pos:int, index:int, stats
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def grow_trail(seed:int, pattern:np.ndarray, stats:np.ndarray, charge:int, iso_mass_range:float, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, cc_cutoff:float)->List:
-    """
-    Wrapper to grow an isotope pattern to the left and right side
+    """Wrapper to grow an isotope pattern to the left and right side.
+
+    Args:
+        seed (int): Seed position.
+        pattern (np.ndarray): Isotope pattern.
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        charge (int): Charge.
+        iso_mass_range (float): Mass range for checking isotope patterns.
+        sortindex_ (np.ndarray): Sortindex to access the hills from stats.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        scan_idx (np.ndarray): Array containing the scan index for a centroid.
+        cc_cutoff (float): Cutoff value for what is considered correlating.
+
+    Returns:
+        List: Isotope pattern.
     """
     x = pattern[seed]
     trail = List()
@@ -739,8 +1017,23 @@ def grow_trail(seed:int, pattern:np.ndarray, stats:np.ndarray, charge:int, iso_m
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def get_trails(seed:int, pattern:np.ndarray, stats:np.ndarray, charge_range:List, iso_mass_range:float, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, cc_cutoff:float)->List:
-    """
-    Wrapper to extract trails for a given charge range
+    """Wrapper to extract trails for a given charge range.
+
+    Args:
+        seed (int): Seed index.
+        pattern (np.ndarray): Pre isotope pattern.
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        charge_range (List): Charge range.
+        iso_mass_range (float): Mass range for checking isotope patterns.
+        sortindex_ (np.ndarray): Sortindex to access the hills from stats.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        scan_idx (np.ndarray): Array containing the scan index for a centroid.
+        cc_cutoff (float): Cutoff value for what is considered correlating.
+
+    Returns:
+        List: Trail of consistent hills.
     """
     trails = []
     for charge in charge_range:
@@ -753,8 +1046,13 @@ def get_trails(seed:int, pattern:np.ndarray, stats:np.ndarray, charge_range:List
 # Cell
 
 def plot_pattern(pattern:np.ndarray, sorted_hills:np.ndarray, centroids:np.ndarray, hill_data:np.ndarray):
-    """
-    Helper function to plot a pattern
+    """Helper function to plot a pattern.
+
+    Args:
+        pattern (np.ndarray): Pre isotope pattern.
+        sorted_hills (np.ndarray): Hills, sorted.
+        centroids (np.ndarray): 1D Array containing the masses of the centroids.
+        hill_data (np.ndarray): Array containing the indices to hills.
     """
     f, (ax1, ax2) = plt.subplots(2, 1, sharex=True, figsize=(10,10))
     centroid_dtype = [("mz", float), ("int", float), ("scan_no", int), ("rt", float)]
@@ -783,9 +1081,15 @@ def plot_pattern(pattern:np.ndarray, sorted_hills:np.ndarray, centroids:np.ndarr
 # Cell
 @alphapept.performance.compile_function(compilation_mode="numba")
 def get_minpos(y:np.ndarray, iso_split_level:float)->List:
-    """
-    Function to get a list of minima in a trace.
+    """Function to get a list of minima in a trace.
     A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.
+
+    Args:
+        y (np.ndarray): Input array.
+        iso_split_level (float): Isotope split level.
+
+    Returns:
+        List: List with min positions.
     """
     minima = get_local_minima(y)
     minima_list = List()
@@ -806,8 +1110,13 @@ def get_minpos(y:np.ndarray, iso_split_level:float)->List:
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def get_local_minima(y:np.ndarray)->List:
-    """
-    Function to return all local minima of a array
+    """Function to return all local minima of a array
+
+    Args:
+        y (np.ndarray): Input array.
+
+    Returns:
+        List: List with indices to minima.
     """
     minima = List()
     for i in range(1, len(y) - 1):
@@ -818,13 +1127,30 @@ def get_local_minima(y:np.ndarray)->List:
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def is_local_minima(y:np.ndarray, i:int)->bool:
+    """Check if position is a local minima.
+
+    Args:
+        y (np.ndarray): Input array.
+        i (int): Position to check.
+
+    Returns:
+        bool: Flag if position is minima or not.
+    """
     return (y[i - 1] > y[i]) & (y[i + 1] > y[i])
 
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def truncate(array:np.ndarray, intensity_profile:np.ndarray, seedpos:int, iso_split_level:float)->np.ndarray:
-    """
-    Function to truncate an intensity profile around its seedposition
+    """Function to truncate an intensity profile around its seedposition.
+
+    Args:
+        array (np.ndarray):  Input array.
+        intensity_profile (np.ndarray): Intensities for the input array.
+        seedpos (int): Seedposition.
+        iso_split_level (float): Split level.
+
+    Returns:
+        np.ndarray: Truncated array.
     """
     minima = int_list_to_array(get_minpos(intensity_profile, iso_split_level))
 
@@ -854,7 +1180,18 @@ from numba.typed import Dict
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def check_averagine(stats:np.ndarray, pattern:np.ndarray, charge:int, averagine_aa:Dict, isotopes:Dict)->float:
+    """Function to compare a pattern to an averagine model.
 
+    Args:
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        pattern (np.ndarray): Isotope pattern.
+        charge (int): Charge.
+        averagine_aa (Dict): Dict containing averagine masses.
+        isotopes (Dict): Dict containing isotopes.
+
+    Returns:
+        float: Averagine correlation.
+    """
     masses, intensity = pattern_to_mz(stats, pattern, charge)
 
     spec_one = np.floor(masses).astype(np.int64)
@@ -868,9 +1205,18 @@ def check_averagine(stats:np.ndarray, pattern:np.ndarray, charge:int, averagine_
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def pattern_to_mz(stats:np.ndarray, pattern:np.ndarray, charge:int)-> (np.ndarray, np.ndarray):
+    """Function to calculate masses and intensities from pattern for a given charge.
+
+    Args:
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        pattern (np.ndarray): Isotope pattern.
+        charge (int): Charge of the pattern.
+
+    Returns:
+        np.ndarray: masses
+        np.ndarray: intensity
     """
-    Function to calculate masses and intensities from pattern for a given charge
-    """
+
     mzs = np.zeros(len(pattern))
     ints = np.zeros(len(pattern))
 
@@ -888,6 +1234,17 @@ def pattern_to_mz(stats:np.ndarray, pattern:np.ndarray, charge:int)-> (np.ndarra
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def cosine_averagine(int_one:np.ndarray, int_two:np.ndarray, spec_one:np.ndarray, spec_two:np.ndarray)-> float:
+    """Calculate the cosine correlation of two hills.
+
+    Args:
+        int_one (np.ndarray): Intensity of the first hill.
+        int_two (np.ndarray): Intensity of the second hill.
+        spec_one (np.ndarray): Scan numbers of the first hill.
+        spec_two (np.ndarray): Scan numbers of the second hill.
+
+    Returns:
+        float: Cosine
+    """
 
     min_one, max_one = spec_one[0], spec_one[-1]
     min_two, max_two = spec_two[0], spec_two[-1]
@@ -911,8 +1268,13 @@ def cosine_averagine(int_one:np.ndarray, int_two:np.ndarray, spec_one:np.ndarray
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def int_list_to_array(numba_list:List)->np.ndarray:
-    """
-    Numba compatbilte function to convert a numba list with integers to a numpy array
+    """Numba compatbilte function to convert a numba list with integers to a numpy array
+
+    Args:
+        numba_list (List): Input numba-typed List.
+
+    Returns:
+        np.ndarray: Output numpy array.
     """
     array = np.zeros(len(numba_list), dtype=np.int64)
 
@@ -926,8 +1288,17 @@ M_PROTON = mass_dict['Proton']
 
 @alphapept.performance.compile_function(compilation_mode="numba")
 def mz_to_mass(mz:float, charge:int)->float:
-    """
-    Function to calculate the mass from a mz value.
+    """Function to calculate the mass from a mz value.
+
+    Args:
+        mz (float): M/z
+        charge (int): Charge.
+
+    Raises:
+        NotImplementedError: When a negative charge is used.
+
+    Returns:
+        float: mass
     """
     if charge < 0:
         raise NotImplementedError("Negative Charges not implemented.")
@@ -938,11 +1309,29 @@ def mz_to_mass(mz:float, charge:int)->float:
 
 # Cell
 @alphapept.performance.compile_function(compilation_mode="numba")
-def isolate_isotope_pattern(pre_pattern:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, stats:np.ndarray, sortindex_:np.ndarray, iso_mass_range:float, charge_range, averagine_aa:Dict, isotopes:Dict, iso_n_seeds:int, cc_cutoff:float, iso_split_level:float):
-    """
-    Isolate isotope patterns
-    """
+def isolate_isotope_pattern(pre_pattern:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, stats:np.ndarray, sortindex_:np.ndarray, iso_mass_range:float, charge_range:List, averagine_aa:Dict, isotopes:Dict, iso_n_seeds:int, cc_cutoff:float, iso_split_level:float)->(np.ndarray, int):
+    """Isolate isotope patterns.
 
+    Args:
+        pre_pattern (np.ndarray): Pre isotope pattern.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        scan_idx (np.ndarray): Array containing the scan index for a centroid.
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        sortindex_ (np.ndarray): Sortindex to access the hills from stats.
+        iso_mass_range (float): Mass range for checking isotope patterns.
+        charge_range (List): Charge range.
+        averagine_aa (Dict): Dict containing averagine masses.
+        isotopes (Dict): Dict containing isotopes.
+        iso_n_seeds (int): Number of seeds.
+        cc_cutoff (float): Cutoff value for what is considered correlating.
+        iso_split_level (float): Split level when isotopes are split.
+
+    Returns:
+        np.ndarray: Array with the best pattern.
+        int: Charge of the best pattern.
+    """
     longest_trace = 0
     champion_trace = None
     champion_charge = 0
@@ -996,8 +1385,29 @@ from numba.typed import List
 from typing import Callable, Union
 
 def get_isotope_patterns(pre_isotope_patterns:list, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, stats:np.ndarray, sortindex_:np.ndarray,  averagine_aa:Dict, isotopes:Dict, iso_charge_min:int = 1, iso_charge_max:int = 6, iso_mass_range:float = 5, iso_n_seeds:int = 100, cc_cutoff:float=0.6, iso_split_level:float = 1.3, callback:Union[Callable, None]=None) -> (np.ndarray, np.ndarray, np.ndarray):
-    """
-    Wrapper function to iterate over pre_isotope_patterns
+    """Wrapper function to iterate over pre_isotope_patterns.
+
+    Args:
+        pre_isotope_patterns (list): List of pre-isotope patterns.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        scan_idx (np.ndarray): Array containing the scan index for a centroid.
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        sortindex_ (np.ndarray): Sortindex to access the hills from stats.
+        averagine_aa (Dict): Dict containing averagine masses.
+        isotopes (Dict): Dict containing isotopes.
+        iso_charge_min (int, optional): Minimum isotope charge. Defaults to 1.
+        iso_charge_max (int, optional): Maximum isotope charge. Defaults to 6.
+        iso_mass_range (float, optional): Mass search range. Defaults to 5.
+        iso_n_seeds (int, optional): Number of isotope seeds. Defaults to 100.
+        cc_cutoff (float, optional): Cuttoff for correlation.. Defaults to 0.6.
+        iso_split_level (float, optional): Isotope split level.. Defaults to 1.3.
+        callback (Union[Callable, None], optional): Callback function for progress. Defaults to None.
+    Returns:
+        list: List of isotope patterns.
+        np.ndarray: Iso idx.
+        np.ndarray: Array containing isotope charges.
     """
 
     isotope_patterns = []
@@ -1053,8 +1463,23 @@ def get_isotope_patterns(pre_isotope_patterns:list, hill_ptrs:np.ndarray, hill_d
 
 # Cell
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
-def report_(idx:np.ndarray, isotope_charges:np.ndarray, isotope_patterns:np.ndarray, iso_idx:np.ndarray, stats:np.ndarray, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, rt_:np.ndarray, rt_idx:np.ndarray, results:np.ndarray):
+def report_(idx:np.ndarray, isotope_charges:list, isotope_patterns:list, iso_idx:np.ndarray, stats:np.ndarray, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, rt_:np.ndarray, rt_idx:np.ndarray, results:np.ndarray):
+    """Function to extract summary statstics from a list of isotope patterns and charges.
 
+    Args:
+        idx (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+        isotope_patterns (list): List containing isotope patterns (indices to hills).
+        isotope_charges (list): List with charges assigned to the isotope patterns.
+        iso_idx (np.ndarray): Index to isotope pattern.
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        sortindex_ (np.ndarray): Sortindex to access the hills from stats.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+        int_data (np.ndarray): Array containing the intensity to each centroid.
+        rt_ (np.ndarray): Array with retention time information for each scan.
+        rt_idx (np.ndarray): Lookup array to match centroid idx to rt.
+        results (np.ndarray): Recordarray with isotope pattern summary statistics.
+    """
     pattern = isotope_patterns[iso_idx[idx]:iso_idx[idx+1]]
     isotope_data = stats[pattern]
 
@@ -1148,6 +1573,21 @@ def report_(idx:np.ndarray, isotope_charges:np.ndarray, isotope_patterns:np.ndar
 import pandas as pd
 
 def feature_finder_report(query_data:dict, isotope_patterns:list, isotope_charges:list, iso_idx:np.ndarray, stats:np.ndarray, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray)->pd.DataFrame:
+    """Creates a report dataframe with summary statistics of the found isotope patterns.
+
+    Args:
+        query_data (dict): Data structure containing the query data.
+        isotope_patterns (list): List containing isotope patterns (indices to hills).
+        isotope_charges (list): List with charges assigned to the isotope patterns.
+        iso_idx (np.ndarray): Index to the isotope pattern.
+        stats (np.ndarray): Stats array that contains summary statistics of hills.
+        sortindex_ (np.ndarray): Sortindex to access the hills from stats.
+        hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+        hill_data (np.ndarray): Array containing the indices to hills.
+
+    Returns:
+        pd.DataFrame: DataFrame with isotope pattern summary statistics.
+    """
     rt_ = np.array(query_data['rt_list_ms1'])
     indices_ = np.array(query_data['indices_ms1'])
     mass_data = np.array(query_data['mass_list_ms1'])
@@ -1167,10 +1607,17 @@ def feature_finder_report(query_data:dict, isotope_patterns:list, isotope_charge
 
 # Cell
 def plot_isotope_pattern(index:int, df:pd.DataFrame, sorted_stats:np.ndarray, centroids:np.ndarray, scan_range:int=100, mz_range:float=2, plot_hills:bool = False):
-    """
-    Plot an isotope pattern in its local environment
-    """
+    """Plot an isotope pattern in its local environment.
 
+    Args:
+        index (int): Index to the pattern.
+        df (pd.DataFrame): Pandas DataFrame containing the patterns.
+        sorted_stats (np.ndarray): Stats array that contains summary statistics of hills.
+        centroids (np.ndarray): 1D Array containing the masses of the centroids.
+        scan_range (int, optional): Scan range to plot. Defaults to 100.
+        mz_range (float, optional): MZ range to plot. Defaults to 2.
+        plot_hills (bool, optional): Flag to plot hills. Defaults to False.
+    """
     markersize = 10
     plot_offset_mz = 1
     plot_offset_rt = 2
@@ -1260,10 +1707,19 @@ import platform
 
 
 def extract_bruker(file:str, base_dir:str = "ext/bruker/FF", config:str = "proteomics_4d.config"):
-    """
-    Call Bruker Feautre Finder via subprocess
-    """
+    """Call Bruker Feautre Finder via subprocess.
 
+    Args:
+        file (str): Filename for feature finding.
+        base_dir (str, optional): Base dir where the feature finder is stored.. Defaults to "ext/bruker/FF".
+        config (str, optional): Config file for feature finder. Defaults to "proteomics_4d.config".
+
+    Raises:
+        NotImplementedError: Unsupported operating system.
+        FileNotFoundError: Feature finder not found.
+        FileNotFoundError: Config file not found.
+        FileNotFoundError: Feature file not found.
+    """
     feature_path = file + '/'+ os.path.split(file)[-1] + '.features'
 
     base_dir = os.path.join(os.path.dirname(__file__), base_dir)
@@ -1318,9 +1774,13 @@ def extract_bruker(file:str, base_dir:str = "ext/bruker/FF", config:str = "prote
 import sqlalchemy as db
 
 def convert_bruker(feature_path:str)->pd.DataFrame:
-    """
-    Reads feature table and converts to feature table to be used with AlphaPept
+    """Reads feature table and converts to feature table to be used with AlphaPept.
 
+    Args:
+        feature_path (str): Path to the feature file from Bruker FF (.features-file).
+
+    Returns:
+        pd.DataFrame: DataFrame containing features information.
     """
     engine_featurefile = db.create_engine('sqlite:///{}'.format(feature_path))
     feature_table = pd.read_sql_table('LcTimsMsFeature', engine_featurefile)
@@ -1337,9 +1797,16 @@ def convert_bruker(feature_path:str)->pd.DataFrame:
     return feature_table
 
 
-def map_bruker(feature_path:str, feature_table:pd.DataFrame, query_data:pd.DataFrame)->pd.DataFrame:
-    """
-    Map Ms1 to Ms2 via Table FeaturePrecursorMapping from Bruker FF
+def map_bruker(feature_path:str, feature_table:pd.DataFrame, query_data:dict)->pd.DataFrame:
+    """Map Ms1 to Ms2 via Table FeaturePrecursorMapping from Bruker FF.
+
+    Args:
+        feature_path (str): Path to the feature file from Bruker FF (.features-file).
+        feature_table (pd.DataFrame): Pandas DataFrame containing the features.
+        query_data (dict): Data structure containing the query data.
+
+    Returns:
+        pd.DataFrame: DataFrame containing features information.
     """
     engine_featurefile = db.create_engine('sqlite:///{}'.format(feature_path))
 
@@ -1398,9 +1865,19 @@ import alphapept.io
 import functools
 
 
-def find_features(to_process:tuple, callback:Union[Callable, None] = None, parallel:bool = False):
-    """
-    Wrapper for feature finding
+def find_features(to_process:tuple, callback:Union[Callable, None] = None, parallel:bool = False)-> Union[str, bool]:
+    """Wrapper for feature finding.
+
+    Args:
+        to_process (tuple): to_process tuple, to be used from a proces spool.
+        callback (Union[Callable, None], optional): Optional callback function. Defaults to None.
+        parallel (bool, optional): Flag to use parallel processing. Currently unused. Defaults to False.
+
+    Raises:
+        NotImplementedError: Error if the file extension is not understood.
+
+    Returns:
+        Union[str, bool]: Returns true if function was sucessfull, otherwise the exception as string.
     """
     try:
         index, settings = to_process
@@ -1535,8 +2012,13 @@ import numpy as np
 
 
 def replace_infs(array:np.ndarray)->np.ndarray:
-    """
-    Replace nans and infs with 0
+    """Replace nans and infs with 0
+
+    Args:
+        array (np.ndarray): Input array.
+
+    Returns:
+        np.ndarray: Output array without nans and infs.
     """
     array[array == -np.inf] = 0
     array[array == np.inf] = 0
@@ -1545,9 +2027,19 @@ def replace_infs(array:np.ndarray)->np.ndarray:
     return array
 
 def map_ms2(feature_table:pd.DataFrame, query_data:dict, map_mz_range:float = 1, map_rt_range:float = 0.5, map_mob_range:float = 0.3, map_n_neighbors:int=5, search_unidentified:bool = False, **kwargs)->pd.DataFrame:
-    """
-    Map MS1 features to MS2 based on rt and mz
-    if ccs is included also add
+    """Map MS1 features to MS2 based on rt and mz.
+    If ccs is included also add.
+    Args:
+        feature_table (pd.DataFrame): Pandas DataFrame with features.
+        query_data (dict): Data structure containing the query data.
+        map_mz_range (float, optional): Mapping range for mz (Da). Defaults to 1.
+        map_rt_range (float, optional): Mapping range for rt (min). Defaults to 0.5.
+        map_mob_range (float, optional): Mapping range for mobility (%). Defaults to 0.3.
+        map_n_neighbors (int, optional): Maximum number of neighbors to be extracted. Defaults to 5.
+        search_unidentified (bool, optional): Flag to perform search on features that have no isotope pattern. Defaults to False.
+
+    Returns:
+        pd.DataFrame: Table with features.
     """
     feature_table['rt'] = feature_table['rt_apex']
 
