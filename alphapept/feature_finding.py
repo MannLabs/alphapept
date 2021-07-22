@@ -296,7 +296,7 @@ def extract_hills(query_data:dict, max_gap:int, centroid_tol:float) -> (np.ndarr
 
 # Cell
 @alphapept.performance.compile_function(compilation_mode="numba")
-def fast_minima(y):
+def fast_minima(y:np.ndarray)->np.ndarray:
     minima = np.zeros(len(y))
 
     start = 0
@@ -314,9 +314,15 @@ def fast_minima(y):
 
     return minima
 
-@alphapept.performance.performance_function(compilation_mode="numba-multithread")
-def split(k, hill_ptrs, int_data, hill_data, splits, hill_split_level, window):
 
+# Cell
+
+@alphapept.performance.performance_function(compilation_mode="numba-multithread")
+def split(k:np.ndarray, hill_ptrs:np.ndarray, int_data:np.ndarray, hill_data:np.ndarray, splits:np.ndarray, hill_split_level:float, window:int):
+    """
+    Split
+
+    """
     start = hill_ptrs[k]
     end = hill_ptrs[k + 1]
 
@@ -355,7 +361,10 @@ def split(k, hill_ptrs, int_data, hill_data, splits, hill_split_level, window):
             splits[k] = start+min_
             break # Split only once per iteration
 
-def split_hills(hill_ptrs, hill_data, int_data, hill_split_level, window):
+def split_hills(hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, hill_split_level:float, window:int)->np.ndarray:
+    """
+    Wrapper function to split hills
+    """
 
     splits = np.zeros(len(int_data), dtype=np.int32)
     to_check = np.arange(len(hill_ptrs)-1)
@@ -376,7 +385,7 @@ def split_hills(hill_ptrs, hill_data, int_data, hill_split_level, window):
 
 # Cell
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
-def check_large_hills(idx, large_peaks, hill_ptrs, hill_data, int_data, to_remove, large_peak = 40, hill_peak_factor = 2, window=1):
+def check_large_hills(idx:np.ndarray, large_peaks:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, to_remove:np.ndarray, large_peak:int = 40, hill_peak_factor:float = 2, window:int=1):
 
     k = large_peaks[idx]
 
@@ -405,7 +414,7 @@ def check_large_hills(idx, large_peaks, hill_ptrs, hill_data, int_data, to_remov
         to_remove[idx] = 0
 
 
-def filter_hills(hill_data, hill_ptrs, int_data, hill_check_large =40, window = 1):
+def filter_hills(hill_data:np.ndarray, hill_ptrs:np.ndarray, int_data:np.ndarray, hill_check_large:int =40, window:int = 1):
 
     large_peaks = np.where(np.diff(hill_ptrs)>=hill_check_large)[0]
 
@@ -434,7 +443,7 @@ def filter_hills(hill_data, hill_ptrs, int_data, hill_check_large =40, window = 
 # Cell
 
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
-def hill_stats(idx, hill_range, hill_ptrs, hill_data, int_data, mass_data, rt_, rt_idx, stats, hill_nboot_max, hill_nboot):
+def hill_stats(idx:np.ndarray, hill_range:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, mass_data:np.ndarray, rt_:np.ndarray, rt_idx:np.ndarray, stats:np.ndarray, hill_nboot_max:int, hill_nboot:int):
     np.random.seed(42)
 
     start = hill_ptrs[idx]
@@ -479,7 +488,7 @@ def hill_stats(idx, hill_range, hill_ptrs, hill_data, int_data, mass_data, rt_, 
     stats[idx,4] = rt_min
     stats[idx,5] = rt_max
 
-def remove_duplicates(stats, hill_data, hill_ptrs):
+def remove_duplicates(stats:np.ndarray, hill_data:np.ndarray, hill_ptrs:np.ndarray)-> (np.ndarray, np.ndarray, np.ndarray):
     dups = pd.DataFrame(stats).duplicated() #all duplicated hills
 
     idx_ = np.ones(len(hill_data), dtype = np.int32) #keep all
@@ -499,7 +508,7 @@ def remove_duplicates(stats, hill_data, hill_ptrs):
 
     return hill_data_, hill_ptrs_, stats[~dups]
 
-def get_hill_data(query_data, hill_ptrs, hill_data, hill_nboot_max = 300, hill_nboot = 150):
+def get_hill_data(query_data:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, hill_nboot_max:int = 300, hill_nboot:int = 150) -> (np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray):
 
     indices_ = np.array(query_data['indices_ms1'])
     rt_ = np.array(query_data['rt_list_ms1'])
@@ -526,7 +535,7 @@ DELTA_S = mass_dict['delta_S']
 maximum_offset = DELTA_M + DELTA_S
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def check_isotope_pattern(mass1, mass2, delta_mass1, delta_mass2, charge, iso_mass_range = 5):
+def check_isotope_pattern(mass1:float, mass2:float, delta_mass1:float, delta_mass2:float, charge:int, iso_mass_range:int = 5)-> bool:
     """
     Check if two masses could belong to the same isotope pattern
     """
@@ -543,7 +552,7 @@ def check_isotope_pattern(mass1, mass2, delta_mass1, delta_mass2, charge, iso_ma
 # Cell
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def correlate(scans_, scans_2, int_, int_2):
+def correlate(scans_:np.ndarray, scans_2:np.ndarray, int_:np.ndarray, int_2:np.ndarray)->float:
 
     min_one, max_one = scans_[0], scans_[-1]
     min_two, max_two = scans_2[0], scans_2[-1]
@@ -570,7 +579,7 @@ def correlate(scans_, scans_2, int_, int_2):
 
 # Cell
 @alphapept.performance.compile_function(compilation_mode="numba")
-def extract_edge(stats, idxs_upper, runner, max_index, maximum_offset,  iso_charge_min = 1, iso_charge_max = 6, iso_mass_range=5):
+def extract_edge(stats:np.ndarray, idxs_upper:np.ndarray, runner:int, max_index:int, maximum_offset:float,  iso_charge_min:int = 1, iso_charge_max:int = 6, iso_mass_range:int=5)->np.ndarray:
     edges = []
 
     mass1 = stats[runner, 0]
@@ -588,7 +597,7 @@ def extract_edge(stats, idxs_upper, runner, max_index, maximum_offset,  iso_char
     return edges
 
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
-def edge_correlation(idx, to_keep, sortindex_, pre_edges, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
+def edge_correlation(idx:np.ndarray, to_keep:np.ndarray, sortindex_:np.ndarray, pre_edges:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, cc_cutoff:float):
 
     edge = pre_edges[idx,:]
 
@@ -612,7 +621,7 @@ def edge_correlation(idx, to_keep, sortindex_, pre_edges, hill_ptrs, hill_data, 
 # Cell
 import networkx as nx
 
-def get_pre_isotope_patterns(stats, idxs_upper, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, maximum_offset, iso_charge_min=1, iso_charge_max=6, iso_mass_range=5, cc_cutoff=0.6):
+def get_pre_isotope_patterns(stats:np.ndarray, idxs_upper:np.ndarray, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, maximum_offset:float, iso_charge_min:int=1, iso_charge_max:int=6, iso_mass_range:float=5, cc_cutoff:float=0.6):
     pre_edges = []
 
     # Step 1
@@ -636,9 +645,10 @@ def get_pre_isotope_patterns(stats, idxs_upper, sortindex_, hill_ptrs, hill_data
     return pre_isotope_patterns
 
 # Cell
+from numba.typed import List
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def check_isotope_pattern_directed(mass1, mass2, delta_mass1, delta_mass2, charge, index, iso_mass_range):
+def check_isotope_pattern_directed(mass1:float, mass2:float, delta_mass1:float, delta_mass2:float, charge:int, index:int, iso_mass_range:float)->bool:
     """
     Check if two masses could belong to the same isotope pattern
 
@@ -653,7 +663,7 @@ def check_isotope_pattern_directed(mass1, mass2, delta_mass1, delta_mass2, charg
 
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def grow(trail, seed, direction, relative_pos, index, stats, pattern, charge, iso_mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
+def grow(trail:List, seed:int, direction:int, relative_pos:int, index:int, stats:np.ndarray, pattern:np.ndarray, charge:int, iso_mass_range:float, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, cc_cutoff:float)->List:
     """
     Grows isotope pattern based on a seed and direction
 
@@ -714,7 +724,7 @@ def grow(trail, seed, direction, relative_pos, index, stats, pattern, charge, is
     return trail
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def grow_trail(seed, pattern, stats, charge, iso_mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
+def grow_trail(seed:int, pattern:np.ndarray, stats:np.ndarray, charge:int, iso_mass_range:float, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, cc_cutoff:float)->List:
     """
     Wrapper to grow an isotope pattern to the left and right side
     """
@@ -728,7 +738,7 @@ def grow_trail(seed, pattern, stats, charge, iso_mass_range, sortindex_, hill_pt
 
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def get_trails(seed, pattern, stats, charge_range, iso_mass_range, sortindex_, hill_ptrs, hill_data, int_data, scan_idx, cc_cutoff):
+def get_trails(seed:int, pattern:np.ndarray, stats:np.ndarray, charge_range:List, iso_mass_range:float, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, cc_cutoff:float)->List:
     """
     Wrapper to extract trails for a given charge range
     """
@@ -742,7 +752,7 @@ def get_trails(seed, pattern, stats, charge_range, iso_mass_range, sortindex_, h
 
 # Cell
 
-def plot_pattern(pattern, sorted_hills, centroids, hill_data):
+def plot_pattern(pattern:np.ndarray, sorted_hills:np.ndarray, centroids:np.ndarray, hill_data:np.ndarray):
     """
     Helper function to plot a pattern
     """
@@ -772,7 +782,7 @@ def plot_pattern(pattern, sorted_hills, centroids, hill_data):
 
 # Cell
 @alphapept.performance.compile_function(compilation_mode="numba")
-def get_minpos(y, iso_split_level):
+def get_minpos(y:np.ndarray, iso_split_level:float)->List:
     """
     Function to get a list of minima in a trace.
     A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.
@@ -795,7 +805,7 @@ def get_minpos(y, iso_split_level):
     return minima_list
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def get_local_minima(y):
+def get_local_minima(y:np.ndarray)->List:
     """
     Function to return all local minima of a array
     """
@@ -807,12 +817,12 @@ def get_local_minima(y):
 
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def is_local_minima(y, i):
+def is_local_minima(y:np.ndarray, i:int)->bool:
     return (y[i - 1] > y[i]) & (y[i + 1] > y[i])
 
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def truncate(array, intensity_profile, seedpos, iso_split_level):
+def truncate(array:np.ndarray, intensity_profile:np.ndarray, seedpos:int, iso_split_level:float)->np.ndarray:
     """
     Function to truncate an intensity profile around its seedposition
     """
@@ -839,10 +849,11 @@ def truncate(array, intensity_profile, seedpos, iso_split_level):
 
 # Cell
 from .chem import mass_to_dist
-from .constants import averagine_aa, isotopes
+from .constants import averagine_aa, isotopes, Isotope
+from numba.typed import Dict
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def check_averagine(stats, pattern, charge, averagine_aa, isotopes):
+def check_averagine(stats:np.ndarray, pattern:np.ndarray, charge:int, averagine_aa:Dict, isotopes:Dict)->float:
 
     masses, intensity = pattern_to_mz(stats, pattern, charge)
 
@@ -856,7 +867,7 @@ def check_averagine(stats, pattern, charge, averagine_aa, isotopes):
     return cosine_averagine(int_one, int_two, spec_one, spec_two)
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def pattern_to_mz(stats, pattern, charge):
+def pattern_to_mz(stats:np.ndarray, pattern:np.ndarray, charge:int)-> (np.ndarray, np.ndarray):
     """
     Function to calculate masses and intensities from pattern for a given charge
     """
@@ -876,7 +887,7 @@ def pattern_to_mz(stats, pattern, charge):
     return masses, intensity
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def cosine_averagine(int_one, int_two, spec_one, spec_two):
+def cosine_averagine(int_one:np.ndarray, int_two:np.ndarray, spec_one:np.ndarray, spec_two:np.ndarray)-> float:
 
     min_one, max_one = spec_one[0], spec_one[-1]
     min_two, max_two = spec_two[0], spec_two[-1]
@@ -899,7 +910,7 @@ def cosine_averagine(int_one, int_two, spec_one, spec_two):
 
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def int_list_to_array(numba_list):
+def int_list_to_array(numba_list:List)->np.ndarray:
     """
     Numba compatbilte function to convert a numba list with integers to a numpy array
     """
@@ -914,7 +925,7 @@ def int_list_to_array(numba_list):
 M_PROTON = mass_dict['Proton']
 
 @alphapept.performance.compile_function(compilation_mode="numba")
-def mz_to_mass(mz, charge):
+def mz_to_mass(mz:float, charge:int)->float:
     """
     Function to calculate the mass from a mz value.
     """
@@ -927,7 +938,7 @@ def mz_to_mass(mz, charge):
 
 # Cell
 @alphapept.performance.compile_function(compilation_mode="numba")
-def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, iso_mass_range, charge_range, averagine_aa, isotopes, iso_n_seeds, cc_cutoff, iso_split_level):
+def isolate_isotope_pattern(pre_pattern:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, stats:np.ndarray, sortindex_:np.ndarray, iso_mass_range:float, charge_range, averagine_aa:Dict, isotopes:Dict, iso_n_seeds:int, cc_cutoff:float, iso_split_level:float):
     """
     Isolate isotope patterns
     """
@@ -982,8 +993,9 @@ def isolate_isotope_pattern(pre_pattern, hill_ptrs, hill_data, int_data, scan_id
 # Cell
 
 from numba.typed import List
+from typing import Callable, Union
 
-def get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_,  averagine_aa, isotopes, iso_charge_min = 1, iso_charge_max = 6, iso_mass_range = 5, iso_n_seeds = 100, cc_cutoff=0.6, iso_split_level = 1.3, callback=None):
+def get_isotope_patterns(pre_isotope_patterns:list, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, scan_idx:np.ndarray, stats:np.ndarray, sortindex_:np.ndarray,  averagine_aa:Dict, isotopes:Dict, iso_charge_min:int = 1, iso_charge_max:int = 6, iso_mass_range:float = 5, iso_n_seeds:int = 100, cc_cutoff:float=0.6, iso_split_level:float = 1.3, callback:Union[Callable, None]=None) -> (np.ndarray, np.ndarray, np.ndarray):
     """
     Wrapper function to iterate over pre_isotope_patterns
     """
@@ -1041,7 +1053,7 @@ def get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, s
 
 # Cell
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
-def report_(idx, isotope_charges, isotope_patterns, iso_idx, stats, sortindex_, hill_ptrs, hill_data, int_data, rt_, rt_idx, results):
+def report_(idx:np.ndarray, isotope_charges:np.ndarray, isotope_patterns:np.ndarray, iso_idx:np.ndarray, stats:np.ndarray, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, rt_:np.ndarray, rt_idx:np.ndarray, results:np.ndarray):
 
     pattern = isotope_patterns[iso_idx[idx]:iso_idx[idx+1]]
     isotope_data = stats[pattern]
@@ -1135,7 +1147,7 @@ def report_(idx, isotope_charges, isotope_patterns, iso_idx, stats, sortindex_, 
 # Cell
 import pandas as pd
 
-def feature_finder_report(query_data, isotope_patterns, isotope_charges, iso_idx, stats, sortindex_, hill_ptrs, hill_data,):
+def feature_finder_report(query_data:dict, isotope_patterns:list, isotope_charges:list, iso_idx:np.ndarray, stats:np.ndarray, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray)->pd.DataFrame:
     rt_ = np.array(query_data['rt_list_ms1'])
     indices_ = np.array(query_data['indices_ms1'])
     mass_data = np.array(query_data['mass_list_ms1'])
@@ -1149,18 +1161,12 @@ def feature_finder_report(query_data, isotope_patterns, isotope_charges, iso_idx
 
     df = pd.DataFrame(results, columns = ['mz','mz_std','mz_most_abundant','charge','rt_start','rt_apex','rt_end','fwhm','n_isotopes','mass','int_apex','int_area', 'int_sum'])
 
-    #Test
-    #df_ = df.copy()
-    #df_['mz'] -= 1.00286864/df_['charge']
-    #df_['mass'] = df_['mz'] * df_['charge'] - df_['charge'] * 1.00727646687
-    #df = pd.concat([df,df_])
-
     df.sort_values(['rt_start','mz'])
 
     return df
 
 # Cell
-def plot_isotope_pattern(index, df, sorted_stats, centroids, scan_range=100, mz_range=2, plot_hills = False):
+def plot_isotope_pattern(index:int, df:pd.DataFrame, sorted_stats:np.ndarray, centroids:np.ndarray, scan_range:int=100, mz_range:float=2, plot_hills:bool = False):
     """
     Plot an isotope pattern in its local environment
     """
@@ -1253,7 +1259,7 @@ import os
 import platform
 
 
-def extract_bruker(file, base_dir = "ext/bruker/FF", config = "proteomics_4d.config"):
+def extract_bruker(file:str, base_dir:str = "ext/bruker/FF", config:str = "proteomics_4d.config"):
     """
     Call Bruker Feautre Finder via subprocess
     """
@@ -1311,7 +1317,7 @@ def extract_bruker(file, base_dir = "ext/bruker/FF", config = "proteomics_4d.con
 
 import sqlalchemy as db
 
-def convert_bruker(feature_path):
+def convert_bruker(feature_path:str)->pd.DataFrame:
     """
     Reads feature table and converts to feature table to be used with AlphaPept
 
@@ -1331,7 +1337,7 @@ def convert_bruker(feature_path):
     return feature_table
 
 
-def map_bruker(feature_path, feature_table, query_data):
+def map_bruker(feature_path:str, feature_table:pd.DataFrame, query_data:pd.DataFrame)->pd.DataFrame:
     """
     Map Ms1 to Ms2 via Table FeaturePrecursorMapping from Bruker FF
     """
@@ -1392,7 +1398,7 @@ import alphapept.io
 import functools
 
 
-def find_features(to_process, callback = None, parallel = False):
+def find_features(to_process:tuple, callback:Union[Callable, None] = None, parallel:bool = False):
     """
     Wrapper for feature finding
     """
@@ -1528,7 +1534,7 @@ import pandas as pd
 import numpy as np
 
 
-def replace_infs(array):
+def replace_infs(array:np.ndarray)->np.ndarray:
     """
     Replace nans and infs with 0
     """
@@ -1538,7 +1544,7 @@ def replace_infs(array):
 
     return array
 
-def map_ms2(feature_table, query_data, map_mz_range = 1, map_rt_range = 0.5, map_mob_range = 0.3, map_n_neighbors=5, search_unidentified = False, **kwargs):
+def map_ms2(feature_table:pd.DataFrame, query_data:dict, map_mz_range:float = 1, map_rt_range:float = 0.5, map_mob_range:float = 0.3, map_n_neighbors:int=5, search_unidentified:bool = False, **kwargs)->pd.DataFrame:
     """
     Map MS1 features to MS2 based on rt and mz
     if ccs is included also add
