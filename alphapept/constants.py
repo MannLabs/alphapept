@@ -319,12 +319,12 @@ spec = [
 @jitclass(spec)
 class Isotope:
     """
-    Jit-compatible class to store istopes
+    Jit-compatible class to store isotopes
 
     Attributes:
         m0 (int): Mass of pattern
         dm0 (int): dm of pattern (number of isotopes)
-        int0 (float): Intensities of pattern
+        int0 (np.float32[:]): Intensities of pattern
     """
     def __init__(self, m0:int, dm:int, intensities:np.ndarray):
         self.m0 = m0

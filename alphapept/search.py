@@ -2,8 +2,8 @@
 
 __all__ = ['compare_frags', 'ppm_to_dalton', 'get_idxs', 'compare_spectrum_parallel', 'query_data_to_features',
            'get_psms', 'frag_delta', 'intensity_fraction', 'add_column', 'remove_column', 'get_hits', 'score',
-           'get_sequences', 'get_score_columns', 'plot_hit', 'plot_psms', 'perform_search', 'store_hdf', 'search_db',
-           'search_fasta_block', 'filter_top_n', 'search_parallel', 'mass_dict']
+           'get_sequences', 'get_score_columns', 'plot_psms', 'store_hdf', 'search_db', 'search_fasta_block',
+           'mass_dict', 'filter_top_n', 'search_parallel']
 
 # Cell
 import logging
@@ -11,9 +11,17 @@ from numba import njit
 import numpy as np
 
 @njit
-def compare_frags(query_frag, db_frag, frag_tol, ppm=False):
-    """
-    Compare query and database frags and find hits
+def compare_frags(query_frag: np.ndarray, db_frag: np.ndarray, frag_tol: float, ppm:bool=False) -> np.ndarray:
+    """Compare query and database frags and find hits
+
+    Args:
+        query_frag (np.ndarray): Array with query fragments.
+        db_frag (np.ndarray): Array with database fragments.
+        frag_tol (float): Fragment tolerance for search.
+        ppm (bool, optional): Use ppm as unit or Dalton. Defaults to False.
+
+    Returns:
+        np.ndarray: Array with reported hits.
     """
     q_max = len(query_frag)
     d_max = len(db_frag)
@@ -42,20 +50,35 @@ def compare_frags(query_frag, db_frag, frag_tol, ppm=False):
     return hits
 
 # Cell
-from numba import prange
-@njit
-def ppm_to_dalton(mass, prec_tol):
-    """
 
+@njit
+def ppm_to_dalton(mass:float, prec_tol:int)->float:
+    """Function to convert ppm tolerances to Dalton.
+
+    Args:
+        mass (float): Base mass.
+        prec_tol (int): Tolerance.
+
+    Returns:
+        float: Tolerance in Dalton.
     """
     return mass / 1e6 * prec_tol
 
+# Cell
 
-def get_idxs(db_masses, query_masses, prec_tol, ppm):
-    """
-    Function to get upper and lower limits to define search range.
+def get_idxs(db_masses:np.ndarray, query_masses:np.ndarray, prec_tol:float, ppm:bool)-> (np.ndarray, np.ndarray):
+    """Function to get upper and lower limits to define search range for a given precursor tolerance.
 
+    Args:
+        db_masses (np.ndarray): Array containing database masses.
+        query_masses (np.ndarray): Array containing query masses.
+        prec_tol (float): Precursor tolerance for search.
+        ppm: Flag to use ppm instead of Dalton.
+
+    Returns:
+        (np.ndarray, np.ndarray): Indices to lower and upper bounds.
     """
+
     if ppm:
         dalton_offset = ppm_to_dalton(query_masses, prec_tol)
     else:
@@ -66,13 +89,28 @@ def get_idxs(db_masses, query_masses, prec_tol, ppm):
 
     return idxs_lower, idxs_higher
 
+# Cell
+
 import alphapept.performance
 
-
 @alphapept.performance.performance_function
-def compare_spectrum_parallel(query_idx, query_masses, idxs_lower, idxs_higher, query_indices, query_frags, query_ints, db_indices, db_frags, best_hits, score, frag_tol, ppm):
-    """
-    Compares a spectrum and writes to best_his, score array
+def compare_spectrum_parallel(query_idx:int, query_masses:np.ndarray, idxs_lower:np.ndarray, idxs_higher:np.ndarray, query_indices:np.ndarray, query_frags:np.ndarray, query_ints:np.ndarray, db_indices:np.ndarray, db_frags:np.ndarray, best_hits:np.ndarray, score:np.ndarray, frag_tol:float, ppm:bool):
+    """Compares a spectrum and writes to the best_hits and score.
+
+    Args:
+        query_idx (int): Integer to the query_spectrum that should be compared.
+        query_masses (np.ndarray): Array with query masses.
+        idxs_lower (np.ndarray): Array with indices for lower search boundary.
+        idxs_higher (np.ndarray): Array with indices for upper search boundary.
+        query_indices (np.ndarray): Array with indices to the query data.
+        query_frags (np.ndarray): Array with frag types of the query data.
+        query_ints (np.ndarray): Array with fragment intensities from the query.
+        db_indices (np.ndarray):  Array with indices to the database data.
+        db_frags (np.ndarray): Array with frag types of the db data.
+        best_hits (np.ndarray): Reporting array which stores indices to the best hits.
+        score (np.ndarray): Reporting array that stores the scores of the best hits.
+        frag_tol (float): Fragment tolerance for search.
+        ppm (bool): Flag to use ppm instead of Dalton.
     """
 
     idx_low = idxs_lower[query_idx]
@@ -153,10 +191,16 @@ import pandas as pd
 import logging
 from .fasta import read_database
 
-def query_data_to_features(query_data):
+def query_data_to_features(query_data: dict)->pd.DataFrame:
+    """Helper function to extract features from query data.
+    This is used when the feature finder will not be used.
 
-    # if we dont use the feature finder we extract them from the query data..
+    Args:
+        query_data (dict): Data structure containing the query data.
 
+    Returns:
+        pd.DataFrame: Pandas dataframe so that it can be used for subsequent processing.
+    """
     query_masses = query_data['prec_mass_list2']
     query_mz = query_data['mono_mzs2']
     query_rt = query_data['rt_list_ms2']
@@ -170,34 +214,40 @@ def query_data_to_features(query_data):
 
     return features
 
+# Cell
+from typing import Callable
+
+#this wrapper function is covered by the quick_test
 def get_psms(
-    query_data,
-    db_data,
-    features,
-    parallel,
-    frag_tol,
-    prec_tol,
-    ppm,
-    min_frag_hits,
-    callback = None,
-    m_offset_calibrated = None,
+    query_data: dict,
+    db_data: dict,
+    features: pd.DataFrame,
+    parallel: bool,
+    frag_tol: float,
+    prec_tol: float,
+    ppm: bool,
+    min_frag_hits: int,
+    callback: Callable = None,
+    m_offset_calibrated:float = None,
     **kwargs
-):
-    """
-    Wrapper function to extract psms from dataset
+)->(np.ndarray, int):
+    """[summary]
 
     Args:
-        db_masses: database precursor masses
-        query_masses: query precursor masses
-        prec_tol: mass offset in dalton or ppm
-        ppm: flag for ppm or dalton
-        callback: Callback function, e.g. for progress bar
+        query_data (dict): Data structure containing the query data.
+        db_data (dict): Data structure containing the database data.
+        features (pd.DataFrame): Pandas dataframe containing feature data.
+        parallel (bool): Flag to use parallel processing.
+        frag_tol (float): Fragment tolerance for search.
+        prec_tol (float): Precursor tolerance for search.
+        ppm (bool): Flag to use ppm instead of Dalton.
+        min_frag_hits (int): Minimum number of frag hits to report a PSMs.
+        callback (Callable, optional): Optional callback. Defaults to None.
+        m_offset_calibrated (float, optional): Precursor tolerance if calibration exists. Defaults to None.
+
     Returns:
-        idxs_lower: lower search range
-        idxs_higher: upper search range
-    Raises:
-
-
+        np.ndarray: Numpy recordarray storing the PSMs.
+        int: 0
     """
 
     if isinstance(db_data, str):
@@ -282,14 +332,6 @@ def get_psms(
 
     logging.info(f'Performing search on {n_queries:,} query and {n_db:,} db entries with frag_tol = {frag_tol:.2f} and prec_tol = {prec_tol:.2f}.')
 
-
-    if False:
-        for query_idx in range(n_queries):
-            compare_spectrum(query_idx, idxs_lower, idxs_higher, query_indices, query_frags, query_ints, db_indices, db_frags, best_hits, score, frag_tol, ppm)
-
-            if callback is not None:
-                callback((query_idx+1)/n_queries)
-
     compare_spectrum_parallel(cupy.arange(n_queries), cupy.arange(n_queries), idxs_lower, idxs_higher, query_indices, query_frags, query_ints, db_indices, db_frags, best_hits, score, frag_tol, ppm)
 
     query_idx, db_idx_ = cupy.where(score > min_frag_hits)
@@ -311,11 +353,18 @@ def get_psms(
 
 # Cell
 @njit
-def frag_delta(query_frag, db_frag, hits):
-    """
-    Calculate the mass difference for a given array of hits in Dalton and ppm
-    """
+def frag_delta(query_frag:np.ndarray, db_frag:np.ndarray, hits:np.ndarray)-> (float, float):
+    """Calculates the mass difference for a given array of hits in Dalton and ppm.
 
+    Args:
+        query_frag (np.ndarray): Array with query fragments.
+        db_frag (np.ndarray): Array with database fragments.
+        hits (np.ndarray): Array with reported hits.
+
+    Returns:
+        float: Fragment deltas in Dalton.
+        float: Fragment deltas in ppm.
+    """
     delta_m = db_frag[hits > 0] - query_frag[hits[hits > 0] - 1]
     delta_m_ppm = (
         2 * delta_m / (db_frag[hits > 0] + query_frag[hits[hits > 0] - 1]) * 1e6
@@ -325,10 +374,17 @@ def frag_delta(query_frag, db_frag, hits):
 
 # Cell
 @njit
-def intensity_fraction(query_int, hits):
+def intensity_fraction(query_int:np.ndarray, hits:np.ndarray)->float:
+    """Calculate the fraction of matched intensity
+
+    Args:
+        query_int (np.ndarray): Array with query intensities.
+        hits (np.ndarray): Array with reported hits.
+
+    Returns:
+        float: Fraction of the matched intensity to the total intensity.
     """
-    Calculate the fraction of matched intensity
-    """
+
     total_intensity = np.sum(query_int)
     if total_intensity != 0:
         matched_intensity = np.sum(query_int[hits[hits > 0] - 1])
@@ -342,9 +398,16 @@ def intensity_fraction(query_int, hits):
 from numpy.lib.recfunctions import append_fields, drop_fields
 
 
-def add_column(recarray, column, name):
-    """
-    Function to add a column with given name to recarray
+def add_column(recarray:np.ndarray, column:np.ndarray, name:str)->np.ndarray:
+    """Function to add a column with given name to recarray
+
+    Args:
+        recarray (np.ndarray): NumPy record array.
+        column (np.ndarray): Data column that should be added to the record array.
+        name (str): Name of the column in the new recordarray.
+
+    Returns:
+        np.ndarray: NumPy recordarray with new field.
     """
     if hasattr(recarray, name):
         recarray = drop_fields(recarray, name, usemask=False, asrecarray=True)
@@ -354,9 +417,15 @@ def add_column(recarray, column, name):
     return recarray
 
 
-def remove_column(recarray, name):
-    """
-    Function to remove a column from recarray
+def remove_column(recarray:np.ndarray, name:str)->np.ndarray:
+    """Function to remove a column from a recarray.
+
+    Args:
+        recarray (np.ndarray): NumPy record array.
+        name (str): Column name of the column to be removed.
+
+    Returns:
+        np.ndarray: NumPy record array with removed column.
     """
     if hasattr(recarray, name):
         recarray = drop_fields(recarray, name, usemask=False, asrecarray=True)
@@ -365,8 +434,33 @@ def remove_column(recarray, name):
 # Cell
 from numba.typed import List
 @njit
-def get_hits(query_frag, query_int, db_frag, db_int, frag_type, mtol, ppm, losses):
+def get_hits(query_frag:np.ndarray, query_int:np.ndarray, db_frag:np.ndarray, db_int:np.ndarray, frag_type:np.ndarray, mtol:float, ppm:bool, losses:list)-> np.ndarray:
+    """Function to extract the types of hits based on a single PSMs.
 
+    The reporting array stores information about the matched ions column wise:
+
+    Column 0: Type of the ion.
+    Column 1: Ion-index refering to what ion type was matched.
+    Column 2: Intensity of the matched ion.
+    Column 3: Intensity of the database ion.
+    Column 4: Experimental mass of the ion.
+    Column 5: Theoretical mass of the ion.
+    Column 6: Index to the query_frag of the ion.
+    Column 7: Index to the database_frag of the ion.
+
+    Args:
+        query_frag (np.ndarray): Array with query fragments.
+        query_int (np.ndarray): Array with query intensities.
+        db_frag (np.ndarray): Array with database fragments.
+        db_int (np.ndarray): Array with database intensities.
+        frag_type (np.ndarray): Array with fragment types.
+        mtol (float): Mass tolerance.
+        ppm (bool): Flag to use ppm instead of Dalton.
+        losses (list): List of losses.
+
+    Returns:
+        np.ndarray: NumPy array that stores ion information.
+    """
     max_array_size = len(db_frag)*len(losses)
 
     ions = np.zeros((max_array_size, 8))
@@ -401,24 +495,51 @@ def get_hits(query_frag, query_int, db_frag, db_int, frag_type, mtol, ppm, losse
 
     return ions
 
+
+# Cell
+
+#This function is a wrapper and ist tested by the quick_test
 @njit
 def score(
-    psms,
-    query_masses,
-    query_masses_raw,
-    query_frags,
-    query_ints,
-    query_indices,
-    db_masses,
-    db_frags,
-    frag_types,
-    mtol,
-    db_indices,
-    ppm,
-    psms_dtype,
-    db_ints = None,
-    parallel = False
-):
+    psms: np.recarray,
+    query_masses: np.ndarray,
+    query_masses_raw: np.ndarray,
+    query_frags: np.ndarray,
+    query_ints: np.ndarray,
+    query_indices: np.ndarray,
+    db_masses: np.ndarray,
+    db_frags: np.ndarray,
+    frag_types: np.ndarray,
+    mtol: float,
+    db_indices: np.ndarray,
+    ppm: bool,
+    psms_dtype: list,
+    db_ints: np.ndarray = None,
+    parallel: bool = False
+) -> (np.ndarray, np.ndarray):
+    """Function to extract score columns when giving a recordarray with PSMs.
+
+    Args:
+        psms (np.recarray): Recordarray containing PSMs.
+        query_masses (np.ndarray): Array with query masses.
+        query_masses_raw (np.ndarray): Array with raw query masses.
+        query_frags (np.ndarray): Array with frag types of the query data.
+        query_ints (np.ndarray): Array with fragment intensities from the query.
+        query_indices (np.ndarray): Array with indices to the query data.
+        db_masses (np.ndarray): Array with database masses.
+        db_frags (np.ndarray): Array with fragment masses.
+        frag_types (np.ndarray): Array with fragment types.
+        mtol (float): Mass tolerance.
+        db_indices (np.ndarray): Array with indices to the database array.
+        ppm (bool): Flag to use ppm instead of Dalton.
+        psms_dtype (list): List describing the dtype of the PSMs record array.
+        db_ints (np.ndarray, optional): Array with database intensities. Defaults to None.
+        parallel (bool, optional): Flag to use parallel processing. Defaults to False.
+
+    Returns:
+        np.recarray: Recordarray containing PSMs with additional columns.
+        np.ndarray: NumPy array containing ion information.
+    """
 
     psms_ = np.zeros(len(psms), dtype=psms_dtype)
 
@@ -478,31 +599,56 @@ def score(
 
     return psms_, ions_
 
-
 # Cell
 
 from numba.typed import Dict
-def get_sequences(psms, db_seqs):
-    """
-    Get sequences to add them to a recarray
+def get_sequences(psms: np.recarray, db_seqs:np.ndarray)-> np.ndarray:
+    """Get sequences to add them to a recarray
+
+    Args:
+        psms (np.recarray): Recordarray containing PSMs.
+        db_seqs (np.ndarray): NumPy array containing sequences.
+
+    Returns:
+        np.ndarray: NumPy array containing a subset of sequences.
     """
     sequence_list = db_seqs[psms["db_idx"]]
 
     return sequence_list
 
+# Cell
+from typing import Union
 
+#This function is a wrapper and ist tested by the quick_test
 def get_score_columns(
-    psms,
-    query_data,
-    db_data,
-    features,
-    parallel,
-    frag_tol,
-    prec_tol,
-    ppm,
-    m_offset_calibrated=None,
+    psms: np.recarray,
+    query_data: dict,
+    db_data: Union[dict, str],
+    features: pd.DataFrame,
+    parallel:bool,
+    frag_tol:float,
+    prec_tol:float,
+    ppm:bool,
+    m_offset_calibrated:Union[None, float]=None,
     **kwargs
-):
+) -> (np.ndarray, np.ndarray):
+    """Wrapper function to extract score columns.
+
+    Args:
+        psms (np.recarray): Recordarray containing PSMs.
+        query_data (dict): Data structure containing the query data.
+        db_data: Union[dict, str]: Data structure containing the database data or path to database.
+        features (pd.DataFrame): Pandas dataframe containing feature data.
+        parallel (bool): Flag to use parallel processing.
+        frag_tol (float): Fragment tolerance for search.
+        prec_tol (float): Precursor tolerance for search.
+        ppm (bool): Flag to use ppm instead of Dalton.
+        m_offset_calibrated (Union[None, float], optional): Calibrated offset mass. Defaults to None.
+
+    Returns:
+        np.recarray: Recordarray containing PSMs with additional columns.
+        np.ndarray: NumPy array containing ion information.
+    """
     logging.info('Extracting columns for scoring.')
     query_indices = query_data["indices_ms2"]
     query_charges = query_data['charge2']
@@ -657,104 +803,35 @@ def get_score_columns(
 
 # Cell
 
-def plot_hit(
-    df,
-    index,
-    db_indices,
-    db_frags,
-    frag_types,
-    query_frags,
-    query_ints,
-    query_indices,
-    ppm,
-    frag_tol,
-    db_ints = None,
-    **kwargs
-):
-    spectrum = df.iloc[index]
-
-    sequence = spectrum["sequence"]
-
-    db_idx = spectrum["db_idx"]
-    query_idx = spectrum["query_idx"]
-
-    intensity_fraction = spectrum["matched_int"] / spectrum["total_int"]
-
-    db_bound = db_indices[db_idx]
-    db_frag = db_frags[:, db_idx] [:db_bound]
-    if db_ints is not None:
-        db_int = db_ints[:, db_idx] [:db_bound]
-    else:
-        db_int = np.ones(len(db_frag))
-
-    db_int = db_int / np.max(db_int) * 100
-
-    frag_type = frag_types[:, db_idx] [:db_bound]
-
-    query_idx_start = query_indices[query_idx]
-    query_idx_end = query_indices[query_idx + 1]
-    query_frag = query_frags[query_idx_start:query_idx_end]
-    query_int = query_ints[query_idx_start:query_idx_end]
-
-    query_int = query_int / np.max(query_int) * 100
-
-    hits = compare_frags(query_frag, db_frag, frag_tol, ppm)
-
-    n_hits = np.sum(hits > 0)
-
-    hitpos = hits[hits > 0] - 1
-
-    hit_x = query_frag[hitpos]
-    hit_y = query_int[hitpos]
-
-    # create an axis
-    ax = plt.figure(figsize=(10, 5))
-
-    plt.vlines(db_frag, 0, db_int, "k", label="DB", alpha=0.2)
-
-    plt.vlines(query_frag, 0, query_int, "r", label="Query", alpha=0.5)
-
-    plt.plot(hit_x, hit_y, "ro", label="Hit", alpha=0.5)
-
-    figure_title = "PSM Match for Spectra: {} - sequence {} \nHits {} - Intensity Fraction {:.2f} %".format(
-        query_idx, sequence, n_hits, intensity_fraction * 100
-    )
-    plt.title(figure_title)
-
-    plt.xlabel("Mass")
-    plt.ylabel("Relative Intensity (%)")
-    plt.ylim([0, 110])
-
-    plt.legend()
-    plt.show()
-
-from .fasta import get_frag_dict, parse
 import matplotlib.pyplot as plt
 
-def plot_psms(query_data, df, index, mass_dict, ppm=True, frag_tol=20):
-    """
-    Plot a psms
-    """
+def plot_psms(index, ms_file):
+
+    df = ms_file.read(dataset_name='peptide_fdr')
+
+    ion_dict = {}
+    ion_dict[0] = ''
+    ion_dict[1] = '-H20'
+    ion_dict[2] = '-NH3'
+
     spectrum = df.iloc[index]
+    start = spectrum['ion_idx']
+    end = spectrum['n_ions'] + start
 
-    sequence = spectrum["sequence"]
-    db_idx = spectrum["db_idx"]
-    query_idx = spectrum["query_idx"]
+    query_data = ms_file.read_DDA_query_data()
+    ions = ms_file.read(dataset_name="ions")
 
-    if 'matched_int' in spectrum.index:
-        intensity_fraction = spectrum["matched_int"] / spectrum["total_int"]
-    else:
-        intensity_fraction = np.nan
-        matched_int = np.nan
+    ion = [('b'+str(int(_))).replace('b-','y') for _ in ions.iloc[start:end]['ion_index']]
+    losses = [ion_dict[int(_)] for _ in ions.iloc[start:end]['ion_type']]
+    ion = [a+b for a,b in zip(ion, losses)]
+    ints = ions.iloc[start:end]['ion_int'].astype('int').values
+    masses = ions.iloc[start:end]['ion_mass'].astype('float').values
+    ion_type = ions.iloc[start:end]['ion_type'].abs().values
 
-    frag_dict = get_frag_dict(parse(sequence), mass_dict)
-    frag_dict_r = {v: k for k, v in frag_dict.items()}
+    query_idx = spectrum['raw_idx']
 
-    db_frag = list(frag_dict.values())
-    db_frag.sort()
-
-    db_int = [100 for _ in db_frag]
-
+    query_indices = query_data["indices_ms2"]
+    query_charges = query_data['charge2']
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
 
@@ -763,75 +840,25 @@ def plot_psms(query_data, df, index, mass_dict, ppm=True, frag_tol=20):
     query_frag = query_frags[query_idx_start:query_idx_end]
     query_int = query_ints[query_idx_start:query_idx_end]
 
-    query_int = query_int / np.max(query_int) * 100
+    ax = plt.figure(figsize=(15, 5))
 
-    hits = compare_frags(query_frag, db_frag, frag_tol, ppm)
+    plt.vlines(query_frag, 0, query_int, "k", label="Query", alpha=0.5)
 
-    n_hits = np.sum(hits > 0)
+    plt.vlines(masses, ints, max(query_int)*(1+0.1*ion_type), "k", label="Hits", alpha=0.5, linestyle=':')
 
-    hitpos = hits[hits > 0] - 1
+    plt.vlines(masses, 0, ints, "r", label="Hits", alpha=0.5)
 
-    hit_x = query_frag[hitpos]
-    hit_y = query_int[hitpos]
+    for i in range(len(masses)):
+        plt.text(masses[i], (1+0.1*ion_type[i])*max(query_int), ion[i])
 
-    # create an axis
-    ax = plt.figure(figsize=(10, 5))
+    figure_title = f"{spectrum['precursor']} - b-hits {spectrum['b_hits']}, y-hits {spectrum['y_hits']}, matched int {spectrum['matched_int_ratio']*100:.2f} %"
 
-    plt.vlines(db_frag, 0, db_int, "k", label="DB", alpha=0.2)
-
-    plt.vlines(query_frag, 0, query_int, "r", label="Query", alpha=0.5)
-
-    plt.plot(hit_x, hit_y, "ro", label="Hit", alpha=0.5)
-
-    figure_title = "Peptide-Spectrum-Match for Spectra: {} - sequence {} \nHits {} - Intensity Fraction {:.2f} %".format(
-        query_idx, sequence, n_hits, intensity_fraction * 100
-    )
-
-    db_hits = np.array(db_frag)[hits>0]
-    ion_hits = [frag_dict_r[_] for _ in db_hits]
-
-    for _ in frag_dict.keys():
-
-        if _ in ion_hits:
-            color = 'r'
-        else:
-            color = 'k'
-
-        if _[0] == 'y':
-            plt.text(frag_dict[_], 110, _, fontsize=12, alpha = 0.8, color=color)
-        else:
-            plt.text(frag_dict[_], 104, _, fontsize=12, alpha = 0.8, color=color)
-
+    plt.xlabel("m/z")
+    plt.ylabel('Intensity')
+    plt.ylim([0, (1+0.1*max(ion_type)+0.1)*max(query_int)])
+    plt.legend()
     plt.title(figure_title)
-
-    plt.xlabel("Mass")
-    plt.ylabel("Relative Intensity (%)")
-    plt.ylim([0, 120])
-
-    plt.legend(loc='lower right')
     plt.show()
-
-# Cell
-def perform_search(query_files, db_masses, db_frags, db_indices, db_seqs, frag_types, plot, **kwargs):
-    """
-    Function to search and score one or multiple MS runs by the X!Tandem approach.
-
-    """
-    if isinstance(query_files, str):
-        kwargs['query_path'] = query_files
-        psms_all = score_psms(db_masses, db_frags, db_indices, db_seqs, frag_types, plot=plot, **kwargs)
-        psms_all['filename'] = query_files
-    elif isinstance(query_files, list):
-        psms_all = []
-        for file in query_files:
-            kwargs['query_path'] = file
-            psms = score_psms(db_masses, db_frags, db_indices, db_seqs, frag_types, plot=plot, **kwargs)
-            psms['filename'] = file
-            psms_all.append(psms)
-        psms_all = pd.concat(psms_all, ignore_index=True)
-    else:
-        raise Exception('query_files should be either a string or a list. The selected query_files argument is of type: {}'.format(type(query_files)))
-    return psms_all
 
 # Cell
 import os
@@ -839,10 +866,18 @@ import pandas as pd
 import copy
 import alphapept.io
 import alphapept.fasta
+from typing import Callable
 
-def store_hdf(df, path, key, replace=False, swmr = False):
-    """
-    Stores in hdf
+#This function is a wrapper and ist tested by the quick_test
+def store_hdf(df: pd.DataFrame, path: str, key:str, replace:bool=False, swmr:bool = False):
+    """Wrapper function to store a DataFrame in an hdf.
+
+    Args:
+        df (pd.DataFrame): DataFrame to be stored.
+        path (str): Target path of the hdf file.
+        key (str): Name of the field to be saved.
+        replace (bool, optional): Flag whether the field should be replaced.. Defaults to False.
+        swmr (bool, optional): Flag to use swmr(single write multiple read)-mode. Defaults to False.
     """
     ms_file = alphapept.io.MS_Data_File(path.file_name, is_overwritable=True)
 
@@ -860,10 +895,18 @@ def store_hdf(df, path, key, replace=False, swmr = False):
             except KeyError: # File is created new
                 ms_file.write(df, dataset_name=key, swmr = swmr)
 
+#This function is a wrapper and ist tested by the quick_test
+def search_db(to_process:tuple, callback:Callable = None, parallel:bool=False, first_search:bool = True) -> Union[bool, str]:
+    """Wrapper function to perform database search to be used by a parallel pool.
 
-def search_db(to_process, callback = None, parallel=False, first_search = True):
-    """
-    Perform a databse search. One file at a time.
+    Args:
+        to_process (tuple): Tuple containing an index to the file and the experiment settings.
+        callback (Callable, optional): Callback function to indicate progress. Defaults to None.
+        parallel (bool, optional): Flag to use parallel processing. Defaults to False.
+        first_search (bool, optional): Flag to indicate this is the first search. Defaults to True.
+
+    Returns:
+        Union[bool, str]: Returns True if the search was successfull, otherwise returns a string containing the Exception.
     """
 
     try:
@@ -936,13 +979,21 @@ from .fasta import block_idx, generate_fasta_list, generate_spectra, check_pepti
 from alphapept import constants
 mass_dict = constants.mass_dict
 import os
-import alphapept.speed
+import alphapept.performance
 
-def search_fasta_block(to_process):
+#This function is a wrapper and ist tested by the quick_test
+def search_fasta_block(to_process:tuple) -> (list, int):
+    """Search fasta block. This file digests per block and does not use a saved database.
+    For searches with big fasta files or unspecific searches.
+
+    Args:
+        to_process (tuple): Tuple containing a fasta_index, fasta_block, a list of files and a list of experimental settings.
+
+    Returns:
+        list: A list of dataframes when searching the respective file.
+        int: Number of new peptides that were generated in this iteration.
     """
-    Search fasta block
-    For searches with big fasta files or unspecific searches
-    """
+
 
     fasta_index, fasta_block, ms_files, settings = to_process
 
@@ -1036,16 +1087,19 @@ def search_fasta_block(to_process):
 
     return psms_container, len(to_add)
 
-from multiprocessing import Pool
+# Cell
 
-
-def filter_top_n(temp, top_n = 10):
-    """
-    Takes a dataframe and keeps only the top n entries.
+def filter_top_n(temp:pd.DataFrame, top_n:int = 10)-> pd.DataFrame:
+    """Takes a dataframe and keeps only the top n entries (based on hits).
     Combines fasta indices for sequences.
 
-    """
+    Args:
+        temp (pd.DataFrame): Pandas DataFrame containing PSMs.
+        top_n (int, optional): Number of top-n entries to be kept. Defaults to 10.
 
+    Returns:
+        pd.DataFrame: Filtered DataFrame.
+    """
     pept_dict_ = {}
 
     for k, v in temp[['sequence','fasta_index']].values:
@@ -1066,9 +1120,19 @@ def filter_top_n(temp, top_n = 10):
     return temp
 
 
-def search_parallel(settings, calibration = None, callback = None):
-    """
-    Function to generate a database from a fasta file
+# Cell
+
+#This function is a wrapper and ist tested by the quick_test
+def search_parallel(settings: dict, calibration:Union[list, None] = None, callback: Union[Callable, None] = None) -> dict:
+    """Function to search multiple ms_data files in parallel.
+
+    Args:
+        settings (dict): Settings file containg the experimental definitions.
+        calibration (Union[list, None], optional): List of calibrated offsets.. Defaults to None.
+        callback (Union[Callable, None], optional): Callback function. Defaults to None.
+
+    Returns:
+        dict: FASTA dictionary.
     """
     fasta_list, fasta_dict = generate_fasta_list(fasta_paths = settings['experiment']['fasta_paths'], **settings['fasta'])
 
@@ -1093,7 +1157,10 @@ def search_parallel(settings, calibration = None, callback = None):
     logging.info(f"Number of FASTA entries: {len(fasta_list):,} - FASTA settings {settings['fasta']}")
     to_process = [(idx_start, fasta_list[idx_start:idx_end], ms_file_path, custom_settings) for idx_start, idx_end in block_idx(len(fasta_list), fasta_block)]
 
-    n_processes = settings['general']['n_processes']
+    n_processes = alphapept.performance.set_worker_count(
+        worker_count=settings['general']['n_processes'],
+        set_global=False
+    )
 
     n_seqs_ = 0
 
@@ -1102,7 +1169,7 @@ def search_parallel(settings, calibration = None, callback = None):
 
     df_cache = {}
 
-    with alphapept.speed.AlphaPool(n_processes) as p:
+    with alphapept.performance.AlphaPool(n_processes) as p:
         max_ = len(to_process)
 
         for i, (_, n_seqs) in enumerate(p.imap_unordered(search_fasta_block, to_process)):

@@ -31,20 +31,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Functions">Functions<a class="anchor-link" href="#Functions"> </a></h2><p>The implemented functions are as follows:</p>
-<ul>
-<li>Create database</li>
-<li>Import raw data</li>
-<li>Perform feature finding</li>
-<li>Search data with fasta</li>
-<li>Recalibrate</li>
-<li>Score data with fasta</li>
-<li>Perform LFQ</li>
-<li>Export results</li>
-<li>Run whole workflow</li>
-</ul>
-<p>The last command allows to run the whole pipeline at once.</p>
-<p>Helper functions include:</p>
+<h2 id="General-utilities">General utilities<a class="anchor-link" href="#General-utilities"> </a></h2><p>Several generic utility functions include:</p>
 <ul>
 <li>Callback function to track progress</li>
 <li>Logging function</li>
@@ -65,47 +52,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="parallel_execute" class="doc_header"><code>parallel_execute</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L22" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>parallel_execute</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>step</code></strong>:<code>callable</code>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
-</blockquote>
-<p>Generic function to execute worklow steps in parallel on a per-file basis.</p>
-<p>Args:
-    settings (dict): The settings for processing the step function.
-    step (callable): A function that accepts settings as input parameter.
-    callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
-<p>Returns:
-    dict: The settings after processing.</p>
-<p>Raises:
-    NotImplementedError: When the step is feature finding on files other then Thermo or Bruker.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="tqdm_wrapper" class="doc_header"><code>tqdm_wrapper</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L120" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>tqdm_wrapper</code>(<strong><code>pbar</code></strong>, <strong><code>update</code></strong>:<code>float</code>)</p>
+<h4 id="tqdm_wrapper" class="doc_header"><code>tqdm_wrapper</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L23" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>tqdm_wrapper</code>(<strong><code>pbar</code></strong>, <strong><code>update</code></strong>:<code>float</code>)</p>
 </blockquote>
 <p>Update a qdm progress bar.</p>
 <p>Args:
@@ -140,7 +87,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_version_and_hardware" class="doc_header"><code>check_version_and_hardware</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L134" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_version_and_hardware</code>(<strong><code>settings</code></strong>:<code>dict</code>)</p>
+<h4 id="check_version_and_hardware" class="doc_header"><code>check_version_and_hardware</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L37" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_version_and_hardware</code>(<strong><code>settings</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Show platform and python information and parse settings.</p>
 <p>Args:
@@ -176,7 +123,64 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="create_database" class="doc_header"><code>create_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L160" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>create_database</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="wrapped_partial" class="doc_header"><code>wrapped_partial</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L59" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>wrapped_partial</code>(<strong><code>func</code></strong>:<code>callable</code>, <strong>*<code>args</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
+</blockquote>
+<p>Wrap a function with partial args and kwargs.</p>
+<p>Args:
+    func (callable): The function to be wrapped.
+    *args (type): Args to be wrapped.
+    **kwargs (type): Kwargs to be wrapped.</p>
+<p>Returns:
+    callable: The wrapped function.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Functions">Functions<a class="anchor-link" href="#Functions"> </a></h2><p>The implemented functions are as follows:</p>
+<ul>
+<li>Create database</li>
+<li>Import raw data</li>
+<li>Perform feature finding</li>
+<li>Search data with fasta</li>
+<li>Recalibrate</li>
+<li>Score data with fasta</li>
+<li>Perform LFQ</li>
+<li>Export results</li>
+<li>Run whole workflow</li>
+</ul>
+<p>The last command allows to run the whole pipeline at once.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="create_database" class="doc_header"><code>create_database</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L81" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>create_database</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Create the search database.</p>
 <p>Args:
@@ -217,7 +221,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="import_raw_data" class="doc_header"><code>import_raw_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L289" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>import_raw_data</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="import_raw_data" class="doc_header"><code>import_raw_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L210" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>import_raw_data</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Import raw data.</p>
 <p>Args:
@@ -256,7 +260,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="feature_finding" class="doc_header"><code>feature_finding</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L325" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>feature_finding</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="feature_finding" class="doc_header"><code>feature_finding</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L246" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>feature_finding</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Find features.</p>
 <p>Args:
@@ -295,38 +299,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="wrapped_partial" class="doc_header"><code>wrapped_partial</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L361" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>wrapped_partial</code>(<strong><code>func</code></strong>:<code>callable</code>, <strong>*<code>args</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
-</blockquote>
-<p>Wrap a function with partial args and kwargs.</p>
-<p>Args:
-    func (callable): The function to be wrapped.
-    *args (type): Args to be wrapped.
-    **kwargs (type): Kwargs to be wrapped.</p>
-<p>Returns:
-    callable: The wrapped function.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="search_data" class="doc_header"><code>search_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L377" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_data</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>first_search</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="search_data" class="doc_header"><code>search_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L282" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_data</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>first_search</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Create the search database.</p>
 <p>Args:
@@ -370,7 +343,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="recalibrate_data" class="doc_header"><code>recalibrate_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L486" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>recalibrate_data</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="recalibrate_data" class="doc_header"><code>recalibrate_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L391" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>recalibrate_data</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Recalibrate mz values.</p>
 <p>Args:
@@ -409,7 +382,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="score" class="doc_header"><code>score</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L523" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>=<em><code>None</code></em>, <strong><code>fasta_dict</code></strong>:<code>dict</code>=<em><code>None</code></em>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="score" class="doc_header"><code>score</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L428" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>=<em><code>None</code></em>, <strong><code>fasta_dict</code></strong>:<code>dict</code>=<em><code>None</code></em>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Score PSMs and calculate FDR.</p>
 <p>Args:
@@ -450,7 +423,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_grouping" class="doc_header"><code>protein_grouping</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L572" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_grouping</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>=<em><code>None</code></em>, <strong><code>fasta_dict</code></strong>:<code>dict</code>=<em><code>None</code></em>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="protein_grouping" class="doc_header"><code>protein_grouping</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L477" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_grouping</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>pept_dict</code></strong>:<code>dict</code>=<em><code>None</code></em>, <strong><code>fasta_dict</code></strong>:<code>dict</code>=<em><code>None</code></em>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Group peptides into proteins.</p>
 <p>Args:
@@ -491,7 +464,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="align" class="doc_header"><code>align</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L640" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="align" class="doc_header"><code>align</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L545" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Align multiple samples.</p>
 <p>Args:
@@ -523,7 +496,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="match" class="doc_header"><code>match</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L669" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>match</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="match" class="doc_header"><code>match</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L574" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>match</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Match datasets.</p>
 <p>Args:
@@ -562,7 +535,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="quantification" class="doc_header"><code>quantification</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L704" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>quantification</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="quantification" class="doc_header"><code>quantification</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L609" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>quantification</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Normalize and quantify datasets.</p>
 <p>Args:
@@ -601,7 +574,7 @@ nb_path: "nbs/11_interface.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="export" class="doc_header"><code>export</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L824" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>export</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="export" class="doc_header"><code>export</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L730" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>export</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Export settings.</p>
 <p>Args:
@@ -629,14 +602,6 @@ nb_path: "nbs/11_interface.ipynb"
 </div>
     {% endraw %}
 
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="Callback">Callback<a class="anchor-link" href="#Callback"> </a></h1><p>Return an overall progress
-And a task based progress..</p>
-
-</div>
-</div>
-</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -648,95 +613,7 @@ And a task based progress..</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_median_unique" class="doc_header"><code>extract_median_unique</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L864" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_median_unique</code>(<strong><code>settings</code></strong>:<code>dict</code>)</p>
-</blockquote>
-<p>Extract the medion protein FDR and number of unique proteins.</p>
-<p>Args:
-    settings (dict): A dictionary with settings how to process the data.</p>
-<p>Returns:
-    tuple: Two arrays with the median protein FDR per file and the unique number of protein hits</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_file_summary" class="doc_header"><code>get_file_summary</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L885" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_file_summary</code>(<strong><code>ms_data</code></strong>:<a href="/io.html#MS_Data_File"><code>MS_Data_File</code></a>)</p>
-</blockquote>
-<p>Get summarize statitics from an MS_Data file.</p>
-<p>Args:
-    ms_data (alphapept.io.MS_Data_File): An MS_Data file which has been fully identified and quantified.</p>
-<p>Returns:
-    dict: A dictionary with summary statistics.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_summary" class="doc_header"><code>get_summary</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L921" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_summary</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>summary</code></strong>:<code>dict</code>)</p>
-</blockquote>
-<p>Append file summary statistics to a summary dictionary.</p>
-<p>Args:
-    settings (dict): A dictionary with settings how to process the data.
-    summary (dict): A dictionary with summary statistics of the experiment.</p>
-<p>Returns:
-    dict: The summary in which file summary statistcs are appended.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="run_complete_workflow" class="doc_header"><code>run_complete_workflow</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L965" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>run_complete_workflow</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>progress</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong><code>callback_overall</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong><code>callback_task</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong><code>logfile</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
+<h4 id="run_complete_workflow" class="doc_header"><code>run_complete_workflow</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L770" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>run_complete_workflow</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>progress</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>logger_set</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>settings_parsed</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong><code>callback_overall</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong><code>callback_task</code></strong>:<code>callable</code>=<em><code>None</code></em>, <strong><code>logfile</code></strong>:<code>str</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Run all AlphaPept steps from a settings dict.</p>
 <p>Args:
@@ -768,9 +645,139 @@ And a task based progress..</p>
 </div>
     {% endraw %}
 
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="extract_median_unique" class="doc_header"><code>extract_median_unique</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L936" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_median_unique</code>(<strong><code>settings</code></strong>:<code>dict</code>)</p>
+</blockquote>
+<p>Extract the medion protein FDR and number of unique proteins.</p>
+<p>Args:
+    settings (dict): A dictionary with settings how to process the data.</p>
+<p>Returns:
+    tuple: Two arrays with the median protein FDR per file and the unique number of protein hits</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_file_summary" class="doc_header"><code>get_file_summary</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L957" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_file_summary</code>(<strong><code>ms_data</code></strong>:<a href="/io.html#MS_Data_File"><code>MS_Data_File</code></a>)</p>
+</blockquote>
+<p>Get summarize statitics from an MS_Data file.</p>
+<p>Args:
+    ms_data (alphapept.io.MS_Data_File): An MS_Data file which has been fully identified and quantified.</p>
+<p>Returns:
+    dict: A dictionary with summary statistics.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_summary" class="doc_header"><code>get_summary</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L993" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_summary</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>summary</code></strong>:<code>dict</code>)</p>
+</blockquote>
+<p>Append file summary statistics to a summary dictionary.</p>
+<p>Args:
+    settings (dict): A dictionary with settings how to process the data.
+    summary (dict): A dictionary with summary statistics of the experiment.</p>
+<p>Returns:
+    dict: The summary in which file summary statistcs are appended.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="parallel_execute" class="doc_header"><code>parallel_execute</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L1045" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>parallel_execute</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>step</code></strong>:<code>callable</code>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+</blockquote>
+<p>Generic function to execute worklow steps in parallel on a per-file basis.</p>
+<p>Args:
+    settings (dict): The settings for processing the step function.
+    step (callable): A function that accepts settings as input parameter.
+    callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns:
+    dict: The settings after processing.</p>
+<p>Raises:
+    NotImplementedError: When the step is feature finding on files other then Thermo or Bruker.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="CLI">CLI<a class="anchor-link" href="#CLI"> </a></h2><p>All workflow functions can be called with the command line interface (CLI).</p>
+<h2 id="CLI">CLI<a class="anchor-link" href="#CLI"> </a></h2><p>All workflow functions can be called with the command line interface (CLI). To implement this CLI, we use the <a href="https://click.palletsprojects.com/en/8.0.x/">click</a> package.</p>
+<p>In brief, <code>click</code> allows to create a CLI with minimal effort by simply adding decorators to already defined functions. These decorators create a help text for each function and describe all their parameters. Functions that are decorated by <code>click</code> can be added to a central <a href="/interface.html#run_cli"><code>run_cli</code></a> functions to be incorporated in the CLI automatically.</p>
+<p>While AlphaTims allows modular execution of individual steps to process MS data, it is common for these steps to be combined and reuse multiple parameters. We therefore opt to use a singe YAML settings file containing all parameters in dictionary format as a single parameter instead of providing all parameters individually to each function.</p>
 
 </div>
 </div>
@@ -786,7 +793,7 @@ And a task based progress..</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="run_cli" class="doc_header"><code>run_cli</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L1141" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>run_cli</code>()</p>
+<h4 id="run_cli" class="doc_header"><code>run_cli</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/interface.py#L1159" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>run_cli</code>()</p>
 </blockquote>
 <p>Run the command line interface.</p>
 

@@ -209,7 +209,7 @@ class TestRun():
             report['mixed_species_quantification'] = self.mixed_species_quantification(self.settings, species, groups)
 
 
-        report['peptide_fdr_arabidopsis'] = self.mixed_species_fdr(self.settings, ('ARATH','HUMAN')) #ECO for now
+        report['protein_fdr_arabidopsis'] = self.mixed_species_fdr(self.settings, ('ARATH','HUMAN')) #ECO for now
 
         self.report = report
         if password:
@@ -243,8 +243,9 @@ class TestRun():
         """
         Estimate FDR by searching against differenft FASTAs
         """
-        df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
-        fdr = len([_ for _ in df['protein_group'] if (species[0] in _) & (species[1] not in _)])/len(df)
+        df = pd.read_hdf(settings['experiment']['results_path'], 'protein_table')
+        sub = df.loc[[_ for _ in df.index if 'REV' not in _]]
+        fdr = len(sub.loc[[_ for _ in sub.index if species[0] in _ and species[1] not in _]]) / len(df)
 
         return fdr
 

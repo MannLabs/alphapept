@@ -89,7 +89,7 @@ For macOS Catalina, open the configuration of zsh via the terminal:
 
 
 ### Standalone Windows Installer
-To use AlphaPept as a stand-alone program for end-users, it can be installed on Windows machines via a one-click installer. Download the latest version [here](http://alphapept.org).
+To use AlphaPept as a stand-alone program for end-users, it can be installed on Windows machines via a one-click installer. Download the latest version [here](https://github.com/MannLabs/alphapept/releases/latest).
 
 
 ### Additional Notes
@@ -193,7 +193,7 @@ Within the notebooks, we try to cover most aspects of a proteomics workflow:
 * Matching: Functions for Match-between-runs
 * Constants: A collection of constants
 * Interface: Code that generates the command-line-interface (CLI)
-* Speed: Helper functions to speed up code with CPU / GPU
+* Performance: Helper functions to speed up code with CPU / GPU
 
 ## Contributing
-If you have a feature request or a bug report, please post it as an issue on the GitHub issue tracker. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started [here](https://github.com/MannLabs/alphapept/blob/master/CONTRIBUTING.md). We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects-page on GitHub. You can also contact us via opensource@alphapept.com.
+If you have a feature request or a bug report, please post it as an issue on the GitHub issue tracker. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started [here](https://mannlabs.github.io/alphapept/contributing.html). We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects-page on GitHub. You can also contact us via opensource@alphapept.com.

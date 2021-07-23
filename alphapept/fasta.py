@@ -13,9 +13,14 @@ __all__ = ['get_missed_cleavages', 'cleave_sequence', 'count_missed_cleavages', 
 from alphapept import constants
 import re
 
-def get_missed_cleavages(sequences, n_missed_cleavages):
+def get_missed_cleavages(sequences:list, n_missed_cleavages:int):
     """
     Combine cleaved sequences to get sequences with missed cleavages
+    Args:
+        seqeuences (list of str): the list of cleaved sequences, no missed cleavages are there.
+        n_missed_cleavages (int): the number of miss cleavage sites.
+    Returns:
+        list (of str): the sequences with missed cleavages.
     """
     missed = []
     for k in range(len(sequences)-n_missed_cleavages):
@@ -25,15 +30,23 @@ def get_missed_cleavages(sequences, n_missed_cleavages):
 
 
 def cleave_sequence(
-    sequence="",
-    n_missed_cleavages=0,
-    protease="trypsin",
-    pep_length_min=6,
-    pep_length_max=65,
+    sequence:str="",
+    n_missed_cleavages:int=0,
+    protease:str="trypsin",
+    pep_length_min:int=6,
+    pep_length_max:int=65,
     **kwargs
-):
+)->list:
     """
     Cleave a sequence with a given protease. Filters to have a minimum and maximum length.
+    Args:
+        sequence (str): the given (protein) sequence.
+        n_missed_cleavages (int): the number of max missed cleavages.
+        protease (str): the protease/enzyme name, the regular expression can be found in alphapept.constants.protease_dict.
+        pep_length_min (int): min peptide length.
+        pep_length_max (int): max peptide length.
+    Returns:
+        list (of str): cleaved peptide sequences with missed cleavages.
     """
 
     proteases = constants.protease_dict
@@ -60,9 +73,14 @@ def cleave_sequence(
 import re
 from alphapept import constants
 
-def count_missed_cleavages(sequence="", protease="trypsin", **kwargs):
+def count_missed_cleavages(sequence:str="", protease:str="trypsin", **kwargs):
     """
     Counts the number of missed cleavages for a given sequence and protease
+    Args:
+        sequence (str): the given (peptide) sequence.
+        protease (str): the protease/enzyme name, the regular expression can be found in alphapept.constants.protease_dict.
+    Returns:
+        int: the number of miss cleavages
     """
     proteases = constants.protease_dict
     protease = proteases[protease]
@@ -70,9 +88,14 @@ def count_missed_cleavages(sequence="", protease="trypsin", **kwargs):
     n_missed = len(p.findall(sequence))
     return n_missed
 
-def count_internal_cleavages(sequence="", protease="trypsin", **kwargs):
+def count_internal_cleavages(sequence:str="", protease:str="trypsin", **kwargs):
     """
     Counts the number of internal cleavage sites for a given sequence and protease
+    Args:
+        sequence (str): the given (peptide) sequence.
+        protease (str): the protease/enzyme name, the regular expression can be found in alphapept.constants.protease_dict.
+    Returns:
+        int (0 or 1): if the sequence is from internal cleavage.
     """
     proteases = constants.protease_dict
     protease = proteases[protease]
@@ -88,9 +111,13 @@ from numba import njit
 from numba.typed import List
 
 @njit
-def parse(peptide):
+def parse(peptide:str)->List:
     """
     Parser to parse peptide strings
+    Args:
+        peptide (str): modified peptide sequence.
+    Return:
+        List (numba.typed.List): a list of animo acids and modified amono acids
     """
     if "_" in peptide:
         peptide = peptide.split("_")[0]
@@ -106,6 +133,9 @@ def parse(peptide):
     return parsed
 
 def list_to_numba(a_list):
+    """
+    Convert python list to numba.typed.List
+    """
     numba_list = List()
 
     for element in a_list:
@@ -115,10 +145,16 @@ def list_to_numba(a_list):
 
 # Cell
 @njit
-def get_decoy_sequence(peptide, pseudo_reverse=False, AL_swap=False, KR_swap = False):
+def get_decoy_sequence(peptide:str, pseudo_reverse:bool=False, AL_swap:bool=False, KR_swap:bool = False)->str:
     """
     Reverses a sequence and adds the '_decoy' tag.
-
+    Args:
+        peptide (str): modified peptide to be reversed.
+        pseudo_reverse (bool): If True, reverse the peptide bug keep the C-terminal amino acid; otherwise reverse the whole peptide. (Default: False)
+        AL_swap (bool): replace A with L, and vice versa. (Default: False)
+        KR_swap (bool): replace K with R at the C-terminal, and vice versa. (Default: False)
+    Returns:
+        str: reversed peptide ending with the '_decoy' tag.
     """
     pep = parse(peptide)
     if pseudo_reverse:
@@ -170,9 +206,16 @@ def swap_AL(peptide):
 
     return peptide
 
-def get_decoys(peptide_list, pseudo_reverse=False, AL_swap=False, KR_swap = False, **kwargs):
+def get_decoys(peptide_list, pseudo_reverse=False, AL_swap=False, KR_swap = False, **kwargs)->list:
     """
     Wrapper to get decoys for lists of peptides
+    Args:
+        peptide_list (list): the list of peptides to be reversed.
+        pseudo_reverse (bool): If True, reverse the peptide bug keep the C-terminal amino acid; otherwise reverse the whole peptide. (Default: False)
+        AL_swap (bool): replace A with L, and vice versa. (Default: False)
+        KR_swap (bool): replace K with R at the C-terminal, and vice versa. (Default: False)
+    Returns:
+        list (of str): a list of decoy peptides
     """
     decoys = []
     decoys.extend([get_decoy_sequence(peptide, pseudo_reverse, AL_swap, KR_swap) for peptide in peptide_list])
@@ -180,14 +223,19 @@ def get_decoys(peptide_list, pseudo_reverse=False, AL_swap=False, KR_swap = Fals
 
 def add_decoy_tag(peptides):
     """
-    Adds a _decoy tag to a list of peptides
+    Adds a '_decoy' tag to a list of peptides
     """
     return [peptide + "_decoy" for peptide in peptides]
 
 # Cell
-def add_fixed_mods(seqs, mods_fixed, **kwargs):
+def add_fixed_mods(seqs:list, mods_fixed:list, **kwargs)->list:
     """
     Adds fixed modifications to sequences.
+    Args:
+        seqs (list of str): sequences to add fixed modifications
+        mods_fixed (list of str): the string list of fixed modifications. Each modification string must be in lower case, except for that the last letter must be the modified amino acid (e.g. oxidation on M should be oxM).
+    Returns:
+        list (of str): the list of the modified sequences. 'ABCDEF' with fixed mod 'cC' will be 'ABcCDEF'.
     """
     if not mods_fixed:
         return seqs
@@ -197,7 +245,7 @@ def add_fixed_mods(seqs, mods_fixed, **kwargs):
         return seqs
 
 # Cell
-def add_variable_mod(peps, mods_variable_dict):
+def add_variable_mod(peps:list, mods_variable_dict:dict):
     peptides = []
     for pep_ in peps:
         pep, min_idx = pep_
@@ -210,10 +258,17 @@ def add_variable_mod(peps, mods_variable_dict):
     return peptides
 
 
-def get_isoforms(mods_variable_dict, peptide, isoforms_max, n_modifications_max=None):
+def get_isoforms(mods_variable_dict:dict, peptide:str, isoforms_max:int, n_modifications_max:int=None)->list:
     """
-    Function to generate isoforms for a given peptide - returns a list of isoforms.
+    Function to generate modified forms (with variable modifications) for a given peptide - returns a list of modified forms.
     The original sequence is included in the list
+    Args:
+        mods_variable_dict (dict): the key is AA, and value is the modified form (e.g. oxM).
+        peptide (str): the peptide sequence to generate modified forms.
+        isoforms_max (int): max number of modified forms to generate per peptide.
+        n_modifications_max (int, optional): max number of variable modifications per peptide.
+    Returns:
+        list (of str): the list of peptide forms for the given peptide
     """
     pep = list(parse(peptide))
 
@@ -251,7 +306,18 @@ def get_isoforms(mods_variable_dict, peptide, isoforms_max, n_modifications_max=
 # Cell
 from itertools import chain
 
-def add_variable_mods(peptide_list, mods_variable, isoforms_max, n_modifications_max, **kwargs):
+def add_variable_mods(peptide_list:list, mods_variable:list, isoforms_max:int, n_modifications_max:int, **kwargs)->list:
+    """
+    Add variable modifications to the peptide list
+    Args:
+        peptide_list (list of str): peptide list.
+        mods_variable (list of str): modification list.
+        isoforms_max (int): max number of modified forms per peptide sequence.
+        n_modifications_max (int): max number of variable modifications per peptide.
+    Returns:
+        list (of str): list of modified sequences for the given peptide list.
+    """
+
     #the peptide_list originates from one peptide already -> limit isoforms here
 
     max_ = isoforms_max - len(peptide_list) + 1
@@ -270,9 +336,16 @@ def add_variable_mods(peptide_list, mods_variable, isoforms_max, n_modifications
         return list(chain.from_iterable(peptide_list))
 
 # Cell
-def add_fixed_mod_terminal(peptides, mod):
+def add_fixed_mod_terminal(peptides:list, mod:str)->list:
     """
     Adds fixed terminal modifications
+    Args:
+        peptides (list of str): peptide list.
+        mod (str): n-term mod contains '<^' (e.g. a<^ for Acetyl@N-term); c-term mod contains '>^'.
+    Raises:
+        "Invalid fixed terminal modification 'mod name'" for the given mod.
+    Returns:
+        list (of str): list of peptides with modification added.
     """
     # < for left side (N-Term), > for right side (C-Term)
     if "<^" in mod: #Any n-term, e.g. a<^
@@ -285,12 +358,19 @@ def add_fixed_mod_terminal(peptides, mod):
         peptides = [peptide[:-1] + peptide[-1].replace(mod[-1], mod[:-2]+mod[-1]) for peptide in peptides]
     else:
         # This should not happen
-        raise ("Invalid fixed terminal modification {}.".format(key))
+        raise ("Invalid fixed terminal modification {}.".format(mod))
     return peptides
 
-def add_fixed_mods_terminal(peptides, mods_fixed_terminal, **kwargs):
+def add_fixed_mods_terminal(peptides:list, mods_fixed_terminal:list, **kwargs)->list:
     """
     Wrapper to add fixed mods on sequences and lists of mods
+    Args:
+        peptides (list of str): peptide list.
+        mods_fixed_terminal (list of str): list of fixed terminal mods.
+    Raises:
+        "Invalid fixed terminal modification {mod}" exception for the given mod.
+    Returns:
+        list (of str): list of peptides with modification added.
     """
     if mods_fixed_terminal == []:
         return peptides
@@ -301,8 +381,15 @@ def add_fixed_mods_terminal(peptides, mods_fixed_terminal, **kwargs):
         return peptides
 
 # Cell
-def add_variable_mods_terminal(peptides, mods_variable_terminal, **kwargs):
-    "Function to add variable terminal modifications"
+def add_variable_mods_terminal(peptides:list, mods_variable_terminal:list, **kwargs)->list:
+    """
+    Function to add variable terminal modifications.
+    Args:
+        peptides (list of str): peptide list.
+        mods_variable_terminal (list of str): list of variable terminal mods.
+    Returns:
+        list (of str): list of peptides with modification added.
+    """
     if not mods_variable_terminal:
         return peptides
     else:
@@ -326,21 +413,31 @@ def add_variable_mods_terminal(peptides, mods_variable_terminal, **kwargs):
 
         return get_unique_peptides(new_peptides_c)
 
-def get_unique_peptides(peptides):
+def get_unique_peptides(peptides:list) -> list:
+    """
+    Function to return unique elements from list.
+    Args:
+        peptides (list of str): peptide list.
+    Returns:
+        list (of str): list of peptides (unique).
+    """
     return list(set(peptides))
 
 # Cell
-def generate_peptides(peptide, **kwargs):
+def generate_peptides(peptide:str, **kwargs)->list:
     """
-    Wrapper to get modified peptides from a peptide
+    Wrapper to get modified peptides (fixed and variable mods) from a peptide.
+
+    Args:
+        peptide (str): the given peptide sequence.
+    Returns:
+        list (of str): all modified peptides.
 
     TODO:
-
-    There can be some edge-cases which are not defined yet.
-    Example:
-    Setting the same fixed modification - once for all peptides and once for only terminal for the protein.
-    The modification will thenbe applied twice.
-
+        There can be some edge-cases which are not defined yet.
+        Example:
+        Setting the same fixed modification - once for all peptides and once for only terminal for the protein.
+        The modification will then be applied twice.
     """
     mod_peptide = add_fixed_mods_terminal([peptide], kwargs['mods_fixed_terminal_prot'])
     mod_peptide = add_variable_mods_terminal(mod_peptide, kwargs['mods_variable_terminal_prot'])
@@ -382,8 +479,15 @@ def generate_peptides(peptide, **kwargs):
 
     return all_peptides
 
-def check_peptide(peptide, AAs):
-
+def check_peptide(peptide:str, AAs:set)->bool:
+    """
+    Check if the peptide contains non-AA letters.
+    Args:
+        peptide (str): peptide sequence.
+        AAs (set): the set of legal amino acids. See alphapept.constants.AAs
+    Returns:
+        bool: True if all letters in the peptide is the subset of AAs, otherwise False
+    """
     if set([_ for _ in peptide if _.isupper()]).issubset(AAs):
         return True
     else:
@@ -393,11 +497,17 @@ def check_peptide(peptide, AAs):
 from numba import njit
 from numba.typed import List
 import numpy as np
+import numba
 
 @njit
-def get_precmass(parsed_pep, mass_dict):
+def get_precmass(parsed_pep:list, mass_dict:numba.typed.Dict)->float:
     """
     Calculate the mass of the neutral precursor
+    Args:
+        parsed_pep (list or numba.typed.List of str): the list of amino acids and modified amono acids.
+        mass_dict (numba.typed.Dict): key is the amino acid or the modified amino acid, and the value is the mass.
+    Returns:
+        float: the peptide neutral mass.
     """
     tmass = mass_dict["H2O"]
     for _ in parsed_pep:
@@ -406,11 +516,19 @@ def get_precmass(parsed_pep, mass_dict):
     return tmass
 
 # Cell
+import numba
 
 @njit
-def get_fragmass(parsed_pep, mass_dict):
+def get_fragmass(parsed_pep:list, mass_dict:numba.typed.Dict)->tuple:
     """
     Calculate the masses of the fragment ions
+    Args:
+        parsed_pep (numba.typed.List of str): the list of amino acids and modified amono acids.
+        mass_dict (numba.typed.Dict): key is the amino acid or the modified amino acid, and the value is the mass.
+    Returns:
+        Tuple[np.ndarray(np.float64), np.ndarray(np.int8)]: the fragment masses and the fragment types (represented as np.int8).
+        For a fragment type, positive value means the b-ion, the value indicates the position (b1, b2, b3...); the negative value means
+        the y-ion, the absolute value indicates the position (y1, y2, ...).
     """
     n_frags = (len(parsed_pep) - 1) * 2
 
@@ -438,10 +556,17 @@ def get_fragmass(parsed_pep, mass_dict):
     return frag_masses, frag_type
 
 # Cell
-def get_frag_dict(parsed_pep, mass_dict):
-
+def get_frag_dict(parsed_pep:list, mass_dict:dict)->dict:
+    """
+    Calculate the masses of the fragment ions
+    Args:
+        parsed_pep (list or numba.typed.List of str): the list of amino acids and modified amono acids.
+        mass_dict (numba.typed.Dict): key is the amino acid or the modified amino acid, and the value is the mass.
+    Returns:
+        dict{str:float}: key is the fragment type (b1, b2, ..., y1, y2, ...), value is fragment mass.
+    """
     frag_dict = {}
-    frag_masses, frag_type = get_fragmass(parsed_pep, constants.mass_dict)
+    frag_masses, frag_type = get_fragmass(parsed_pep, mass_dict)
 
     for idx, _ in enumerate(frag_masses):
 
@@ -457,7 +582,15 @@ def get_frag_dict(parsed_pep, mass_dict):
 
 # Cell
 @njit
-def get_spectrum(peptide, mass_dict):
+def get_spectrum(peptide:str, mass_dict:numba.typed.Dict)->tuple:
+    """
+    Get neutral peptide mass, fragment masses and fragment types for a peptide
+    Args:
+        peptide (str): the (modified) peptide.
+        mass_dict (numba.typed.Dict): key is the amino acid or modified amino acid, and the value is the mass.
+    Returns:
+        Tuple[float, str, np.ndarray(np.float64), np.ndarray(np.int8)]: (peptide mass, peptide, fragment masses, fragment_types), for fragment types, see get_fragmass.
+    """
     parsed_peptide = parse(peptide)
 
     fragmasses, fragtypes = get_fragmass(parsed_peptide, mass_dict)
@@ -470,7 +603,17 @@ def get_spectrum(peptide, mass_dict):
     return (precmass, peptide, fragmasses, fragtypes)
 
 @njit
-def get_spectra(peptides, mass_dict):
+def get_spectra(peptides:numba.typed.List, mass_dict:numba.typed.Dict)->List:
+    """
+    Get neutral peptide mass, fragment masses and fragment types for a list of peptides
+    Args:
+        peptides (list of str): the (modified) peptide list.
+        mass_dict (numba.typed.Dict): key is the amino acid or modified amino acid, and the value is the mass.
+    Raises:
+        Unknown exception and pass.
+    Returns:
+        list of Tuple[float, str, np.ndarray(np.float64), np.ndarray(np.int8)]: See get_spectrum.
+    """
     spectra = List()
 
     for i in range(len(peptides)):
@@ -487,9 +630,13 @@ import os
 from glob import glob
 import logging
 
-def read_fasta_file(fasta_filename=""):
+def read_fasta_file(fasta_filename:str=""):
     """
     Read a FASTA file line by line
+    Args:
+        fasta_filename (str): fasta.
+    Yields:
+        dict {id:str, name:str, description:str, sequence:str}: protein information.
     """
     with open(fasta_filename, "rt") as handle:
         iterator = SeqIO.parse(handle, "fasta")
@@ -517,6 +664,10 @@ def read_fasta_file(fasta_filename=""):
 def read_fasta_file_entries(fasta_filename=""):
     """
     Function to count entries in fasta file
+    Args:
+        fasta_filename (str): fasta.
+    Returns:
+        int: number of entries.
     """
     with open(fasta_filename, "rt") as handle:
         iterator = SeqIO.parse(handle, "fasta")
@@ -531,9 +682,15 @@ def read_fasta_file_entries(fasta_filename=""):
         return count
 
 
-def check_sequence(element, AAs, verbose = False):
+def check_sequence(element:dict, AAs:set, verbose:bool = False)->bool:
     """
     Checks wheter a sequence from a FASTA entry contains valid AAs
+    Args:
+        element (dict): fasta entry of the protein information.
+        AAs (set): a set of amino acid letters.
+        verbose (bool): logging the invalid amino acids.
+    Returns:
+        bool: False if the protein sequence contains non-AA letters, otherwise True.
     """
     if not set(element['sequence']).issubset(AAs):
         unknown = set(element['sequence']) - set(AAs)
@@ -546,9 +703,16 @@ def check_sequence(element, AAs, verbose = False):
 
 
 # Cell
-def add_to_pept_dict(pept_dict, new_peptides, i):
+def add_to_pept_dict(pept_dict:dict, new_peptides:list, i:int)->tuple:
     """
     Add peptides to the peptide dictionary
+    Args:
+        pept_dict (dict): the key is peptide sequence, and the value is protein id list indicating where the peptide is from.
+        new_peptides (list): the list of peptides to be added to pept_dict.
+        i (int): the protein id where new_peptides are from.
+    Returns:
+        dict: same as the pept_dict in the arguments.
+        list (of str): the peptides from new_peptides that not in the pept_dict.
     """
     added_peptides = List()
     for peptide in new_peptides:
@@ -563,8 +727,14 @@ def add_to_pept_dict(pept_dict, new_peptides, i):
 
 # Cell
 
-def merge_pept_dicts(list_of_pept_dicts):
-
+def merge_pept_dicts(list_of_pept_dicts:list)->dict:
+    """
+    Merge a list of peptide dict into a single dict.
+    Args:
+        list_of_pept_dicts (list of dict): the key of the pept_dict is peptide sequence, and the value is protein id list indicating where the peptide is from.
+    Returns:
+        dict: the key is peptide sequence, and the value is protein id list indicating where the peptide is from.
+    """
     if len(list_of_pept_dicts) == 0:
         raise ValueError('Need to pass at least 1 element.')
 
@@ -584,9 +754,15 @@ def merge_pept_dicts(list_of_pept_dicts):
 # Cell
 from collections import OrderedDict
 
-def generate_fasta_list(fasta_paths, callback = None, **kwargs):
+def generate_fasta_list(fasta_paths:list, callback = None, **kwargs)->tuple:
     """
     Function to generate a database from a fasta file
+    Args:
+        fasta_paths (str or list of str): fasta path or a list of fasta paths.
+        callback (function, optional): callback function.
+    Returns:
+        fasta_list (list of dict): list of protein entry dict {id:str, name:str, description:str, sequence:str}.
+        fasta_dict (dict{int:dict}): the key is the protein id, the value is the protein entry dict.
     """
     fasta_list = []
 
@@ -616,9 +792,20 @@ def generate_fasta_list(fasta_paths, callback = None, **kwargs):
     return fasta_list, fasta_dict
 
 
-def generate_database(mass_dict, fasta_paths, callback = None, **kwargs):
+
+# Cell
+
+def generate_database(mass_dict:dict, fasta_paths:list, callback = None, **kwargs)->tuple:
     """
     Function to generate a database from a fasta file
+    Args:
+        mass_dict (dict): not used, will be removed in the future.
+        fasta_paths (str or list of str): fasta path or a list of fasta paths.
+        callback (function, optional): callback function.
+    Returns:
+        to_add (list of str): non-redundant (modified) peptides to be added.
+        pept_dict (dict{str:list of int}): the key is peptide sequence, and the value is protein id list indicating where the peptide is from.
+        fasta_dict (dict{int:dict}): the key is the protein id, the value is the protein entry dict {id:str, name:str, description:str, sequence:str}.
     """
     to_add = List()
     fasta_dict = OrderedDict()
@@ -653,10 +840,17 @@ def generate_database(mass_dict, fasta_paths, callback = None, **kwargs):
 
     return to_add, pept_dict, fasta_dict
 
+# Cell
 
-def generate_spectra(to_add, mass_dict, callback = None):
+def generate_spectra(to_add:list, mass_dict:dict, callback = None)->list:
     """
-    Function to generate a database from a fasta file
+    Function to generate spectra list database from a fasta file
+    Args:
+        to_add (list):
+        mass_dict (dict{str:float}): amino acid mass dict.
+        callback (function, optional): callback function. (Default: None)
+    Returns:
+        list (of tuple): list of (peptide mass, peptide, fragment masses, fragment_types), see get_fragmass.
     """
 
     if len(to_add) > 0:
@@ -679,13 +873,15 @@ def generate_spectra(to_add, mass_dict, callback = None):
     return spectra
 
 # Cell
-from multiprocessing import Pool
-from alphapept import constants
-mass_dict = constants.mass_dict
 
-def block_idx(len_list, block_size = 1000):
+def block_idx(len_list:int, block_size:int = 1000)->list:
     """
-    Create indices for a list of length len_list
+    Helper function to split length into blocks
+    Args:
+        len_list (int): list length.
+        block_size (int, optional, default 1000): size per block.
+    Returns:
+        list[(int, int)]: list of (start, end) positions of blocks.
     """
     blocks = []
     start = 0
@@ -698,16 +894,28 @@ def block_idx(len_list, block_size = 1000):
 
     return blocks
 
-def blocks(l, n):
+def blocks(l:int, n:int)->tuple:
     """
-    Create blocks from a given list
+    Helper function to reate blocks from a given list
+    Args:
+        l (list): the list
+        n (int): size per block
+    Returns:
+        tuple: tuple of split blocks
     """
     n = max(1, n)
     return (l[i:i+n] for i in range(0, len(l), n))
 
-def digest_fasta_block(to_process):
+# Cell
+
+from multiprocessing import Pool
+from alphapept import constants
+mass_dict = constants.mass_dict
+
+#This function is a wrapper function and to be tested by the integration test
+def digest_fasta_block(to_process:tuple)-> (list, dict):
     """
-    Digest and create spectra for a whole fasta_block
+    Digest and create spectra for a whole fasta_block for multiprocessing. See generate_database_parallel.
     """
 
     fasta_index, fasta_block, settings = to_process
@@ -732,15 +940,24 @@ def digest_fasta_block(to_process):
 
     return (spectra, pept_dict)
 
-import alphapept.speed
+import alphapept.performance
 
-def generate_database_parallel(settings, callback = None):
+#This function is a wrapper function and to be tested by the integration test
+def generate_database_parallel(settings:dict, callback = None):
     """
-    Function to generate a database from a fasta file
+    Function to generate a database from a fasta file in parallel.
+    Args:
+        settings: alphapept settings.
+    Returns:
+        list: theoretical spectra. See generate_spectra()
+        dict: peptide dict. See add_to_pept_dict()
+        dict: fasta_dict. See generate_fasta_list()
     """
-    n_processes = settings['general']['n_processes']
 
-    n_processes = alphapept.speed.set_max_process(n_processes)
+    n_processes = alphapept.performance.set_worker_count(
+        worker_count=settings['general']['n_processes'],
+        set_global=False
+    )
 
     fasta_list, fasta_dict = generate_fasta_list(fasta_paths = settings['experiment']['fasta_paths'], **settings['fasta'])
 
@@ -769,9 +986,10 @@ def generate_database_parallel(settings, callback = None):
     return spectra_set, pept_dict, fasta_dict
 
 # Cell
-def pept_dict_from_search(settings):
+#This function is a wrapper function and to be tested by the integration test
+def pept_dict_from_search(settings:dict):
     """
-    Generates a peptide dict from a large search
+    Generates a peptide dict from a large search.
     """
 
     paths = settings['experiment']['file_paths']
@@ -814,9 +1032,13 @@ def pept_dict_from_search(settings):
 import alphapept.io
 import pandas as pd
 
-def save_database(spectra, pept_dict, fasta_dict, database_path, **kwargs):
+def save_database(spectra:list, pept_dict:dict, fasta_dict:dict, database_path:str, **kwargs):
     """
-    Function to save a database to the *.hdf format.
+    Function to save a database to the *.hdf format. Write the database into hdf.
+    Args:
+        spectra (list): list: theoretical spectra. See generate_spectra()
+        pept_dict (dict): peptide dict. See add_to_pept_dict()
+        fasta_dict (dict): fasta_dict. See generate_fasta_list()
     """
 
     precmasses, seqs, fragmasses, fragtypes = zip(*spectra)
@@ -884,7 +1106,15 @@ def save_database(spectra, pept_dict, fasta_dict, database_path, **kwargs):
 # Cell
 import collections
 
-def read_database(database_path:str, array_name:str=None):
+def read_database(database_path:str, array_name:str=None)->dict:
+    """
+    Read database from hdf file.
+    Args:
+        database_path (str): hdf database file generate by alphapept.
+        array_name (str): the dataset name to read
+    return:
+        dict: key is the dataset_name in hdf file, value is the python object read from the dataset_name
+    """
     db_file = alphapept.io.HDF_File(database_path)
     if array_name is None:
         db_data = {
