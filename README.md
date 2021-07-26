@@ -7,10 +7,16 @@
 ![Performance test](https://github.com/MannLabs/alphapept/workflows/Performance%20test/badge.svg)
 ![Windows Installer](https://github.com/MannLabs/alphapept/workflows/Windows%20Installer/badge.svg)
 
+[![DOI:10.1101/2021.07.23.453379](http://img.shields.io/badge/DOI-10.1101/2021.07.23.453379-B31B1B.svg)](https://www.biorxiv.org/content/10.1101/2021.07.23.453379v1)
+
 # AlphaPept
 ![](https://i.imgur.com/xkFtDff.jpg)
  > A modular, python-based framework to analyze mass spectrometry data. Powered by nbdev. Supercharged with numba.
 
+
+## Preprint
+
+Our preprint **AlphaPept, a modern and open framework for MS-based proteomics** is now available [here.](https://www.biorxiv.org/content/10.1101/2021.07.23.453379v1)
 
 ## Documentation
 
@@ -197,3 +203,19 @@ Within the notebooks, we try to cover most aspects of a proteomics workflow:
 
 ## Contributing
 If you have a feature request or a bug report, please post it as an issue on the GitHub issue tracker. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started [here](https://mannlabs.github.io/alphapept/contributing.html). We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects-page on GitHub. You can also contact us via opensource@alphapept.com.
+
+## Cite us
+
+```
+@article {Strauss2021.07.23.453379,
+	author = {Strauss, Maximilian T and Bludau, Isabell and Zeng, Wen-Feng and Voytik, Eugenia and Ammar, Constantin and Schessner, Julia and Ilango, Rajesh and Gill, Michelle and Meier, Florian and Willems, Sander and Mann, Matthias},
+	title = {AlphaPept, a modern and open framework for MS-based proteomics},
+	elocation-id = {2021.07.23.453379},
+	year = {2021},
+	doi = {10.1101/2021.07.23.453379},
+	publisher = {Cold Spring Harbor Laboratory},
+	URL = {https://www.biorxiv.org/content/early/2021/07/26/2021.07.23.453379},
+	eprint = {https://www.biorxiv.org/content/early/2021/07/26/2021.07.23.453379.full.pdf},
+	journal = {bioRxiv}
+}
+```
