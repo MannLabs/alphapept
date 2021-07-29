@@ -18,6 +18,10 @@
 
 Our preprint **AlphaPept, a modern and open framework for MS-based proteomics** is now available [here.](https://www.biorxiv.org/content/10.1101/2021.07.23.453379v1)
 
+Be sure to check out other packages of our ecosystem:
+- [alphatims](https://github.com/MannLabs/alphatims): Fast access to TimsTOF data.
+- [alphamap](https://github.com/MannLabs/alphamap): Peptide level MS data exploration.
+
 ## Documentation
 
 The documentation is automatically built based on the jupyter notebooks (nbs/index.ipynb) and can be found [here](https://mannlabs.github.io/alphapept/):
@@ -124,7 +128,7 @@ For the [windows installation](https://github.com/MannLabs/alphapept/releases/la
 
 Once AlphaPept is correctly installed, you can use it like any other python module.
 
-```
+```python
 from alphapept.fasta import get_frag_dict, parse
 from alphapept import constants
 
