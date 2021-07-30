@@ -281,8 +281,8 @@ def experiment():
                 raw_files = [_ for _ in raw_files if _ not in exclude]
 
                 file_df = file_df_from_files(raw_files, file_folder)
-                file_df["Fraction"] = ""
-                file_df["Matching group"] = ""
+                #file_df["Fraction"] = ""
+                #file_df["Matching group"] = ""
 
                 gb = GridOptionsBuilder.from_dataframe(file_df)
                 gb.configure_default_column(
@@ -338,12 +338,13 @@ def experiment():
                     os.path.join(file_folder, _)
                     for _ in file_df_selected["Filename"].values.tolist()
                 ]
-                recorder["experiment"]["fractions"] = file_df_selected[
-                    "Fraction"
-                ].values.tolist()
-                recorder["experiment"]["matching_groups"] = file_df_selected[
-                    "Matching group"
-                ].values.tolist()
+
+                #recorder["experiment"]["fractions"] = file_df_selected[
+                #    "Fraction"
+                #].values.tolist()
+                #recorder["experiment"]["matching_groups"] = file_df_selected[
+                #    "Matching group"
+                #].values.tolist()
 
                 st.write(f"## Workflow")
 

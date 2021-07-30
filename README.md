@@ -175,18 +175,6 @@ settings = load_settings('new_settings.yaml')
 r = alphapept.interface.run_complete_workflow(settings)
 ```
 
-## Dockerization
-
-We provide a dockerfile to show how to run AlphaPept in a containerized environment. This allows building powerful pipelines e.g. with AWS Batch. The dockerfile will launch the browser-based GUI. 
-
-1. Install docker
-2. Build the dockerfile with `docker build -t docker-alphapept:latest .` This took approximately ~10 minutes on a 2019 MacBookPro)
-3. Run the container `docker run -p 8501:8501 -v /Users/mstrauss/Desktop/docker:/home/alphapept/ docker-alphapept:latest alphapept gui`
-
-Notes: 
-`-p 8501:8501` forwards the streamlit port to the same port on your machine. You can access AlphaPept via `localhost:8501`
-`-v /Users/mstrauss/Desktop/docker:/shared_folder/` mounts the volume to your docker container. E.g., in this case, the local `docker`-folder on the Desktop can be accessed via `/shared_folder/`.
-
 ## Notebooks
 
 Within the notebooks, we try to cover most aspects of a proteomics workflow:
