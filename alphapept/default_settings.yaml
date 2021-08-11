@@ -65,9 +65,9 @@ features:
   map_n_neighbors: 5
   search_unidentified: false
 search:
-  prec_tol: 30
-  frag_tol: 30
-  min_frag_hits: 7
+  prec_tol: 50
+  frag_tol: 50
+  min_frag_hits: 6
   ppm: true
   calibrate: true
   calibration_std: 3
