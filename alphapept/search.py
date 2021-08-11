@@ -941,7 +941,7 @@ def search_db(to_process:tuple, callback:Callable = None, parallel:bool=False, f
                 logging.info(f'{e}')
 
             try:
-                fragment_std = float(ms_file_.read(group_name = "first_search", dataset_name="fragment_calibration", attr_name="estimated_max_fragment_ppm"))
+                fragment_std = float(ms_file_.read(dataset_name="estimated_max_fragment_ppm")[0])
                 skip = False
                 settings['search']['frag_tol_calibrated'] = fragment_std*settings['search']['calibration_std']
                 calib = settings['search']['frag_tol_calibrated']
