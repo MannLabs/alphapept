@@ -282,7 +282,7 @@ def calibrate_hdf(
                 dataset_name="corrected_fragment_mzs",
             )
 
-            ms_file_.write(std_offset, dataset_name="estimated_max_fragment_ppm")
+            ms_file_.write(std_offset, group_name = "first_search", dataset_name="fragment_calibration", attr_name="estimated_max_fragment_ppm")
 
         return True
     except Exception as e:

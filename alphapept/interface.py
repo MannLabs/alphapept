@@ -378,8 +378,9 @@ def search_data(
                 frag_tols = [
                     alphapept.io.MS_Data_File(
                         ms_file_name
-                    ).read(dataset_name="estimated_max_fragment_ppm") * settings['search']['calibration_std'] for ms_file_name in ms_files
+                    ).read(group_name = "first_search", dataset_name="fragment_calibration", attr_name="estimated_max_fragment_ppm") * settings['search']['calibration_std'] for ms_file_name in ms_files
                 ]
+
             except KeyError:
                 logging.info('Fragment tolerance not calibrated found.')
                 frag_tols = None
