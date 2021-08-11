@@ -171,7 +171,10 @@ def get_calibration(
         corrected_mass = (1-y_hat/1e6) * features['mass_matched']
 
         y_hat_std = y_hat.std()
-        return corrected_mass, y_hat_std
+
+        mad_offset = np.median(np.absolute(y_hat - np.median(y_hat)))
+
+        return corrected_mass, y_hat_std, mad_offset
 
 
     else:
@@ -222,7 +225,7 @@ def calibrate_hdf(
                 verbose=False,
                 **settings["search"]
             )
-            corrected_mass, prec_offset_ppm_std = get_calibration(
+            corrected_mass, std, prec_offset_ppm_std = get_calibration(
                 df,
                 features,
                 **settings["calibration"]
@@ -267,6 +270,8 @@ def calibrate_hdf(
             delta_ppm = ((ions['db_mass'] - ions['ion_mass'])/((ions['db_mass'] + ions['ion_mass'])/2)*1e6).values
             median_offset = -np.median(delta_ppm)
             std_offset = np.std(delta_ppm)
+            mad_offset = np.median(np.absolute(delta_ppm - np.median(delta_ppm)))
+
             mass_list_ms2 = ms_file_.read(dataset_name = 'mass_list_ms2', group_name = "Raw/MS2_scans")
 
             try:
@@ -276,14 +281,14 @@ def calibrate_hdf(
 
             offset += median_offset
 
-            logging.info(f'Median fragment offset {median_offset:.2f} - std {std_offset:.2f} ppm')
+            logging.info(f'Median fragment offset {median_offset:.2f} - std {std_offset:.2f} ppm - mad {mad_offset:.2f} ppm')
 
             ms_file_.write(
                 offset,
                 dataset_name="corrected_fragment_mzs",
             )
 
-            ms_file_.write(np.array([std_offset]), dataset_name="estimated_max_fragment_ppm")
+            ms_file_.write(np.array([mad_offset]), dataset_name="estimated_max_fragment_ppm")
 
         return True
     except Exception as e:
