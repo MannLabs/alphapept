@@ -229,6 +229,7 @@ def get_psms(
     min_frag_hits: int,
     callback: Callable = None,
     prec_tol_calibrated:float = None,
+    frag_tol_calibrated:float = None,
     **kwargs
 )->(np.ndarray, int):
     """[summary]
@@ -244,6 +245,7 @@ def get_psms(
         min_frag_hits (int): Minimum number of frag hits to report a PSMs.
         callback (Callable, optional): Optional callback. Defaults to None.
         prec_tol_calibrated (float, optional): Precursor tolerance if calibration exists. Defaults to None.
+        frag_tol_calibrated (float, optional): Fragment tolerance if calibration exists. Defaults to None.
 
     Returns:
         np.ndarray: Numpy recordarray storing the PSMs.
@@ -262,6 +264,9 @@ def get_psms(
     query_indices = query_data["indices_ms2"]
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
+
+    if frag_tol_calibrated:
+        frag_tol = frag_tol_calibrated
 
     if features is not None:
         if prec_tol_calibrated:
@@ -928,7 +933,6 @@ def search_db(to_process:tuple, callback:Callable = None, parallel:bool=False, f
                 if calibration == 0:
                     logging.info('Calibration is 0, skipping second database search.')
                     skip = True
-
                 else:
                     settings['search']['prec_tol_calibrated'] = calibration*settings['search']['calibration_std']
                     calib = settings['search']['prec_tol_calibrated']
@@ -936,6 +940,14 @@ def search_db(to_process:tuple, callback:Callable = None, parallel:bool=False, f
             except KeyError as e:
                 logging.info(f'{e}')
 
+            try:
+                fragment_std = float(ms_file_.read(dataset_name='estimated_max_fragment_ppm'))
+                skip = False
+                settings['search']['frag_tol_calibrated'] = fragment_std*settings['search']['calibration_std']
+                calib = settings['search']['frag_tol_calibrated']
+                logging.info(f"Found calibrated frag_tol with value {calib:.2f}")
+            except KeyError as e:
+                logging.info(f'{e}')
 
         if not skip:
             db_data_path = settings['experiment']['database_path']
@@ -1123,12 +1135,14 @@ def filter_top_n(temp:pd.DataFrame, top_n:int = 10)-> pd.DataFrame:
 # Cell
 
 #This function is a wrapper and ist tested by the quick_test
-def search_parallel(settings: dict, calibration:Union[list, None] = None, callback: Union[Callable, None] = None) -> dict:
+def search_parallel(settings: dict, calibration:Union[list, None] = None, fragment_calibration:Union[list, None] = None, callback: Union[Callable, None] = None) -> dict:
     """Function to search multiple ms_data files in parallel.
+    This function will additionally calculate fragments and precursor masses from a given FASTA file.
 
     Args:
         settings (dict): Settings file containg the experimental definitions.
-        calibration (Union[list, None], optional): List of calibrated offsets.. Defaults to None.
+        calibration (Union[list, None], optional): List of calibrated offsets. Defaults to None.
+        fragment_calibration (Union[list, None], optional): List of calibrated fragment offsets. Defaults to None.
         callback (Union[Callable, None], optional): Callback function. Defaults to None.
 
     Returns:
@@ -1152,6 +1166,10 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, callba
             custom_settings.append(settings_)
     else:
         custom_settings = [settings for _ in ms_file_path]
+
+
+    for idx, _ in enumerate(fragment_calibration):
+        custom_settings[idx]["search"]["frag_tol_calibrated"] = _
 
 
     logging.info(f"Number of FASTA entries: {len(fasta_list):,} - FASTA settings {settings['fasta']}")

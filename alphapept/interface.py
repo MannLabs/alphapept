@@ -374,11 +374,23 @@ def search_data(
                 logging.info('No calibration found.')
                 offsets = None
 
+            try:
+                frag_tols = [
+                    alphapept.io.MS_Data_File(
+                        ms_file_name
+                    ).read(dataset_name="estimated_max_fragment_ppm") * settings['search']['calibration_std'] for ms_file_name in ms_files
+                ]
+            except KeyError:
+                logging.info('Fragment tolerance not calibrated found.')
+                frag_tols = None
+
+
             logging.info('Starting second search.')
 
             fasta_dict = alphapept.search.search_parallel(
                 settings,
                 calibration=offsets,
+                fragment_calibration=frag_tols,
                 callback=cb
             )
             pept_dict = None

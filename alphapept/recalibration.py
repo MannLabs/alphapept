@@ -282,6 +282,8 @@ def calibrate_hdf(
                 dataset_name="corrected_fragment_mzs",
             )
 
+            ms_file_.write(std_offset, dataset_name="estimated_max_fragment_ppm")
+
         return True
     except Exception as e:
         logging.error(f'Calibration of file {ms_file} failed. Exception {e}.')
