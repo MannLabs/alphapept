@@ -228,7 +228,7 @@ def get_psms(
     ppm: bool,
     min_frag_hits: int,
     callback: Callable = None,
-    m_offset_calibrated:float = None,
+    prec_tol_calibrated:float = None,
     **kwargs
 )->(np.ndarray, int):
     """[summary]
@@ -243,7 +243,7 @@ def get_psms(
         ppm (bool): Flag to use ppm instead of Dalton.
         min_frag_hits (int): Minimum number of frag hits to report a PSMs.
         callback (Callable, optional): Optional callback. Defaults to None.
-        m_offset_calibrated (float, optional): Precursor tolerance if calibration exists. Defaults to None.
+        prec_tol_calibrated (float, optional): Precursor tolerance if calibration exists. Defaults to None.
 
     Returns:
         np.ndarray: Numpy recordarray storing the PSMs.
@@ -264,8 +264,8 @@ def get_psms(
     query_ints = query_data['int_list_ms2']
 
     if features is not None:
-        if m_offset_calibrated:
-            prec_tol = m_offset_calibrated
+        if prec_tol_calibrated:
+            prec_tol = prec_tol_calibrated
             query_masses = features['corrected_mass'].values
         else:
             query_masses = features['mass_matched'].values
@@ -292,8 +292,8 @@ def get_psms(
         )
         query_indices = indices
     else:
-        if m_offset_calibrated:
-            prec_tol = m_offset_calibrated
+        if prec_tol_calibrated:
+            prec_tol = prec_tol_calibrated
 
         query_masses = query_data['prec_mass_list2']
         query_mz = query_data['mono_mzs2']
@@ -629,7 +629,7 @@ def get_score_columns(
     frag_tol:float,
     prec_tol:float,
     ppm:bool,
-    m_offset_calibrated:Union[None, float]=None,
+    prec_tol_calibrated:Union[None, float]=None,
     **kwargs
 ) -> (np.ndarray, np.ndarray):
     """Wrapper function to extract score columns.
@@ -643,7 +643,7 @@ def get_score_columns(
         frag_tol (float): Fragment tolerance for search.
         prec_tol (float): Precursor tolerance for search.
         ppm (bool): Flag to use ppm instead of Dalton.
-        m_offset_calibrated (Union[None, float], optional): Calibrated offset mass. Defaults to None.
+        prec_tol_calibrated (Union[None, float], optional): Calibrated offset mass. Defaults to None.
 
     Returns:
         np.recarray: Recordarray containing PSMs with additional columns.
@@ -685,7 +685,7 @@ def get_score_columns(
             db_ints = None
 
     if features is not None:
-        if m_offset_calibrated:
+        if prec_tol_calibrated:
             query_masses = features['corrected_mass'].values
         else:
             query_masses = features['mass_matched'].values
@@ -930,8 +930,8 @@ def search_db(to_process:tuple, callback:Callable = None, parallel:bool=False, f
                     skip = True
 
                 else:
-                    settings['search']['m_offset_calibrated'] = calibration*settings['search']['calibration_std']
-                    calib = settings['search']['m_offset_calibrated']
+                    settings['search']['prec_tol_calibrated'] = calibration*settings['search']['calibration_std']
+                    calib = settings['search']['prec_tol_calibrated']
                     logging.info(f"Found calibrated prec_tol with value {calib:.2f}")
             except KeyError as e:
                 logging.info(f'{e}')
@@ -1148,7 +1148,7 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, callba
         custom_settings = []
         for _ in calibration:
             settings_ = copy.deepcopy(settings)
-            settings_["search"]["m_offset_calibrated"] = _
+            settings_["search"]["prec_tol_calibrated"] = _
             custom_settings.append(settings_)
     else:
         custom_settings = [settings for _ in ms_file_path]

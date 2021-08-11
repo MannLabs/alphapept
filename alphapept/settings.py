@@ -37,7 +37,7 @@ def load_settings_as_template(path: str):
         if _ in settings:
             settings.pop(_)
 
-    _ = 'm_offset_calibrated'
+    _ = 'prec_tol_calibrated'
     if 'search' in settings:
         if _ in settings['search']:
             settings['search'].pop(_)
