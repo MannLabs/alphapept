@@ -398,7 +398,7 @@ search:
     type: spinbox
     min: 1
     max: 500
-    default: 50
+    default: 30
     description: Precursor mass offset.
   frag_tol:
     type: spinbox
