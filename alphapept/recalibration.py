@@ -179,7 +179,10 @@ def get_calibration(
 
     else:
         logging.info('Not enough data points present. Skipping recalibration.')
-        return features['mass_matched'], np.abs(df['prec_offset_ppm'].std())
+
+        mad_offset = np.median(np.absolute(df['prec_offset_ppm'].values - np.median(df['prec_offset_ppm'].values)))
+
+        return features['mass_matched'], np.abs(df['prec_offset_ppm'].std()), mad_offset
 
 # Cell
 

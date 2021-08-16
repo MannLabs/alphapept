@@ -66,7 +66,7 @@ features:
   search_unidentified: false
 search:
   prec_tol: 30
-  frag_tol: 50
+  frag_tol: 30
   min_frag_hits: 6
   ppm: true
   calibrate: true
