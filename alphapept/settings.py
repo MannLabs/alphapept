@@ -9,13 +9,13 @@ def print_settings(settings: dict):
     """Print a yaml settings file
 
     Args:
-        settings (dict): A yaml dictionary
+        settings (dict): A yaml dictionary.
     """
     print(yaml.dump(settings, default_flow_style=False))
 
 
 def load_settings(path: str):
-    """Load a yaml settings file
+    """Load a yaml settings file.
 
     Args:
         path (str): Path to the settings file.
@@ -46,10 +46,10 @@ def load_settings_as_template(path: str):
 
 
 def save_settings(settings: dict, path: str):
-    """Save settings file to path
+    """Save settings file to path.
 
     Args:
-        settings (dict): A yaml dictionary
+        settings (dict): A yaml dictionary.
         path (str): Path to the settings file.
     """
     with open(path, "w") as file:
