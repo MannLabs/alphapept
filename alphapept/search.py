@@ -565,7 +565,7 @@ def score(
         frag_type = frag_types[db_indices[db_idx]:db_indices[db_idx+1]]
 
         if db_ints is None:
-            db_int = np.zeros(len(db_frag))
+            db_int = np.ones(len(db_frag))
         else:
             db_int = db_ints[i]
 
@@ -583,7 +583,7 @@ def score(
         psms_['total_int'][i] = np.sum(query_int)
         psms_['matched_int'][i] = np.sum(ions[:,2])
         psms_['matched_int_ratio'][i] = psms_['matched_int'][i] / psms_['total_int'][i]
-        psms_['int_ratio'][i] = np.mean(ions[:,3]/ions[:,2])
+        psms_['int_ratio'][i] = np.mean(ions[:,2]/ions[:,3]) #3 is db_int, 2 is query_int
 
         psms_['b_hits'][i] = np.sum(ions[ions[:,1]==0][:,0]>0)
         psms_['y_hits'][i] = np.sum(ions[ions[:,1]==0][:,0]<0)
