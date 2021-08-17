@@ -333,6 +333,12 @@ def experiment():
                 )
                 recorder["experiment"]["fasta_paths"] = selection
 
+                #TODO
+
+                if len(recorder["experiment"]["fasta_paths"]) == 0:
+                    st.warning(f"Warning: No FASTA files selected.")
+                    error += 1
+
                 recorder["experiment"]["shortnames"] = shortnames
                 recorder["experiment"]["file_paths"] = [
                     os.path.join(file_folder, _)
