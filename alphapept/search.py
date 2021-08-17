@@ -699,7 +699,7 @@ def get_score_columns(
 
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
-        query_charges = query_charges[features['query_idx'].values]
+        query_charges = features['charge_matched'].values
         query_scans = query_scans[features['query_idx'].values]
 
         if bruker:
