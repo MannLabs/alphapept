@@ -279,8 +279,11 @@ def extract_mzml_info(input_dict: dict) -> tuple:
     ms_order = input_dict.get('ms level')
     prec_mass = mono_mz = charge = 0
     if ms_order == 2:
-        charge = int(input_dict.get('precursorList').get('precursor')[0].get('selectedIonList').get('selectedIon')[0].get(
+        try:
+            charge = int(input_dict.get('precursorList').get('precursor')[0].get('selectedIonList').get('selectedIon')[0].get(
                 'charge state'))
+        except TypeError:
+            charge = 0
         mono_mz = input_dict.get('precursorList').get('precursor')[0].get('selectedIonList').get('selectedIon')[0].get(
                 'selected ion m/z')
         prec_mass = calculate_mass(mono_mz, charge)
@@ -356,7 +359,7 @@ def load_mzml_data(
         except SystemExit as e:
             raise e
         except Exception as e:
-            logging.info(f"Bad scan={i} in mzML file '{filename}'")
+            logging.info(f"Bad scan={i} in mzML file '{filename}' {e}")
 
         if callback:
             callback((idx+1)/len(spec_indices))
