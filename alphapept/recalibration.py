@@ -228,7 +228,7 @@ def calibrate_hdf(
                 verbose=False,
                 **settings["search"]
             )
-            corrected_mass, std, prec_offset_ppm_std = get_calibration(
+            corrected_mass, prec_offset_ppm_std, prec_offset_ppm_mad = get_calibration(
                 df,
                 features,
                 **settings["calibration"]
