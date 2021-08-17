@@ -44,7 +44,7 @@ def parse_folder(file_folder: str) -> (list, list, list):
     raw_files = [
         _
         for _ in os.listdir(file_folder)
-        if _.lower().endswith(".raw") or _.lower().endswith(".d")
+        if _.lower().endswith(".raw") or _.lower().endswith(".d") or _.lower().endswith(".mzml")
     ]
     fasta_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith(".fasta")]
     db_files = [
