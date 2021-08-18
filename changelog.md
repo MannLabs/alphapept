@@ -10,3 +10,4 @@ Last change: 17-AUG-2021, MTS
 * Fixed a bug in how `int_ratio` is calculated in first_search
 * Enabled handling of `mzML`-files in GUI / Core
 * Improved Documentation
+* Ion export for search parallel
