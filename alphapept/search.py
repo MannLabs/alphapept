@@ -1167,9 +1167,9 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
     else:
         custom_settings = [settings for _ in ms_file_path]
 
-
-    for idx, _ in enumerate(fragment_calibration):
-        custom_settings[idx]["search"]["frag_tol_calibrated"] = _
+    if fragment_calibration:
+        for idx, _ in enumerate(fragment_calibration):
+            custom_settings[idx]["search"]["frag_tol_calibrated"] = _
 
 
     logging.info(f"Number of FASTA entries: {len(fasta_list):,} - FASTA settings {settings['fasta']}")
