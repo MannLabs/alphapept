@@ -375,10 +375,10 @@ def search_data(
                 offsets = None
 
             try:
-                frag_tols = [
+                frag_tols = [float(
                     alphapept.io.MS_Data_File(
                         ms_file_name
-                    ).read(float(ms_file_.read(dataset_name="estimated_max_fragment_ppm")[0])) * settings['search']['calibration_std'] for ms_file_name in ms_files
+                    ).read(dataset_name="estimated_max_fragment_ppm")[0] * settings['search']['calibration_std']) for ms_file_name in ms_files
                 ]
 
             except KeyError:
