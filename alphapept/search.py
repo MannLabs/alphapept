@@ -3,7 +3,7 @@
 __all__ = ['compare_frags', 'ppm_to_dalton', 'get_idxs', 'compare_spectrum_parallel', 'query_data_to_features',
            'get_psms', 'frag_delta', 'intensity_fraction', 'add_column', 'remove_column', 'get_hits', 'score',
            'LOSS_DICT', 'LOSSES', 'get_sequences', 'get_score_columns', 'plot_psms', 'store_hdf', 'search_db',
-           'search_fasta_block', 'mass_dict', 'filter_top_n', 'search_parallel']
+           'search_fasta_block', 'mass_dict', 'filter_top_n', 'ion_extractor', 'search_parallel']
 
 # Cell
 import logging
@@ -636,7 +636,7 @@ def get_score_columns(
     prec_tol:float,
     ppm:bool,
     prec_tol_calibrated:Union[None, float]=None,
-    ion_list:bool=False,
+    frag_tol_calibrated:float = None,
     **kwargs
 ) -> (np.ndarray, np.ndarray):
     """Wrapper function to extract score columns.
@@ -651,7 +651,7 @@ def get_score_columns(
         prec_tol (float): Precursor tolerance for search.
         ppm (bool): Flag to use ppm instead of Dalton.
         prec_tol_calibrated (Union[None, float], optional): Calibrated offset mass. Defaults to None.
-        ion_list (bool): Flag to return ions as list.
+        frag_tol_calibrated (float, optional): Fragment tolerance if calibration exists. Defaults to None.
 
     Returns:
         np.recarray: Recordarray containing PSMs with additional columns.
@@ -663,6 +663,9 @@ def get_score_columns(
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
     query_scans = query_data['scan_list_ms2']
+
+    if frag_tol_calibrated:
+        frag_tol = frag_tol_calibrated
 
     if 'prec_id2' in query_data.keys():
         bruker = True
@@ -754,10 +757,7 @@ def get_score_columns(
         ppm,
         psms_dtype)
 
-    if not ion_list:
-        ions_ = np.vstack(ions)
-    else:
-        ions_ = np.array(ions, dtype='object')
+    ions_ = np.vstack(ions)
 
     for _ in psms_.dtype.names:
         psms = add_column(psms, psms_[_], _)
@@ -1014,7 +1014,6 @@ def search_fasta_block(to_process:tuple) -> (list, int):
     to_add = List()
 
     psms_container = [list() for _ in ms_files]
-    ion_container = [list() for _ in ms_files]
 
     f_index = 0
 
@@ -1088,7 +1087,7 @@ def search_fasta_block(to_process:tuple) -> (list, int):
 
                 if len(psms) > 0:
                     #This could be speed up..
-                    psms, ions = get_score_columns(psms, query_data, db_data, features, ion_list=True, **settings[file_idx]["search"])
+                    psms, ions = get_score_columns(psms, query_data, db_data, features, **settings[file_idx]["search"])
 
                     fasta_indices = [set(x for x in pept_dict[_]) for _ in psms['sequence']]
 
@@ -1096,9 +1095,8 @@ def search_fasta_block(to_process:tuple) -> (list, int):
                     psms_df['fasta_index'] = fasta_indices
 
                     psms_container[file_idx].append(psms_df)
-                    ion_container[file_idx].append(ions)
 
-    return psms_container, ion_container, len(to_add)
+    return psms_container, len(to_add)
 
 # Cell
 
@@ -1137,6 +1135,60 @@ def filter_top_n(temp:pd.DataFrame, top_n:int = 10)-> pd.DataFrame:
 
 # Cell
 import psutil
+
+
+def ion_extractor(df: pd.DataFrame, ms_file, frag_tol:float, ppm:bool)->(np.ndarray, np.ndarray):
+    """Extracts the matched hits (ions) from a dataframe.
+
+    Args:
+        df (pd.DataFrame): Pandas dataframe containing the results of the first search.
+        ms_file : MsFile
+        frag_tol (float): Fragment tolerance for search.
+        ppm (bool): Flag to use ppm instead of Dalton.
+
+    Returns:
+        np.ndarray: Numpy recordarray storing the PSMs.
+        np.ndarray: Numpy recordarray storing the ions.
+    """
+
+    query_data = ms_file.read_DDA_query_data()
+    query_indices = query_data["indices_ms2"]
+    query_frags = query_data['mass_list_ms2']
+    query_ints = query_data['int_list_ms2']
+
+    psms = df.to_records()
+
+    ion_count = 0
+
+    ions_ = List()
+
+    for i in range(len(psms)):
+        query_idx = psms[i]["raw_idx"]
+        db_idx = psms[i]["db_idx"]
+        query_idx_start = query_indices[query_idx]
+        query_idx_end = query_indices[query_idx + 1]
+        query_frag = query_frags[query_idx_start:query_idx_end]
+        query_int = query_ints[query_idx_start:query_idx_end]
+
+        seq = psms[i]['sequence']
+
+        db_frag, frag_type = get_fragmass(parse(seq), constants.mass_dict)
+        db_int = np.ones_like(db_frag)
+
+        ions = get_hits(query_frag, query_int, db_frag, db_int, frag_type, frag_tol, ppm, LOSSES)
+
+        n_ions = len(ions)
+
+        psms['n_ions'][i] = n_ions
+        psms['ion_idx'][i] = ion_count
+
+        ion_count += n_ions
+        ions_.append(ions)
+
+    ions_ = np.vstack(ions_)
+
+    return psms, ions_
+
 
 #This function is a wrapper and ist tested by the quick_test
 def search_parallel(settings: dict, calibration:Union[list, None] = None, fragment_calibration:Union[list, None] = None, callback: Union[Callable, None] = None) -> dict:
@@ -1181,7 +1233,7 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
 
     memory_available = psutil.virtual_memory().available/1024**3
 
-    n_processes = int(memory_available // 4 )
+    n_processes = int(memory_available // 2 )
 
     logging.info(f'Setting Process limit to {n_processes}')
 
@@ -1201,7 +1253,7 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
     with alphapept.performance.AlphaPool(n_processes) as p:
         max_ = len(to_process)
 
-        for i, (psm_container, ion_container, n_seqs) in enumerate(p.imap_unordered(search_fasta_block, to_process)):
+        for i, (psm_container, n_seqs) in enumerate(p.imap_unordered(search_fasta_block, to_process)):
             n_seqs_ += n_seqs
 
             logging.info(f'Block {i+1} of {max_} complete - {((i+1)/max_*100):.2f} % - created peptides {n_seqs:,} ')
@@ -1216,38 +1268,33 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
                     else:
                         df_cache[ms_file_path[j]] = psms
 
-                ion_output = []
-                for _ in ion_container[j]:
-                     ion_output.extend(_)
-                if len(ion_output) > 0:
-                    ions = np.vstack(ion_output)
-                    if ms_file_path[j] in ion_cache:
-                        ion_ = np.vstack([ion_cache[ms_file_path[j]], ions])[selector]
-                        ion_cache[ms_file_path[j]] = ion_
-                    else:
-                        ion_cache[ms_file_path[j]] = ions
-
-                print(f"Length of ion cache {len(ion_cache[ms_file_path[j]])} - {ms_file_path[j]}")
-
             if callback:
                 callback((i+1)/max_)
 
-    for _ in ms_file_path:
+    for idx, _ in enumerate(ms_file_path):
         if _ in df_cache:
             x = df_cache[_]
-            ions = ion_cache[_]
             ms_file = alphapept.io.MS_Data_File(_)
 
             x['fasta_index'] = x['fasta_index'].apply(lambda x: ','.join(str(_) for _ in x))
 
-            if calibration:
-                store_hdf(x, ms_file, 'second_search', replace = True)
-            else:
-                store_hdf(x, ms_file, 'first_search', replace = True)
+            frag_tol = custom_settings[idx]['search']['frag_tol_calibrated'].get()
+            if not frag_tol:
+                frag_tol = custom_settings[idx]['search']['frag_tol'].get()
+            ppm = custom_settings[idx]['search']['ppm']
 
+            if calibration:
+                save_field = 'first_search'
+            else:
+                save_field = 'second_search'
+
+            psms, ions = ion_extractor(x, ms_file, frag_tol, ppm)
+
+            store_hdf(pd.DataFrame(psms), ms_file, save_field, replace=True)
             ion_columns = ['ion_index','ion_type','ion_int','db_int','ion_mass','db_mass','query_idx','db_idx']
             store_hdf(pd.DataFrame(ions, columns = ion_columns), ms_file, 'ions', replace=True)
 
+    #Todo? Callback
     logging.info(f'Complete. Created peptides {n_seqs_:,}')
 
     return fasta_dict
