@@ -323,6 +323,7 @@ def main(runtype = None, password = None, new_files = True):
         MONGODB_URL = 'ci.yue0n.mongodb.net/'
         config_test_paths(BASE_DIR, TEST_DIR, ARCHIVE_DIR, MONGODB_USER, MONGODB_URL)
 
+    AVAILABLE = ['bruker_irt', 'bruker_hela', 'thermo_irt', 'thermo_hela', 'thermo_hela_large_fasta', 'thermo_hela_modifications', 'PXD006109', 'PXD010012']
 
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']
@@ -378,7 +379,7 @@ def main(runtype = None, password = None, new_files = True):
         test_run.run(password=password)
 
     else:
-        raise NotImplementedError(runtype)
+        raise NotImplementedError(f"Runtime {runtype} not found. Available are {AVAILABLE}")
 
 
 if __name__ == "__main__":
