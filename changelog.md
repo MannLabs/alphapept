@@ -11,8 +11,4 @@ Last change: 17-AUG-2021, MTS
 * Enabled handling of `mzML`-files in GUI / Core
 * Improved Documentation
 * Ion export for search parallel
-
-
-TODO:
-
-* Clean up loss_dict
+* Moved loss_dict to constants.
