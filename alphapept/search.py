@@ -1135,7 +1135,8 @@ def filter_top_n(temp:pd.DataFrame, top_n:int = 10)-> pd.DataFrame:
 
 # Cell
 import psutil
-
+import alphapept.constants as constants
+from .fasta import get_fragmass, parse
 
 def ion_extractor(df: pd.DataFrame, ms_file, frag_tol:float, ppm:bool)->(np.ndarray, np.ndarray):
     """Extracts the matched hits (ions) from a dataframe.
@@ -1233,7 +1234,7 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
 
     memory_available = psutil.virtual_memory().available/1024**3
 
-    n_processes = int(memory_available // 2 )
+    n_processes = int(memory_available // 4 )
 
     logging.info(f'Setting Process limit to {n_processes}')
 
@@ -1278,9 +1279,12 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
 
             x['fasta_index'] = x['fasta_index'].apply(lambda x: ','.join(str(_) for _ in x))
 
-            frag_tol = custom_settings[idx]['search']['frag_tol_calibrated'].get()
-            if not frag_tol:
-                frag_tol = custom_settings[idx]['search']['frag_tol'].get()
+
+            if 'frag_tol_calibrated' in custom_settings[idx]['search']:
+                frag_tol = custom_settings[idx]['search']['frag_tol_calibrated']
+            else:
+                frag_tol = custom_settings[idx]['search']['frag_tol']
+
             ppm = custom_settings[idx]['search']['ppm']
 
             if calibration:
