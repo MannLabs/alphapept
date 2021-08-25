@@ -13,7 +13,7 @@ __all__ = ['get_missed_cleavages', 'cleave_sequence', 'count_missed_cleavages', 
 from alphapept import constants
 import re
 
-def get_missed_cleavages(sequences:list, n_missed_cleavages:int):
+def get_missed_cleavages(sequences:list, n_missed_cleavages:int) -> list:
     """
     Combine cleaved sequences to get sequences with missed cleavages
     Args:
@@ -73,7 +73,7 @@ def cleave_sequence(
 import re
 from alphapept import constants
 
-def count_missed_cleavages(sequence:str="", protease:str="trypsin", **kwargs):
+def count_missed_cleavages(sequence:str="", protease:str="trypsin", **kwargs) -> int:
     """
     Counts the number of missed cleavages for a given sequence and protease
     Args:
@@ -88,7 +88,7 @@ def count_missed_cleavages(sequence:str="", protease:str="trypsin", **kwargs):
     n_missed = len(p.findall(sequence))
     return n_missed
 
-def count_internal_cleavages(sequence:str="", protease:str="trypsin", **kwargs):
+def count_internal_cleavages(sequence:str="", protease:str="trypsin", **kwargs) -> int:
     """
     Counts the number of internal cleavage sites for a given sequence and protease
     Args:
@@ -132,9 +132,13 @@ def parse(peptide:str)->List:
 
     return parsed
 
-def list_to_numba(a_list):
+def list_to_numba(a_list) -> List:
     """
-    Convert python list to numba.typed.List
+    Convert Python list to numba.typed.List
+    Args:
+        a_list (list): Python list.
+    Return:
+        List (numba.typed.List): Numba typed list.
     """
     numba_list = List()
 
@@ -175,9 +179,15 @@ def get_decoy_sequence(peptide:str, pseudo_reverse:bool=False, AL_swap:bool=Fals
 
 
 @njit
-def swap_KR(peptide):
+def swap_KR(peptide:str)->str:
     """
     Swaps a terminal K or R. Note: Only if AA is not modified.
+
+    Args:
+        peptide (str): peptide.
+
+    Returns:
+        str: peptide with swapped KRs.
     """
     if peptide[-1] == 'K':
         peptide[-1] = 'R'
@@ -188,9 +198,14 @@ def swap_KR(peptide):
 
 
 @njit
-def swap_AL(peptide):
+def swap_AL(peptide:str)->str:
     """
     Swaps a A with L. Note: Only if AA is not modified.
+    Args:
+        peptide (str): peptide.
+
+    Returns:
+        str: peptide with swapped ALs.
     """
     i = 0
     while i < len(range(len(peptide) - 1)):
@@ -245,7 +260,15 @@ def add_fixed_mods(seqs:list, mods_fixed:list, **kwargs)->list:
         return seqs
 
 # Cell
-def add_variable_mod(peps:list, mods_variable_dict:dict):
+def add_variable_mod(peps:list, mods_variable_dict:dict)->list:
+    """
+    Function to add variable modification to a list of peptides.
+    Args:
+        peps (list): List of peptides.
+        mods_variable_dict (dict): Dicitionary with modifications. The key is AA, and value is the modified form (e.g. oxM).
+    Returns:
+        list : the list of peptide forms for the given peptide.
+    """
     peptides = []
     for pep_ in peps:
         pep, min_idx = pep_
@@ -263,7 +286,7 @@ def get_isoforms(mods_variable_dict:dict, peptide:str, isoforms_max:int, n_modif
     Function to generate modified forms (with variable modifications) for a given peptide - returns a list of modified forms.
     The original sequence is included in the list
     Args:
-        mods_variable_dict (dict): the key is AA, and value is the modified form (e.g. oxM).
+        mods_variable_dict (dict): Dicitionary with modifications. The key is AA, and value is the modified form (e.g. oxM).
         peptide (str): the peptide sequence to generate modified forms.
         isoforms_max (int): max number of modified forms to generate per peptide.
         n_modifications_max (int, optional): max number of variable modifications per peptide.
@@ -873,6 +896,7 @@ def generate_spectra(to_add:list, mass_dict:dict, callback = None)->list:
     return spectra
 
 # Cell
+from typing import Generator
 
 def block_idx(len_list:int, block_size:int = 1000)->list:
     """
@@ -894,14 +918,14 @@ def block_idx(len_list:int, block_size:int = 1000)->list:
 
     return blocks
 
-def blocks(l:int, n:int)->tuple:
+def blocks(l:int, n:int)->Generator[list, None, None]:
     """
-    Helper function to reate blocks from a given list
+    Helper function to create blocks from a given list
     Args:
         l (list): the list
         n (int): size per block
     Returns:
-        tuple: tuple of split blocks
+        Generator: List with splitted elements
     """
     n = max(1, n)
     return (l[i:i+n] for i in range(0, len(l), n))
@@ -1035,10 +1059,12 @@ import pandas as pd
 def save_database(spectra:list, pept_dict:dict, fasta_dict:dict, database_path:str, **kwargs):
     """
     Function to save a database to the *.hdf format. Write the database into hdf.
+
     Args:
-        spectra (list): list: theoretical spectra. See generate_spectra()
-        pept_dict (dict): peptide dict. See add_to_pept_dict()
-        fasta_dict (dict): fasta_dict. See generate_fasta_list()
+        spectra (list): list: theoretical spectra. See generate_spectra().
+        pept_dict (dict): peptide dict. See add_to_pept_dict().
+        fasta_dict (dict): fasta_dict. See generate_fasta_list().
+        database_path (str): Path to database.
     """
 
     precmasses, seqs, fragmasses, fragtypes = zip(*spectra)

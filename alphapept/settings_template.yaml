@@ -397,20 +397,20 @@ search:
   prec_tol:
     type: spinbox
     min: 1
-    max: 99
+    max: 500
     default: 30
-    description: Precursor mass offset.
+    description: Maximum allowed precursor mass offset.
   frag_tol:
     type: spinbox
     min: 1
-    max: 99
+    max: 500
     default: 30
-    description: MSMS mass offset.
+    description: Maximum fragment mass tolerance.
   min_frag_hits:
     type: spinbox
     min: 1
     max: 99
-    default: 7
+    default: 6
     description: Minimum number of fragment hits.
   ppm:
     type: checkbox
