@@ -67,7 +67,7 @@ features:
 search:
   prec_tol: 30
   frag_tol: 30
-  min_frag_hits: 6
+  min_frag_hits: 7
   ppm: true
   calibrate: true
   calibration_std: 3
