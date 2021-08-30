@@ -44,7 +44,7 @@ def parse_folder(file_folder: str) -> (list, list, list):
     raw_files = [
         _
         for _ in os.listdir(file_folder)
-        if _.lower().endswith(".raw") or _.lower().endswith(".d")
+        if _.lower().endswith(".raw") or _.lower().endswith(".d") or _.lower().endswith(".mzml")
     ]
     fasta_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith(".fasta")]
     db_files = [
@@ -332,6 +332,12 @@ def experiment():
                     default=fasta_files,
                 )
                 recorder["experiment"]["fasta_paths"] = selection
+
+                #TODO
+
+                if len(recorder["experiment"]["fasta_paths"]) == 0:
+                    st.warning(f"Warning: No FASTA files selected.")
+                    error += 1
 
                 recorder["experiment"]["shortnames"] = shortnames
                 recorder["experiment"]["file_paths"] = [

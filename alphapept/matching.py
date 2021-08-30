@@ -60,9 +60,17 @@ def calculate_distance(table_1: pd.DataFrame, table_2: pd.DataFrame, offset_dict
 
 def calib_table(table: pd.DataFrame, delta: pd.Series, offset_dict: dict):
     """
-    Apply offset to a table
-    If not _calib table exist, create a new one.
+    Apply offset to a table. Different operations for offsets exist.
+    Offsets will be saved with a '_calib'-suffix. If this does not already exist,
+    it will be created.
 
+    Args:
+        table_1 (pd.DataFrame): Dataframe with data.
+        delta (pd.Series): Series cotaining the offset.
+        offset_dict (dict): Dictionary with column names and how the distance should be calculated.
+
+    Raises:
+        NotImplementedError: If the type of vonversion is not implemented.
     """
     for col in offset_dict:
 
@@ -193,7 +201,14 @@ import functools
 
 #There is no unit test for align_files and align_datasets as they are wrappers and should be covered by the quick_test
 def align_files(filenames: list, alignment: pd.DataFrame, offset_dict: dict):
+    """
+    Wrapper function that aligns a list of files.
 
+    Args:
+        filenames (list): A list with raw file names.
+        alignment (pd.DataFrame): A pandas dataframe containing the alignment information.
+        offset_dict (dict): Dictionary with column names and how the distance should be calculated.
+    """
     for idx, filename in enumerate(filenames):
 
         file = os.path.splitext(filename)[0] + '.ms_data.hdf'
@@ -207,7 +222,14 @@ def align_files(filenames: list, alignment: pd.DataFrame, offset_dict: dict):
             ms_file.write(df, dataset_name=column)
 
 
-def align_datasets(settings, callback=None):
+def align_datasets(settings:dict, callback:callable=None):
+    """
+    Wrapper function that aligns all experimental files specified a settings file.
+
+    Args:
+        settings (dict): A list with raw file names.
+        callback (Callable): Callback function to indicate progress.
+    """
     filenames = settings['experiment']['file_paths']
 
     if callback:
@@ -267,7 +289,11 @@ def align_datasets(settings, callback=None):
 from scipy import stats
 def get_probability(df: pd.DataFrame, ref: pd.DataFrame, sigma:pd.DataFrame, index:int)-> float:
     """Probablity estimate of a transfered identification using the Mahalanobis distance.
-    This functions that the dataframes are matched, meaning that the first entry in df matches to the first entry in ref
+
+    The function calculates the probability that a feature is a reference feature.
+    The reference features containing std deviations so that a probability can be estimated.
+
+    It is required that the data frames are matched, meaning that the first entry in df matches to the first entry in ref.
 
     Args:
         df (pd.DataFrame): Dataset containing transferered features

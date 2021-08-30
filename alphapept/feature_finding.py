@@ -1889,6 +1889,8 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
             datatype='thermo'
         elif ext.lower() == '.d':
             datatype='bruker'
+        elif ext.lower() == '.mzml':
+            datatype='mzml'
         else:
             raise NotImplementedError('File extension {} not understood.'.format(ext))
 
@@ -1917,7 +1919,7 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
             if not settings['workflow']["find_features"]:
                 features = query_data_to_features(query_data)
             else:
-                if datatype == 'thermo':
+                if datatype in ['thermo','mzml']:
 
                     from .constants import averagine_aa, isotopes
 

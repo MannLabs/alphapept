@@ -2,8 +2,8 @@
 
 __all__ = ['compare_frags', 'ppm_to_dalton', 'get_idxs', 'compare_spectrum_parallel', 'query_data_to_features',
            'get_psms', 'frag_delta', 'intensity_fraction', 'add_column', 'remove_column', 'get_hits', 'score',
-           'get_sequences', 'get_score_columns', 'plot_psms', 'store_hdf', 'search_db', 'search_fasta_block',
-           'mass_dict', 'filter_top_n', 'search_parallel']
+           'LOSS_DICT', 'LOSSES', 'get_sequences', 'get_score_columns', 'plot_psms', 'store_hdf', 'search_db',
+           'search_fasta_block', 'mass_dict', 'filter_top_n', 'ion_extractor', 'search_parallel']
 
 # Cell
 import logging
@@ -228,7 +228,8 @@ def get_psms(
     ppm: bool,
     min_frag_hits: int,
     callback: Callable = None,
-    m_offset_calibrated:float = None,
+    prec_tol_calibrated:float = None,
+    frag_tol_calibrated:float = None,
     **kwargs
 )->(np.ndarray, int):
     """[summary]
@@ -243,7 +244,8 @@ def get_psms(
         ppm (bool): Flag to use ppm instead of Dalton.
         min_frag_hits (int): Minimum number of frag hits to report a PSMs.
         callback (Callable, optional): Optional callback. Defaults to None.
-        m_offset_calibrated (float, optional): Precursor tolerance if calibration exists. Defaults to None.
+        prec_tol_calibrated (float, optional): Precursor tolerance if calibration exists. Defaults to None.
+        frag_tol_calibrated (float, optional): Fragment tolerance if calibration exists. Defaults to None.
 
     Returns:
         np.ndarray: Numpy recordarray storing the PSMs.
@@ -263,9 +265,12 @@ def get_psms(
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
 
+    if frag_tol_calibrated:
+        frag_tol = frag_tol_calibrated
+
     if features is not None:
-        if m_offset_calibrated:
-            prec_tol = m_offset_calibrated
+        if prec_tol_calibrated:
+            prec_tol = prec_tol_calibrated
             query_masses = features['corrected_mass'].values
         else:
             query_masses = features['mass_matched'].values
@@ -292,8 +297,8 @@ def get_psms(
         )
         query_indices = indices
     else:
-        if m_offset_calibrated:
-            prec_tol = m_offset_calibrated
+        if prec_tol_calibrated:
+            prec_tol = prec_tol_calibrated
 
         query_masses = query_data['prec_mass_list2']
         query_mz = query_data['mono_mzs2']
@@ -497,6 +502,9 @@ def get_hits(query_frag:np.ndarray, query_int:np.ndarray, db_frag:np.ndarray, db
 
 
 # Cell
+from alphapept import constants
+LOSS_DICT = constants.loss_dict
+LOSSES = np.array(list(LOSS_DICT.values()))
 
 #This function is a wrapper and ist tested by the quick_test
 @njit
@@ -543,8 +551,6 @@ def score(
 
     psms_ = np.zeros(len(psms), dtype=psms_dtype)
 
-    losses = [0, 18.01056468346, 17.03052] #H2O, NH3
-
     ions_ = List()
 
     ion_count = 0
@@ -560,17 +566,17 @@ def score(
         frag_type = frag_types[db_indices[db_idx]:db_indices[db_idx+1]]
 
         if db_ints is None:
-            db_int = np.zeros(len(db_frag))
+            db_int = np.ones(len(db_frag))
         else:
             db_int = db_ints[i]
 
-        ions = get_hits(query_frag, query_int, db_frag, db_int, frag_type, mtol, ppm, losses)
+        ions = get_hits(query_frag, query_int, db_frag, db_int, frag_type, mtol, ppm, LOSSES)
 
-        psms_['o_mass'][i] = query_masses[query_idx] - db_masses[db_idx]
-        psms_['o_mass_ppm'][i] = 2 * psms_['o_mass'][i] / (query_masses[query_idx]  + db_masses[db_idx] ) * 1e6
+        psms_['prec_offset'][i] = query_masses[query_idx] - db_masses[db_idx]
+        psms_['prec_offset_ppm'][i] = 2 * psms_['prec_offset'][i] / (query_masses[query_idx]  + db_masses[db_idx] ) * 1e6
 
-        psms_['o_mass_raw'][i] = query_masses_raw[query_idx] - db_masses[db_idx]
-        psms_['o_mass_ppm_raw'][i] = 2 * psms_['o_mass'][i] / (query_masses_raw[query_idx]  + db_masses[db_idx] ) * 1e6
+        psms_['prec_offset_raw '][i] = query_masses_raw[query_idx] - db_masses[db_idx]
+        psms_['prec_offset_raw_ppm '][i] = 2 * psms_['prec_offset'][i] / (query_masses_raw[query_idx]  + db_masses[db_idx] ) * 1e6
 
         psms_['delta_m'][i] = np.mean(ions[:,4]-ions[:,5])
         psms_['delta_m_ppm'][i] = np.mean(2 * psms_['delta_m'][i] / (ions[:,4]  + ions[:,5] ) * 1e6)
@@ -578,7 +584,7 @@ def score(
         psms_['total_int'][i] = np.sum(query_int)
         psms_['matched_int'][i] = np.sum(ions[:,2])
         psms_['matched_int_ratio'][i] = psms_['matched_int'][i] / psms_['total_int'][i]
-        psms_['int_ratio'][i] = np.mean(ions[:,3]/ions[:,2])
+        psms_['int_ratio'][i] = np.mean(ions[:,2]/ions[:,3]) #3 is db_int, 2 is query_int
 
         psms_['b_hits'][i] = np.sum(ions[ions[:,1]==0][:,0]>0)
         psms_['y_hits'][i] = np.sum(ions[ions[:,1]==0][:,0]<0)
@@ -629,7 +635,8 @@ def get_score_columns(
     frag_tol:float,
     prec_tol:float,
     ppm:bool,
-    m_offset_calibrated:Union[None, float]=None,
+    prec_tol_calibrated:Union[None, float]=None,
+    frag_tol_calibrated:float = None,
     **kwargs
 ) -> (np.ndarray, np.ndarray):
     """Wrapper function to extract score columns.
@@ -643,7 +650,8 @@ def get_score_columns(
         frag_tol (float): Fragment tolerance for search.
         prec_tol (float): Precursor tolerance for search.
         ppm (bool): Flag to use ppm instead of Dalton.
-        m_offset_calibrated (Union[None, float], optional): Calibrated offset mass. Defaults to None.
+        prec_tol_calibrated (Union[None, float], optional): Calibrated offset mass. Defaults to None.
+        frag_tol_calibrated (float, optional): Fragment tolerance if calibration exists. Defaults to None.
 
     Returns:
         np.recarray: Recordarray containing PSMs with additional columns.
@@ -655,6 +663,9 @@ def get_score_columns(
     query_frags = query_data['mass_list_ms2']
     query_ints = query_data['int_list_ms2']
     query_scans = query_data['scan_list_ms2']
+
+    if frag_tol_calibrated:
+        frag_tol = frag_tol_calibrated
 
     if 'prec_id2' in query_data.keys():
         bruker = True
@@ -685,7 +696,7 @@ def get_score_columns(
             db_ints = None
 
     if features is not None:
-        if m_offset_calibrated:
+        if prec_tol_calibrated:
             query_masses = features['corrected_mass'].values
         else:
             query_masses = features['mass_matched'].values
@@ -694,7 +705,7 @@ def get_score_columns(
 
         query_mz = features['mz_matched'].values
         query_rt = features['rt_matched'].values
-        query_charges = query_charges[features['query_idx'].values]
+        query_charges = features['charge_matched'].values
         query_scans = query_scans[features['query_idx'].values]
 
         if bruker:
@@ -726,18 +737,12 @@ def get_score_columns(
         query_mz = query_data['mono_mzs2']
         query_rt = query_data['rt_list_ms2']
 
-
-    loss_dict = Dict()
-    loss_dict[''] = 0.0
-    loss_dict['-H2O'] = 18.01056468346
-    loss_dict['-NH3'] = 17.03052
-
-    float_fields = ['o_mass', 'o_mass_ppm', 'o_mass_raw','o_mass_ppm_raw','delta_m','delta_m_ppm','matched_int_ratio','int_ratio']
-    int_fields = ['total_int','matched_int','n_ions','ion_idx'] + [a+_+'_hits' for _ in loss_dict for a in ['b','y']]
+    float_fields = ['prec_offset', 'prec_offset_ppm', 'prec_offset_raw ','prec_offset_raw_ppm ','delta_m','delta_m_ppm','matched_int_ratio','int_ratio']
+    int_fields = ['total_int','matched_int','n_ions','ion_idx'] + [a+_+'_hits' for _ in LOSS_DICT for a in ['b','y']]
 
     psms_dtype = np.dtype([(_,np.float32) for _ in float_fields] + [(_,np.int64) for _ in int_fields])
 
-    psms_, ions_,  = score(
+    psms_, ions,  = score(
         psms,
         query_masses,
         query_masses_raw,
@@ -752,7 +757,7 @@ def get_score_columns(
         ppm,
         psms_dtype)
 
-    ions_ = np.vstack(ions_)
+    ions_ = np.vstack(ions)
 
     for _ in psms_.dtype.names:
         psms = add_column(psms, psms_[_], _)
@@ -928,14 +933,21 @@ def search_db(to_process:tuple, callback:Callable = None, parallel:bool=False, f
                 if calibration == 0:
                     logging.info('Calibration is 0, skipping second database search.')
                     skip = True
-
                 else:
-                    settings['search']['m_offset_calibrated'] = calibration*settings['search']['calibration_std']
-                    calib = settings['search']['m_offset_calibrated']
+                    settings['search']['prec_tol_calibrated'] = calibration*settings['search']['calibration_std']
+                    calib = settings['search']['prec_tol_calibrated']
                     logging.info(f"Found calibrated prec_tol with value {calib:.2f}")
             except KeyError as e:
                 logging.info(f'{e}')
 
+            try:
+                fragment_std = float(ms_file_.read(dataset_name="estimated_max_fragment_ppm")[0])
+                skip = False
+                settings['search']['frag_tol_calibrated'] = fragment_std*settings['search']['calibration_std']
+                calib = settings['search']['frag_tol_calibrated']
+                logging.info(f"Found calibrated frag_tol with value {calib:.2f}")
+            except KeyError as e:
+                logging.info(f'{e}')
 
         if not skip:
             db_data_path = settings['experiment']['database_path']
@@ -1033,7 +1045,6 @@ def search_fasta_block(to_process:tuple) -> (list, int):
 
             n_frags = sum(lens)
 
-
             frags = np.zeros(n_frags, dtype=fragmasses[0].dtype)
             frag_types = np.zeros(n_frags, dtype=fragtypes[0].dtype)
 
@@ -1102,6 +1113,8 @@ def filter_top_n(temp:pd.DataFrame, top_n:int = 10)-> pd.DataFrame:
     """
     pept_dict_ = {}
 
+    temp['temp_idx'] = np.arange(len(temp))
+
     for k, v in temp[['sequence','fasta_index']].values:
         if k in pept_dict_:
             new_set = pept_dict_[k]
@@ -1121,14 +1134,72 @@ def filter_top_n(temp:pd.DataFrame, top_n:int = 10)-> pd.DataFrame:
 
 
 # Cell
+import psutil
+import alphapept.constants as constants
+from .fasta import get_fragmass, parse
+
+def ion_extractor(df: pd.DataFrame, ms_file, frag_tol:float, ppm:bool)->(np.ndarray, np.ndarray):
+    """Extracts the matched hits (ions) from a dataframe.
+
+    Args:
+        df (pd.DataFrame): Pandas dataframe containing the results of the first search.
+        ms_file : MsFile
+        frag_tol (float): Fragment tolerance for search.
+        ppm (bool): Flag to use ppm instead of Dalton.
+
+    Returns:
+        np.ndarray: Numpy recordarray storing the PSMs.
+        np.ndarray: Numpy recordarray storing the ions.
+    """
+
+    query_data = ms_file.read_DDA_query_data()
+    query_indices = query_data["indices_ms2"]
+    query_frags = query_data['mass_list_ms2']
+    query_ints = query_data['int_list_ms2']
+
+    psms = df.to_records()
+
+    ion_count = 0
+
+    ions_ = List()
+
+    for i in range(len(psms)):
+        query_idx = psms[i]["raw_idx"]
+        db_idx = psms[i]["db_idx"]
+        query_idx_start = query_indices[query_idx]
+        query_idx_end = query_indices[query_idx + 1]
+        query_frag = query_frags[query_idx_start:query_idx_end]
+        query_int = query_ints[query_idx_start:query_idx_end]
+
+        seq = psms[i]['sequence']
+
+        db_frag, frag_type = get_fragmass(parse(seq), constants.mass_dict)
+        db_int = np.ones_like(db_frag)
+
+        ions = get_hits(query_frag, query_int, db_frag, db_int, frag_type, frag_tol, ppm, LOSSES)
+
+        n_ions = len(ions)
+
+        psms['n_ions'][i] = n_ions
+        psms['ion_idx'][i] = ion_count
+
+        ion_count += n_ions
+        ions_.append(ions)
+
+    ions_ = np.vstack(ions_)
+
+    return psms, ions_
+
 
 #This function is a wrapper and ist tested by the quick_test
-def search_parallel(settings: dict, calibration:Union[list, None] = None, callback: Union[Callable, None] = None) -> dict:
+def search_parallel(settings: dict, calibration:Union[list, None] = None, fragment_calibration:Union[list, None] = None, callback: Union[Callable, None] = None) -> dict:
     """Function to search multiple ms_data files in parallel.
+    This function will additionally calculate fragments and precursor masses from a given FASTA file.
 
     Args:
         settings (dict): Settings file containg the experimental definitions.
-        calibration (Union[list, None], optional): List of calibrated offsets.. Defaults to None.
+        calibration (Union[list, None], optional): List of calibrated offsets. Defaults to None.
+        fragment_calibration (Union[list, None], optional): List of calibrated fragment offsets. Defaults to None.
         callback (Union[Callable, None], optional): Callback function. Defaults to None.
 
     Returns:
@@ -1148,17 +1219,27 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, callba
         custom_settings = []
         for _ in calibration:
             settings_ = copy.deepcopy(settings)
-            settings_["search"]["m_offset_calibrated"] = _
+            settings_["search"]["prec_tol_calibrated"] = _
             custom_settings.append(settings_)
     else:
         custom_settings = [settings for _ in ms_file_path]
+
+    if fragment_calibration:
+        for idx, _ in enumerate(fragment_calibration):
+            custom_settings[idx]["search"]["frag_tol_calibrated"] = _
 
 
     logging.info(f"Number of FASTA entries: {len(fasta_list):,} - FASTA settings {settings['fasta']}")
     to_process = [(idx_start, fasta_list[idx_start:idx_end], ms_file_path, custom_settings) for idx_start, idx_end in block_idx(len(fasta_list), fasta_block)]
 
+    memory_available = psutil.virtual_memory().available/1024**3
+
+    n_processes = int(memory_available // 4 )
+
+    logging.info(f'Setting Process limit to {n_processes}')
+
     n_processes = alphapept.performance.set_worker_count(
-        worker_count=settings['general']['n_processes'],
+        worker_count=n_processes,
         set_global=False
     )
 
@@ -1168,42 +1249,56 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, callba
         ms_file = alphapept.io.MS_Data_File(_+'_', is_new_file=True) #Create temporary files for writing
 
     df_cache = {}
+    ion_cache = {}
 
     with alphapept.performance.AlphaPool(n_processes) as p:
         max_ = len(to_process)
 
-        for i, (_, n_seqs) in enumerate(p.imap_unordered(search_fasta_block, to_process)):
+        for i, (psm_container, n_seqs) in enumerate(p.imap_unordered(search_fasta_block, to_process)):
             n_seqs_ += n_seqs
 
-
             logging.info(f'Block {i+1} of {max_} complete - {((i+1)/max_*100):.2f} % - created peptides {n_seqs:,} ')
-            for j in range(len(_)): #Temporary hdf files for avoiding saving issues
-                output = [_ for _ in _[j]]
+            for j in range(len(psm_container)): #Temporary hdf files for avoiding saving issues
+                output = [_ for _ in psm_container[j]]
                 if len(output) > 0:
-
                     psms = pd.concat(output)
-
                     if ms_file_path[j] in df_cache:
-                        df_cache[ms_file_path[j]] = filter_top_n(pd.concat([df_cache[ms_file_path[j]], psms]))
+                        temp = filter_top_n(pd.concat([df_cache[ms_file_path[j]], psms]))
+                        selector = temp['temp_idx'].values
+                        df_cache[ms_file_path[j]] = temp
                     else:
                         df_cache[ms_file_path[j]] = psms
-
 
             if callback:
                 callback((i+1)/max_)
 
-    for _ in ms_file_path:
+    for idx, _ in enumerate(ms_file_path):
         if _ in df_cache:
             x = df_cache[_]
             ms_file = alphapept.io.MS_Data_File(_)
 
             x['fasta_index'] = x['fasta_index'].apply(lambda x: ','.join(str(_) for _ in x))
 
-            if calibration:
-                store_hdf(x, ms_file, 'second_search', replace = True)
-            else:
-                store_hdf(x, ms_file, 'first_search', replace = True)
 
+            if 'frag_tol_calibrated' in custom_settings[idx]['search']:
+                frag_tol = custom_settings[idx]['search']['frag_tol_calibrated']
+            else:
+                frag_tol = custom_settings[idx]['search']['frag_tol']
+
+            ppm = custom_settings[idx]['search']['ppm']
+
+            if calibration:
+                save_field = 'first_search'
+            else:
+                save_field = 'second_search'
+
+            psms, ions = ion_extractor(x, ms_file, frag_tol, ppm)
+
+            store_hdf(pd.DataFrame(psms), ms_file, save_field, replace=True)
+            ion_columns = ['ion_index','ion_type','ion_int','db_int','ion_mass','db_mass','query_idx','db_idx']
+            store_hdf(pd.DataFrame(ions, columns = ion_columns), ms_file, 'ions', replace=True)
+
+    #Todo? Callback
     logging.info(f'Complete. Created peptides {n_seqs_:,}')
 
     return fasta_dict
