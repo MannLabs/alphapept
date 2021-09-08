@@ -1107,12 +1107,12 @@ def parallel_execute(
                 memory_available = psutil.virtual_memory().available/1024**3
                 n_processes = max((int(memory_available //25 ),1))
                 logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}.')
-            elif ext.lower() == '.raw':
+            elif ext.lower() in ('.raw','.mzml'):
                 memory_available = psutil.virtual_memory().available/1024**3
                 n_processes = max((int(memory_available //8 ), 1))
                 logging.info(f'Setting Process limit to {n_processes}')
             else:
-                raise NotImplementedError('File extension {} not understood.'.format(ext))
+                raise NotImplementedError('Feature Finding: File extension {} not understood.'.format(ext))
 
         if step.__name__ == 'search_db':
             memory_available = psutil.virtual_memory().available/1024**3

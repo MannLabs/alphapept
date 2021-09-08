@@ -331,6 +331,8 @@ def load_mzml_data(
     mono_mzs_list = []
     charge_list = []
 
+    vendor = "Unknown"
+
     for idx, i in enumerate(spec_indices):
         try:
             spec = next(reader)
@@ -339,9 +341,6 @@ def load_mzml_data(
                 ext = re.findall(r"File:\".+\.(\w+)\"", spec['spectrum title'])[0]
                 if ext.lower() == 'raw':
                     vendor = "Thermo"
-                else:
-                    # add support for other vendors
-                    vendor = "Unknown"
 
             scan_list.append(i)
             rt, masses, intensities, ms_order, prec_mass, mono_mz, charge = extract_mzml_info(spec)
