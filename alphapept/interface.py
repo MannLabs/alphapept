@@ -646,83 +646,88 @@ def quantification(
 
     field = settings['quantification']['mode']
 
-    df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
+    if os.path.isfile(settings['experiment']['results_path']):
 
-    if settings["workflow"]["lfq_quantification"]:
+        df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
 
-        if field in df.keys():  # Check if the quantification information exists.
-            # We could include another protein fdr in here..
+        if settings["workflow"]["lfq_quantification"]:
 
-            files = df['filename'].unique().tolist()
+            if field in df.keys():  # Check if the quantification information exists.
+                # We could include another protein fdr in here..
 
-            if len(files) > 1:
-                logging.info('Delayed Normalization.')
-                df, normalization = alphapept.quantification.delayed_normalization(
-                    df,
-                    field
-                )
-                pd.DataFrame(normalization).to_hdf(
+                files = df['filename'].unique().tolist()
+
+                if len(files) > 1:
+                    logging.info('Delayed Normalization.')
+                    df, normalization = alphapept.quantification.delayed_normalization(
+                        df,
+                        field
+                    )
+                    pd.DataFrame(normalization).to_hdf(
+                        settings['experiment']['results_path'],
+                        'fraction_normalization'
+                    )
+                    df_grouped = df.groupby(
+                        ['filename', 'precursor', 'protein_group']
+                    )[['{}_dn'.format(field)]].sum().reset_index()
+                else:
+                    df_grouped = df.groupby(
+                        ['filename', 'precursor', 'protein_group']
+                    )[field].sum().reset_index()
+
+
+                df.to_hdf(
                     settings['experiment']['results_path'],
-                    'fraction_normalization'
+                    'combined_protein_fdr_dn'
                 )
-                df_grouped = df.groupby(
-                    ['filename', 'precursor', 'protein_group']
-                )[['{}_dn'.format(field)]].sum().reset_index()
-            else:
-                df_grouped = df.groupby(
-                    ['filename', 'precursor', 'protein_group']
-                )[field].sum().reset_index()
 
+                logging.info('Complete. ')
+                logging.info('Starting profile extraction.')
 
-            df.to_hdf(
-                settings['experiment']['results_path'],
-                'combined_protein_fdr_dn'
-            )
+                if not callback:
+                    cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
+                else:
+                    cb = callback
 
-            logging.info('Complete. ')
-            logging.info('Starting profile extraction.')
+                protein_table = alphapept.quantification.protein_profile_parallel_ap(
+                    settings,
+                    df_grouped,
+                    callback=cb
+                )
+                protein_table.to_hdf(
+                    settings['experiment']['results_path'],
+                    'protein_table'
+                )
+                results_path = settings['experiment']['results_path']
+                base, ext = os.path.splitext(results_path)
+                protein_table.to_csv(base+'_proteins.csv')
 
-            if not callback:
-                cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
-            else:
-                cb = callback
+                logging.info('LFQ complete.')
 
-            protein_table = alphapept.quantification.protein_profile_parallel_ap(
-                settings,
-                df_grouped,
-                callback=cb
-            )
-            protein_table.to_hdf(
-                settings['experiment']['results_path'],
-                'protein_table'
-            )
-            results_path = settings['experiment']['results_path']
-            base, ext = os.path.splitext(results_path)
-            protein_table.to_csv(base+'_proteins.csv')
+                logging.info('Extracting protein_summary')
 
-            logging.info('LFQ complete.')
+                protein_summary = pd.DataFrame(index = df['protein_group'].unique())
 
-            logging.info('Extracting protein_summary')
+                for field in ['sequence','precursor']:
+                    col_ = 'n_'+ field+' '
+                    m = df.groupby(['protein_group','filename'])[field].count().unstack()
+                    m.columns = [col_ +_ for _ in m.columns]
+                    protein_summary.loc[m.index, m.columns] = m.values
 
-            protein_summary = pd.DataFrame(index = df['protein_group'].unique())
+                # Add intensity
+                new_cols = ['intensity ' + _ if not _.endswith('_LFQ') else 'LFQ intensity '+_[:-4] for _ in protein_table.columns ]
+                protein_summary.loc[protein_table.index, new_cols] = protein_table.values
+                ps_out = base+'_protein_summary.csv'
+                protein_summary.to_csv(ps_out)
+                logging.info(f'Saved protein_summary of length {len(protein_summary):,} saved to {ps_out}')
 
-            for field in ['sequence','precursor']:
-                col_ = 'n_'+ field+' '
-                m = df.groupby(['protein_group','filename'])[field].count().unstack()
-                m.columns = [col_ +_ for _ in m.columns]
-                protein_summary.loc[m.index, m.columns] = m.values
+                #protein summary
+                protein_summary.to_hdf(
+                settings['experiment']['results_path'],'protein_summary')
 
-            # Add intensity
-            new_cols = ['intensity ' + _ if not _.endswith('_LFQ') else 'LFQ intensity '+_[:-4] for _ in protein_table.columns ]
-            protein_summary.loc[protein_table.index, new_cols] = protein_table.values
-            ps_out = base+'_protein_summary.csv'
-            protein_summary.to_csv(ps_out)
-            logging.info(f'Saved protein_summary of length {len(protein_summary):,} saved to {ps_out}')
-
-            #protein summary
-            protein_summary.to_hdf(
-            settings['experiment']['results_path'],'protein_summary')
-
+    else:
+        logging.info('No results.hdf present.')
+        df = pd.DataFrame()
 
     if len(df) > 0:
         logging.info('Exporting as csv.')
