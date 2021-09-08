@@ -9,6 +9,38 @@ import pandas as pd
 from typing import Callable, Union
 
 
+def get_size(path: str ) -> float:
+    """
+    Helper function to get size of a path (file / folder)
+
+    """
+    if path.endswith(".d"):
+        size_function = get_folder_size
+    else:
+        size_function = os.path.getsize
+
+    return size_function(path)
+
+def get_folder_size(start_path: str = ".") -> float:
+    """Returns the total size of a given folder.
+
+    Args:
+        start_path (str): Path to the folder that should be checked. Defaults to '.'.
+
+    Returns:
+        float: Total size in Mb.
+    """
+
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(start_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            # skip if it is symbolic link
+            if not os.path.islink(fp):
+                total_size += os.path.getsize(fp)
+    return total_size
+
+
 def escape_markdown(text: str) -> str:
     """Helper function to escape markdown in text.
 
@@ -73,7 +105,7 @@ def files_in_folder_pandas(folder: str) -> pd.DataFrame:
     """
     files = os.listdir(folder)
     created = [time.ctime(os.path.getctime(os.path.join(folder, _))) for _ in files]
-    sizes = [os.path.getsize(os.path.join(folder, _)) / 1024 ** 2 for _ in files]
+    sizes = [get_size(os.path.join(folder, _)) / 1024 ** 2 for _ in files]
     df = pd.DataFrame(files, columns=["File"])
     df["Created"] = created
     df["Filesize (Mb)"] = sizes

@@ -13,7 +13,7 @@ from alphapept.paths import (
     FASTA_PATH,
 )
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
-from alphapept.gui.utils import escape_markdown, files_in_folder
+from alphapept.gui.utils import escape_markdown, files_in_folder, get_size
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, JsCode
 
 # Dict to match workflow
@@ -226,7 +226,7 @@ def file_df_from_files(raw_files: list, file_folder: str) -> pd.DataFrame:
     """
     raw_files.sort()
     sizes = [
-        round(os.stat(os.path.join(file_folder, _)).st_size / 1024 ** 3, 2)
+        round(get_size(os.path.join(file_folder, _)) / 1024 ** 3, 2)
         for _ in raw_files
     ]
     created = [
