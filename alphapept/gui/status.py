@@ -151,10 +151,11 @@ def status():
 
     st.write("## Hardware utilization")
 
-    st.text("Ram")
-    ram = st.progress(0)
-    st.text("CPU")
-    cpu = st.progress(0)
+    c1,c2 = st.beta_columns(2)
+    c1.text("Ram")
+    ram = c1.progress(0)
+    c2.text("CPU")
+    cpu = c2.progress(0)
 
     running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
 
@@ -179,8 +180,6 @@ def status():
         with st.beta_expander(f"Failed"):
             failed_table = st.empty()
 
-        refresh = st.checkbox("Auto-Update Page")
-
         if st.checkbox("Terminate process"):
             st.error(
                 f"This will abort the current run and move it to failed. Please confirm."
@@ -189,45 +188,6 @@ def status():
                 terminate_process()
 
         while True:
-            if os.path.isfile(current_file):
-                with open(current_file, "r") as file:
-                    cf_ = yaml.load(file, Loader=yaml.FullLoader)
-
-                cf = cf_["file"]
-                cf_start = cf_["started"]
-                status_msg.success(
-                    f"Processing {escape_markdown(cf)}. Started at {cf_start}"
-                )
-
-                logfile = os.path.join(PROCESSED_PATH, os.path.splitext(cf)[0] + ".log")
-                if current_log != logfile:
-                    current_log = logfile
-                    log_txt = []
-                    f = open(logfile, "r")
-
-                lines = f.readlines()[-200:]  # Limit to 200 lines
-
-                for line in lines:
-                    if "__progress_current" in line:
-                        current_p_ = float(line.split("__progress_current ")[1][:5])
-                        current.progress(current_p_)
-
-                        current_p.text(f"Current progress: {current_p_*100:.2f}%")
-                    elif "__progress_overall" in line:
-
-                        overall_p = float(line.split("__progress_overall ")[1][:5])
-                        overall.progress(overall_p)
-
-                        overall_txt.text(f"Overall: {overall_p*100:.2f}%")
-                    elif "__current_task" in line:
-                        task_ = line.strip("\n").split("__current_task ")[1]
-                        task.text(f"Current task: {task_}")
-                    else:
-                        log_txt.append(line)
-
-                    last_log.code("".join(log_txt[-3:]))
-                    log_.code("".join(log_txt))
-
             ram.progress(
                 1 - psutil.virtual_memory().available / psutil.virtual_memory().total
             )
@@ -250,6 +210,46 @@ def status():
                 queue_table.table(pd.DataFrame())
 
             else:
+
+                if os.path.isfile(current_file):
+                    with open(current_file, "r") as file:
+                        cf_ = yaml.load(file, Loader=yaml.FullLoader)
+
+                    cf = cf_["file"]
+                    cf_start = cf_["started"]
+                    status_msg.success(
+                        f"Processing {escape_markdown(cf)}. Started at {cf_start}"
+                    )
+
+                    logfile = os.path.join(PROCESSED_PATH, os.path.splitext(cf)[0] + ".log")
+                    if current_log != logfile:
+                        current_log = logfile
+                        log_txt = []
+                        f = open(logfile, "r")
+
+                    lines = f.readlines()[-200:]  # Limit to 200 lines
+
+                    for line in lines:
+                        if "__progress_current" in line:
+                            current_p_ = float(line.split("__progress_current ")[1][:5])
+                            current.progress(current_p_)
+
+                            current_p.text(f"Current progress: {current_p_*100:.2f}%")
+                        elif "__progress_overall" in line:
+
+                            overall_p = float(line.split("__progress_overall ")[1][:5])
+                            overall.progress(overall_p)
+
+                            overall_txt.text(f"Overall: {overall_p*100:.2f}%")
+                        elif "__current_task" in line:
+                            task_ = line.strip("\n").split("__current_task ")[1]
+                            task.text(f"Current task: {task_}")
+                        else:
+                            log_txt.append(line)
+
+                        last_log.code("".join(log_txt[-3:]))
+                        log_.code("".join(log_txt))
+
                 created = [
                     time.ctime(os.path.getctime(os.path.join(QUEUE_PATH, _)))
                     for _ in queue_files
@@ -265,7 +265,4 @@ def status():
                 failed_msg.error(f"{n_failed} runs failed. Please check {FAILED_PATH}.")
 
             failed_table.table(pd.DataFrame(failed_files))
-            time.sleep(0.2)
-
-            if not refresh:
-                break
+            time.sleep(0.4)

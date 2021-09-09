@@ -1362,14 +1362,29 @@ def cli_workflow(settings_file, progress):
     help="Start graphical user interface for AlphaPept.",
 )
 def cli_gui():
-    print('Starting AlphaPept Server')
-    print('This may take a second..')
-
     _this_file = os.path.abspath(__file__)
     _this_directory = os.path.dirname(_this_file)
 
     file_path = os.path.join(_this_directory, 'webui.py')
 
+
+    print('Starting AlphaPept background process.')
+
+    from .gui.utils import start_process
+    from .gui.status import queue_watcher, check_process
+
+    from .paths import PROCESS_FILE
+
+    start_process(target=queue_watcher, process_file=PROCESS_FILE, verbose=False)
+
+    running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
+
+    while not running:
+        running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
+        print('.', end ='')
+
+    print('Starting AlphaPept Server.')
+    print('This may take a second..')
 
     #if __name__ == '__main__':
     #    sys.argv = ["streamlit", "run", "webui.py"]
