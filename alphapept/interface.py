@@ -1367,8 +1367,7 @@ def cli_gui():
 
     file_path = os.path.join(_this_directory, 'webui.py')
 
-
-    print('Starting AlphaPept background process.')
+    print('Starting AlphaPept background process')
 
     from .gui.utils import start_process
     from .gui.status import queue_watcher, check_process
@@ -1379,12 +1378,13 @@ def cli_gui():
 
     running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
 
-    while not running:
+    while not queue_watcher_state:
         running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
         print('.', end ='')
+        sleep(0.3)
+    print('\n')
 
-    print('Starting AlphaPept Server.')
-    print('This may take a second..')
+    print('Starting AlphaPept Server')
 
     #if __name__ == '__main__':
     #    sys.argv = ["streamlit", "run", "webui.py"]

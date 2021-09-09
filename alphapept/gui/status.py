@@ -206,19 +206,21 @@ def status():
                 overall.progress(0)
                 overall_txt.text("Overall: 0%")
                 task.text("None")
+                last_log.code("")
 
                 queue_table.table(pd.DataFrame())
 
             else:
-
                 if os.path.isfile(current_file):
                     with open(current_file, "r") as file:
                         cf_ = yaml.load(file, Loader=yaml.FullLoader)
 
                     cf = cf_["file"]
                     cf_start = cf_["started"]
+                    now = datetime.datetime.now()
+                    delta = f"{now-cf_start}".split('.')[0]
                     status_msg.success(
-                        f"Processing {escape_markdown(cf)}. Started at {cf_start}"
+                        f'{now.strftime("%d.%m.%Y %H:%M:%S")} Processing {escape_markdown(cf)}. Time elapsed {delta}'
                     )
 
                     logfile = os.path.join(PROCESSED_PATH, os.path.splitext(cf)[0] + ".log")
