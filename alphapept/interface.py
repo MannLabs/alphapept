@@ -984,8 +984,15 @@ def get_file_summary(ms_data: alphapept.io.MS_Data_File) -> dict:
     """
     f_summary = {}
 
-    f_summary['acquisition_date_time'] = ms_data.read(group_name = 'Raw', attr_name = 'acquisition_date_time')
-    n_ms2 = ms_data.read(group_name='Raw/MS2_scans', dataset_name='prec_mass_list2', return_dataset_shape=True)[0]
+    try:
+        f_summary['acquisition_date_time'] = ms_data.read(group_name = 'Raw', attr_name = 'acquisition_date_time')
+    except KeyError:
+        f_summary['acquisition_date_time'] = None
+
+    try:
+        n_ms2 = ms_data.read(group_name='Raw/MS2_scans', dataset_name='prec_mass_list2', return_dataset_shape=True)[0]
+    except KeyError:
+        n_ms2 = 0
 
     for key in ms_data.read():
 
