@@ -5,6 +5,8 @@ Last change: 7-SEP-2021, MTS
 ## 0.3.29
 * Stability improvements
 * support of running multiple `mzML`-files #316
+* Auto-refresh of Status page #203
+* Moved custom plots to home directory
 
 ## 0.3.28
 
