@@ -1361,9 +1361,19 @@ def cli_workflow(settings_file, progress):
     "gui",
     help="Start graphical user interface for AlphaPept.",
 )
-def cli_gui():
+@click.option(
+    "--port",
+    "-p",
+    help="Set port for the streamlit server.",
+    type=click.IntRange(1, 49151)
+)
+
+def cli_gui(port):
     _this_file = os.path.abspath(__file__)
     _this_directory = os.path.dirname(_this_file)
+
+    if not port:
+        port = 8501
 
     file_path = os.path.join(_this_directory, 'webui.py')
 
@@ -1421,7 +1431,7 @@ def cli_gui():
     theme.append("--theme.font=sans serif")
     theme.append("--theme.primaryColor=#18212b")
 
-    args = ["streamlit", "run", file_path, "--global.developmentMode=false", "--server.port=8501", "--browser.gatherUsageStats=False"]
+    args = ["streamlit", "run", file_path, "--global.developmentMode=false", f"--server.port={port}", "--browser.gatherUsageStats=False"]
 
     args.extend(theme)
 
