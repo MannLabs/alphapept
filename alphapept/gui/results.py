@@ -3,6 +3,7 @@ from alphapept.gui.utils import files_in_folder, read_log, escape_markdown
 from alphapept.paths import PROCESSED_PATH
 from alphapept.settings import load_settings
 from alphapept.fasta import read_database
+from alphapept.display import calculate_sequence_coverage
 import os
 import re
 import yaml
@@ -357,11 +358,12 @@ def sequence_coverage_map(file: str, options: list, results_yaml: dict):
 
     if "/protein_fdr" in options:
 
+        # get peptides matching target
+        protein_fdr = pd.read_hdf(file, "protein_fdr")
+
         with st.beta_expander("Sequence coverage map"):
 
-            protein_id = st.text_input(
-                "Enter a protein identifier to view sequence coverage map",
-            )
+            protein_id = st.selectbox('Select protein', protein_fdr['protein'].unique().tolist())
 
             selections = ['all'] + readable_files_from_yaml(results_yaml)[1:] # exclude results.hdf
             selection = st.selectbox("File selection", selections)
@@ -379,17 +381,12 @@ def sequence_coverage_map(file: str, options: list, results_yaml: dict):
                 )
                 filter_target = database[database['name'].str.contains(protein_id)]
 
-                try:
-                    assert len(filter_target) == 1
-                except AssertionError:
+                if len(filter_target) != 1:
                     st.info("Protein name/identifier is ambiguous: {0} matches returned from FASTA file".format(len(filter_target)))
                     return
 
                 target_sequence = filter_target.loc[filter_target.index[0], 'sequence']
                 target_name = filter_target.loc[filter_target.index[0], 'name']
-
-                # get peptides matching target
-                protein_fdr = pd.read_hdf(file, "protein_fdr")
 
                 # filter for search term
                 target_protein_peptide_matches = protein_fdr[protein_fdr['protein'].str.contains(protein_id)]
@@ -409,31 +406,21 @@ def sequence_coverage_map(file: str, options: list, results_yaml: dict):
                 else:
                     selection_label = 'across all files'
 
-                residues = [
-                    {'res': res, 'covered': False} for res in target_sequence
-                ]
-                for index, row in target_protein_peptide_matches.iterrows():
-                    peptide = row['naked_sequence']
+                if any(target_protein_peptide_matches['naked_sequence'].tolist()):
+                    peptide_list = target_protein_peptide_matches['naked_sequence'].tolist()
+                else:
+                    peptide_list = target_protein_peptide_matches['sequence'].tolist()
 
-                    if peptide == '': # Found cases where naked_sequence was blank for all - Bug?
-                        peptide = ''.join(_ for _ in row['sequence'] if not _.islower())
-
-                    matches = [m.start() for m in re.finditer('(?=%s)' %peptide, target_sequence)]
-                    for m in matches:
-                        for index in range(m, m+len(peptide)):
-                            assert residues[index]['res'] == target_sequence[index]
-                            residues[index]['covered'] = True
-
-                total = len(residues)
-                total_covered = len([r for r in residues if r['covered'] == True])
-                coverage_percent = total_covered / total * 100
+                total, total_covered, coverage_percent, residue_list = calculate_sequence_coverage(
+                    target_sequence, peptide_list
+                )
 
                 row_length = 50 # number of residues presented in a single row
                 group_length = 10 # number of residues within a whitespaced group
 
                 formatted_sequence = ''
                 counter = 0
-                for residue in residues:
+                for residue in residue_list:
                     if counter % group_length == 0:
                         formatted_sequence += ' '
                     if counter % row_length == 0:
