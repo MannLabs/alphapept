@@ -17,7 +17,7 @@ jobs:
           PERSONAL_ACCESS_TOKEN : ${{ secrets.CLA_ACCESS }}
         with:
           path-to-signatures: 'signatures/version1/cla.json'
-          path-to-cla-document: 'https://github.com/MannLabs/alphapept/blob/master/CLA.md'
+          path-to-document: 'https://github.com/MannLabs/alphapept/blob/master/CLA.md'
           # branch should not be protected
           branch: 'cla'
           allowlist: straussmaximilian,dependabot[bot],bot*
