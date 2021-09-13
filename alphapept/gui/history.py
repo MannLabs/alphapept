@@ -151,21 +151,18 @@ def create_multiple_plots(all_results: dict, groups: list, to_plot: list):
         groups (list): List of groups.
         to_plot (list): Name of the column that should be plotted.
     """
-    # Get filename and acquisition_date_time
-    files = [
-        os.path.splitext(all_results[_]["summary"]["processed_files"][0])[0]
-        for _ in all_results.keys()
-    ]
-    acquisition_date_times = [
-        all_results[_]["summary"][files[idx]]["acquisition_date_time"]
-        for idx, _ in enumerate(all_results.keys())
-    ]
 
+    files = []
+    acquisition_date_times = []
     fields = set()
-    [
-        fields.update(all_results[_]["summary"][files[idx]].keys())
-        for idx, _ in enumerate(all_results.keys())
-    ]
+
+    for idx, _ in enumerate(all_results.keys()):
+
+        if "summary" in all_results[_]:
+            files.append(os.path.splitext(all_results[_]["summary"]["processed_files"][0])[0])
+            acquisition_date_times.append(all_results[_]["summary"][files[idx]]["acquisition_date_time"])
+            fields.update(all_results[_]["summary"][files[idx]].keys())
+
     fields.remove("acquisition_date_time")
     fields = list(fields)
     fields.sort()
@@ -178,15 +175,6 @@ def create_multiple_plots(all_results: dict, groups: list, to_plot: list):
     mode = st.selectbox("X-Axis", options=["AcquisitionDateTime", "Filename"])
 
     with st.spinner("Creating plots.."):
-        # Get filename and acquisition_date_time
-        files = [
-            os.path.splitext(all_results[_]["summary"]["processed_files"][0])[0]
-            for _ in all_results.keys()
-        ]
-        acquisition_date_times = [
-            all_results[_]["summary"][files[idx]]["acquisition_date_time"]
-            for idx, _ in enumerate(all_results.keys())
-        ]
 
         for plot in plot_types:
             create_single_plot(
