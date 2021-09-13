@@ -11,6 +11,12 @@ BASE_PATH = os.path.dirname(__file__)
 HOME = os.path.expanduser("~")
 LOG_PATH = os.path.join(HOME, "alphapept", "logs")
 
+LATEST_GITHUB_INIT_FILE = (
+    "https://raw.githubusercontent.com/MannLabs/alphapept/"
+    "master/alphapept/__init__.py"
+)
+
+
 def set_logger(
     *,
     log_file_name: str = "",
@@ -315,3 +321,27 @@ def log_me(given_function):
         logging.debug("FUNCTION `{}` FINISHED".format(given_function.__name__))
         return result
     return wrapper
+
+def check_github_version() -> str:
+    """Checks and returns the current version of AlphaPept.
+    Parameters
+    ----------
+
+    Returns
+    -------
+    : str
+        The version on the AlphaPept GitHub master branch.
+        None if no version can be found on GitHub
+    """
+    import urllib.request
+    import urllib.error
+    try:
+        with urllib.request.urlopen(LATEST_GITHUB_INIT_FILE) as version_file:
+            for line in version_file.read().decode('utf-8').split("\n"):
+                if line.startswith("__version__"):
+                    github_version = line.split()[2][1:-1]
+                    return github_version
+    except IndexError:
+        return None
+    except urllib.error.URLError:
+        return None

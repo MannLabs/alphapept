@@ -3,7 +3,7 @@
 __all__ = ['tqdm_wrapper', 'check_version_and_hardware', 'wrapped_partial', 'create_database', 'import_raw_data',
            'feature_finding', 'search_data', 'recalibrate_data', 'score', 'protein_grouping', 'align', 'match',
            'quantification', 'export', 'run_complete_workflow', 'extract_median_unique', 'get_file_summary',
-           'get_summary', 'parallel_execute', 'run_cli', 'cli_overview', 'cli_database', 'cli_import',
+           'get_summary', 'parallel_execute', 'bcolors', 'run_cli', 'cli_overview', 'cli_database', 'cli_import',
            'cli_feature_finding', 'cli_search', 'cli_recalibrate', 'cli_score', 'cli_align', 'cli_match',
            'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui', 'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
 
@@ -1165,12 +1165,24 @@ def parallel_execute(
 
 # Cell
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 import click
 import os
 import alphapept.settings
 from .__version__ import VERSION_NO
 from .__version__ import COPYRIGHT
 from .__version__ import URL
+from .utils import check_github_version
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 CLICK_SETTINGS_OPTION = click.argument(
@@ -1183,6 +1195,17 @@ CLICK_SETTINGS_OPTION = click.argument(
 
 def run_cli() -> None:
     """Run the command line interface."""
+
+
+    remote_version = check_github_version()
+
+    version_str = '.{}.'.format(VERSION_NO)
+
+    if remote_version:
+        if remote_version != VERSION_NO:
+            version_str = f'{VERSION_NO} {bcolors.OKGREEN} -> Update available ({remote_version}){bcolors.ENDC}'
+            version_str = f".{version_str.center(50+len(bcolors.ENDC)+len(bcolors.OKGREEN))}."
+
     print(
         "\n".join(
             [
@@ -1196,12 +1219,13 @@ def run_cli() -> None:
                 '.'*52,
                 '.{}.'.format(URL.center(50)),
                 '.{}.'.format(COPYRIGHT.center(50)),
-                '.{}.'.format(VERSION_NO.center(50)),
+                version_str,
                 '.'*52,
                 "\n"
             ]
         )
     )
+
     cli_overview.add_command(cli_database)
     cli_overview.add_command(cli_import)
     cli_overview.add_command(cli_feature_finding)
