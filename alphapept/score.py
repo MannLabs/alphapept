@@ -897,7 +897,12 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
             elif settings["score"]["method"] == 'x_tandem':
                 df = filter_with_x_tandem(df)
             else:
-                raise NotImplementedError('Scoring method {} not implemented.'.format(settings["score"]["method"]))
+                try:
+                    import importlib
+                    alphapept_plugin = importlib.import_module(settings["score"]["method"]+".alphapept_plugin")
+                    df = alphapept_plugin.score_alphapept(df, index, settings)
+                except Exception as e:
+                    raise NotImplementedError('Scoring method {} not implemented. Other exception info: {}'.format(settings["score"]["method"], e))
 
             df = cut_global_fdr(df, analyte_level='precursor',  plot=False, fdr_level = settings["search"]["peptide_fdr"], **settings['search'])
 
