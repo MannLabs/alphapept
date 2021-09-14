@@ -3,7 +3,7 @@
 __all__ = ['load_thermo_raw', 'load_bruker_raw', 'one_over_k0_to_CCS', 'check_sanity', 'extract_mzml_info',
            'load_mzml_data', '__extract_nested', 'extract_mq_settings', 'parse_mq_seq', 'get_peaks', 'get_centroid',
            'gaussian_estimator', 'centroid_data', 'get_most_abundant', 'list_to_numpy_f32', 'HDF_File', 'MS_Data_File',
-           'raw_conversion']
+           'index_ragged_list', 'raw_conversion']
 
 # Cell
 def load_thermo_raw(
@@ -331,6 +331,8 @@ def load_mzml_data(
     mono_mzs_list = []
     charge_list = []
 
+    vendor = "Unknown"
+
     for idx, i in enumerate(spec_indices):
         try:
             spec = next(reader)
@@ -339,9 +341,6 @@ def load_mzml_data(
                 ext = re.findall(r"File:\".+\.(\w+)\"", spec['spectrum title'])[0]
                 if ext.lower() == 'raw':
                     vendor = "Thermo"
-                else:
-                    # add support for other vendors
-                    vendor = "Unknown"
 
             scan_list.append(i)
             rt, masses, intensities, ms_order, prec_mass, mono_mz, charge = extract_mzml_info(spec)
@@ -1155,6 +1154,21 @@ def import_raw_DDA_data(
     self._save_DDA_query_data(query_data, vendor, acquisition_date_time)
 
 
+def index_ragged_list(ragged_list: list)  -> np.ndarray:
+    """Create lookup indices for a list of arrays for concatenation.
+
+    Args:
+        value (list): Input list of arrays.
+
+    Returns:
+        indices: A numpy array with indices.
+    """
+    indices = np.zeros(len(ragged_list) + 1, np.int64)
+    indices[1:] = [len(i) for i in ragged_list]
+    indices = np.cumsum(indices)
+
+    return indices
+
 def _read_DDA_query_data(
     file_name:str,
     n_most_abundant:int=-1,
@@ -1251,9 +1265,7 @@ def _save_DDA_query_data(
         if key.endswith("1"):
 #             TODO: Weak check for ms2, imporve to _ms1 if consistency in naming is guaranteed
             if key == "mass_list_ms1":
-                indices = np.zeros(len(value) + 1, np.int64)
-                indices[1:] = [len(i) for i in value]
-                indices = np.cumsum(indices)
+                indices = index_ragged_list(value)
                 self.write(
                     indices,
                     dataset_name="indices_ms1",
@@ -1271,17 +1283,21 @@ def _save_DDA_query_data(
         elif key.endswith("2"):
 #             TODO: Weak check for ms2, imporve to _ms2 if consistency in naming is guaranteed
             if key == "mass_list_ms2":
-                indices = np.zeros(len(value) + 1, np.int64)
-                indices[1:] = [len(i) for i in value]
-                indices = np.cumsum(indices)
+                indices = index_ragged_list(value)
                 self.write(
                     indices,
                     dataset_name="indices_ms2",
                     group_name=f"Raw/MS2_scans"
                 )
-                value = np.concatenate(value)
+                if len(value) > 1: #in case there is no MS2
+                    value = np.concatenate(value)
+                else:
+                    value = np.array(value)
             elif key == "int_list_ms2":
-                value = np.concatenate(value)
+                if len(value) > 1: #in case there is no MS2
+                    value = np.concatenate(value)
+                else:
+                    value = np.array(value)
             self.write(
                 value,
 #                 TODO: key should be trimmed: xxx_ms2 should just be e.g. xxx
@@ -1415,3 +1431,4 @@ def raw_conversion(
     except Exception as e:
         logging.error(f'File conversion of file {file_name} failed. Exception {e}')
         return f"{e}" #Can't return exception object, cast as string
+    return True

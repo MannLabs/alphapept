@@ -1,11 +1,12 @@
 import os
-import streamlit as st
-import plotly.express as px
 import yaml
-import pandas as pd
-from alphapept.paths import PROCESSED_PATH, AP_PATH, PLOT_SETTINGS
-from alphapept.gui.utils import files_in_folder
+import streamlit as st
 import numpy as np
+import plotly.express as px
+import pandas as pd
+
+from alphapept.paths import PROCESSED_PATH, PLOT_SETTINGS
+from alphapept.gui.utils import files_in_folder
 from alphapept.settings import load_settings
 from typing import Callable, Union
 
@@ -151,21 +152,19 @@ def create_multiple_plots(all_results: dict, groups: list, to_plot: list):
         groups (list): List of groups.
         to_plot (list): Name of the column that should be plotted.
     """
-    # Get filename and acquisition_date_time
-    files = [
-        os.path.splitext(all_results[_]["summary"]["processed_files"][0])[0]
-        for _ in all_results.keys()
-    ]
-    acquisition_date_times = [
-        all_results[_]["summary"][files[idx]]["acquisition_date_time"]
-        for idx, _ in enumerate(all_results.keys())
-    ]
 
+    files = []
+    acquisition_date_times = []
     fields = set()
-    [
-        fields.update(all_results[_]["summary"][files[idx]].keys())
-        for idx, _ in enumerate(all_results.keys())
-    ]
+
+    for result in all_results.values():
+        if "summary" in result:
+            result_file = os.path.splitext(result["summary"]["processed_files"][0])[0]
+            files.append(result_file)
+            acquisition_date_time = result["summary"][result_file]["acquisition_date_time"]
+            acquisition_date_times.append(acquisition_date_time)
+            fields.update(result["summary"][result_file].keys())
+
     fields.remove("acquisition_date_time")
     fields = list(fields)
     fields.sort()
@@ -178,15 +177,6 @@ def create_multiple_plots(all_results: dict, groups: list, to_plot: list):
     mode = st.selectbox("X-Axis", options=["AcquisitionDateTime", "Filename"])
 
     with st.spinner("Creating plots.."):
-        # Get filename and acquisition_date_time
-        files = [
-            os.path.splitext(all_results[_]["summary"]["processed_files"][0])[0]
-            for _ in all_results.keys()
-        ]
-        acquisition_date_times = [
-            all_results[_]["summary"][files[idx]]["acquisition_date_time"]
-            for idx, _ in enumerate(all_results.keys())
-        ]
 
         for plot in plot_types:
             create_single_plot(
