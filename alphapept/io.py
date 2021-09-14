@@ -1265,7 +1265,7 @@ def _save_DDA_query_data(
         if key.endswith("1"):
 #             TODO: Weak check for ms2, imporve to _ms1 if consistency in naming is guaranteed
             if key == "mass_list_ms1":
-                indices = value_to_index(value)
+                indices = index_ragged_list(value)
                 self.write(
                     indices,
                     dataset_name="indices_ms1",
@@ -1283,7 +1283,7 @@ def _save_DDA_query_data(
         elif key.endswith("2"):
 #             TODO: Weak check for ms2, imporve to _ms2 if consistency in naming is guaranteed
             if key == "mass_list_ms2":
-                indices = value_to_index(value)
+                indices = index_ragged_list(value)
                 self.write(
                     indices,
                     dataset_name="indices_ms2",
