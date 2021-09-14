@@ -5,7 +5,7 @@ from __future__ import annotations
 
 
 __all__ = ['IsotopeDistribution', 'fast_add', 'numba_bin', 'dict_to_dist', 'spec', 'get_average_formula',
-           'mass_to_dist', 'calculate_mass', 'M_PROTON']
+           'mass_to_dist', 'ISOTOPE_MASS', 'calculate_mass', 'M_PROTON']
 
 # Cell
 
@@ -216,6 +216,8 @@ def get_average_formula(molecule_mass:float, averagine_aa:Dict, isotopes:Dict, s
     return counted_AA
 
 # Cell
+from .constants import mass_dict
+ISOTOPE_MASS = mass_dict['delta_M']
 @njit
 def mass_to_dist(molecule_mass: float, averagine_aa:Dict, isotopes:Dict)-> (np.ndarray, np.ndarray):
     """Function to calculate an isotope distribution from a molecule mass using the averagine model.
@@ -233,7 +235,7 @@ def mass_to_dist(molecule_mass: float, averagine_aa:Dict, isotopes:Dict)-> (np.n
 
     dist = dict_to_dist(counted_AA, isotopes)
 
-    masses = np.array([dist.m0 + i for i in range(len(dist.intensities))])
+    masses = np.array([dist.m0 + i*ISOTOPE_MASS for i in range(len(dist.intensities))])
     ints = dist.intensities
 
     return masses, ints
