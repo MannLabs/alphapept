@@ -1163,8 +1163,8 @@ def index_ragged_list(ragged_list: list)  -> np.ndarray:
     Returns:
         indices: A numpy array with indices.
     """
-    indices = np.zeros(len(value) + 1, np.int64)
-    indices[1:] = [len(i) for i in value]
+    indices = np.zeros(len(ragged_list) + 1, np.int64)
+    indices[1:] = [len(i) for i in ragged_list]
     indices = np.cumsum(indices)
 
     return indices
