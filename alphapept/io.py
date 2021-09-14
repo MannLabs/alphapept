@@ -3,7 +3,7 @@
 __all__ = ['load_thermo_raw', 'load_bruker_raw', 'one_over_k0_to_CCS', 'check_sanity', 'extract_mzml_info',
            'load_mzml_data', '__extract_nested', 'extract_mq_settings', 'parse_mq_seq', 'get_peaks', 'get_centroid',
            'gaussian_estimator', 'centroid_data', 'get_most_abundant', 'list_to_numpy_f32', 'HDF_File', 'MS_Data_File',
-           'value_to_index', 'raw_conversion']
+           'index_ragged_list', 'raw_conversion']
 
 # Cell
 def load_thermo_raw(
@@ -1154,8 +1154,8 @@ def import_raw_DDA_data(
     self._save_DDA_query_data(query_data, vendor, acquisition_date_time)
 
 
-def value_to_index(value: list) -> np.ndarray:
-    """Create lookup indices for a list of arrays for concetenation.
+def index_ragged_list(ragged_list: list)  -> np.ndarray:
+    """Create lookup indices for a list of arrays for concatenation.
 
     Args:
         value (list): Input list of arrays.

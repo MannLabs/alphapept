@@ -1,14 +1,12 @@
 import streamlit as st
 from alphapept.gui.utils import (
-    files_in_folder,
-    read_log,
     check_process,
     init_process,
     start_process,
     escape_markdown,
 )
 from alphapept.paths import PROCESSED_PATH, PROCESS_FILE, QUEUE_PATH, FAILED_PATH
-from alphapept.settings import load_settings, load_settings_as_template, save_settings
+from alphapept.settings import load_settings_as_template, save_settings
 import os
 import psutil
 import datetime

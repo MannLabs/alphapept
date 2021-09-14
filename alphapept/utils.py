@@ -336,7 +336,7 @@ def check_github_version() -> str:
     import urllib.request
     import urllib.error
     try:
-        with urllib.request.urlopen(LATEST_GITHUB_INIT_FILE) as version_file:
+        with urllib.request.urlopen(LATEST_GITHUB_INIT_FILE, timeout=10) as version_file:
             for line in version_file.read().decode('utf-8').split("\n"):
                 if line.startswith("__version__"):
                     github_version = line.split()[2][1:-1]

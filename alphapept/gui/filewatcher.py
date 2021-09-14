@@ -1,12 +1,13 @@
-import streamlit as st
-from alphapept.paths import FILE_WATCHER_FILE, DEFAULT_SETTINGS_PATH, QUEUE_PATH
-from alphapept.gui.utils import check_process, init_process, start_process, get_folder_size, get_size
-from alphapept.settings import load_settings_as_template, save_settings
 import os
 import time
 import datetime
 import yaml
 import psutil
+
+import streamlit as st
+from alphapept.paths import FILE_WATCHER_FILE, DEFAULT_SETTINGS_PATH, QUEUE_PATH
+from alphapept.gui.utils import check_process, init_process, start_process, get_size
+from alphapept.settings import load_settings_as_template, save_settings
 
 
 def check_file_completion(file: str, minimum_file_size: float) -> list:
@@ -137,8 +138,8 @@ def filewatcher():
         st.success(f"PID {last_pid} - {p_name} - {status} - {path}")
 
         if st.button("Stop file watcher"):
-            p_ = psutil.Process(last_pid)
-            p_.terminate()
+            process = psutil.Process(last_pid)
+            process.terminate()
             st.success(f"Terminated {last_pid}")
             raise st.script_runner.RerunException(
                 st.script_request_queue.RerunData(None)

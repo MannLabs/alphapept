@@ -1,11 +1,12 @@
 import os
-import streamlit as st
-import plotly.express as px
 import yaml
-import pandas as pd
-from alphapept.paths import PROCESSED_PATH, AP_PATH, PLOT_SETTINGS
-from alphapept.gui.utils import files_in_folder
+import streamlit as st
 import numpy as np
+import plotly.express as px
+import pandas as pd
+
+from alphapept.paths import PROCESSED_PATH, PLOT_SETTINGS
+from alphapept.gui.utils import files_in_folder
 from alphapept.settings import load_settings
 from typing import Callable, Union
 
@@ -156,12 +157,13 @@ def create_multiple_plots(all_results: dict, groups: list, to_plot: list):
     acquisition_date_times = []
     fields = set()
 
-    for idx, _ in enumerate(all_results.keys()):
-
-        if "summary" in all_results[_]:
-            files.append(os.path.splitext(all_results[_]["summary"]["processed_files"][0])[0])
-            acquisition_date_times.append(all_results[_]["summary"][files[idx]]["acquisition_date_time"])
-            fields.update(all_results[_]["summary"][files[idx]].keys())
+    for result in all_results.values():
+        if "summary" in result:
+            result_file = os.path.splitext(result["summary"]["processed_files"][0])[0]
+            files.append(result_file)
+            acquisition_date_time = result["summary"][result_file]["acquisition_date_time"]
+            acquisition_date_times.append(acquisition_date_time)
+            fields.update(result["summary"][result_file].keys())
 
     fields.remove("acquisition_date_time")
     fields = list(fields)

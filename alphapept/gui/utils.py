@@ -1,18 +1,23 @@
 import os
 import datetime
+from multiprocessing import Process
+import time
 import yaml
 import streamlit as st
-from multiprocessing import Process
 import psutil
-import time
 import pandas as pd
-from typing import Callable, Union
+from typing import Callable, Union, Tuple
 
 
 def get_size(path: str ) -> float:
     """
     Helper function to get size of a path (file / folder)
 
+    Args:
+        path (str): Path to the folder / file.
+
+    Returns:
+        float: Total size in bytes.
     """
     if path.endswith(".d"):
         size_function = get_folder_size
@@ -21,14 +26,14 @@ def get_size(path: str ) -> float:
 
     return size_function(path)
 
-def get_folder_size(start_path: str = ".") -> float:
+def get_folder_size(start_path: str ) -> float:
     """Returns the total size of a given folder.
 
     Args:
-        start_path (str): Path to the folder that should be checked. Defaults to '.'.
+        start_path (str): Path to the folder that should be checked.
 
     Returns:
-        float: Total size in Mb.
+        float: Total size in bytes.
     """
 
     total_size = 0
@@ -161,7 +166,7 @@ def start_process(
 
 def check_process(
     process_path: str,
-) -> (bool, Union[str, None], Union[str, None], Union[str, None], bool):
+) ->Tuple[bool, Union[str, None], Union[str, None], Union[str, None], bool]:
     """Function to check the status of a process.
     Reads the process file from the yaml and checks the process id.
 
@@ -204,12 +209,12 @@ def init_process(process_path: str, **kwargs: dict):
     while True:
         if os.path.isfile(process_path):
             with open(process_path, "r") as process_file:
-                p = yaml.load(process_file, Loader=yaml.FullLoader)
-            p["init"] = True
+                process = yaml.load(process_file, Loader=yaml.FullLoader)
+            process["init"] = True
             for _ in kwargs:
-                p[_] = kwargs[_]
+                process[_] = kwargs[_]
             with open(process_path, "w") as file:
-                yaml.dump(p, file, sort_keys=False)
+                yaml.dump(process, file, sort_keys=False)
             break
         else:
             time.sleep(1)
