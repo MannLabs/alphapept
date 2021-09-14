@@ -385,7 +385,7 @@ def AlphaPool(process_count: int) -> multiprocessing.Pool:
     Args:
         process_count (int): The number of processes.
             If larger than available cores, it is trimmed to the available maximum.
-            If 0, it is set to the maximum cores available (at most 50).
+
 
     Returns:
         multiprocessing.Pool: A Pool object to parallelize functions with multiple processes.
@@ -393,6 +393,9 @@ def AlphaPool(process_count: int) -> multiprocessing.Pool:
     """
     max_processes = psutil.cpu_count()
     new_max = min(process_count, 50, max_processes)
+
+    if new_max == 0:
+        new_max = 1
     logging.info(f"AlphaPool was set to {process_count} processes. Setting max to {new_max}.")
 
     return Pool(new_max)

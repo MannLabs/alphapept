@@ -44,7 +44,7 @@ def parse_folder(file_folder: str) -> (list, list, list):
     raw_files = [
         _
         for _ in os.listdir(file_folder)
-        if _.lower().endswith(".raw") or _.lower().endswith(".d")
+        if _.lower().endswith(".raw") or _.lower().endswith(".d") or _.lower().endswith(".mzml")
     ]
     fasta_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith(".fasta")]
     db_files = [
@@ -281,8 +281,8 @@ def experiment():
                 raw_files = [_ for _ in raw_files if _ not in exclude]
 
                 file_df = file_df_from_files(raw_files, file_folder)
-                file_df["Fraction"] = ""
-                file_df["Matching group"] = ""
+                #file_df["Fraction"] = ""
+                #file_df["Matching group"] = ""
 
                 gb = GridOptionsBuilder.from_dataframe(file_df)
                 gb.configure_default_column(
@@ -333,17 +333,24 @@ def experiment():
                 )
                 recorder["experiment"]["fasta_paths"] = selection
 
+                #TODO
+
+                if len(recorder["experiment"]["fasta_paths"]) == 0:
+                    st.warning(f"Warning: No FASTA files selected.")
+                    error += 1
+
                 recorder["experiment"]["shortnames"] = shortnames
                 recorder["experiment"]["file_paths"] = [
                     os.path.join(file_folder, _)
                     for _ in file_df_selected["Filename"].values.tolist()
                 ]
-                recorder["experiment"]["fractions"] = file_df_selected[
-                    "Fraction"
-                ].values.tolist()
-                recorder["experiment"]["matching_groups"] = file_df_selected[
-                    "Matching group"
-                ].values.tolist()
+
+                #recorder["experiment"]["fractions"] = file_df_selected[
+                #    "Fraction"
+                #].values.tolist()
+                #recorder["experiment"]["matching_groups"] = file_df_selected[
+                #    "Matching group"
+                #].values.tolist()
 
                 st.write(f"## Workflow")
 

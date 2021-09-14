@@ -67,10 +67,10 @@ nb_path: "nbs/07_recalibration.ipynb"
 <h4 id="remove_outliers" class="doc_header"><code>remove_outliers</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L11" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>remove_outliers</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>outlier_std</code></strong>:<code>float</code>)</p>
 </blockquote>
 <p>Helper function to remove outliers from a dataframe.
-Outliers are removed based on the precursor offset mass (o_mass).
+Outliers are removed based on the precursor offset mass (prec_offset).
 All values within x standard deviations to the median are kept.</p>
 <p>Args:
-    df (pd.DataFrame): Input dataframe that contains a o_mass_ppm-column.
+    df (pd.DataFrame): Input dataframe that contains a prec_offset_ppm-column.
     outlier_std (float): Range of standard deviations to filter outliers</p>
 <p>Raises:
     ValueError: An error if the column is not present in the dataframe.</p>

@@ -374,11 +374,24 @@ def search_data(
                 logging.info('No calibration found.')
                 offsets = None
 
+            try:
+                frag_tols = [float(
+                    alphapept.io.MS_Data_File(
+                        ms_file_name
+                    ).read(dataset_name="estimated_max_fragment_ppm")[0] * settings['search']['calibration_std']) for ms_file_name in ms_files
+                ]
+
+            except KeyError:
+                logging.info('Fragment tolerance not calibrated found.')
+                frag_tols = None
+
+
             logging.info('Starting second search.')
 
             fasta_dict = alphapept.search.search_parallel(
                 settings,
                 calibration=offsets,
+                fragment_calibration=frag_tols,
                 callback=cb
             )
             pept_dict = None
@@ -947,7 +960,7 @@ def extract_median_unique(settings: dict) -> tuple:
     cols = [_ for _ in ['protein','protein_group','precursor','naked_sequence','sequence'] if _ in protein_fdr.columns]
     n_unique = protein_fdr.groupby('filename')[cols].nunique()
     n_unique.index = [os.path.split(_)[1][:-12] for _ in n_unique.index]
-    cols = [_ for _ in ['fwhm','int_sum','rt_length','rt_tail','o_mass_ppm_raw'] if _ in protein_fdr.columns]
+    cols = [_ for _ in ['fwhm','int_sum','rt_length','rt_tail','prec_offset_raw_ppm '] if _ in protein_fdr.columns]
     median = protein_fdr.groupby('filename')[cols].median()
     median.index = [os.path.split(_)[1][:-12] for _ in median.index]
 
@@ -983,7 +996,7 @@ def get_file_summary(ms_data: alphapept.io.MS_Data_File) -> dict:
                     f_summary['id_rate (peptide_fdr)'] = float(df['raw_idx'].nunique() / n_ms2)
 
             if key in ['feature_table','peptide_fdr']:
-                for field in ['fwhm','int_sum','rt_length','rt_tail','o_mass_ppm_raw']:
+                for field in ['fwhm','int_sum','rt_length','rt_tail','prec_offset_raw_ppm ']:
                     if field in df.columns:
                         f_summary[f'{field} ({key}, median)'] = float(df[field].median())
 

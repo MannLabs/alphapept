@@ -7,10 +7,20 @@
 ![Performance test](https://github.com/MannLabs/alphapept/workflows/Performance%20test/badge.svg)
 ![Windows Installer](https://github.com/MannLabs/alphapept/workflows/Windows%20Installer/badge.svg)
 
+[![DOI:10.1101/2021.07.23.453379](http://img.shields.io/badge/DOI-10.1101/2021.07.23.453379-B31B1B.svg)](https://www.biorxiv.org/content/10.1101/2021.07.23.453379v1)
+
 # AlphaPept
 ![](https://i.imgur.com/xkFtDff.jpg)
  > A modular, python-based framework to analyze mass spectrometry data. Powered by nbdev. Supercharged with numba.
 
+
+## Preprint
+
+Our preprint **AlphaPept, a modern and open framework for MS-based proteomics** is now available [here.](https://www.biorxiv.org/content/10.1101/2021.07.23.453379v1)
+
+Be sure to check out other packages of our ecosystem:
+- [alphatims](https://github.com/MannLabs/alphatims): Fast access to TimsTOF data.
+- [alphamap](https://github.com/MannLabs/alphamap): Peptide level MS data exploration.
 
 ## Documentation
 
@@ -118,7 +128,7 @@ For the [windows installation](https://github.com/MannLabs/alphapept/releases/la
 
 Once AlphaPept is correctly installed, you can use it like any other python module.
 
-```
+```python
 from alphapept.fasta import get_frag_dict, parse
 from alphapept import constants
 
@@ -165,18 +175,6 @@ settings = load_settings('new_settings.yaml')
 r = alphapept.interface.run_complete_workflow(settings)
 ```
 
-## Dockerization
-
-We provide a dockerfile to show how to run AlphaPept in a containerized environment. This allows building powerful pipelines e.g. with AWS Batch. The dockerfile will launch the browser-based GUI. 
-
-1. Install docker
-2. Build the dockerfile with `docker build -t docker-alphapept:latest .` This took approximately ~10 minutes on a 2019 MacBookPro)
-3. Run the container `docker run -p 8501:8501 -v /Users/mstrauss/Desktop/docker:/home/alphapept/ docker-alphapept:latest alphapept gui`
-
-Notes: 
-`-p 8501:8501` forwards the streamlit port to the same port on your machine. You can access AlphaPept via `localhost:8501`
-`-v /Users/mstrauss/Desktop/docker:/shared_folder/` mounts the volume to your docker container. E.g., in this case, the local `docker`-folder on the Desktop can be accessed via `/shared_folder/`.
-
 ## Notebooks
 
 Within the notebooks, we try to cover most aspects of a proteomics workflow:
@@ -193,7 +191,23 @@ Within the notebooks, we try to cover most aspects of a proteomics workflow:
 * Matching: Functions for Match-between-runs
 * Constants: A collection of constants
 * Interface: Code that generates the command-line-interface (CLI)
-* Speed: Helper functions to speed up code with CPU / GPU
+* Performance: Helper functions to speed up code with CPU / GPU
 
 ## Contributing
-If you have a feature request or a bug report, please post it as an issue on the GitHub issue tracker. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started [here](https://github.com/MannLabs/alphapept/blob/master/CONTRIBUTING.md). We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects-page on GitHub. You can also contact us via opensource@alphapept.com.
+If you have a feature request or a bug report, please post it as an issue on the GitHub issue tracker. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started [here](https://mannlabs.github.io/alphapept/contributing.html). We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects-page on GitHub. You can also contact us via opensource@alphapept.com.
+
+## Cite us
+
+```
+@article {Strauss2021.07.23.453379,
+	author = {Strauss, Maximilian T and Bludau, Isabell and Zeng, Wen-Feng and Voytik, Eugenia and Ammar, Constantin and Schessner, Julia and Ilango, Rajesh and Gill, Michelle and Meier, Florian and Willems, Sander and Mann, Matthias},
+	title = {AlphaPept, a modern and open framework for MS-based proteomics},
+	elocation-id = {2021.07.23.453379},
+	year = {2021},
+	doi = {10.1101/2021.07.23.453379},
+	publisher = {Cold Spring Harbor Laboratory},
+	URL = {https://www.biorxiv.org/content/early/2021/07/26/2021.07.23.453379},
+	eprint = {https://www.biorxiv.org/content/early/2021/07/26/2021.07.23.453379.full.pdf},
+	journal = {bioRxiv}
+}
+```

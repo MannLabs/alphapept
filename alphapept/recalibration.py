@@ -12,11 +12,11 @@ def remove_outliers(
     df:  pd.DataFrame,
     outlier_std: float) -> pd.DataFrame:
     """Helper function to remove outliers from a dataframe.
-    Outliers are removed based on the precursor offset mass (o_mass).
+    Outliers are removed based on the precursor offset mass (prec_offset).
     All values within x standard deviations to the median are kept.
 
     Args:
-        df (pd.DataFrame): Input dataframe that contains a o_mass_ppm-column.
+        df (pd.DataFrame): Input dataframe that contains a prec_offset_ppm-column.
         outlier_std (float): Range of standard deviations to filter outliers
 
     Raises:
@@ -26,14 +26,14 @@ def remove_outliers(
         pd.DataFrame: A dataframe w/o outliers.
     """
 
-    if 'o_mass_ppm' not in df.columns:
-        raise ValueError(f"Column o_mass_ppm not in df")
+    if 'prec_offset_ppm' not in df.columns:
+        raise ValueError(f"Column prec_offset_ppm not in df")
     else:
         # Remove outliers for calibration
-        o_mass_std = np.abs(df['o_mass_ppm'].std())
-        o_mass_median = df['o_mass_ppm'].median()
+        o_mass_std = np.abs(df['prec_offset_ppm'].std())
+        o_mass_median = df['prec_offset_ppm'].median()
 
-        df_sub = df.query('o_mass_ppm < @o_mass_median+@outlier_std*@o_mass_std and o_mass_ppm > @o_mass_median-@outlier_std*@o_mass_std').copy()
+        df_sub = df.query('prec_offset_ppm < @o_mass_median+@outlier_std*@o_mass_std and prec_offset_ppm > @o_mass_median-@outlier_std*@o_mass_std').copy()
 
         return df_sub
 
@@ -154,7 +154,7 @@ def get_calibration(
 
     if len(df) > calib_n_neighbors:
 
-        target = 'o_mass_ppm'
+        target = 'prec_offset_ppm'
         cols = ['mz','rt']
 
         if 'mobility' in df.columns:
@@ -171,11 +171,18 @@ def get_calibration(
         corrected_mass = (1-y_hat/1e6) * features['mass_matched']
 
         y_hat_std = y_hat.std()
-        return corrected_mass, y_hat_std
+
+        mad_offset = np.median(np.absolute(y_hat - np.median(y_hat)))
+
+        return corrected_mass, y_hat_std, mad_offset
+
 
     else:
         logging.info('Not enough data points present. Skipping recalibration.')
-        return features['mass_matched'], np.abs(df['o_mass_ppm'].std())
+
+        mad_offset = np.median(np.absolute(df['prec_offset_ppm'].values - np.median(df['prec_offset_ppm'].values)))
+
+        return features['mass_matched'], np.abs(df['prec_offset_ppm'].std()), mad_offset
 
 # Cell
 
@@ -221,7 +228,7 @@ def calibrate_hdf(
                 verbose=False,
                 **settings["search"]
             )
-            corrected_mass, o_mass_ppm_std = get_calibration(
+            corrected_mass, prec_offset_ppm_std, prec_offset_ppm_mad = get_calibration(
                 df,
                 features,
                 **settings["calibration"]
@@ -239,10 +246,10 @@ def calibrate_hdf(
                 group_name="features"
             )
 
-            o_mass_ppm_std = 0
+            prec_offset_ppm_std = 0
 
         ms_file_.write(
-            o_mass_ppm_std,
+            prec_offset_ppm_std,
             dataset_name="corrected_mass",
             group_name="features",
             attr_name="estimated_max_precursor_ppm"
@@ -266,6 +273,8 @@ def calibrate_hdf(
             delta_ppm = ((ions['db_mass'] - ions['ion_mass'])/((ions['db_mass'] + ions['ion_mass'])/2)*1e6).values
             median_offset = -np.median(delta_ppm)
             std_offset = np.std(delta_ppm)
+            mad_offset = np.median(np.absolute(delta_ppm - np.median(delta_ppm)))
+
             mass_list_ms2 = ms_file_.read(dataset_name = 'mass_list_ms2', group_name = "Raw/MS2_scans")
 
             try:
@@ -275,12 +284,14 @@ def calibrate_hdf(
 
             offset += median_offset
 
-            logging.info(f'Median fragment offset {median_offset:.2f} - std {std_offset:.2f} ppm')
+            logging.info(f'Median fragment offset {median_offset:.2f} - std {std_offset:.2f} ppm - mad {mad_offset:.2f} ppm')
 
             ms_file_.write(
                 offset,
                 dataset_name="corrected_fragment_mzs",
             )
+
+            ms_file_.write(np.array([mad_offset]), dataset_name="estimated_max_fragment_ppm")
 
         return True
     except Exception as e:
