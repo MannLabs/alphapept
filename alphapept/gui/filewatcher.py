@@ -1,32 +1,13 @@
-import streamlit as st
-from alphapept.paths import FILE_WATCHER_FILE, DEFAULT_SETTINGS_PATH, QUEUE_PATH
-from alphapept.gui.utils import check_process, init_process, start_process
-from alphapept.settings import load_settings_as_template, save_settings
 import os
 import time
 import datetime
 import yaml
 import psutil
 
-
-def get_folder_size(start_path: str = ".") -> float:
-    """Returns the total size of a given folder.
-
-    Args:
-        start_path (str): Path to the folder that should be checked. Defaults to '.'.
-
-    Returns:
-        float: Total size in Mb.
-    """
-
-    total_size = 0
-    for dirpath, dirnames, filenames in os.walk(start_path):
-        for f in filenames:
-            fp = os.path.join(dirpath, f)
-            # skip if it is symbolic link
-            if not os.path.islink(fp):
-                total_size += os.path.getsize(fp)
-    return total_size
+import streamlit as st
+from alphapept.paths import FILE_WATCHER_FILE, DEFAULT_SETTINGS_PATH, QUEUE_PATH
+from alphapept.gui.utils import check_process, init_process, start_process, get_size
+from alphapept.settings import load_settings_as_template, save_settings
 
 
 def check_file_completion(file: str, minimum_file_size: float) -> list:
@@ -42,17 +23,12 @@ def check_file_completion(file: str, minimum_file_size: float) -> list:
 
     to_analyze = []
 
-    if file.endswith(".d"):
-        size_function = get_folder_size
-    else:
-        size_function = os.path.getsize
-
-    filesize = size_function(file)
+    filesize = get_size(file)
 
     writing = True
     while writing:
         time.sleep(5)
-        new_filesize = size_function(file)
+        new_filesize = get_size(file)
         if filesize == new_filesize:
             writing = False
         else:
@@ -162,8 +138,8 @@ def filewatcher():
         st.success(f"PID {last_pid} - {p_name} - {status} - {path}")
 
         if st.button("Stop file watcher"):
-            p_ = psutil.Process(last_pid)
-            p_.terminate()
+            process = psutil.Process(last_pid)
+            process.terminate()
             st.success(f"Terminated {last_pid}")
             raise st.script_runner.RerunException(
                 st.script_request_queue.RerunData(None)

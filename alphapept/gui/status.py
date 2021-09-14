@@ -1,14 +1,12 @@
 import streamlit as st
 from alphapept.gui.utils import (
-    files_in_folder,
-    read_log,
     check_process,
     init_process,
     start_process,
     escape_markdown,
 )
 from alphapept.paths import PROCESSED_PATH, PROCESS_FILE, QUEUE_PATH, FAILED_PATH
-from alphapept.settings import load_settings, load_settings_as_template, save_settings
+from alphapept.settings import load_settings_as_template, save_settings
 import os
 import psutil
 import datetime
@@ -151,52 +149,82 @@ def status():
 
     st.write("## Hardware utilization")
 
-    st.text("Ram")
-    ram = st.progress(0)
-    st.text("CPU")
-    cpu = st.progress(0)
+    c1,c2 = st.beta_columns(2)
+    c1.text("Ram")
+    ram = c1.progress(0)
+    c2.text("CPU")
+    cpu = c2.progress(0)
 
     running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
+
+
 
     if not running:
         start_process(target=queue_watcher, process_file=PROCESS_FILE, verbose=False)
         st.warning(
             "Initializing Alphapept and waiting for process to start. Please refresh page in a couple of seconds."
         )
-    elif not queue_watcher_state:
-        st.warning(
-            "Initializing Alphapept and waiting for process to start. Please refresh page in a couple of seconds."
+
+    if not queue_watcher_state:
+        with st.spinner('Waiting for AlphaPept process to start.'):
+            while not queue_watcher_state:
+                running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
+
+        time.sleep(1)
+        raise st.script_runner.RerunException(st.script_request_queue.RerunData(None))
+
+    current_file = os.path.join(QUEUE_PATH, "current_file")
+
+    with st.beta_expander(f"Full log "):
+        log_ = st.empty()
+
+    with st.beta_expander(f"Queue"):
+        queue_table = st.empty()
+
+    with st.beta_expander(f"Failed"):
+        failed_table = st.empty()
+
+    if st.checkbox("Terminate process"):
+        st.error(
+            f"This will abort the current run and move it to failed. Please confirm."
         )
-    else:
-        current_file = os.path.join(QUEUE_PATH, "current_file")
+        if st.button("Confirm"):
+            terminate_process()
 
-        with st.beta_expander(f"Full log "):
-            log_ = st.empty()
+    while True:
+        ram.progress(
+            1 - psutil.virtual_memory().available / psutil.virtual_memory().total
+        )
+        cpu.progress(psutil.cpu_percent() / 100)
 
-        with st.beta_expander(f"Queue"):
-            queue_table = st.empty()
+        queue_files = [_ for _ in os.listdir(QUEUE_PATH) if _.endswith(".yaml")]
+        failed_files = [_ for _ in os.listdir(FAILED_PATH) if _.endswith(".yaml")]
+        n_failed = len(failed_files)
+        n_queue = len(queue_files)
 
-        with st.beta_expander(f"Failed"):
-            failed_table = st.empty()
-
-        refresh = st.checkbox("Auto-Update Page")
-
-        if st.checkbox("Terminate process"):
-            st.error(
-                f"This will abort the current run and move it to failed. Please confirm."
+        if n_queue == 0:
+            status_msg.success(
+                f'{datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")} No files to process. Please add new experiments.'
             )
-            if st.button("Confirm"):
-                terminate_process()
+            current.progress(0)
+            overall.progress(0)
+            overall_txt.text("Overall: 0%")
+            task.text("None")
+            last_log.code("")
 
-        while True:
+            queue_table.table(pd.DataFrame())
+
+        else:
             if os.path.isfile(current_file):
                 with open(current_file, "r") as file:
                     cf_ = yaml.load(file, Loader=yaml.FullLoader)
 
                 cf = cf_["file"]
                 cf_start = cf_["started"]
+                now = datetime.datetime.now()
+                delta = f"{now-cf_start}".split('.')[0]
                 status_msg.success(
-                    f"Processing {escape_markdown(cf)}. Started at {cf_start}"
+                    f'{now.strftime("%d.%m.%Y %H:%M:%S")} Processing {escape_markdown(cf)}. Time elapsed {delta}'
                 )
 
                 logfile = os.path.join(PROCESSED_PATH, os.path.splitext(cf)[0] + ".log")
@@ -228,44 +256,19 @@ def status():
                     last_log.code("".join(log_txt[-3:]))
                     log_.code("".join(log_txt))
 
-            ram.progress(
-                1 - psutil.virtual_memory().available / psutil.virtual_memory().total
-            )
-            cpu.progress(psutil.cpu_percent() / 100)
+            created = [
+                time.ctime(os.path.getctime(os.path.join(QUEUE_PATH, _)))
+                for _ in queue_files
+            ]
+            queue_df = pd.DataFrame(queue_files, columns=["File"])
+            queue_df["Created"] = created
 
-            queue_files = [_ for _ in os.listdir(QUEUE_PATH) if _.endswith(".yaml")]
-            failed_files = [_ for _ in os.listdir(FAILED_PATH) if _.endswith(".yaml")]
-            n_failed = len(failed_files)
-            n_queue = len(queue_files)
+            queue_table.table(queue_df)
 
-            if n_queue == 0:
-                status_msg.success(
-                    f'{datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S")} No files to process. Please add new experiments.'
-                )
-                current.progress(0)
-                overall.progress(0)
-                overall_txt.text("Overall: 0%")
-                task.text("None")
+        if n_failed == 1:
+            failed_msg.error(f"{n_failed} run failed. Please check {FAILED_PATH}.")
+        elif n_failed > 1:
+            failed_msg.error(f"{n_failed} runs failed. Please check {FAILED_PATH}.")
 
-                queue_table.table(pd.DataFrame())
-
-            else:
-                created = [
-                    time.ctime(os.path.getctime(os.path.join(QUEUE_PATH, _)))
-                    for _ in queue_files
-                ]
-                queue_df = pd.DataFrame(queue_files, columns=["File"])
-                queue_df["Created"] = created
-
-                queue_table.table(queue_df)
-
-            if n_failed == 1:
-                failed_msg.error(f"{n_failed} run failed. Please check {FAILED_PATH}.")
-            elif n_failed > 1:
-                failed_msg.error(f"{n_failed} runs failed. Please check {FAILED_PATH}.")
-
-            failed_table.table(pd.DataFrame(failed_files))
-            time.sleep(0.2)
-
-            if not refresh:
-                break
+        failed_table.table(pd.DataFrame(failed_files))
+        time.sleep(0.4)

@@ -3,7 +3,7 @@
 __all__ = ['tqdm_wrapper', 'check_version_and_hardware', 'wrapped_partial', 'create_database', 'import_raw_data',
            'feature_finding', 'search_data', 'recalibrate_data', 'score', 'protein_grouping', 'align', 'match',
            'quantification', 'export', 'run_complete_workflow', 'extract_median_unique', 'get_file_summary',
-           'get_summary', 'parallel_execute', 'run_cli', 'cli_overview', 'cli_database', 'cli_import',
+           'get_summary', 'parallel_execute', 'bcolors', 'run_cli', 'cli_overview', 'cli_database', 'cli_import',
            'cli_feature_finding', 'cli_search', 'cli_recalibrate', 'cli_score', 'cli_align', 'cli_match',
            'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui', 'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
 
@@ -646,83 +646,88 @@ def quantification(
 
     field = settings['quantification']['mode']
 
-    df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
+    if os.path.isfile(settings['experiment']['results_path']):
 
-    if settings["workflow"]["lfq_quantification"]:
+        df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
 
-        if field in df.keys():  # Check if the quantification information exists.
-            # We could include another protein fdr in here..
+        if settings["workflow"]["lfq_quantification"]:
 
-            files = df['filename'].unique().tolist()
+            if field in df.keys():  # Check if the quantification information exists.
+                # We could include another protein fdr in here..
 
-            if len(files) > 1:
-                logging.info('Delayed Normalization.')
-                df, normalization = alphapept.quantification.delayed_normalization(
-                    df,
-                    field
-                )
-                pd.DataFrame(normalization).to_hdf(
+                files = df['filename'].unique().tolist()
+
+                if len(files) > 1:
+                    logging.info('Delayed Normalization.')
+                    df, normalization = alphapept.quantification.delayed_normalization(
+                        df,
+                        field
+                    )
+                    pd.DataFrame(normalization).to_hdf(
+                        settings['experiment']['results_path'],
+                        'fraction_normalization'
+                    )
+                    df_grouped = df.groupby(
+                        ['filename', 'precursor', 'protein_group']
+                    )[['{}_dn'.format(field)]].sum().reset_index()
+                else:
+                    df_grouped = df.groupby(
+                        ['filename', 'precursor', 'protein_group']
+                    )[field].sum().reset_index()
+
+
+                df.to_hdf(
                     settings['experiment']['results_path'],
-                    'fraction_normalization'
+                    'combined_protein_fdr_dn'
                 )
-                df_grouped = df.groupby(
-                    ['filename', 'precursor', 'protein_group']
-                )[['{}_dn'.format(field)]].sum().reset_index()
-            else:
-                df_grouped = df.groupby(
-                    ['filename', 'precursor', 'protein_group']
-                )[field].sum().reset_index()
 
+                logging.info('Complete. ')
+                logging.info('Starting profile extraction.')
 
-            df.to_hdf(
-                settings['experiment']['results_path'],
-                'combined_protein_fdr_dn'
-            )
+                if not callback:
+                    cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
+                else:
+                    cb = callback
 
-            logging.info('Complete. ')
-            logging.info('Starting profile extraction.')
+                protein_table = alphapept.quantification.protein_profile_parallel_ap(
+                    settings,
+                    df_grouped,
+                    callback=cb
+                )
+                protein_table.to_hdf(
+                    settings['experiment']['results_path'],
+                    'protein_table'
+                )
+                results_path = settings['experiment']['results_path']
+                base, ext = os.path.splitext(results_path)
+                protein_table.to_csv(base+'_proteins.csv')
 
-            if not callback:
-                cb = functools.partial(tqdm_wrapper, tqdm.tqdm(total=1))
-            else:
-                cb = callback
+                logging.info('LFQ complete.')
 
-            protein_table = alphapept.quantification.protein_profile_parallel_ap(
-                settings,
-                df_grouped,
-                callback=cb
-            )
-            protein_table.to_hdf(
-                settings['experiment']['results_path'],
-                'protein_table'
-            )
-            results_path = settings['experiment']['results_path']
-            base, ext = os.path.splitext(results_path)
-            protein_table.to_csv(base+'_proteins.csv')
+                logging.info('Extracting protein_summary')
 
-            logging.info('LFQ complete.')
+                protein_summary = pd.DataFrame(index = df['protein_group'].unique())
 
-            logging.info('Extracting protein_summary')
+                for field in ['sequence','precursor']:
+                    col_ = 'n_'+ field+' '
+                    m = df.groupby(['protein_group','filename'])[field].count().unstack()
+                    m.columns = [col_ +_ for _ in m.columns]
+                    protein_summary.loc[m.index, m.columns] = m.values
 
-            protein_summary = pd.DataFrame(index = df['protein_group'].unique())
+                # Add intensity
+                new_cols = ['intensity ' + _ if not _.endswith('_LFQ') else 'LFQ intensity '+_[:-4] for _ in protein_table.columns ]
+                protein_summary.loc[protein_table.index, new_cols] = protein_table.values
+                ps_out = base+'_protein_summary.csv'
+                protein_summary.to_csv(ps_out)
+                logging.info(f'Saved protein_summary of length {len(protein_summary):,} saved to {ps_out}')
 
-            for field in ['sequence','precursor']:
-                col_ = 'n_'+ field+' '
-                m = df.groupby(['protein_group','filename'])[field].count().unstack()
-                m.columns = [col_ +_ for _ in m.columns]
-                protein_summary.loc[m.index, m.columns] = m.values
+                #protein summary
+                protein_summary.to_hdf(
+                settings['experiment']['results_path'],'protein_summary')
 
-            # Add intensity
-            new_cols = ['intensity ' + _ if not _.endswith('_LFQ') else 'LFQ intensity '+_[:-4] for _ in protein_table.columns ]
-            protein_summary.loc[protein_table.index, new_cols] = protein_table.values
-            ps_out = base+'_protein_summary.csv'
-            protein_summary.to_csv(ps_out)
-            logging.info(f'Saved protein_summary of length {len(protein_summary):,} saved to {ps_out}')
-
-            #protein summary
-            protein_summary.to_hdf(
-            settings['experiment']['results_path'],'protein_summary')
-
+    else:
+        logging.info('No results.hdf present.')
+        df = pd.DataFrame()
 
     if len(df) > 0:
         logging.info('Exporting as csv.')
@@ -979,8 +984,15 @@ def get_file_summary(ms_data: alphapept.io.MS_Data_File) -> dict:
     """
     f_summary = {}
 
-    f_summary['acquisition_date_time'] = ms_data.read(group_name = 'Raw', attr_name = 'acquisition_date_time')
-    n_ms2 = ms_data.read(group_name='Raw/MS2_scans', dataset_name='prec_mass_list2', return_dataset_shape=True)[0]
+    try:
+        f_summary['acquisition_date_time'] = ms_data.read(group_name = 'Raw', attr_name = 'acquisition_date_time')
+    except KeyError:
+        f_summary['acquisition_date_time'] = None
+
+    try:
+        n_ms2 = ms_data.read(group_name='Raw/MS2_scans', dataset_name='prec_mass_list2', return_dataset_shape=True)[0]
+    except KeyError:
+        n_ms2 = 0
 
     for key in ms_data.read():
 
@@ -1102,12 +1114,12 @@ def parallel_execute(
                 memory_available = psutil.virtual_memory().available/1024**3
                 n_processes = max((int(memory_available //25 ),1))
                 logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}.')
-            elif ext.lower() == '.raw':
+            elif ext.lower() in ('.raw','.mzml'):
                 memory_available = psutil.virtual_memory().available/1024**3
                 n_processes = max((int(memory_available //8 ), 1))
                 logging.info(f'Setting Process limit to {n_processes}')
             else:
-                raise NotImplementedError('File extension {} not understood.'.format(ext))
+                raise NotImplementedError('Feature Finding: File extension {} not understood.'.format(ext))
 
         if step.__name__ == 'search_db':
             memory_available = psutil.virtual_memory().available/1024**3
@@ -1153,12 +1165,24 @@ def parallel_execute(
 
 # Cell
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 import click
 import os
 import alphapept.settings
 from .__version__ import VERSION_NO
 from .__version__ import COPYRIGHT
 from .__version__ import URL
+from .utils import check_github_version
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 CLICK_SETTINGS_OPTION = click.argument(
@@ -1171,6 +1195,17 @@ CLICK_SETTINGS_OPTION = click.argument(
 
 def run_cli() -> None:
     """Run the command line interface."""
+
+
+    remote_version = check_github_version()
+
+    version_str = '.{}.'.format(VERSION_NO)
+
+    if remote_version:
+        if remote_version != VERSION_NO:
+            version_str = f'{VERSION_NO} {bcolors.OKGREEN} -> Update available ({remote_version}){bcolors.ENDC}'
+            version_str = f".{version_str.center(50+len(bcolors.ENDC)+len(bcolors.OKGREEN))}."
+
     print(
         "\n".join(
             [
@@ -1184,12 +1219,13 @@ def run_cli() -> None:
                 '.'*52,
                 '.{}.'.format(URL.center(50)),
                 '.{}.'.format(COPYRIGHT.center(50)),
-                '.{}.'.format(VERSION_NO.center(50)),
+                version_str,
                 '.'*52,
                 "\n"
             ]
         )
     )
+
     cli_overview.add_command(cli_database)
     cli_overview.add_command(cli_import)
     cli_overview.add_command(cli_feature_finding)
@@ -1349,15 +1385,34 @@ def cli_workflow(settings_file, progress):
     "gui",
     help="Start graphical user interface for AlphaPept.",
 )
-def cli_gui():
-    print('Starting AlphaPept Server')
-    print('This may take a second..')
+@click.option(
+    "--port",
+    "-p",
+    help="Set port for the streamlit server.",
+    type=click.IntRange(1, 49151)
+)
 
+def cli_gui(port):
     _this_file = os.path.abspath(__file__)
     _this_directory = os.path.dirname(_this_file)
 
+    if not port:
+        port = 8501
+
     file_path = os.path.join(_this_directory, 'webui.py')
 
+    print('Starting AlphaPept Background Process')
+
+    from .gui.utils import start_process
+    from .gui.status import queue_watcher, check_process
+
+    from .paths import PROCESS_FILE
+
+    start_process(target=queue_watcher, process_file=PROCESS_FILE, verbose=False)
+
+    running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
+
+    print('Starting AlphaPept Server')
 
     #if __name__ == '__main__':
     #    sys.argv = ["streamlit", "run", "webui.py"]
@@ -1394,7 +1449,7 @@ def cli_gui():
     theme.append("--theme.font=sans serif")
     theme.append("--theme.primaryColor=#18212b")
 
-    args = ["streamlit", "run", file_path, "--global.developmentMode=false", "--server.port=8501", "--browser.gatherUsageStats=False"]
+    args = ["streamlit", "run", file_path, "--global.developmentMode=false", f"--server.port={port}", "--browser.gatherUsageStats=False"]
 
     args.extend(theme)
 

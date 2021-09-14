@@ -2,9 +2,8 @@ import streamlit as st
 import os
 import pandas as pd
 import datetime
-import time
 import yaml
-from typing import Union
+from typing import Union, Tuple
 
 from alphapept.paths import (
     SETTINGS_TEMPLATE_PATH,
@@ -13,8 +12,8 @@ from alphapept.paths import (
     FASTA_PATH,
 )
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
-from alphapept.gui.utils import escape_markdown, files_in_folder
-from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, JsCode
+from alphapept.gui.utils import escape_markdown, files_in_folder, get_size
+from st_aggrid import GridOptionsBuilder, AgGrid
 
 # Dict to match workflow
 WORKFLOW_DICT = {}
@@ -29,7 +28,7 @@ WORKFLOW_DICT["lfq_quantification"] = ["quantification"]
 SETTINGS_TEMPLATE = load_settings(SETTINGS_TEMPLATE_PATH)
 
 
-def parse_folder(file_folder: str) -> (list, list, list):
+def parse_folder(file_folder: str) -> Tuple[list, list, list]:
     """Checks a folder for raw, fasta and db_data.hdf files.
 
     Args:
@@ -83,9 +82,9 @@ def widget_from_setting(
         recorder[key] = {}
 
     if "description" in _:
-        help = _["description"]
+        tooltip = _["description"]
     else:
-        help = ""
+        tooltip = ""
 
     value = _["default"]
 
@@ -103,18 +102,18 @@ def widget_from_setting(
             min_value=float(_["min"]),
             max_value=float(_["max"]),
             value=float(value),
-            help=help,
+            help=tooltip,
         )
     elif _["type"] == "spinbox":
         recorder[key][element] = c2.slider(
-            element, min_value=_["min"], max_value=_["max"], value=value, help=help
+            element, min_value=_["min"], max_value=_["max"], value=value, help=tooltip
         )
     elif _["type"] == "checkbox":
-        recorder[key][element] = c2.checkbox(element, value=value, help=help)
+        recorder[key][element] = c2.checkbox(element, value=value, help=tooltip)
     elif _["type"] == "checkgroup":
         opts = list(_["value"].keys())
         recorder[key][element] = c2.multiselect(
-            label=element, options=opts, default=value, help=help
+            label=element, options=opts, default=value, help=tooltip
         )
     elif _["type"] == "combobox":
         recorder[key][element] = c2.selectbox(
@@ -173,7 +172,9 @@ def customize_settings(recorder: dict, uploaded_settings: dict, loaded: bool) ->
     with st.beta_expander("Settings", loaded):
         checked = [_ for _ in recorder["workflow"] if not recorder["workflow"][_]]
         checked_ = []
-        [checked_.extend(WORKFLOW_DICT[_]) for _ in checked if _ in WORKFLOW_DICT]
+        for _ in checked: 
+            if _ in WORKFLOW_DICT:
+                checked_.extend(WORKFLOW_DICT[_])
 
         exclude = ["experiment", "workflow"] + checked_
 
@@ -226,7 +227,7 @@ def file_df_from_files(raw_files: list, file_folder: str) -> pd.DataFrame:
     """
     raw_files.sort()
     sizes = [
-        round(os.stat(os.path.join(file_folder, _)).st_size / 1024 ** 3, 2)
+        round(get_size(os.path.join(file_folder, _)) / 1024 ** 3, 2)
         for _ in raw_files
     ]
     created = [
@@ -316,7 +317,7 @@ def experiment():
 
                 shortnames = file_df_selected["Shortname"].values.tolist()
                 if len(shortnames) != len(set(shortnames)):
-                    st.warning(f"Warning: Shortnames are not unique.")
+                    st.warning("Warning: Shortnames are not unique.")
                     error += 1
 
                 fasta_files_home_dir = files_in_folder(FASTA_PATH, ".fasta")
@@ -327,16 +328,14 @@ def experiment():
                 fasta_files_home_dir += fasta_files
 
                 selection = st.multiselect(
-                    f"Select FASTA files",
+                    "Select FASTA files",
                     options=fasta_files_home_dir,
                     default=fasta_files,
                 )
                 recorder["experiment"]["fasta_paths"] = selection
 
-                #TODO
-
                 if len(recorder["experiment"]["fasta_paths"]) == 0:
-                    st.warning(f"Warning: No FASTA files selected.")
+                    st.warning("Warning: No FASTA files selected.")
                     error += 1
 
                 recorder["experiment"]["shortnames"] = shortnames
