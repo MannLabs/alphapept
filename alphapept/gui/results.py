@@ -160,7 +160,7 @@ def correlation_heatmap(file: str, options: list):
         options (list): List of plot options.
     """
     if "/protein_table" in options:
-        with st.beta_expander("Correlation heatmap"):
+        with st.expander("Correlation heatmap"):
             df = cached_file(file)
 
             cols = [_ for _ in df.columns if "LFQ" in _]
@@ -192,7 +192,7 @@ def pca_plot(file: str, options: list):
         options (list): List of plot options.
     """
     if "/protein_table" in options:
-        with st.beta_expander("PCA"):
+        with st.expander("PCA"):
             df = cached_file(file)
 
             cols = [_ for _ in df.columns if "LFQ" in _]
@@ -228,11 +228,11 @@ def volcano_plot(file: str, options: list):
         options (list): List of plot options.
     """
     if "/protein_table" in options:
-        with st.beta_expander("Volcano plot"):
+        with st.expander("Volcano plot"):
             df = cached_file(file)
 
             df_log = np.log(df.copy())
-            col1, col2 = st.beta_columns(2)
+            col1, col2 = st.columns(2)
 
             if multiple_file_check(df.columns):
 
@@ -310,11 +310,11 @@ def scatter_plot(file: str, options: list):
         options (list): List of plot options.
     """
     if "/protein_table" in options:
-        with st.beta_expander("Scatter plot"):
+        with st.expander("Scatter plot"):
             df = cached_file(file)
 
             df_log = np.log(df.copy())
-            col1, col2 = st.beta_columns(2)
+            col1, col2 = st.columns(2)
 
             all_cols = df.columns
 
@@ -361,7 +361,7 @@ def sequence_coverage_map(file: str, options: list, results_yaml: dict):
         # get peptides matching target
         protein_fdr = pd.read_hdf(file, "protein_fdr")
 
-        with st.beta_expander("Sequence coverage map"):
+        with st.expander("Sequence coverage map"):
 
             protein_id = st.selectbox('Select protein', protein_fdr['protein'].unique().tolist())
 
@@ -594,7 +594,7 @@ def results():
             with st.spinner("Loading data.."):
                 plot_summary(results_yaml, selection)
 
-            with st.beta_expander("Run summary"):
+            with st.expander("Run summary"):
                 st.write(results_yaml["summary"])
 
             read_log(os.path.splitext(filepath_selection)[0] + ".log")

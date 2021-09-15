@@ -195,7 +195,7 @@ def history():
 
     processed_files = files_in_folder(PROCESSED_PATH, ".yaml")
 
-    with st.beta_expander(f"Processed files ({len(processed_files)})"):
+    with st.expander(f"Processed files ({len(processed_files)})"):
         st.table(processed_files)
 
     plot_settings = load_plot_settings()
@@ -213,7 +213,7 @@ def history():
     else:
         to_plot = []
 
-    with st.beta_expander("Customize plots"):
+    with st.expander("Customize plots"):
         st.text(
             f"Plots can be modified by changing {PLOT_SETTINGS}, set groups to group plots according to filename, set plots to define the plots."
         )

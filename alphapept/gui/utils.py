@@ -125,7 +125,7 @@ def read_log(log_path: str):
         log_path (str): Path to the logile.
     """
     if os.path.isfile(log_path):
-        with st.beta_expander("Run log"):
+        with st.expander("Run log"):
             with st.spinner("Parsing file"):
                 with open(log_path, "r") as logfile:
                     lines = logfile.readlines()

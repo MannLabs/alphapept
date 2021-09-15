@@ -70,7 +70,7 @@ def widget_from_setting(
         group (str): Groupname of the widget that should be created.
         element (str): Element of thw widget that should be created.
         override (Union[float, None], optional): Override value for the default value. Defaults to None.
-        indent (bool, optional): Flag to indent the widget via the st.beta_columns widget. Defaults to False.
+        indent (bool, optional): Flag to indent the widget via the st.columns widget. Defaults to False.
 
     Returns:
         dict: A dictionary that stores all widgets.
@@ -92,7 +92,7 @@ def widget_from_setting(
         value = override
 
     if indent:
-        c1, c2 = st.beta_columns((1, 8))
+        c1, c2 = st.columns((1, 8))
     else:
         c2 = st
 
@@ -169,10 +169,10 @@ def customize_settings(recorder: dict, uploaded_settings: dict, loaded: bool) ->
         loaded (bool): Flag to indicate that data was uploaded.
     """
 
-    with st.beta_expander("Settings", loaded):
+    with st.expander("Settings", loaded):
         checked = [_ for _ in recorder["workflow"] if not recorder["workflow"][_]]
         checked_ = []
-        for _ in checked: 
+        for _ in checked:
             if _ in WORKFLOW_DICT:
                 checked_.extend(WORKFLOW_DICT[_])
 
@@ -305,7 +305,7 @@ def experiment():
 
                 file_df_selected = grid_response["data"]
 
-                with st.beta_expander("Additional info"):
+                with st.expander("Additional info"):
                     st.write(
                         "- Filename: Name of the file."
                         " \n- Creation date of file."
@@ -353,7 +353,7 @@ def experiment():
 
                 st.write(f"## Workflow")
 
-                with st.beta_expander("Steps"):
+                with st.expander("Steps"):
                     group = SETTINGS_TEMPLATE["workflow"]
                     for element in group:
                         recorder = widget_from_setting(

@@ -149,7 +149,7 @@ def status():
 
     st.write("## Hardware utilization")
 
-    c1,c2 = st.beta_columns(2)
+    c1,c2 = st.columns(2)
     c1.text("Ram")
     ram = c1.progress(0)
     c2.text("CPU")
@@ -175,13 +175,13 @@ def status():
 
     current_file = os.path.join(QUEUE_PATH, "current_file")
 
-    with st.beta_expander(f"Full log "):
+    with st.expander(f"Full log "):
         log_ = st.empty()
 
-    with st.beta_expander(f"Queue"):
+    with st.expander(f"Queue"):
         queue_table = st.empty()
 
-    with st.beta_expander(f"Failed"):
+    with st.expander(f"Failed"):
         failed_table = st.empty()
 
     if st.checkbox("Terminate process"):

@@ -8,7 +8,7 @@ def start():
     st.write("# Getting started")
     st.text("Welcome to AlphaPept.")
 
-    with st.beta_expander("Navigation"):
+    with st.expander("Navigation"):
         st.write("Use the sidebar to the left to navigate through the different menus.")
         st.write(
             "- Status: Displays the current processing status."
@@ -19,7 +19,7 @@ def start():
             " \n- FileWatcher: Set up a file watcher to automatically process files."
         )
 
-    with st.beta_expander("Resources"):
+    with st.expander("Resources"):
         st.write(
             "On the following pages you can find additional information about AlphaPept:"
         )
@@ -42,7 +42,7 @@ def start():
             f"mailto:opensource@alphapept.com?subject=AlphaPept({VERSION_NO})",
         )
 
-    with st.beta_expander("Server"):
+    with st.expander("Server"):
 
         st.write(
             "When starting AlphaPept you launch a server that can be closed when closing the terminal window."
@@ -54,7 +54,7 @@ def start():
             "The server starts an AlphaPept process in the background that will process new experiments once they are submitted."
         )
 
-    with st.beta_expander("Sample Run"):
+    with st.expander("Sample Run"):
         st.write("Download the following sample files:")
         markdown_link(
             "Download IRT sample here.",

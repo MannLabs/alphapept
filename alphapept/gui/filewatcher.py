@@ -178,7 +178,7 @@ def filewatcher():
     else:
         settings_ = load_settings_as_template(settings_template)
         st.success("Valid settings file.")
-        with st.beta_expander("Show settings"):
+        with st.expander("Show settings"):
             st.write(settings_)
 
     st.write("## Start watcher")
