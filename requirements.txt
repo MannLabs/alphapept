@@ -3,7 +3,7 @@ comtypes==1.1.10
 h5py==3.1.0
 lxml==4.6.2
 matplotlib==3.3.3
-networkx==2.5
+networkx==2.6.3
 numba==0.52.0
 numpy==1.19.4
 pandas==1.2.1
