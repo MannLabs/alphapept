@@ -8,7 +8,7 @@ from typing import Union, Tuple
 from alphapept.paths import (
     SETTINGS_TEMPLATE_PATH,
     QUEUE_PATH,
-    FINISHED_PATH,
+    PROCESSED_PATH,
     DEFAULT_SETTINGS_PATH,
     FASTA_PATH,
 )
@@ -141,11 +141,11 @@ def submit_experiment(recorder: dict):
 
     long_name = name + ".yaml"
     long_name_path_queue = os.path.join(QUEUE_PATH, long_name)
-    long_name_path_finished = os.path.join(FINISHED_PATH, long_name)
+    long_name_path_processed = os.path.join(PROCESSED_PATH, long_name)
 
     if os.path.exists(long_name_path_queue):
         st.error(f"Name {escape_markdown(long_name)} already exists. Please rename.")
-    elif os.path.exists(long_name_path_finished):
+    elif os.path.exists(long_name_path_processed):
         st.error(f"Name {escape_markdown(long_name)} already exists. Please rename.")
     else:
         st.info(
