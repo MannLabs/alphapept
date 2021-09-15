@@ -139,9 +139,12 @@ def submit_experiment(recorder: dict):
     )
 
     long_name = name + ".yaml"
-    long_name_path = os.path.join(QUEUE_PATH, long_name)
+    long_name_path_queue = os.path.join(QUEUE_PATH, long_name)
+    long_name_path_finished = os.path.join(QUEUE_PATH, long_name)
 
-    if os.path.exists(long_name_path):
+    if os.path.exists(long_name_path_queue):
+        st.error(f"Name {escape_markdown(long_name)} already exists. Please rename.")
+    elif os.path.exists(long_name_path_finished):
         st.error(f"Name {escape_markdown(long_name)} already exists. Please rename.")
     else:
         st.info(
@@ -153,7 +156,7 @@ def submit_experiment(recorder: dict):
                 for key in recorder[group]:
                     settings[group][key] = recorder[group][key]
 
-            save_settings(settings, long_name_path)
+            save_settings(settings, long_name_path_queue)
             # Change things from experiment
             st.success(
                 f"Experiment {escape_markdown(long_name)} submitted. Switch to Status tab to track progress."
