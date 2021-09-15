@@ -23,4 +23,4 @@ streamlit==0.88.0
 plotly_express==0.4.1
 watchdog==2.1.0
 wget==3.2
-streamlit-aggrid==0.1.9
+streamlit-aggrid==0.2.1
