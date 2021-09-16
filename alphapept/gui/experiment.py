@@ -118,10 +118,10 @@ def widget_from_setting(
         )
     elif _["type"] == "combobox":
         recorder[key][element] = c2.selectbox(
-            label=element, options=_["value"], index=_["value"].index(value), help=help
+            label=element, options=_["value"], index=_["value"].index(value), help=tooltip
         )
     elif _["type"] == "string":
-        recorder[key][element] = c2.text_input(label=element, default=value, help=help)
+        recorder[key][element] = c2.text_input(label=element, default=value, help=tooltip)
     else:
         st.write(f"Not understood {_}")
 
