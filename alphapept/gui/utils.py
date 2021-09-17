@@ -183,19 +183,21 @@ def check_process(
     if os.path.isfile(process_path):
         with open(process_path, "r") as process_file:
             process = yaml.load(process_file, Loader=yaml.FullLoader)
-        last_pid = process["pid"]
 
-        if "init" in process:
-            p_init = process["init"]
-        else:
-            p_init = False
+        if process:    
+            last_pid = process["pid"]
 
-        if psutil.pid_exists(last_pid):
-            p_ = psutil.Process(last_pid)
-            with p_.oneshot():
-                p_name = p_.name()
-                status = p_.status()
-            return True, last_pid, p_name, status, p_init
+            if "init" in process:
+                p_init = process["init"]
+            else:
+                p_init = False
+
+            if psutil.pid_exists(last_pid):
+                p_ = psutil.Process(last_pid)
+                with p_.oneshot():
+                    p_name = p_.name()
+                    status = p_.status()
+                return True, last_pid, p_name, status, p_init
 
     return False, None, None, None, False
 
