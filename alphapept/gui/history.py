@@ -4,9 +4,10 @@ import streamlit as st
 import numpy as np
 import plotly.express as px
 import pandas as pd
+import datetime
 
 from alphapept.paths import PROCESSED_PATH, PLOT_SETTINGS
-from alphapept.gui.utils import files_in_folder
+from alphapept.gui.utils import files_in_folder, compare_date
 from alphapept.settings import load_settings
 from typing import Callable, Union
 
@@ -20,6 +21,19 @@ def load_plot_settings() -> dict:
     plot_settings = load_settings(PLOT_SETTINGS)
     return plot_settings
 
+@st.cache
+def load_file(file:str) -> dict:
+    """Cached streamlit function to read summary stats from a file.
+
+    Args:
+        file (str): List of file paths.
+
+    Returns:
+        dict: A dictionary containing the summary of a results.yaml file.
+    """
+    with open(os.path.join(PROCESSED_PATH, file), "r") as settings_file:
+        results = yaml.load(settings_file, Loader=yaml.FullLoader)
+    return results
 
 def load_files(file_list: list, callback: Union[Callable, None] = None) -> dict:
     """Read multiple results.yaml files and combine them into a dict.
@@ -34,10 +48,8 @@ def load_files(file_list: list, callback: Union[Callable, None] = None) -> dict:
     all_results = {}
 
     for idx, _ in enumerate(file_list):
-        with open(os.path.join(PROCESSED_PATH, _), "r") as settings_file:
-            results = yaml.load(settings_file, Loader=yaml.FullLoader)
-            base, ext = os.path.splitext(_)
-            all_results[base] = results
+        base, ext = os.path.splitext(_)
+        all_results[base] = load_file(_)
 
         if callback:
             callback.progress((idx + 1) / len(file_list))
@@ -54,14 +66,13 @@ def filter_by_tag(files: list) -> list:
     Returns:
         list: Reduced file list with files containing the tag.
     """
-    filter = st.text_input("Filter")
+    filter = st.text_input("Filter by name")
 
     if filter:
         filtered = [_ for _ in files if filter in _]
     else:
         filtered = files
 
-    st.write(filter)
     st.write(f"Remaining {len(filtered)} of {len(files)} files.")
 
     return filtered
@@ -90,6 +101,7 @@ def create_single_plot(
     mode: str,
     groups: list,
     plot: str,
+    minimum_date: datetime,
 ):
     """Helper function to create a plotly express plot based on the all_results dict and the specified fields.
 
@@ -100,6 +112,7 @@ def create_single_plot(
         mode (str): Plotting mode. Values will be sorted according to this field.
         groups (list): List of groups.
         plot (str): Name of the column that should be plotted.
+        minimum_date (datetime): Minimum acquistion date for files to be displayed.
     """
     vals = np.empty(len(all_results))
     for idx, _ in enumerate(all_results.keys()):
@@ -115,6 +128,9 @@ def create_single_plot(
                 vals[idx] = np.nan
 
     plot_df = pd.DataFrame([files, acquisition_date_times, vals]).T
+    plot_df = plot_df[~plot_df[0].isna()]
+    plot_df = plot_df[plot_df[1].apply(lambda x : compare_date(x, minimum_date))]
+
     plot_df.columns = ["Filename", "AcquisitionDateTime", plot]
 
     if groups != []:
@@ -174,13 +190,18 @@ def create_multiple_plots(all_results: dict, groups: list, to_plot: list):
     else:
         plot_types = [_ for _ in to_plot if _ in fields]
 
-    mode = st.selectbox("X-Axis", options=["AcquisitionDateTime", "Filename"])
+    c1, c2  = st.columns(2)
+
+    mode = c1.selectbox("X-Axis", options=["AcquisitionDateTime", "Filename"])
+    minimum_date = c2.date_input('Minimum acquisition date', datetime.datetime.today() - datetime.timedelta(days=28))
+
+    minimum_date = datetime.datetime.combine(minimum_date, datetime.datetime.min.time())
 
     with st.spinner("Creating plots.."):
 
         for plot in plot_types:
             create_single_plot(
-                all_results, files, acquisition_date_times, mode, groups, plot
+                all_results, files, acquisition_date_times, mode, groups, plot, minimum_date,
             )
 
 
@@ -220,10 +241,6 @@ def history():
         st.write(history_settings)
 
     filtered = filter_by_tag(processed_files)
-    if len(filtered) > 1:
-        filtered = filtered[
-            : st.slider("Preview", 1, len(filtered), min(len(filtered), 50))
-        ]
     all_results = load_files(filtered, callback=st.progress(0))
 
     if len(all_results) > 0:

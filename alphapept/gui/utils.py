@@ -184,7 +184,7 @@ def check_process(
         with open(process_path, "r") as process_file:
             process = yaml.load(process_file, Loader=yaml.FullLoader)
 
-        if process:    
+        if process:
             last_pid = process["pid"]
 
             if "init" in process:
@@ -238,5 +238,36 @@ def check_file(path: str) -> bool:
             return True
         else:
             return False
+    else:
+        return False
+
+def compare_date(date: str, minimum_date: datetime) -> bool:
+    """Utility function to convert the acquisition date time to a datetime format.
+    Checks if it was before the minimum_date.
+
+    Args:
+        date (str): Datetime as string.
+        minimum_date (dateime): Comparison
+
+    Returns:
+        bool: Flag if file was acquired after the minimum date.
+    """
+
+    if not date:
+        return False
+
+    if date.endswith('Z'):
+        rem = date.split('.')[1]
+
+        if len(rem) == 8:
+            date = date[:-2]+'Z'
+
+        dt = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+    else:
+        dt = datetime.datetime.fromisoformat(date).replace(tzinfo=None)
+
+    if dt > minimum_date:
+        return True
     else:
         return False
