@@ -101,18 +101,18 @@ def create_single_plot(
         groups (list): List of groups.
         plot (str): Name of the column that should be plotted.
     """
-    vals = []
+    vals = np.empty(len(all_results))
     for idx, _ in enumerate(all_results.keys()):
         if plot == "timing (min)":
             try:
-                vals.append(all_results[_]["summary"]["timing"]["total (min)"])
+                vals[idx] = all_results[_]["summary"]["timing"]["total (min)"]
             except KeyError:
-                vals.append(np.nan)
+                vals[idx] = np.nan
         else:
             try:
-                vals.append(all_results[_]["summary"][files[idx]][plot])
+                vals[idx] = all_results[_]["summary"][files[idx]][plot]
             except KeyError:
-                vals.append(np.nan)
+                vals[idx] = np.nan
 
     plot_df = pd.DataFrame([files, acquisition_date_times, vals]).T
     plot_df.columns = ["Filename", "AcquisitionDateTime", plot]
@@ -153,17 +153,17 @@ def create_multiple_plots(all_results: dict, groups: list, to_plot: list):
         to_plot (list): Name of the column that should be plotted.
     """
 
-    files = []
-    acquisition_date_times = []
+    files = np.empty(len(all_results), dtype='object')
+    acquisition_date_times = np.empty(len(all_results), dtype='object')
+
     fields = set()
 
-    for result in all_results.values():
+    for idx, result in enumerate(all_results.values()):
         if "summary" in result:
-            result_file = os.path.splitext(result["summary"]["processed_files"][0])[0]
-            files.append(result_file)
-            acquisition_date_time = result["summary"][result_file]["acquisition_date_time"]
-            acquisition_date_times.append(acquisition_date_time)
-            fields.update(result["summary"][result_file].keys())
+            summary = result["summary"]
+            files[idx] = os.path.splitext(summary["processed_files"][0])[0]
+            acquisition_date_times[idx] = summary[files[idx]]["acquisition_date_time"]
+            fields.update(summary[files[idx]].keys())
 
     fields.remove("acquisition_date_time")
     fields = list(fields)
