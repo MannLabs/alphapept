@@ -218,3 +218,23 @@ def init_process(process_path: str, **kwargs: dict):
             break
         else:
             time.sleep(1)
+
+
+def check_file(path: str) -> bool:
+    """Function to check if a file exists.
+    This function will also return if the file is None.
+
+    Args:
+        path (str): Path to the file to be checked.
+
+    Returns:
+        bool: Flag if file or path exists..
+    """
+
+    if path:
+        if os.path.isfile(path):
+            return True
+        else:
+            return False
+    else:
+        return False

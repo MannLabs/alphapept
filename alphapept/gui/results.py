@@ -1,12 +1,10 @@
 import streamlit as st
-from alphapept.gui.utils import files_in_folder, read_log, escape_markdown
+from alphapept.gui.utils import files_in_folder, read_log, escape_markdown, check_file
 from alphapept.paths import PROCESSED_PATH
 from alphapept.settings import load_settings
 from alphapept.fasta import read_database
 from alphapept.display import calculate_sequence_coverage
 import os
-import re
-import yaml
 import alphapept.io
 import pandas as pd
 import base64
@@ -353,7 +351,7 @@ def sequence_coverage_map(file: str, options: list, results_yaml: dict):
     """
 
     if not all([
-        os.path.isfile(results_yaml['experiment']['database_path']),
+        check_file(results_yaml['experiment']['database_path']),
     ]): return
 
     if "/protein_fdr" in options:
