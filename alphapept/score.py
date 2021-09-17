@@ -897,7 +897,12 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
             elif settings["score"]["method"] == 'x_tandem':
                 df = filter_with_x_tandem(df)
             else:
-                raise NotImplementedError('Scoring method {} not implemented.'.format(settings["score"]["method"]))
+                try:
+                    import importlib
+                    alphapept_plugin = importlib.import_module(settings["score"]["method"]+".alphapept_plugin")
+                    df = alphapept_plugin.score_alphapept(df, index, settings)
+                except Exception as e:
+                    raise NotImplementedError('Scoring method {} not implemented. Other exception info: {}'.format(settings["score"]["method"], e))
 
             df = cut_global_fdr(df, analyte_level='precursor',  plot=False, fdr_level = settings["search"]["peptide_fdr"], **settings['search'])
 
@@ -949,21 +954,24 @@ def protein_grouping_all(settings:dict, pept_dict:dict, fasta_dict:dict, callbac
     """
 
     df = alphapept.utils.assemble_df(settings, field = 'peptide_fdr', callback=None)
+    if len(df) > 0:
+        df_pg = perform_protein_grouping(df, pept_dict, fasta_dict, callback = None)
 
-    df_pg = perform_protein_grouping(df, pept_dict, fasta_dict, callback = None)
+        df_pg = cut_global_fdr(df_pg, analyte_level='protein_group',  plot=False, fdr_level = settings["search"]["protein_fdr"], **settings['search'])
+        logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
 
-    df_pg = cut_global_fdr(df_pg, analyte_level='protein_group',  plot=False, fdr_level = settings["search"]["protein_fdr"], **settings['search'])
-    logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
+        path = settings['experiment']['results_path']
 
-    path = settings['experiment']['results_path']
+        base, ext = os.path.splitext(path)
 
-    base, ext = os.path.splitext(path)
+        df_pg.to_csv(base+'_protein_fdr.csv')
 
-    df_pg.to_csv(base+'_protein_fdr.csv')
+        df_pg.to_hdf(
+            path,
+            'protein_fdr'
+        )
 
-    df_pg.to_hdf(
-        path,
-        'protein_fdr'
-    )
+        logging.info('Saving complete.')
 
-    logging.info('Saving complete.')
+    else:
+        logging.info('No peptides for grouping present. Skipping.')

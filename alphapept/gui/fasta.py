@@ -1,9 +1,10 @@
+import os
+import datetime
+import wget
 import streamlit as st
 from alphapept.paths import FASTA_PATH
 from alphapept.gui.utils import files_in_folder_pandas
-import os
-import wget
-import datetime
+
 
 proteomes = {}
 proteomes["Homo_sapiens_UP000005640"] = "UP000005640"
@@ -39,13 +40,8 @@ def fasta():
 
             st.code(f"Downloading {p_} to {new_file}.")
 
-            download_bar = st.progress(0)
-
-            def bar(current, total, width):
-                download_bar.progress(current / total)
-
             with st.spinner("Downloading.."):
-                wget.download(download_link, new_file, bar=bar)
+                wget.download(download_link, new_file)
 
             raise st.script_runner.RerunException(
                 st.script_request_queue.RerunData(None)

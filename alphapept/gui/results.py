@@ -1,9 +1,10 @@
 import streamlit as st
-from alphapept.gui.utils import files_in_folder, read_log, escape_markdown
+from alphapept.gui.utils import files_in_folder, read_log, escape_markdown, check_file
 from alphapept.paths import PROCESSED_PATH
 from alphapept.settings import load_settings
+from alphapept.fasta import read_database
+from alphapept.display import calculate_sequence_coverage
 import os
-import yaml
 import alphapept.io
 import pandas as pd
 import base64
@@ -157,7 +158,7 @@ def correlation_heatmap(file: str, options: list):
         options (list): List of plot options.
     """
     if "/protein_table" in options:
-        with st.beta_expander("Correlation heatmap"):
+        with st.expander("Correlation heatmap"):
             df = cached_file(file)
 
             cols = [_ for _ in df.columns if "LFQ" in _]
@@ -189,7 +190,7 @@ def pca_plot(file: str, options: list):
         options (list): List of plot options.
     """
     if "/protein_table" in options:
-        with st.beta_expander("PCA"):
+        with st.expander("PCA"):
             df = cached_file(file)
 
             cols = [_ for _ in df.columns if "LFQ" in _]
@@ -225,11 +226,11 @@ def volcano_plot(file: str, options: list):
         options (list): List of plot options.
     """
     if "/protein_table" in options:
-        with st.beta_expander("Volcano plot"):
+        with st.expander("Volcano plot"):
             df = cached_file(file)
 
             df_log = np.log(df.copy())
-            col1, col2 = st.beta_columns(2)
+            col1, col2 = st.columns(2)
 
             if multiple_file_check(df.columns):
 
@@ -307,11 +308,11 @@ def scatter_plot(file: str, options: list):
         options (list): List of plot options.
     """
     if "/protein_table" in options:
-        with st.beta_expander("Scatter plot"):
+        with st.expander("Scatter plot"):
             df = cached_file(file)
 
             df_log = np.log(df.copy())
-            col1, col2 = st.beta_columns(2)
+            col1, col2 = st.columns(2)
 
             all_cols = df.columns
 
@@ -339,11 +340,116 @@ def scatter_plot(file: str, options: list):
                     st.code(results.px_fit_results.iloc[0].summary())
 
 
-def parse_file_and_display(file: str):
+def sequence_coverage_map(file: str, options: list, results_yaml: dict):
+    """Plots PSM coverage of total protein sequence.
+    Shows streamlit widgets to select the file and target protein.
+
+    Args:
+        file (str): Path to file.
+        options (list): List of plot options.
+        results_yaml (dict): Results yaml dict.
+    """
+
+    if not all([
+        check_file(results_yaml['experiment']['database_path']),
+    ]): return
+
+    if "/protein_fdr" in options:
+
+        # get peptides matching target
+        protein_fdr = pd.read_hdf(file, "protein_fdr")
+
+        with st.expander("Sequence coverage map"):
+
+            protein_id = st.selectbox('Select protein', protein_fdr['protein'].unique().tolist())
+
+            selections = ['all'] + readable_files_from_yaml(results_yaml)[1:] # exclude results.hdf
+            selection = st.selectbox("File selection", selections)
+
+            if not protein_id: return
+
+            # excape pipes from fasta headers if present
+            protein_id = protein_id.replace('|','\|')
+
+            with st.spinner('Fetching sequence..'):
+
+                # get target protein sequence from fasta file
+                database = read_database(
+                    results_yaml['experiment']['database_path'], array_name = 'proteins'
+                )
+                filter_target = database[database['name'].str.contains(protein_id)]
+
+                if len(filter_target) != 1:
+                    st.info("Protein name/identifier is ambiguous: {0} matches returned from FASTA file".format(len(filter_target)))
+                    return
+
+                target_sequence = filter_target.loc[filter_target.index[0], 'sequence']
+                target_name = filter_target.loc[filter_target.index[0], 'name']
+
+                # filter for search term
+                target_protein_peptide_matches = protein_fdr[protein_fdr['protein'].str.contains(protein_id)]
+
+                # remove MBR rows
+                try:
+                    target_protein_peptide_matches = target_protein_peptide_matches[target_protein_peptide_matches['type'] == 'msms']
+                except KeyError:
+                    pass
+
+                if selection != 'all':
+                    # restrict to only peptides from defined file
+                    target_protein_peptide_matches = target_protein_peptide_matches[
+                        target_protein_peptide_matches['filename'] == selection
+                    ]
+                    selection_label = 'in ' + os.path.basename(selection)
+                else:
+                    selection_label = 'across all files'
+
+                if any(target_protein_peptide_matches['naked_sequence'].tolist()):
+                    peptide_list = target_protein_peptide_matches['naked_sequence'].tolist()
+                else:
+                    peptide_list = target_protein_peptide_matches['sequence'].tolist()
+
+                total, total_covered, coverage_percent, residue_list = calculate_sequence_coverage(
+                    target_sequence, peptide_list
+                )
+
+                row_length = 50 # number of residues presented in a single row
+                group_length = 10 # number of residues within a whitespaced group
+
+                formatted_sequence = ''
+                counter = 0
+                for residue in residue_list:
+                    if counter % group_length == 0:
+                        formatted_sequence += ' '
+                    if counter % row_length == 0:
+                        formatted_sequence += '<br>'
+                        formatted_sequence += str(counter) + ' '*(5 - len(str(counter)))
+                    if residue['covered']:
+                        formatted_sequence += '<strong style="color: red;">%s</strong>'%residue['res']
+                    else:
+                        formatted_sequence += '<strong style="color: black;">%s</strong>'%residue['res']
+                    counter += 1
+
+                st.markdown('{0}'.format( target_name ), unsafe_allow_html=False)
+                st.markdown(
+                    'Sequence coverage: {0} of {1} residues ({2:.1f}%) from {3} PSMs {4}'.format(
+                        total_covered,
+                        total,
+                        coverage_percent,
+                        len(target_protein_peptide_matches),
+                        selection_label
+                    ),
+                    unsafe_allow_html=True
+                )
+                st.markdown('<pre>'+formatted_sequence+'</pre>', unsafe_allow_html=True)
+
+
+def parse_file_and_display(file: str, results_yaml: dict):
     """Wrapper function to load file and displays dataframe in streamlit.
 
     Args:
         file (str): Path to file.
+        results_yaml (dict): Results yaml dict.
     """
 
     pandas_hdf = False
@@ -363,6 +469,9 @@ def parse_file_and_display(file: str):
         correlation_heatmap(file, options)
         scatter_plot(file, options)
         pca_plot(file, options)
+
+        if results_yaml:
+            sequence_coverage_map(file, options, results_yaml)
 
     if ms_file is not None:
         st.write("Basic Plots")
@@ -468,6 +577,8 @@ def results():
 
     selection = st.selectbox("File selection", ("Previous results", "Enter file"))
 
+    results_yaml = {}
+
     if selection == "Previous results":
 
         results_files = files_in_folder(PROCESSED_PATH, ".yaml", sort="date")
@@ -481,7 +592,7 @@ def results():
             with st.spinner("Loading data.."):
                 plot_summary(results_yaml, selection)
 
-            with st.beta_expander("Run summary"):
+            with st.expander("Run summary"):
                 st.write(results_yaml["summary"])
 
             read_log(os.path.splitext(filepath_selection)[0] + ".log")
@@ -501,4 +612,4 @@ def results():
         st.warning("Not a valid file.")
     else:
         with st.spinner("Parsing file"):
-            parse_file_and_display(file)
+            parse_file_and_display(file, results_yaml)

@@ -1,12 +1,49 @@
 import os
 import datetime
+from multiprocessing import Process
+import time
 import yaml
 import streamlit as st
-from multiprocessing import Process
 import psutil
-import time
 import pandas as pd
-from typing import Callable, Union
+from typing import Callable, Union, Tuple
+
+
+def get_size(path: str ) -> float:
+    """
+    Helper function to get size of a path (file / folder)
+
+    Args:
+        path (str): Path to the folder / file.
+
+    Returns:
+        float: Total size in bytes.
+    """
+    if path.endswith(".d"):
+        size_function = get_folder_size
+    else:
+        size_function = os.path.getsize
+
+    return size_function(path)
+
+def get_folder_size(start_path: str ) -> float:
+    """Returns the total size of a given folder.
+
+    Args:
+        start_path (str): Path to the folder that should be checked.
+
+    Returns:
+        float: Total size in bytes.
+    """
+
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(start_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            # skip if it is symbolic link
+            if not os.path.islink(fp):
+                total_size += os.path.getsize(fp)
+    return total_size
 
 
 def escape_markdown(text: str) -> str:
@@ -73,7 +110,7 @@ def files_in_folder_pandas(folder: str) -> pd.DataFrame:
     """
     files = os.listdir(folder)
     created = [time.ctime(os.path.getctime(os.path.join(folder, _))) for _ in files]
-    sizes = [os.path.getsize(os.path.join(folder, _)) / 1024 ** 2 for _ in files]
+    sizes = [get_size(os.path.join(folder, _)) / 1024 ** 2 for _ in files]
     df = pd.DataFrame(files, columns=["File"])
     df["Created"] = created
     df["Filesize (Mb)"] = sizes
@@ -88,7 +125,7 @@ def read_log(log_path: str):
         log_path (str): Path to the logile.
     """
     if os.path.isfile(log_path):
-        with st.beta_expander("Run log"):
+        with st.expander("Run log"):
             with st.spinner("Parsing file"):
                 with open(log_path, "r") as logfile:
                     lines = logfile.readlines()
@@ -129,7 +166,7 @@ def start_process(
 
 def check_process(
     process_path: str,
-) -> (bool, Union[str, None], Union[str, None], Union[str, None], bool):
+) ->Tuple[bool, Union[str, None], Union[str, None], Union[str, None], bool]:
     """Function to check the status of a process.
     Reads the process file from the yaml and checks the process id.
 
@@ -146,19 +183,21 @@ def check_process(
     if os.path.isfile(process_path):
         with open(process_path, "r") as process_file:
             process = yaml.load(process_file, Loader=yaml.FullLoader)
-        last_pid = process["pid"]
 
-        if "init" in process:
-            p_init = process["init"]
-        else:
-            p_init = False
+        if process:
+            last_pid = process["pid"]
 
-        if psutil.pid_exists(last_pid):
-            p_ = psutil.Process(last_pid)
-            with p_.oneshot():
-                p_name = p_.name()
-                status = p_.status()
-            return True, last_pid, p_name, status, p_init
+            if "init" in process:
+                p_init = process["init"]
+            else:
+                p_init = False
+
+            if psutil.pid_exists(last_pid):
+                p_ = psutil.Process(last_pid)
+                with p_.oneshot():
+                    p_name = p_.name()
+                    status = p_.status()
+                return True, last_pid, p_name, status, p_init
 
     return False, None, None, None, False
 
@@ -172,12 +211,63 @@ def init_process(process_path: str, **kwargs: dict):
     while True:
         if os.path.isfile(process_path):
             with open(process_path, "r") as process_file:
-                p = yaml.load(process_file, Loader=yaml.FullLoader)
-            p["init"] = True
+                process = yaml.load(process_file, Loader=yaml.FullLoader)
+            process["init"] = True
             for _ in kwargs:
-                p[_] = kwargs[_]
+                process[_] = kwargs[_]
             with open(process_path, "w") as file:
-                yaml.dump(p, file, sort_keys=False)
+                yaml.dump(process, file, sort_keys=False)
             break
         else:
             time.sleep(1)
+
+
+def check_file(path: str) -> bool:
+    """Function to check if a file exists.
+    This function will also return if the file is None.
+
+    Args:
+        path (str): Path to the file to be checked.
+
+    Returns:
+        bool: Flag if file or path exists..
+    """
+
+    if path:
+        if os.path.isfile(path):
+            return True
+        else:
+            return False
+    else:
+        return False
+
+def compare_date(date: str, minimum_date: datetime) -> bool:
+    """Utility function to convert the acquisition date time to a datetime format.
+    Checks if it was before the minimum_date.
+
+    Args:
+        date (str): Datetime as string.
+        minimum_date (dateime): Comparison
+
+    Returns:
+        bool: Flag if file was acquired after the minimum date.
+    """
+
+    if not date:
+        return False
+
+    if date.endswith('Z'):
+        rem = date.split('.')[1]
+
+        if len(rem) == 8:
+            date = date[:-2]+'Z'
+
+        dt = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%S.%fZ')
+
+    else:
+        dt = datetime.datetime.fromisoformat(date).replace(tzinfo=None)
+
+    if dt > minimum_date:
+        return True
+    else:
+        return False

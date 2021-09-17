@@ -1991,7 +1991,12 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
                 feature_table['rt_tail'] = feature_table['rt_right'] / feature_table['rt_left']
 
                 logging.info('Matching features to query data.')
-                features = map_ms2(feature_table, query_data, **settings['features'])
+
+                if 'mono_mzs2' not in query_data.keys():
+                    logging.info('No MS2-data to match.')
+                    features = pd.DataFrame()
+                else:
+                    features = map_ms2(feature_table, query_data, **settings['features'])
 
                 logging.info('Saving feature table.')
                 ms_file.write(feature_table, dataset_name="feature_table")

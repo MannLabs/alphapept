@@ -2,19 +2,19 @@ import streamlit as st
 import os
 import pandas as pd
 import datetime
-import time
 import yaml
-from typing import Union
+from typing import Union, Tuple
 
 from alphapept.paths import (
     SETTINGS_TEMPLATE_PATH,
     QUEUE_PATH,
+    PROCESSED_PATH,
     DEFAULT_SETTINGS_PATH,
     FASTA_PATH,
 )
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
-from alphapept.gui.utils import escape_markdown, files_in_folder
-from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, JsCode
+from alphapept.gui.utils import escape_markdown, files_in_folder, get_size
+from st_aggrid import GridOptionsBuilder, AgGrid
 
 # Dict to match workflow
 WORKFLOW_DICT = {}
@@ -29,7 +29,7 @@ WORKFLOW_DICT["lfq_quantification"] = ["quantification"]
 SETTINGS_TEMPLATE = load_settings(SETTINGS_TEMPLATE_PATH)
 
 
-def parse_folder(file_folder: str) -> (list, list, list):
+def parse_folder(file_folder: str) -> Tuple[list, list, list]:
     """Checks a folder for raw, fasta and db_data.hdf files.
 
     Args:
@@ -71,7 +71,7 @@ def widget_from_setting(
         group (str): Groupname of the widget that should be created.
         element (str): Element of thw widget that should be created.
         override (Union[float, None], optional): Override value for the default value. Defaults to None.
-        indent (bool, optional): Flag to indent the widget via the st.beta_columns widget. Defaults to False.
+        indent (bool, optional): Flag to indent the widget via the st.columns widget. Defaults to False.
 
     Returns:
         dict: A dictionary that stores all widgets.
@@ -83,9 +83,9 @@ def widget_from_setting(
         recorder[key] = {}
 
     if "description" in _:
-        help = _["description"]
+        tooltip = _["description"]
     else:
-        help = ""
+        tooltip = ""
 
     value = _["default"]
 
@@ -93,7 +93,7 @@ def widget_from_setting(
         value = override
 
     if indent:
-        c1, c2 = st.beta_columns((1, 8))
+        c1, c2 = st.columns((1, 8))
     else:
         c2 = st
 
@@ -103,25 +103,25 @@ def widget_from_setting(
             min_value=float(_["min"]),
             max_value=float(_["max"]),
             value=float(value),
-            help=help,
+            help=tooltip,
         )
     elif _["type"] == "spinbox":
         recorder[key][element] = c2.slider(
-            element, min_value=_["min"], max_value=_["max"], value=value, help=help
+            element, min_value=_["min"], max_value=_["max"], value=value, help=tooltip
         )
     elif _["type"] == "checkbox":
-        recorder[key][element] = c2.checkbox(element, value=value, help=help)
+        recorder[key][element] = c2.checkbox(element, value=value, help=tooltip)
     elif _["type"] == "checkgroup":
         opts = list(_["value"].keys())
         recorder[key][element] = c2.multiselect(
-            label=element, options=opts, default=value, help=help
+            label=element, options=opts, default=value, help=tooltip
         )
     elif _["type"] == "combobox":
         recorder[key][element] = c2.selectbox(
-            label=element, options=_["value"], index=_["value"].index(value), help=help
+            label=element, options=_["value"], index=_["value"].index(value), help=tooltip
         )
     elif _["type"] == "string":
-        recorder[key][element] = c2.text_input(label=element, default=value, help=help)
+        recorder[key][element] = c2.text_input(label=element, default=value, help=tooltip)
     else:
         st.write(f"Not understood {_}")
 
@@ -140,9 +140,12 @@ def submit_experiment(recorder: dict):
     )
 
     long_name = name + ".yaml"
-    long_name_path = os.path.join(QUEUE_PATH, long_name)
+    long_name_path_queue = os.path.join(QUEUE_PATH, long_name)
+    long_name_path_processed = os.path.join(PROCESSED_PATH, long_name)
 
-    if os.path.exists(long_name_path):
+    if os.path.exists(long_name_path_queue):
+        st.error(f"Name {escape_markdown(long_name)} already exists. Please rename.")
+    elif os.path.exists(long_name_path_processed):
         st.error(f"Name {escape_markdown(long_name)} already exists. Please rename.")
     else:
         st.info(
@@ -154,7 +157,7 @@ def submit_experiment(recorder: dict):
                 for key in recorder[group]:
                     settings[group][key] = recorder[group][key]
 
-            save_settings(settings, long_name_path)
+            save_settings(settings, long_name_path_queue)
             # Change things from experiment
             st.success(
                 f"Experiment {escape_markdown(long_name)} submitted. Switch to Status tab to track progress."
@@ -170,10 +173,12 @@ def customize_settings(recorder: dict, uploaded_settings: dict, loaded: bool) ->
         loaded (bool): Flag to indicate that data was uploaded.
     """
 
-    with st.beta_expander("Settings", loaded):
+    with st.expander("Settings", loaded):
         checked = [_ for _ in recorder["workflow"] if not recorder["workflow"][_]]
         checked_ = []
-        [checked_.extend(WORKFLOW_DICT[_]) for _ in checked if _ in WORKFLOW_DICT]
+        for _ in checked:
+            if _ in WORKFLOW_DICT:
+                checked_.extend(WORKFLOW_DICT[_])
 
         exclude = ["experiment", "workflow"] + checked_
 
@@ -226,7 +231,7 @@ def file_df_from_files(raw_files: list, file_folder: str) -> pd.DataFrame:
     """
     raw_files.sort()
     sizes = [
-        round(os.stat(os.path.join(file_folder, _)).st_size / 1024 ** 3, 2)
+        round(get_size(os.path.join(file_folder, _)) / 1024 ** 3, 2)
         for _ in raw_files
     ]
     created = [
@@ -304,7 +309,7 @@ def experiment():
 
                 file_df_selected = grid_response["data"]
 
-                with st.beta_expander("Additional info"):
+                with st.expander("Additional info"):
                     st.write(
                         "- Filename: Name of the file."
                         " \n- Creation date of file."
@@ -316,7 +321,7 @@ def experiment():
 
                 shortnames = file_df_selected["Shortname"].values.tolist()
                 if len(shortnames) != len(set(shortnames)):
-                    st.warning(f"Warning: Shortnames are not unique.")
+                    st.warning("Warning: Shortnames are not unique.")
                     error += 1
 
                 fasta_files_home_dir = files_in_folder(FASTA_PATH, ".fasta")
@@ -327,16 +332,14 @@ def experiment():
                 fasta_files_home_dir += fasta_files
 
                 selection = st.multiselect(
-                    f"Select FASTA files",
+                    "Select FASTA files",
                     options=fasta_files_home_dir,
                     default=fasta_files,
                 )
                 recorder["experiment"]["fasta_paths"] = selection
 
-                #TODO
-
                 if len(recorder["experiment"]["fasta_paths"]) == 0:
-                    st.warning(f"Warning: No FASTA files selected.")
+                    st.warning("Warning: No FASTA files selected.")
                     error += 1
 
                 recorder["experiment"]["shortnames"] = shortnames
@@ -354,7 +357,7 @@ def experiment():
 
                 st.write(f"## Workflow")
 
-                with st.beta_expander("Steps"):
+                with st.expander("Steps"):
                     group = SETTINGS_TEMPLATE["workflow"]
                     for element in group:
                         recorder = widget_from_setting(
