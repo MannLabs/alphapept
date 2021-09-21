@@ -47,7 +47,7 @@ jobs:
       - name: Prepare distribution
         shell: bash -l {0}
         run: |
-          conda env create --force --name alphapept --file misc/conda_development_environment.yaml
+          conda create -n alphapept python=3.8 -y
           conda activate alphapept
           rm -rf dist
           rm -rf build
