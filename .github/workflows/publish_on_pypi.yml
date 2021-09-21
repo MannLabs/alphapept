@@ -1,0 +1,97 @@
+on:
+  workflow_dispatch:
+
+name: Publish on PyPi
+
+jobs:
+  Version_Bumped:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.master_version_bumped.outputs.version }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+      - name: Master version bumped
+        id: master_version_bumped
+        shell: bash -l {0}
+        run: |
+          current_version=$(grep "__version__" alphapept/__init__.py | cut -f3 -d ' ' | sed 's/"//g')
+          current_version_as_regex=$(echo $current_version | sed 's/\./\\./g')
+          conda create -n version_check python=3.8 pip=20.1 -y
+          conda activate version_check
+          set +e
+          already_on_pypi=$(pip install alphapept== 2>&1 | grep -c "$current_version_as_regex")
+          set -e
+          conda deactivate
+          if [ $already_on_pypi -ne 0 ]; then
+            echo "Version is already on PyPi"
+            exit 1
+          fi
+          echo ::set-output name=version::$current_version
+  Create_PyPi_Release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+      - name: Conda info
+        shell: bash -l {0}
+        run: conda info
+      - name: Prepare distribution
+        shell: bash -l {0}
+        run: |
+          conda env create --force --name alphapept --file misc/conda_development_environment.yaml
+          conda activate alphapept
+          rm -rf dist
+          rm -rf build
+          python setup.py sdist bdist_wheel
+          twine check dist/*
+          conda deactivate
+      - name: Publish distribution to Test PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
+      - name: Test PyPI test release
+        shell: bash -l {0}
+        run: |
+          conda create -n alphapept_pip_test python=3.8 -y
+          conda activate alphapept_pip_test
+          pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple "alphapept"
+          alphapept
+          conda deactivate
+      - name: Publish distribution to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN }}
+  Test_PyPi_Release:
+    name: Test_PyPi_version_on_${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: Create_PyPi_Release
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          auto-update-conda: true
+          python-version: ${{ matrix.python-version }}
+      - name: Conda info
+        shell: bash -l {0}
+        run: conda info
+      - name: Test pip installation from PyPi
+        shell: bash -l {0}
+        run: |
+          conda create -n alphapept_pip_test python=3.8 -y
+          conda activate alphapept_pip_test
+          pip install "alphapept"
+          alphapept
+          conda deactivate

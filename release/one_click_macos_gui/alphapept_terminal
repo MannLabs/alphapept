@@ -1,0 +1,3 @@
+#!/bin/sh
+
+open -a Terminal "${BASH_SOURCE%/*}/alphapept_gui"

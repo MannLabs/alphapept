@@ -1,0 +1,7 @@
+Package: alphapept
+Version: 0.3.29
+Architecture: all
+Maintainer: Mann Labs <opensource@alphapept.com>
+Description: AlphaPept
+  AlphaPept is an open-source Python package in the AlphaPept ecosystem.
+  AlphaPept was developed by the Mann Labs at the Max Planck Institute of Biochemistry and University of Copenhagen and is freely available with an Apache License. Additional third-party licenses are applicable for external Python packages (see https://github.com/MannLabs/alphapept for more details.).
