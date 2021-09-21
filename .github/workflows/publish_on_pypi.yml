@@ -48,6 +48,7 @@ jobs:
         shell: bash -l {0}
         run: |
           conda create -n alphapept python=3.8 -y
+          pip install twine
           conda activate alphapept
           rm -rf dist
           rm -rf build
