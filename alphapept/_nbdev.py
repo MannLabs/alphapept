@@ -269,6 +269,7 @@ index = {"print_settings": "00_settings.ipynb",
          "ap_to_mq_sequence": "13_export.ipynb",
          "prepare_ap_results": "13_export.ipynb",
          "calculate_sequence_coverage": "14_display.ipynb",
+         "get_latest_version": "14_display.ipynb",
          "sample_function": "contributing.ipynb"}
 
 modules = ["settings.py",
