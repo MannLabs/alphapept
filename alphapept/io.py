@@ -347,12 +347,19 @@ def load_mzml_data(
             if ms_order == 2:
                 masses, intensities = get_most_abundant(masses, intensities, n_most_abundant)
             rt_list.append(rt)
+
+            #Remove zero intensities
+            to_keep = intensities>0
+            masses = masses[to_keep]
+            intensities = intensities[to_keep]
+
             mass_list.append(masses)
             int_list.append(intensities)
             ms_list.append(ms_order)
             prec_mzs_list.append(prec_mass)
             mono_mzs_list.append(mono_mz)
             charge_list.append(charge)
+
         except KeyboardInterrupt as e:
             raise e
         except SystemExit as e:
