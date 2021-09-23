@@ -1,5 +1,6 @@
 import streamlit as st
 from alphapept.gui.utils import markdown_link
+from alphapept.utils import check_github_version
 from alphapept.__version__ import VERSION_NO
 
 
@@ -65,3 +66,10 @@ def start():
             "https://datashare.biochem.mpg.de/s/p8Qu3KolzbSiCHH/download",
         )
         st.write("Put both files in one folder and go to the New experiment tab.")
+
+
+    latest_version = check_github_version()
+    if latest_version and (VERSION_NO != latest_version):
+        st.info(
+            f"You're using AlphaPept {VERSION_NO} but version {latest_version} is now avaliable! See [here](https://github.com/MannLabs/alphapept) for details"
+        )

@@ -11,7 +11,7 @@ def calculate_sequence_coverage(target_sequence:str, peptide_list:list)->(int, i
     Calculate the percentage of a target protein covered by a list of peptides.
     Args:
         target_sequence (str): the protein sequence against which the peptide_list should be compared.
-        peptide_list (str): the list of peptides (str) to be compared against the target_sequence.
+        peptide_list (List[str]): the list of peptides (str) to be compared against the target_sequence.
     return:
         int: number of residues in target_sequence.
         int: number of residues in target_sequence covered by peptides in peptide_list.
