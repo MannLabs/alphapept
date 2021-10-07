@@ -5,7 +5,7 @@ from alphapept.__version__ import VERSION_NO
 
 SHOW_WARNING = False
 try:
-    import pythonnet
+    import clr
 except ModuleNotFoundError:
     SHOW_WARNING = True
 
