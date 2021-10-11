@@ -8,8 +8,8 @@ __all__ = ['connect_centroids_unidirection', 'find_centroid_connections', 'conve
            'check_isotope_pattern_directed', 'grow', 'grow_trail', 'get_trails', 'plot_pattern', 'get_minpos',
            'get_local_minima', 'is_local_minima', 'truncate', 'check_averagine', 'pattern_to_mz', 'cosine_averagine',
            'int_list_to_array', 'mz_to_mass', 'M_PROTON', 'isolate_isotope_pattern', 'get_isotope_patterns', 'report_',
-           'feature_finder_report', 'plot_isotope_pattern', 'extract_bruker', 'convert_bruker', 'map_bruker',
-           'find_features', 'replace_infs', 'map_ms2']
+           'feature_finder_report', 'extract_bruker', 'convert_bruker', 'map_bruker', 'find_features', 'replace_infs',
+           'map_ms2']
 
 # Cell
 import numpy as np
@@ -1463,7 +1463,7 @@ def get_isotope_patterns(pre_isotope_patterns:list, hill_ptrs:np.ndarray, hill_d
 
 # Cell
 @alphapept.performance.performance_function(compilation_mode="numba-multithread")
-def report_(idx:np.ndarray, isotope_charges:list, isotope_patterns:list, iso_idx:np.ndarray, stats:np.ndarray, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, rt_:np.ndarray, rt_idx:np.ndarray, results:np.ndarray):
+def report_(idx:np.ndarray, isotope_charges:list, isotope_patterns:list, iso_idx:np.ndarray, stats:np.ndarray, sortindex_:np.ndarray, hill_ptrs:np.ndarray, hill_data:np.ndarray, int_data:np.ndarray, rt_:np.ndarray, rt_idx:np.ndarray, results:np.ndarray, lookup_idx:np.ndarray):
     """Function to extract summary statstics from a list of isotope patterns and charges.
 
     Args:
@@ -1479,6 +1479,7 @@ def report_(idx:np.ndarray, isotope_charges:list, isotope_patterns:list, iso_idx
         rt_ (np.ndarray): Array with retention time information for each scan.
         rt_idx (np.ndarray): Lookup array to match centroid idx to rt.
         results (np.ndarray): Recordarray with isotope pattern summary statistics.
+        lookup_idx (np.ndarray): Lookup array for each centroid.
     """
     pattern = isotope_patterns[iso_idx[idx]:iso_idx[idx+1]]
     isotope_data = stats[pattern]
@@ -1503,7 +1504,7 @@ def report_(idx:np.ndarray, isotope_charges:list, isotope_patterns:list, iso_idx
     rt_range = np.linspace(rt_min_, rt_max_, 100)
     trace_sum = np.zeros_like(rt_range)
 
-    for k in pattern:
+    for i, k in enumerate(pattern):
         x = sortindex_[k]
 
         start = hill_ptrs[x]
@@ -1511,6 +1512,9 @@ def report_(idx:np.ndarray, isotope_charges:list, isotope_patterns:list, iso_idx
         idx_ = hill_data[start:end]
         int_ = int_data[idx_]
         rts = rt_[rt_idx[idx_]]
+
+        lookup_idx[idx_, 0] = idx
+        lookup_idx[idx_, 1] = i
 
         interpolation = np.interp(rt_range, rts, int_)
 
@@ -1593,112 +1597,19 @@ def feature_finder_report(query_data:dict, isotope_patterns:list, isotope_charge
     mass_data = np.array(query_data['mass_list_ms1'])
     rt_idx = np.searchsorted(indices_, np.arange(len(mass_data)), side='right') - 1
 
+    lookup_idx= np.zeros((len(mass_data),2), dtype=np.int)-1
+
     int_data = np.array(query_data['int_list_ms1'])
 
     results = np.zeros((len(isotope_charges), 13))
 
-    report_(range(len(isotope_charges)), isotope_charges, isotope_patterns, iso_idx, stats, sortindex_, hill_ptrs, hill_data, int_data, rt_, rt_idx, results)
+    report_(range(len(isotope_charges)), isotope_charges, isotope_patterns, iso_idx, stats, sortindex_, hill_ptrs, hill_data, int_data, rt_, rt_idx, results, lookup_idx)
 
     df = pd.DataFrame(results, columns = ['mz','mz_std','mz_most_abundant','charge','rt_start','rt_apex','rt_end','fwhm','n_isotopes','mass','int_apex','int_area', 'int_sum'])
 
     df.sort_values(['rt_start','mz'])
 
-    return df
-
-# Cell
-def plot_isotope_pattern(index:int, df:pd.DataFrame, sorted_stats:np.ndarray, centroids:np.ndarray, scan_range:int=100, mz_range:float=2, plot_hills:bool = False):
-    """Plot an isotope pattern in its local environment.
-
-    Args:
-        index (int): Index to the pattern.
-        df (pd.DataFrame): Pandas DataFrame containing the patterns.
-        sorted_stats (np.ndarray): Stats array that contains summary statistics of hills.
-        centroids (np.ndarray): 1D Array containing the masses of the centroids.
-        scan_range (int, optional): Scan range to plot. Defaults to 100.
-        mz_range (float, optional): MZ range to plot. Defaults to 2.
-        plot_hills (bool, optional): Flag to plot hills. Defaults to False.
-    """
-    markersize = 10
-    plot_offset_mz = 1
-    plot_offset_rt = 2
-
-    feature =  df.loc[index]
-
-    scan = rt_dict[feature['rt_apex']]
-
-    start_scan = scan-scan_range
-    end_scan = scan+scan_range
-
-    mz_min = feature['mz']-mz_range-plot_offset_mz
-    mz_max = feature['mz']+mz_range+plot_offset_mz
-
-    sub_data = np.hstack(centroids[start_scan:end_scan])
-
-    selection = sub_data[(sub_data['mz']>mz_min) & (sub_data['mz']<mz_max)]
-
-    min_rt = selection['rt'].min() - plot_offset_rt
-    max_rt = selection['rt'].max() + plot_offset_rt
-
-    hill_selection = sorted_stats[(sorted_stats['mz_avg']>mz_min) & (sorted_stats['mz_avg']<mz_max) & (sorted_stats['rt_max']<max_rt) & (sorted_stats['rt_min']>min_rt)]
-
-    plt.style.use('dark_background')
-
-    plt.figure(figsize=(15,15))
-    plt.scatter(selection['rt'], selection['mz'], c= np.log(selection['int']), marker='s', s=markersize, alpha=0.9)
-    plt.colorbar()
-    plt.grid(False)
-    plt.xlabel('RT (min)')
-    plt.ylabel('m/z')
-
-    box_height = mz_range/50
-
-    if plot_hills:
-        for hill in hill_selection:
-            bbox = [hill['rt_min'], hill['mz_avg']-box_height, hill['rt_max'], hill['mz_avg']+box_height]
-
-            rect = plt.Rectangle((bbox[0], bbox[1]),
-                                      bbox[2] - bbox[0],
-                                      bbox[3] - bbox[1], fill=False,
-                                      edgecolor='w', linewidth=1, alpha = 0.3)
-            plt.gca().add_patch(rect)
-
-
-    feature_selection = df[(df['mz']>mz_min) & (df['mz']<mz_max) & (df['rt_end']<max_rt) & (df['rt_start']>min_rt)]
-
-    for f_idx in feature_selection.index:
-        for c_idx in range(len(sorted_stats[isotope_patterns[f_idx]])-1):
-
-            start = sorted_stats[isotope_patterns[f_idx]][c_idx]
-            end = sorted_stats[isotope_patterns[f_idx]][c_idx+1]
-
-            start_mass = start['mz_avg']
-            start_rt = (start['rt_min']+start['rt_max'])/2
-
-            end_mass = end['mz_avg']
-            end_rt = (end['rt_min']+end['rt_max'])/2
-
-            plt.plot([start_rt, end_rt], [start_mass, end_mass], '+', color='y')
-            plt.plot([start_rt, end_rt], [start_mass, end_mass], ':', color='y')
-
-        if plot_hills:
-            for hill_idx in isotope_patterns[f_idx]:
-
-                hill = sorted_stats[hill_idx]
-                bbox = [hill['rt_min'], hill['mz_avg']-box_height, hill['rt_max'], hill['mz_avg']+box_height]
-
-                rect = plt.Rectangle((bbox[0], bbox[1]),
-                                          bbox[2] - bbox[0],
-                                          bbox[3] - bbox[1], fill=False,
-                                          edgecolor='g', linewidth=1, alpha = 0.8)
-                plt.gca().add_patch(rect)
-
-
-    plt.xlim([min_rt+plot_offset_rt, max_rt-plot_offset_rt])
-    plt.ylim([mz_min+plot_offset_mz, mz_max-plot_offset_mz])
-    plt.title('Pattern')
-    plt.show()
-
-    plt.style.use('ggplot')
+    return df, lookup_idx
 
 # Cell
 import subprocess
@@ -1930,6 +1841,11 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
                     iso_split_level = f_settings['iso_split_level']
 
 
+                    #Cleanup if
+
+                    int_data = np.array(query_data['int_list_ms1'])
+
+
                     window = f_settings['hill_smoothing']
                     hill_check_large = f_settings['hill_check_large']
 
@@ -1956,8 +1872,6 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
                     hill_ptrs, hill_data, path_node_cnt, score_median, score_std = extract_hills(query_data, max_gap, score_median+score_std*3)
                     logging.info(f'Number of hills {len(hill_ptrs):,}, len = {np.mean(path_node_cnt):.2f}')
 
-                    int_data = np.array(query_data['int_list_ms1'])
-
                     hill_ptrs = split_hills(hill_ptrs, hill_data, int_data, hill_split_level=hill_split_level, window = window) #hill lenght is inthere already
                     logging.info(f'After split hill_ptrs {len(hill_ptrs):,}')
 
@@ -1974,7 +1888,10 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
                     isotope_patterns, iso_idx, isotope_charges = get_isotope_patterns(pre_isotope_patterns, hill_ptrs, hill_data, int_data, scan_idx, stats, sortindex_, averagine_aa, isotopes, iso_charge_min = iso_charge_min, iso_charge_max = iso_charge_max, iso_mass_range = iso_mass_range, iso_n_seeds = iso_n_seeds, cc_cutoff = iso_corr_min, iso_split_level=iso_split_level, callback=None)
                     logging.info('Extracted {:,} isotope patterns.'.format(len(isotope_charges)))
 
-                    feature_table = feature_finder_report(query_data, isotope_patterns, isotope_charges, iso_idx, stats, sortindex_, hill_ptrs, hill_data)
+                    feature_table, lookup_idx = feature_finder_report(query_data, isotope_patterns, isotope_charges, iso_idx, stats, sortindex_, hill_ptrs, hill_data)
+
+                    lookup_idx_df = pd.DataFrame(lookup_idx, columns = ['isotope_pattern', 'isotope_pattern_hill'])
+                    ms_file.write(lookup_idx_df, dataset_name="feature_table_idx")
 
                     logging.info('Report complete.')
 
