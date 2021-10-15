@@ -11,7 +11,7 @@ from typing import Callable, Union, Tuple
 from alphapept.paths import PROCESSED_PATH
 
 
-@st.cache
+@st.cache(allow_output_mutation=True)
 def load_file(file:str) -> dict:
     """Cached streamlit function to read summary stats from a file.
 

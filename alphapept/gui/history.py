@@ -1,5 +1,4 @@
 import os
-import yaml
 import streamlit as st
 import numpy as np
 import plotly.express as px
@@ -9,7 +8,7 @@ import datetime
 from alphapept.paths import PLOT_SETTINGS, PROCESSED_PATH
 from alphapept.gui.utils import files_in_folder, compare_date, load_files, check_group, filter_by_tag
 from alphapept.settings import load_settings
-from typing import Callable, Union
+from typing import Callable
 
 
 def load_plot_settings() -> dict:
@@ -125,12 +124,10 @@ def create_multiple_plots(all_results: dict, groups: list, to_plot: list):
     minimum_date = datetime.datetime.combine(minimum_date, datetime.datetime.min.time())
 
     with st.spinner("Creating plots.."):
-
         for plot in plot_types:
             create_single_plot(
                 all_results, files, acquisition_date_times, mode, groups, plot, minimum_date,
             )
-
 
 def history():
     """Streamlit page to plot a historical overview of previous results."""
