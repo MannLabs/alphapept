@@ -3,8 +3,7 @@
 __all__ = ['filter_score', 'filter_precursor', 'get_q_values', 'cut_fdr', 'cut_global_fdr', 'get_x_tandem_score',
            'score_x_tandem', 'filter_with_x_tandem', 'filter_with_score', 'score_psms', 'get_ML_features', 'train_RF',
            'score_ML', 'filter_with_ML', 'assign_proteins', 'get_shared_proteins', 'get_protein_groups',
-           'perform_protein_grouping', 'get_ion', 'ecdf', 'score_hdf', 'ion_dict', 'protein_groups_hdf',
-           'protein_grouping_all', 'protein_groups_hdf_parallel']
+           'perform_protein_grouping', 'get_ion', 'ion_dict', 'ecdf', 'score_hdf', 'protein_grouping_all']
 
 # Cell
 import numpy as np
@@ -12,26 +11,39 @@ import pandas as pd
 import logging
 import alphapept.io
 
-def filter_score(df, mode='multiple'):
+def filter_score(df: pd.DataFrame, mode: str='multiple') -> pd.DataFrame:
     """
-    Filter df by score
-    TODO: PSMS could still have the same score when having modifications at multiple positions that are not distinguishable.
+    Filter psms feature table by keeping only the best scoring psm per experimental spectrum.
+
+    TODO: psms could still have the same score when having modifications at multiple positions that are not distinguishable.
     Only keep one.
 
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        mode (str, optional): string specifying which mode to use for psms filtering. The two options are 'single' and 'multiple'. 'single' will only keep one feature per experimental spectrum. 'multiple' will allow multiple features per experimental spectrum. In either option, each feature can only occur once. Defaults to 'multiple'.
+
+    Returns:
+        pd.DataFrame: table containing the filtered psms results.
     """
-    df["rank"] = df.groupby(["query_idx", "localexp"])["score"].rank("dense", ascending=False).astype("int")
+
+    if "localexp" in df.columns:
+        additional_group = ['localexp']
+    else:
+        additional_group = []
+
+    df["rank"] = df.groupby(["query_idx"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
     df = df[df["rank"] == 1]
 
-    # in case two hits have the same score and therfore rank only accept the first one
-    df = df.drop_duplicates(["query_idx", "localexp"])
+    # in case two hits have the same score and therfore the same rank only accept the first one
+    df = df.drop_duplicates(["query_idx"] + additional_group)
 
     if 'dist' in df.columns:
-        df["feature_rank"] = df.groupby(["feature_idx", "localexp"])["dist"].rank("dense", ascending=True).astype("int")
-        df["raw_rank"] = df.groupby(["raw_idx", "localexp"])["score"].rank("dense", ascending=False).astype("int")
+        df["feature_rank"] = df.groupby(["feature_idx"] + additional_group)["dist"].rank("dense", ascending=True).astype("int")
+        df["raw_rank"] = df.groupby(["raw_idx"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
 
         if mode == 'single':
             df_filtered = df[(df["feature_rank"] == 1) & (df["raw_rank"] == 1) ]
-            df_filtered = df_filtered.drop_duplicates(["raw_idx", "localexp"])
+            df_filtered = df_filtered.drop_duplicates(["raw_idx"] + additional_group)
 
         elif mode == 'multiple':
             df_filtered = df[(df["feature_rank"] == 1)]
@@ -45,15 +57,29 @@ def filter_score(df, mode='multiple'):
     # TOD: this needs to be sorted out, for modifications -> What if we have MoxM -> oxMM, this will screw up with the filter sequence part
     return df_filtered
 
-def filter_precursor(df):
+# Cell
+
+def filter_precursor(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Filter df by precursor
+    Filter psms feature table by precursor.
     Allow each precursor only once.
 
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+
+    Returns:
+        pd.DataFrame: table containing the filtered psms results.
+
     """
+    if "localexp" in df.columns:
+        additional_group = ['localexp']
+    else:
+        additional_group = []
+
     df["rank_precursor"] = (
-        df.groupby(["precursor", "localexp"])["score"].rank("dense", ascending=False).astype("int")
+        df.groupby(["precursor"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
     )
+
     df_filtered = df[df["rank_precursor"] == 1]
 
     return df_filtered
@@ -61,9 +87,15 @@ def filter_precursor(df):
 # Cell
 from numba import njit
 @njit
-def get_q_values(fdr_values):
+def get_q_values(fdr_values: np.ndarray) -> np.ndarray:
     """
-    Calculate q values from fdr_values
+    Calculate q-values from fdr_values.
+
+    Args:
+        fdr_values (np.ndarray): np.ndarray of fdr values.
+
+    Returns:
+        np.ndarray: np.ndarray of q-values.
     """
     q_values = np.zeros_like(fdr_values)
     min_q_value = np.max(fdr_values)
@@ -80,19 +112,19 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-def cut_fdr(df, fdr_level=0.01, plot=True):
+#Note that the test function for cut_fdr is further down in the notebook to also test protein-level FDR.
+def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True) -> (float, pd.DataFrame):
     """
     Cuts a dataframe with a given fdr level
 
     Args:
-        fdr_level: fdr level that should be used
-        plot: flag to enable plot
+        df (pd.DataFrame): psms table of search results from alphapept.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+        plot (bool, optional): flag to enable plot. Defaults to 'True'.
 
     Returns:
-        cutoff: df with psms within fdr
-        cutoff_value: numerical value of score cutoff
-
-    Raises:
+        float: numerical value of the applied score cutoff
+        pd.DataFrame: df with psms within fdr
 
     """
 
@@ -134,7 +166,6 @@ def cut_fdr(df, fdr_level=0.01, plot=True):
 
     if plot:
         import matplotlib.pyplot as plt
-        import seaborn as sns
         plt.figure(figsize=(10, 5))
         plt.plot(df["score"], df["fdr"])
         plt.axhline(0.01, color="k", linestyle="--")
@@ -148,8 +179,8 @@ def cut_fdr(df, fdr_level=0.01, plot=True):
 
         bins = np.linspace(np.min(df["score"]), np.max(df["score"]), 100)
         plt.figure(figsize=(10, 5))
-        sns.distplot(df[df["decoy"]]["score"].values, label="decoy", bins=bins)
-        sns.distplot(df[~df["decoy"]]["score"].values, label="target", bins=bins)
+        plt.hist(df[df["decoy"]]["score"].values, label="decoy", bins=bins, alpha=0.5)
+        plt.hist(df[~df["decoy"]]["score"].values, label="target", bins=bins, alpha=0.5)
         plt.xlabel("Score")
         plt.ylabel("Frequency")
         plt.title("Score vs Class")
@@ -161,9 +192,18 @@ def cut_fdr(df, fdr_level=0.01, plot=True):
 
 # Cell
 
-def cut_global_fdr(data, analyte_level='sequence', fdr_level=0.01, plot=True, **kwargs):
+def cut_global_fdr(data: pd.DataFrame, analyte_level: str='sequence', fdr_level: float=0.01, plot: bool=True, **kwargs) -> pd.DataFrame:
     """
     Function to estimate and filter by global peptide or protein fdr
+
+    Args:
+        data (pd.DataFrame): psms table of search results from alphapept.
+        analyte_level (str, optional): string specifying the analyte level to apply the fdr threshold. Options include: 'precursor', 'sequence', 'protein_group' and 'protein'. Defaults to 'sequence'.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+        plot (bool, optional): flag to enable plot. Defaults to 'True'.
+
+    Returns:
+        pd.DataFrame: df with filtered results
 
     """
     logging.info('Global FDR on {}'.format(analyte_level))
@@ -191,8 +231,17 @@ def cut_global_fdr(data, analyte_level='sequence', fdr_level=0.01, plot=True, **
 
 import networkx as nx
 
-def get_x_tandem_score(df):
+def get_x_tandem_score(df: pd.DataFrame) -> np.ndarray:
+    """
+    Function to calculate the x tandem score
 
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+
+    Returns:
+        np.ndarray: np.ndarray with x_tandem scores
+
+    """
     b = df['b_hits'].astype('int').apply(lambda x: np.math.factorial(x)).values
     y = df['y_hits'].astype('int').apply(lambda x: np.math.factorial(x)).values
     x_tandem = np.log(b.astype('float')*y.astype('float')*df['matched_int'].values)
@@ -201,10 +250,20 @@ def get_x_tandem_score(df):
 
     return x_tandem
 
-def score_x_tandem(df, fdr_level = 0.01, plot = True, **kwargs):
+def score_x_tandem(df: pd.DataFrame, fdr_level: float = 0.01, plot: bool = True, **kwargs) -> pd.DataFrame:
+    """
+    Filters the psms table by using the x_tandem score and filtering the results for fdr_level.
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+
+    Returns:
+        pd.DataFrame: psms table with an extra 'score' column for x_tandem, filtered for no feature or precursor to be assigned multiple times.
+    """
+    logging.info('Scoring using X-Tandem')
     if 'localexp' not in df.columns:
         df['localexp'] =0
-    logging.info('Scoring using X-Tandem')
     df['score'] = get_x_tandem_score(df)
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
@@ -214,9 +273,16 @@ def score_x_tandem(df, fdr_level = 0.01, plot = True, **kwargs):
 
     return cutoff
 
-def filter_with_x_tandem(df, fdr_level = 0.01):
+def filter_with_x_tandem(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Filters a dataframe using an x_tandem score
+    Filters the psms table by using the x_tandem score, no fdr filter.
+    TODO: Remove redundancy with score functions, see issue: #275
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+
+    Returns:
+        pd.DataFrame: psms table with an extra 'score' column for x_tandem, filtered for no feature or precursor to be assigned multiple times.
     """
     logging.info('Filter df with x_tandem score')
 
@@ -228,9 +294,16 @@ def filter_with_x_tandem(df, fdr_level = 0.01):
 
     return df
 
-def filter_with_score(df, fdr_level = 0.01):
+def filter_with_score(df: pd.DataFrame):
     """
-    Filters a dataframe using an custom score
+    Filters the psms table by using the score column, no fdr filter.
+    TODO: Remove redundancy with score functions, see issue: #275
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+
+    Returns:
+        pd.DataFrame: psms table filtered for no feature or precursor to be assigned multiple times.
     """
     logging.info('Filter df with custom score')
 
@@ -243,7 +316,20 @@ def filter_with_score(df, fdr_level = 0.01):
 
 # Cell
 
-def score_psms(df, score = 'y_hits', fdr_level = 0.01, plot = True, **kwargs):
+def score_psms(df: pd.DataFrame, score: str='y_hits', fdr_level: float=0.01, plot: bool=True, **kwargs) -> pd.DataFrame:
+    """
+    Uses the specified score in df to filter psms and to apply the fdr_level threshold.
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        score (str, optional): string specifying the column in df to use as score. Defaults to 'y_hits'.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+        plot (bool, optional): flag to enable plot. Defaults to 'True'.
+
+    Returns:
+        pd.DataFrame: filtered df with psms within fdr
+
+    """
     if score in df.columns:
         df['score'] = df[score]
     else:
@@ -273,7 +359,18 @@ import matplotlib.pyplot as plt
 from .fasta import count_missed_cleavages, count_internal_cleavages
 
 
-def get_ML_features(df, protease='trypsin', **kwargs):
+def get_ML_features(df: pd.DataFrame, protease: str='trypsin', **kwargs) -> pd.DataFrame:
+    """
+    Uses the specified score in df to filter psms and to apply the fdr_level threshold.
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        protease (str, optional): string specifying the protease that was used for proteolytic digestion. Defaults to 'trypsin'.
+
+    Returns:
+        pd.DataFrame: df including additional scores for subsequent ML.
+
+    """
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
     df['abs_delta_m_ppm'] = np.abs(df['delta_m_ppm'])
@@ -288,20 +385,41 @@ def get_ML_features(df, protease='trypsin', **kwargs):
 
     return df
 
-def train_RF(df,
-             exclude_features = ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence','target'],
-             train_fdr_level = 0.1,
-             ini_score = 'x_tandem',
-             min_train = 1000,
-             test_size = 0.8,
-             max_depth = [5,25,50],
-             max_leaf_nodes = [150,200,250],
-             n_jobs=-1,
-             scoring='accuracy',
-             plot = False,
-             random_state = 42,
-             **kwargs):
+def train_RF(df: pd.DataFrame,
+             exclude_features: list = ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence','target'],
+             train_fdr_level:  float = 0.1,
+             ini_score: str = 'x_tandem',
+             min_train: int = 1000,
+             test_size: float = 0.8,
+             max_depth: list = [5,25,50],
+             max_leaf_nodes: list = [150,200,250],
+             n_jobs: int = -1,
+             scoring: str = 'accuracy',
+             plot:bool = False,
+             random_state: int = 42,
+             **kwargs) -> (GridSearchCV, list):
 
+    """
+    Function to train a random forest classifier to separate targets from decoys via semi-supervised learning.
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        exclude_features (list, optional): list with features to exclude for ML. Defaults to ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence','target'].
+        train_fdr_level (float, optional): Only targets below the train_fdr_level cutoff are considered for training the classifier. Defaults to 0.1.
+        ini_score (str, optional): Initial score to select psms set for semi-supervised learning. Defaults to 'x_tandem'.
+        min_train (int, optional): Minimum number of psms in the training set. Defaults to 1000.
+        test_size (float, optional): Fraction of psms used for testing. Defaults to 0.8.
+        max_depth (list, optional): List of clf__max_depth parameters to test in the grid search. Defaults to [5,25,50].
+        max_leaf_nodes (list, optional): List of clf__max_leaf_nodes parameters to test in the grid search. Defaults to [150,200,250].
+        n_jobs (int, optional): Number of jobs to use for parallelizing the gridsearch. Defaults to -1.
+        scoring (str, optional): Scoring method for the gridsearch. Defaults to'accuracy'.
+        plot (bool, optional): flag to enable plot. Defaults to 'False'.
+        random_state (int, optional): Random state for initializing the RandomForestClassifier. Defaults to 42.
+
+    Returns:
+        [GridSearchCV, list]: GridSearchCV: GridSearchCV object with trained RandomForestClassifier. list: list of features used for training the classifier.
+
+    """
 
     if getattr(sys, 'frozen', False):
         logging.info('Using frozen pyinstaller version. Setting n_jobs to 1')
@@ -382,13 +500,26 @@ def train_RF(df,
 
     return cv, features
 
-def score_ML(df,
-             trained_classifier,
-             features = None,
-            fdr_level = 0.01,
-            plot=True,
-             **kwargs):
+def score_ML(df: pd.DataFrame,
+             trained_classifier: GridSearchCV,
+             features: list = None,
+             fdr_level: float = 0.01,
+             plot: bool = True,
+             **kwargs) -> pd.DataFrame:
+    """
+    Applies a trained ML classifier to df and uses the ML score to filter psms and to apply the fdr_level threshold.
 
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        trained_classifier (GridSearchCV): GridSearchCV object returned by train_RF.
+        features (list): list with features returned by train_RF. Defaults to 'None'.
+        fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
+        plot (bool, optional): flag to enable plot. Defaults to 'True'.
+
+    Returns:
+        pd.DataFrame: filtered df with psms within fdr
+
+    """
     logging.info('Scoring using Machine Learning')
     # Apply the classifier to the entire dataset
     df_new = df.copy()
@@ -400,15 +531,22 @@ def score_ML(df,
     return cutoff
 
 
-def filter_with_ML(df,
-             trained_classifier,
-             features = None,
-            fdr_level = 0.01,
-            plot=True,
-             **kwargs):
+def filter_with_ML(df: pd.DataFrame,
+             trained_classifier: GridSearchCV,
+             features: list = None,
+             **kwargs) -> pd.DataFrame:
 
     """
-    Filters a dataframe using ML
+    Filters the psms table by using the x_tandem score, no fdr filter.
+    TODO: Remove redundancy with score functions, see issue: #275
+
+    Args:
+        df (pd.DataFrame): psms table of search results from alphapept.
+        trained_classifier (GridSearchCV): GridSearchCV object returned by train_RF.
+        features (list): list with features returned by train_RF. Defaults to 'None'.
+
+    Returns:
+        pd.DataFrame: psms table with an extra 'score' column from the trained_classifier by ML, filtered for no feature or precursor to be assigned multiple times.
     """
     logging.info('Filter df with x_tandem score')
     # Apply the classifier to the entire dataset
@@ -422,12 +560,19 @@ def filter_with_ML(df,
 # Cell
 import networkx as nx
 
-def assign_proteins(data, pept_dict):
+def assign_proteins(data: pd.DataFrame, pept_dict: dict) -> (pd.DataFrame, dict):
     """
-    Assign proteins to psms.
-    This functions requires a dataframe and a peptide dictionary (that matches sequences to proteins).
-    It will append the dataframe with the column 'n_possible_proteins' which indicate how many proteins could belong to the PSMs.
-    It will return a dictionary `found_proteins` where each protein is mapped to the indices of PSMs.
+    Assign psms to proteins.
+    This function appends the dataframe with a column 'n_possible_proteins' which indicates how many proteins a psm could be matched to.
+    It returns the appended dataframe and a dictionary `found_proteins` where each protein is mapped to the psms indices.
+
+    Args:
+        data (pd.DataFrame): psms table of scored and filtered search results from alphapept.
+        pept_dict (dict): dictionary that matches peptide sequences to proteins
+
+    Returns:
+        pd.DataFrame: psms table of search results from alphapept appended with the number of matched proteins.
+        dict: dictionary mapping psms indices to proteins.
 
     """
 
@@ -453,7 +598,19 @@ def assign_proteins(data, pept_dict):
 
     return data, found_proteins
 
-def get_shared_proteins(data, found_proteins, pept_dict):
+def get_shared_proteins(data: pd.DataFrame, found_proteins: dict, pept_dict: dict) -> dict:
+    """
+    Assign peptides to razor proteins.
+
+    Args:
+        data (pd.DataFrame): psms table of scored and filtered search results from alphapept, appended with `n_possible_proteins`.
+        found_proteins (dict): dictionary mapping psms indices to proteins
+        pept_dict (dict): dictionary mapping peptide indices to the originating proteins as a list
+
+    Returns:
+        dict: dictionary mapping peptides to razor proteins
+
+    """
 
     G = nx.Graph()
 
@@ -530,11 +687,22 @@ def get_shared_proteins(data, found_proteins, pept_dict):
 
 
 
-def get_protein_groups(data, pept_dict, fasta_dict, decoy = False, callback = None, **kwargs):
+def get_protein_groups(data: pd.DataFrame, pept_dict: dict, fasta_dict: dict, decoy = False, callback = None, **kwargs) -> pd.DataFrame:
     """
-    Function to perform protein grouping by razor approach
+    Function to perform protein grouping by razor approach.
+    This function calls `assign_proteins` and `get_shared_proteins`.
     ToDo: implement callback for solving
     Each protein is indicated with a p -> protein index
+
+    Args:
+        data (pd.DataFrame): psms table of scored and filtered search results from alphapept.
+        pept_dict (dict): A dictionary mapping peptide indices to the originating proteins as a list.
+        fasta_dict (dict): A dictionary with fasta sequences.
+        decoy (bool, optional): Defaults to False.
+        callback (bool, optional): Defaults to None.
+
+    Returns:
+        pd.DataFrame: alphapept results table now including protein level information.
     """
     data, found_proteins = assign_proteins(data, pept_dict)
     found_proteins_razor = get_shared_proteins(data, found_proteins, pept_dict)
@@ -588,10 +756,17 @@ def get_protein_groups(data, pept_dict, fasta_dict, decoy = False, callback = No
 
     return report
 
-def perform_protein_grouping(data, pept_dict, fasta_dict, **kwargs):
+def perform_protein_grouping(data: pd.DataFrame, pept_dict: dict, fasta_dict: dict, **kwargs) -> pd.DataFrame:
     """
     Wrapper function to perform protein grouping by razor approach
 
+    Args:
+        data (pd.DataFrame): psms table of scored and filtered search results from alphapept.
+        pept_dict (dict): A dictionary mapping peptide indices to the originating proteins as a list.
+        fasta_dict (dict): A dictionary with fasta sequences.
+
+    Returns:
+        pd.DataFrame: alphapept results table now including protein level information.
     """
     data_sub = data[['sequence','score','decoy']]
     data_sub_unique = data_sub.groupby(['sequence','decoy'], as_index=False).agg({"score": "max"})
@@ -620,16 +795,27 @@ def perform_protein_grouping(data, pept_dict, fasta_dict, **kwargs):
     return protein_report
 
 # Cell
-import os
-from multiprocessing import Pool
-from scipy.interpolate import interp1d
 
 ion_dict = {}
 ion_dict[0] = ''
 ion_dict[1] = '-H20'
 ion_dict[2] = '-NH3'
 
-def get_ion(i, df, ions):
+def get_ion(i: int, df: pd.DataFrame, ions: pd.DataFrame)-> (list, np.ndarray):
+    """
+    Helper function to extract the ion-hits for a given DataFrame index.
+    This function extracts the hit type and the intensities.
+    E.g.: ['b1','y1'], np.array([10,20]).
+
+    Args:
+        i (int): Row index for the DataFrame
+        df (pd.DataFrame): DataFrame with PSMs
+        ions (pd.DataFrame): DataFrame with ion hits
+
+    Returns:
+        list: List with strings that describe the ion type.
+        np.ndarray: Array with intensity information
+    """
     start = df['ion_idx'].iloc[i]
     end = df['n_ions'].iloc[i]+start
 
@@ -640,16 +826,48 @@ def get_ion(i, df, ions):
 
     return ion, ints
 
-def ecdf(data):
-    """ Compute ECDF """
+# Cell
+def ecdf(data:np.ndarray)-> (np.ndarray, np.ndarray):
+    """Compute ECDF.
+    Helper function to calculate the ECDF of a score distribution.
+    This is later used to normalize the score from an arbitrary range to [0,1].
+
+    Args:
+        data (np.ndarray): Array containting the score.
+
+    Returns:
+        np.ndarray: Array containg the score, sorted.
+        np.ndarray: Noramalized counts.
+
+    """
     x = np.sort(data)
     n = x.size
     y = np.arange(1, n+1) / n
-    return(x,y)
 
-def score_hdf(to_process, callback = None, parallel=False):
+    return (x,y)
+
+# Cell
+import os
+from multiprocessing import Pool
+from scipy.interpolate import interp1d
+from typing import Callable, Union
+
+#This function has no unit test and is covered by the quick_test
+def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False) -> Union[bool, str]:
+    """Apply scoring on an hdf file to be called from a parallel pool.
+    This function does not raise errors but returns the exception as a string.
+    Args:
+        to_process: (int, dict): Tuple containg a file index and the settings.
+        callback: (Callable): Optional callback
+        parallel: (bool): Parallel flag (unused).
+
+    Returns:
+        Union[bool, str]: True if no eo exception occured, the exception if things failed.
+
+    """
     try:
         index, settings = to_process
+
         exp_name = sorted(settings['experiment']['fractioned_samples'].keys())[index]
         shortnames = settings['experiment']['fractioned_samples'].get(exp_name)
         file_paths = settings['experiment']['file_paths']
@@ -662,6 +880,7 @@ def score_hdf(to_process, callback = None, parallel=False):
 
         ms_file_names = [os.path.splitext(x)[0]+".ms_data.hdf" for x in relevant_files]
 
+
         skip = False
 
         all_dfs = []
@@ -669,6 +888,7 @@ def score_hdf(to_process, callback = None, parallel=False):
         idx_start = 0
         for ms_filename in ms_file_names:
             ms_file_ = alphapept.io.MS_Data_File(ms_filename, is_overwritable=True)
+
 
             try:
                 df = ms_file_.read(dataset_name='second_search')
@@ -689,6 +909,7 @@ def score_hdf(to_process, callback = None, parallel=False):
 
         df = pd.concat(all_dfs)
 
+
         if len(df) == 0:
             skip = True
             logging.info('Dataframe does not contain data. Skipping scoring step.')
@@ -699,7 +920,7 @@ def score_hdf(to_process, callback = None, parallel=False):
             if settings["score"]["method"] == 'random_forest':
                 try:
                     cv, features = train_RF(df)
-                    df = filter_with_ML(df_, cv, features = features, fdr_level = settings["search"]["peptide_fdr"])
+                    df = filter_with_ML(df_, cv, features = features)
                 except ValueError as e:
                     logging.info('ML failed. Defaulting to x_tandem score')
                     logging.info(f"{e}")
@@ -710,17 +931,21 @@ def score_hdf(to_process, callback = None, parallel=False):
                     f = interp1d(x_, y_, bounds_error = False, fill_value=(y_.min(), y_.max()))
 
                     df_['score'] = df_['score'].apply(lambda x: f(x))
-                    df = filter_with_score(df_,  fdr_level = settings["search"]["peptide_fdr"])
+                    df = filter_with_score(df_)
 
             elif settings["score"]["method"] == 'x_tandem':
-                df = filter_with_x_tandem(df, fdr_level = settings["search"]["peptide_fdr"])
+                df = filter_with_x_tandem(df)
             else:
-                raise NotImplementedError('Scoring method {} not implemented.'.format(settings["score"]["method"]))
+                try:
+                    import importlib
+                    alphapept_plugin = importlib.import_module(settings["score"]["method"]+".alphapept_plugin")
+                    df = alphapept_plugin.score_alphapept(df, index, settings)
+                except Exception as e:
+                    raise NotImplementedError('Scoring method {} not implemented. Other exception info: {}'.format(settings["score"]["method"], e))
 
             df = cut_global_fdr(df, analyte_level='precursor',  plot=False, fdr_level = settings["search"]["peptide_fdr"], **settings['search'])
 
             logging.info('FDR on peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
-
 
             for ms_file_, idxs in ms_file2idx.items():
                 df_file = df.loc[df.index.intersection(idxs)]
@@ -745,108 +970,50 @@ def score_hdf(to_process, callback = None, parallel=False):
                 except KeyError:
                     logging.info('No ions present.')
 
-                ms_file_.write(df_file.reset_index().drop(columns=['localexp']), dataset_name="peptide_fdr")
+            ms_file_.write(df_file.reset_index().drop(columns=['localexp']), dataset_name="peptide_fdr")
 
             logging.info(f'Scoring of files {ms_file2idx.keys()} complete.')
-            return True
+
+        logging.info(f'Scoring of file {ms_file} complete.')
+        return True
     except Exception as e:
         logging.info(f'Scoring of files {ms_file2idx.keys()} failed. Exception {e}')
-
         return f"{e}" #Can't return exception object, cast as string
 
 
-# Cell
-
 import alphapept.utils
 
-def protein_groups_hdf(to_process):
+#This function has no unit test and is covered by the quick_test
+def protein_grouping_all(settings:dict, pept_dict:dict, fasta_dict:dict, callback=None):
+    """Apply protein grouping on all files in an experiment.
+    This function will load all dataframes (peptide_fdr level) and perform protein grouping.
 
-    skip = False
-    path, pept_dict, fasta_dict, settings = to_process
-    ms_file = alphapept.io.MS_Data_File(path, is_overwritable=True)
-    try:
-        df = ms_file.read(dataset_name='peptide_fdr')
-    except KeyError:
-        skip = True
+    Args:
+        settings: (dict): Settings file for the experiment
+        pept_dict: (dict): A peptide dictionary.
+        fast_dict: (dict): A FASTA dictionary.
+        callback: (Callable): Optional callback.
+    """
 
-    if not skip:
+    df = alphapept.utils.assemble_df(settings, field = 'peptide_fdr', callback=None)
+    if len(df) > 0:
         df_pg = perform_protein_grouping(df, pept_dict, fasta_dict, callback = None)
 
         df_pg = cut_global_fdr(df_pg, analyte_level='protein_group',  plot=False, fdr_level = settings["search"]["protein_fdr"], **settings['search'])
         logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
 
-        try:
-            logging.info('Extracting ions')
-            ions = ms_file.read(dataset_name='ions')
+        path = settings['experiment']['results_path']
 
-            ion_list = []
-            ion_ints = []
-
-            for i in range(len(df_pg)):
-                ion, ints = get_ion(i, df_pg, ions)
-                ion_list.append(ion)
-                ion_ints.append(ints)
-
-            df_pg['ion_int'] = ion_ints
-            df_pg['ion_types'] = ion_list
-
-            logging.info('Extracting ions complete.')
-
-        except KeyError:
-            logging.info('No ions present.')
-
-        ms_file.write(df_pg, dataset_name="protein_fdr")
         base, ext = os.path.splitext(path)
+
         df_pg.to_csv(base+'_protein_fdr.csv')
+
+        df_pg.to_hdf(
+            path,
+            'protein_fdr'
+        )
 
         logging.info('Saving complete.')
 
-
-def protein_grouping_all(settings, pept_dict, fasta_dict, callback=None):
-    """
-    Perform protein grouping on everything
-    """
-
-    df = alphapept.utils.assemble_df(settings, field = 'peptide_fdr', callback=None)
-
-    df_pg = perform_protein_grouping(df, pept_dict, fasta_dict, callback = None)
-
-    df_pg = cut_global_fdr(df_pg, analyte_level='protein_group',  plot=False, fdr_level = settings["search"]["protein_fdr"], **settings['search'])
-    logging.info('FDR on proteins complete. For {} FDR found {:,} targets and {:,} decoys. A total of {:,} proteins found.'.format(settings["search"]["protein_fdr"], df_pg['target'].sum(), df_pg['decoy'].sum(), len(set(df_pg['protein']))))
-
-    path = settings['experiment']['results_path']
-
-    base, ext = os.path.splitext(path)
-
-    df_pg.to_csv(base+'_protein_fdr.csv')
-
-    df_pg.to_hdf(
-        path,
-        'protein_fdr'
-    )
-
-    logging.info('Saving complete.')
-
-
-def protein_groups_hdf_parallel(settings, pept_dict, fasta_dict, callback=None):
-
-    paths = []
-
-    for _ in settings['experiment']['file_paths']:
-        base, ext = os.path.splitext(_)
-        hdf_path = base+'.ms_data.hdf'
-        paths.append(hdf_path)
-
-    to_process = [(path, pept_dict.copy(), fasta_dict.copy(), settings) for path in paths]
-
-    n_processes = settings['general']['n_processes']
-
-    if len(to_process) == 1:
-        protein_groups_hdf(to_process[0])
     else:
-
-        with Pool(n_processes) as p:
-            max_ = len(to_process)
-            for i, _ in enumerate(p.imap_unordered(protein_groups_hdf, to_process)):
-                if callback:
-                    callback((i+1)/max_)
+        logging.info('No peptides for grouping present. Skipping.')
