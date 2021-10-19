@@ -2,11 +2,11 @@
 
 __all__ = ['tqdm_wrapper', 'check_version_and_hardware', 'wrapped_partial', 'create_database', 'import_raw_data',
            'feature_finding', 'search_data', 'recalibrate_data', 'score', 'isobaric_labeling', 'protein_grouping',
-           'align', 'match', 'adjust_filenames_for_tags', 'read_tag_intensity', 'quantification', 'export',
-           'run_complete_workflow', 'extract_median_unique', 'get_file_summary', 'get_summary', 'parallel_execute',
-           'bcolors', 'run_cli', 'cli_overview', 'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search',
-           'cli_recalibrate', 'cli_score', 'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow',
-           'cli_gui', 'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
+           'align', 'match', 'read_label_intensity', 'quantification', 'export', 'run_complete_workflow',
+           'extract_median_unique', 'get_file_summary', 'get_summary', 'parallel_execute', 'bcolors', 'run_cli',
+           'cli_overview', 'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search', 'cli_recalibrate',
+           'cli_score', 'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui',
+           'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
 
 # Cell
 
@@ -521,7 +521,7 @@ def isobaric_labeling(
                 else:
                     cb = callback
 
-                settings = parallel_execute(settings, alphapept.label.find_tags, callback = cb)
+                settings = parallel_execute(settings, alphapept.label.find_labels, callback = cb)
 
     return settings
 
@@ -658,66 +658,27 @@ def match(
 
 from typing import NamedTuple
 
-def adjust_filenames_for_tags(df : pd.DataFrame, tag: NamedTuple) ->  pd.DataFrame:
-    """Modifies a pandas dataframe with tag intensities so that it can be used with the LFQ implementation.
-    It replicates rows with tag intensities and changes the filename.
-
-    E.g. file_1 with channels a,b,c will be file_1_a, file_1_b, file_1_c
+def read_label_intensity(df : pd.DataFrame, label: NamedTuple) ->  pd.DataFrame:
+    """Reads the label intensities from peptides and sums them by protein group.
 
     Args:
-        df (pd.DataFrame): alphapept feature table.
-        tag (namedtuple): Tag used for the experiment
+        df (pd.DataFrame): Table with peptide information.
+        label (NamedTuple): Label used for the experiment.
 
     Returns:
-        pd.DataFrame: table containing filenames for each tag intensity."""
-
-    columns = df.columns
-
-    base_columns = [_ for _ in columns if _ not in tag.channels]
-    base_columns = [_ for _ in base_columns if _.split('_off_ppm')[0] not in tag.channels]
-
-    subs = []
-
-    for channel in tag.channels:
-        sub = df[base_columns + [channel, channel+'_off_ppm']].copy()
-
-        sub['shortname'] += '_' + channel
-        sub['filename'] += '_' + channel
-
-        sub['label_int'] = sub[channel]
-        sub['label'] = channel
-
-        subs.append(sub)
-
-    subs = pd.concat(subs)
-    subs = subs[subs['label_int'] > 0]
-
-    return subs
-
-def read_tag_intensity(df : pd.DataFrame, tag: NamedTuple) ->  pd.DataFrame:
-    """Modifies a pandas dataframe with tag intensities so that it can be used with the LFQ implementation.
-    It replicates rows with tag intensities and changes the filename.
-
-    E.g. file_1 with channels a,b,c will be file_1_a, file_1_b, file_1_c
-
-    Args:
-        df (pd.DataFrame): alphapept feature table.
-        tag (namedtuple): Tag used for the experiment
-
-    Returns:
-        pd.DataFrame: table containing filenames for each tag intensity."""
+        pd.DataFrame: Summary protein table containing proteins and their intensity for each channel."""
 
     all_channels = []
 
-    for channel in tag.channels:
+    for channel in label.channels:
 
         _ = df[['protein_group', channel]].groupby('protein_group').sum()
 
         all_channels.append(_)
 
-    df = pd.concat(all_channels, axis=1)
+    protein_table = pd.concat(all_channels, axis=1)
 
-    return df
+    return protein_table
 
 # Cell
 
@@ -749,21 +710,28 @@ def quantification(
 
     import alphapept.quantification
 
+    skip = False
+    protein_summary = pd.DataFrame()
+
     field = settings['quantification']['mode']
 
     if os.path.isfile(settings['experiment']['results_path']):
 
+        results_path = settings['experiment']['results_path']
+        base, ext = os.path.splitext(results_path)
+
         df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
 
-        if ('isobaric_label' in settings) & (settings['isobaric_label']['label'] != 'None'):
-            from .constants import label_dict
+        if 'isobaric_label' in settings:
+            if settings['isobaric_label']['label'] != 'None':
+                from .constants import label_dict
 
-            tag = label_dict[settings['isobaric_label']['label']]
-            logging.info('Reading intensities from channel')
+                label = label_dict[settings['isobaric_label']['label']]
+                logging.info('Reading intensities from channels.')
+                protein_summary = read_label_intensity(df, label)
+                skip = True
 
-            protein_summary = read_tag_intensity(df, tag)
-
-        else:
+        if not skip:
 
             if settings["workflow"]["lfq_quantification"]:
 
@@ -813,8 +781,7 @@ def quantification(
                         settings['experiment']['results_path'],
                         'protein_table'
                     )
-                    results_path = settings['experiment']['results_path']
-                    base, ext = os.path.splitext(results_path)
+
                     protein_table.to_csv(base+'_proteins.csv')
 
                     logging.info('LFQ complete.')
@@ -833,13 +800,14 @@ def quantification(
                     new_cols = ['intensity ' + _ if not _.endswith('_LFQ') else 'LFQ intensity '+_[:-4] for _ in protein_table.columns ]
                     protein_summary.loc[protein_table.index, new_cols] = protein_table.values
 
-                ps_out = base+'_protein_summary.csv'
-                protein_summary.to_csv(ps_out)
-                logging.info(f'Saved protein_summary of length {len(protein_summary):,} saved to {ps_out}')
+        if len(protein_summary) > 0:
+            ps_out = base+'_protein_summary.csv'
+            protein_summary.to_csv(ps_out)
+            logging.info(f'Saved protein_summary of length {len(protein_summary):,} saved to {ps_out}')
 
-                #protein summary
-                protein_summary.to_hdf(
-                settings['experiment']['results_path'],'protein_summary')
+            #protein summary
+            protein_summary.to_hdf(
+            settings['experiment']['results_path'],'protein_summary')
 
     else:
         logging.info('No results.hdf present.')
@@ -1009,10 +977,10 @@ def run_complete_workflow(
         if settings['isobaric_label']['label'] != 'None':
             from .constants import label_dict
 
-            tag = label_dict[settings['isobaric_label']['label']]
+            label = label_dict[settings['isobaric_label']['label']]
 
             for _ in ['mods_fixed_terminal', 'mods_variable']:
-                for mod in getattr(tag, _):
+                for mod in getattr(label, _):
                     if mod not in settings['fasta'][_]:
                         settings['fasta'][_].append(mod)
 
