@@ -500,6 +500,24 @@ matching:
     max: 10.0
     default: 3
     description: Minimum distance cutoff for matching
+isobaric_label:
+  label:
+    type: combobox
+    value:
+    - None
+    - TMT10plex
+    default: None
+    description: Type of isobaric label present.
+  reporter_frag_tolerance:
+    type: spinbox
+    min: 1
+    max: 500
+    default: 15
+    description: Maximum fragment mass tolerance for a reporter.
+  reporter_frag_tolerance_ppm:
+    type: checkbox
+    default: true
+    description: Use ppm instead of Dalton.
 quantification:
   max_lfq:
     type: checkbox

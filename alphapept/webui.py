@@ -1,5 +1,5 @@
 import streamlit as st
-from alphapept.gui import history, results, filewatcher, status, experiment, fasta, start#, compare
+from alphapept.gui import history, results, filewatcher, status, experiment, fasta, start
 from PIL import Image
 from alphapept.__version__ import VERSION_NO
 import os

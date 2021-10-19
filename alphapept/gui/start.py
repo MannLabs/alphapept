@@ -3,11 +3,19 @@ from alphapept.gui.utils import markdown_link
 from alphapept.utils import check_github_version
 from alphapept.__version__ import VERSION_NO
 
+SHOW_WARNING = False
+try:
+    import clr
+except ModuleNotFoundError:
+    SHOW_WARNING = True
 
 def start():
     """Streamlit page that displays information on how to get started."""
     st.write("# Getting started")
     st.text("Welcome to AlphaPept.")
+
+    if SHOW_WARNING:
+        st.warning('Pythonnet not found. Please check installation instructions.')
 
     with st.expander("Navigation"):
         st.write("Use the sidebar to the left to navigate through the different menus.")

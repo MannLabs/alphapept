@@ -8,6 +8,84 @@ import psutil
 import pandas as pd
 from typing import Callable, Union, Tuple
 
+from alphapept.paths import PROCESSED_PATH
+
+
+@st.cache(allow_output_mutation=True)
+def load_file(file:str) -> dict:
+    """Cached streamlit function to read summary stats from a file.
+
+    Args:
+        file (str): List of file paths.
+
+    Returns:
+        dict: A dictionary containing the summary of a results.yaml file.
+    """
+    with open(os.path.join(PROCESSED_PATH, file), "r") as settings_file:
+        results = yaml.load(settings_file, Loader=yaml.FullLoader)
+    return results
+
+def load_files(file_list: list, callback: Union[Callable, None] = None) -> dict:
+    """Read multiple results.yaml files and combine them into a dict.
+
+    Args:
+        file_list (list): List of file paths.
+        callback (Union[Callable, None], optional): Callback function to report progress. Defaults to None.
+
+    Returns:
+        dict: A dictionary containing the summary of all results.yaml files.
+    """
+    all_results = {}
+
+    for idx, _ in enumerate(file_list):
+        base, ext = os.path.splitext(_)
+        all_results[base] = load_file(_)
+
+        if callback:
+            callback.progress((idx + 1) / len(file_list))
+
+    return all_results
+
+
+def filter_by_tag(files: list) -> list:
+    """Streamlit widget to filter a list based on a user input.
+
+    Args:
+        files (list): List of files to be filtered.
+    Returns:
+        list: Reduced file list with files containing the tag.
+    """
+    filter = st.text_input("Filter by name (use & for multiple names)")
+    if filter:
+        multi = filter.split('&')
+        multi = [_.replace(' ', '') for _ in multi]
+        st.write(f"Searching for files containing {multi}")
+        filtered = files
+        for tag in multi:
+            filtered = [_ for _ in filtered if tag in _]
+    else:
+        filtered = files
+
+    st.write(f"Remaining {len(filtered)} of {len(files)} files.")
+
+    return filtered
+
+
+def check_group(filename: str, groups: list) -> Union[str, None]:
+    """Helper function to check if a group exists for a given filename.
+
+    Args:
+        filename (str): Name of file to be checked.
+        groups (list): List of groups.
+
+    Returns:
+        Union[str, None]: Returns None if group is not present, else the group name.
+    """
+    for group in groups:
+        if group in filename:
+            return group
+    return "None"
+
 
 def get_size(path: str ) -> float:
     """
