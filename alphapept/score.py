@@ -865,9 +865,13 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
         Union[bool, str]: True if no eo exception occured, the exception if things failed.
 
     """
+
+    logging.info('Calling score_hdf')
     try:
         index, settings = to_process
 
+
+        #This part collects all ms_data files that belong to one sample.
         exp_name = sorted(settings['experiment']['fractioned_samples'].keys())[index]
         shortnames = settings['experiment']['fractioned_samples'].get(exp_name)
         file_paths = settings['experiment']['file_paths']
@@ -879,8 +883,6 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
                     break
 
         ms_file_names = [os.path.splitext(x)[0]+".ms_data.hdf" for x in relevant_files]
-
-
         skip = False
 
         all_dfs = []
@@ -888,7 +890,6 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
         idx_start = 0
         for ms_filename in ms_file_names:
             ms_file_ = alphapept.io.MS_Data_File(ms_filename, is_overwritable=True)
-
 
             try:
                 df = ms_file_.read(dataset_name='second_search')
@@ -972,12 +973,10 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
 
             ms_file_.write(df_file.reset_index().drop(columns=['localexp']), dataset_name="peptide_fdr")
 
-            logging.info(f'Scoring of files {ms_file2idx.keys()} complete.')
-
-        logging.info(f'Scoring of file {ms_file} complete.')
+            logging.info(f'Scoring of files {list(ms_file2idx.keys())} complete.')
         return True
     except Exception as e:
-        logging.info(f'Scoring of files {ms_file2idx.keys()} failed. Exception {e}')
+        logging.info(f'Scoring of files {list(ms_file2idx.keys())} failed. Exception {e}')
         return f"{e}" #Can't return exception object, cast as string
 
 

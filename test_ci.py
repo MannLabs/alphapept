@@ -162,7 +162,7 @@ class TestRun():
         self.settings['experiment']['file_paths'] =  [os.path.join(TEST_DIR, _) for _ in self.file_paths]
         self.settings['experiment']['fasta_paths'] = [os.path.join(TEST_DIR, _) for _ in self.fasta_paths]
         if self.fractioned_samples == None:
-            self.settings['experiment']['fractioned_samples'] = {k:k for k in self.settings['experiment']['file_paths']}
+            self.settings['experiment']['fractioned_samples'] = {k:[k] for k in self.settings['experiment']['file_paths']}
         else:
             self.settings['experiment']['fractioned_samples'] = self.fractioned_samples
 
@@ -171,7 +171,7 @@ class TestRun():
         if self.new_files:
             self.prepare_files()
         if 'settings' not in self.__dict__.keys():
-            print('settings not in!')
+            logging.info('No settings provided. Creating from default settings.f')
             self.prepare_settings()
 
         report = {}
@@ -201,7 +201,7 @@ class TestRun():
             settings_path = base +'.yaml'
             settings = load_settings(settings_path)
         else:
-            logging.info('Using Python version for testing')
+            logging.info("Couldn't find compiled exe. Using Python version for testing.")
             settings = alphapept.interface.run_complete_workflow(settings)
         end = time()
 
