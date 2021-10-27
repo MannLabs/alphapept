@@ -15,6 +15,7 @@ experiment:
   shortnames: []
   file_paths: []
   fractions: []
+  matching_groups: []
   database_path: null
   fasta_paths: []
 raw:
@@ -85,6 +86,10 @@ calibration:
 matching:
   match_p_min: 0.05
   match_d_min: 3
+isobaric_label:
+  label: None
+  reporter_frag_tolerance: 15
+  reporter_frag_tolerance_ppm: true
 quantification:
   max_lfq: true
   lfq_ratio_min: 1

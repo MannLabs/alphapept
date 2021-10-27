@@ -31,7 +31,7 @@ nb_path: "nbs/04_feature_finding.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This part describes the implementation of the feature finding algorithm. The core of the algorithm is described in the <a href="https://www.nature.com/articles/nbt.1511">MaxQuant-Paper</a>.
+<p>This part describes the implementation of the feature-finding algorithm. The core of the algorithm is described in the <a href="https://www.nature.com/articles/nbt.1511">MaxQuant-Paper</a>.
 The supplementary material explains the underlying methodology in great detail and is the foundation of the theoretical background that is described here.
 A refined version of the algorithm was presented with <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4933939/">Dinosaur</a>, which was also used as a reference for the Python implementation.</p>
 <p>For the algorithm, we need serval modules:</p>
@@ -53,226 +53,10 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Loading-Data">Loading Data<a class="anchor-link" href="#Loading-Data"> </a></h2><p>From the <code>IO</code> library, we already have <code>*.ms_data.hdf</code> container that contains centroided data. To use it in feature finding, we directly load the data.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Connecting-Centroids-to-Hills">Connecting Centroids to Hills<a class="anchor-link" href="#Connecting-Centroids-to-Hills"> </a></h2><h3 id="Connecting-Centroids">Connecting Centroids<a class="anchor-link" href="#Connecting-Centroids"> </a></h3><p>In this step, we search for centroids that are connected (i.e., within a specific mass difference) over time. The connected centroids are termed hills. As we have a list of centroid lists, we ideally would have a list of tuples with indices to the centroids that describe the connected hills.</p>
-<h4 id="Pairs-of-Centroids">Pairs of Centroids<a class="anchor-link" href="#Pairs-of-Centroids"> </a></h4><p>First, we define the function <code>get_pairs_centroids</code> that checks two lists of centroids and checks for pairs of centroids. As the masses in the centroid lists are sorted, we can loop through the centroids with two indices and compare the mass difference. If the mass difference is within the defined threshold, <code>centroid_tol</code> (default is 7ppm), we have found ourselves a pair. If no match is found, we can advance either index, depending on whether the mass difference is positive or negative. A pair is a <code>tuple</code> containing the index to the first centroid list <code>i</code> and the second centroid list <code>j</code> as well as the difference in ppm <code>delta</code>. We add all found pairs to a list termed <code>pairs</code>.</p>
-
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="connect_centroids_unidirection" class="doc_header"><code>connect_centroids_unidirection</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L20" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>connect_centroids_unidirection</code>(<strong><code>idx</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>connections</code></strong>, <strong><code>scores</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>, <strong><code>centroid_tol</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="convert_connections_to_array" class="doc_header"><code>convert_connections_to_array</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L61" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_connections_to_array</code>(<strong><code>idx</code></strong>, <strong><code>from_r</code></strong>, <strong><code>from_c</code></strong>, <strong><code>to_r</code></strong>, <strong><code>to_c</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>out_from_idx</code></strong>, <strong><code>out_to_idx</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="eliminate_overarching_vertex" class="doc_header"><code>eliminate_overarching_vertex</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L82" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>eliminate_overarching_vertex</code>(<strong><code>idx</code></strong>, <strong><code>from_idx</code></strong>, <strong><code>to_idx</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="path_finder" class="doc_header"><code>path_finder</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L94" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>path_finder</code>(<strong><code>idx</code></strong>, <strong><code>from_idx</code></strong>, <strong><code>to_idx</code></strong>, <strong><code>forward</code></strong>, <strong><code>backward</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="find_path_start" class="doc_header"><code>find_path_start</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L106" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_path_start</code>(<strong><code>idx</code></strong>, <strong><code>forward</code></strong>, <strong><code>backward</code></strong>, <strong><code>path_starts</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="find_path_length" class="doc_header"><code>find_path_length</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L116" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_path_length</code>(<strong><code>idx</code></strong>, <strong><code>path_starts</code></strong>, <strong><code>forward</code></strong>, <strong><code>path_cnt</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="fill_path_matrix" class="doc_header"><code>fill_path_matrix</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L130" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fill_path_matrix</code>(<strong><code>idx</code></strong>, <strong><code>path_start</code></strong>, <strong><code>forwards</code></strong>, <strong><code>out_hill_data</code></strong>, <strong><code>out_hill_ptr</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="convert_to_coord_path" class="doc_header"><code>convert_to_coord_path</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L144" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_to_coord_path</code>(<strong><code>idx</code></strong>, <strong><code>out_rows</code></strong>, <strong><code>out_cols</code></strong>, <strong><code>connected_comps</code></strong>, <strong><code>d_width</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h4 id="Connecting-all-Centroids">Connecting all Centroids<a class="anchor-link" href="#Connecting-all-Centroids"> </a></h4><p>As we now have a function that can find pairs of centroids when given two lists of centroids, the next step is to write a function that connects all the centroids within a dataset. For this, we define the function <a href="/feature_finding.html#connect_centroids"><code>connect_centroids</code></a>. Here, we use the <code>get_pairs_centroids</code> function to connect hills in consecutive scans <code>(n-&gt;n+1)</code> whenever their centroid m/z positions differ less than the defined threshold. If no matching peak is found in the next scan <code>(n+1)</code>, additional scans can be considered when looking in the scan after next <code>(n+2)</code>. The maximum distance between two hills can be set via the <code>gap</code> parameter.</p>
-<p>For an efficient implementation to find all connected hills over all scans, we create a sparse matrix, named <code>results</code> that represent indices to all possible centroids. As the number of centroids varies for each scan, not all positions within the matrix represent a valid centroid. To distinguish these values, we fill the matrix with <code>-1</code> upon initialization. We can use the matrix to store the matching centroid as an integer that encodes its position. The x,y index for each cell represents the indices to the centroid list. The idea here is to have an efficient data structure to represent connections between centroids.</p>
-<p>To calculate indexes back and forth we define the functions <code>tup_to_ind</code> and <code>ind_to_tup</code>. This could in principle be also done with <code>numpy.unravel_index</code>, however, the numba implementation seems to be much faster.</p>
-<p>Additionally, we define a sparse matrix named <code>scores</code> that is intended to store the mass difference. If there are multiple possible connections between two centroids, only the best (i.e., shortest distance) will be stored.</p>
-<p>The idea behind the matrix-indexing is explained with the following example:</p>
-<h5 id="Example:">Example:<a class="anchor-link" href="#Example:"> </a></h5><p>Imagine you have three scans with the following centroids:</p>
+<h2 id="Loading-Data">Loading Data<a class="anchor-link" href="#Loading-Data"> </a></h2><p>From the <code>IO</code> library, we already have an <code>*.ms_data.hdf</code> container that contains centroided data. To use it in feature finding, we directly load the data.</p>
+<h2 id="Connecting-Centroids-to-Hills">Connecting Centroids to Hills<a class="anchor-link" href="#Connecting-Centroids-to-Hills"> </a></h2><p>{% include note.html content='Feature finding relies heavily on the performance function decorator from the performance notebook: <code>@alphapept.performance.performance_function</code>. Part of this is that the functions will not have return values to be GPU compatible. Please check out this notebook for further information.' %}</p>
+<h3 id="Connecting-centroids">Connecting centroids<a class="anchor-link" href="#Connecting-centroids"> </a></h3><p>Feature finding starts with connecting centroids. For this we look at subsequent scans and compare peaks that are withing a defined mass tolerance (<code>centroid_tol</code>).</p>
+<p>Imagine you have three scans with the following centroids:</p>
 <ul>
 <li>Scan 0: 10, 20, 30</li>
 <li>Scan 1: 10.2, 40.1</li>
@@ -296,34 +80,86 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 -1 &amp; -1 &amp; -1 
 \end{bmatrix}$</p>
 <p>This allows us to not only easily store connections between centroids but also perform a quick lookup for the delta of an existing connection. Note that it also only stores the best connection for each centroid. To extract the connected centroids, we can use <code>np.where(results &gt;= 0)</code>. This implementation allows getting millions of connections within seconds.</p>
-<h5 id="Foward-and-Backward-Search">Foward and Backward Search<a class="anchor-link" href="#Foward-and-Backward-Search"> </a></h5><p>One thing that still needs to be considered is that when searching with a large mass tolerance, we could get multiple matches that we do not want. Consider the following example:</p>
-<ul>
-<li>Scan 0: 10 (a), </li>
-<li>Scan 1: 10 (b) , 10.1 (c)</li>
-<li>Scan 2: 10 (d)</li>
-</ul>
-<p>As we only allow one connection per mass, we would have the following connections:</p>
-<ul>
-<li>a -&gt; b</li>
-<li>b -&gt; d</li>
-</ul>
-<p>Now if we have a large delta mass, e.g. of <code>0.1</code>, there would be an additional connection:</p>
-<ul>
-<li>c-&gt; d</li>
-</ul>
-<p><img src="/images/undirected.png" alt="undirected"></p>
-<p>The resulting hill would have a branch to the c centroid, which is obviously intended. To circumvent this, we additionally perform the search backwards. (Note the functions <code>connect_centroids_forward</code> and <code>connect_centroids_backward</code>).  Now, as we only store, the best connection between two centroids  <code>d</code> will only be connected to <code>b</code>. To, therefore, remove branches, we remove all connections that are not double.</p>
-<p><img src="/images/directed.png" alt="directed"></p>
-<p>We define a wrapper function named <a href="/feature_finding.html#connect_centroids"><code>connect_centroids</code></a> that allows to search with a gaps ize and returns lists of indices of the connected centroids.</p>
+<p>As we are also allowing gaps, refering to that we can have connections between Scan 0 and Scan 2, we make the aforementioned matrix multdimensional, so that e.g. a first matrix stores the conncetions for no gap, the second matrix the connections with a gap of 1.</p>
+<p>The functionality for this step is implemented in <a href="/feature_finding.html#connect_centroids_unidirection"><code>connect_centroids_unidirection</code></a> and the wrapper <a href="/feature_finding.html#find_centroid_connections"><code>find_centroid_connections</code></a>.</p>
 
 </div>
 </div>
 </div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="connect_centroids_unidirection" class="doc_header"><code>connect_centroids_unidirection</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L19" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>connect_centroids_unidirection</code>(<strong><code>x</code></strong>:<code>ndarray</code>, <strong><code>row_borders</code></strong>:<code>ndarray</code>, <strong><code>connections</code></strong>:<code>ndarray</code>, <strong><code>scores</code></strong>:<code>ndarray</code>, <strong><code>centroids</code></strong>:<code>ndarray</code>, <strong><code>max_gap</code></strong>:<code>int</code>, <strong><code>centroid_tol</code></strong>:<code>float</code>)</p>
+</blockquote>
+<p>Connect centroids.</p>
+<p>Args:
+    x (np.ndarray): Index to datapoint. Note that this using the performance_function, so one passes an ndarray.
+    row_borders (np.ndarray): Row borders of the centroids array.
+    connections (np.ndarray): Connections matrix to store the connections
+    scores (np.ndarray):  Score matrix to store the connections
+    centroids (np.ndarray): 1D Array containing the masses of the centroids data.
+    max_gap (int): Maximum gap when connecting centroids.
+    centroid_tol (float): Centroid tolerance.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="find_centroid_connections" class="doc_header"><code>find_centroid_connections</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L65" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_centroid_connections</code>(<strong><code>rowwise_peaks</code></strong>:<code>ndarray</code>, <strong><code>row_borders</code></strong>:<code>ndarray</code>, <strong><code>centroids</code></strong>:<code>ndarray</code>, <strong><code>max_gap</code></strong>:<code>int</code>, <strong><code>centroid_tol</code></strong>:<code>float</code>)</p>
+</blockquote>
+<p>Wrapper function to call connect_centroids_unidirection</p>
+<p>Args:
+    rowwise_peaks (np.ndarray): Length of centroids with respect to the row borders.
+    row_borders (np.ndarray): Row borders of the centroids array.
+    centroids (np.ndarray): Array containing the centroids data.
+    max_gap (int): Maximum gap when connecting centroids.
+    centroid_tol (float): Centroid tolerance.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Connecting-hills">Connecting hills<a class="anchor-link" href="#Connecting-hills"> </a></h3><p>Having all the connected centroids, we would like to find <code>hills</code>, referring to centroids that are connected. We can achieve this by creating a graph <code>G</code> with the <code>networkx</code>-package. Here, each connection is added as an edge using the <code>add_edge</code> method to the graph. We can then use the <code>connected_components</code> function to extract all the connected components.</p>
-<p><code>NetworkX</code> is known to be memory <a href="https://groups.google.com/forum/#!topic/networkx-discuss/Etd4GpkjPdA">consuming</a> and can take hundreds of bytes per edge. For millions of connections, we will, therefore, consume Gigabytes of memory. To keep the graph small, we continuously feed the graph until we reach a certain scan number <code>buffer size</code>. Once the limit is reached, we extract all completed hills and remove all nodes that are part of a completed hill or cannot be connected anymore. Once all edges are added, we perform a final extraction step. Finally, everything is put into the <a href="/feature_finding.html#get_hills"><code>get_hills</code></a> function.</p>
-<h4 id="Parallelization-Strategies">Parallelization Strategies<a class="anchor-link" href="#Parallelization-Strategies"> </a></h4><p>Currently, the parallel connection of hills is not implemented yet. A possible way could be to process individual chunks of edges in parallel and then combine them together, as it is done in <code>Dinosaur</code>.</p>
+<p>We wrap the centroid connections in the function <a href="/feature_finding.html#connect_centroids"><code>connect_centroids</code></a>. This function converts the connections into an usable array.</p>
 
 </div>
 </div>
@@ -339,8 +175,18 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="find_centroid_connections" class="doc_header"><code>find_centroid_connections</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L160" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_centroid_connections</code>(<strong><code>rowwise_peaks</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>centroid_tol</code></strong>=<em><code>8</code></em>)</p>
+<h4 id="convert_connections_to_array" class="doc_header"><code>convert_connections_to_array</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L115" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_connections_to_array</code>(<strong><code>x</code></strong>:<code>ndarray</code>, <strong><code>from_r</code></strong>:<code>ndarray</code>, <strong><code>from_c</code></strong>:<code>ndarray</code>, <strong><code>to_r</code></strong>:<code>ndarray</code>, <strong><code>to_c</code></strong>:<code>ndarray</code>, <strong><code>row_borders</code></strong>:<code>ndarray</code>, <strong><code>out_from_idx</code></strong>:<code>ndarray</code>, <strong><code>out_to_idx</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
+<p>Convert integer indices of a matrix to coordinates.</p>
+<p>Args:
+    x (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+    from_r (np.ndarray): From array with row coordinates.
+    from_c (np.ndarray): From array with column coordinates.
+    to_r (np.ndarray): To array with row coordinates.
+    to_c (np.ndarray): To array with column coordinates.
+    row_borders (np.ndarray): Row borders (for indexing).
+    out_from_idx (np.ndarray): Reporting array: 1D index from.
+    out_to_idx (np.ndarray): Reporting array: 1D index to.</p>
 
 </div>
 
@@ -348,13 +194,6 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 </div>
 </div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}
@@ -370,8 +209,13 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_hills" class="doc_header"><code>get_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L194" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hills</code>(<strong><code>centroids</code></strong>, <strong><code>from_idx</code></strong>, <strong><code>to_idx</code></strong>, <strong><code>hill_length_min</code></strong>=<em><code>3</code></em>)</p>
+<h4 id="eliminate_overarching_vertex" class="doc_header"><code>eliminate_overarching_vertex</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L143" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>eliminate_overarching_vertex</code>(<strong><code>x</code></strong>:<code>ndarray</code>, <strong><code>from_idx</code></strong>:<code>ndarray</code>, <strong><code>to_idx</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
+<p>Eliminate overacrhing vertex.</p>
+<p>Args:
+    x (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+    from_idx (np.ndarray): From index.
+    to_idx (np.ndarray): To index.</p>
 
 </div>
 
@@ -379,13 +223,6 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 </div>
 </div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}
@@ -401,8 +238,20 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="connect_centroids" class="doc_header"><code>connect_centroids</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L226" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>connect_centroids</code>(<strong><code>rowwise_peaks</code></strong>, <strong><code>row_borders</code></strong>, <strong><code>centroids</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>centroid_tol</code></strong>=<em><code>8</code></em>)</p>
+<h4 id="connect_centroids" class="doc_header"><code>connect_centroids</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L158" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>connect_centroids</code>(<strong><code>rowwise_peaks</code></strong>:<code>ndarray</code>, <strong><code>row_borders</code></strong>:<code>ndarray</code>, <strong><code>centroids</code></strong>:<code>ndarray</code>, <strong><code>max_gap</code></strong>:<code>int</code>, <strong><code>centroid_tol</code></strong>:<code>float</code>)</p>
 </blockquote>
+<p>Function to connect centroids.</p>
+<p>Args:
+    rowwise_peaks (np.ndarray): Indexes for centroids.
+    row_borders (np.ndarray): Row borders (for indexing).
+    centroids (np.ndarray): Centroid data.
+    max_gap: Maximum gap.
+    centroid_tol: Centroid tol for matching centroids.
+Returns:
+    np.ndarray: From index.
+    np.ndarray: To index.
+    float: Median score.
+    float: Std deviation of the score.</p>
 
 </div>
 
@@ -417,6 +266,109 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">row_borders</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">9</span><span class="p">])</span>
+<span class="n">rowwise_peaks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+<span class="n">max_gap</span> <span class="o">=</span> <span class="mi">2</span>
+
+<span class="n">score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_gap</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+<span class="n">connections</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_gap</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="n">centroids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mf">10.2</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">40</span><span class="p">])</span>
+<span class="n">centroid_tol</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="mf">1e5</span>
+
+<span class="n">from_idx</span><span class="p">,</span> <span class="n">to_idx</span><span class="p">,</span> <span class="n">score_median</span><span class="p">,</span> <span class="n">score_std</span> <span class="o">=</span> <span class="n">connect_centroids</span><span class="p">(</span><span class="n">rowwise_peaks</span><span class="p">,</span> <span class="n">row_borders</span><span class="p">,</span> <span class="n">centroids</span><span class="p">,</span> <span class="n">max_gap</span><span class="p">,</span> <span class="n">centroid_tol</span><span class="p">)</span>
+
+<span class="n">scan_no</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row_borders</span><span class="p">):</span>
+    <span class="n">ctrd</span> <span class="o">=</span> <span class="n">centroids</span><span class="p">[</span><span class="n">_</span><span class="o">-</span><span class="n">rowwise_peaks</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span><span class="n">_</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ctrd</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">ctrd</span><span class="p">)</span><span class="o">*</span><span class="n">i</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">from_idx</span><span class="p">):</span>
+    <span class="n">from_</span> <span class="o">=</span> <span class="n">_</span>
+    <span class="n">to_</span> <span class="o">=</span> <span class="n">to_idx</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">centroids</span><span class="p">[</span><span class="n">from_</span><span class="p">],</span> <span class="n">centroids</span><span class="p">[</span><span class="n">to_</span><span class="p">]],</span> <span class="p">[</span><span class="n">scan_no</span><span class="p">[</span><span class="n">from_</span><span class="p">],</span> <span class="n">scan_no</span><span class="p">[</span><span class="n">to_</span><span class="p">]],</span> <span class="s1">&#39;k:&#39;</span><span class="p">)</span>
+    
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;scan&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;m/z&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row_borders</span><span class="p">)</span><span class="o">+</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Peak connections&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Extracting-hills.">Extracting hills.<a class="anchor-link" href="#Extracting-hills."> </a></h3><p>To extract hills we extract connected components from the connections.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="path_finder" class="doc_header"><code>path_finder</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L208" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>path_finder</code>(<strong><code>x</code></strong>:<code>ndarray</code>, <strong><code>from_idx</code></strong>:<code>ndarray</code>, <strong><code>to_idx</code></strong>:<code>ndarray</code>, <strong><code>forward</code></strong>:<code>ndarray</code>, <strong><code>backward</code></strong>:<code>ndarray</code>)</p>
+</blockquote>
+<p>Extracts path information and writes to path matrix.</p>
+<p>Args:
+    x (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+    from_idx (np.ndarray): Array containing from indices.
+    to_idx (np.ndarray): Array containing to indices.
+    forward (np.ndarray): Array to report forward connection.
+    backward (np.ndarray): Array to report backward connection.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
 
 </div>
     {% endraw %}
@@ -432,8 +384,144 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_hills" class="doc_header"><code>extract_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L256" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_hills</code>(<strong><code>query_data</code></strong>, <strong><code>max_gap</code></strong>=<em><code>2</code></em>, <strong><code>centroid_tol</code></strong>=<em><code>8</code></em>)</p>
+<h4 id="find_path_start" class="doc_header"><code>find_path_start</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L226" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_path_start</code>(<strong><code>x</code></strong>:<code>ndarray</code>, <strong><code>forward</code></strong>:<code>ndarray</code>, <strong><code>backward</code></strong>:<code>ndarray</code>, <strong><code>path_starts</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
+<p>Function to find the start of a path.</p>
+<p>Args:
+    x (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+    forward (np.ndarray):  Array to report forward connection.
+    backward (np.ndarray):  Array to report backward connection.
+    path_starts (np.ndarray): Array to report path starts.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="find_path_length" class="doc_header"><code>find_path_length</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L239" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_path_length</code>(<strong><code>x</code></strong>:<code>ndarray</code>, <strong><code>path_starts</code></strong>:<code>ndarray</code>, <strong><code>forward</code></strong>:<code>ndarray</code>, <strong><code>path_cnt</code></strong>:<code>ndarray</code>)</p>
+</blockquote>
+<p>Function to extract the length of a path.</p>
+<p>Args:
+    x (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+    path_starts (np.ndarray): Array that stores the starts of the paths.
+    forward (np.ndarray): Array that stores forward information.
+    path_cnt (np.ndarray): Reporting array to count the paths.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="fill_path_matrix" class="doc_header"><code>fill_path_matrix</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L256" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fill_path_matrix</code>(<strong><code>x</code></strong>:<code>ndarray</code>, <strong><code>path_start</code></strong>:<code>ndarray</code>, <strong><code>forwards</code></strong>:<code>ndarray</code>, <strong><code>out_hill_data</code></strong>:<code>ndarray</code>, <strong><code>out_hill_ptr</code></strong>:<code>ndarray</code>)</p>
+</blockquote>
+<p>Function to fill the path matrix.</p>
+<p>Args:
+    x (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+    path_starts (np.ndarray): Array that stores the starts of the paths.
+    forwards (np.ndarray): Forward array.
+    out_hill_data (np.ndarray): Array containing the indices to hills.
+    out_hill_ptr (np.ndarray): Array containing the bounds to out_hill_data.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_hills" class="doc_header"><code>get_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L274" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hills</code>(<strong><code>centroids</code></strong>:<code>ndarray</code>, <strong><code>from_idx</code></strong>:<code>ndarray</code>, <strong><code>to_idx</code></strong>:<code>ndarray</code>, <strong><code>hill_length_min</code></strong>:<code>int</code>=<em><code>3</code></em>)</p>
+</blockquote>
+<p>Function to get hills from centroid connections.</p>
+<p>Args:
+    centroids (np.ndarray): 1D Array containing the masses of the centroids.
+    from_idx (np.ndarray): From index.
+    to_idx (np.ndarray): To index.
+    hill_length_min (int): Minimum hill length:</p>
+<p>Returns:
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    path_node_cnt (int): Number of elements in this path.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="extract_hills" class="doc_header"><code>extract_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L326" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_hills</code>(<strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>max_gap</code></strong>:<code>int</code>, <strong><code>centroid_tol</code></strong>:<code>float</code>)</p>
+</blockquote>
+<p>[summary]</p>
+<p>Args:
+    query_data (dict): Data structure containing the query data.
+    max_gap (int): Maximum gap when connecting centroids.
+    centroid_tol (float): Centroid tolerance.</p>
+<p>Returns:
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    path_node_cnt (int): Number of elements in this path.
+    score_median (float): Median score.
+    score_std (float): Std deviation of the score.</p>
 
 </div>
 
@@ -470,8 +558,53 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="fast_minima" class="doc_header"><code>fast_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L284" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fast_minima</code>(<strong><code>y</code></strong>)</p>
+<h4 id="fast_minima" class="doc_header"><code>fast_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L374" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>fast_minima</code>(<strong><code>y</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
+<p>Function to calculate the local minimas of an array.</p>
+<p>Args:
+    y (np.ndarray): Input array.</p>
+<p>Returns:
+    np.ndarray: Array containing minima positions.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="split" class="doc_header"><code>split</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L403" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split</code>(<strong><code>k</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>splits</code></strong>:<code>ndarray</code>, <strong><code>hill_split_level</code></strong>:<code>float</code>, <strong><code>window</code></strong>:<code>int</code>)</p>
+</blockquote>
+<p>Function to split hills.</p>
+<p>Args:
+    k (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    int_data (np.ndarray): Array containing the intensity to each centroid.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    splits (np.ndarray): Array containing splits.
+    hill_split_level (float): Split level for hills.
+    window (int): Smoothing window.</p>
 
 </div>
 
@@ -494,32 +627,17 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="split" class="doc_header"><code>split</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L303" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split</code>(<strong><code>idx</code></strong>, <strong><code>hill_ptrs_range</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>int_data</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>splits</code></strong>, <strong><code>hill_split_level</code></strong>, <strong><code>window</code></strong>)</p>
+<h4 id="split_hills" class="doc_header"><code>split_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L455" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split_hills</code>(<strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>hill_split_level</code></strong>:<code>float</code>, <strong><code>window</code></strong>:<code>int</code>)</p>
 </blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="split_hills" class="doc_header"><code>split_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L350" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>split_hills</code>(<strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>hill_split_level</code></strong>, <strong><code>window</code></strong>)</p>
-</blockquote>
+<p>Wrapper function to split hills</p>
+<p>Args:
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    int_data (np.ndarray): Array containing the intensity to each centroid.
+    hill_split_level (float): Split level for hills.
+    window (int): Smoothing window.</p>
+<p>Returns:
+    np.ndarray: Array containing the bounds to the hill_data with splits.</p>
 
 </div>
 
@@ -556,8 +674,19 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_large_hills" class="doc_header"><code>check_large_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L369" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_large_hills</code>(<strong><code>idx</code></strong>, <strong><code>large_peaks</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>to_remove</code></strong>, <strong><code>hill_check_large</code></strong>=<em><code>40</code></em>, <strong><code>hill_peak_factor</code></strong>=<em><code>2</code></em>, <strong><code>window</code></strong>=<em><code>1</code></em>)</p>
+<h4 id="check_large_hills" class="doc_header"><code>check_large_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L487" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_large_hills</code>(<strong><code>idx</code></strong>:<code>ndarray</code>, <strong><code>large_peaks</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>to_remove</code></strong>:<code>ndarray</code>, <strong><code>large_peak</code></strong>:<code>int</code>=<em><code>40</code></em>, <strong><code>hill_peak_factor</code></strong>:<code>float</code>=<em><code>2</code></em>, <strong><code>window</code></strong>:<code>int</code>=<em><code>1</code></em>)</p>
 </blockquote>
+<p>Function to check large hills and flag them for removal.</p>
+<p>Args:
+    idx (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+    large_peaks (np.ndarray): Array containing large peaks.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    int_data (np.ndarray): Array containing the intensity to each centroid.
+    to_remove (np.ndarray): Array with indexes to remove.
+    large_peak (int, optional): Length criterion when a peak is large. Defaults to 40.
+    hill_peak_factor (float, optional): Hill maximum criterion. Defaults to 2.
+    window (int, optional): Smoothing window.. Defaults to 1.</p>
 
 </div>
 
@@ -580,8 +709,18 @@ A refined version of the algorithm was presented with <a href="https://www.ncbi.
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="filter_hills" class="doc_header"><code>filter_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L403" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_hills</code>(<strong><code>hill_data</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>int_data</code></strong>, <strong><code>hill_check_large</code></strong>=<em><code>40</code></em>, <strong><code>window</code></strong>=<em><code>1</code></em>)</p>
+<h4 id="filter_hills" class="doc_header"><code>filter_hills</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L529" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_hills</code>(<strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>hill_check_large</code></strong>:<code>int</code>=<em><code>40</code></em>, <strong><code>window</code></strong>:<code>int</code>=<em><code>1</code></em>)</p>
 </blockquote>
+<p>Filters large hills.</p>
+<p>Args:
+    hill_data (np.ndarray): Array containing the indices to hills.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    int_data (np.ndarray): Array containing the intensity to each centroid.
+    hill_check_large (int, optional): Length criterion when a hill is considered large.. Defaults to 40.
+    window (int, optional): Smoothing window. Defaults to 1.</p>
+<p>Returns:
+    np.ndarray: Filtered hill data.
+    np.ndarray: Filtered hill points.</p>
 
 </div>
 
@@ -632,8 +771,21 @@ $$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m}
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="hill_stats" class="doc_header"><code>hill_stats</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L432" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>hill_stats</code>(<strong><code>idx</code></strong>, <strong><code>hill_range</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>mass_data</code></strong>, <strong><code>rt_</code></strong>, <strong><code>rt_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>hill_nboot_max</code></strong>, <strong><code>hill_nboot</code></strong>)</p>
+<h4 id="hill_stats" class="doc_header"><code>hill_stats</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L570" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>hill_stats</code>(<strong><code>idx</code></strong>:<code>ndarray</code>, <strong><code>hill_range</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>mass_data</code></strong>:<code>ndarray</code>, <strong><code>rt_</code></strong>:<code>ndarray</code>, <strong><code>rt_idx</code></strong>:<code>ndarray</code>, <strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>hill_nboot_max</code></strong>:<code>int</code>, <strong><code>hill_nboot</code></strong>:<code>int</code>)</p>
 </blockquote>
+<p>Function to calculate hill stats.</p>
+<p>Args:
+    idx (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+    hill_range (np.ndarray): Hill range.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    int_data (np.ndarray): Array containing the intensity to each centroid.
+    mass<em>data (np.ndarray): Array containing mass data.
+    rt</em> (np.ndarray): Array with retention time information for each scan.
+    rt_idx (np.ndarray): Lookup array to match centroid idx to rt.
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    hill_nboot_max (int): Maximum number of bootstrap comparisons.
+    hill_nboot (int): Number of bootstrap comparisons</p>
 
 </div>
 
@@ -656,8 +808,55 @@ $$\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m}
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_hill_data" class="doc_header"><code>get_hill_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L483" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hill_data</code>(<strong><code>query_data</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>hill_nboot_max</code></strong>=<em><code>300</code></em>, <strong><code>hill_nboot</code></strong>=<em><code>150</code></em>)</p>
+<h4 id="remove_duplicates" class="doc_header"><code>remove_duplicates</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L631" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>remove_duplicates</code>(<strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
+<p>Remove duplicate hills.</p>
+<p>Args:
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.</p>
+<p>Returns:
+    np.ndarray: Filtered hill data.
+    np.ndarray: Filtered hill points.
+    np.ndarray: Filtered hill stats.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_hill_data" class="doc_header"><code>get_hill_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L664" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hill_data</code>(<strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>hill_nboot_max</code></strong>:<code>int</code>=<em><code>300</code></em>, <strong><code>hill_nboot</code></strong>:<code>int</code>=<em><code>150</code></em>)</p>
+</blockquote>
+<p>Wrapper function to get the hill data.</p>
+<p>Args:
+    query_data (dict): Data structure containing the query data.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    hill_nboot_max (int): Maximum number of bootstrap comparisons.
+    hill_nboot (int): Number of bootstrap comparisons</p>
+<p>Returns:
+    np.ndarray: Hill stats.
+    np.ndarray: Sortindex.
+    np.ndarray: Upper index.
+    np.ndarray: Scan index.
+    np.ndarray: Hill data.
+    np.ndarray: Hill points.</p>
 
 </div>
 
@@ -699,9 +898,18 @@ $$\left | \Delta m-\frac{\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_isotope_pattern" class="doc_header"><code>check_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L510" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_isotope_pattern</code>(<strong><code>mass1</code></strong>, <strong><code>mass2</code></strong>, <strong><code>delta_mass1</code></strong>, <strong><code>delta_mass2</code></strong>, <strong><code>charge</code></strong>, <strong><code>iso_mass_range</code></strong>=<em><code>5</code></em>)</p>
+<h4 id="check_isotope_pattern" class="doc_header"><code>check_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L706" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_isotope_pattern</code>(<strong><code>mass1</code></strong>:<code>float</code>, <strong><code>mass2</code></strong>:<code>float</code>, <strong><code>delta_mass1</code></strong>:<code>float</code>, <strong><code>delta_mass2</code></strong>:<code>float</code>, <strong><code>charge</code></strong>:<code>int</code>, <strong><code>iso_mass_range</code></strong>:<code>int</code>=<em><code>5</code></em>)</p>
 </blockquote>
-<p>Check if two masses could belong to the same isotope pattern</p>
+<p>Check if two masses could belong to the same isotope pattern.</p>
+<p>Args:
+    mass1 (float): Mass of the first pattern.
+    mass2 (float): Mass of the second pattern.
+    delta_mass1 (float): Delta mass of the first pattern.
+    delta_mass2 (float): Delta mass of the second pattern.
+    charge (int): Charge.
+    iso_mass_range (int, optional): Mass range. Defaults to 5.</p>
+<p>Returns:
+    bool: Flag to see if pattern belongs to the same pattern.</p>
 
 </div>
 
@@ -789,8 +997,16 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="correlate" class="doc_header"><code>correlate</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L527" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>correlate</code>(<strong><code>scans_</code></strong>, <strong><code>scans_2</code></strong>, <strong><code>int_</code></strong>, <strong><code>int_2</code></strong>)</p>
+<h4 id="correlate" class="doc_header"><code>correlate</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L733" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>correlate</code>(<strong><code>scans_</code></strong>:<code>ndarray</code>, <strong><code>scans_2</code></strong>:<code>ndarray</code>, <strong><code>int_</code></strong>:<code>ndarray</code>, <strong><code>int_2</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
+<p>Correlate two scans.</p>
+<p>Args:
+    scans_ (np.ndarray): Masses of the first scan.
+    scans<em>2 (np.ndarray): Masses of the second scan.
+    int</em> (np.ndarray): Intensity of the first scan.
+    int_2 (np.ndarray): Intensity of the second scan.</p>
+<p>Returns:
+    float: Correlation.</p>
 
 </div>
 
@@ -828,8 +1044,20 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_edge" class="doc_header"><code>extract_edge</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L554" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_edge</code>(<strong><code>stats</code></strong>, <strong><code>idxs_upper</code></strong>, <strong><code>runner</code></strong>, <strong><code>max_index</code></strong>, <strong><code>maximum_offset</code></strong>, <strong><code>iso_charge_min</code></strong>=<em><code>1</code></em>, <strong><code>iso_charge_max</code></strong>=<em><code>6</code></em>, <strong><code>iso_mass_range</code></strong>=<em><code>5</code></em>)</p>
+<h4 id="extract_edge" class="doc_header"><code>extract_edge</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L771" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_edge</code>(<strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>idxs_upper</code></strong>:<code>ndarray</code>, <strong><code>runner</code></strong>:<code>int</code>, <strong><code>max_index</code></strong>:<code>int</code>, <strong><code>maximum_offset</code></strong>:<code>float</code>, <strong><code>iso_charge_min</code></strong>:<code>int</code>=<em><code>1</code></em>, <strong><code>iso_charge_max</code></strong>:<code>int</code>=<em><code>6</code></em>, <strong><code>iso_mass_range</code></strong>:<code>int</code>=<em><code>5</code></em>)</p>
 </blockquote>
+<p>Extract edges.</p>
+<p>Args:
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    idxs_upper (np.ndarray): Upper index for comparing.
+    runner (int): Index.
+    max_index (int): Unused.
+    maximum_offset (float): Maximum offset when comparing edges.
+    iso_charge_min (int, optional): Minimum isotope charge. Defaults to 1.
+    iso_charge_max (int, optional): Maximum isotope charge. Defaults to 6.
+    iso_mass_range (float, optional): Mass search range. Defaults to 5.</p>
+<p>Returns:
+    list: List of edges.</p>
 
 </div>
 
@@ -852,8 +1080,19 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="edge_correlation" class="doc_header"><code>edge_correlation</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L572" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>edge_correlation</code>(<strong><code>idx</code></strong>, <strong><code>to_keep</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>pre_edges</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
+<h4 id="edge_correlation" class="doc_header"><code>edge_correlation</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L804" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>edge_correlation</code>(<strong><code>idx</code></strong>:<code>ndarray</code>, <strong><code>to_keep</code></strong>:<code>ndarray</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>pre_edges</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>scan_idx</code></strong>:<code>ndarray</code>, <strong><code>cc_cutoff</code></strong>:<code>float</code>)</p>
 </blockquote>
+<p>Correlates two edges and flag them it they should be kept.</p>
+<p>Args:
+    idx (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+    to<em>keep (np.ndarray): Array with indices which edges should be kept.
+    sortindex</em> (np.ndarray): Sortindex to access the hills from stats.
+    pre_edges (np.ndarray): Array with pre edges.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    int_data (np.ndarray): Array containing the intensity to each centroid.
+    scan_idx (np.ndarray): Array containing the scan index for a centroid.
+    cc_cutoff (float): Cutoff value for what is considered correlating.</p>
 
 </div>
 
@@ -883,8 +1122,24 @@ $$\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_pre_isotope_patterns" class="doc_header"><code>get_pre_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L601" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_pre_isotope_patterns</code>(<strong><code>stats</code></strong>, <strong><code>idxs_upper</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>maximum_offset</code></strong>, <strong><code>iso_charge_min</code></strong>=<em><code>1</code></em>, <strong><code>iso_charge_max</code></strong>=<em><code>6</code></em>, <strong><code>iso_mass_range</code></strong>=<em><code>5</code></em>, <strong><code>cc_cutoff</code></strong>=<em><code>0.6</code></em>)</p>
+<h4 id="get_pre_isotope_patterns" class="doc_header"><code>get_pre_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L841" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_pre_isotope_patterns</code>(<strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>idxs_upper</code></strong>:<code>ndarray</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>scan_idx</code></strong>:<code>ndarray</code>, <strong><code>maximum_offset</code></strong>:<code>float</code>, <strong><code>iso_charge_min</code></strong>:<code>int</code>=<em><code>1</code></em>, <strong><code>iso_charge_max</code></strong>:<code>int</code>=<em><code>6</code></em>, <strong><code>iso_mass_range</code></strong>:<code>float</code>=<em><code>5</code></em>, <strong><code>cc_cutoff</code></strong>:<code>float</code>=<em><code>0.6</code></em>)</p>
 </blockquote>
+<p>Function to extract pre isotope patterns.</p>
+<p>Args:
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    idxs<em>upper (np.ndarray): Upper index for comparison.
+    sortindex</em> (np.ndarray): Sortindex to access the hills from stats.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    int_data (np.ndarray): Array containing the intensity to each centroid.
+    scan_idx (np.ndarray): Array containing the scan index for a centroid.
+    maximum_offset (float): Maximum offset when matching.
+    iso_charge_min (int, optional): Minimum isotope charge. Defaults to 1.
+    iso_charge_max (int, optional): Maximum isotope charge. Defaults to 6.
+    iso_mass_range (float, optional): Mass search range. Defaults to 5.
+    cc_cutoff (float, optional): Correlation cutoff. Defaults to 0.6.</p>
+<p>Returns:
+    list: List of pre isotope patterns.</p>
 
 </div>
 
@@ -927,9 +1182,19 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_isotope_pattern_directed" class="doc_header"><code>check_isotope_pattern_directed</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L627" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_isotope_pattern_directed</code>(<strong><code>mass1</code></strong>, <strong><code>mass2</code></strong>, <strong><code>delta_mass1</code></strong>, <strong><code>delta_mass2</code></strong>, <strong><code>charge</code></strong>, <strong><code>index</code></strong>, <strong><code>iso_mass_range</code></strong>)</p>
+<h4 id="check_isotope_pattern_directed" class="doc_header"><code>check_isotope_pattern_directed</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L886" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_isotope_pattern_directed</code>(<strong><code>mass1</code></strong>:<code>float</code>, <strong><code>mass2</code></strong>:<code>float</code>, <strong><code>delta_mass1</code></strong>:<code>float</code>, <strong><code>delta_mass2</code></strong>:<code>float</code>, <strong><code>charge</code></strong>:<code>int</code>, <strong><code>index</code></strong>:<code>int</code>, <strong><code>iso_mass_range</code></strong>:<code>float</code>)</p>
 </blockquote>
-<p>Check if two masses could belong to the same isotope pattern</p>
+<p>Check if two masses could belong to the same isotope pattern.</p>
+<p>Args:
+    mass1 (float): Mass of the first pattern.
+    mass2 (float): Mass of the second pattern.
+    delta_mass1 (float): Delta mass of the first pattern.
+    delta_mass2 (float): Delta mass of the second pattern.
+    charge (int): Charge.
+    index (int): Index (unused).
+    iso_mass_range (float): Isotope mass ranges.
+Returns:
+    bool: Flag if two isotope patterns belong together.</p>
 
 </div>
 
@@ -952,9 +1217,27 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="grow" class="doc_header"><code>grow</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L642" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>grow</code>(<strong><code>trail</code></strong>, <strong><code>seed</code></strong>, <strong><code>direction</code></strong>, <strong><code>relative_pos</code></strong>, <strong><code>index</code></strong>, <strong><code>stats</code></strong>, <strong><code>pattern</code></strong>, <strong><code>charge</code></strong>, <strong><code>iso_mass_range</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
+<h4 id="grow" class="doc_header"><code>grow</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L910" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>grow</code>(<strong><code>trail</code></strong>:<code>List</code>, <strong><code>seed</code></strong>:<code>int</code>, <strong><code>direction</code></strong>:<code>int</code>, <strong><code>relative_pos</code></strong>:<code>int</code>, <strong><code>index</code></strong>:<code>int</code>, <strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>pattern</code></strong>:<code>ndarray</code>, <strong><code>charge</code></strong>:<code>int</code>, <strong><code>iso_mass_range</code></strong>:<code>float</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>scan_idx</code></strong>:<code>ndarray</code>, <strong><code>cc_cutoff</code></strong>:<code>float</code>)</p>
 </blockquote>
-<p>Grows isotope pattern based on a seed and direction</p>
+<p>Grows isotope pattern based on a seed and direction.</p>
+<p>Args:
+    trail (List): List of hills belonging to a pattern.
+    seed (int): Seed position.
+    direction (int): Direction in which to grow the trail
+    relative_pos (int): Relative position.
+    index (int): Index.
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    pattern (np.ndarray): Isotope pattern.
+    charge (int): Charge.
+    iso_mass<em>range (float): Mass range for checking isotope patterns.
+    sortindex</em> (np.ndarray): Sortindex to access the hills from stats.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    int_data (np.ndarray): Array containing the intensity to each centroid.
+    scan_idx (np.ndarray): Array containing the scan index for a centroid.
+    cc_cutoff (float): Cutoff value for what is considered correlating.</p>
+<p>Returns:
+    List: List of hills belonging to a pattern.</p>
 
 </div>
 
@@ -977,9 +1260,23 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="grow_trail" class="doc_header"><code>grow_trail</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L703" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>grow_trail</code>(<strong><code>seed</code></strong>, <strong><code>pattern</code></strong>, <strong><code>stats</code></strong>, <strong><code>charge</code></strong>, <strong><code>iso_mass_range</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
+<h4 id="grow_trail" class="doc_header"><code>grow_trail</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L989" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>grow_trail</code>(<strong><code>seed</code></strong>:<code>int</code>, <strong><code>pattern</code></strong>:<code>ndarray</code>, <strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>charge</code></strong>:<code>int</code>, <strong><code>iso_mass_range</code></strong>:<code>float</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>scan_idx</code></strong>:<code>ndarray</code>, <strong><code>cc_cutoff</code></strong>:<code>float</code>)</p>
 </blockquote>
-<p>Wrapper to grow an isotope pattern to the left and right side</p>
+<p>Wrapper to grow an isotope pattern to the left and right side.</p>
+<p>Args:
+    seed (int): Seed position.
+    pattern (np.ndarray): Isotope pattern.
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    charge (int): Charge.
+    iso_mass<em>range (float): Mass range for checking isotope patterns.
+    sortindex</em> (np.ndarray): Sortindex to access the hills from stats.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    int_data (np.ndarray): Array containing the intensity to each centroid.
+    scan_idx (np.ndarray): Array containing the scan index for a centroid.
+    cc_cutoff (float): Cutoff value for what is considered correlating.</p>
+<p>Returns:
+    List: Isotope pattern.</p>
 
 </div>
 
@@ -1002,9 +1299,23 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_trails" class="doc_header"><code>get_trails</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L717" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_trails</code>(<strong><code>seed</code></strong>, <strong><code>pattern</code></strong>, <strong><code>stats</code></strong>, <strong><code>charge_range</code></strong>, <strong><code>iso_mass_range</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
+<h4 id="get_trails" class="doc_header"><code>get_trails</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1018" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_trails</code>(<strong><code>seed</code></strong>:<code>int</code>, <strong><code>pattern</code></strong>:<code>ndarray</code>, <strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>charge_range</code></strong>:<code>List</code>, <strong><code>iso_mass_range</code></strong>:<code>float</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>scan_idx</code></strong>:<code>ndarray</code>, <strong><code>cc_cutoff</code></strong>:<code>float</code>)</p>
 </blockquote>
-<p>Wrapper to extract trails for a given charge range</p>
+<p>Wrapper to extract trails for a given charge range.</p>
+<p>Args:
+    seed (int): Seed index.
+    pattern (np.ndarray): Pre isotope pattern.
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    charge_range (List): Charge range.
+    iso_mass<em>range (float): Mass range for checking isotope patterns.
+    sortindex</em> (np.ndarray): Sortindex to access the hills from stats.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    int_data (np.ndarray): Array containing the intensity to each centroid.
+    scan_idx (np.ndarray): Array containing the scan index for a centroid.
+    cc_cutoff (float): Cutoff value for what is considered correlating.</p>
+<p>Returns:
+    List: Trail of consistent hills.</p>
 
 </div>
 
@@ -1034,9 +1345,14 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="plot_pattern" class="doc_header"><code>plot_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L732" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_pattern</code>(<strong><code>pattern</code></strong>, <strong><code>sorted_hills</code></strong>, <strong><code>centroids</code></strong>, <strong><code>hill_data</code></strong>)</p>
+<h4 id="plot_pattern" class="doc_header"><code>plot_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1048" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_pattern</code>(<strong><code>pattern</code></strong>:<code>ndarray</code>, <strong><code>sorted_hills</code></strong>:<code>ndarray</code>, <strong><code>centroids</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-<p>Helper function to plot a pattern</p>
+<p>Helper function to plot a pattern.</p>
+<p>Args:
+    pattern (np.ndarray): Pre isotope pattern.
+    sorted_hills (np.ndarray): Hills, sorted.
+    centroids (np.ndarray): 1D Array containing the masses of the centroids.
+    hill_data (np.ndarray): Array containing the indices to hills.</p>
 
 </div>
 
@@ -1066,10 +1382,15 @@ $$\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_minpos" class="doc_header"><code>get_minpos</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L921" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_minpos</code>(<strong><code>y</code></strong>, <strong><code>split</code></strong>=<em><code>5</code></em>)</p>
+<h4 id="get_minpos" class="doc_header"><code>get_minpos</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1082" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_minpos</code>(<strong><code>y</code></strong>:<code>ndarray</code>, <strong><code>iso_split_level</code></strong>:<code>float</code>)</p>
 </blockquote>
 <p>Function to get a list of minima in a trace.
 A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.</p>
+<p>Args:
+    y (np.ndarray): Input array.
+    iso_split_level (float): Isotope split level.</p>
+<p>Returns:
+    List: List with min positions.</p>
 
 </div>
 
@@ -1092,9 +1413,13 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_local_minima" class="doc_header"><code>get_local_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L946" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_local_minima</code>(<strong><code>y</code></strong>)</p>
+<h4 id="get_local_minima" class="doc_header"><code>get_local_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1111" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_local_minima</code>(<strong><code>y</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Function to return all local minima of a array</p>
+<p>Args:
+    y (np.ndarray): Input array.</p>
+<p>Returns:
+    List: List with indices to minima.</p>
 
 </div>
 
@@ -1117,8 +1442,14 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="is_local_minima" class="doc_header"><code>is_local_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L958" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>is_local_minima</code>(<strong><code>y</code></strong>, <strong><code>i</code></strong>)</p>
+<h4 id="is_local_minima" class="doc_header"><code>is_local_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1128" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>is_local_minima</code>(<strong><code>y</code></strong>:<code>ndarray</code>, <strong><code>i</code></strong>:<code>int</code>)</p>
 </blockquote>
+<p>Check if position is a local minima.</p>
+<p>Args:
+    y (np.ndarray): Input array.
+    i (int): Position to check.</p>
+<p>Returns:
+    bool: Flag if position is minima or not.</p>
 
 </div>
 
@@ -1141,9 +1472,16 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="truncate" class="doc_header"><code>truncate</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L964" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>truncate</code>(<strong><code>array</code></strong>, <strong><code>intensity_profile</code></strong>, <strong><code>seedpos</code></strong>)</p>
+<h4 id="truncate" class="doc_header"><code>truncate</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1142" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>truncate</code>(<strong><code>array</code></strong>:<code>ndarray</code>, <strong><code>intensity_profile</code></strong>:<code>ndarray</code>, <strong><code>seedpos</code></strong>:<code>int</code>, <strong><code>iso_split_level</code></strong>:<code>float</code>)</p>
 </blockquote>
-<p>Function to truncate an intensity profile around its seedposition</p>
+<p>Function to truncate an intensity profile around its seedposition.</p>
+<p>Args:
+    array (np.ndarray):  Input array.
+    intensity_profile (np.ndarray): Intensities for the input array.
+    seedpos (int): Seedposition.
+    iso_split_level (float): Split level.</p>
+<p>Returns:
+    np.ndarray: Truncated array.</p>
 
 </div>
 
@@ -1184,8 +1522,17 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="check_averagine" class="doc_header"><code>check_averagine</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L836" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_averagine</code>(<strong><code>stats</code></strong>, <strong><code>pattern</code></strong>, <strong><code>charge</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>)</p>
+<h4 id="check_averagine" class="doc_header"><code>check_averagine</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1181" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>check_averagine</code>(<strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>pattern</code></strong>:<code>ndarray</code>, <strong><code>charge</code></strong>:<code>int</code>, <strong><code>averagine_aa</code></strong>:<code>Dict</code>, <strong><code>isotopes</code></strong>:<code>Dict</code>)</p>
 </blockquote>
+<p>Function to compare a pattern to an averagine model.</p>
+<p>Args:
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    pattern (np.ndarray): Isotope pattern.
+    charge (int): Charge.
+    averagine_aa (Dict): Dict containing averagine masses.
+    isotopes (Dict): Dict containing isotopes.</p>
+<p>Returns:
+    float: Averagine correlation.</p>
 
 </div>
 
@@ -1208,9 +1555,16 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="pattern_to_mz" class="doc_header"><code>pattern_to_mz</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L850" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pattern_to_mz</code>(<strong><code>stats</code></strong>, <strong><code>pattern</code></strong>, <strong><code>charge</code></strong>)</p>
+<h4 id="pattern_to_mz" class="doc_header"><code>pattern_to_mz</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1206" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>pattern_to_mz</code>(<strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>pattern</code></strong>:<code>ndarray</code>, <strong><code>charge</code></strong>:<code>int</code>)</p>
 </blockquote>
-<p>Function to calculate masses and intensities from pattern for a given charge</p>
+<p>Function to calculate masses and intensities from pattern for a given charge.</p>
+<p>Args:
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    pattern (np.ndarray): Isotope pattern.
+    charge (int): Charge of the pattern.</p>
+<p>Returns:
+    np.ndarray: masses
+    np.ndarray: intensity</p>
 
 </div>
 
@@ -1233,8 +1587,16 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="cosine_averagine" class="doc_header"><code>cosine_averagine</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L870" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cosine_averagine</code>(<strong><code>int_one</code></strong>, <strong><code>int_two</code></strong>, <strong><code>spec_one</code></strong>, <strong><code>spec_two</code></strong>)</p>
+<h4 id="cosine_averagine" class="doc_header"><code>cosine_averagine</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1235" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>cosine_averagine</code>(<strong><code>int_one</code></strong>:<code>ndarray</code>, <strong><code>int_two</code></strong>:<code>ndarray</code>, <strong><code>spec_one</code></strong>:<code>ndarray</code>, <strong><code>spec_two</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
+<p>Calculate the cosine correlation of two hills.</p>
+<p>Args:
+    int_one (np.ndarray): Intensity of the first hill.
+    int_two (np.ndarray): Intensity of the second hill.
+    spec_one (np.ndarray): Scan numbers of the first hill.
+    spec_two (np.ndarray): Scan numbers of the second hill.</p>
+<p>Returns:
+    float: Cosine</p>
 
 </div>
 
@@ -1257,9 +1619,13 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="int_list_to_array" class="doc_header"><code>int_list_to_array</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L893" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>int_list_to_array</code>(<strong><code>numba_list</code></strong>)</p>
+<h4 id="int_list_to_array" class="doc_header"><code>int_list_to_array</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1269" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>int_list_to_array</code>(<strong><code>numba_list</code></strong>:<code>List</code>)</p>
 </blockquote>
 <p>Numba compatbilte function to convert a numba list with integers to a numpy array</p>
+<p>Args:
+    numba_list (List): Input numba-typed List.</p>
+<p>Returns:
+    np.ndarray: Output numpy array.</p>
 
 </div>
 
@@ -1282,109 +1648,16 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="mz_to_mass" class="doc_header"><code>mz_to_mass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L908" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>mz_to_mass</code>(<strong><code>mz</code></strong>, <strong><code>charge</code></strong>)</p>
+<h4 id="mz_to_mass" class="doc_header"><code>mz_to_mass</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1289" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>mz_to_mass</code>(<strong><code>mz</code></strong>:<code>float</code>, <strong><code>charge</code></strong>:<code>int</code>)</p>
 </blockquote>
 <p>Function to calculate the mass from a mz value.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_minpos" class="doc_header"><code>get_minpos</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L921" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_minpos</code>(<strong><code>y</code></strong>, <strong><code>split</code></strong>=<em><code>5</code></em>)</p>
-</blockquote>
-<p>Function to get a list of minima in a trace.
-A minimum is returned if the ratio of lower of the surrounding maxima to the minimum is larger than the splitting factor.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_local_minima" class="doc_header"><code>get_local_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L946" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_local_minima</code>(<strong><code>y</code></strong>)</p>
-</blockquote>
-<p>Function to return all local minima of a array</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="is_local_minima" class="doc_header"><code>is_local_minima</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L958" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>is_local_minima</code>(<strong><code>y</code></strong>, <strong><code>i</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="truncate" class="doc_header"><code>truncate</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L964" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>truncate</code>(<strong><code>array</code></strong>, <strong><code>intensity_profile</code></strong>, <strong><code>seedpos</code></strong>)</p>
-</blockquote>
-<p>Function to truncate an intensity profile around its seedposition</p>
+<p>Args:
+    mz (float): M/z
+    charge (int): Charge.</p>
+<p>Raises:
+    NotImplementedError: When a negative charge is used.</p>
+<p>Returns:
+    float: mass</p>
 
 </div>
 
@@ -1421,9 +1694,27 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="isolate_isotope_pattern" class="doc_header"><code>isolate_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L992" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>isolate_isotope_pattern</code>(<strong><code>pre_pattern</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>iso_mass_range</code></strong>, <strong><code>charge_range</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>iso_n_seeds</code></strong>, <strong><code>cc_cutoff</code></strong>)</p>
+<h4 id="isolate_isotope_pattern" class="doc_header"><code>isolate_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1311" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>isolate_isotope_pattern</code>(<strong><code>pre_pattern</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>scan_idx</code></strong>:<code>ndarray</code>, <strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>iso_mass_range</code></strong>:<code>float</code>, <strong><code>charge_range</code></strong>:<code>List</code>, <strong><code>averagine_aa</code></strong>:<code>Dict</code>, <strong><code>isotopes</code></strong>:<code>Dict</code>, <strong><code>iso_n_seeds</code></strong>:<code>int</code>, <strong><code>cc_cutoff</code></strong>:<code>float</code>, <strong><code>iso_split_level</code></strong>:<code>float</code>)</p>
 </blockquote>
-<p>Isolate isotope patterns</p>
+<p>Isolate isotope patterns.</p>
+<p>Args:
+    pre_pattern (np.ndarray): Pre isotope pattern.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    int_data (np.ndarray): Array containing the intensity to each centroid.
+    scan<em>idx (np.ndarray): Array containing the scan index for a centroid.
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    sortindex</em> (np.ndarray): Sortindex to access the hills from stats.
+    iso_mass_range (float): Mass range for checking isotope patterns.
+    charge_range (List): Charge range.
+    averagine_aa (Dict): Dict containing averagine masses.
+    isotopes (Dict): Dict containing isotopes.
+    iso_n_seeds (int): Number of seeds.
+    cc_cutoff (float): Cutoff value for what is considered correlating.
+    iso_split_level (float): Split level when isotopes are split.</p>
+<p>Returns:
+    np.ndarray: Array with the best pattern.
+    int: Charge of the best pattern.</p>
 
 </div>
 
@@ -1500,7 +1791,7 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
         <span class="n">test_centroids</span> <span class="o">=</span> <span class="n">List</span><span class="p">([</span><span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">test_centroids_tmp</span><span class="p">])</span>
 
         <span class="n">test_hills</span> <span class="o">=</span> <span class="n">get_hills</span><span class="p">(</span><span class="n">test_centroids</span><span class="p">)</span>
-        <span class="n">sorted_hills</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">get_hill_data</span><span class="p">(</span><span class="n">test_hills</span><span class="p">,</span> <span class="n">test_centroids</span><span class="p">)</span>
+        <span class="n">sorted_hills</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">hill_data</span><span class="p">,</span> <span class="n">hill_ptrs</span> <span class="o">=</span> <span class="n">get_hill_data</span><span class="p">(</span><span class="n">test_hills</span><span class="p">,</span> <span class="n">test_centroids</span><span class="p">)</span>
         <span class="n">pre_patterns</span> <span class="o">=</span> <span class="n">get_edges</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
 
         <span class="n">isotope_patterns</span><span class="p">,</span> <span class="n">isotope_charges</span> <span class="o">=</span> <span class="n">get_isotope_patterns</span><span class="p">(</span><span class="n">pre_patterns</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">averagine_aa</span><span class="p">,</span> <span class="n">isotopes</span><span class="p">)</span>
@@ -1530,9 +1821,30 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_isotope_patterns" class="doc_header"><code>get_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1046" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isotope_patterns</code>(<strong><code>pre_isotope_patterns</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>scan_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>averagine_aa</code></strong>, <strong><code>isotopes</code></strong>, <strong><code>iso_charge_min</code></strong>=<em><code>1</code></em>, <strong><code>iso_charge_max</code></strong>=<em><code>6</code></em>, <strong><code>iso_mass_range</code></strong>=<em><code>5</code></em>, <strong><code>iso_n_seeds</code></strong>=<em><code>100</code></em>, <strong><code>cc_cutoff</code></strong>=<em><code>0.6</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="get_isotope_patterns" class="doc_header"><code>get_isotope_patterns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1387" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_isotope_patterns</code>(<strong><code>pre_isotope_patterns</code></strong>:<code>list</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>scan_idx</code></strong>:<code>ndarray</code>, <strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>averagine_aa</code></strong>:<code>Dict</code>, <strong><code>isotopes</code></strong>:<code>Dict</code>, <strong><code>iso_charge_min</code></strong>:<code>int</code>=<em><code>1</code></em>, <strong><code>iso_charge_max</code></strong>:<code>int</code>=<em><code>6</code></em>, <strong><code>iso_mass_range</code></strong>:<code>float</code>=<em><code>5</code></em>, <strong><code>iso_n_seeds</code></strong>:<code>int</code>=<em><code>100</code></em>, <strong><code>cc_cutoff</code></strong>:<code>float</code>=<em><code>0.6</code></em>, <strong><code>iso_split_level</code></strong>:<code>float</code>=<em><code>1.3</code></em>, <strong><code>callback</code></strong>:<code>Optional</code>[<code>Callable</code>]=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Wrapper function to iterate over pre_isotope_patterns</p>
+<p>Wrapper function to iterate over pre_isotope_patterns.</p>
+<p>Args:
+    pre_isotope_patterns (list): List of pre-isotope patterns.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    int_data (np.ndarray): Array containing the intensity to each centroid.
+    scan<em>idx (np.ndarray): Array containing the scan index for a centroid.
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    sortindex</em> (np.ndarray): Sortindex to access the hills from stats.
+    averagine_aa (Dict): Dict containing averagine masses.
+    isotopes (Dict): Dict containing isotopes.
+    iso_charge_min (int, optional): Minimum isotope charge. Defaults to 1.
+    iso_charge_max (int, optional): Maximum isotope charge. Defaults to 6.
+    iso_mass_range (float, optional): Mass search range. Defaults to 5.
+    iso_n_seeds (int, optional): Number of isotope seeds. Defaults to 100.
+    cc_cutoff (float, optional): Cuttoff for correlation.. Defaults to 0.6.
+    iso_split_level (float, optional): Isotope split level.. Defaults to 1.3.
+    callback (Union[Callable, None], optional): Callback function for progress. Defaults to None.
+Returns:
+    list: List of isotope patterns.
+    np.ndarray: Iso idx.
+    np.ndarray: Array containing isotope charges.</p>
 
 </div>
 
@@ -1562,8 +1874,22 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="report_" class="doc_header"><code>report_</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1103" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>report_</code>(<strong><code>idx</code></strong>, <strong><code>isotope_charges</code></strong>, <strong><code>isotope_patterns</code></strong>, <strong><code>iso_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>, <strong><code>int_data</code></strong>, <strong><code>rt_</code></strong>, <strong><code>rt_idx</code></strong>, <strong><code>results</code></strong>)</p>
+<h4 id="report_" class="doc_header"><code>report_</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1465" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>report_</code>(<strong><code>idx</code></strong>:<code>ndarray</code>, <strong><code>isotope_charges</code></strong>:<code>list</code>, <strong><code>isotope_patterns</code></strong>:<code>list</code>, <strong><code>iso_idx</code></strong>:<code>ndarray</code>, <strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>rt_</code></strong>:<code>ndarray</code>, <strong><code>rt_idx</code></strong>:<code>ndarray</code>, <strong><code>results</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
+<p>Function to extract summary statstics from a list of isotope patterns and charges.</p>
+<p>Args:
+    idx (np.ndarray): Input index. Note that we are using the performance function so this is a range.
+    isotope_patterns (list): List containing isotope patterns (indices to hills).
+    isotope_charges (list): List with charges assigned to the isotope patterns.
+    iso<em>idx (np.ndarray): Index to isotope pattern.
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    sortindex</em> (np.ndarray): Sortindex to access the hills from stats.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.
+    int<em>data (np.ndarray): Array containing the intensity to each centroid.
+    rt</em> (np.ndarray): Array with retention time information for each scan.
+    rt_idx (np.ndarray): Lookup array to match centroid idx to rt.
+    results (np.ndarray): Recordarray with isotope pattern summary statistics.</p>
 
 </div>
 
@@ -1593,8 +1919,20 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="feature_finder_report" class="doc_header"><code>feature_finder_report</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1216" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>feature_finder_report</code>(<strong><code>query_data</code></strong>, <strong><code>isotope_patterns</code></strong>, <strong><code>isotope_charges</code></strong>, <strong><code>iso_idx</code></strong>, <strong><code>stats</code></strong>, <strong><code>sortindex_</code></strong>, <strong><code>hill_ptrs</code></strong>, <strong><code>hill_data</code></strong>)</p>
+<h4 id="feature_finder_report" class="doc_header"><code>feature_finder_report</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1575" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>feature_finder_report</code>(<strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>isotope_patterns</code></strong>:<code>list</code>, <strong><code>isotope_charges</code></strong>:<code>list</code>, <strong><code>iso_idx</code></strong>:<code>ndarray</code>, <strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
+<p>Creates a report dataframe with summary statistics of the found isotope patterns.</p>
+<p>Args:
+    query_data (dict): Data structure containing the query data.
+    isotope_patterns (list): List containing isotope patterns (indices to hills).
+    isotope_charges (list): List with charges assigned to the isotope patterns.
+    iso<em>idx (np.ndarray): Index to the isotope pattern.
+    stats (np.ndarray): Stats array that contains summary statistics of hills.
+    sortindex</em> (np.ndarray): Sortindex to access the hills from stats.
+    hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.
+    hill_data (np.ndarray): Array containing the indices to hills.</p>
+<p>Returns:
+    pd.DataFrame: DataFrame with isotope pattern summary statistics.</p>
 
 </div>
 
@@ -1638,9 +1976,17 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="plot_isotope_pattern" class="doc_header"><code>plot_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1236" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_isotope_pattern</code>(<strong><code>index</code></strong>, <strong><code>df</code></strong>, <strong><code>sorted_stats</code></strong>, <strong><code>centroids</code></strong>, <strong><code>scan_range</code></strong>=<em><code>100</code></em>, <strong><code>mz_range</code></strong>=<em><code>2</code></em>, <strong><code>plot_hills</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="plot_isotope_pattern" class="doc_header"><code>plot_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1609" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_isotope_pattern</code>(<strong><code>index</code></strong>:<code>int</code>, <strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>sorted_stats</code></strong>:<code>ndarray</code>, <strong><code>centroids</code></strong>:<code>ndarray</code>, <strong><code>scan_range</code></strong>:<code>int</code>=<em><code>100</code></em>, <strong><code>mz_range</code></strong>:<code>float</code>=<em><code>2</code></em>, <strong><code>plot_hills</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
-<p>Plot an isotope pattern in its local environment</p>
+<p>Plot an isotope pattern in its local environment.</p>
+<p>Args:
+    index (int): Index to the pattern.
+    df (pd.DataFrame): Pandas DataFrame containing the patterns.
+    sorted_stats (np.ndarray): Stats array that contains summary statistics of hills.
+    centroids (np.ndarray): 1D Array containing the masses of the centroids.
+    scan_range (int, optional): Scan range to plot. Defaults to 100.
+    mz_range (float, optional): MZ range to plot. Defaults to 2.
+    plot_hills (bool, optional): Flag to plot hills. Defaults to False.</p>
 
 </div>
 
@@ -1677,9 +2023,18 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_bruker" class="doc_header"><code>extract_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1329" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_bruker</code>(<strong><code>file</code></strong>, <strong><code>base_dir</code></strong>=<em><code>'ext/bruker/FF'</code></em>, <strong><code>config</code></strong>=<em><code>'proteomics_4d.config'</code></em>)</p>
+<h4 id="extract_bruker" class="doc_header"><code>extract_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1709" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_bruker</code>(<strong><code>file</code></strong>:<code>str</code>, <strong><code>base_dir</code></strong>:<code>str</code>=<em><code>'ext/bruker/FF'</code></em>, <strong><code>config</code></strong>:<code>str</code>=<em><code>'proteomics_4d.config'</code></em>)</p>
 </blockquote>
-<p>Call Bruker Feautre Finder via subprocess</p>
+<p>Call Bruker Feautre Finder via subprocess.</p>
+<p>Args:
+    file (str): Filename for feature finding.
+    base_dir (str, optional): Base dir where the feature finder is stored.. Defaults to "ext/bruker/FF".
+    config (str, optional): Config file for feature finder. Defaults to "proteomics_4d.config".</p>
+<p>Raises:
+    NotImplementedError: Unsupported operating system.
+    FileNotFoundError: Feature finder not found.
+    FileNotFoundError: Config file not found.
+    FileNotFoundError: Feature file not found.</p>
 
 </div>
 
@@ -1702,9 +2057,13 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="convert_bruker" class="doc_header"><code>convert_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1387" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_bruker</code>(<strong><code>feature_path</code></strong>)</p>
+<h4 id="convert_bruker" class="doc_header"><code>convert_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1776" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_bruker</code>(<strong><code>feature_path</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Reads feature table and converts to feature table to be used with AlphaPept</p>
+<p>Reads feature table and converts to feature table to be used with AlphaPept.</p>
+<p>Args:
+    feature_path (str): Path to the feature file from Bruker FF (.features-file).</p>
+<p>Returns:
+    pd.DataFrame: DataFrame containing features information.</p>
 
 </div>
 
@@ -1727,9 +2086,15 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="map_bruker" class="doc_header"><code>map_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1407" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_bruker</code>(<strong><code>feature_path</code></strong>, <strong><code>feature_table</code></strong>, <strong><code>query_data</code></strong>)</p>
+<h4 id="map_bruker" class="doc_header"><code>map_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1800" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_bruker</code>(<strong><code>feature_path</code></strong>:<code>str</code>, <strong><code>feature_table</code></strong>:<code>DataFrame</code>, <strong><code>query_data</code></strong>:<code>dict</code>)</p>
 </blockquote>
-<p>Map Ms1 to Ms2 via Table FeaturePrecursorMapping from Bruker FF</p>
+<p>Map Ms1 to Ms2 via Table FeaturePrecursorMapping from Bruker FF.</p>
+<p>Args:
+    feature_path (str): Path to the feature file from Bruker FF (.features-file).
+    feature_table (pd.DataFrame): Pandas DataFrame containing the features.
+    query_data (dict): Data structure containing the query data.</p>
+<p>Returns:
+    pd.DataFrame: DataFrame containing features information.</p>
 
 </div>
 
@@ -1765,9 +2130,17 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="find_features" class="doc_header"><code>find_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1468" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_features</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="find_features" class="doc_header"><code>find_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1868" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_features</code>(<strong><code>to_process</code></strong>:<code>tuple</code>, <strong><code>callback</code></strong>:<code>Optional</code>[<code>Callable</code>]=<em><code>None</code></em>, <strong><code>parallel</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
-<p>Wrapper for feature finding</p>
+<p>Wrapper for feature finding.</p>
+<p>Args:
+    to_process (tuple): to_process tuple, to be used from a proces spool.
+    callback (Union[Callable, None], optional): Optional callback function. Defaults to None.
+    parallel (bool, optional): Flag to use parallel processing. Currently unused. Defaults to False.</p>
+<p>Raises:
+    NotImplementedError: Error if the file extension is not understood.</p>
+<p>Returns:
+    Union[str, bool]: Returns true if function was sucessfull, otherwise the exception as string.</p>
 
 </div>
 
@@ -1804,10 +2177,49 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="map_ms2" class="doc_header"><code>map_ms2</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1591" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_ms2</code>(<strong><code>feature_table</code></strong>, <strong><code>query_data</code></strong>, <strong><code>calib_mz_range</code></strong>=<em><code>20</code></em>, <strong><code>rt_range</code></strong>=<em><code>0.5</code></em>, <strong><code>calib_mob_range</code></strong>=<em><code>0.3</code></em>, <strong><code>calib_n_neighbors</code></strong>=<em><code>5</code></em>, <strong><code>search_unidentified</code></strong>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="replace_infs" class="doc_header"><code>replace_infs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L2014" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>replace_infs</code>(<strong><code>array</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
-<p>Map MS1 features to MS2 based on rt and mz
-if ccs is included also add</p>
+<p>Replace nans and infs with 0</p>
+<p>Args:
+    array (np.ndarray): Input array.</p>
+<p>Returns:
+    np.ndarray: Output array without nans and infs.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="map_ms2" class="doc_header"><code>map_ms2</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L2029" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_ms2</code>(<strong><code>feature_table</code></strong>:<code>DataFrame</code>, <strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>map_mz_range</code></strong>:<code>float</code>=<em><code>1</code></em>, <strong><code>map_rt_range</code></strong>:<code>float</code>=<em><code>0.5</code></em>, <strong><code>map_mob_range</code></strong>:<code>float</code>=<em><code>0.3</code></em>, <strong><code>map_n_neighbors</code></strong>:<code>int</code>=<em><code>5</code></em>, <strong><code>search_unidentified</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+</blockquote>
+<p>Map MS1 features to MS2 based on rt and mz.
+If ccs is included also add.
+Args:
+    feature_table (pd.DataFrame): Pandas DataFrame with features.
+    query_data (dict): Data structure containing the query data.
+    map_mz_range (float, optional): Mapping range for mz (Da). Defaults to 1.
+    map_rt_range (float, optional): Mapping range for rt (min). Defaults to 0.5.
+    map_mob_range (float, optional): Mapping range for mobility (%). Defaults to 0.3.
+    map_n_neighbors (int, optional): Maximum number of neighbors to be extracted. Defaults to 5.
+    search_unidentified (bool, optional): Flag to perform search on features that have no isotope pattern. Defaults to False.</p>
+<p>Returns:
+    pd.DataFrame: Table with features.</p>
 
 </div>
 

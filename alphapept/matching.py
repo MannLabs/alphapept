@@ -4,21 +4,32 @@ __all__ = ['calculate_distance', 'calib_table', 'align', 'calculate_deltas', 'al
            'get_probability', 'match_datasets']
 
 # Cell
-import logging
+
 import pandas as pd
-from itertools import combinations
 import numpy as np
-import os
-import alphapept.io
-import functools
-from sklearn.linear_model import LinearRegression
 
+def calculate_distance(table_1: pd.DataFrame, table_2: pd.DataFrame, offset_dict: dict, calib: bool = False) -> (list, int):
+    """Calculate the distance between two precursors for different columns
+    Distance can either be relative or absolute.
 
-def calculate_distance(table_1, table_2, offset_cols, calib = False):
+    An example for a minimal offset_dict is: offset_dict = {'mass':'absolute'}
+
+    Args:
+        table_1 (pd.DataFrame): Dataframe with precusor data.
+        table_2 (pd.DataFrame): Dataframe with precusor data.
+        offset_dict (dict): Dictionary with column names and how the distance should be calculated.
+        calib (bool): Flag to indicate that distances should be calculated on calibrated columns. Defaults to False.
+
+    Raises:
+        KeyError: If either table_1 or table_2 is not indexed by precursor
+
     """
-    Calculate the distance, either relative or absolute
-    TODO: We could use a weighting factor
-    """
+
+    if table_1.index.name != 'precursor':
+        raise KeyError('table_1 is not indexed by precursor')
+
+    if table_2.index.name != 'precursor':
+        raise KeyError('table_2 is not indexed by precursor')
 
     shared_precursors = list(set(table_1.index).intersection(set(table_2.index)))
 
@@ -30,44 +41,67 @@ def calculate_distance(table_1, table_2, offset_cols, calib = False):
 
     deltas = []
 
-    for col in list(offset_cols.keys()):
+    for col in offset_dict:
         if calib:
             col_ = col+'_calib'
         else:
             col_ = col
 
-        if offset_cols[col] == 'absolute':
+        if offset_dict[col] == 'absolute':
             deltas.append(np.nanmedian(table_1_[col_] - table_2_[col_]))
-        elif offset_cols[col] == 'relative':
+        elif offset_dict[col] == 'relative':
             deltas.append(np.nanmedian((table_1_[col_] - table_2_[col_]) / (table_1_[col_] + table_2_[col_]) * 2))
         else:
-            raise NotImplementedError(offset_cols[col_])
+            raise NotImplementedError(f"Calculating delta for {offset_dict[col_]} not implemented.")
 
     return deltas, len(shared_precursors)
 
-def calib_table(table, delta, offset_cols):
-    """
-    Apply offset to a table
-    If not _calib table exist, create a new one.
+# Cell
 
+def calib_table(table: pd.DataFrame, delta: pd.Series, offset_dict: dict):
     """
-    for col in list(offset_cols.keys()):
+    Apply offset to a table. Different operations for offsets exist.
+    Offsets will be saved with a '_calib'-suffix. If this does not already exist,
+    it will be created.
+
+    Args:
+        table_1 (pd.DataFrame): Dataframe with data.
+        delta (pd.Series): Series cotaining the offset.
+        offset_dict (dict): Dictionary with column names and how the distance should be calculated.
+
+    Raises:
+        NotImplementedError: If the type of vonversion is not implemented.
+    """
+    for col in offset_dict:
 
         if (col not in table.columns) and (col+'_apex' in table.columns):
             col_ = col+'_apex'
         else:
             col_ = col
 
-        if offset_cols[col] == 'absolute':
+        if offset_dict[col] == 'absolute':
             table[col+'_calib'] =  table[col_]-delta[col]
-        elif offset_cols[col] == 'relative':
+        elif offset_dict[col] == 'relative':
             table[col+'_calib'] = (1-delta[col_])*table[col]
         else:
-            raise NotImplementedError(offset_cols[col])
+            raise NotImplementedError(offset_dict[col])
 
-def align(deltas, filenames, weights=None):
-    """
-    Solve equation system
+# Cell
+import logging
+from sklearn.linear_model import LinearRegression
+
+def align(deltas: pd.DataFrame, filenames: list, weights:np.ndarray=None) -> np.ndarray:
+    """Align multiple datasets.
+    This function creates a matrix to represent the shifts from each dataset to another.
+    This effectively is an overdetermined equation system and is solved with a linear regression.
+
+    Args:
+        deltas (pd.DataFrame): Distances from each dataset to another.
+        filenames (list): The filenames of the datasts that were compared.
+        weights (np.ndarray, optional): Distances can be weighted by their number of shared elements. Defaults to None.
+
+    Returns:
+        np.ndarray: alignment values.
     """
     matrix = []
 
@@ -82,7 +116,6 @@ def align(deltas, filenames, weights=None):
         matrix.append(lines)
 
     # Remove nan values
-
     not_nan = ~deltas.isnull().any(axis=1)
     matrix = np.array(matrix)
     matrix = matrix[not_nan]
@@ -100,46 +133,56 @@ def align(deltas, filenames, weights=None):
 
     logging.info(f"Regression score is {score}")
 
-    x= reg.predict(np.eye(len(filenames)-1))
-
-    #x = np.linalg.lstsq(matrix, deltas_.values, rcond=None)[0] #Alternative w/o weights
+    x = reg.predict(np.eye(len(filenames)-1))
 
     return x
 
+# Cell
+import alphapept.io
+import os
+from typing import Callable
 
-def calculate_deltas(combos, calib = False, callback=None):
+def calculate_deltas(combos: list, calib:bool = False, callback:Callable=None) -> (pd.DataFrame, np.ndarray, dict):
+
+    """Wrapper function to calculate the distances of multiple files.
+
+    In here, we define the offset_dict to make a relative comparison for mz and mobility and absolute for rt.
+
+    TODO: This function could be speed-up by parallelization
+
+    Args:
+        combos (list): A list containing tuples of filenames that should be compared.
+        calib (bool): Boolean flag to indicate distance should be calculated on calibrated data.
+        callback (Callable): A callback function to track progress.
+
+    Returns:
+        pd.DataFrame: Dataframe containing the deltas of the files
+        np.ndarray: Numpy array containing the weights of each comparison (i.e. number of shared elements)
+        dict: Offset dictionary whicch was used for comparing.
+
     """
-    Calculate offsets for multiple files
-    TODO: Parallelize
-    """
 
-
-    offset_cols = {}
-
-    callback = None
-
+    offset_dict = {}
     deltas = pd.DataFrame()
     weights = []
 
     for i, combo in enumerate(combos):
-
         file1 = os.path.splitext(combo[0])[0] + '.ms_data.hdf'
         file2 = os.path.splitext(combo[1])[0] + '.ms_data.hdf'
+        df_1 = alphapept.io.MS_Data_File(file1).read(dataset_name="peptide_fdr").set_index('precursor')
+        df_2 = alphapept.io.MS_Data_File(file2).read(dataset_name="peptide_fdr").set_index('precursor')
 
-        df_1 = alphapept.io.MS_Data_File(file1).read(dataset_name="peptide_fdr")
-        df_2 = alphapept.io.MS_Data_File(file2).read(dataset_name="peptide_fdr")
-
-        if not offset_cols:
-            offset_cols = {'mz':'relative', 'rt':'absolute'}
+        if not offset_dict:
+            offset_dict = {'mz':'relative', 'rt':'absolute'}
             if 'mobility' in df_1.columns:
                 logging.info("Also using mobility for calibration.")
-                offset_cols['mobility'] = 'relative'
-            cols = list(offset_cols.keys())
+                offset_dict['mobility'] = 'relative'
+            cols = list(offset_dict.keys())
 
         if len(deltas) == 0:
              deltas = pd.DataFrame(columns = cols)
 
-        dists, weight = calculate_distance(df_1, df_2, offset_cols, calib = calib)
+        dists, weight = calculate_distance(df_1, df_2, offset_dict, calib = calib)
         deltas = deltas.append(pd.DataFrame([dists], columns = cols, index=[combo]))
 
         weights.append(weight)
@@ -147,25 +190,46 @@ def calculate_deltas(combos, calib = False, callback=None):
         if callback:
             callback((i+1)/len(combos))
 
-    return deltas, np.array(weights), offset_cols
+    return deltas, np.array(weights), offset_dict
 
+# Cell
+import pandas as pd
+from itertools import combinations
+import numpy as np
+import os
+import functools
 
-def align_files(filenames, alignment, offset_cols):
+#There is no unit test for align_files and align_datasets as they are wrappers and should be covered by the quick_test
+def align_files(filenames: list, alignment: pd.DataFrame, offset_dict: dict):
+    """
+    Wrapper function that aligns a list of files.
 
+    Args:
+        filenames (list): A list with raw file names.
+        alignment (pd.DataFrame): A pandas dataframe containing the alignment information.
+        offset_dict (dict): Dictionary with column names and how the distance should be calculated.
+    """
     for idx, filename in enumerate(filenames):
 
         file = os.path.splitext(filename)[0] + '.ms_data.hdf'
 
         for column in ['peptide_fdr', 'feature_table']:
             df = alphapept.io.MS_Data_File(file).read(dataset_name=column)
-            calib_table(df, alignment.iloc[idx], offset_cols)
+            calib_table(df, alignment.iloc[idx], offset_dict)
             logging.info(f"Saving {file} - {column}.")
             ms_file = alphapept.io.MS_Data_File(file, is_overwritable=True)
 
             ms_file.write(df, dataset_name=column)
 
 
-def align_datasets(settings, callback=None):
+def align_datasets(settings:dict, callback:callable=None):
+    """
+    Wrapper function that aligns all experimental files specified a settings file.
+
+    Args:
+        settings (dict): A list with raw file names.
+        callback (Callable): Callback function to indicate progress.
+    """
     filenames = settings['experiment']['file_paths']
 
     if callback:
@@ -179,9 +243,9 @@ def align_datasets(settings, callback=None):
     if len(filenames) > 1:
         combos = list(combinations(filenames, 2))
 
-        deltas, weights, offset_cols = calculate_deltas(combos, callback=cb)
+        deltas, weights, offset_dict = calculate_deltas(combos, callback=cb)
 
-        cols = list(offset_cols.keys())
+        cols = list(offset_dict.keys())
 
         before_sum = deltas.abs().sum().to_dict()
         before_mean = deltas.abs().mean().to_dict()
@@ -199,12 +263,12 @@ def align_datasets(settings, callback=None):
 
         logging.info(f'Applying offset')
 
-        align_files(filenames, -alignment, offset_cols)
+        align_files(filenames, -alignment, offset_dict)
 
         if cb:
             cb = functools.partial(progress_wrapper, 1, 2)
 
-        deltas, weights, offset_cols = calculate_deltas(combos, calib=True, callback=cb)
+        deltas, weights, offset_dict = calculate_deltas(combos, calib=True, callback=cb)
 
         after_sum = deltas.abs().sum().to_dict()
         after_mean = deltas.abs().mean().to_dict()
@@ -222,18 +286,29 @@ def align_datasets(settings, callback=None):
         logging.info('Only 1 dataset present. Skipping alignment.')
 
 # Cell
-
-from sklearn.neighbors import KDTree
-from .utils import assemble_df
 from scipy import stats
+def get_probability(df: pd.DataFrame, ref: pd.DataFrame, sigma:pd.DataFrame, index:int)-> float:
+    """Probablity estimate of a transfered identification using the Mahalanobis distance.
 
-def get_probability(df, ref, sigma, index):
+    The function calculates the probability that a feature is a reference feature.
+    The reference features containing std deviations so that a probability can be estimated.
+
+    It is required that the data frames are matched, meaning that the first entry in df matches to the first entry in ref.
+
+    Args:
+        df (pd.DataFrame): Dataset containing transferered features
+        ref (pd.DataFrame): Dataset containing reference features
+        sigma (pd.DataFrame): Dataset containing the standard deviations of the reference features
+        index (int): Index to the datframes that should be compared
+
+    Returns:
+        float: Mahalanobis distance
+    """
 
     sigma = sigma.iloc[index].values
     sigma = sigma*np.eye(len(sigma))
 
     mu = ref.iloc[index].values
-
     x = df.iloc[index].values
 
     try:
@@ -245,7 +320,19 @@ def get_probability(df, ref, sigma, index):
 
     return _
 
-def match_datasets(settings, callback = None):
+# Cell
+from sklearn.neighbors import KDTree
+from .utils import assemble_df
+
+# This function is a wrapper function and has currently has no unit test
+# The function will be revised when implementing issue #255: https://github.com/MannLabs/alphapept/issues/255
+def match_datasets(settings:dict, callback:Callable = None):
+    """Match datasets: Wrapper function to match datasets based on a settings file.
+
+    Args:
+        settings (dict): Dictionary containg specifications of the run
+        callback (Callable): Callback function to indicate progress.
+    """
 
     if len(settings['experiment']['file_paths']) > 2:
         xx = alphapept.utils.assemble_df(settings, field='peptide_fdr')

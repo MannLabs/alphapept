@@ -54,9 +54,11 @@ nb_path: "nbs/00_settings.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="print_settings" class="doc_header"><code>print_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L8" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>print_settings</code>(<strong><code>settings</code></strong>)</p>
+<h4 id="print_settings" class="doc_header"><code>print_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L8" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>print_settings</code>(<strong><code>settings</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Print a yaml settings file</p>
+<p>Args:
+    settings (dict): A yaml dictionary</p>
 
 </div>
 
@@ -79,9 +81,11 @@ nb_path: "nbs/00_settings.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="load_settings" class="doc_header"><code>load_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L15" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_settings</code>(<strong><code>path</code></strong>)</p>
+<h4 id="load_settings" class="doc_header"><code>load_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L17" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_settings</code>(<strong><code>path</code></strong>:<code>str</code>)</p>
 </blockquote>
 <p>Load a yaml settings file</p>
+<p>Args:
+    path (str): Path to the settings file.</p>
 
 </div>
 
@@ -104,9 +108,11 @@ nb_path: "nbs/00_settings.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="load_settings_as_template" class="doc_header"><code>load_settings_as_template</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L24" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_settings_as_template</code>(<strong><code>path</code></strong>)</p>
+<h4 id="load_settings_as_template" class="doc_header"><code>load_settings_as_template</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L28" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_settings_as_template</code>(<strong><code>path</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Loads settings but removes run specific fields</p>
+<p>Loads settings but removes fields that contain summary information.</p>
+<p>Args:
+    path (str): Path to the settings file.</p>
 
 </div>
 
@@ -129,9 +135,12 @@ nb_path: "nbs/00_settings.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="save_settings" class="doc_header"><code>save_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L42" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_settings</code>(<strong><code>settings</code></strong>, <strong><code>path</code></strong>)</p>
+<h4 id="save_settings" class="doc_header"><code>save_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L48" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_settings</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>path</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Save a yaml settings file to path</p>
+<p>Save settings file to path</p>
+<p>Args:
+    settings (dict): A yaml dictionary
+    path (str): Path to the settings file.</p>
 
 </div>
 
@@ -146,21 +155,77 @@ nb_path: "nbs/00_settings.ipynb"
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">settings</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;field1&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span><span class="s1">&#39;summary&#39;</span><span class="p">:</span><span class="mi">123</span><span class="p">}</span>
+<span class="n">dummy_path</span> <span class="o">=</span> <span class="s1">&#39;to_delete.yaml&#39;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--- print_settings ---&#39;</span><span class="p">)</span>
+<span class="n">print_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">)</span>
+
+<span class="n">save_settings</span><span class="p">(</span><span class="n">settings</span><span class="p">,</span> <span class="n">dummy_path</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--- load_settings ---&#39;</span><span class="p">)</span>
+
+<span class="n">print_settings</span><span class="p">(</span><span class="n">load_settings</span><span class="p">(</span><span class="n">dummy_path</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;--- load_settings_as_template ---&#39;</span><span class="p">)</span>
+
+<span class="n">print_settings</span><span class="p">(</span><span class="n">load_settings_as_template</span><span class="p">(</span><span class="n">dummy_path</span><span class="p">))</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>--- print_settings ---
+field1: 0
+summary: 123
+
+--- load_settings ---
+field1: 0
+summary: 123
+
+--- load_settings_as_template ---
+field1: 0
+
+</pre>
+</div>
+</div>
+
+</div>
+</div>
 
 </div>
     {% endraw %}
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Settings-Template">Settings Template<a class="anchor-link" href="#Settings-Template"> </a></h2><p>The settings template defines individual settings. The idea is to provide a template so that a graphical user interface can be automatically generated. The list below represents what each item would be when using PyQt. This could be adapted for any kind of GUI library.</p>
+<h2 id="Settings-Template">Settings Template<a class="anchor-link" href="#Settings-Template"> </a></h2><p>The settings template defines individual settings. The idea is to provide a template so that a graphical user interface can be automatically generated. The list below represents what each item would be when using <code>streamlit</code>. This could be adapted for any kind of GUI library.</p>
 <p>Each entry has a type, default values, and a description.</p>
 <ul>
-<li>spinbox -&gt; QSpinBox with minimum and maximum values (int)</li>
-<li>doublespinbox -&gt; QDoubleSpinBox with minimum and maximum values (float)</li>
-<li>path -&gt; Clickable button to select a path to save / load files.</li>
-<li>combobox -&gt; QComboBox, dropdown menu with values to choose from</li>
-<li>checkbox -&gt; QCheckBox, checkbox that can be selected</li>
-<li>checkgroup -&gt; Creates a list of QCheckBox options that can be selected</li>
+<li>spinbox -&gt; <code>st.range</code>, range with minimum and maximum values (int)</li>
+<li>doublespinbox -&gt; <code>st.range</code>, range with minimum and maximum values (float)</li>
+<li>path -&gt; <code>st.button</code>, clickable button to select a path to save / load files.</li>
+<li>combobox -&gt; <code>st.selectbox</code>, dropdown menu with values to choose from</li>
+<li>checkbox -&gt; <code>st.checkbox</code>, checkbox that can be selected</li>
+<li>checkgroup -&gt; <code>st.multiselect</code>, creates a list of options that can be selected</li>
+<li>string -&gt; <code>st.text_input</code>, generic string input</li>
 <li>list -&gt; Creates a list that is displayed</li>
 <li>placeholder -&gt; This just prints the parameter and cannot be changed</li>
 </ul>
@@ -348,6 +413,11 @@ fractions:
   default: []
   description: List of fractions for the raw files.
   type: list
+matching_groups:
+  default: []
+  description: List of macthing groups for the raw files. This only allows match-between-runs
+    of files within the same groups.
+  type: list
 results_path:
   default: null
   description: Path where the results should be stored.
@@ -457,12 +527,6 @@ fasta_block:
   max: 10000
   min: 100
   type: spinbox
-n_modifications_max:
-  default: 8
-  description: Limit the number of modifications per peptide.
-  max: 4096
-  min: 1
-  type: spinbox
 fasta_size_max:
   default: 100
   description: Maximum size of FASTA (MB) when switching on-the-fly.
@@ -474,18 +538,6 @@ isoforms_max:
   description: Maximum number of isoforms per peptide.
   max: 4096
   min: 1
-  type: spinbox
-pep_length_max:
-  default: 27
-  description: Maximum peptide length.
-  max: 99
-  min: 6
-  type: spinbox
-pep_length_min:
-  default: 6
-  description: Minimum peptide length.
-  max: 99
-  min: 6
   type: spinbox
 mods_fixed:
   default:
@@ -592,6 +644,24 @@ n_missed_cleavages:
   max: 99
   min: 0
   type: spinbox
+n_modifications_max:
+  default: 8
+  description: Limit the number of modifications per peptide.
+  max: 4096
+  min: 1
+  type: spinbox
+pep_length_max:
+  default: 27
+  description: Maximum peptide length.
+  max: 99
+  min: 6
+  type: spinbox
+pep_length_min:
+  default: 6
+  description: Minimum peptide length.
+  max: 99
+  min: 6
+  type: spinbox
 protease:
   default: trypsin
   description: Protease for digestions.
@@ -686,14 +756,9 @@ spectra_block:
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>hill_nboot:
-  default: 150
-  max: 500
-  min: 1
-  type: spinbox
-hill_nboot_max:
-  default: 300
-  max: 500
+<pre>centroid_tol:
+  default: 8
+  max: 25
   min: 1
   type: spinbox
 hill_check_large:
@@ -701,67 +766,18 @@ hill_check_large:
   max: 100
   min: 1
   type: spinbox
-iso_mass_range:
-  default: 5
-  max: 10
-  min: 1
-  type: spinbox
-iso_charge_max:
-  default: 6
-  max: 6
-  min: 1
-  type: spinbox
-max_gap:
-  default: 2
-  max: 10
-  min: 1
-  type: spinbox
-iso_charge_min:
-  default: 1
-  max: 6
-  min: 1
-  type: spinbox
-iso_corr_min:
-  default: 0.6
-  max: 1
-  min: 0.1
-  type: doublespinbox
 hill_length_min:
   default: 3
   max: 10
   min: 1
   type: spinbox
-calib_mob_range:
-  default: 0.3
-  max: 1
-  min: 0.1
-  type: doublespinbox
-calib_n_neighbors:
-  default: 5
-  max: 10
+hill_nboot:
+  default: 150
+  max: 500
   min: 1
   type: spinbox
-calib_mz_range:
-  default: 20
-  max: 100
-  min: 1
-  type: spinbox
-centroid_tol:
-  default: 8
-  max: 25
-  min: 1
-  type: spinbox
-rt_range:
-  default: 0.5
-  max: 1
-  min: 0.1
-  type: doublespinbox
-search_unidentified:
-  default: false
-  description: Search MSMS w/o feature.
-  type: checkbox
-iso_n_seeds:
-  default: 100
+hill_nboot_max:
+  default: 300
   max: 500
   min: 1
   type: spinbox
@@ -775,6 +791,65 @@ hill_split_level:
   max: 10.0
   min: 0.1
   type: doublespinbox
+iso_charge_max:
+  default: 6
+  max: 6
+  min: 1
+  type: spinbox
+iso_charge_min:
+  default: 1
+  max: 6
+  min: 1
+  type: spinbox
+iso_corr_min:
+  default: 0.6
+  max: 1
+  min: 0.1
+  type: doublespinbox
+iso_mass_range:
+  default: 5
+  max: 10
+  min: 1
+  type: spinbox
+iso_n_seeds:
+  default: 100
+  max: 500
+  min: 1
+  type: spinbox
+iso_split_level:
+  default: 1.3
+  max: 10.0
+  min: 0.1
+  type: doublespinbox
+map_mob_range:
+  default: 0.3
+  max: 1
+  min: 0.1
+  type: doublespinbox
+map_mz_range:
+  default: 1.5
+  max: 2
+  min: 0.1
+  type: doublespinbox
+map_n_neighbors:
+  default: 5
+  max: 10
+  min: 1
+  type: spinbox
+map_rt_range:
+  default: 0.5
+  max: 1
+  min: 0.1
+  type: doublespinbox
+max_gap:
+  default: 2
+  max: 10
+  min: 1
+  type: spinbox
+search_unidentified:
+  default: false
+  description: Search MSMS w/o feature.
+  type: checkbox
 
 </pre>
 </div>
@@ -822,12 +897,6 @@ calibration_std:
   max: 5
   min: 1
   type: spinbox
-prec_tol:
-  default: 30
-  description: Precursor mass offset.
-  max: 99
-  min: 1
-  type: spinbox
 frag_tol:
   default: 30
   description: MSMS mass offset.
@@ -854,6 +923,12 @@ ppm:
   default: true
   description: Use ppm instead of Dalton.
   type: checkbox
+prec_tol:
+  default: 30
+  description: Precursor mass offset.
+  max: 99
+  min: 1
+  type: spinbox
 protein_fdr:
   default: 0.01
   description: FDR level for proteins.
@@ -953,30 +1028,30 @@ recalibration_min:
   max: 1.0
   min: 0.0
   type: doublespinbox
-calib_n_neighbors:
-  default: 100
-  description: Number of neighbors that are used for offset interpolation.
-  max: 1000
-  min: 1
-  type: spinbox
-outlier_std:
-  default: 3
-  description: Number of std. deviations to filter outliers in psms.
-  max: 5
-  min: 1
-  type: spinbox
 calib_mz_range:
   default: 20
   description: Scaling factor for mz axis.
   max: 1000
   min: 1
   type: spinbox
-rt_range:
+calib_n_neighbors:
+  default: 100
+  description: Number of neighbors that are used for offset interpolation.
+  max: 1000
+  min: 1
+  type: spinbox
+calib_rt_range:
   default: 0.5
   description: Scaling factor for rt axis.
   max: 10
   min: 0.0
   type: doublespinbox
+outlier_std:
+  default: 3
+  description: Number of std. deviations to filter outliers in psms.
+  max: 5
+  min: 1
+  type: spinbox
 
 </pre>
 </div>

@@ -46,8 +46,20 @@ entries:
       title: Interface
       url: interface.html
     - output: web,pdf
-      title: Speed
-      url: speed.html
+      title: Performance
+      url: performance.html
+    - output: web,pdf
+      title: Export
+      url: export.html
+    - output: web,pdf
+      title: Additional code
+      url: additional_code.html
+    - output: web,pdf
+      title: How to contribute
+      url: contributing.html
+    - output: web,pdf
+      title: AlphaPept workflow and files
+      url: file_formats.html
     output: web
     title: alphapept
   output: web

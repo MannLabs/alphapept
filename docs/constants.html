@@ -70,7 +70,7 @@ nb_path: "nbs/10_constants.ipynb"
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>{&#39;P&#39;, &#39;I&#39;, &#39;A&#39;, &#39;L&#39;, &#39;M&#39;, &#39;N&#39;, &#39;F&#39;, &#39;D&#39;, &#39;G&#39;, &#39;S&#39;, &#39;Y&#39;, &#39;C&#39;, &#39;R&#39;, &#39;V&#39;, &#39;Q&#39;, &#39;U&#39;, &#39;T&#39;, &#39;H&#39;, &#39;K&#39;, &#39;W&#39;, &#39;E&#39;}
+<pre>{&#39;A&#39;, &#39;P&#39;, &#39;N&#39;, &#39;R&#39;, &#39;C&#39;, &#39;L&#39;, &#39;K&#39;, &#39;Y&#39;, &#39;H&#39;, &#39;S&#39;, &#39;D&#39;, &#39;I&#39;, &#39;V&#39;, &#39;F&#39;, &#39;M&#39;, &#39;E&#39;, &#39;T&#39;, &#39;W&#39;, &#39;G&#39;, &#39;U&#39;, &#39;Q&#39;}
 </pre>
 </div>
 </div>
@@ -83,7 +83,7 @@ nb_path: "nbs/10_constants.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Mass-dict">Mass dict<a class="anchor-link" href="#Mass-dict"> </a></h2><p>A numba compatible mass dict dictionary</p>
+<h2 id="Mass-dict">Mass dict<a class="anchor-link" href="#Mass-dict"> </a></h2><p>A numba compatible mass dict dictionary.</p>
 
 </div>
 </div>
@@ -91,6 +91,253 @@ nb_path: "nbs/10_constants.ipynb"
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">mass_dict</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_</span><span class="o">+</span><span class="s1">&#39;:&#39;</span><span class="si">:</span><span class="s2"> &lt;12</span><span class="si">}{</span><span class="n">mass_dict</span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>A:          71.0371138
+C:          103.0091845
+D:          115.0269431
+E:          129.0425931
+F:          147.0684139
+G:          57.02146373
+H:          137.0589119
+I:          113.084064
+K:          128.094963
+L:          113.084064
+M:          131.0404846
+N:          114.0429275
+P:          97.05276386
+Q:          128.0585775
+R:          156.101111
+S:          87.03202843
+T:          101.0476785
+U:          150.9536333957
+V:          99.06841392
+W:          186.079313
+Y:          163.0633286
+cC:         160.03064823
+oxM:        147.03539923000002
+aA:         113.04767849000001
+aC:         145.01974919
+aD:         157.03750779
+aE:         171.05315779
+aF:         189.07897859
+aG:         99.03202842
+aH:         179.06947659
+aI:         155.09462869
+aK:         170.10552769
+aL:         155.09462869
+aM:         173.05104929
+aN:         156.05349219000001
+aP:         139.06332855
+aQ:         170.06914219
+aR:         198.11167569
+aS:         129.04259312
+aT:         143.05824319
+aU:         192.9641980857
+aV:         141.07897861
+aW:         228.08987769
+aY:         205.07389329
+amA:        70.053098207
+amC:        102.02516890700001
+amD:        114.042927507
+amE:        128.058577507
+amF:        146.084398307
+amG:        56.037448137
+amH:        136.074896307
+amI:        112.100048407
+amK:        127.11094740700001
+amL:        112.100048407
+amM:        130.056469007
+amN:        113.05891190700001
+amP:        96.068748267
+amQ:        127.07456190700002
+amR:        155.117095407
+amS:        86.048012837
+amT:        100.06366290700001
+amU:        149.9696178027
+amV:        98.084398327
+amW:        185.095297407
+amY:        162.079313007
+pS:         166.99835935
+pT:         181.01400942
+pY:         243.02965952
+deamN:      115.026943093
+deamNQ:     129.04259309300002
+cmC:        85.9826354
+pgE:        111.03202841000001
+pgQ:        111.03202840000002
+tmt0A:      295.1895917
+tmt0C:      327.1616624
+tmt0D:      339.179421
+tmt0E:      353.195071
+tmt0F:      371.2208918
+tmt0G:      281.17394163
+tmt0H:      361.2113898
+tmt0I:      337.2365419
+tmt0K:      352.2474409
+tmt0L:      337.2365419
+tmt0M:      355.1929625
+tmt0N:      338.1954054
+tmt0P:      321.20524176000004
+tmt0Q:      352.2110554
+tmt0R:      380.2535889
+tmt0S:      311.18450633
+tmt0T:      325.2001564
+tmt0U:      375.1061112957
+tmt0V:      323.22089182
+tmt0W:      410.2317909
+tmt0Y:      387.2158065
+tmt2A:      296.1929466
+tmt2C:      328.16501730000004
+tmt2D:      340.1827759
+tmt2E:      354.1984259
+tmt2F:      372.2242467
+tmt2G:      282.17729653000004
+tmt2H:      362.2147447
+tmt2I:      338.2398968
+tmt2K:      353.2507958
+tmt2L:      338.2398968
+tmt2M:      356.1963174
+tmt2N:      339.1987603
+tmt2P:      322.20859666
+tmt2Q:      353.21441030000005
+tmt2R:      381.25694380000004
+tmt2S:      312.18786123
+tmt2T:      326.2035113
+tmt2U:      376.1094661957
+tmt2V:      324.22424672
+tmt2W:      411.23514580000005
+tmt2Y:      388.2191614
+tmt6A:      300.200046
+tmt6C:      332.1721167
+tmt6D:      344.1898753
+tmt6E:      358.2055253
+tmt6F:      376.2313461
+tmt6G:      286.18439593
+tmt6H:      366.2218441
+tmt6I:      342.2469962
+tmt6K:      357.2578952
+tmt6L:      342.2469962
+tmt6M:      360.2034168
+tmt6N:      343.2058597
+tmt6P:      326.21569606
+tmt6Q:      357.2215097
+tmt6R:      385.2640432
+tmt6S:      316.19496062999997
+tmt6T:      330.2106107
+tmt6U:      380.11656559569997
+tmt6V:      328.23134612
+tmt6W:      415.2422452
+tmt6Y:      392.2262608
+itraq4KA:   215.13952419999998
+itraq4KC:   247.1115949
+itraq4KD:   259.1293535
+itraq4KE:   273.14500350000003
+itraq4KF:   291.1708243
+itraq4KG:   201.12387413
+itraq4KH:   281.1613223
+itraq4KI:   257.1864744
+itraq4KK:   272.1973734
+itraq4KL:   257.1864744
+itraq4KM:   275.142895
+itraq4KN:   258.1453379
+itraq4KP:   241.15517426
+itraq4KQ:   272.1609879
+itraq4KR:   300.2035214
+itraq4KS:   231.13443883
+itraq4KT:   245.15008890000001
+itraq4KU:   295.0560437957
+itraq4KV:   243.17082432
+itraq4KW:   330.1817234
+itraq4KY:   307.16573900000003
+itraq4K:    272.1973734
+itraq4Y:    307.16573900000003
+itraq8KA:   375.2393133
+itraq8KC:   407.211384
+itraq8KD:   419.2291426
+itraq8KE:   433.2447926
+itraq8KF:   451.2706134
+itraq8KG:   361.22366323
+itraq8KH:   441.2611114
+itraq8KI:   417.2862635
+itraq8KK:   432.2971625
+itraq8KL:   417.2862635
+itraq8KM:   435.2426841
+itraq8KN:   418.245127
+itraq8KP:   401.25496336000003
+itraq8KQ:   432.260777
+itraq8KR:   460.3033105
+itraq8KS:   391.23422793
+itraq8KT:   405.249878
+itraq8KU:   455.1558328957
+itraq8KV:   403.27061342
+itraq8KW:   490.2815125
+itraq8KY:   467.2655281
+itraq8K:    432.2971625
+itraq8Y:    467.2655281
+eA:         337.1209813
+eC:         369.093052
+eD:         381.1108106
+eE:         395.1264606
+eF:         413.1522814
+eG:         323.10533123
+eH:         403.1427794
+eI:         379.1679315
+eK:         394.1788305
+eL:         379.1679315
+eM:         397.1243521
+eN:         380.126795
+eP:         363.13663136
+eQ:         394.142445
+eR:         422.1849785
+eS:         353.11589592999997
+eT:         367.131546
+eU:         417.03750089569996
+eV:         365.15228142
+eW:         452.1631805
+eY:         429.1471961
+arg10R:     166.10938057776002
+arg6R:      162.121241
+lys8K:      136.10916278888
+Electron:   0.00054857990907
+Proton:     1.00727646687
+Hydrogen:   1.00782503223
+C13:        13.003354835
+Oxygen:     15.994914619
+OH:         17.002739651229998
+H2O:        18.01056468346
+NH3:        17.03052
+delta_M:    1.00286864
+delta_S:    0.0109135
+</pre>
+</div>
+</div>
+
+</div>
+</div>
 
 </div>
     {% endraw %}
@@ -142,16 +389,20 @@ nb_path: "nbs/10_constants.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_mass_dict" class="doc_header"><code>get_mass_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/constants.py#L236" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_mass_dict</code>(<strong><code>modfile</code></strong>=<em><code>'../modifications.tsv'</code></em>, <strong><code>aasfile</code></strong>=<em><code>'../amino_acids.tsv'</code></em>)</p>
+<h4 id="get_mass_dict" class="doc_header"><code>get_mass_dict</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/constants.py#L236" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_mass_dict</code>(<strong><code>modfile</code></strong>:<code>str</code>=<em><code>'../modifications.tsv'</code></em>, <strong><code>aasfile</code></strong>:<code>str</code>=<em><code>'../amino_acids.tsv'</code></em>, <strong><code>verbose</code></strong>:<code>bool</code>=<em><code>True</code></em>)</p>
 </blockquote>
-<p>Creates a mass_dict based on tsv files</p>
+<p>Function to create a mass dict based on tsv files.
+This is used to create the hardcoded dict in the constants notebook.
+The dict needs to be hardcoded because of importing restrictions when using numba.
+More specifically, a global needs to be typed at runtime.</p>
 <p>Args:
-    modfile: Filename of modifications file
-    aasfile: Filename of AAs file</p>
+    modfile (str): Filename of modifications file.
+    aasfile (str): Filename of AAs file.
+    verbose (bool, optional): Flag to print dict.</p>
 <p>Returns:
-    Returns a numba compatible dictionary with masses</p>
+    Returns a numba compatible dictionary with masses.</p>
 <p>Raises:
-    FileNotFoundError: If files are not found</p>
+    FileNotFoundError: If files are not found.</p>
 
 </div>
 
@@ -166,44 +417,6 @@ nb_path: "nbs/10_constants.ipynb"
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="c1">## Read modifications from modifications file</span>
-<span class="n">mod_db</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../modifications.tsv&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
-
-<span class="n">mods</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">mods_terminal</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">mods_protein</span> <span class="o">=</span> <span class="p">{}</span>
-
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mod_db</span><span class="p">)):</span>
-    <span class="n">mod</span> <span class="o">=</span> <span class="n">mod_db</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="c1">#print(mod)</span>
-    <span class="k">if</span> <span class="s1">&#39;terminus&#39;</span> <span class="ow">in</span> <span class="n">mod</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="s1">&#39;peptide&#39;</span> <span class="ow">in</span> <span class="n">mod</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]:</span>
-            <span class="n">mods_terminal</span><span class="p">[</span><span class="n">mod</span><span class="p">[</span><span class="s1">&#39;Identifier&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mod</span><span class="p">[</span><span class="s1">&#39;Description&#39;</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="s1">&#39;protein&#39;</span> <span class="ow">in</span> <span class="n">mod</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">]:</span>
-            <span class="n">mods_protein</span><span class="p">[</span><span class="n">mod</span><span class="p">[</span><span class="s1">&#39;Identifier&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mod</span><span class="p">[</span><span class="s1">&#39;Description&#39;</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Not understood&#39;</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">mod</span><span class="p">[</span><span class="s1">&#39;Type&#39;</span><span class="p">])</span>
-            <span class="k">raise</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">mods</span><span class="p">[</span><span class="n">mod</span><span class="p">[</span><span class="s1">&#39;Identifier&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">mod</span><span class="p">[</span><span class="s1">&#39;Description&#39;</span><span class="p">]</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
 
 </div>
     {% endraw %}
@@ -228,6 +441,11 @@ nb_path: "nbs/10_constants.ipynb"
 <div class="output_markdown rendered_html output_subarea ">
 <h2 id="Isotope" class="doc_header"><code>class</code> <code>Isotope</code><a href="" class="source_link" style="float:right">[source]</a></h2><blockquote><p><code>Isotope</code>(<strong>*<code>args</code></strong>, <strong>**<code>kwargs</code></strong>) :: <a href="/constants.html#Isotope"><code>Isotope</code></a></p>
 </blockquote>
+<p>Jit-compatible class to store isotopes</p>
+<p>Attributes:
+    m0 (int): Mass of pattern
+    dm0 (int): dm of pattern (number of isotopes)
+    int0 (np.float32[:]): Intensities of pattern</p>
 
 </div>
 
@@ -242,6 +460,45 @@ nb_path: "nbs/10_constants.ipynb"
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">isotopes</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Element </span><span class="si">{</span><span class="n">_</span><span class="si">}</span><span class="s1">: base mass </span><span class="si">{</span><span class="n">isotopes</span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="o">.</span><span class="n">m0</span><span class="si">:</span><span class="s1">&lt;20</span><span class="si">}</span><span class="s1"> intensities </span><span class="si">{</span><span class="n">isotopes</span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="o">.</span><span class="n">intensities</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+    
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>Element C: base mass 12.0                 intensities [0.9893 0.0107 0.    ]
+Element H: base mass 1.0079400539398193   intensities [9.99885e-01 1.15000e-04 0.00000e+00]
+Element O: base mass 15.994915008544922   intensities [9.9757e-01 3.8000e-04 2.0500e-03]
+Element N: base mass 14.003073692321777   intensities [0.99636 0.00364]
+Element S: base mass 31.972070693969727   intensities [9.499e-01 7.500e-03 4.250e-02 1.000e-04]
+Element I: base mass 126.90447235107422   intensities [1.]
+Element K: base mass 38.963706970214844   intensities [9.32581e-01 1.17000e-04 6.73020e-02]
+</pre>
+</div>
+</div>
+
+</div>
+</div>
 
 </div>
     {% endraw %}
@@ -259,9 +516,45 @@ nb_path: "nbs/10_constants.ipynb"
 </div>
     {% endraw %}
 
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">averagine_aa</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">averagine_aa</span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>C 4.9384
+H 7.7583
+N 1.3577
+O 1.4773
+S 0.0417
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Protease-dict">Protease dict<a class="anchor-link" href="#Protease-dict"> </a></h2><p>A numba compatible dictionary that stores different regular expressions neeeded for digestion. The dictionary was largely taken from the <a href="https://pyteomics.readthedocs.io/en/latest/_modules/pyteomics/parser.html">Pyteomics</a> website which in turn derived the rules are from <a href="https://web.expasy.org/peptide_cutter/peptidecutter_enzymes.html">expasy</a>.</p>
+<h2 id="Protease-dict">Protease dict<a class="anchor-link" href="#Protease-dict"> </a></h2><p>A numba compatible dictionary that stores different regular expressions needed for digestion. The dictionary was largely taken from the <a href="https://pyteomics.readthedocs.io/en/latest/_modules/pyteomics/parser.html">Pyteomics</a> website which in turn derived the rules are from <a href="https://web.expasy.org/peptide_cutter/peptidecutter_enzymes.html">expasy</a>.</p>
 
 </div>
 </div>
@@ -280,7 +573,8 @@ nb_path: "nbs/10_constants.ipynb"
 
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">protease_dict</span><span class="p">[</span><span class="s2">&quot;trypsin&quot;</span><span class="p">]</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">protease_dict</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_</span><span class="si">:</span><span class="s2">&lt;35</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">protease_dict</span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -292,12 +586,46 @@ nb_path: "nbs/10_constants.ipynb"
 
 <div class="output_area">
 
-
-
-<div class="output_text output_subarea output_execute_result">
-<pre>&#39;([KR](?=[^P]))&#39;</pre>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>arg-c                               R
+asp-n                               \w(?=D)
+bnps-skatole                        W
+caspase 1                           (?&lt;=[FWYL]\w[HAT])D(?=[^PEDQKR])
+caspase 2                           (?&lt;=DVA)D(?=[^PEDQKR])
+caspase 3                           (?&lt;=DMQ)D(?=[^PEDQKR])
+caspase 4                           (?&lt;=LEV)D(?=[^PEDQKR])
+caspase 5                           (?&lt;=[LW]EH)D
+caspase 6                           (?&lt;=VE[HI])D(?=[^PEDQKR])
+caspase 7                           (?&lt;=DEV)D(?=[^PEDQKR])
+caspase 8                           (?&lt;=[IL]ET)D(?=[^PEDQKR])
+caspase 9                           (?&lt;=LEH)D
+caspase 10                          (?&lt;=IEA)D
+chymotrypsin high specificity       ([FY](?=[^P]))|(W(?=[^MP]))
+chymotrypsin low specificity        ([FLY](?=[^P]))|(W(?=[^MP]))|(M(?=[^PY]))|(H(?=[^DMPW]))
+clostripain                         R
+cnbr                                M
+enterokinase                        (?&lt;=[DE]{3})K
+factor xa                           (?&lt;=[AFGILTVM][DE]G)R
+formic acid                         D
+glutamyl endopeptidase              E
+granzyme b                          (?&lt;=IEP)D
+hydroxylamine                       N(?=G)
+iodosobenzoic acid                  W
+lysc                                K
+ntcb                                \w(?=C)
+pepsin ph1.3                        ((?&lt;=[^HKR][^P])[^R](?=[FL][^P]))|((?&lt;=[^HKR][^P])[FL](?=\w[^P]))
+pepsin ph2.0                        ((?&lt;=[^HKR][^P])[^R](?=[FLWY][^P]))|((?&lt;=[^HKR][^P])[FLWY](?=\w[^P]))
+proline endopeptidase               (?&lt;=[HKR])P(?=[^P])
+proteinase k                        [AEFILTVWY]
+staphylococcal peptidase i          (?&lt;=[^E])E
+thermolysin                         [^DE](?=[AFILMV])
+thrombin                            ((?&lt;=G)R(?=G))|((?&lt;=[AFGILTVM][AFGILTVWA]P)R(?=[^DE][^DE]))
+trypsin_full                        ([KR](?=[^P]))|((?&lt;=W)K(?=P))|((?&lt;=M)R(?=P))
+trypsin_exception                   ((?&lt;=[CD])K(?=D))|((?&lt;=C)K(?=[HY]))|((?&lt;=C)R(?=K))|((?&lt;=R)R(?=[HR]))
+non-specific                        ()
+trypsin                             ([KR](?=[^P]))
+</pre>
 </div>
-
 </div>
 
 </div>

@@ -227,7 +227,7 @@ class TestRun():
             report['mixed_species_quantification'] = self.mixed_species_quantification(self.settings, species, groups)
 
 
-        report['peptide_fdr_arabidopsis'] = self.mixed_species_fdr(self.settings, ('ARATH','HUMAN')) #ECO for now
+        report['protein_fdr_arabidopsis'] = self.mixed_species_fdr(self.settings, ('ARATH','HUMAN')) #ECO for now
 
         self.report = report
         if password:
@@ -261,8 +261,9 @@ class TestRun():
         """
         Estimate FDR by searching against differenft FASTAs
         """
-        df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
-        fdr = len([_ for _ in df['protein_group'] if (species[0] in _) & (species[1] not in _)])/len(df)
+        df = pd.read_hdf(settings['experiment']['results_path'], 'protein_table')
+        sub = df.loc[[_ for _ in df.index if 'REV' not in _]]
+        fdr = len(sub.loc[[_ for _ in sub.index if species[0] in _ and species[1] not in _]]) / len(df)
 
         return fdr
 
@@ -340,6 +341,7 @@ def main(runtype = None, password = None, new_files = True):
         MONGODB_URL = 'ci.yue0n.mongodb.net/'
         config_test_paths(BASE_DIR, TEST_DIR, ARCHIVE_DIR, MONGODB_USER, MONGODB_URL)
 
+    AVAILABLE = ['bruker_irt', 'bruker_hela', 'thermo_irt', 'thermo_hela', 'thermo_hela_large_fasta', 'thermo_hela_modifications', 'PXD006109', 'PXD010012']
 
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']
@@ -413,7 +415,7 @@ def main(runtype = None, password = None, new_files = True):
 
 
     else:
-        raise NotImplementedError(runtype)
+        raise NotImplementedError(f"Runtime {runtype} not found. Available are {AVAILABLE}")
 
 
 if __name__ == "__main__":

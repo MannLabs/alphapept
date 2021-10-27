@@ -31,34 +31,28 @@ nb_path: "nbs/07_recalibration.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This notebook contains everything to perform a recalibration.</p>
-<p>Current ToDo here:</p>
-<ul>
-<li>Write introduction / comment more on functions</li>
-<li>Describe approach</li>
-<li>Cite relevant papers</li>
-</ul>
+<p>This notebook contains evertyhing related to recalibration of data.</p>
 
 </div>
 </div>
 </div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Recalibration-after-search">Recalibration after search<a class="anchor-link" href="#Recalibration-after-search"> </a></h2><h3 id="Precursor-mass-calibration">Precursor mass calibration<a class="anchor-link" href="#Precursor-mass-calibration"> </a></h3><p>Recalibration refers to the computational step where masses are recalibrated after a first search. The identified peptides are used to calculate the deviations of experimental masses to their theoretical masses. After recalibration, a second search with decreased precursor tolerance is performed.</p>
+<p>The recalibration is largely motivated by the software lock mass paper:</p>
+<p><a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3231580/">Cox J, Michalski A, Mann M. Software lock mass by two-dimensional minimization of peptide mass errors. J Am Soc Mass Spectrom. 2011;22(8):1373-1380. doi:10.1007/s13361-011-0142-8</a></p>
+<p>Here, mass offsets are piecewise linearly approximated. The positions for approximation need to fulfill a number of criteria (e.g., a minimum number of samples and a minimum distance). The AlphaPept implementation is slightly modified by employing a more general <code>KNeighborsRegressor</code>-approach. In brief, the calibration is calculated for each point individually by estimating the deviation from its identified neighbors in n-dimensional space (e.g., retention time, mass, mobility).</p>
+<p>More specifically, the algorithm consists of the following steps:</p>
+<ol>
+<li>Outlier removal: We remove outliers from the identified peptides by only accepting identifications with a mass offset that is within n (default 3) standard deviations to the mean.</li>
+<li>For each point, we perform a neighbors lookup of the next n (default 100) neighbors. For the neighbor's lookup we need to scale the axis, which is done with a transform function either absolute or relative.</li>
+<li>Next, we perform a regression based on the neighbors to determine the mass offset. The contribution of each neighbor is weighted by their distance.</li>
+</ol>
+<h3 id="Fragment-mass-calibration">Fragment mass calibration<a class="anchor-link" href="#Fragment-mass-calibration"> </a></h3><p>The fragment mass calibration is based on the identified ions (i.e., b-hits and y-hits). For each hit, we calculate the offset to its theoretical mass. The correction is then applied by taking the median offset in ppm and applying it globally.</p>
 
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-</pre></div>
-
-    </div>
 </div>
 </div>
-
 </div>
-    {% endraw %}
-
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -70,33 +64,18 @@ nb_path: "nbs/07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="transform" class="doc_header"><code>transform</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L15" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>transform</code>(<strong><code>x</code></strong>, <strong><code>_</code></strong>, <strong><code>scaling_dict</code></strong>)</p>
+<h4 id="remove_outliers" class="doc_header"><code>remove_outliers</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L11" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>remove_outliers</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>outlier_std</code></strong>:<code>float</code>)</p>
 </blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_calibration" class="doc_header"><code>get_calibration</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L30" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_calibration</code>(<strong><code>df</code></strong>, <strong><code>features</code></strong>, <strong><code>outlier_std</code></strong>=<em><code>3</code></em>, <strong><code>calib_n_neighbors</code></strong>=<em><code>100</code></em>, <strong><code>calib_mz_range</code></strong>=<em><code>20</code></em>, <strong><code>rt_range</code></strong>=<em><code>0.5</code></em>, <strong><code>calib_mob_range</code></strong>=<em><code>0.3</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
-</blockquote>
-<p>Calibration</p>
+<p>Helper function to remove outliers from a dataframe.
+Outliers are removed based on the precursor offset mass (prec_offset).
+All values within x standard deviations to the median are kept.</p>
+<p>Args:
+    df (pd.DataFrame): Input dataframe that contains a prec_offset_ppm-column.
+    outlier_std (float): Range of standard deviations to filter outliers</p>
+<p>Raises:
+    ValueError: An error if the column is not present in the dataframe.</p>
+<p>Returns:
+    pd.DataFrame: A dataframe w/o outliers.</p>
 
 </div>
 
@@ -112,6 +91,13 @@ nb_path: "nbs/07_recalibration.ipynb"
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -119,8 +105,152 @@ nb_path: "nbs/07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calibrate_hdf" class="doc_header"><code>calibrate_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L80" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_hdf</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="transform" class="doc_header"><code>transform</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L42" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>transform</code>(<strong><code>x</code></strong>:<code>ndarray</code>, <strong><code>column</code></strong>:<code>str</code>, <strong><code>scaling_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
+<p>Helper function to transform an input array for neighbors lookup used for calibration</p>
+<p>Note: The scaling_dict stores information about how scaling is applied and is defined in get_calibration</p>
+<p>Relative transformation: Compare distances relatively, for mz that is ppm, for mobility %.
+Absolute transformation: Compare distance absolute, for RT it is the timedelta.</p>
+<p>An example definition is below:</p>
+<p>scaling_dict = {}
+scaling_dict['mz'] = ('relative', calib_mz_range/1e6)
+scaling_dict['rt'] = ('absolute', calib_rt_range)
+scaling_dict['mobility'] = ('relative', calib_mob_range)</p>
+<p>Args:
+    x (np.ndarray): Input array.
+    column (str): String to lookup what scaling should be applied.
+    scaling_dict (dict): Lookup dict to retrieve the scaling operation and factor for the column.</p>
+<p>Raises:
+    KeyError: An error if the column is not present in the dict.
+    NotImplementedError: An error if the column is not present in the dict.</p>
+<p>Returns:
+    np.ndarray: A scaled array.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="kneighbors_calibration" class="doc_header"><code>kneighbors_calibration</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L89" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>kneighbors_calibration</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>features</code></strong>:<code>DataFrame</code>, <strong><code>cols</code></strong>:<code>list</code>, <strong><code>target</code></strong>:<code>str</code>, <strong><code>scaling_dict</code></strong>:<code>dict</code>, <strong><code>calib_n_neighbors</code></strong>:<code>int</code>)</p>
+</blockquote>
+<p>Calibration using a KNeighborsRegressor.
+Input arrays from are transformed to be used with a nearest-neighbor approach.
+Based on neighboring points a calibration is calculated for each input point.</p>
+<p>Args:
+    df (pd.DataFrame): Input dataframe that contains identified peptides (w/o outliers).
+    features (pd.DataFrame): Features dataframe for which the masses are calibrated.
+    cols (list): List of input columns for the calibration.
+    target (str): Target column on which offset is calculated.
+    scaling_dict (dict): A dictionary that contains how scaling operations are applied.
+    calib_n_neighbors (int): Number of neighbors for calibration.</p>
+<p>Returns:
+    np.ndarray: A numpy array with calibrated masses.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_calibration" class="doc_header"><code>get_calibration</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L127" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_calibration</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>features</code></strong>:<code>DataFrame</code>, <strong><code>outlier_std</code></strong>:<code>float</code>=<em><code>3</code></em>, <strong><code>calib_n_neighbors</code></strong>:<code>int</code>=<em><code>100</code></em>, <strong><code>calib_mz_range</code></strong>:<code>int</code>=<em><code>20</code></em>, <strong><code>calib_rt_range</code></strong>:<code>float</code>=<em><code>0.5</code></em>, <strong><code>calib_mob_range</code></strong>:<code>float</code>=<em><code>0.3</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+</blockquote>
+<p>Wrapper function to get calibrated values for the precursor mass.</p>
+<p>Args:
+    df (pd.DataFrame): Input dataframe that contains identified peptides.
+    features (pd.DataFrame): Features dataframe for which the masses are calibrated.
+    outlier_std (float, optional): Range in standard deviations for outlier removal. Defaults to 3.
+    calib_n_neighbors (int, optional): Number of neighbors used for regression. Defaults to 100.
+    calib_mz_range (int, optional): Scaling factor for mz range. Defaults to 20.
+    calib_rt_range (float, optional): Scaling factor for rt_range. Defaults to 0.5.
+    calib_mob_range (float, optional): Scaling factor for mobility range. Defaults to 0.3.
+    **kwargs: Arbitrary keyword arguments so that settings can be passes as whole.</p>
+<p>Returns:
+    corrected_mass (np.ndarray): The calibrated mass
+    y_hat_std (float): The standard deviation of the precursor offset after calibration</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="calibrate_hdf" class="doc_header"><code>calibrate_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L188" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_hdf</code>(<strong><code>to_process</code></strong>:<code>tuple</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>True</code></em>)</p>
+</blockquote>
+<p>Wrapper function to get calibrate a hdf file when using the parallel executor.
+The function loads the respective dataframes from the hdf, calls the calibration function and applies the offset.</p>
+<p>Args:
+    to_process (tuple): Tuple that contains the file index and the settings dictionary.
+    callback ([type], optional): Placeholder for callback (unused).
+    parallel (bool, optional): Placeholder for parallel usage (unused).</p>
+<p>Returns:
+    Union[str,bool]: Either True as boolean when calibration is successfull or the Error message as string.</p>
 
 </div>
 
@@ -141,7 +271,7 @@ nb_path: "nbs/07_recalibration.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>Calbration with regards to database</p>
+<h4 id="Database-calibration">Database calibration<a class="anchor-link" href="#Database-calibration"> </a></h4><p>Another way to calibrate the fragment and precursor masses is by directly comparing them to a previously generated theoretical mass database. Here, peaks in the distribution of databases are used to align the experimental masses.</p>
 
 </div>
 </div>
@@ -157,39 +287,19 @@ nb_path: "nbs/07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_db_targets" class="doc_header"><code>get_db_targets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L186" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_db_targets</code>(<strong><code>db_file_name</code></strong>, <strong><code>max_ppm</code></strong>=<em><code>100</code></em>, <strong><code>min_distance</code></strong>=<em><code>0.5</code></em>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
+<h4 id="get_db_targets" class="doc_header"><code>get_db_targets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L298" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_db_targets</code>(<strong><code>db_file_name</code></strong>:<code>str</code>, <strong><code>max_ppm</code></strong>:<code>int</code>=<em><code>100</code></em>, <strong><code>min_distance</code></strong>:<code>float</code>=<em><code>0.5</code></em>, <strong><code>ms_level</code></strong>:<code>int</code>=<em><code>2</code></em>)</p>
 </blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="align_run_to_db" class="doc_header"><code>align_run_to_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L230" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_run_to_db</code>(<strong><code>ms_data_file_name</code></strong>, <strong><code>db_array</code></strong>, <strong><code>max_ppm_distance</code></strong>=<em><code>1000000</code></em>, <strong><code>rt_step_size</code></strong>=<em><code>0.1</code></em>, <strong><code>plot_ppms</code></strong>=<em><code>False</code></em>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
-</blockquote>
+<p>Function to extract database targets for database-calibration.
+Based on the FASTA database it finds masses that occur often. These will be used for calibration.</p>
+<p>Args:
+    db_file_name (str): Path to the database.
+    max_ppm (int, optional): Maximum distance in ppm between two peaks. Defaults to 100.
+    min_distance (float, optional): Minimum distance between two calibration peaks. Defaults to 0.5.
+    ms_level (int, optional): MS-Level used for calibration, either precursors (1) or fragmasses (2). Defaults to 2.</p>
+<p>Raises:
+    ValueError: When ms_level is not valid.</p>
+<p>Returns:
+    np.ndarray: Numpy array with calibration masses.</p>
 
 </div>
 
@@ -219,8 +329,59 @@ nb_path: "nbs/07_recalibration.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calibrate_fragments" class="doc_header"><code>calibrate_fragments</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L317" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_fragments</code>(<strong><code>db_file_name</code></strong>, <strong><code>ms_data_file_name</code></strong>, <strong><code>ms_level</code></strong>=<em><code>2</code></em>)</p>
+<h4 id="align_run_to_db" class="doc_header"><code>align_run_to_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L358" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_run_to_db</code>(<strong><code>ms_data_file_name</code></strong>:<code>str</code>, <strong><code>db_array</code></strong>:<code>ndarray</code>, <strong><code>max_ppm_distance</code></strong>:<code>int</code>=<em><code>1000000</code></em>, <strong><code>rt_step_size</code></strong>:<code>float</code>=<em><code>0.1</code></em>, <strong><code>plot_ppms</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>ms_level</code></strong>:<code>int</code>=<em><code>2</code></em>)</p>
 </blockquote>
+<p>Function align a run to it's theoretical FASTA database.</p>
+<p>Args:
+    ms_data_file_name (str): Path to the run.
+    db_array (np.ndarray): Numpy array containing the database targets.
+    max_ppm_distance (int, optional): Maximum distance in ppm. Defaults to 1000000.
+    rt_step_size (float, optional): Stepsize for rt calibration. Defaults to 0.1.
+    plot_ppms (bool, optional): Flag to indicate plotting. Defaults to False.
+    ms_level (int, optional): ms_level for calibration. Defaults to 2.</p>
+<p>Raises:
+    ValueError: When ms_level is not valid.</p>
+<p>Returns:
+    np.ndarray: Estimated errors</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="calibrate_fragments" class="doc_header"><code>calibrate_fragments</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/recalibration.py#L462" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calibrate_fragments</code>(<strong><code>db_file_name</code></strong>:<code>str</code>, <strong><code>ms_data_file_name</code></strong>:<code>str</code>, <strong><code>ms_level</code></strong>:<code>int</code>=<em><code>2</code></em>, <strong><code>write</code></strong>=<em><code>True</code></em>, <strong><code>plot_ppms</code></strong>=<em><code>False</code></em>)</p>
+</blockquote>
+<p>Wrapper function to calibrate fragments.
+Calibrated values are saved to corrected_fragment_mzs</p>
+<p>Args:
+    db_file_name (str): Path to database
+    ms_data_file_name (str): Path to ms_data file
+    ms_level (int, optional): MS-level for calibration. Defaults to 2.
+    write (bool, optional): Boolean flag for test purposes to avoid writing to testfile. Defaults to True.
+    plot_ppms (bool, optional):  Boolean flag to plot the calibration. Defaults to False.</p>
 
 </div>
 

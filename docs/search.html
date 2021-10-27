@@ -31,14 +31,14 @@ nb_path: "nbs/05_search.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This notebook contains all functions related to searching and getting peptide-spectrum-matches (PSMs). When searching, we compare how similar an experimental spectrum is to a theoretical spectrum. As described in the FASTA notebook, we can calculate theoretical fragment masses for a given peptide sequence and get theoretical spectra. Typically, we calculate a database with all possible spectra and compare our experimental data. It could be that the database is too large to be saved on disc; here we keep the database in memory.</p>
+<p>This notebook contains all functions related to searching and getting peptide-spectrum-matches (PSMs). When searching, we compare how similar an experimental spectrum is to a theoretical spectrum. As described in the FASTA notebook, we can calculate theoretical fragment masses for a given peptide sequence and get theoretical spectra. Typically, we calculate a database with all possible spectra, save it to disk, and then compare our experimental data. This allows re-using the database and saving time for this computational step. It could be that the database is too large to be saved on disc; in this case, generate the database on the fly, referring to only have a subset of all FASTA entries in memory and processing them.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Comparing-Fragments">Comparing Fragments<a class="anchor-link" href="#Comparing-Fragments"> </a></h2><p>To efficiently compare two fragments, we use a pointer based approach. We start with two sorted arrays, the <code>query_frag</code> that contains the m/z positions of the query spectrum and the <code>db_frag</code> which contains the database fragment that is compared against to. The two pointers compare each m/z position with each other and check wheter they are within a certain tolerance <code>mtol</code>. Depending on their delta, either of the pointers is advanced. The function returns an arrray named <code>hits</code> that is the same length as the database spectrum and encodes the hit positions.</p>
+<h2 id="Comparing-spectra">Comparing spectra<a class="anchor-link" href="#Comparing-spectra"> </a></h2><p>To efficiently compare two spectra, we use a pointer based approach. We start with two sorted arrays, the <code>query_frag</code> that contains the m/z positions of the experimental query spectrum and the <code>db_frag</code> which contains the database fragment that is compared against to. The two pointers compare each m/z position with each other and check wheter they are within a certain tolerance <code>frag_tol</code>. Depending on their delta, either of the pointers is advanced. The function returns an arrray named <code>hits</code> that is the same length as the database spectrum and encodes the hit positions.</p>
 
 </div>
 </div>
@@ -54,9 +54,16 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="compare_frags" class="doc_header"><code>compare_frags</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L14" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_frags</code>(<strong><code>query_frag</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>mtol</code></strong>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="compare_frags" class="doc_header"><code>compare_frags</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L13" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_frags</code>(<strong><code>query_frag</code></strong>:<code>ndarray</code>, <strong><code>db_frag</code></strong>:<code>ndarray</code>, <strong><code>frag_tol</code></strong>:<code>float</code>, <strong><code>ppm</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Compare query and database frags and find hits</p>
+<p>Args:
+    query_frag (np.ndarray): Array with query fragments.
+    db_frag (np.ndarray): Array with database fragments.
+    frag_tol (float): Fragment tolerance for search.
+    ppm (bool, optional): Use ppm as unit or Dalton. Defaults to False.</p>
+<p>Returns:
+    np.ndarray: Array with reported hits.</p>
 
 </div>
 
@@ -88,7 +95,7 @@ nb_path: "nbs/05_search.ipynb"
 
 <span class="c1"># Hits: Query 2 -&gt; Db 2 and Query 3 -&gt; Db 3</span>
 
-<span class="n">compare_frags</span><span class="p">(</span><span class="n">query_frag</span><span class="p">,</span> <span class="n">db_frag</span><span class="p">,</span> <span class="n">mtol</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">compare_frags</span><span class="p">(</span><span class="n">query_frag</span><span class="p">,</span> <span class="n">db_frag</span><span class="p">,</span> <span class="n">frag_tol</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 </pre></div>
 
     </div>
@@ -116,7 +123,7 @@ nb_path: "nbs/05_search.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p>This function allows us to easily compare a query spectrum against a theoretical database.</p>
+<p>This function allows us to easily compare a query spectrum against a spectrum from a theoretical database.</p>
 
 </div>
 </div>
@@ -150,7 +157,7 @@ nb_path: "nbs/05_search.ipynb"
 <span class="n">query_frag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">98.06</span><span class="p">,</span> <span class="mf">227.10</span><span class="p">,</span> <span class="mf">263.08</span><span class="p">,</span> <span class="mf">548.06</span><span class="p">,</span> <span class="mf">653.31</span><span class="p">])</span>
 <span class="n">query_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
 
-<span class="n">hits</span> <span class="o">=</span> <span class="n">compare_frags</span><span class="p">(</span><span class="n">query_frag</span><span class="p">,</span> <span class="n">db_frag</span><span class="p">,</span> <span class="n">mtol</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">hits</span> <span class="o">=</span> <span class="n">compare_frags</span><span class="p">(</span><span class="n">query_frag</span><span class="p">,</span> <span class="n">db_frag</span><span class="p">,</span> <span class="n">frag_tol</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">hitpos</span> <span class="o">=</span> <span class="n">hits</span><span class="p">[</span><span class="n">hits</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span>
 <span class="n">hit_x</span> <span class="o">=</span> <span class="n">query_frag</span><span class="p">[</span><span class="n">hitpos</span><span class="p">]</span>
@@ -183,19 +190,14 @@ nb_path: "nbs/05_search.ipynb"
 
 <div class="output_area">
 
-<div class="output_subarea output_text output_error">
-<pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">ModuleNotFoundError</span>                       Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-6-84fbbf7c6838&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
-<span class="ansi-green-intense-fg ansi-bold">      1</span> <span class="ansi-green-fg">import</span> matplotlib<span class="ansi-blue-fg">.</span>pyplot <span class="ansi-green-fg">as</span> plt
-<span class="ansi-green-fg">----&gt; 2</span><span class="ansi-red-fg"> </span><span class="ansi-green-fg">from</span> alphapept <span class="ansi-green-fg">import</span> constants
-<span class="ansi-green-intense-fg ansi-bold">      3</span> <span class="ansi-green-fg">from</span> alphapept<span class="ansi-blue-fg">.</span>fasta <span class="ansi-green-fg">import</span> get_frag_dict<span class="ansi-blue-fg">,</span> parse
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-green-fg">import</span> alphapept<span class="ansi-blue-fg">.</span>io
-<span class="ansi-green-intense-fg ansi-bold">      5</span> <span class="ansi-green-fg">import</span> numpy <span class="ansi-green-fg">as</span> np
 
-<span class="ansi-red-fg">ModuleNotFoundError</span>: No module named &#39;alphapept&#39;</pre>
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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f7Fsbxp6vxYuXMhZZ53F8ccfz7HHHlvyfW6u/2+++Wbuv/9+brzxxvpf8PagoT58+umnqa6uZsiQIdTU1PDTn/6Unj17Nunr3S2hob6vra3lV7/6FYcddhg9evTghRde4M477+S0007Lrc6G+vRLX/rSBv9ZnXzyyZx77rkccMABudUJDfdp7969+b//+7/6dR544AHuv/9+Lr/88jZ/yoaG+v7555+nR48e7LrrrqxYsYLLLruM/fbbr2SHtTf3b8LDDz/MyJEjqays5JlnnuG+++7jiiuuKMk+26q3336b7t27U1ZWxuLFi+nZsyddfv5z1lRX817nznSNYF337qzu2pWeDz4In/zkNu+rS5cuTJs2rf7xLbfc0qhrX5eVldGjRw/mzp1Lly5d6r9gU11dzaJFi6iqqqJTp04sWbKk5FMftt//jVvA4Ycfztlnn82iRYv41Kc+xemnnw7Asccey/z58wHqJw3ec889uR1+GD16NL/61a82+IvgN7/5DRdffHH94wMOOIDRo0czfvz4HCpsHQ29X5MnT2bu3LlMmjRpg3OxPfHEEyXbb0P9f80111BRUcExxxxT33baaaflPhl+axrqwyeffJIf/ehHLFy4kM6dO7PPPvtw9dVXb/EbR62lob7//e9/z8SJE1m7di39+vXjhBNO4IQTTsitxob6dOO/vsvLy+nZsyddu3bNqcr3bdynO+ywA3369Klf3r17dzp16rRBW1vVUN8/9thjXHPNNbz99tt069aNj3/84/zwhz8s6X4b+lzefvvt/OAHPyClxC677ML3vve9NnkOy1KqqqrijTfeYN26dXTv3p2+ffsSb75J9112YcW771JTU0NZWRnd+ven09y5udVZXV3NO++8s8Fnurq6mrVr1/L3v/8dKHzu68J1qUR7HiIdMWJEakzi7WgWLFjAscceywMPPNBuDo1tT+z//Nj3pWefNl9H68OZM2c2/gsf48cXDlf26vV+W93jZgwYdO/efYM5XnUjZBMnTmT8+PF0796dcePGceSRR3Luuefy6U9/un7dtWvXMnv2bIYMGdKs01k11A8R8WxKaURD67ft8WU1WW1tLbfddhuf+cxnOsQvfltj/+fHvi89+7T57MOtGDOmEMCWLoXa2vfvjxnTKrs/9dRTOeuss+on9dedZb9nz56tfm5RR8i2IzU1NYwa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
+"
+>
 </div>
+
 </div>
 
 </div>
@@ -206,9 +208,9 @@ nb_path: "nbs/05_search.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Comparing-Spectra">Comparing Spectra<a class="anchor-link" href="#Comparing-Spectra"> </a></h2><p>To compare multiple spectra against a database, we first need some helper functions. Per default, AlphaPept calculates in Dalton. To use ppm boundaries, we need the function <a href="/search.html#ppm_to_dalton"><code>ppm_to_dalton</code></a> for conversion.</p>
-<p>To minimize the search space, we typically only compare spectra with precursors in the same mass range as defined by <code>prec_tol</code>. To look up the limits for search, we define the function <a href="/search.html#get_idxs"><code>get_idxs</code></a>, which is a wrapper to the fast <code>searchsorted</code> method from NumPy.</p>
-<p>The actual search takes place in <a href="/search.html#compare_specs_single"><code>compare_specs_single</code></a> and <a href="/search.html#compare_specs_parallel"><code>compare_specs_parallel</code></a>, a single-core and multicore method for comparing spectra.</p>
+<h2 id="Comparing-Spectra">Comparing Spectra<a class="anchor-link" href="#Comparing-Spectra"> </a></h2><p>To compare multiple spectra against a database, we first need some helper functions. First, we need a conversion function to convert from Dalton masses to ppm, which is implemented in the <a href="/search.html#ppm_to_dalton"><code>ppm_to_dalton</code></a> function.</p>
+<p>To minimize the search space, we typically only compare spectra with precursors in the same mass range as defined by <code>prec_tol</code>. To look up the limits for search, we define the function <a href="/search.html#get_idxs"><code>get_idxs</code></a>, which is a wrapper to the fast <code>searchsorted</code> method from <code>NumPy</code>.</p>
+<p>The actual search takes place in <a href="/search.html#compare_spectrum_parallel"><code>compare_spectrum_parallel</code></a>, which utilizes the performance decorator from the performance notebook. Here we save the top matching spectra for each query spectrum. Note that for code compilation reasons, the code of the previously defined function <a href="/search.html#compare_frags"><code>compare_frags</code></a> is duplicated in here.</p>
 
 </div>
 </div>
@@ -224,155 +226,14 @@ nb_path: "nbs/05_search.ipynb"
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="ppm_to_dalton" class="doc_header"><code>ppm_to_dalton</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L47" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>ppm_to_dalton</code>(<strong><code>mass</code></strong>, <strong><code>prec_tol</code></strong>)</p>
+<h4 id="ppm_to_dalton" class="doc_header"><code>ppm_to_dalton</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L54" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>ppm_to_dalton</code>(<strong><code>mass</code></strong>:<code>float</code>, <strong><code>prec_tol</code></strong>:<code>int</code>)</p>
 </blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_idxs" class="doc_header"><code>get_idxs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L55" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_idxs</code>(<strong><code>db_masses</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>prec_tol</code></strong>, <strong><code>ppm</code></strong>)</p>
-</blockquote>
-<p>Function to get upper and lower limits to define search range.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="compare_specs_parallel" class="doc_header"><code>compare_specs_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L70" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_specs_parallel</code>(<strong><code>frag_hits</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>idxs_lower</code></strong>, <strong><code>idxs_higher</code></strong>, <strong><code>mtol</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>chunk</code></strong>=<em><code>(0, 1)</code></em>, <strong><code>offset</code></strong>=<em><code>False</code></em>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
-</blockquote>
-<p>Compare spectra, parallelized version</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="compare_specs_single" class="doc_header"><code>compare_specs_single</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L126" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_specs_single</code>(<strong><code>frag_hits</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>idxs_lower</code></strong>, <strong><code>idxs_higher</code></strong>, <strong><code>mtol</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>chunk</code></strong>=<em><code>(0, 1)</code></em>, <strong><code>offset</code></strong>=<em><code>False</code></em>, <strong><code>ppm</code></strong>=<em><code>False</code></em>)</p>
-</blockquote>
-<p>Compare spectra, single core version</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Wrapper">Wrapper<a class="anchor-link" href="#Wrapper"> </a></h2>
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="query_data_to_features" class="doc_header"><code>query_data_to_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L190" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>query_data_to_features</code>(<strong><code>query_data</code></strong>)</p>
-</blockquote>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_psms" class="doc_header"><code>get_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L207" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_psms</code>(<strong><code>query_data</code></strong>, <strong><code>db_data</code></strong>, <strong><code>features</code></strong>, <strong><code>parallel</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>prec_tol</code></strong>, <strong><code>ppm</code></strong>, <strong><code>min_frag_hits</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>m_offset_calibrated</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
-</blockquote>
-<p>Wrapper function to extract psms from dataset</p>
+<p>Function to convert ppm tolerances to Dalton.</p>
 <p>Args:
-    db_masses: database precursor masses
-    query_masses: query precursor masses
-    prec_tol: mass offset in dalton or ppm
-    ppm: flag for ppm or dalton
-    callback: Callback function, e.g. for progress bar
-Returns:
-    idxs_lower: lower search range
-    idxs_higher: upper search range
-Raises:</p>
+    mass (float): Base mass.
+    prec_tol (int): Tolerance.</p>
+<p>Returns:
+    float: Tolerance in Dalton.</p>
 
 </div>
 
@@ -391,20 +252,6 @@ Raises:</p>
 </div>
     {% endraw %}
 
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Extracting-columns-for-scoring">Extracting columns for scoring<a class="anchor-link" href="#Extracting-columns-for-scoring"> </a></h2><p>The basic fragment comparison only counts the number of hits when comparing a theoretical spectrum to an experimental one. Based on the number of hits, we can drastically reduce the number of candidates one wants to analyze for an in-depth comparison, which requires additional features. The following section describes several functions which extract parameters to compare spectrum matches better.</p>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Frag-Delta">Frag Delta<a class="anchor-link" href="#Frag-Delta"> </a></h3><p><a href="/search.html#frag_delta"><code>frag_delta</code></a> calculates the the substracts the experimental fragment masses from the theoretical fragment masses for each hit.</p>
-
-</div>
-</div>
-</div>
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
@@ -416,9 +263,62 @@ Raises:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="frag_delta" class="doc_header"><code>frag_delta</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L389" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>frag_delta</code>(<strong><code>query_frag</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>hits</code></strong>)</p>
+<h4 id="get_idxs" class="doc_header"><code>get_idxs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L69" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_idxs</code>(<strong><code>db_masses</code></strong>:<code>ndarray</code>, <strong><code>query_masses</code></strong>:<code>ndarray</code>, <strong><code>prec_tol</code></strong>:<code>float</code>, <strong><code>ppm</code></strong>:<code>bool</code>)</p>
 </blockquote>
-<p>Calculate the mass difference for a given array of hits in Dalton and ppm</p>
+<p>Function to get upper and lower limits to define search range for a given precursor tolerance.</p>
+<p>Args:
+    db_masses (np.ndarray): Array containing database masses.
+    query_masses (np.ndarray): Array containing query masses.
+    prec_tol (float): Precursor tolerance for search.
+    ppm: Flag to use ppm instead of Dalton.</p>
+<p>Returns:
+    (np.ndarray, np.ndarray): Indices to lower and upper bounds.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="compare_spectrum_parallel" class="doc_header"><code>compare_spectrum_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L96" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>compare_spectrum_parallel</code>(<strong><code>query_idx</code></strong>:<code>int</code>, <strong><code>query_masses</code></strong>:<code>ndarray</code>, <strong><code>idxs_lower</code></strong>:<code>ndarray</code>, <strong><code>idxs_higher</code></strong>:<code>ndarray</code>, <strong><code>query_indices</code></strong>:<code>ndarray</code>, <strong><code>query_frags</code></strong>:<code>ndarray</code>, <strong><code>query_ints</code></strong>:<code>ndarray</code>, <strong><code>db_indices</code></strong>:<code>ndarray</code>, <strong><code>db_frags</code></strong>:<code>ndarray</code>, <strong><code>best_hits</code></strong>:<code>ndarray</code>, <strong><code>score</code></strong>:<code>ndarray</code>, <strong><code>frag_tol</code></strong>:<code>float</code>, <strong><code>ppm</code></strong>:<code>bool</code>)</p>
+</blockquote>
+<p>Compares a spectrum and writes to the best_hits and score.</p>
+<p>Args:
+    query_idx (int): Integer to the query_spectrum that should be compared.
+    query_masses (np.ndarray): Array with query masses.
+    idxs_lower (np.ndarray): Array with indices for lower search boundary.
+    idxs_higher (np.ndarray): Array with indices for upper search boundary.
+    query_indices (np.ndarray): Array with indices to the query data.
+    query_frags (np.ndarray): Array with frag types of the query data.
+    query_ints (np.ndarray): Array with fragment intensities from the query.
+    db_indices (np.ndarray):  Array with indices to the database data.
+    db_frags (np.ndarray): Array with frag types of the db data.
+    best_hits (np.ndarray): Reporting array which stores indices to the best hits.
+    score (np.ndarray): Reporting array that stores the scores of the best hits.
+    frag_tol (float): Fragment tolerance for search.
+    ppm (bool): Flag to use ppm instead of Dalton.</p>
 
 </div>
 
@@ -439,7 +339,8 @@ Raises:</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Intensity-Fraction">Intensity Fraction<a class="anchor-link" href="#Intensity-Fraction"> </a></h3>
+<h2 id="Wrapper">Wrapper<a class="anchor-link" href="#Wrapper"> </a></h2><p>To conveniently perform peptide-spectrum matches on multiple datasets we define a wrapper <a href="/search.html#get_psms"><code>get_psms</code></a> that returns the PSMS when handing over <code>query_data</code> and <code>db_data</code>.</p>
+
 </div>
 </div>
 </div>
@@ -454,9 +355,157 @@ Raises:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="intensity_fraction" class="doc_header"><code>intensity_fraction</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L403" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_fraction</code>(<strong><code>query_int</code></strong>, <strong><code>hits</code></strong>)</p>
+<h4 id="query_data_to_features" class="doc_header"><code>query_data_to_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L194" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>query_data_to_features</code>(<strong><code>query_data</code></strong>:<code>dict</code>)</p>
+</blockquote>
+<p>Helper function to extract features from query data.
+This is used when the feature finder will not be used.</p>
+<p>Args:
+    query_data (dict): Data structure containing the query data.</p>
+<p>Returns:
+    pd.DataFrame: Pandas dataframe so that it can be used for subsequent processing.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_psms" class="doc_header"><code>get_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L221" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_psms</code>(<strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>db_data</code></strong>:<code>dict</code>, <strong><code>features</code></strong>:<code>DataFrame</code>, <strong><code>parallel</code></strong>:<code>bool</code>, <strong><code>frag_tol</code></strong>:<code>float</code>, <strong><code>prec_tol</code></strong>:<code>float</code>, <strong><code>ppm</code></strong>:<code>bool</code>, <strong><code>min_frag_hits</code></strong>:<code>int</code>, <strong><code>callback</code></strong>:<code>Callable</code>=<em><code>None</code></em>, <strong><code>prec_tol_calibrated</code></strong>:<code>float</code>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+</blockquote>
+<p>[summary]</p>
+<p>Args:
+    query_data (dict): Data structure containing the query data.
+    db_data (dict): Data structure containing the database data.
+    features (pd.DataFrame): Pandas dataframe containing feature data.
+    parallel (bool): Flag to use parallel processing.
+    frag_tol (float): Fragment tolerance for search.
+    prec_tol (float): Precursor tolerance for search.
+    ppm (bool): Flag to use ppm instead of Dalton.
+    min_frag_hits (int): Minimum number of frag hits to report a PSMs.
+    callback (Callable, optional): Optional callback. Defaults to None.
+    prec_tol_calibrated (float, optional): Precursor tolerance if calibration exists. Defaults to None.</p>
+<p>Returns:
+    np.ndarray: Numpy recordarray storing the PSMs.
+    int: 0</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Extracting-columns-for-scoring">Extracting columns for scoring<a class="anchor-link" href="#Extracting-columns-for-scoring"> </a></h2><p>The basic fragment comparison only counts the number of hits and matched intensity fraction when comparing a theoretical spectrum to an experimental one. Based on this metric, we can drastically reduce the number of candidates one wants to analyze for an in-depth comparison, which requires additional features. The following section describes several functions which extract parameters to compare spectrum matches better.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Frag-Delta">Frag Delta<a class="anchor-link" href="#Frag-Delta"> </a></h3><p><a href="/search.html#frag_delta"><code>frag_delta</code></a> substracts the experimental fragment masses from the theoretical fragment masses for each hit.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="frag_delta" class="doc_header"><code>frag_delta</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L355" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>frag_delta</code>(<strong><code>query_frag</code></strong>:<code>ndarray</code>, <strong><code>db_frag</code></strong>:<code>ndarray</code>, <strong><code>hits</code></strong>:<code>ndarray</code>)</p>
+</blockquote>
+<p>Calculates the mass difference for a given array of hits in Dalton and ppm.</p>
+<p>Args:
+    query_frag (np.ndarray): Array with query fragments.
+    db_frag (np.ndarray): Array with database fragments.
+    hits (np.ndarray): Array with reported hits.</p>
+<p>Returns:
+    float: Fragment deltas in Dalton.
+    float: Fragment deltas in ppm.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Intensity-Fraction">Intensity Fraction<a class="anchor-link" href="#Intensity-Fraction"> </a></h3><p><a href="/search.html#intensity_fraction"><code>intensity_fraction</code></a> calculates the fraction of matched intensity. This refers to the intensity of all hits compared to the intensity of all peaks in the query spectrum.</p>
+
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="intensity_fraction" class="doc_header"><code>intensity_fraction</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L376" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_fraction</code>(<strong><code>query_int</code></strong>:<code>ndarray</code>, <strong><code>hits</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Calculate the fraction of matched intensity</p>
+<p>Args:
+    query_int (np.ndarray): Array with query intensities.
+    hits (np.ndarray): Array with reported hits.</p>
+<p>Returns:
+    float: Fraction of the matched intensity to the total intensity.</p>
 
 </div>
 
@@ -477,45 +526,8 @@ Raises:</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="Intensity-Product">Intensity Product<a class="anchor-link" href="#Intensity-Product"> </a></h3>
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
+<h3 id="File-Format">File Format<a class="anchor-link" href="#File-Format"> </a></h3><p>To have an efficient data format to store PSMs in the search. We use <code>numpy</code>-recarrays and define the utility functions <a href="/search.html#add_column"><code>add_column</code></a> and <a href="/search.html#remove_column"><code>remove_column</code></a> to append and remove data.</p>
 
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="intensity_product" class="doc_header"><code>intensity_product</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L418" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>intensity_product</code>(<strong><code>query_int</code></strong>, <strong><code>hits</code></strong>, <strong><code>db_int</code></strong>=<em><code>None</code></em>)</p>
-</blockquote>
-<p>Calculate the dot product of matched query intensity to db intensity</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h3 id="B-&amp;-Y---Hits">B &amp; Y - Hits<a class="anchor-link" href="#B-&amp;-Y---Hits"> </a></h3>
 </div>
 </div>
 </div>
@@ -530,59 +542,15 @@ Raises:</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="b_y_hits" class="doc_header"><code>b_y_hits</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L434" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>b_y_hits</code>(<strong><code>frag_type</code></strong>, <strong><code>hits</code></strong>)</p>
-</blockquote>
-<p>Count the number of b and y hits
-hits usually start with b-ions &gt; 0, then y-ions &lt; 1</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span> 
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="add_column" class="doc_header"><code>add_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L453" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_column</code>(<strong><code>recarray</code></strong>, <strong><code>column</code></strong>, <strong><code>name</code></strong>)</p>
+<h4 id="add_column" class="doc_header"><code>add_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L401" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>add_column</code>(<strong><code>recarray</code></strong>:<code>ndarray</code>, <strong><code>column</code></strong>:<code>ndarray</code>, <strong><code>name</code></strong>:<code>str</code>)</p>
 </blockquote>
 <p>Function to add a column with given name to recarray</p>
+<p>Args:
+    recarray (np.ndarray): NumPy record array.
+    column (np.ndarray): Data column that should be added to the record array.
+    name (str): Name of the column in the new recordarray.</p>
+<p>Returns:
+    np.ndarray: NumPy recordarray with new field.</p>
 
 </div>
 
@@ -605,9 +573,14 @@ hits usually start with b-ions &gt; 0, then y-ions &lt; 1</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="remove_column" class="doc_header"><code>remove_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L465" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>remove_column</code>(<strong><code>recarray</code></strong>, <strong><code>name</code></strong>)</p>
+<h4 id="remove_column" class="doc_header"><code>remove_column</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L420" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>remove_column</code>(<strong><code>recarray</code></strong>:<code>ndarray</code>, <strong><code>name</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Function to remove a column from recarray</p>
+<p>Function to remove a column from a recarray.</p>
+<p>Args:
+    recarray (np.ndarray): NumPy record array.
+    name (str): Column name of the column to be removed.</p>
+<p>Returns:
+    np.ndarray: NumPy record array with removed column.</p>
 
 </div>
 
@@ -628,16 +601,17 @@ hits usually start with b-ions &gt; 0, then y-ions &lt; 1</p>
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Reporting">Reporting<a class="anchor-link" href="#Reporting"> </a></h2><p>When performing a database search, we need to know what experimental spectrum we are comparing with which database entry. 
+<h2 id="Extracting-features-for-scoring">Extracting features for scoring<a class="anchor-link" href="#Extracting-features-for-scoring"> </a></h2><h3 id="Indices">Indices<a class="anchor-link" href="#Indices"> </a></h3><p>When performing a database search, we need to know which experimental spectrum we compare with what database entry. 
 We distinguish three indices:</p>
 <ul>
 <li>query_idx</li>
 <li>raw_idx</li>
-<li>feature_idx
-Initially, the get_psms functions accepts experimental data in the form of <code>query_data</code>. Here, the <code>query_idx</code> refers to the index to <code>query_data</code>. However, this might not be the same index as of the raw data. This is due to the implementation of the matching of MS1-features to MS2 spectra. Here we allow multiple matches and implement this by repeating the respective spectra. </li>
+<li>feature_idx</li>
 </ul>
-<p>We then add the two columns <code>feature_idx</code> and <code>raw_idx</code> to the psms to later be able to distinguish where the match originated from. Here, <code>raw_idx</code> refers to the original spectrum.</p>
+<p>Initially, the get_psms function accepts experimental data in the form of <code>query_data</code>. Here, the <code>query_idx</code> refers to the index to <code>query_data</code>. However, this might not be the same index as the raw data. This is due to the implementation of the matching of MS1-features to MS2 spectra. Here we allow multiple matches and implement this by repeating the respective spectrum.</p>
+<p>We then add the two columns <code>feature_idx</code> and <code>raw_idx</code> to the PSMs to later be able to distinguish where the match originated. In this case, <code>raw_idx</code> refers to the original spectrum.</p>
 <p>When not applying feature finding, <code>raw_idx</code> and <code>query_idx</code> are equivalent.</p>
+<h3 id="Features">Features<a class="anchor-link" href="#Features"> </a></h3><p>In the <a href="/score.html"><code>score</code></a>-function we use the pre-filtered PSMs to extract additional columns for scoring such as the offset from theoretical to experimental precursor or the number of b- and y-ion hits.</p>
 
 </div>
 </div>
@@ -653,8 +627,29 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_hits" class="doc_header"><code>get_hits</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L475" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hits</code>(<strong><code>query_frag</code></strong>, <strong><code>query_int</code></strong>, <strong><code>db_frag</code></strong>, <strong><code>db_int</code></strong>, <strong><code>frag_type</code></strong>, <strong><code>mtol</code></strong>, <strong><code>ppm</code></strong>, <strong><code>losses</code></strong>)</p>
+<h4 id="get_hits" class="doc_header"><code>get_hits</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L436" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_hits</code>(<strong><code>query_frag</code></strong>:<code>ndarray</code>, <strong><code>query_int</code></strong>:<code>ndarray</code>, <strong><code>db_frag</code></strong>:<code>ndarray</code>, <strong><code>db_int</code></strong>:<code>ndarray</code>, <strong><code>frag_type</code></strong>:<code>ndarray</code>, <strong><code>mtol</code></strong>:<code>float</code>, <strong><code>ppm</code></strong>:<code>bool</code>, <strong><code>losses</code></strong>:<code>list</code>)</p>
 </blockquote>
+<p>Function to extract the types of hits based on a single PSMs.</p>
+<p>The reporting array stores information about the matched ions column wise:</p>
+<p>Column 0: Type of the ion.
+Column 1: Ion-index refering to what ion type was matched.
+Column 2: Intensity of the matched ion.
+Column 3: Intensity of the database ion.
+Column 4: Experimental mass of the ion.
+Column 5: Theoretical mass of the ion.
+Column 6: Index to the query_frag of the ion.
+Column 7: Index to the database_frag of the ion.</p>
+<p>Args:
+    query_frag (np.ndarray): Array with query fragments.
+    query_int (np.ndarray): Array with query intensities.
+    db_frag (np.ndarray): Array with database fragments.
+    db_int (np.ndarray): Array with database intensities.
+    frag_type (np.ndarray): Array with fragment types.
+    mtol (float): Mass tolerance.
+    ppm (bool): Flag to use ppm instead of Dalton.
+    losses (list): List of losses.</p>
+<p>Returns:
+    np.ndarray: NumPy array that stores ion information.</p>
 
 </div>
 
@@ -670,6 +665,13 @@ Initially, the get_psms functions accepts experimental data in the form of <code
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -677,8 +679,28 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="score" class="doc_header"><code>score</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L512" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score</code>(<strong><code>psms</code></strong>, <strong><code>query_masses</code></strong>, <strong><code>query_masses_raw</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>mtol</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>ppm</code></strong>, <strong><code>psms_dtype</code></strong>, <strong><code>db_ints</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="score" class="doc_header"><code>score</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L502" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>score</code>(<strong><code>psms</code></strong>:<code>recarray</code>, <strong><code>query_masses</code></strong>:<code>ndarray</code>, <strong><code>query_masses_raw</code></strong>:<code>ndarray</code>, <strong><code>query_frags</code></strong>:<code>ndarray</code>, <strong><code>query_ints</code></strong>:<code>ndarray</code>, <strong><code>query_indices</code></strong>:<code>ndarray</code>, <strong><code>db_masses</code></strong>:<code>ndarray</code>, <strong><code>db_frags</code></strong>:<code>ndarray</code>, <strong><code>frag_types</code></strong>:<code>ndarray</code>, <strong><code>mtol</code></strong>:<code>float</code>, <strong><code>db_indices</code></strong>:<code>ndarray</code>, <strong><code>ppm</code></strong>:<code>bool</code>, <strong><code>psms_dtype</code></strong>:<code>list</code>, <strong><code>db_ints</code></strong>:<code>ndarray</code>=<em><code>None</code></em>, <strong><code>parallel</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
+<p>Function to extract score columns when giving a recordarray with PSMs.</p>
+<p>Args:
+    psms (np.recarray): Recordarray containing PSMs.
+    query_masses (np.ndarray): Array with query masses.
+    query_masses_raw (np.ndarray): Array with raw query masses.
+    query_frags (np.ndarray): Array with frag types of the query data.
+    query_ints (np.ndarray): Array with fragment intensities from the query.
+    query_indices (np.ndarray): Array with indices to the query data.
+    db_masses (np.ndarray): Array with database masses.
+    db_frags (np.ndarray): Array with fragment masses.
+    frag_types (np.ndarray): Array with fragment types.
+    mtol (float): Mass tolerance.
+    db_indices (np.ndarray): Array with indices to the database array.
+    ppm (bool): Flag to use ppm instead of Dalton.
+    psms_dtype (list): List describing the dtype of the PSMs record array.
+    db_ints (np.ndarray, optional): Array with database intensities. Defaults to None.
+    parallel (bool, optional): Flag to use parallel processing. Defaults to False.</p>
+<p>Returns:
+    np.recarray: Recordarray containing PSMs with additional columns.
+    np.ndarray: NumPy array containing ion information.</p>
 
 </div>
 
@@ -708,9 +730,14 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_sequences" class="doc_header"><code>get_sequences</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L593" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_sequences</code>(<strong><code>psms</code></strong>, <strong><code>db_seqs</code></strong>)</p>
+<h4 id="get_sequences" class="doc_header"><code>get_sequences</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L605" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_sequences</code>(<strong><code>psms</code></strong>:<code>recarray</code>, <strong><code>db_seqs</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Get sequences to add them to a recarray</p>
+<p>Args:
+    psms (np.recarray): Recordarray containing PSMs.
+    db_seqs (np.ndarray): NumPy array containing sequences.</p>
+<p>Returns:
+    np.ndarray: NumPy array containing a subset of sequences.</p>
 
 </div>
 
@@ -726,6 +753,13 @@ Initially, the get_psms functions accepts experimental data in the form of <code
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -733,8 +767,22 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_score_columns" class="doc_header"><code>get_score_columns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L602" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_score_columns</code>(<strong><code>psms</code></strong>, <strong><code>query_data</code></strong>, <strong><code>db_data</code></strong>, <strong><code>features</code></strong>, <strong><code>parallel</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>prec_tol</code></strong>, <strong><code>ppm</code></strong>, <strong><code>m_offset_calibrated</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="get_score_columns" class="doc_header"><code>get_score_columns</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L623" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_score_columns</code>(<strong><code>psms</code></strong>:<code>recarray</code>, <strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>db_data</code></strong>:<code>Union</code>[<code>dict</code>, <code>str</code>], <strong><code>features</code></strong>:<code>DataFrame</code>, <strong><code>parallel</code></strong>:<code>bool</code>, <strong><code>frag_tol</code></strong>:<code>float</code>, <strong><code>prec_tol</code></strong>:<code>float</code>, <strong><code>ppm</code></strong>:<code>bool</code>, <strong><code>prec_tol_calibrated</code></strong>:<code>Union</code>[<code>NoneType</code>, <code>float</code>]=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
+<p>Wrapper function to extract score columns.</p>
+<p>Args:
+    psms (np.recarray): Recordarray containing PSMs.
+    query_data (dict): Data structure containing the query data.
+    db_data: Union[dict, str]: Data structure containing the database data or path to database.
+    features (pd.DataFrame): Pandas dataframe containing feature data.
+    parallel (bool): Flag to use parallel processing.
+    frag_tol (float): Fragment tolerance for search.
+    prec_tol (float): Precursor tolerance for search.
+    ppm (bool): Flag to use ppm instead of Dalton.
+    prec_tol_calibrated (Union[None, float], optional): Calibrated offset mass. Defaults to None.</p>
+<p>Returns:
+    np.recarray: Recordarray containing PSMs with additional columns.
+    np.ndarray: NumPy array containing ion information.</p>
 
 </div>
 
@@ -770,7 +818,7 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="plot_hit" class="doc_header"><code>plot_hit</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L768" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_hit</code>(<strong><code>df</code></strong>, <strong><code>index</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>query_frags</code></strong>, <strong><code>query_ints</code></strong>, <strong><code>query_indices</code></strong>, <strong><code>ppm</code></strong>, <strong><code>frag_tol</code></strong>, <strong><code>db_ints</code></strong>=<em><code>None</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="plot_psms" class="doc_header"><code>plot_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L808" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_psms</code>(<strong><code>index</code></strong>, <strong><code>ms_file</code></strong>)</p>
 </blockquote>
 
 </div>
@@ -786,6 +834,24 @@ Initially, the get_psms functions accepts experimental data in the form of <code
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ms_file</span> <span class="o">=</span> <span class="n">alphapept</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="n">MS_Data_File</span><span class="p">(</span><span class="s1">&#39;../testfiles/test.ms_data.hdf&#39;</span><span class="p">)</span>
+<span class="n">plot_psms</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ms_file</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
 
 <div class="output_wrapper">
 <div class="output">
@@ -793,62 +859,17 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 <div class="output_area">
 
 
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="plot_psms" class="doc_header"><code>plot_psms</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L842" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_psms</code>(<strong><code>query_data</code></strong>, <strong><code>df</code></strong>, <strong><code>index</code></strong>, <strong><code>mass_dict</code></strong>, <strong><code>ppm</code></strong>=<em><code>True</code></em>, <strong><code>frag_tol</code></strong>=<em><code>20</code></em>)</p>
-</blockquote>
-<p>Plot a psms</p>
 
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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d2+mTp1ap/c/8MADPPbYY1x99dV1el+zZs0A6wbg0KFDKT8dvFIqHGq7vwPIzc3l6quvJiMjo9r3B/3+bvLkyRQVFdGgQQPOOeccAIqKihARDhw4wHnnnYcxhk2bNtGlSxcaN25c5f0HDx5k165dGGNo06bNaY93+eWX88ADDzB16lQmTZrE8ePHue+++7jrrrto37498+bN48SJExQVFVX0Fg4ePJgf/ehHbNmyhW7duvHvf/+boqIizj333FP2n56ezlVXXcUPfvCDKsGlW9rjqDx12223VdyAnThxgpycHG6++eY67ePBBx/kySefrHZWqAceeICsrKyKf5UVFhbSr18/OnbsyIMPPki7du0cfw6lVLRt2rSJH/7wh2zcuJFmzZrxl7/8BbBuhvr168dPfvKTWqdFHzJkCGeeeSaLFy8+5bn333+/Sj01Z86cKs/feuuttGnThk8//bRi2JZSSgXZ6e7vcnJyuOmmm2rdR9Dv71q1alUxfNQYw/79+2ndujVNmzatGCmSmZl5StBYWdu2bWvsEd22bRvr169n/fr1bNmyhT/96U/k5ubSvXt3WrZsyYEDB/j2t7/NmDFj6NKlC7169eLHP/5xxcQ2Z599NtnZ2dx0003069ePIUOG8Omnn9ZYlgkTJnDGGWfU2AvshPY4Kk917tyZli1b8vHHH/Pll19ywQUX1Ll7vGvXrgwaNIhXXnnllOd+//vfnzIGPqZjx46sXbuWL774guuuu45x48ZVtBoppVRlHTt2rMgTufnmm3n66ad59tlnadOmDUeOHOHOO+/kiSee4JFHHqlxH7/4xS/4zW9+wxNPPFFl+7e+9a1Tchwre/HFFzl+/Dh33303r776qmeTFiilVLLUdn+3c+dOPvnkE6666qpa9xH0+7tGjRrRoEEDysrKOHr0KBkZGRw7dozy8nL69esHwGeffUazZs1o2rRptfuIbT948OApz3Xp0qViOOnhw4cRkYqGxQ8//JCbbrqJ8vJyvvzyS6ZNm8YZZ5zav3f55ZezcuXKU7bHciQry8vL49ZbbyUtLS2xX0ACtMdRee6OO+4gOzubF198kdtuu63G161YsaLGFvmf//znPPHEExhj6nz8du3a0adPH95///06v1cplRrih4iKCG3btkVEaNSoEbfeemvF8KCrrrqKrKws7rjjjirvufzyyzl06BDLly+v8/HT0tIYP348f//7351/CKWUqkc13d/NnDmTsWPH0rBhQyDc93etWrVi79697N27l1atWnHgwAG+9rWvkZaWRlpaGpmZmfz73/+muLi4ovfw3//+d5V9tG3blp07d9bpuBdddBGff/45F110EWeccQaHDh1y9TnGjh3L1KlTK4YSe0UDR+W5sWPHMn/+fFauXFlr69OgQYMqEnyvvfbaKs+dd9559OrVizfffDOhY+7YsaPiIisuLiYvL48ePXo4/xBKqUjbvn07y5YtA+CVV15h6NChFX/ojTG88cYb9OnTB4C3336b/Px8/va3v52yn1/84hf87ne/S+iYxhi2bNlS8fOcOXM477zzvPg4SimVdDXd382YMaPKMNUw3981b96cr776irKyMpo1a8aZZ57JwYMHMcZw4sQJDh48SHp6Oi1atKB379707t27yqQ0AJmZmRw/fjzh4O/w4cMVgfThw4cpLy+vktvpxKxZs1i7di2tWrVytZ94OlRVee7MM8/ksssuo3nz5hXd49/61rf49NNPKS0tpUOHDjz//POnHdLw8MMPc8EFFyR0zI0bN3LfffchIhhjuP/+++nbt6/rz6KUiqYePXrw5z//mdtuu41evXrxgx/8gNGjR7Nnzx6MMWRlZfHcc8+ddj+jRo3i7LPPTuiYxhhuueUWvvrqK4wxnH/++Tz77LNuP4pSStWL6u7vCgoKKCws5NJLL014P0G+vzvjjDNo2rQpaWlpiAgtWrTg4MGDrF+/HrCCwubNm592P23btq1oKDyd0tJSdu7ciYggInTq1Kmi9zZoxElXcRQNHDjQxNbkUnUXG2994YUXcuLECfr3789rr71G9+7dfS6ZUkoppZRyYvXq1QAMGDAgUvd3GzdupGfPnhWPY72D6enpbNiwgW984xukp6f7Vbx6E/97ABCR1caYgdW9XoeqKk9ceOGFXHjhhWzYsIFu3bpxxRVXhL5SUUoppZRKZQMGDGDAgAGRv7+LzZS6bt06mjVrlhJBoxM6VFV5qlevXmzdutXvYiil1CliU8lPmjTJ55IopVS4RP3+7vjx45x55pma5nQa2uOoPDF16tQ6L6CtlFL1KTaRgVJKqcRkZ2eTnZ3tdzGSrri4mOLi4no9ZuUlR8D6XU+ZMgWA5557ruK+Ojs7u8a1Ieub9jgqT+jNmFIq6AYM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
+"
+>
 </div>
 
 </div>
 
 </div>
 </div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Wrapper">Wrapper<a class="anchor-link" href="#Wrapper"> </a></h2>
-</div>
-</div>
-</div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="perform_search" class="doc_header"><code>perform_search</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L923" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>perform_search</code>(<strong><code>query_files</code></strong>, <strong><code>db_masses</code></strong>, <strong><code>db_frags</code></strong>, <strong><code>db_indices</code></strong>, <strong><code>db_seqs</code></strong>, <strong><code>frag_types</code></strong>, <strong><code>plot</code></strong>, <strong>**<code>kwargs</code></strong>)</p>
-</blockquote>
-<p>Function to search and score one or multiple MS runs by the X!Tandem approach.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}
@@ -871,9 +892,15 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="store_hdf" class="doc_header"><code>store_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L951" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>store_hdf</code>(<strong><code>df</code></strong>, <strong><code>path</code></strong>, <strong><code>key</code></strong>, <strong><code>replace</code></strong>=<em><code>False</code></em>, <strong><code>swmr</code></strong>=<em><code>False</code></em>)</p>
+<h4 id="store_hdf" class="doc_header"><code>store_hdf</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L872" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>store_hdf</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>path</code></strong>:<code>str</code>, <strong><code>key</code></strong>:<code>str</code>, <strong><code>replace</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>swmr</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
-<p>Stores in hdf</p>
+<p>Wrapper function to store a DataFrame in an hdf.</p>
+<p>Args:
+    df (pd.DataFrame): DataFrame to be stored.
+    path (str): Target path of the hdf file.
+    key (str): Name of the field to be saved.
+    replace (bool, optional): Flag whether the field should be replaced.. Defaults to False.
+    swmr (bool, optional): Flag to use swmr(single write multiple read)-mode. Defaults to False.</p>
 
 </div>
 
@@ -896,9 +923,16 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="search_db" class="doc_header"><code>search_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L972" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_db</code>(<strong><code>to_process</code></strong>, <strong><code>callback</code></strong>=<em><code>None</code></em>, <strong><code>parallel</code></strong>=<em><code>False</code></em>, <strong><code>first_search</code></strong>=<em><code>True</code></em>)</p>
+<h4 id="search_db" class="doc_header"><code>search_db</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L899" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_db</code>(<strong><code>to_process</code></strong>:<code>tuple</code>, <strong><code>callback</code></strong>:<code>Callable</code>=<em><code>None</code></em>, <strong><code>parallel</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>first_search</code></strong>:<code>bool</code>=<em><code>True</code></em>)</p>
 </blockquote>
-<p>Perform a databse search. One file at a time.</p>
+<p>Wrapper function to perform database search to be used by a parallel pool.</p>
+<p>Args:
+    to_process (tuple): Tuple containing an index to the file and the experiment settings.
+    callback (Callable, optional): Callback function to indicate progress. Defaults to None.
+    parallel (bool, optional): Flag to use parallel processing. Defaults to False.
+    first_search (bool, optional): Flag to indicate this is the first search. Defaults to True.</p>
+<p>Returns:
+    Union[bool, str]: Returns True if the search was successfull, otherwise returns a string containing the Exception.</p>
 
 </div>
 
@@ -934,10 +968,15 @@ Initially, the get_psms functions accepts experimental data in the form of <code
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="search_fasta_block" class="doc_header"><code>search_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1049" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_fasta_block</code>(<strong><code>to_process</code></strong>)</p>
+<h4 id="search_fasta_block" class="doc_header"><code>search_fasta_block</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L985" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_fasta_block</code>(<strong><code>to_process</code></strong>:<code>tuple</code>)</p>
 </blockquote>
-<p>Search fasta block
-For searches with big fasta files or unspecific searches</p>
+<p>Search fasta block. This file digests per block and does not use a saved database.
+For searches with big fasta files or unspecific searches.</p>
+<p>Args:
+    to_process (tuple): Tuple containing a fasta_index, fasta_block, a list of files and a list of experimental settings.</p>
+<p>Returns:
+    list: A list of dataframes when searching the respective file.
+    int: Number of new peptides that were generated in this iteration.</p>
 
 </div>
 
@@ -953,6 +992,13 @@ For searches with big fasta files or unspecific searches</p>
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -960,10 +1006,15 @@ For searches with big fasta files or unspecific searches</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="filter_top_n" class="doc_header"><code>filter_top_n</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1150" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_top_n</code>(<strong><code>temp</code></strong>, <strong><code>top_n</code></strong>=<em><code>10</code></em>)</p>
+<h4 id="filter_top_n" class="doc_header"><code>filter_top_n</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1092" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>filter_top_n</code>(<strong><code>temp</code></strong>:<code>DataFrame</code>, <strong><code>top_n</code></strong>:<code>int</code>=<em><code>10</code></em>)</p>
 </blockquote>
-<p>Takes a dataframe and keeps only the top n entries.
+<p>Takes a dataframe and keeps only the top n entries (based on hits).
 Combines fasta indices for sequences.</p>
+<p>Args:
+    temp (pd.DataFrame): Pandas DataFrame containing PSMs.
+    top_n (int, optional): Number of top-n entries to be kept. Defaults to 10.</p>
+<p>Returns:
+    pd.DataFrame: Filtered DataFrame.</p>
 
 </div>
 
@@ -979,6 +1030,13 @@ Combines fasta indices for sequences.</p>
     
 <div class="cell border-box-sizing code_cell rendered">
 
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
 <div class="output_wrapper">
 <div class="output">
 
@@ -986,9 +1044,15 @@ Combines fasta indices for sequences.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="search_parallel" class="doc_header"><code>search_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1177" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_parallel</code>(<strong><code>settings</code></strong>, <strong><code>calibration</code></strong>=<em><code>None</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="search_parallel" class="doc_header"><code>search_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/search.py#L1126" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>search_parallel</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>calibration</code></strong>:<code>Optional</code>[<code>list</code>]=<em><code>None</code></em>, <strong><code>callback</code></strong>:<code>Optional</code>[<code>Callable</code>]=<em><code>None</code></em>)</p>
 </blockquote>
-<p>Function to generate a database from a fasta file</p>
+<p>Function to search multiple ms_data files in parallel.</p>
+<p>Args:
+    settings (dict): Settings file containg the experimental definitions.
+    calibration (Union[list, None], optional): List of calibrated offsets.. Defaults to None.
+    callback (Union[Callable, None], optional): Callback function. Defaults to None.</p>
+<p>Returns:
+    dict: FASTA dictionary.</p>
 
 </div>
 

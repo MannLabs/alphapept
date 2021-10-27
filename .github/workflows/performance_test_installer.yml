@@ -12,6 +12,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Freezing code
         run: |
+          remove-item -path "C:\ProgramData\Miniconda3\envs\alphapeptinstaller" -Force -Recurse -ErrorAction SilentlyContinue
           conda deactivate
           cd installer\one_click_windows
           .\create_installer_windows.bat

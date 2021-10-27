@@ -1,6 +1,7 @@
 import setuptools
 from configparser import ConfigParser
 from pkg_resources import parse_version
+import os
 assert parse_version(setuptools.__version__) >= parse_version('36.2')
 
 config = ConfigParser(delimiters=['='])
@@ -47,6 +48,14 @@ with open("requirements.txt") as requirements_file:
     for line in requirements_file:
         requirements.append(line)
 
+def is_tool(name):
+    """Check whether `name` is on PATH and marked as executable."""
+    from shutil import which
+    return which(name) is not None
+if os.name == 'posix':
+    if not is_tool('mono'): #Do not try to install pythonnet if mono is not installed.
+        requirements = [_ for _ in requirements if not _.startswith('pythonnet')]
+
 setuptools.setup(
     name=cfg["lib_name"],
     license=license_options[cfg["license"]][0],
@@ -70,7 +79,9 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     # TODO: Modifying this should allow to remove the MAINFEST.in
     include_package_data=True,
-    install_requires=requirements,
+    install_requires=requirements + [
+        "pywin32==225; sys_platform=='win32'"
+    ],
     python_requires=f'>={cfg["min_python"]},<{cfg["max_python"]}',
     long_description=long_description,
     long_description_content_type='text/markdown',

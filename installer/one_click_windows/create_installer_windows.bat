@@ -11,9 +11,10 @@ call DEL /F/Q/S dist > NUL
 call RMDIR /Q/S build
 call RMDIR /Q/S dist
 call python setup.py sdist bdist_wheel
-call pip install dist/alphapept-0.3.25-py3-none-any.whl
+call pip install dist/alphapept-0.3.29-py3-none-any.whl
 call pip install pyinstaller==4.2
 call cd installer/one_click_windows
 call pyinstaller ../alphapept.spec -y
 call conda deactivate
+call robocopy dist/alphapept/site-packages/st_aggrid dist/alphapept/st_aggrid /E
 call "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" alphapept_innoinstaller.iss

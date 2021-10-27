@@ -64,6 +64,11 @@ experiment:
     type: list
     default: []
     description: List of fractions for the raw files.
+  matching_groups:
+    type: list
+    default: []
+    description: List of macthing groups for the raw files. This only allows match-between-runs
+      of files within the same groups.
   database_path:
     type: path
     default: null
@@ -392,15 +397,15 @@ search:
   prec_tol:
     type: spinbox
     min: 1
-    max: 99
+    max: 500
     default: 30
-    description: Precursor mass offset.
+    description: Maximum allowed precursor mass offset.
   frag_tol:
     type: spinbox
     min: 1
-    max: 99
+    max: 500
     default: 30
-    description: MSMS mass offset.
+    description: Maximum fragment mass tolerance.
   min_frag_hits:
     type: spinbox
     min: 1
@@ -495,6 +500,24 @@ matching:
     max: 10.0
     default: 3
     description: Minimum distance cutoff for matching
+isobaric_label:
+  label:
+    type: combobox
+    value:
+    - None
+    - TMT10plex
+    default: None
+    description: Type of isobaric label present.
+  reporter_frag_tolerance:
+    type: spinbox
+    min: 1
+    max: 500
+    default: 15
+    description: Maximum fragment mass tolerance for a reporter.
+  reporter_frag_tolerance_ppm:
+    type: checkbox
+    default: true
+    description: Use ppm instead of Dalton.
 quantification:
   max_lfq:
     type: checkbox
