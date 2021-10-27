@@ -234,7 +234,7 @@ def align_datasets(settings:dict, callback:callable=None):
 
     if callback:
         def progress_wrapper(current, step, n_steps):
-            callback(step+current/n_steps)
+            callback((step/n_steps)+(current/n_steps))
 
         cb = functools.partial(progress_wrapper, 0, 2)
     else:
