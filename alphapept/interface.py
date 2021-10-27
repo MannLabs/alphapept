@@ -922,9 +922,9 @@ def run_complete_workflow(
         steps.append(recalibrate_data)
         steps.append(search_data)
     steps.append(score)
-    if workflow["align"]:
+    if workflow["align"] & (len(settings["experiment"]["fractioned_samples"].keys())!=1):
         steps.append(align)
-    if workflow["match"]:
+    if workflow["match"] & (len(settings["experiment"]["fractioned_samples"].keys())!=1):
         if align not in steps:
             steps.append(align)
         steps.append(match)
@@ -1199,6 +1199,10 @@ def parallel_execute(
     to_process = [(i, settings) for i in range(n_files)]
 
     failed = []
+
+    if step.__name__ == 'score_hdf':
+        num_exps_w_fractions = len(settings['experiment']['fractioned_samples'].keys())#all fractions of a biological sample map to the fractionated sample. Note that the fraction number must not be contained in the name
+        to_process = [(i, settings) for i in range(num_exps_w_fractions)] #process the fractions together
 
     if n_files == 1:
         if not step(to_process[0], callback=callback, parallel=True):
