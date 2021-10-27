@@ -286,7 +286,7 @@ def experiment():
                 raw_files = [_ for _ in raw_files if _ not in exclude]
 
                 file_df = file_df_from_files(raw_files, file_folder)
-                #file_df["Fraction"] = ""
+                file_df["Fraction"] = [str(i+1) for i in range(len(file_df))]
                 #file_df["Matching group"] = ""
 
                 gb = GridOptionsBuilder.from_dataframe(file_df)
@@ -316,7 +316,7 @@ def experiment():
                         " \n- Size (GB): Size in GB of the file."
                         " \n- Shortname: Unique shortname for each file."
                         " \n- Fraction: Fraction of each file."
-                        " \n- Matching Group: Match-between-runs only among members of this group."
+                        #" \n- Matching Group: Match-between-runs only among members of this group."
                     )
 
                 shortnames = file_df_selected["Shortname"].values.tolist()
@@ -348,12 +348,17 @@ def experiment():
                     for _ in file_df_selected["Filename"].values.tolist()
                 ]
 
-                #recorder["experiment"]["fractions"] = file_df_selected[
-                #    "Fraction"
-                #].values.tolist()
+                recorder["experiment"]["fractions"] = file_df_selected[
+                    "Fraction"
+                ].values.tolist()
                 #recorder["experiment"]["matching_groups"] = file_df_selected[
                 #    "Matching group"
                 #].values.tolist()
+
+                f_dict = file_df_selected.groupby('Fraction')['Filename'].unique().to_dict()
+                f_dict = {k: list(v) for k,v in f_dict.items()}
+
+                recorder['experiment']["fraction_dict"] = f_dict
 
                 st.write(f"## Workflow")
 
