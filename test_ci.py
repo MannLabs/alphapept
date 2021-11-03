@@ -88,13 +88,13 @@ class TestRun():
     """
     Class to prepare and download files to make a default test run
     """
-    def __init__(self, id, experimental_files, fasta_paths, new_files, fractions = None,custom_settings = None):
+    def __init__(self, id, experimental_files, fasta_paths, new_files, fraction_dict = None,custom_settings = None):
 
         self.id = id
         self.file_paths = experimental_files
         self.fasta_paths = fasta_paths
         self.new_files = new_files
-        self.fractions = fractions
+        self.fraction_dict = fraction_dict
 
         self.custom_settings = custom_settings
 
@@ -158,13 +158,13 @@ class TestRun():
         """
 
         self.settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
-        
+
         self.settings['experiment']['file_paths'] =  [os.path.join(TEST_DIR, _) for _ in self.file_paths]
         self.settings['experiment']['fasta_paths'] = [os.path.join(TEST_DIR, _) for _ in self.fasta_paths]
-        if self.fractions == None:
-            self.settings['experiment']['fractions'] = {k:[k] for k in self.settings['experiment']['file_paths']}
+        if self.fraction_dict == None:
+            self.settings['experiment']['fraction_dict'] = {k:[k] for k in self.settings['experiment']['file_paths']}
         else:
-            self.settings['experiment']['fractions'] = self.fractions
+            self.settings['experiment']['fraction_dict'] = self.fraction_dict
 
 
     def run(self, password=None):
@@ -406,8 +406,8 @@ def main(runtype = None, password = None, new_files = True):
     elif runtype == 'PXD015087':
         files = ['Hela_P035210_BA1_S00_A00_R1.raw', 'Hela_P035210_BA1_S00_A00_R5.raw', 'Hela_P035210_BA1_S00_A00_R14.raw', 'Hela_P035210_BA1_S00_A00_R19.raw']
         fasta_files = ['human.fasta', 'contaminants.fasta']
-        fractions = {'Hela_P035210_BA1_S00_A00': ['Hela_P035210_BA1_S00_A00_R1.raw', 'Hela_P035210_BA1_S00_A00_R5.raw', 'Hela_P035210_BA1_S00_A00_R14.raw', 'Hela_P035210_BA1_S00_A00_R19.raw']}
-        run = TestRun(runtype, files, fasta_files, new_files, fractions = fractions)
+        fraction_dict = {'Hela_P035210_BA1_S00_A00': ['Hela_P035210_BA1_S00_A00_R1.raw', 'Hela_P035210_BA1_S00_A00_R5.raw', 'Hela_P035210_BA1_S00_A00_R14.raw', 'Hela_P035210_BA1_S00_A00_R19.raw']}
+        run = TestRun(runtype, files, fasta_files, new_files, fraction_dict = fraction_dict)
         #run.prepare_settings()
         #print(run.file_paths)
         #run.settings['workflow'] = {'continue_runs': True, 'create_database': False, 'import_raw_data': False, 'find_features': False, 'search_data': False, 'recalibrate_data': False, 'align': True, 'match': False, 'lfq_quantification': True}
