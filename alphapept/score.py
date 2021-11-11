@@ -971,7 +971,11 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
                 except KeyError:
                     logging.info('No ions present.')
 
-            ms_file_.write(df_file.reset_index().drop(columns=['localexp']), dataset_name="peptide_fdr")
+            export_df = df_file.reset_index().drop(columns=['localexp'])
+            if 'level_0' in export_df.columns:
+                export_df = export_df.drop(columns = ['level_0'])
+
+            ms_file_.write(export_df, dataset_name="peptide_fdr")
 
             logging.info(f'Scoring of files {list(ms_file2idx.keys())} complete.')
         return True

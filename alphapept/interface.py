@@ -906,6 +906,8 @@ def run_complete_workflow(
 
     workflow = settings['workflow']
 
+    if not "fraction_dict" in settings['experiment']:
+        settings['experiment']['fraction_dict'] = {k:[k] for k in settings['experiment']['file_paths']}
     if "continue_runs" in workflow:
         if not workflow["continue_runs"]:
             for _ in settings['experiment']['file_paths']:

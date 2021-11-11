@@ -1245,9 +1245,6 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
 
     n_seqs_ = 0
 
-    for _ in ms_file_path:
-        ms_file = alphapept.io.MS_Data_File(_+'_', is_new_file=True) #Create temporary files for writing
-
     df_cache = {}
     ion_cache = {}
 

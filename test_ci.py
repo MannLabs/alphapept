@@ -88,7 +88,7 @@ class TestRun():
     """
     Class to prepare and download files to make a default test run
     """
-    def __init__(self, id, experimental_files, fasta_paths, new_files, fraction_dict = None,custom_settings = None):
+    def __init__(self, id, experimental_files, fasta_paths, new_files, fraction_dict = None, custom_settings = None):
 
         self.id = id
         self.file_paths = experimental_files
@@ -171,7 +171,7 @@ class TestRun():
         if self.new_files:
             self.prepare_files()
         if 'settings' not in self.__dict__.keys():
-            logging.info('No settings provided. Creating from default settings.f')
+            logging.info('No settings provided. Creating from default settings.')
             self.prepare_settings()
 
         report = {}
@@ -382,7 +382,7 @@ def main(runtype = None, password = None, new_files = True):
         fasta = {}
         fasta['mods_variable'] = ['oxM','pS','pT','pY']
         custom_settings['fasta'] = fasta
-        run = TestRun(runtype, files, fasta_files, new_files, custom_settings)
+        run = TestRun(runtype, files, fasta_files, new_files, custom_settings = custom_settings)
         run.run(password=password)
     elif runtype == 'PXD006109':
         files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
