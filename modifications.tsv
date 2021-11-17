@@ -8,7 +8,7 @@ phosphorylation of S	amino acid residue	S	79.96633092	79.979902	0	0	none	21	Phos
 phosphorylation of T	amino acid residue	T	79.96633092	79.979902	0	0	none	21	Phospho	HPO3	pT
 phosphorylation of Y	amino acid residue	Y	79.96633092	79.979902	0	0	none	21	Phospho	HPO3	pY
 deamidation of N	amino acid residue	N	0.984015593	0.98476	0	0	none	7	Deamidated	H-1N-1O	deamN
-deamidation of Q	amino acid residue	Q	0.984015593	0.98476	0	0	none	7	Deamidated	H-1N-1O	deamNQ
+deamidation of Q	amino acid residue	Q	0.984015593	0.98476	0	0	none	7	Deamidated	H-1N-1O	deamQ
 pyro-cmC	peptide N-terminus	C	-17.0265491	-17.03052	0	0	none	26	Pyro-carbamidomethyl	H-3N-1	cm<C
 pyro-E	peptide N-terminus	E	-18.01056469	-18.01528	0	0	none	27	Glu->pyro-Glu	H-2O-1	pg<E
 pyro-Q	peptide N-terminus	Q	-17.0265491	-17.03052	0	0	none	28	Gln->pyro-Glu	H-3N-1	pg<Q
