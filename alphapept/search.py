@@ -468,7 +468,7 @@ def get_hits(query_frag:np.ndarray, query_int:np.ndarray, db_frag:np.ndarray, db
     """
     max_array_size = len(db_frag)*len(losses)
 
-    ions = np.zeros((max_array_size, 8))
+    ions = np.zeros((max_array_size, 9))
 
     pointer = 0
 
@@ -601,6 +601,9 @@ def score(
         psms_['ion_idx'][i] = ion_count
 
         ion_count += n_ions
+
+        ions[:,8] = i #Save psms index
+
         ions_.append(ions)
 
     return psms_, ions_
@@ -972,7 +975,7 @@ def search_db(to_process:tuple, callback:Callable = None, parallel:bool=False, f
                     save_field = 'second_search'
 
                 store_hdf(pd.DataFrame(psms), ms_file_, save_field, replace=True)
-                ion_columns = ['ion_index','ion_type','ion_int','db_int','ion_mass','db_mass','query_idx','db_idx']
+                ion_columns = ['ion_index','ion_type','ion_int','db_int','ion_mass','db_mass','query_idx','db_idx','psms_idx']
                 store_hdf(pd.DataFrame(ions, columns = ion_columns), ms_file_, 'ions', replace=True)
             else:
                 logging.info('No psms found.')
@@ -1292,7 +1295,7 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
             psms, ions = ion_extractor(x, ms_file, frag_tol, ppm)
 
             store_hdf(pd.DataFrame(psms), ms_file, save_field, replace=True)
-            ion_columns = ['ion_index','ion_type','ion_int','db_int','ion_mass','db_mass','query_idx','db_idx']
+            ion_columns = ['ion_index','ion_type','ion_int','db_int','ion_mass','db_mass','query_idx','db_idx','psms_idx']
             store_hdf(pd.DataFrame(ions, columns = ion_columns), ms_file, 'ions', replace=True)
 
     #Todo? Callback
