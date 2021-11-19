@@ -232,8 +232,8 @@ def save_fragment_calibration(ions, corrected, mad_offset, file_name, settings):
     ax2 = density_scatter(ions['rt'].values, corrected.values, ax = ax2)
     ax1.axhline(0, color='w', linestyle='-', alpha=0.5)
     ax2.axhline(0, color='w', linestyle='-', alpha=0.5)
-    ax2.axhline(0+mad_offset*settings['search']['calibration_std'], color='w', linestyle=':', alpha=0.5)
-    ax2.axhline(0-mad_offset*settings['search']['calibration_std'], color='w', linestyle=':', alpha=0.5)
+    ax2.axhline(0+mad_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
+    ax2.axhline(0-mad_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
 
     ax2.set_title('Fragment error after correction')
     ax2.set_ylabel('Error (ppm)')
@@ -255,8 +255,8 @@ def save_fragment_calibration(ions, corrected, mad_offset, file_name, settings):
     ax4.set_title('Fragment error after correction')
 
     ax4.axhline(0, color='w', linestyle='-', alpha=0.5)
-    ax4.axhline(0+mad_offset*settings['search']['calibration_std'], color='w', linestyle=':', alpha=0.5)
-    ax4.axhline(0-mad_offset*settings['search']['calibration_std'], color='w', linestyle=':', alpha=0.5)
+    ax4.axhline(0+mad_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
+    ax4.axhline(0-mad_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
 
     base, ext = os.path.splitext(file_name)
 
@@ -272,7 +272,7 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
     skip = False
 
     try:
-        logging.info(f'Calibrating fragments')
+        logging.info(f'Calibrating fragments with neighbors')
         ions = ms_file_.read(dataset_name='ions')
     except KeyError:
         logging.info('No ions to calibrate fragment masses found')
@@ -329,14 +329,14 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
 
         logging.info('Saving calibration')
 
-        save_fragment_calibration(ions, delta_ppm_median_corrected, mad_offset, file_name, settings)
+        save_fragment_calibration(ions, delta_ppm_median_corrected, delta_ppm_median_corrected_std, file_name, settings)
 
         ms_file_.write(
             offset,
             dataset_name="corrected_fragment_mzs",
         )
 
-        ms_file_.write(np.array([mad_offset]), dataset_name="estimated_max_fragment_ppm")
+        ms_file_.write(np.array([delta_ppm_median_corrected_std]), dataset_name="estimated_max_fragment_ppm")
 
 # Cell
 

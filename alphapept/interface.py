@@ -369,7 +369,7 @@ def search_data(
                         dataset_name="corrected_mass",
                         group_name="features",
                         attr_name="estimated_max_precursor_ppm"
-                    ) * settings['search']['calibration_std'] for ms_file_name in ms_files
+                    ) * settings['search']['calibration_std_prec'] for ms_file_name in ms_files
                 ]
             except KeyError:
                 logging.info('No calibration found.')
@@ -379,7 +379,7 @@ def search_data(
                 frag_tols = [float(
                     alphapept.io.MS_Data_File(
                         ms_file_name
-                    ).read(dataset_name="estimated_max_fragment_ppm")[0] * settings['search']['calibration_std']) for ms_file_name in ms_files
+                    ).read(dataset_name="estimated_max_fragment_ppm")[0] * settings['search']['calibration_std_prec']) for ms_file_name in ms_files
                 ]
 
             except KeyError:

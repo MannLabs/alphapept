@@ -35,7 +35,7 @@ fasta:
   pep_length_min: 6
   pep_length_max: 27
   isoforms_max: 1024
-  n_modifications_max: 8
+  n_modifications_max: 3
   pseudo_reverse: true
   AL_swap: false
   KR_swap: false
@@ -70,7 +70,8 @@ search:
   min_frag_hits: 7
   ppm: true
   calibrate: true
-  calibration_std: 3
+  calibration_std_prec: 5
+  calibration_std_frag: 3
   parallel: true
   peptide_fdr: 0.01
   protein_fdr: 0.01

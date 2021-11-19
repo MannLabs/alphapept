@@ -937,7 +937,7 @@ def search_db(to_process:tuple, callback:Callable = None, parallel:bool=False, f
                     logging.info('Calibration is 0, skipping second database search.')
                     skip = True
                 else:
-                    settings['search']['prec_tol_calibrated'] = calibration*settings['search']['calibration_std']
+                    settings['search']['prec_tol_calibrated'] = calibration*settings['search']['calibration_std_prec']
                     calib = settings['search']['prec_tol_calibrated']
                     logging.info(f"Found calibrated prec_tol with value {calib:.2f}")
             except KeyError as e:
@@ -946,7 +946,7 @@ def search_db(to_process:tuple, callback:Callable = None, parallel:bool=False, f
             try:
                 fragment_std = float(ms_file_.read(dataset_name="estimated_max_fragment_ppm")[0])
                 skip = False
-                settings['search']['frag_tol_calibrated'] = fragment_std*settings['search']['calibration_std']
+                settings['search']['frag_tol_calibrated'] = fragment_std*settings['search']['calibration_std_frag']
                 calib = settings['search']['frag_tol_calibrated']
                 logging.info(f"Found calibrated frag_tol with value {calib:.2f}")
             except KeyError as e:

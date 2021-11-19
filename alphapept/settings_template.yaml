@@ -218,8 +218,8 @@ fasta:
   n_modifications_max:
     type: spinbox
     min: 1
-    max: 4096
-    default: 8
+    max: 10
+    default: 3
     description: Limit the number of modifications per peptide.
   pseudo_reverse:
     type: checkbox
@@ -420,12 +420,18 @@ search:
     type: checkbox
     default: true
     description: Recalibrate masses.
-  calibration_std:
+  calibration_std_prec:
     type: spinbox
     min: 1
-    max: 5
+    max: 10
+    default: 5
+    description: Std range for precursor tolerance after calibration.
+  calibration_std_frag:
+    type: spinbox
+    min: 1
+    max: 10
     default: 3
-    description: Std range for search after calibration.
+    description: Std range for fragment tolerance after calibration.
   parallel:
     type: checkbox
     default: true
