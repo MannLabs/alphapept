@@ -355,7 +355,6 @@ def search_data(
 
 
         else:
-
             ms_files = []
             for _ in settings['experiment']['file_paths']:
                 base, ext = os.path.splitext(_)

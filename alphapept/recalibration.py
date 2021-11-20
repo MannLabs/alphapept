@@ -175,6 +175,8 @@ def get_calibration(
 
         mad_offset = np.median(np.absolute(y_hat - np.median(y_hat)))
 
+        logging.info(f'Precursor calibration std {y_hat_std:.2f}, {mad_offset:.2f}')
+
         return corrected_mass, y_hat_std, mad_offset
 
 
@@ -214,7 +216,7 @@ def density_scatter( x , y, ax = None, sort = True, bins = 20, **kwargs )   :
 
     return ax
 
-def save_fragment_calibration(ions, corrected, mad_offset, file_name, settings):
+def save_fragment_calibration(ions, corrected, std_offset, file_name, settings):
 
     f, axes = plt.subplots(2, 2, figsize=(20,10))
 
@@ -232,8 +234,8 @@ def save_fragment_calibration(ions, corrected, mad_offset, file_name, settings):
     ax2 = density_scatter(ions['rt'].values, corrected.values, ax = ax2)
     ax1.axhline(0, color='w', linestyle='-', alpha=0.5)
     ax2.axhline(0, color='w', linestyle='-', alpha=0.5)
-    ax2.axhline(0+mad_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
-    ax2.axhline(0-mad_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
+    ax2.axhline(0+std_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
+    ax2.axhline(0-std_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
 
     ax2.set_title('Fragment error after correction')
     ax2.set_ylabel('Error (ppm)')
@@ -255,8 +257,8 @@ def save_fragment_calibration(ions, corrected, mad_offset, file_name, settings):
     ax4.set_title('Fragment error after correction')
 
     ax4.axhline(0, color='w', linestyle='-', alpha=0.5)
-    ax4.axhline(0+mad_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
-    ax4.axhline(0-mad_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
+    ax4.axhline(0+std_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
+    ax4.axhline(0-std_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
 
     base, ext = os.path.splitext(file_name)
 
@@ -279,7 +281,7 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
         skip = True
 
     if not skip:
-        calib_n_neighbors = 100
+        calib_n_neighbors = 400
         psms = ms_file_.read(dataset_name='first_search')
 
         #Calculate offset
@@ -297,9 +299,10 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
         neigh.fit(ions['rt'].values.reshape(-1, 1), ions['delta_ppm'].values)
 
         #Read required datasets
-        rt_list_ms2 = ms_file_.read(dataset_name = 'rt_list_ms2', group_name = "Raw/MS2_scans")
-        mass_list_ms2 = ms_file_.read(dataset_name = 'mass_list_ms2', group_name = "Raw/MS2_scans")
-        incides_ms2 = ms_file_.read(dataset_name = 'indices_ms2', group_name = "Raw/MS2_scans")
+
+        rt_list_ms2 = ms_file_.read_DDA_query_data()['rt_list_ms2']
+        mass_list_ms2 = ms_file_.read_DDA_query_data()['mass_list_ms2']
+        incides_ms2 = ms_file_.read_DDA_query_data()['indices_ms2']
         scan_idx = np.searchsorted(incides_ms2, np.arange(len(mass_list_ms2)), side='right') - 1
 
         #Estimate offset

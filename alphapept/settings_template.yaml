@@ -199,13 +199,13 @@ fasta:
     description: Number of missed cleavages.
   pep_length_min:
     type: spinbox
-    min: 6
+    min: 7
     max: 99
-    default: 6
+    default: 7
     description: Minimum peptide length.
   pep_length_max:
     type: spinbox
-    min: 6
+    min: 7
     max: 99
     default: 27
     description: Maximum peptide length.
@@ -430,7 +430,7 @@ search:
     type: spinbox
     min: 1
     max: 10
-    default: 3
+    default: 5
     description: Std range for fragment tolerance after calibration.
   parallel:
     type: checkbox
