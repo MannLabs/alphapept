@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# make sure this file itself is executable
+rm -rf /Applications/alphapept.app
+echo "Preinstall finished"

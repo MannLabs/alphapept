@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDisplayName</key>
+	<string>alphapept</string>
+	<key>CFBundleExecutable</key>
+	<string>MacOS/alphapept_terminal</string>
+	<key>CFBundleIconFile</key>
+	<string>alpha_logo.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>alphapept.0.3.29</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.3.29</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>alphapept</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>LSBackgroundOnly</key>
+	<true/>
+</dict>
+</plist>
