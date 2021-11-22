@@ -600,6 +600,8 @@ def results():
             raw_files = readable_files_from_yaml(results_yaml)
             st.write("### Explore tables from experiment")
             file = st.selectbox("Select file from experiment", raw_files)
+        else:
+            file = None
 
     elif selection == "Enter file":
         file = st.text_input("Enter path to hdf file.", os.getcwd())
