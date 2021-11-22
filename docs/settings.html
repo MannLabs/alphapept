@@ -58,7 +58,7 @@ nb_path: "nbs/00_settings.ipynb"
 </blockquote>
 <p>Print a yaml settings file</p>
 <p>Args:
-    settings (dict): A yaml dictionary</p>
+    settings (dict): A yaml dictionary.</p>
 
 </div>
 
@@ -83,7 +83,7 @@ nb_path: "nbs/00_settings.ipynb"
 <div class="output_markdown rendered_html output_subarea ">
 <h4 id="load_settings" class="doc_header"><code>load_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L17" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>load_settings</code>(<strong><code>path</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Load a yaml settings file</p>
+<p>Load a yaml settings file.</p>
 <p>Args:
     path (str): Path to the settings file.</p>
 
@@ -137,9 +137,9 @@ nb_path: "nbs/00_settings.ipynb"
 <div class="output_markdown rendered_html output_subarea ">
 <h4 id="save_settings" class="doc_header"><code>save_settings</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/settings.py#L48" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>save_settings</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>path</code></strong>:<code>str</code>)</p>
 </blockquote>
-<p>Save settings file to path</p>
+<p>Save settings file to path.</p>
 <p>Args:
-    settings (dict): A yaml dictionary
+    settings (dict): A yaml dictionary.
     path (str): Path to the settings file.</p>
 
 </div>
@@ -645,22 +645,22 @@ n_missed_cleavages:
   min: 0
   type: spinbox
 n_modifications_max:
-  default: 8
+  default: 3
   description: Limit the number of modifications per peptide.
-  max: 4096
+  max: 10
   min: 1
   type: spinbox
 pep_length_max:
   default: 27
   description: Maximum peptide length.
   max: 99
-  min: 6
+  min: 7
   type: spinbox
 pep_length_min:
-  default: 6
+  default: 7
   description: Minimum peptide length.
   max: 99
-  min: 6
+  min: 7
   type: spinbox
 protease:
   default: trypsin
@@ -891,16 +891,22 @@ search_unidentified:
   default: true
   description: Recalibrate masses.
   type: checkbox
+calibration_std_frag:
+  default: 5
+  description: Std range for fragment tolerance after calibration.
+  max: 10
+  min: 1
+  type: spinbox
 calibration_std_prec:
-  default: 3
-  description: Std range for search after calibration.
-  max: 5
+  default: 5
+  description: Std range for precursor tolerance after calibration.
+  max: 10
   min: 1
   type: spinbox
 frag_tol:
   default: 30
-  description: MSMS mass offset.
-  max: 99
+  description: Maximum fragment mass tolerance.
+  max: 500
   min: 1
   type: spinbox
 min_frag_hits:
@@ -925,8 +931,8 @@ ppm:
   type: checkbox
 prec_tol:
   default: 30
-  description: Precursor mass offset.
-  max: 99
+  description: Maximum allowed precursor mass offset.
+  max: 500
   min: 1
   type: spinbox
 protein_fdr:
@@ -1106,6 +1112,35 @@ match_p_min:
 </div>
 </div>
 
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h3 id="Isobaric-Labeling">Isobaric Labeling<a class="anchor-link" href="#Isobaric-Labeling"> </a></h3>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">isobaric_label</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">isobaric_label</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;combobox&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">:[</span><span class="s1">&#39;None&#39;</span><span class="p">,</span><span class="s1">&#39;TMT10plex&#39;</span><span class="p">],</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span><span class="s1">&#39;None&#39;</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span><span class="s2">&quot;Type of isobaric label present.&quot;</span><span class="p">}</span>
+<span class="n">isobaric_label</span><span class="p">[</span><span class="s2">&quot;reporter_frag_tolerance&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;spinbox&#39;</span><span class="p">,</span> <span class="s1">&#39;min&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;max&#39;</span><span class="p">:</span><span class="mi">500</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span><span class="mi">15</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span><span class="s2">&quot;Maximum fragment mass tolerance for a reporter.&quot;</span><span class="p">}</span>
+<span class="n">isobaric_label</span><span class="p">[</span><span class="s2">&quot;reporter_frag_tolerance_ppm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;type&#39;</span><span class="p">:</span><span class="s1">&#39;checkbox&#39;</span><span class="p">,</span> <span class="s1">&#39;default&#39;</span><span class="p">:</span><span class="kc">True</span><span class="p">,</span> <span class="s1">&#39;description&#39;</span><span class="p">:</span><span class="s2">&quot;Use ppm instead of Dalton.&quot;</span><span class="p">}</span>
+
+<span class="n">SETTINGS_TEMPLATE</span><span class="p">[</span><span class="s2">&quot;isobaric_label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">isobaric_label</span>
+</pre></div>
+
+    </div>
 </div>
 </div>
 

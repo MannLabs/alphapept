@@ -31,38 +31,7 @@ nb_path: "nbs/13_export.ipynb"
 
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="MaxQuant-output-files">MaxQuant output files<a class="anchor-link" href="#MaxQuant-output-files"> </a></h2><p>Read MaxQuant folder and return the files</p>
-
-<pre><code>import os
-sample_path = 'F:/TESTDATA/DEFAULT/THERMO/combined/txt/'
-mq_ouput_files = os.listdir(sample_path)</code></pre>
-
-</div>
-</div>
-</div>
-<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
-<div class="text_cell_render border-box-sizing rendered_html">
-<h1 id="To-implement-in-AlphaPept:">To implement in AlphaPept:<a class="anchor-link" href="#To-implement-in-AlphaPept:"> </a></h1>
-<pre><code>* Type of match needs to be implemented
-* evidence[['MS/MS m/z','m/z']]
-MS/MS m/z: The m/z used for fragmentation (not necessarily the monoisotopic
-m/z).
-    m/z The recalibrated mass-over-charge value of the precursor ion.
-
-* Include rt_length directly in feature finding..
-
-* try to extract more properties from the featues
-
-mq_dict_evidence['Number of data points'] =
-mq_dict_evidence['Number of scans'] =
-mq_dict_evidence['Number of isotopic peaks'] =
-
-
-THis needs alot be done: 
-
-'MS/MS count'
-'MS/MS scan number'
-'Delta Score' (to the second best identifeid peptide..)</code></pre>
+<h2 id="MaxQuant-output-files">MaxQuant output files<a class="anchor-link" href="#MaxQuant-output-files"> </a></h2><p>Read MaxQuant folder and return the files.</p>
 
 </div>
 </div>

@@ -1736,83 +1736,6 @@ A minimum is returned if the ratio of lower of the surrounding maxima to the min
     {% raw %}
     
 <div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="k">if</span> <span class="kc">False</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">test_get_isotope_patterns</span><span class="p">():</span>
-
-        <span class="n">test_centroids</span> <span class="o">=</span> <span class="p">[</span>
-            <span class="p">[</span>
-                <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">300.501</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">301.003</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">301.504</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">302.006</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-                <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">300.501</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">301.003</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">301.504</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">302.006</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-                <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">300.501</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">301.003</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">301.504</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">302.006</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-                <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">300.501</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">301.003</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">301.504</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">302.006</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="p">[</span>
-                <span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">300.501</span><span class="p">,</span> <span class="mi">40</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">301.003</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">301.504</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
-                <span class="p">(</span><span class="mf">302.006</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
-            <span class="p">],</span>
-            <span class="p">[(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">401</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="p">(</span><span class="mi">402</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">)],</span>
-            <span class="p">[(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">401</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="p">(</span><span class="mi">402</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">7</span><span class="p">)],</span>
-            <span class="p">[(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">401</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="p">(</span><span class="mi">402</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">8</span><span class="p">)],</span>
-            <span class="p">[(</span><span class="mi">400</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="p">(</span><span class="mi">401</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">),</span> <span class="p">(</span><span class="mi">402</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">9</span><span class="p">)],</span>
-        <span class="p">]</span>
-
-        <span class="n">centroid_dtype</span> <span class="o">=</span> <span class="p">[(</span><span class="s2">&quot;mz&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;scan_no&quot;</span><span class="p">,</span> <span class="nb">int</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;rt&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">)]</span>
-        <span class="n">test_centroids_tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">centroid_dtype</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">test_centroids</span><span class="p">]</span>
-
-        <span class="n">test_centroids</span> <span class="o">=</span> <span class="n">List</span><span class="p">([</span><span class="n">_</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">test_centroids_tmp</span><span class="p">])</span>
-
-        <span class="n">test_hills</span> <span class="o">=</span> <span class="n">get_hills</span><span class="p">(</span><span class="n">test_centroids</span><span class="p">)</span>
-        <span class="n">sorted_hills</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">hill_data</span><span class="p">,</span> <span class="n">hill_ptrs</span> <span class="o">=</span> <span class="n">get_hill_data</span><span class="p">(</span><span class="n">test_hills</span><span class="p">,</span> <span class="n">test_centroids</span><span class="p">)</span>
-        <span class="n">pre_patterns</span> <span class="o">=</span> <span class="n">get_edges</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-
-        <span class="n">isotope_patterns</span><span class="p">,</span> <span class="n">isotope_charges</span> <span class="o">=</span> <span class="n">get_isotope_patterns</span><span class="p">(</span><span class="n">pre_patterns</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">averagine_aa</span><span class="p">,</span> <span class="n">isotopes</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">isotope_patterns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]))</span>
-        <span class="k">assert</span> <span class="n">isotope_charges</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span>
-        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">isotope_patterns</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">]))</span>
-        <span class="k">assert</span> <span class="n">isotope_charges</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span>
-
-    <span class="n">test_get_isotope_patterns</span><span class="p">()</span>
-</pre></div>
-
-    </div>
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
 <div class="output">
@@ -1874,7 +1797,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="report_" class="doc_header"><code>report_</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1465" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>report_</code>(<strong><code>idx</code></strong>:<code>ndarray</code>, <strong><code>isotope_charges</code></strong>:<code>list</code>, <strong><code>isotope_patterns</code></strong>:<code>list</code>, <strong><code>iso_idx</code></strong>:<code>ndarray</code>, <strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>rt_</code></strong>:<code>ndarray</code>, <strong><code>rt_idx</code></strong>:<code>ndarray</code>, <strong><code>results</code></strong>:<code>ndarray</code>)</p>
+<h4 id="report_" class="doc_header"><code>report_</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1465" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>report_</code>(<strong><code>idx</code></strong>:<code>ndarray</code>, <strong><code>isotope_charges</code></strong>:<code>list</code>, <strong><code>isotope_patterns</code></strong>:<code>list</code>, <strong><code>iso_idx</code></strong>:<code>ndarray</code>, <strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>, <strong><code>int_data</code></strong>:<code>ndarray</code>, <strong><code>rt_</code></strong>:<code>ndarray</code>, <strong><code>rt_idx</code></strong>:<code>ndarray</code>, <strong><code>results</code></strong>:<code>ndarray</code>, <strong><code>lookup_idx</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Function to extract summary statstics from a list of isotope patterns and charges.</p>
 <p>Args:
@@ -1889,7 +1812,8 @@ Returns:
     int<em>data (np.ndarray): Array containing the intensity to each centroid.
     rt</em> (np.ndarray): Array with retention time information for each scan.
     rt_idx (np.ndarray): Lookup array to match centroid idx to rt.
-    results (np.ndarray): Recordarray with isotope pattern summary statistics.</p>
+    results (np.ndarray): Recordarray with isotope pattern summary statistics.
+    lookup_idx (np.ndarray): Lookup array for each centroid.</p>
 
 </div>
 
@@ -1919,7 +1843,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="feature_finder_report" class="doc_header"><code>feature_finder_report</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1575" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>feature_finder_report</code>(<strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>isotope_patterns</code></strong>:<code>list</code>, <strong><code>isotope_charges</code></strong>:<code>list</code>, <strong><code>iso_idx</code></strong>:<code>ndarray</code>, <strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>)</p>
+<h4 id="feature_finder_report" class="doc_header"><code>feature_finder_report</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1579" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>feature_finder_report</code>(<strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>isotope_patterns</code></strong>:<code>list</code>, <strong><code>isotope_charges</code></strong>:<code>list</code>, <strong><code>iso_idx</code></strong>:<code>ndarray</code>, <strong><code>stats</code></strong>:<code>ndarray</code>, <strong><code>sortindex_</code></strong>:<code>ndarray</code>, <strong><code>hill_ptrs</code></strong>:<code>ndarray</code>, <strong><code>hill_data</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Creates a report dataframe with summary statistics of the found isotope patterns.</p>
 <p>Args:
@@ -1965,46 +1889,6 @@ Returns:
 </div>
 </div>
 </div>
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-<div class="output_wrapper">
-<div class="output">
-
-<div class="output_area">
-
-
-<div class="output_markdown rendered_html output_subarea ">
-<h4 id="plot_isotope_pattern" class="doc_header"><code>plot_isotope_pattern</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1609" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>plot_isotope_pattern</code>(<strong><code>index</code></strong>:<code>int</code>, <strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>sorted_stats</code></strong>:<code>ndarray</code>, <strong><code>centroids</code></strong>:<code>ndarray</code>, <strong><code>scan_range</code></strong>:<code>int</code>=<em><code>100</code></em>, <strong><code>mz_range</code></strong>:<code>float</code>=<em><code>2</code></em>, <strong><code>plot_hills</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
-</blockquote>
-<p>Plot an isotope pattern in its local environment.</p>
-<p>Args:
-    index (int): Index to the pattern.
-    df (pd.DataFrame): Pandas DataFrame containing the patterns.
-    sorted_stats (np.ndarray): Stats array that contains summary statistics of hills.
-    centroids (np.ndarray): 1D Array containing the masses of the centroids.
-    scan_range (int, optional): Scan range to plot. Defaults to 100.
-    mz_range (float, optional): MZ range to plot. Defaults to 2.
-    plot_hills (bool, optional): Flag to plot hills. Defaults to False.</p>
-
-</div>
-
-</div>
-
-</div>
-</div>
-
-</div>
-    {% endraw %}
-
-    {% raw %}
-    
-<div class="cell border-box-sizing code_cell rendered">
-
-</div>
-    {% endraw %}
-
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="External-Feature-Finder">External Feature Finder<a class="anchor-link" href="#External-Feature-Finder"> </a></h2><p>To utilize the command-line Feature Finder from Bruker <code>4DFF-3.13</code> - <code>uff-cmdline2.exe</code>, we call it via a subprocess and wait until completion.</p>
@@ -2023,7 +1907,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="extract_bruker" class="doc_header"><code>extract_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1709" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_bruker</code>(<strong><code>file</code></strong>:<code>str</code>, <strong><code>base_dir</code></strong>:<code>str</code>=<em><code>'ext/bruker/FF'</code></em>, <strong><code>config</code></strong>:<code>str</code>=<em><code>'proteomics_4d.config'</code></em>)</p>
+<h4 id="extract_bruker" class="doc_header"><code>extract_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1620" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>extract_bruker</code>(<strong><code>file</code></strong>:<code>str</code>, <strong><code>base_dir</code></strong>:<code>str</code>=<em><code>'ext/bruker/FF'</code></em>, <strong><code>config</code></strong>:<code>str</code>=<em><code>'proteomics_4d.config'</code></em>)</p>
 </blockquote>
 <p>Call Bruker Feautre Finder via subprocess.</p>
 <p>Args:
@@ -2057,7 +1941,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="convert_bruker" class="doc_header"><code>convert_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1776" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_bruker</code>(<strong><code>feature_path</code></strong>:<code>str</code>)</p>
+<h4 id="convert_bruker" class="doc_header"><code>convert_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1687" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_bruker</code>(<strong><code>feature_path</code></strong>:<code>str</code>)</p>
 </blockquote>
 <p>Reads feature table and converts to feature table to be used with AlphaPept.</p>
 <p>Args:
@@ -2086,7 +1970,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="map_bruker" class="doc_header"><code>map_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1800" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_bruker</code>(<strong><code>feature_path</code></strong>:<code>str</code>, <strong><code>feature_table</code></strong>:<code>DataFrame</code>, <strong><code>query_data</code></strong>:<code>dict</code>)</p>
+<h4 id="map_bruker" class="doc_header"><code>map_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1711" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_bruker</code>(<strong><code>feature_path</code></strong>:<code>str</code>, <strong><code>feature_table</code></strong>:<code>DataFrame</code>, <strong><code>query_data</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Map Ms1 to Ms2 via Table FeaturePrecursorMapping from Bruker FF.</p>
 <p>Args:
@@ -2130,7 +2014,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="find_features" class="doc_header"><code>find_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1868" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_features</code>(<strong><code>to_process</code></strong>:<code>tuple</code>, <strong><code>callback</code></strong>:<code>Optional</code>[<code>Callable</code>]=<em><code>None</code></em>, <strong><code>parallel</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
+<h4 id="find_features" class="doc_header"><code>find_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1779" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_features</code>(<strong><code>to_process</code></strong>:<code>tuple</code>, <strong><code>callback</code></strong>:<code>Optional</code>[<code>Callable</code>]=<em><code>None</code></em>, <strong><code>parallel</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Wrapper for feature finding.</p>
 <p>Args:
@@ -2177,7 +2061,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="replace_infs" class="doc_header"><code>replace_infs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L2014" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>replace_infs</code>(<strong><code>array</code></strong>:<code>ndarray</code>)</p>
+<h4 id="replace_infs" class="doc_header"><code>replace_infs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1938" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>replace_infs</code>(<strong><code>array</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Replace nans and infs with 0</p>
 <p>Args:
@@ -2206,7 +2090,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="map_ms2" class="doc_header"><code>map_ms2</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L2029" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_ms2</code>(<strong><code>feature_table</code></strong>:<code>DataFrame</code>, <strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>map_mz_range</code></strong>:<code>float</code>=<em><code>1</code></em>, <strong><code>map_rt_range</code></strong>:<code>float</code>=<em><code>0.5</code></em>, <strong><code>map_mob_range</code></strong>:<code>float</code>=<em><code>0.3</code></em>, <strong><code>map_n_neighbors</code></strong>:<code>int</code>=<em><code>5</code></em>, <strong><code>search_unidentified</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="map_ms2" class="doc_header"><code>map_ms2</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1953" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_ms2</code>(<strong><code>feature_table</code></strong>:<code>DataFrame</code>, <strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>map_mz_range</code></strong>:<code>float</code>=<em><code>1</code></em>, <strong><code>map_rt_range</code></strong>:<code>float</code>=<em><code>0.5</code></em>, <strong><code>map_mob_range</code></strong>:<code>float</code>=<em><code>0.3</code></em>, <strong><code>map_n_neighbors</code></strong>:<code>int</code>=<em><code>5</code></em>, <strong><code>search_unidentified</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Map MS1 features to MS2 based on rt and mz.
 If ccs is included also add.

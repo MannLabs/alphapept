@@ -52,6 +52,12 @@ entries:
       title: Export
       url: export.html
     - output: web,pdf
+      title: Display
+      url: display.html
+    - output: web,pdf
+      title: Label
+      url: label.html
+    - output: web,pdf
       title: Additional code
       url: additional_code.html
     - output: web,pdf

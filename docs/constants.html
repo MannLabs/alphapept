@@ -70,7 +70,7 @@ nb_path: "nbs/10_constants.ipynb"
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>{&#39;A&#39;, &#39;P&#39;, &#39;N&#39;, &#39;R&#39;, &#39;C&#39;, &#39;L&#39;, &#39;K&#39;, &#39;Y&#39;, &#39;H&#39;, &#39;S&#39;, &#39;D&#39;, &#39;I&#39;, &#39;V&#39;, &#39;F&#39;, &#39;M&#39;, &#39;E&#39;, &#39;T&#39;, &#39;W&#39;, &#39;G&#39;, &#39;U&#39;, &#39;Q&#39;}
+<pre>{&#39;F&#39;, &#39;Y&#39;, &#39;P&#39;, &#39;W&#39;, &#39;A&#39;, &#39;H&#39;, &#39;V&#39;, &#39;I&#39;, &#39;T&#39;, &#39;D&#39;, &#39;M&#39;, &#39;G&#39;, &#39;S&#39;, &#39;U&#39;, &#39;E&#39;, &#39;R&#39;, &#39;L&#39;, &#39;N&#39;, &#39;Q&#39;, &#39;C&#39;, &#39;K&#39;}
 </pre>
 </div>
 </div>
@@ -624,6 +624,100 @@ trypsin_full                        ([KR](?=[^P]))|((?&lt;=W)K(?=P))|((?&lt;=M)R
 trypsin_exception                   ((?&lt;=[CD])K(?=D))|((?&lt;=C)K(?=[HY]))|((?&lt;=C)R(?=K))|((?&lt;=R)R(?=[HR]))
 non-specific                        ()
 trypsin                             ([KR](?=[^P]))
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Losses">Losses<a class="anchor-link" href="#Losses"> </a></h2>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">loss_dict</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">_</span><span class="si">:</span><span class="s2">&lt;5</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">loss_dict</span><span class="p">[</span><span class="n">_</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>      0.0
+-H2O  18.01056468346
+-NH3  17.03052
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Labels">Labels<a class="anchor-link" href="#Labels"> </a></h2>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="n">label_dict</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">label_dict</span><span class="p">[</span><span class="n">label</span><span class="p">])</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>label(mod_name=&#39;tmt6&#39;, channels=[&#39;tmt10-126&#39;, &#39;tmt10-127N&#39;, &#39;tmt10-127C&#39;, &#39;tmt10-128N&#39;, &#39;tmt10-128C&#39;, &#39;tmt10-129N&#39;, &#39;tmt10-129C&#39;, &#39;tmt10-130N&#39;, &#39;tmt10-130C&#39;, &#39;tmt10-131&#39;, &#39;tmt10-131C&#39;], masses=array([126.127726, 127.124761, 127.131081, 128.128116, 128.134436,
+       129.131471, 129.13779 , 130.134825, 130.141145, 131.13818 ,
+       131.144499]), reference_channel=&#39;tmt10-126&#39;, mods_fixed_terminal=[&#39;tmt6&lt;^&#39;], mods_variable=[&#39;tmt6Y&#39;, &#39;tmt6K&#39;])
 </pre>
 </div>
 </div>

@@ -1,4 +1,4 @@
-# Title
+# AlphaPept
 
 
 
@@ -8,11 +8,6 @@
 ![Windows Installer](https://github.com/MannLabs/alphapept/workflows/Windows%20Installer/badge.svg)
 
 [![DOI:10.1101/2021.07.23.453379](http://img.shields.io/badge/DOI-10.1101/2021.07.23.453379-B31B1B.svg)](https://www.biorxiv.org/content/10.1101/2021.07.23.453379v1)
-
-# AlphaPept
-![](https://i.imgur.com/xkFtDff.jpg)
- > A modular, python-based framework to analyze mass spectrometry data. Powered by nbdev. Supercharged with numba.
-
 
 ## Preprint
 
@@ -46,6 +41,7 @@ See also below for more detailed instructions.
 | Isobaric labels 	| None           	|
 | Platform        	| Windows        	|
 
+Linux and MacOs should in principle work but are not heavily tested and might require additional work to setup (see detailed instructions below). To read Thermo files we use Mono, which can be used on Mac and Linux. For Bruker files we can use Linux but not MacOs.
 
 ## Installation Instructions
 
@@ -93,7 +89,7 @@ To enable usage of a GPU, additional packages need to be installed. The followin
 For macOS Catalina, open the configuration of zsh via the terminal:
 * Type in `cd` to navigate to the home directory.
 * Type `nano ~/.zshrc` to open the configuration of the terminal
-* Add the path to your mono installation: `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/Current/lib/pkgconfig:$PKG_CONFIG_PATH`.
+* Add the path to your mono installation: `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/pkgconfig:$PKG_CONFIG_PATH`. Make sure that the Path matches to your version (Here 6.12.0)
 * Save everything and execute `. ~/.zshrc` 
 4. Navigate to the alphapept folder and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode.
 
@@ -109,6 +105,7 @@ To use AlphaPept as a stand-alone program for end-users, it can be installed on 
 
 ## Version Performance
 An overview on the performance of different versions can be found [here](https://charts.mongodb.com/charts-alphapept-itfxv/public/dashboards/5f671dcf-bcd6-4d90-8494-8c7f724b727b).
+We re-run multiple tests on datasets for different versions so that users can assess what changes from version to version. Feel free to [suggest](https://github.com/MannLabs/alphapept/discussions) a test set in case.
 
 ## How to use
 
@@ -175,13 +172,20 @@ settings = load_settings('new_settings.yaml')
 r = alphapept.interface.run_complete_workflow(settings)
 ```
 
+This also allows you to break the workflow down in indiviudal steps, e.g.:
+
+```
+settings = alphapept.interface.import_raw_data(settings)
+settings = alphapept.interface.feature_finding(settings)
+```
+
 ## Notebooks
 
 Within the notebooks, we try to cover most aspects of a proteomics workflow:
 
 * Settings: General settings to define a workflow
 * Chem: Chemistry related functions, e.g., for calculating isotope distributions
-* IO: Everything related to importing and exporting and the file formats used
+* Input / Output: Everything related to importing and exporting and the file formats used
 * FASTA: Generating theoretical databases from FASTA files
 * Feature Finding: How to extract MS1 features for quantification
 * Search: Comparing theoretical databases to experimental spectra and getting Peptide-Spectrum-Matches (PSMs)
@@ -190,11 +194,17 @@ Within the notebooks, we try to cover most aspects of a proteomics workflow:
 * Quantification: Functions for quantification, e.g., LFQ
 * Matching: Functions for Match-between-runs
 * Constants: A collection of constants
-* Interface: Code that generates the command-line-interface (CLI)
+* Interface: Code that generates the command-line-interface (CLI) and makes workflow steps callable
 * Performance: Helper functions to speed up code with CPU / GPU
+* Export: Helper functions to make exports compatbile to other Software tools
+* Label: Code for support isobaric label search
+* Display: Code related to displaying in the streamlit gui
+* Additional code: Overview of additional code not covered by the notebooks
+* How to contribute: Contribution guidelines
+* AlphaPept workflow and files: Overview of the worfklow, files and column names
 
 ## Contributing
-If you have a feature request or a bug report, please post it as an issue on the GitHub issue tracker. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started [here](https://mannlabs.github.io/alphapept/contributing.html). We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects-page on GitHub. You can also contact us via opensource@alphapept.com.
+If you have a feature request or a bug report, please post it either as an idea in the [discussions](https://github.com/MannLabs/alphapept/discussions) or as an issue on the [GitHub issue tracker](https://github.com/MannLabs/alphapept/issues). Upvoting features in the discussions page will help to prioritize what to implement next. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started [here](https://mannlabs.github.io/alphapept/contributing.html). We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects-page on GitHub. You can also contact us via opensource@alphapept.com.
 
 ## Cite us
 

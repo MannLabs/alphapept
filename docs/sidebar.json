@@ -15,6 +15,8 @@
     "Interface": "interface.html",
     "Performance": "performance.html",
     "Export": "export.html",
+    "Display": "display.html",
+    "Label": "label.html",
     "Additional code": "additional_code.html",
     "How to contribute": "contributing.html",
     "AlphaPept workflow and files": "file_formats.html"
