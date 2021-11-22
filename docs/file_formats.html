@@ -43,6 +43,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <p>The <code>File watcher</code> can be set up to monitor a folder; whenever a new file matching pre-defined settings is copied to the folder, it will create a <code>*.yaml</code>-file and add it to the <code>Queue</code>-folder.</p>
 <p>Whenever an experiment succeeds, the <code>*.yaml</code>-file will be appended by summary information of the experiment and moved to the <code>Finished</code>-folder. As the <code>*.yaml</code>-file is only very small in size (~kB), it is intended to serve as a history of processed files.</p>
 <p>Whenever an experiment fails, the <code>*.yaml</code>-file will be moved to the <code>Failed</code>-folder. It can be moved from there to the <code>Queue</code>-folder for reprocessing.</p>
+<h3 id="FASTA-files">FASTA files<a class="anchor-link" href="#FASTA-files"> </a></h3><p>When FASTA files are downloaded via the AlphaPept GUI, the files are stored in the FASTA folder in the alphapept home directory (e.g. <code>C:\Users\username\.alphapept\fasta</code>).</p>
 <h3 id="History-and-Results">History and Results<a class="anchor-link" href="#History-and-Results"> </a></h3><p>AlphaPept screens all <code>*.yaml</code>-files in the finished folder and plots a run history based on the summary information. This is especially useful for QC or comparison purposes. Additionally, the <code>*.yaml</code>-files can be used to investigate the results of a run.</p>
 <p><img src="https://i.imgur.com/thGOrDk.jpg" alt=""></p>
 
@@ -152,7 +153,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 </tr>
 <tr>
 <td>int_ratio</td>
-<td>mean intensity ratio: matched database fragment intensity divided by experimental fragment intensity (if no db intensity is available it is set to 1)</td>
+<td>mean intensity ratio: experimental fragment intensity divided by theoretical intensity (if no db intensity is available db intensity is set to 1) for each matched ion</td>
 </tr>
 <tr>
 <td>int_sum</td>
@@ -219,11 +220,11 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <td>prec_offset in ppm</td>
 </tr>
 <tr>
-<td>prec_offset_raw_ppm </td>
+<td>prec_offset_raw_ppm</td>
 <td>prec_offset_raw  in ppm</td>
 </tr>
 <tr>
-<td>prec_offset_raw </td>
+<td>prec_offset_raw</td>
 <td>mass offset from theoretical precursor mass to actual precursor mass (before recalibration)</td>
 </tr>
 <tr>

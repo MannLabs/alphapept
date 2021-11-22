@@ -21,9 +21,9 @@ nb_path: "nbs/12_performance.ipynb"
 -->
 
 <div class="container" id="notebook-container">
-
+        
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
@@ -54,7 +54,7 @@ nb_path: "nbs/12_performance.ipynb"
 </div>
 </div>
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
@@ -68,7 +68,7 @@ nb_path: "nbs/12_performance.ipynb"
 </div>
 </div>
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -98,7 +98,7 @@ nb_path: "nbs/12_performance.ipynb"
     {% endraw %}
 
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
@@ -112,7 +112,7 @@ nb_path: "nbs/12_performance.ipynb"
 </div>
 </div>
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
@@ -126,7 +126,7 @@ nb_path: "nbs/12_performance.ipynb"
 </div>
 </div>
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -162,7 +162,7 @@ nb_path: "nbs/12_performance.ipynb"
     {% endraw %}
 
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
@@ -183,7 +183,7 @@ importlib.reload(imported_module)</code></pre>
 </div>
 </div>
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -217,7 +217,7 @@ importlib.reload(imported_module)</code></pre>
     {% endraw %}
 
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -259,7 +259,7 @@ unless explicitly defined otherwise..</p>
     {% endraw %}
 
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -284,7 +284,7 @@ unless explicitly defined otherwise..</p>
     {% endraw %}
 
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
@@ -298,7 +298,7 @@ unless explicitly defined otherwise..</p>
 </div>
 </div>
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -312,7 +312,7 @@ unless explicitly defined otherwise..</p>
 <span class="k">def</span> <span class="nf">test_func_python</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Docstring test&quot;&quot;&quot;</span>
     <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-
+    
 <span class="nd">@compile_function</span><span class="p">(</span><span class="n">compilation_mode</span><span class="o">=</span><span class="s2">&quot;numba&quot;</span><span class="p">)</span>
 <span class="k">def</span> <span class="nf">test_func_numba</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Docstring test&quot;&quot;&quot;</span>
@@ -395,7 +395,7 @@ unless explicitly defined otherwise..</p>
 </div>
 </div>
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -435,7 +435,7 @@ results should be stored in buffer arrays inside thge function instead.</p>
     {% endraw %}
 
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
@@ -449,7 +449,7 @@ results should be stored in buffer arrays inside thge function instead.</p>
 </div>
 </div>
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
 
@@ -510,9 +510,9 @@ results should be stored in buffer arrays inside thge function instead.</p>
 <div class="output_area">
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Wall time: 4.01 s
-Wall time: 6.51 s
-Wall time: 752 ms
+<pre>Wall time: 3.27 s
+Wall time: 6.19 s
+Wall time: 665 ms
 </pre>
 </div>
 </div>
@@ -532,7 +532,7 @@ Wall time: 752 ms
 </div>
 </div>
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 <div class="output_wrapper">
@@ -547,8 +547,7 @@ Wall time: 752 ms
 <p>Create a multiprocessing.Pool object.</p>
 <p>Args:
     process_count (int): The number of processes.
-        If larger than available cores, it is trimmed to the available maximum.
-        If 0, it is set to the maximum cores available (at most 50).</p>
+        If larger than available cores, it is trimmed to the available maximum.</p>
 <p>Returns:
     multiprocessing.Pool: A Pool object to parallelize functions with multiple processes.</p>
 
@@ -563,10 +562,12 @@ Wall time: 752 ms
     {% endraw %}
 
     {% raw %}
-
+    
 <div class="cell border-box-sizing code_cell rendered">
 
 </div>
     {% endraw %}
 
 </div>
+ 
+
