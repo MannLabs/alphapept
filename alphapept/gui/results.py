@@ -127,6 +127,7 @@ def ion_plot(ms_file: MS_Data_File, options: list):
                     row=1,
                     col=1,
                 )
+                fig.add_hline(y=0, line_color='black')
                 fig.add_bar(y=counts, x=bin_edges, row=1, col=2, marker_color="#17212b")
                 fig.update_layout(showlegend=False)
 
@@ -477,19 +478,19 @@ def parse_file_and_display(file: str, results_yaml: dict):
         st.write("Basic Plots")
         ion_plot(ms_file, options)
 
-        opt = st.selectbox("Select group", [None] + options)
-        if opt is not None:
-            if pandas_hdf:
-                df = pd.read_hdf(file, opt)
-            else:
-                df = ms_file.read(dataset_name=opt)
-            if not isinstance(df, pd.DataFrame):
-                df = pd.DataFrame(df)
+    opt = st.selectbox("Select group", [None] + options)
+    if opt is not None:
+        if pandas_hdf:
+            df = pd.read_hdf(file, opt)
+        else:
+            df = ms_file.read(dataset_name=opt)
+        if not isinstance(df, pd.DataFrame):
+            df = pd.DataFrame(df)
 
-            data_range = st.slider("Data range", 0, len(df), (0, 1000))
-            st.write(df.iloc[data_range[0] : data_range[1]])
+        data_range = st.slider("Data range", 0, len(df), (0, 1000))
+        st.write(df.iloc[data_range[0] : data_range[1]])
 
-            make_df_downloadble(df, file)
+        make_df_downloadble(df, file)
 
 
 def plot_summary(results_yaml: dict, selection: str):

@@ -1,12 +1,21 @@
 import streamlit as st
 from alphapept.gui.utils import markdown_link
+from alphapept.utils import check_github_version
 from alphapept.__version__ import VERSION_NO
 
+SHOW_WARNING = False
+try:
+    import clr
+except ModuleNotFoundError:
+    SHOW_WARNING = True
 
 def start():
     """Streamlit page that displays information on how to get started."""
     st.write("# Getting started")
     st.text("Welcome to AlphaPept.")
+
+    if SHOW_WARNING:
+        st.warning('Pythonnet not found. Please check installation instructions.')
 
     with st.expander("Navigation"):
         st.write("Use the sidebar to the left to navigate through the different menus.")
@@ -65,3 +74,10 @@ def start():
             "https://datashare.biochem.mpg.de/s/p8Qu3KolzbSiCHH/download",
         )
         st.write("Put both files in one folder and go to the New experiment tab.")
+
+
+    latest_version = check_github_version()
+    if latest_version and (VERSION_NO != latest_version):
+        st.info(
+            f"You're using AlphaPept {VERSION_NO} but version {latest_version} is now avaliable! See [here](https://github.com/MannLabs/alphapept) for details"
+        )

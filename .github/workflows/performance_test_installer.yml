@@ -74,3 +74,11 @@ jobs:
       run: |
         conda activate alphapeptinstaller
         python test_ci.py "${{ env.TMP_FOLDER }}" PXD010012 "${{ secrets.MONGODB_PW }}"
+  PXD015087:
+    needs: [Pyinstaller, Prepare_Environment_for_testing, HeLa_Thermo_Win]
+    runs-on: self-hosted
+    steps:
+    - name: Run Alphapept on PXD015087
+      run: |
+        conda activate alphapeptinstaller
+        python test_ci.py "${{ env.TMP_FOLDER }}" PXD015087 "${{ secrets.MONGODB_PW }}"

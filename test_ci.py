@@ -56,6 +56,14 @@ FILE_DICT['PXD010012_CT_3_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/
 FILE_DICT['PXD010012_CT_4_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/swO523hdX1aqN3R/download'
 FILE_DICT['PXD010012_CT_5_C2_01_Ratio.d'] = 'https://datashare.biochem.mpg.de/s/Kbq97G9IzxQ8AHb/download'
 
+#PXD015087
+
+FILE_DICT['Hela_P035210_BA1_S00_A00_R1.raw'] = 'https://datashare.biochem.mpg.de/s/W7LPSZFrxlnIfsN/download'
+FILE_DICT['Hela_P035210_BA1_S00_A00_R5.raw'] = 'https://datashare.biochem.mpg.de/s/jySnR9qAZouc2Wu/download'
+FILE_DICT['Hela_P035210_BA1_S00_A00_R14.raw'] = 'https://datashare.biochem.mpg.de/s/sa0oBpIuuVppa43/download'
+FILE_DICT['Hela_P035210_BA1_S00_A00_R19.raw'] = 'https://datashare.biochem.mpg.de/s/ubzGyDP2gLyFO3b/download'
+
+
 mods = sys.modules[__name__]
 
 def config_test_paths(BASE_DIR, TEST_DIR, ARCHIVE_DIR, MONGODB_USER, MONGODB_URL):
@@ -80,12 +88,13 @@ class TestRun():
     """
     Class to prepare and download files to make a default test run
     """
-    def __init__(self, id, experimental_files, fasta_paths, new_files, custom_settings = None):
+    def __init__(self, id, experimental_files, fasta_paths, new_files, fraction_dict = None, custom_settings = None):
 
         self.id = id
         self.file_paths = experimental_files
         self.fasta_paths = fasta_paths
         self.new_files = new_files
+        self.fraction_dict = fraction_dict
 
         self.custom_settings = custom_settings
 
@@ -142,19 +151,28 @@ class TestRun():
             else:
                 shutil.copyfile(os.path.join(BASE_DIR, file), os.path.join(TEST_DIR, file))
 
+    import os
     def prepare_settings(self):
         """
         Prepares the settings according to the test run
         """
 
         self.settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
+
         self.settings['experiment']['file_paths'] =  [os.path.join(TEST_DIR, _) for _ in self.file_paths]
         self.settings['experiment']['fasta_paths'] = [os.path.join(TEST_DIR, _) for _ in self.fasta_paths]
+        if self.fraction_dict == None:
+            self.settings['experiment']['fraction_dict'] = {k:[k] for k in self.settings['experiment']['file_paths']}
+        else:
+            self.settings['experiment']['fraction_dict'] = self.fraction_dict
+
 
     def run(self, password=None):
         if self.new_files:
             self.prepare_files()
-        self.prepare_settings()
+        if 'settings' not in self.__dict__.keys():
+            logging.info('No settings provided. Creating from default settings.')
+            self.prepare_settings()
 
         report = {}
         report['timestamp'] = datetime.now()
@@ -183,7 +201,7 @@ class TestRun():
             settings_path = base +'.yaml'
             settings = load_settings(settings_path)
         else:
-            logging.info('Using Python version for testing')
+            logging.info("Couldn't find compiled exe. Using Python version for testing.")
             settings = alphapept.interface.run_complete_workflow(settings)
         end = time()
 
@@ -340,6 +358,13 @@ def main(runtype = None, password = None, new_files = True):
         fasta_files = ['IRT_fasta.fasta','contaminants.fasta']
         run = TestRun(runtype, files, fasta_files, new_files)
         run.run(password=password)
+
+    elif runtype == 'thermo_singlefrac':
+        files = ['Hela_P035210_BA1_S00_A00_R1.raw']
+        fasta_files = ['human.fasta','contaminants.fasta']
+        run = TestRun(runtype, files, fasta_files, new_files)
+        run.run(password=password)
+
     elif runtype == 'thermo_hela':
         files = ['thermo_HeLa.raw']
         fasta_files = ['human.fasta', 'arabidopsis.fasta', 'contaminants.fasta']
@@ -357,7 +382,7 @@ def main(runtype = None, password = None, new_files = True):
         fasta = {}
         fasta['mods_variable'] = ['oxM','pS','pT','pY']
         custom_settings['fasta'] = fasta
-        run = TestRun(runtype, files, fasta_files, new_files, custom_settings)
+        run = TestRun(runtype, files, fasta_files, new_files, custom_settings = custom_settings)
         run.run(password=password)
     elif runtype == 'PXD006109':
         files = ['PXD006109_HeLa12_1.raw','PXD006109_HeLa12_2.raw','PXD006109_HeLa12_3.raw','PXD006109_HeLa2_1.raw','PXD006109_HeLa2_2.raw','PXD006109_HeLa2_3.raw']
@@ -377,6 +402,17 @@ def main(runtype = None, password = None, new_files = True):
         groups = (['PXD010012_CT_1_C2_01_Ratio', 'PXD010012_CT_2_C2_01_Ratio', 'PXD010012_CT_3_C2_01_Ratio', 'PXD010012_CT_4_C2_01_Ratio', 'PXD010012_CT_5_C2_01_Ratio'], ['PXD010012_CT_1_C1_01_Base', 'PXD010012_CT_2_C1_01_Base', 'PXD010012_CT_3_C1_01_Base', 'PXD010012_CT_4_C1_01_Base', 'PXD010012_CT_5_C1_01_Base'])
         test_run.run_mixed_analysis = (species, groups)
         test_run.run(password=password)
+
+    elif runtype == 'PXD015087':
+        files = ['Hela_P035210_BA1_S00_A00_R1.raw', 'Hela_P035210_BA1_S00_A00_R5.raw', 'Hela_P035210_BA1_S00_A00_R14.raw', 'Hela_P035210_BA1_S00_A00_R19.raw']
+        fasta_files = ['human.fasta', 'contaminants.fasta']
+        fraction_dict = {'Hela_P035210_BA1_S00_A00': ['Hela_P035210_BA1_S00_A00_R1.raw', 'Hela_P035210_BA1_S00_A00_R5.raw', 'Hela_P035210_BA1_S00_A00_R14.raw', 'Hela_P035210_BA1_S00_A00_R19.raw']}
+        run = TestRun(runtype, files, fasta_files, new_files, fraction_dict = fraction_dict)
+        #run.prepare_settings()
+        #print(run.file_paths)
+        #run.settings['workflow'] = {'continue_runs': True, 'create_database': False, 'import_raw_data': False, 'find_features': False, 'search_data': False, 'recalibrate_data': False, 'align': True, 'match': False, 'lfq_quantification': True}
+        run.run(password=password)
+
 
     else:
         raise NotImplementedError(f"Runtime {runtype} not found. Available are {AVAILABLE}")
