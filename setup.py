@@ -2,7 +2,10 @@ import setuptools
 from configparser import ConfigParser
 from pkg_resources import parse_version
 import os
+import re
 assert parse_version(setuptools.__version__) >= parse_version('36.2')
+
+import alphapept as package2install
 
 config = ConfigParser(delimiters=['='])
 config.read('settings.ini')
@@ -32,21 +35,24 @@ maximum_python3_available = 8
 with open("README.md") as readme_file:
     long_description = readme_file.read()
 
-strict_requirements = {
-    "numba": "numba>=0.4.8",
-    "matplotlib": "matplotlib==3.2.2",
-}
-with open("requirements.txt") as requirements_file:
-    requirements = []
-    # for line in requirements_file:
-    #     # TODO, this should be a proper regex parsing
-    #     requirement, version = line.split("==")
-    #     if requirement not in strict_requirements:
-    #         requirements.append(requirement)
-    #     else:
-    #         requirements.append(strict_requirements[requirement])
-    for line in requirements_file:
-        requirements.append(line)
+
+extra_requirements = {}
+for extra, requirement_file_name in package2install.__requirements__.items():
+    with open(requirement_file_name) as requirements_file:
+        if extra != "":
+            extra_stable = f"{extra}-stable"
+        else:
+            extra_stable = "stable"
+        extra_requirements[extra_stable] = []
+        extra_requirements[extra] = []
+        for line in requirements_file:
+            extra_requirements[extra_stable].append(line)
+            requirement, *comparison = re.split("[><=~!]", line)
+            requirement == requirement.strip()
+            extra_requirements[extra].append(requirement)
+
+requirements = extra_requirements.pop("")
+
 
 def is_tool(name):
     """Check whether `name` is on PATH and marked as executable."""
@@ -82,6 +88,7 @@ setuptools.setup(
     install_requires=requirements + [
         "pywin32==225; sys_platform=='win32'"
     ],
+    extras_require=extra_requirements,
     python_requires=f'>={cfg["min_python"]},<{cfg["max_python"]}',
     long_description=long_description,
     long_description_content_type='text/markdown',
