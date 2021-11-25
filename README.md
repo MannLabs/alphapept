@@ -17,15 +17,11 @@ Be sure to check out other packages of our ecosystem:
 - [alphatims](https://github.com/MannLabs/alphatims): Fast access to TimsTOF data.
 - [alphamap](https://github.com/MannLabs/alphamap): Peptide level MS data exploration.
 
-## Documentation
-
-The documentation is automatically built based on the jupyter notebooks (nbs/index.ipynb) and can be found [here](https://mannlabs.github.io/alphapept/):
-
 ## Windows Quickstart
 ![](https://i.imgur.com/UO64YPx.jpg)
 
-1. Download the latest installer [here](https://github.com/MannLabs/alphapept/releases/latest), install and click the shortcut on the desktop. A browser window with the AlphaPept interface should open. In case Windows Firewall asks for network access for AlphaPept, please allow.
-2. In the `New Experiment` select a folder with raw files and FASTA files.
+1. Download the latest installer [here](https://github.com/MannLabs/alphapept/releases/latest), install and click the shortcut on the desktop. A browser window with the AlphaPept interface should open. In the case of Windows Firewall asking for network access for AlphaPept, please allow.
+2. In the `New Experiment`, select a folder with raw files and FASTA files.
 3. Specify additional settings such as modifications with `Settings`.
 4. Click `Start` and run the analysis. 
 
@@ -41,48 +37,45 @@ See also below for more detailed instructions.
 | Isobaric labels 	| None           	|
 | Platform        	| Windows        	|
 
-Linux and MacOs should in principle work but are not heavily tested and might require additional work to setup (see detailed instructions below). To read Thermo files we use Mono, which can be used on Mac and Linux. For Bruker files we can use Linux but not MacOs.
+Linux and macOS should, in principle, work but are not heavily tested and might require additional work to set up (see detailed instructions below). To read Thermo files, we use Mono, which can be used on Mac and Linux. For Bruker files, we can use Linux but not macOS.
 
-## Installation Instructions
+## Python Installation Instructions
 
-
-### Python
+### Requirements
 
 We highly recommend the [Anaconda](https://www.anaconda.com) or [Miniconda](https://docs.conda.io/en/latest/miniconda.html) Python distribution, which comes with a powerful package manager. See below for additional instructions for Linux and Mac as they require additional installation of Mono to use the RawFileReader.
+
+AlphaPept can be used as an application as a whole or as a Python Package where individual modules are called. Depending on the use case, AlphaPept will need different requirements, and you might not want to install all of them.
+
+Currently, we have the default `requirements.txt`, additional requirements to run the GUI `gui` and packages used for developing `develop`. 
+
+Therefore, you can install AlphaPept in multiple ways:
+
+- The default `alphapept`
+- With GUI-packages `alphapept[gui]`
+- With pacakges for development `alphapept[develop]` (`alphapept[develop,gui]` respectively
+
+The requirements typically contain pinned versions and will be automatically upgraded and tested with `dependabot`. This `stable` version allows having a reproducible workflow. However, in order to avoid conflicts with package versions that are too strict, the requirements are not pinned when being installed. To use the strict version use the `-stable`-flag, e.g. `alphapept[gui-stable]`.
+
+For end-users that want to set up a processing environment in Python, the `alphapept[gui-stable]` is 'batteries-included'-version that you want to use.
+
+### Python
 
 It is strongly recommended to install AlphaPept in its own environment.
 1. Open the console and create a new conda environment: `conda create --name alphapept python=3.8`
 2. Activate the environment: `conda activate alphapept`
-3. Redirect to the folder of choice and clone the repository: `git clone https://github.com/MannLabs/alphapept.git`
-4. Navigate to the alphapept folder with `cd alphapept` and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode.
-5. To ensure compatibility, install strict requirements with `pip install -r requirements.txt`.
+3. Install AlphaPept via pip: `pip install "alphapept[gui-stable]"`. If you want to use AlphaPept as a package without the GUI dependencies and without strict version dependencies, use `pip install alphapept`.
 
-If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.
-
-#### GPU Support
-To enable usage of a GPU, additional packages need to be installed. The following instructions are targeted at a more experienced audience.
-
-1. Make sure to have a working [CUDA toolkit](https://developer.nvidia.com/cuda-toolkit) installation that is compatible with cupy. To check type `nvcc --version` in your terminal.
-2. Install [cupy](https://cupy.dev). Make sure to install the cupy version matching your CUDA toolkit (e.g. `pip install cupy-cuda110` for CUDA toolkit 11.0.
-
-
-#### Notes
-* If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: `conda install nb_conda`, which also installs the jupyter notebook extensions. They can be called from a running jupyter instance like so: `http://localhost:8888/nbextensions`. 
-* For navigating the notebooks, the exension `collapsible headings` and `toc2` are very beneficial.
-* For developing with the notebooks, see the `nbev` section below.
-
+If AlphaPept is installed correctly, you should be able to import AlphaPept as a package within the environment; see below.
 
 #### Linux
-
 1. Install the build-essentials: `sudo apt-get install build-essential`.
 2. Install Mono from mono-project website [Mono Linux](https://www.mono-project.com/download/stable/#download-lin). NOTE, the installed mono version should be at least 6.10, which requires you to add the ppa to your trusted sources!
-3. Navigate to the alphapept folder and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode.
+3. Install AlphaPept via pip: `pip install "alphapept[gui-stable]"`. If you want to use AlphaPept as a package withouth the GUI dependencies and strict version dependencies use `pip install alphapept`.
 4. Install libgomp.1 with `sudo apt-get install libgomp1`.
 5. Copy-paste the Bruker library for feature finding to your /usr/lib folder with `sudo cp alphapept/ext/bruker/FF/linux64/alphapeptlibtbb.so.2 /usr/lib/libtbb.so.2`.
 
-
 #### Mac
-
 1. Install [brew](https://brew.sh) and pkg-config: `brew install pkg-config`
 2. Intall Mono from mono-project website [Mono Mac](https://www.mono-project.com/download/stable/)
 3. Register the Mono-Path to your system:
@@ -91,20 +84,34 @@ For macOS Catalina, open the configuration of zsh via the terminal:
 * Type `nano ~/.zshrc` to open the configuration of the terminal
 * Add the path to your mono installation: `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/pkgconfig:$PKG_CONFIG_PATH`. Make sure that the Path matches to your version (Here 6.12.0)
 * Save everything and execute `. ~/.zshrc` 
-4. Navigate to the alphapept folder and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode.
+4. Install AlphaPept via pip: `pip install "alphapept[gui-stable]"`. If you want to use AlphaPept as a package withouth the GUI dependencies and strict version dependencies use `pip install alphapept`.
 
+#### Developer
+1. Redirect to the folder of choice and clone the repository: `git clone https://github.com/MannLabs/alphapept.git`
+2. Navigate to the alphapept folder with `cd alphapept` and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode. Note that you can use the different requirements here aswell (e.g. `pip install ".[gui-stable]"`)
 
-### Standalone Windows Installer
-To use AlphaPept as a stand-alone program for end-users, it can be installed on Windows machines via a one-click installer. Download the latest version [here](https://github.com/MannLabs/alphapept/releases/latest).
+#### GPU Support
+To enable the usage of a GPU, additional packages need to be installed. The following instructions are targeted at a more experienced audience.
 
+1. Make sure to have a working [CUDA toolkit](https://developer.nvidia.com/cuda-toolkit) installation that is compatible with cupy. To check type `nvcc --version` in your terminal.
+2. Install [cupy](https://cupy.dev). Make sure to install the cupy version matching your CUDA toolkit (e.g. `pip install cupy-cuda110` for CUDA toolkit 11.0.
 
 ### Additional Notes
-> To access Thermo files, we have integrated [RawFileReader](https://planetorbitrap.com/rawfilereader) into AlphaPept. We rely on [Mono](https://www.mono-project.com/) for Linux/Mac systems.
+> To access Thermo files, we have integrated [RawFileReader](https://planetorbitrap.com/rawfilereader) into AlphaPept. We rely on [Mono](https://www.mono-project.com/) for Linux/Mac systems.> To access Bruker files, we rely on the `timsdata`-library. Currently, only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the `ext` folder of this repository.
+ 
+#### Notes for NBDEV
 
- > To access Bruker files, we rely on the `timsdata`-library. Currently, only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the `ext` folder of this repository.
+* For developing with the notebooks, install the nbdev package (see the development requirements)
+* To facilitate navigating the notebooks, use jupyter notebook extensions. They can be called from a running jupyter instance like so:`http://localhost:8888/nbextensions`. The extensions `collapsible headings` and `toc2` are very beneficial.
+## Standalone Windows Installer
+To use AlphaPept as a stand-alone program for end-users, it can be installed on Windows machines via a one-click installer. Download the latest version [here](https://github.com/MannLabs/alphapept/releases/latest).
+
+## Additional Documentation
+
+The documentation is automatically built based on the jupyter notebooks (nbs/index.ipynb) and can be found [here](https://mannlabs.github.io/alphapept/):
 
 ## Version Performance
-An overview on the performance of different versions can be found [here](https://charts.mongodb.com/charts-alphapept-itfxv/public/dashboards/5f671dcf-bcd6-4d90-8494-8c7f724b727b).
+An overview of the performance of different versions can be found [here](https://charts.mongodb.com/charts-alphapept-itfxv/public/dashboards/5f671dcf-bcd6-4d90-8494-8c7f724b727b).
 We re-run multiple tests on datasets for different versions so that users can assess what changes from version to version. Feel free to [suggest](https://github.com/MannLabs/alphapept/discussions) a test set in case.
 
 ## How to use
@@ -158,7 +165,7 @@ This allows us to select different modules. To start the GUI use:
 
 To run a workflow, use:
 * `alphapept workflow your_own_workflow.yaml`
-An example workflow is easily generated by running the GUI once and saving the settings which an be modified on a per-project basis.
+An example workflow is easily generated by running the GUI once and saving the settings which can be modified on a per-project basis.
 
 ### CMD / Python
 1. Create a settings-file. This can be done by changing the `default_settings.yaml` in the repository or using the GUI.
@@ -204,7 +211,9 @@ Within the notebooks, we try to cover most aspects of a proteomics workflow:
 * AlphaPept workflow and files: Overview of the worfklow, files and column names
 
 ## Contributing
-If you have a feature request or a bug report, please post it either as an idea in the [discussions](https://github.com/MannLabs/alphapept/discussions) or as an issue on the [GitHub issue tracker](https://github.com/MannLabs/alphapept/issues). Upvoting features in the discussions page will help to prioritize what to implement next. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started [here](https://mannlabs.github.io/alphapept/contributing.html). We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects-page on GitHub. You can also contact us via opensource@alphapept.com.
+If you have a feature request or a bug report, please post it either as an idea in the [discussions](https://github.com/MannLabs/alphapept/discussions) or as an issue on the [GitHub issue tracker](https://github.com/MannLabs/alphapept/issues). Upvoting features in the discussions page will help to prioritize what to implement next. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started [here](https://mannlabs.github.io/alphapept/contributing.html). We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects page on GitHub. You can also contact us via opensource@alphapept.com.
+
+If you like the project, consider starring it!
 
 ## Cite us
 

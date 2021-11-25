@@ -54,21 +54,20 @@ nb_path: "nbs/index.ipynb"
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Documentation">Documentation<a class="anchor-link" href="#Documentation"> </a></h2><p>The documentation is automatically built based on the jupyter notebooks (nbs/index.ipynb) and can be found <a href="https://mannlabs.github.io/alphapept/">here</a>:</p>
+<h2 id="Windows-Quickstart">Windows Quickstart<a class="anchor-link" href="#Windows-Quickstart"> </a></h2><p><img src="https://i.imgur.com/UO64YPx.jpg" alt=""></p>
+<ol>
+<li>Download the latest installer <a href="https://github.com/MannLabs/alphapept/releases/latest">here</a>, install and click the shortcut on the desktop. A browser window with the AlphaPept interface should open. In the case of Windows Firewall asking for network access for AlphaPept, please allow.</li>
+<li>In the <code>New Experiment</code>, select a folder with raw files and FASTA files.</li>
+<li>Specify additional settings such as modifications with <code>Settings</code>.</li>
+<li>Click <code>Start</code> and run the analysis. </li>
+</ol>
+<p>See also below for more detailed instructions.</p>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Windows-Quickstart">Windows Quickstart<a class="anchor-link" href="#Windows-Quickstart"> </a></h2><p><img src="https://i.imgur.com/UO64YPx.jpg" alt=""></p>
-<ol>
-<li>Download the latest installer <a href="https://github.com/MannLabs/alphapept/releases/latest">here</a>, install and click the shortcut on the desktop. A browser window with the AlphaPept interface should open. In case Windows Firewall asks for network access for AlphaPept, please allow.</li>
-<li>In the <code>New Experiment</code> select a folder with raw files and FASTA files.</li>
-<li>Specify additional settings such as modifications with <code>Settings</code>.</li>
-<li>Click <code>Start</code> and run the analysis. </li>
-</ol>
-<p>See also below for more detailed instructions.</p>
 <h2 id="Current-functionality">Current functionality<a class="anchor-link" href="#Current-functionality"> </a></h2><table>
 <thead><tr>
 <th>Feature</th>
@@ -98,31 +97,35 @@ nb_path: "nbs/index.ipynb"
 </tr>
 </tbody>
 </table>
-<p>Linux and MacOs should in principle work but are not heavily tested and might require additional work to setup (see detailed instructions below). To read Thermo files we use Mono, which can be used on Mac and Linux. For Bruker files we can use Linux but not MacOs.</p>
-<h2 id="Installation-Instructions">Installation Instructions<a class="anchor-link" href="#Installation-Instructions"> </a></h2><h3 id="Python">Python<a class="anchor-link" href="#Python"> </a></h3><p>We highly recommend the <a href="https://www.anaconda.com">Anaconda</a> or <a href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a> Python distribution, which comes with a powerful package manager. See below for additional instructions for Linux and Mac as they require additional installation of Mono to use the RawFileReader.</p>
-<p>It is strongly recommended to install AlphaPept in its own environment.</p>
+<p>Linux and macOS should, in principle, work but are not heavily tested and might require additional work to set up (see detailed instructions below). To read Thermo files, we use Mono, which can be used on Mac and Linux. For Bruker files, we can use Linux but not macOS.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Python-Installation-Instructions">Python Installation Instructions<a class="anchor-link" href="#Python-Installation-Instructions"> </a></h2><h3 id="Requirements">Requirements<a class="anchor-link" href="#Requirements"> </a></h3><p>We highly recommend the <a href="https://www.anaconda.com">Anaconda</a> or <a href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a> Python distribution, which comes with a powerful package manager. See below for additional instructions for Linux and Mac as they require additional installation of Mono to use the RawFileReader.</p>
+<p>AlphaPept can be used as an application as a whole or as a Python Package where individual modules are called. Depending on the use case, AlphaPept will need different requirements, and you might not want to install all of them.</p>
+<p>Currently, we have the default <code>requirements.txt</code>, additional requirements to run the GUI <code>gui</code> and packages used for developing <code>develop</code>.</p>
+<p>Therefore, you can install AlphaPept in multiple ways:</p>
+<ul>
+<li>The default <code>alphapept</code></li>
+<li>With GUI-packages <code>alphapept[gui]</code></li>
+<li>With pacakges for development <code>alphapept[develop]</code> (<code>alphapept[develop,gui]</code> respectively</li>
+</ul>
+<p>The requirements typically contain pinned versions and will be automatically upgraded and tested with <code>dependabot</code>. This <code>stable</code> version allows having a reproducible workflow. However, in order to avoid conflicts with package versions that are too strict, the requirements are not pinned when being installed. To use the strict version use the <code>-stable</code>-flag, e.g. <code>alphapept[gui-stable]</code>.</p>
+<p>For end-users that want to set up a processing environment in Python, the <code>alphapept[gui-stable]</code> is 'batteries-included'-version that you want to use.</p>
+<h3 id="Python">Python<a class="anchor-link" href="#Python"> </a></h3><p>It is strongly recommended to install AlphaPept in its own environment.</p>
 <ol>
 <li>Open the console and create a new conda environment: <code>conda create --name alphapept python=3.8</code></li>
 <li>Activate the environment: <code>conda activate alphapept</code></li>
-<li>Redirect to the folder of choice and clone the repository: <code>git clone https://github.com/MannLabs/alphapept.git</code></li>
-<li>Navigate to the alphapept folder with <code>cd alphapept</code> and install the package with <code>pip install .</code> (default users) or with <code>pip install -e .</code> to enable developers mode.</li>
-<li>To ensure compatibility, install strict requirements with <code>pip install -r requirements.txt</code>.</li>
+<li>Install AlphaPept via pip: <code>pip install "alphapept[gui-stable]"</code>. If you want to use AlphaPept as a package without the GUI dependencies and without strict version dependencies, use <code>pip install alphapept</code>.</li>
 </ol>
-<p>If AlphaPept is installed correctly, you should be able to import Alphapept as a package within the environment; see below.</p>
-<h4 id="GPU-Support">GPU Support<a class="anchor-link" href="#GPU-Support"> </a></h4><p>To enable usage of a GPU, additional packages need to be installed. The following instructions are targeted at a more experienced audience.</p>
-<ol>
-<li>Make sure to have a working <a href="https://developer.nvidia.com/cuda-toolkit">CUDA toolkit</a> installation that is compatible with cupy. To check type <code>nvcc --version</code> in your terminal.</li>
-<li>Install <a href="https://cupy.dev">cupy</a>. Make sure to install the cupy version matching your CUDA toolkit (e.g. <code>pip install cupy-cuda110</code> for CUDA toolkit 11.0.</li>
-</ol>
-<h4 id="Notes">Notes<a class="anchor-link" href="#Notes"> </a></h4><ul>
-<li>If you would like to use alphapept in your jupyter notebook environment, additionally install nb_conda: <code>conda install nb_conda</code>, which also installs the jupyter notebook extensions. They can be called from a running jupyter instance like so: <code>http://localhost:8888/nbextensions</code>. </li>
-<li>For navigating the notebooks, the exension <code>collapsible headings</code> and <code>toc2</code> are very beneficial.</li>
-<li>For developing with the notebooks, see the <code>nbev</code> section below.</li>
-</ul>
+<p>If AlphaPept is installed correctly, you should be able to import AlphaPept as a package within the environment; see below.</p>
 <h4 id="Linux">Linux<a class="anchor-link" href="#Linux"> </a></h4><ol>
 <li>Install the build-essentials: <code>sudo apt-get install build-essential</code>.</li>
 <li>Install Mono from mono-project website <a href="https://www.mono-project.com/download/stable/#download-lin">Mono Linux</a>. NOTE, the installed mono version should be at least 6.10, which requires you to add the ppa to your trusted sources!</li>
-<li>Navigate to the alphapept folder and install the package with <code>pip install .</code> (default users) or with <code>pip install -e .</code> to enable developers mode.</li>
+<li>Install AlphaPept via pip: <code>pip install "alphapept[gui-stable]"</code>. If you want to use AlphaPept as a package withouth the GUI dependencies and strict version dependencies use <code>pip install alphapept</code>.</li>
 <li>Install libgomp.1 with <code>sudo apt-get install libgomp1</code>.</li>
 <li>Copy-paste the Bruker library for feature finding to your /usr/lib folder with <code>sudo cp alphapept/ext/bruker/FF/linux64/alphapeptlibtbb.so.2 /usr/lib/libtbb.so.2</code>.</li>
 </ol>
@@ -139,19 +142,39 @@ For macOS Catalina, open the configuration of zsh via the terminal:</li>
 <li>Save everything and execute <code>. ~/.zshrc</code> </li>
 </ul>
 <ol>
-<li>Navigate to the alphapept folder and install the package with <code>pip install .</code> (default users) or with <code>pip install -e .</code> to enable developers mode.</li>
+<li>Install AlphaPept via pip: <code>pip install "alphapept[gui-stable]"</code>. If you want to use AlphaPept as a package withouth the GUI dependencies and strict version dependencies use <code>pip install alphapept</code>.</li>
 </ol>
-<h3 id="Standalone-Windows-Installer">Standalone Windows Installer<a class="anchor-link" href="#Standalone-Windows-Installer"> </a></h3><p>To use AlphaPept as a stand-alone program for end-users, it can be installed on Windows machines via a one-click installer. Download the latest version <a href="https://github.com/MannLabs/alphapept/releases/latest">here</a>.</p>
-<h3 id="Additional-Notes">Additional Notes<a class="anchor-link" href="#Additional-Notes"> </a></h3><blockquote><p>To access Thermo files, we have integrated <a href="https://planetorbitrap.com/rawfilereader">RawFileReader</a> into AlphaPept. We rely on <a href="https://www.mono-project.com/">Mono</a> for Linux/Mac systems.</p>
-<p>To access Bruker files, we rely on the <code>timsdata</code>-library. Currently, only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the <code>ext</code> folder of this repository.</p>
+<h4 id="Developer">Developer<a class="anchor-link" href="#Developer"> </a></h4><ol>
+<li>Redirect to the folder of choice and clone the repository: <code>git clone https://github.com/MannLabs/alphapept.git</code></li>
+<li>Navigate to the alphapept folder with <code>cd alphapept</code> and install the package with <code>pip install .</code> (default users) or with <code>pip install -e .</code> to enable developers mode. Note that you can use the different requirements here aswell (e.g. <code>pip install ".[gui-stable]"</code>)</li>
+</ol>
+<h4 id="GPU-Support">GPU Support<a class="anchor-link" href="#GPU-Support"> </a></h4><p>To enable the usage of a GPU, additional packages need to be installed. The following instructions are targeted at a more experienced audience.</p>
+<ol>
+<li>Make sure to have a working <a href="https://developer.nvidia.com/cuda-toolkit">CUDA toolkit</a> installation that is compatible with cupy. To check type <code>nvcc --version</code> in your terminal.</li>
+<li>Install <a href="https://cupy.dev">cupy</a>. Make sure to install the cupy version matching your CUDA toolkit (e.g. <code>pip install cupy-cuda110</code> for CUDA toolkit 11.0.</li>
+</ol>
+<h3 id="Additional-Notes">Additional Notes<a class="anchor-link" href="#Additional-Notes"> </a></h3><blockquote><p>To access Thermo files, we have integrated <a href="https://planetorbitrap.com/rawfilereader">RawFileReader</a> into AlphaPept. We rely on <a href="https://www.mono-project.com/">Mono</a> for Linux/Mac systems.&gt; To access Bruker files, we rely on the <code>timsdata</code>-library. Currently, only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the <code>ext</code> folder of this repository.</p>
 </blockquote>
+<h4 id="Notes-for-NBDEV">Notes for NBDEV<a class="anchor-link" href="#Notes-for-NBDEV"> </a></h4><ul>
+<li>For developing with the notebooks, install the nbdev package (see the development requirements)</li>
+<li>To facilitate navigating the notebooks, use jupyter notebook extensions. They can be called from a running jupyter instance like so:<code>http://localhost:8888/nbextensions</code>. The extensions <code>collapsible headings</code> and <code>toc2</code> are very beneficial.
+## Standalone Windows Installer
+To use AlphaPept as a stand-alone program for end-users, it can be installed on Windows machines via a one-click installer. Download the latest version <a href="https://github.com/MannLabs/alphapept/releases/latest">here</a>.</li>
+</ul>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Version-Performance">Version Performance<a class="anchor-link" href="#Version-Performance"> </a></h2><p>An overview on the performance of different versions can be found <a href="https://charts.mongodb.com/charts-alphapept-itfxv/public/dashboards/5f671dcf-bcd6-4d90-8494-8c7f724b727b">here</a>.
+<h2 id="Additional-Documentation">Additional Documentation<a class="anchor-link" href="#Additional-Documentation"> </a></h2><p>The documentation is automatically built based on the jupyter notebooks (nbs/index.ipynb) and can be found <a href="https://mannlabs.github.io/alphapept/">here</a>:</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Version-Performance">Version Performance<a class="anchor-link" href="#Version-Performance"> </a></h2><p>An overview of the performance of different versions can be found <a href="https://charts.mongodb.com/charts-alphapept-itfxv/public/dashboards/5f671dcf-bcd6-4d90-8494-8c7f724b727b">here</a>.
 We re-run multiple tests on datasets for different versions so that users can assess what changes from version to version. Feel free to <a href="https://github.com/MannLabs/alphapept/discussions">suggest</a> a test set in case.</p>
 
 </div>
@@ -229,7 +252,7 @@ We re-run multiple tests on datasets for different versions so that users can as
 <p>To run a workflow, use:</p>
 <ul>
 <li><code>alphapept workflow your_own_workflow.yaml</code>
-An example workflow is easily generated by running the GUI once and saving the settings which an be modified on a per-project basis.</li>
+An example workflow is easily generated by running the GUI once and saving the settings which can be modified on a per-project basis.</li>
 </ul>
 
 </div>
@@ -285,7 +308,8 @@ settings = alphapept.interface.feature_finding(settings)</code></pre>
 </div>
 <div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<h2 id="Contributing">Contributing<a class="anchor-link" href="#Contributing"> </a></h2><p>If you have a feature request or a bug report, please post it either as an idea in the <a href="https://github.com/MannLabs/alphapept/discussions">discussions</a> or as an issue on the <a href="https://github.com/MannLabs/alphapept/issues">GitHub issue tracker</a>. Upvoting features in the discussions page will help to prioritize what to implement next. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started <a href="https://mannlabs.github.io/alphapept/contributing.html">here</a>. We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects-page on GitHub. You can also contact us via opensource@alphapept.com.</p>
+<h2 id="Contributing">Contributing<a class="anchor-link" href="#Contributing"> </a></h2><p>If you have a feature request or a bug report, please post it either as an idea in the <a href="https://github.com/MannLabs/alphapept/discussions">discussions</a> or as an issue on the <a href="https://github.com/MannLabs/alphapept/issues">GitHub issue tracker</a>. Upvoting features in the discussions page will help to prioritize what to implement next. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started <a href="https://mannlabs.github.io/alphapept/contributing.html">here</a>. We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects page on GitHub. You can also contact us via opensource@alphapept.com.</p>
+<p>If you like the project, consider starring it!</p>
 
 </div>
 </div>
