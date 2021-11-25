@@ -1,3 +1,4 @@
-streamlit==0.88.0
 plotly_express==0.4.1
 streamlit-aggrid==0.2.1
+streamlit==0.88.0
+watchdog==2.1.5
