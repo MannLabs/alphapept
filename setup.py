@@ -77,7 +77,8 @@ setuptools.setup(
     # TODO: Modifying this should allow to remove the MAINFEST.in
     include_package_data=True,
     install_requires=requirements + [
-        "pywin32==225; sys_platform=='win32'"
+        "pywin32==225; sys_platform=='win32'",
+        "pythonnet==2.5.2; sys_platform=='win32'"
     ],
     extras_require=extra_requirements,
     python_requires=f'>={cfg["min_python"]},<{cfg["max_python"]}',
