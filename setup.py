@@ -53,15 +53,6 @@ for extra, requirement_file_name in package2install.__requirements__.items():
 
 requirements = extra_requirements.pop("")
 
-
-def is_tool(name):
-    """Check whether `name` is on PATH and marked as executable."""
-    from shutil import which
-    return which(name) is not None
-if os.name == 'posix':
-    if not is_tool('mono'): #Do not try to install pythonnet if mono is not installed.
-        requirements = [_ for _ in requirements if not _.startswith('pythonnet')]
-
 setuptools.setup(
     name=cfg["lib_name"],
     license=license_options[cfg["license"]][0],
@@ -96,26 +87,5 @@ setuptools.setup(
     entry_points={
         'console_scripts': cfg.get('console_scripts', '').split()
     },
-    # lib_name=cfg["lib_name"],
-    # user=cfg["user"],
-    # copyright=cfg["copyright"],
-    # branch=cfg["branch"],
-    # min_python=cfg["min_python"],
-    # max_python=cfg["max_python"],
-    # audience=cfg["audience"],
-    # language=cfg["language"],
-    # custom_sidebar=cfg["custom_sidebar"],
-    # status=cfg["status"],
-    # nbs_path=cfg["nbs_path"],
-    # doc_path=cfg["doc_path"],
-    # doc_host=cfg["doc_host"],
-    # doc_baseurl=cfg["doc_baseurl"],
-    # git_url=cfg["git_url"],
-    # lib_path=cfg["lib_path"],
-    # title=cfg["title"],
-    # host=cfg["host"],
-    # url_documentation=cfg["url_documentation"],
-    # url_issue=cfg["url_issue"],
-    # url_contribute=cfg["url_contribute"],
-    # console_scripts=cfg["console_scripts"],
+
 )
