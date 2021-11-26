@@ -17,7 +17,7 @@ python setup.py sdist bdist_wheel
 # Setting up the local package
 cd release/one_click_windows_gui
 # Make sure you include the required extra packages and always use the stable or very-stable options!
-pip install "../../dist/alphapept-0.3.30-py3-none-any.whl[gui-stable]"
+pip install "../../dist/alphapept-0.3.30-py3-none-any.whl[stable,gui-stable]"
 
 # Creating the stand-alone pyinstaller folder
 pip install pyinstaller==4.2

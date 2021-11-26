@@ -20,7 +20,7 @@ python setup.py sdist bdist_wheel
 
 # Setting up the local package
 cd release/one_click_macos_gui
-pip install "../../dist/alphapept-0.3.30-py3-none-any.whl[gui-stable]"
+pip install "../../dist/alphapept-0.3.30-py3-none-any.whl[stable,gui-stable]"
 
 # Creating the stand-alone pyinstaller folder
 pip install pyinstaller==4.2

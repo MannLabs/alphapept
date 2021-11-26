@@ -37,7 +37,7 @@ See also below for more detailed instructions.
 | Isobaric labels 	| None           	|
 | Platform        	| Windows        	|
 
-Linux and macOS should, in principle, work but are not heavily tested and might require additional work to set up (see detailed instructions below). To read Thermo files, we use Mono, which can be used on Mac and Linux. For Bruker files, we can use Linux but not macOS.
+Linux and macOS should, in principle, work but are not heavily tested and might require additional work to set up (see detailed instructions below). To read Thermo files, we use Mono, which can be used on Mac and Linux. For Bruker files, we can use Linux but not yet macOS.
 
 ## Python Installation Instructions
 
@@ -55,45 +55,59 @@ Therefore, you can install AlphaPept in multiple ways:
 - With GUI-packages `alphapept[gui]`
 - With pacakges for development `alphapept[develop]` (`alphapept[develop,gui]` respectively
 
-The requirements typically contain pinned versions and will be automatically upgraded and tested with `dependabot`. This `stable` version allows having a reproducible workflow. However, in order to avoid conflicts with package versions that are too strict, the requirements are not pinned when being installed. To use the strict version use the `-stable`-flag, e.g. `alphapept[gui-stable]`.
+The requirements typically contain pinned versions and will be automatically upgraded and tested with `dependabot`. This `stable` version allows having a reproducible workflow. However, in order to avoid conflicts with package versions that are too strict, the requirements are not pinned when being installed. To use the strict version use the `-stable`-flag, e.g. `alphapept[stable]`.
 
-For end-users that want to set up a processing environment in Python, the `alphapept[gui-stable]` is 'batteries-included'-version that you want to use.
+For end-users that want to set up a processing environment in Python, the `"alphapept[stable,gui-stable]"` is the `batteries-included`-version that you want to use.
 
 ### Python
 
 It is strongly recommended to install AlphaPept in its own environment.
 1. Open the console and create a new conda environment: `conda create --name alphapept python=3.8`
 2. Activate the environment: `conda activate alphapept`
-3. Install AlphaPept via pip: `pip install "alphapept[gui-stable]"`. If you want to use AlphaPept as a package without the GUI dependencies and without strict version dependencies, use `pip install alphapept`.
+3. Install AlphaPept via pip: `pip install "alphapept[stable,gui-stable]"`. If you want to use AlphaPept as a package without the GUI dependencies and without strict version dependencies, use `pip install alphapept`.
 
 If AlphaPept is installed correctly, you should be able to import AlphaPept as a package within the environment; see below.
 
+* * *
 #### Linux
 1. Install the build-essentials: `sudo apt-get install build-essential`.
-2. Install Mono from mono-project website [Mono Linux](https://www.mono-project.com/download/stable/#download-lin). NOTE, the installed mono version should be at least 6.10, which requires you to add the ppa to your trusted sources!
-3. Install AlphaPept via pip: `pip install "alphapept[gui-stable]"`. If you want to use AlphaPept as a package withouth the GUI dependencies and strict version dependencies use `pip install alphapept`.
-4. Install libgomp.1 with `sudo apt-get install libgomp1`.
-5. Copy-paste the Bruker library for feature finding to your /usr/lib folder with `sudo cp alphapept/ext/bruker/FF/linux64/alphapeptlibtbb.so.2 /usr/lib/libtbb.so.2`.
+2. Install AlphaPept via pip: `pip install "alphapept[stable,gui-stable]"`. If you want to use AlphaPept as a package withouth the GUI dependencies and strict version dependencies use `pip install alphapept`.
+3. Install libgomp.1 with `sudo apt-get install libgomp1`.
 
+##### Bruker Support
+4. Copy-paste the Bruker library for feature finding to your /usr/lib folder with `sudo cp alphapept/ext/bruker/FF/linux64/alphapeptlibtbb.so.2 /usr/lib/libtbb.so.2`.
+
+##### Thermo Support
+5. Install Mono from mono-project website [Mono Linux](https://www.mono-project.com/download/stable/#download-lin). NOTE, the installed mono version should be at least 6.10, which requires you to add the ppa to your trusted sources!
+6. Install pythonnet with `pip install pythonnet==2.5.2`
+
+* * *
 #### Mac
-1. Install [brew](https://brew.sh) and pkg-config: `brew install pkg-config`
-2. Intall Mono from mono-project website [Mono Mac](https://www.mono-project.com/download/stable/)
-3. Register the Mono-Path to your system:
+
+1. Install AlphaPept via pip: `pip install "alphapept[stable,gui-stable]"`. If you want to use AlphaPept as a package withouth the GUI dependencies and strict version dependencies use `pip install alphapept`.
+
+##### Bruker Support
+> Only supported for preprocessed files.
+
+##### Thermo Support
+2. Install [brew](https://brew.sh) and pkg-config: `brew install pkg-config`3. Intall Mono from mono-project website [Mono Mac](https://www.mono-project.com/download/stable/)
+4. Register the Mono-Path to your system:
 For macOS Catalina, open the configuration of zsh via the terminal:
 * Type in `cd` to navigate to the home directory.
 * Type `nano ~/.zshrc` to open the configuration of the terminal
 * Add the path to your mono installation: `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/6.12.0/lib/pkgconfig:$PKG_CONFIG_PATH`. Make sure that the Path matches to your version (Here 6.12.0)
 * Save everything and execute `. ~/.zshrc` 
-4. Install AlphaPept via pip: `pip install "alphapept[gui-stable]"`. If you want to use AlphaPept as a package withouth the GUI dependencies and strict version dependencies use `pip install alphapept`.
+4. Install pythonnet with `pip install pythonnet==2.5.2`
 
+* * *
 #### Developer
 1. Redirect to the folder of choice and clone the repository: `git clone https://github.com/MannLabs/alphapept.git`
 2. Navigate to the alphapept folder with `cd alphapept` and install the package with `pip install .` (default users) or with `pip install -e .` to enable developers mode. Note that you can use the different requirements here aswell (e.g. `pip install ".[gui-stable]"`)
 
 #### GPU Support
-To enable the usage of a GPU, additional packages need to be installed. The following instructions are targeted at a more experienced audience.
+Some functionality of AlphaPept is GPU optimized that uses Nvidia's CUDA. To enable this, additional packages need to be installed. 
 
-1. Make sure to have a working [CUDA toolkit](https://developer.nvidia.com/cuda-toolkit) installation that is compatible with cupy. To check type `nvcc --version` in your terminal.
+1. Make sure to have a working [CUDA toolkit](https://developer.nvidia.com/cuda-toolkit) installation that is compatible with CuPy. To check type `nvcc --version` in your terminal.
 2. Install [cupy](https://cupy.dev). Make sure to install the cupy version matching your CUDA toolkit (e.g. `pip install cupy-cuda110` for CUDA toolkit 11.0.
 
 ### Additional Notes
