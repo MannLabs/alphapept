@@ -14,8 +14,7 @@ jobs:
         pip install -U setuptools
         pip install -U wheel
         pip install nbdev jupyter
-        pip install .
-        pip install -r requirements.txt
+        pip install ".[gui-stable]"
     - name: Read all notebooks
       run: |
         nbdev_read_nbs
