@@ -2,7 +2,7 @@ call DEL /F/Q/S build > NUL
 call DEL /F/Q/S dist > NUL
 call RMDIR /Q/S build
 call RMDIR /Q/S dist
-call IF EXIST C:\Users\admin\.conda\envs\alphapeptinstaller RMDIR /S /Q C:\Users\admin\.conda\envs\alphapeptinstaller
+IF EXIST C:\Users\admin\.conda\envs\alphapeptinstaller RMDIR /S /Q C:\Users\admin\.conda\envs\alphapeptinstaller
 call conda env remove -n alphapeptinstaller
 call conda create -n alphapeptinstaller python=3.8 -y
 call conda activate alphapeptinstaller
