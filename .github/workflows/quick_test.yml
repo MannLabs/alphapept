@@ -19,7 +19,7 @@ jobs:
         remove-item -path "C:\Users\admin\.conda\envs\alphapept" -Force -Recurse -ErrorAction SilentlyContinue
         conda create --name alphapept python=3.8 -y
         conda activate alphapept
-        pip install .
+        pip install ".[stable,gui-stable]"
         pip install pymongo
         pip install dnspython
         pip install wget
