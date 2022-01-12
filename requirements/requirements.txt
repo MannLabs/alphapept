@@ -1,5 +1,5 @@
 biopython==1.78
-click==7.1.2
+click==8.0.3
 fastcore==1.3.21
 h5py==3.4.0
 matplotlib==3.3.3
