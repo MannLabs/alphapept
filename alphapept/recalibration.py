@@ -85,7 +85,7 @@ def transform(
 # Cell
 
 from sklearn.neighbors import KNeighborsRegressor
-
+import logging
 
 def kneighbors_calibration(df: pd.DataFrame, features: pd.DataFrame, cols: list, target: str, scaling_dict: dict, calib_n_neighbors: int) -> np.ndarray:
     """Calibration using a KNeighborsRegressor.
@@ -115,15 +115,18 @@ def kneighbors_calibration(df: pd.DataFrame, features: pd.DataFrame, cols: list,
     for idx, _ in enumerate(data.columns):
         target_points[:, idx] = transform(target_points[:, idx], _, scaling_dict)
 
-    neigh = KNeighborsRegressor(n_neighbors=calib_n_neighbors, weights = 'distance')
-    neigh.fit(tree_points, df[target].values)
+    if len(tree_points) >= calib_n_neighbors:
+        neigh = KNeighborsRegressor(n_neighbors=calib_n_neighbors, weights = 'distance')
+        neigh.fit(tree_points, df[target].values)
 
-    y_hat = neigh.predict(target_points)
+        y_hat = neigh.predict(target_points)
+    else:
+        logging.info('Number of identified peptides is smaller than the number of neighbors set for calibration. Skipping calibration.')
+        y_hat = np.zeros(len(target_points))
 
     return y_hat
 
 # Cell
-import logging
 
 def get_calibration(
     df: pd.DataFrame,

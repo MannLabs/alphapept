@@ -1,13 +1,16 @@
 # Changelog
 
-Last change: 25-Nov-2021, MTS
+Last change: 12-Jan-2021, MTS
+
+## 0.3.32
+* Bugfixes for fragment calibration
 
 ## 0.3.30
 * Improved fragment calibration, this increases performance
 * Support for fractionated data (Note the performance is not yet satisfactory)
 * Basic scaffold for TMT quantification
 * Community contributions by @mgleeming (Coverage Map) and @romanzenka (Typo)
-* Multiple small bugs and improvements 
+* Multiple small bugs and improvements
 
 ## 0.3.29
 * Stability improvements
