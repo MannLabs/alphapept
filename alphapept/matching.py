@@ -233,10 +233,10 @@ def align_datasets(settings:dict, callback:callable=None):
     filenames = settings['experiment']['file_paths']
 
     if callback:
-        def progress_wrapper(current, step, n_steps):
+        def progress_wrapper(step, n_steps, current):
             callback((step/n_steps)+(current/n_steps))
 
-        progress_wrapper(0, 0, 2)
+        progress_wrapper(0, 2, 0)
         cb = functools.partial(progress_wrapper, 0, 2)
     else:
         cb = None
@@ -267,7 +267,7 @@ def align_datasets(settings:dict, callback:callable=None):
         align_files(filenames, -alignment, offset_dict)
 
         if cb:
-            progress_wrapper(0, 1, 2)
+            progress_wrapper(0, 2, 1)
             cb = functools.partial(progress_wrapper, 1, 2)
 
         deltas, weights, offset_dict = calculate_deltas(combos, calib=True, callback=cb)
