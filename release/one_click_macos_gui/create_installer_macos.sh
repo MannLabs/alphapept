@@ -20,7 +20,7 @@ python setup.py sdist bdist_wheel
 
 # Setting up the local package
 cd release/one_click_macos_gui
-pip install "../../dist/alphapept-0.3.31-py3-none-any.whl[stable,gui-stable]"
+pip install "../../dist/alphapept-0.3.32-py3-none-any.whl[stable,gui-stable]"
 
 # Creating the stand-alone pyinstaller folder
 pip install pyinstaller==4.2
@@ -40,5 +40,5 @@ cp ../../LICENSE.txt Resources/LICENSE.txt
 cp ../logos/alpha_logo.png Resources/alpha_logo.png
 chmod 777 scripts/*
 
-pkgbuild --root dist/alphapept --identifier de.mpg.biochem.alphapept.app --version 0.3.31 --install-location /Applications/alphapept.app --scripts scripts alphapept.pkg
+pkgbuild --root dist/alphapept --identifier de.mpg.biochem.alphapept.app --version 0.3.32 --install-location /Applications/alphapept.app --scripts scripts alphapept.pkg
 productbuild --distribution distribution.xml --resources Resources --package-path alphapept.pkg dist/alphapept_gui_installer_macos.pkg
