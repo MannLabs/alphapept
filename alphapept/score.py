@@ -867,10 +867,10 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
     """
 
     logging.info('Calling score_hdf')
+
+    index, settings = to_process
+
     try:
-        index, settings = to_process
-
-
         #This part collects all ms_data files that belong to one sample.
         exp_name = sorted(settings['experiment']['fraction_dict'].keys())[index]
         shortnames = settings['experiment']['fraction_dict'].get(exp_name)
@@ -928,7 +928,7 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
 
                     logging.info('Converting x_tandem score to probabilities')
 
-                    x_, y_ = ecdf(df_[~df_['decoy']]['score'].values)
+                    x_, y_ = ecdf(df_['score'].values)
                     f = interp1d(x_, y_, bounds_error = False, fill_value=(y_.min(), y_.max()))
 
                     df_['score'] = df_['score'].apply(lambda x: f(x))
@@ -980,7 +980,7 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
             logging.info(f'Scoring of files {list(ms_file2idx.keys())} complete.')
         return True
     except Exception as e:
-        logging.info(f'Scoring of files {list(ms_file2idx.keys())} failed. Exception {e}')
+        logging.info(f'Scoring of file {index} failed. Exception {e}')
         return f"{e}" #Can't return exception object, cast as string
 
 
