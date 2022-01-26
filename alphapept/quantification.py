@@ -600,12 +600,15 @@ def protein_profile_parallel_ap(settings: dict, df : pd.DataFrame, callback=None
     return protein_table
 
 # This function invokes a parallel pool and has therfore no dedicated test in the notebook
-def protein_profile_parallel_mq(evidence_path : str, protein_groups_path: str, callback=None) -> pd.DataFrame:
+def protein_profile_parallel_mq(evidence_path : str, protein_groups_path: str, minimum_ratios: int = 1, minimum_occurence:bool=None, delayed:bool = True, callback=None) -> pd.DataFrame:
     """Derives protein LFQ intensities from Maxquant quantified features.
 
     Args:
         evidence_path (str): path to the Maxquant standard output table evidence.txt.
         protein_groups_path (str): path to the Maxquant standard output table proteinGroups.txt.
+        minimum_ratios (int): minimum ratios (LFQ parameter)
+        minimum_occurence (int): minimum occurence (LFQ parameter)
+        delayed (bool): toggle for delayed normalization (on/off)
         callback ([type], optional): [description]. Defaults to None.
 
     Raises:
@@ -646,7 +649,13 @@ def protein_profile_parallel_mq(evidence_path : str, protein_groups_path: str, c
     logging.info(f'A total of {max_:,} proteins.')
 
     df = pd.concat(protein_df)
-    df, normed = delayed_normalization(df, field ='Intensity')
-    protein_table = protein_profile_parallel(df, minimum_ratios=1, field='Intensity', callback=callback)
+
+    field = 'Intensity'
+
+    if delayed:
+        df, normed = delayed_normalization(df, field ='Intensity', minimum_occurence = minimum_occurence)
+        field = 'Intensity_dn'
+
+    protein_table = protein_profile_parallel(df, minimum_ratios=minimum_ratios, field=field, callback=callback)
 
     return protein_table
