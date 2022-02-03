@@ -1215,18 +1215,21 @@ def parallel_execute(
             base, ext = os.path.splitext(files[0])
             if ext.lower() == '.d':
                 memory_available = psutil.virtual_memory().available/1024**3
-                n_processes = max((int(memory_available //25 ),1))
+                n_processes_temp = max((int(memory_available //25 ),1))
+                n_processes = min((n_processes, n_processes_temp))
                 logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}.')
             elif ext.lower() in ('.raw','.mzml'):
                 memory_available = psutil.virtual_memory().available/1024**3
-                n_processes = max((int(memory_available //8 ), 1))
+                n_processes_temp = max((int(memory_available //8 ), 1))
+                n_processes = min((n_processes, n_processes_temp))
                 logging.info(f'Setting Process limit to {n_processes}')
             else:
                 raise NotImplementedError('Feature Finding: File extension {} not understood.'.format(ext))
 
         if step.__name__ == 'search_db':
             memory_available = psutil.virtual_memory().available/1024**3
-            n_processes = max((int(memory_available //8 ), 1)) # 8 gb per file: Todo: make this better
+            n_processes_temp = max((int(memory_available //8 ), 1)) # 8 gb per file: Todo: make this better
+            n_processes = min((n_processes, n_processes_temp))
             logging.info(f'Searching. Setting Process limit to {n_processes}.')
 
 
