@@ -1238,14 +1238,17 @@ def parallel_execute(
         rerun_map = {}
         with alphapept.performance.AlphaPool(n_processes) as p:
             for i, success in enumerate(p.imap(step, to_process)):
+                progress = (i+1)/n_files
                 if success is not True:
                     failed.append((i, files[i]))
                     logging.error(f'Processing of {files[i]} for step {step.__name__} failed. Exception {success}')
                     rerun_map[len(rerun)] = i
                     rerun.append(to_process[i])
+                else:
+                    logging.error(f'Processing of {files[i]} for step {step.__name__} succeeded. {progress*100:.2f} %')
 
                 if callback:
-                    callback((i+1)/n_files)
+                    callback(progress)
 
         if len(failed) > 0:
             ## Retry failed with more memory
@@ -1255,12 +1258,14 @@ def parallel_execute(
             failed = []
             with alphapept.performance.AlphaPool(n_processes_) as p:
                 for i, success in enumerate(p.imap(step, rerun)):
+                    progress = (i+1)/len(failed)
                     if success is not True:
                         failed.append(files[rerun_map[i]])
                         logging.error(f'Processing of {files[i]} for step {step.__name__} failed. Exception {success}')
-
+                    else:
+                        logging.error(f'Processing of {files[i]} for step {step.__name__} succeeded. {progress*100:.2f} %')
                     if callback:
-                        callback((i+1)/n_files)
+                        callback(progress)
 
     if step.__name__ not in settings['failed']:
         settings['failed'][step.__name__] = failed
