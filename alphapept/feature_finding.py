@@ -2,14 +2,14 @@
 
 __all__ = ['connect_centroids_unidirection', 'find_centroid_connections', 'convert_connections_to_array',
            'eliminate_overarching_vertex', 'connect_centroids', 'path_finder', 'find_path_start', 'find_path_length',
-           'fill_path_matrix', 'get_hills', 'extract_hills', 'fast_minima', 'split', 'split_hills', 'check_large_hills',
-           'filter_hills', 'hill_stats', 'remove_duplicates', 'get_hill_data', 'check_isotope_pattern', 'DELTA_M',
-           'DELTA_S', 'maximum_offset', 'correlate', 'extract_edge', 'edge_correlation', 'get_pre_isotope_patterns',
-           'check_isotope_pattern_directed', 'grow', 'grow_trail', 'get_trails', 'plot_pattern', 'get_minpos',
-           'get_local_minima', 'is_local_minima', 'truncate', 'check_averagine', 'pattern_to_mz', 'cosine_averagine',
-           'int_list_to_array', 'mz_to_mass', 'M_PROTON', 'isolate_isotope_pattern', 'get_isotope_patterns', 'report_',
-           'feature_finder_report', 'extract_bruker', 'convert_bruker', 'map_bruker', 'find_features', 'replace_infs',
-           'map_ms2']
+           'fill_path_matrix', 'get_hills', 'extract_hills', 'remove_duplicate_hills', 'fast_minima', 'split',
+           'split_hills', 'check_large_hills', 'filter_hills', 'hill_stats', 'remove_duplicates', 'get_hill_data',
+           'check_isotope_pattern', 'DELTA_M', 'DELTA_S', 'maximum_offset', 'correlate', 'extract_edge',
+           'edge_correlation', 'get_pre_isotope_patterns', 'check_isotope_pattern_directed', 'grow', 'grow_trail',
+           'get_trails', 'plot_pattern', 'get_minpos', 'get_local_minima', 'is_local_minima', 'truncate',
+           'check_averagine', 'pattern_to_mz', 'cosine_averagine', 'int_list_to_array', 'mz_to_mass', 'M_PROTON',
+           'isolate_isotope_pattern', 'get_isotope_patterns', 'report_', 'feature_finder_report', 'extract_bruker',
+           'convert_bruker', 'map_bruker', 'find_features', 'replace_infs', 'map_ms2']
 
 # Cell
 import numpy as np
@@ -354,7 +354,6 @@ def extract_hills(query_data:dict, max_gap:int, centroid_tol:float)-> (np.ndarra
 
     from_idx, to_idx, score_median, score_std = connect_centroids(rowwise_peaks, row_borders, mass_data, max_gap, centroid_tol)
 
-
     hill_ptrs, hill_data, path_node_cnt = get_hills(mass_data, from_idx, to_idx)
 
     del mass_data
@@ -369,6 +368,41 @@ def extract_hills(query_data:dict, max_gap:int, centroid_tol:float)-> (np.ndarra
         score_std = score_std.get()
 
     return hill_ptrs, hill_data, path_node_cnt, score_median, score_std
+
+from numba import njit
+@njit
+def remove_duplicate_hills(hill_ptrs, hill_data, path_node_cnt):
+    """
+    Removes hills that share datapoints. Starts from the largest hills.
+
+    """
+    taken_points = np.zeros(hill_data.max()+1)
+
+    c = 0
+    current_idx = 0
+
+    hill_ptrs_new = np.zeros_like(hill_ptrs)
+    hill_data_new = np.zeros_like(hill_data)
+
+    for i, _ in enumerate(np.argsort(path_node_cnt)[::-1]):
+        s, e = hill_ptrs[_], hill_ptrs[_+1]
+
+        point_idx = hill_data[s:e]
+
+        hill_pts = taken_points[point_idx]
+
+        if hill_pts.sum() == 0:
+            hill_data_new[current_idx:current_idx+len(hill_pts)] = point_idx
+            current_idx += len(hill_pts)
+            hill_ptrs_new[c+1] = current_idx
+            c +=1
+
+        taken_points[point_idx] +=1
+
+    hill_data_new = hill_data_new[:current_idx]
+    hill_ptrs_new = hill_ptrs_new[:c]
+
+    return hill_ptrs_new, hill_data_new
 
 # Cell
 @alphapept.performance.compile_function(compilation_mode="numba")
@@ -1872,10 +1906,13 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
                     hill_ptrs, hill_data, path_node_cnt, score_median, score_std = extract_hills(query_data, max_gap, score_median+score_std*3)
                     logging.info(f'Number of hills {len(hill_ptrs):,}, len = {np.mean(path_node_cnt):.2f}')
 
+                    hill_ptrs, hill_data = remove_duplicate_hills(hill_ptrs, hill_data, path_node_cnt)
+                    logging.info(f'After duplicate removal of hills {len(hill_ptrs):,}')
+
                     hill_ptrs = split_hills(hill_ptrs, hill_data, int_data, hill_split_level=hill_split_level, window = window) #hill lenght is inthere already
                     logging.info(f'After split hill_ptrs {len(hill_ptrs):,}')
 
-                    hill_data, hill_ptrs = filter_hills(hill_data, hill_ptrs, int_data, hill_check_large =hill_check_large, window=window)
+                    hill_data, hill_ptrs = filter_hills(hill_data, hill_ptrs, int_data, hill_check_large = hill_check_large, window=window)
 
                     logging.info(f'After filter hill_ptrs {len(hill_ptrs):,}')
 
