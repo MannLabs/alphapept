@@ -1250,7 +1250,8 @@ def parallel_execute(
                 if callback:
                     callback(progress)
 
-        if len(failed) > 0:
+        n_failed = len(failed)
+        if n_failed > 0:
             ## Retry failed with more memory
             n_processes_ = max((1, int(n_processes // 2)))
             logging.info(f'Attempting to rerun failed runs with {n_processes_} processes')
@@ -1258,7 +1259,7 @@ def parallel_execute(
             failed = []
             with alphapept.performance.AlphaPool(n_processes_) as p:
                 for i, success in enumerate(p.imap(step, rerun)):
-                    progress = (i+1)/len(failed)
+                    progress = (i+1)/n_failed
                     if success is not True:
                         failed.append(files[rerun_map[i]])
                         logging.error(f'Processing of {files[i]} for step {step.__name__} failed. Exception {success}')
