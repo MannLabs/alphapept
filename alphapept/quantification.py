@@ -516,7 +516,8 @@ def protein_profile_parallel(df: pd.DataFrame, minimum_ratios: int, field: str, 
     columnes_ext = [_+'_LFQ' for _ in files]
     protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + files)
 
-    grouped = df[[field, 'filename','precursor','protein_group']].groupby(['protein_group','filename','precursor']).sum()
+    #Take the best precursor for protein quantification. .max()
+    grouped = df[[field, 'filename','precursor','protein_group']].groupby(['protein_group','filename','precursor']).max()
 
     column_combinations = List()
     [column_combinations.append(_) for _ in combinations(range(len(files)), 2)]
