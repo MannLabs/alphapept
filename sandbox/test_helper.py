@@ -9,6 +9,37 @@ import seaborn as sns
 from tqdm.notebook import tqdm as tqdm
 import warnings
 
+
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib import cm
+from matplotlib.colors import Normalize
+from scipy.interpolate import interpn
+
+COLOR_1 = 'r'
+COLOR_2 = 'b'
+
+def density_scatter( x , y, ax = None, sort = True, bins = 30, cmap = 'turbo', **kwargs )   :
+    """
+    Scatter plot colored by 2d histogram
+    Adapted from https://stackoverflow.com/questions/20105364/how-can-i-make-a-scatter-plot-colored-by-density-in-matplotlib
+    """
+
+    data , x_e, y_e = np.histogram2d( x, y, bins = bins, density = True )
+    z = interpn( ( 0.5*(x_e[1:] + x_e[:-1]) , 0.5*(y_e[1:]+y_e[:-1]) ) , data , np.vstack([x,y]).T , method = "splinef2d", bounds_error = False)
+
+    #To be sure to plot all data
+    z[np.where(np.isnan(z))] = 0.0
+
+    # Sort the points by density, so that the densest points are plotted last
+    if sort :
+        idx = z.argsort()
+        x, y, z = x[idx], y[idx], z[idx]
+
+    ax.scatter( x, y, c=z, cmap=cmap, **kwargs )
+
+    return ax
+
 def prepare_files(path1, path2):
 
     df1 = pd.read_hdf(path1, 'protein_fdr')
@@ -133,18 +164,19 @@ def compare_intensities(df1, df2,software_1, software_2):
     for idx, _ in enumerate(['protein','precursor']):
 
         ax = axes[idx]
-        d1 = ref_df1[[_,'total_int']].groupby(_).sum()
-        d2 = ref_df2[[_,'int_sum']].groupby(_).sum()
+        d1 = np.log(ref_df1[[_,'total_int']].groupby(_).sum())
+        d2 = np.log(ref_df2[[_,'int_sum']].groupby(_).sum())
+
+        d2 = d2[~np.isinf(d2['int_sum'].values)]
 
         shared = set(d1.index.values).intersection(set(d2.index.values))
 
-        ax.scatter(d1.loc[shared]['total_int'].values, d2.loc[shared]['int_sum'].values, alpha=0.2, marker='.')
-        ax.set_xscale('log')
-        ax.set_yscale('log')
+        ax = density_scatter(d1.loc[shared]['total_int'].values, d2.loc[shared]['int_sum'].values, ax = ax, bins=30)
 
         ax.set_xlabel(software_1)
         ax.set_ylabel(software_2)
-        ax.set_title(f"{_} intensity")
+        ax.set_title(f"{_} intensity n={len(shared):,}")
+
 
     mins_ = []
     maxs_ = []
@@ -164,13 +196,8 @@ def compare_intensities(df1, df2,software_1, software_2):
     min_ = np.min(mins_)
     max_ = np.max(maxs_)
 
-    max_ = 10**np.ceil(np.log10(max_))
-    min_ = np.max([1, 10**np.floor(np.log10(min_))])
-
     for idx, _ in enumerate(['protein','precursor']):
         ax = axes[idx]
-        ax.set_xlim([min_, max_])
-        ax.set_ylim([min_, max_])
         ax.plot([min_, max_], [min_, max_], 'k:', alpha=0.7)
 
     plt.show()
@@ -179,17 +206,36 @@ def compare_intensities(df1, df2,software_1, software_2):
 def protein_rank(df1, df2, software_1, software_2):
     data_1 = df1[['protein','total_int']].groupby('protein').sum()
     data_1 = data_1.sort_values(by='total_int', ascending=False) #.head(20)
+    data_1 = data_1[data_1>0]
 
     data_2 = df2[['Leading proteins','Intensity']].groupby('Leading proteins').sum()
     data_2 = data_2.sort_values(by='Intensity', ascending=False) #.head(20)
+    data_2 = data_2[data_2>0]
 
+    data_1 = df1[['protein','total_int']].groupby('protein').sum()
+    data_1 = data_1.sort_values(by='total_int', ascending=False) #.head(20)
+    data_1 = data_1.reset_index()
+    data_1 = data_1[data_1['total_int']>0]
 
-    plt.figure(figsize=(5,5))
-    plt.plot(data_1['total_int'].values, label=software_1)
-    plt.plot(data_2['Intensity'].values, label=software_2)
-    plt.yscale('log')
-    plt.legend()
-    plt.ylabel('Protein Intensity')
+    data_2 = df2[['Leading proteins','Intensity']].groupby('Leading proteins').sum()
+    data_2 = data_2.sort_values(by='Intensity', ascending=False) #.head(20)
+    data_2 = data_2.reset_index()
+    data_2 = data_2[data_2['Intensity']>0]
+
+    fig, axes = plt.subplots(1, 1, figsize=(5,5), sharex=True,sharey=True)
+
+    ax1 = axes
+
+    ax1.plot(data_1['total_int'].values, label=software_1, color='r')
+    ax1.axhline(data_1['total_int'].min(), color='r', linestyle=':')
+    ax1.axhline(data_1['total_int'].max(), color='r', linestyle=':')
+
+    ax1.plot(data_2['Intensity'].values, label=software_2, color='b')
+    ax1.axhline(data_2['Intensity'].min(), color='b', linestyle=':')
+    ax1.axhline(data_2['Intensity'].max(), color='b', linestyle=':')
+    ax1.set_yscale('log')
+    ax1.legend()
+    ax1.set_ylabel('Protein Intensity')
     plt.show()
 
 
@@ -213,22 +259,64 @@ def get_plot_df(ref, base_columns, ratio_columns, ax, id_, valid_filter = True):
     else:
         valid = to_plot.query(f'ratio_cnt >0 and base_cnt >0')
 
-    ax = sns.scatterplot(ax = ax, x="ratio_", y="sum_", hue="Species",
-    hue_order=['Homo sapiens', "Escherichia coli","X"], data=valid, alpha=0.2)
+    homo = valid[valid['Species'] == 'Homo sapiens']
+    e_coli = valid[valid['Species'] == 'Escherichia coli']
 
-    homo = valid[valid['Species'] == 'Homo sapiens']['ratio_'].values
-    e_coli = valid[valid['Species'] == 'Escherichia coli']['ratio_'].values
+    homo_ratio = homo['ratio_'].values
+    e_coli_ratio = e_coli['ratio_'].values
+
+    ax = density_scatter(homo['ratio_'].values, homo['sum_'].values, ax, bins=20, cmap='Reds', alpha=0.5)
+    ax = density_scatter(e_coli['ratio_'].values, e_coli['sum_'].values, ax, bins=20, cmap='Blues', alpha=0.5)
 
     with warnings.catch_warnings():
         warnings.simplefilter("ignore", category=RuntimeWarning)
-        homo_ratio = np.nanmean(homo[~np.isinf(homo)])
-        e_coli_ratio = np.nanmean(e_coli[~np.isinf(e_coli)])
+        homo_ratio_median = np.nanmedian(homo_ratio[~np.isinf(homo_ratio)])
+        e_coli_ratio_median = np.nanmedian(e_coli_ratio[~np.isinf(e_coli_ratio)])
 
-        homo_ratio_std = np.nanstd(homo[~np.isinf(homo)])
-        e_coli_ratio_std = np.nanstd(e_coli[~np.isinf(e_coli)])
+        homo_ratio_std = np.nanstd(homo_ratio[~np.isinf(homo_ratio)])
+        e_coli_ratio_std = np.nanstd(e_coli_ratio[~np.isinf(e_coli_ratio)])
 
     nl = '\n'
-    ax.set_title(f'{id_} {nl} Homo (mean, std) {homo_ratio:.2f}, {homo_ratio_std:.2f} {nl} EColi (mean, std) {e_coli_ratio:.2f}, {e_coli_ratio_std:.2f} {nl} {valid["Species"].value_counts().to_dict()}')
+    ax.set_title(f'{id_} {nl} Homo (median, std) {homo_ratio_median:.2f}, {homo_ratio_std:.2f} {nl} EColi (median, std) {e_coli_ratio_median:.2f}, {e_coli_ratio_std:.2f} {nl} {valid["Species"].value_counts().to_dict()}')
+
+def get_plot_df_single(ref, base_columns, ratio_columns, ax, id_, valid_filter = True):
+
+    to_plot = pd.DataFrame()
+    ref[base_columns] = ref[base_columns].replace(0, np.nan)
+    ref[ratio_columns] = ref[ratio_columns].replace(0, np.nan)
+    to_plot['Species'] = ref['Species']
+
+    to_plot['base'] = ref[base_columns].median(axis=1)
+    to_plot['ratio'] = ref[ratio_columns].median(axis=1)
+    to_plot['base_cnt'] = ref[base_columns].notna().sum(axis=1)
+    to_plot['ratio_cnt'] = ref[ratio_columns].notna().sum(axis=1)
+
+    to_plot['ratio_'] = np.log2(to_plot['base'] / to_plot['ratio'])
+    to_plot['sum_'] = np.log2(to_plot['ratio'])
+
+    if valid_filter:
+        valid = to_plot.query(f'ratio_cnt >= 2 and base_cnt >=2')
+    else:
+        valid = to_plot.query(f'ratio_cnt >0 and base_cnt >0')
+
+    homo = valid[valid['Species'] == 'Homo sapiens']
+    e_coli = valid[valid['Species'] == 'Escherichia coli']
+
+    homo_ratio = homo['ratio_'].values
+    e_coli_ratio = e_coli['ratio_'].values
+
+    ax = density_scatter(valid['ratio_'].values, valid['sum_'].values, ax, bins=30)
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore", category=RuntimeWarning)
+        homo_ratio_median = np.nanmedian(homo_ratio[~np.isinf(homo_ratio)])
+        e_coli_ratio_median = np.nanmedian(e_coli_ratio[~np.isinf(e_coli_ratio)])
+
+        homo_ratio_std = np.nanstd(homo_ratio[~np.isinf(homo_ratio)])
+        e_coli_ratio_std = np.nanstd(e_coli_ratio[~np.isinf(e_coli_ratio)])
+
+    nl = '\n'
+    ax.set_title(f'{id_} {nl} Homo (median, std) {homo_ratio_median:.2f}, {homo_ratio_std:.2f} {nl} EColi (median, std) {e_coli_ratio_median:.2f}, {e_coli_ratio_std:.2f} {nl} {valid["Species"].value_counts().to_dict()}')
 
 
 

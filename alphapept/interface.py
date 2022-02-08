@@ -813,11 +813,20 @@ def quantification(
         df = pd.DataFrame()
 
     if len(df) > 0:
-        logging.info('Exporting as csv.')
         results_path = settings['experiment']['results_path']
+
+        logging.info('Updating protein_fdr.') #This now has delayed normalization in it
+
+        df.to_hdf(
+            results_path,
+            'protein_fdr'
+        )
+
+        logging.info('Exporting as csv.')
         base, ext = os.path.splitext(results_path)
-        df.to_csv(base+'.csv')
+        df.to_csv(base+'_peptides.csv')
         logging.info(f'Saved df of length {len(df):,} saved to {base}')
+
 
     else:
         logging.info(f"No Proteins found.")

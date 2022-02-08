@@ -82,6 +82,11 @@ def filter_precursor(df: pd.DataFrame) -> pd.DataFrame:
 
     df_filtered = df[df["rank_precursor"] == 1]
 
+    if 'int_sum' in df_filtered.columns:
+        #if int_sum from feature finding is present: Remove duplicates in case there are any
+        df_filtered = df_filtered.sort_values('int_sum')[::-1]
+        df_filtered = df_filtered.drop_duplicates(["precursor", "rank_precursor"] + additional_group)
+
     return df_filtered
 
 # Cell
@@ -263,7 +268,7 @@ def score_x_tandem(df: pd.DataFrame, fdr_level: float = 0.01, plot: bool = True,
     """
     logging.info('Scoring using X-Tandem')
     if 'localexp' not in df.columns:
-        df['localexp'] =0
+        df['localexp'] = 0
     df['score'] = get_x_tandem_score(df)
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
@@ -1008,8 +1013,6 @@ def protein_grouping_all(settings:dict, pept_dict:dict, fasta_dict:dict, callbac
         path = settings['experiment']['results_path']
 
         base, ext = os.path.splitext(path)
-
-        df_pg.to_csv(base+'_protein_fdr.csv')
 
         df_pg.to_hdf(
             path,
