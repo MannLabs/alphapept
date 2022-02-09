@@ -85,7 +85,7 @@ def transform(
 # Cell
 
 from sklearn.neighbors import KNeighborsRegressor
-
+import logging
 
 def kneighbors_calibration(df: pd.DataFrame, features: pd.DataFrame, cols: list, target: str, scaling_dict: dict, calib_n_neighbors: int) -> np.ndarray:
     """Calibration using a KNeighborsRegressor.
@@ -115,15 +115,18 @@ def kneighbors_calibration(df: pd.DataFrame, features: pd.DataFrame, cols: list,
     for idx, _ in enumerate(data.columns):
         target_points[:, idx] = transform(target_points[:, idx], _, scaling_dict)
 
-    neigh = KNeighborsRegressor(n_neighbors=calib_n_neighbors, weights = 'distance')
-    neigh.fit(tree_points, df[target].values)
+    if len(tree_points) >= calib_n_neighbors:
+        neigh = KNeighborsRegressor(n_neighbors=calib_n_neighbors, weights = 'distance')
+        neigh.fit(tree_points, df[target].values)
 
-    y_hat = neigh.predict(target_points)
+        y_hat = neigh.predict(target_points)
+    else:
+        logging.info('Number of identified peptides is smaller than the number of neighbors set for calibration. Skipping calibration.')
+        y_hat = np.zeros(len(target_points))
 
     return y_hat
 
 # Cell
-import logging
 
 def get_calibration(
     df: pd.DataFrame,
@@ -153,21 +156,24 @@ def get_calibration(
 
     """
 
-    if len(df) > calib_n_neighbors:
 
-        target = 'prec_offset_ppm'
-        cols = ['mz','rt']
 
-        if 'mobility' in df.columns:
-            cols += ['mobility']
+    target = 'prec_offset_ppm'
+    cols = ['mz','rt']
 
-        scaling_dict = {}
-        scaling_dict['mz'] = ('relative', calib_mz_range/1e6)
-        scaling_dict['rt'] = ('absolute', calib_rt_range)
-        scaling_dict['mobility'] = ('relative', calib_mob_range)
+    if 'mobility' in df.columns:
+        cols += ['mobility']
 
-        df_sub = remove_outliers(df, outlier_std)
-        y_hat = kneighbors_calibration(df, features, cols, target, scaling_dict, calib_n_neighbors)
+    scaling_dict = {}
+    scaling_dict['mz'] = ('relative', calib_mz_range/1e6)
+    scaling_dict['rt'] = ('absolute', calib_rt_range)
+    scaling_dict['mobility'] = ('relative', calib_mob_range)
+
+    df_sub = remove_outliers(df, outlier_std)
+
+    if len(df_sub) > calib_n_neighbors:
+
+        y_hat = kneighbors_calibration(df_sub, features, cols, target, scaling_dict, calib_n_neighbors)
 
         corrected_mass = (1-y_hat/1e6) * features['mass_matched']
 
@@ -294,52 +300,57 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
         min_score = 12
         ions = ions[ions['hits']> min_score]
 
-        #Train regressor
-        neigh = KNeighborsRegressor(n_neighbors=calib_n_neighbors, weights = 'distance')
-        neigh.fit(ions['rt'].values.reshape(-1, 1), ions['delta_ppm'].values)
 
-        #Read required datasets
+        if len(ions) >= calib_n_neighbors:
 
-        rt_list_ms2 = ms_file_.read_DDA_query_data()['rt_list_ms2']
-        mass_list_ms2 = ms_file_.read_DDA_query_data()['mass_list_ms2']
-        incides_ms2 = ms_file_.read_DDA_query_data()['indices_ms2']
-        scan_idx = np.searchsorted(incides_ms2, np.arange(len(mass_list_ms2)), side='right') - 1
+            #Train regressor
+            neigh = KNeighborsRegressor(n_neighbors=calib_n_neighbors, weights = 'distance')
+            neigh.fit(ions['rt'].values.reshape(-1, 1), ions['delta_ppm'].values)
 
-        #Estimate offset
-        y_hat = neigh.predict(rt_list_ms2.reshape(-1, 1))
-        y_hat_ = neigh.predict(ions['rt'].values.reshape(-1, 1))
+            #Read required datasets
 
-        delta_ppm_corrected = ions['delta_ppm'] - y_hat_
-        median_off_corrected = np.median(delta_ppm_corrected.values)
-        delta_ppm_median_corrected = delta_ppm_corrected - median_off_corrected
+            rt_list_ms2 = ms_file_.read_DDA_query_data()['rt_list_ms2']
+            mass_list_ms2 = ms_file_.read_DDA_query_data()['mass_list_ms2']
+            incides_ms2 = ms_file_.read_DDA_query_data()['indices_ms2']
+            scan_idx = np.searchsorted(incides_ms2, np.arange(len(mass_list_ms2)), side='right') - 1
 
-        mad_offset = np.median(np.abs(delta_ppm_median_corrected))
+            #Estimate offset
+            y_hat = neigh.predict(rt_list_ms2.reshape(-1, 1))
+            y_hat_ = neigh.predict(ions['rt'].values.reshape(-1, 1))
 
-        try:
-            offset = ms_file_.read(dataset_name = 'corrected_fragment_mzs')
-        except KeyError:
-            offset = np.zeros(len(mass_list_ms2))
+            delta_ppm_corrected = ions['delta_ppm'] - y_hat_
+            median_off_corrected = np.median(delta_ppm_corrected.values)
+            delta_ppm_median_corrected = delta_ppm_corrected - median_off_corrected
 
-        offset += -y_hat[scan_idx] - median_off_corrected
+            mad_offset = np.median(np.abs(delta_ppm_median_corrected))
 
-        delta_ppm_median = ions['delta_ppm'].median()
-        delta_ppm_std = ions['delta_ppm'].std()
+            try:
+                offset = ms_file_.read(dataset_name = 'corrected_fragment_mzs')
+            except KeyError:
+                offset = np.zeros(len(mass_list_ms2))
 
-        delta_ppm_median_corrected_median = delta_ppm_median_corrected.median()
-        delta_ppm_median_corrected_std = delta_ppm_median_corrected.std()
+            offset += -y_hat[scan_idx] - median_off_corrected
 
-        logging.info(f'Median offset (std) {delta_ppm_median:.2f} ({delta_ppm_std:.2f}) - after calibration {delta_ppm_median_corrected_median:.2f} ({delta_ppm_median_corrected_std:.2f}) Mad offset {mad_offset:.2f}')
+            delta_ppm_median = ions['delta_ppm'].median()
+            delta_ppm_std = ions['delta_ppm'].std()
 
-        logging.info('Saving calibration')
+            delta_ppm_median_corrected_median = delta_ppm_median_corrected.median()
+            delta_ppm_median_corrected_std = delta_ppm_median_corrected.std()
 
-        save_fragment_calibration(ions, delta_ppm_median_corrected, delta_ppm_median_corrected_std, file_name, settings)
+            logging.info(f'Median offset (std) {delta_ppm_median:.2f} ({delta_ppm_std:.2f}) - after calibration {delta_ppm_median_corrected_median:.2f} ({delta_ppm_median_corrected_std:.2f}) Mad offset {mad_offset:.2f}')
 
-        ms_file_.write(
-            offset,
-            dataset_name="corrected_fragment_mzs",
-        )
+            logging.info('Saving calibration')
 
-        ms_file_.write(np.array([delta_ppm_median_corrected_std]), dataset_name="estimated_max_fragment_ppm")
+            save_fragment_calibration(ions, delta_ppm_median_corrected, delta_ppm_median_corrected_std, file_name, settings)
+
+            ms_file_.write(
+                offset,
+                dataset_name="corrected_fragment_mzs",
+            )
+
+            ms_file_.write(np.array([delta_ppm_median_corrected_std]), dataset_name="estimated_max_fragment_ppm")
+        else:
+            logging.info(f'Not enough datapoints {len(ions)} for fragment calibration. Minimum is set to {calib_n_neighbors}. Skipping fragment calibration.')
 
 # Cell
 

@@ -813,11 +813,20 @@ def quantification(
         df = pd.DataFrame()
 
     if len(df) > 0:
-        logging.info('Exporting as csv.')
         results_path = settings['experiment']['results_path']
+
+        logging.info('Updating protein_fdr.') #This now has delayed normalization in it
+
+        df.to_hdf(
+            results_path,
+            'protein_fdr'
+        )
+
+        logging.info('Exporting as csv.')
         base, ext = os.path.splitext(results_path)
-        df.to_csv(base+'.csv')
+        df.to_csv(base+'_peptides.csv')
         logging.info(f'Saved df of length {len(df):,} saved to {base}')
+
 
     else:
         logging.info(f"No Proteins found.")
@@ -1215,18 +1224,21 @@ def parallel_execute(
             base, ext = os.path.splitext(files[0])
             if ext.lower() == '.d':
                 memory_available = psutil.virtual_memory().available/1024**3
-                n_processes = max((int(memory_available //25 ),1))
+                n_processes_temp = max((int(memory_available //25 ),1))
+                n_processes = min((n_processes, n_processes_temp))
                 logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}.')
             elif ext.lower() in ('.raw','.mzml'):
                 memory_available = psutil.virtual_memory().available/1024**3
-                n_processes = max((int(memory_available //8 ), 1))
+                n_processes_temp = max((int(memory_available //8 ), 1))
+                n_processes = min((n_processes, n_processes_temp))
                 logging.info(f'Setting Process limit to {n_processes}')
             else:
                 raise NotImplementedError('Feature Finding: File extension {} not understood.'.format(ext))
 
         if step.__name__ == 'search_db':
             memory_available = psutil.virtual_memory().available/1024**3
-            n_processes = max((int(memory_available //8 ), 1)) # 8 gb per file: Todo: make this better
+            n_processes_temp = max((int(memory_available //8 ), 1)) # 8 gb per file: Todo: make this better
+            n_processes = min((n_processes, n_processes_temp))
             logging.info(f'Searching. Setting Process limit to {n_processes}.')
 
 
@@ -1235,16 +1247,20 @@ def parallel_execute(
         rerun_map = {}
         with alphapept.performance.AlphaPool(n_processes) as p:
             for i, success in enumerate(p.imap(step, to_process)):
+                progress = (i+1)/n_files
                 if success is not True:
                     failed.append((i, files[i]))
                     logging.error(f'Processing of {files[i]} for step {step.__name__} failed. Exception {success}')
                     rerun_map[len(rerun)] = i
                     rerun.append(to_process[i])
+                else:
+                    logging.error(f'Processing of {files[i]} for step {step.__name__} succeeded. {progress*100:.2f} %')
 
                 if callback:
-                    callback((i+1)/n_files)
+                    callback(progress)
 
-        if len(failed) > 0:
+        n_failed = len(failed)
+        if n_failed > 0:
             ## Retry failed with more memory
             n_processes_ = max((1, int(n_processes // 2)))
             logging.info(f'Attempting to rerun failed runs with {n_processes_} processes')
@@ -1252,12 +1268,14 @@ def parallel_execute(
             failed = []
             with alphapept.performance.AlphaPool(n_processes_) as p:
                 for i, success in enumerate(p.imap(step, rerun)):
+                    progress = (i+1)/n_failed
                     if success is not True:
                         failed.append(files[rerun_map[i]])
                         logging.error(f'Processing of {files[i]} for step {step.__name__} failed. Exception {success}')
-
+                    else:
+                        logging.error(f'Processing of {files[i]} for step {step.__name__} succeeded. {progress*100:.2f} %')
                     if callback:
-                        callback((i+1)/n_files)
+                        callback(progress)
 
     if step.__name__ not in settings['failed']:
         settings['failed'][step.__name__] = failed
