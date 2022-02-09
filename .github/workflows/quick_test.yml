@@ -16,7 +16,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Install package
       run: |
-        remove-item -path "C:\ProgramData\Miniconda3\envs\alphapept" -Force -Recurse -ErrorAction SilentlyContinue
+        remove-item -path "C:\Users\admin\.conda\envs\alphapeptinstaller" -Force -Recurse -ErrorAction SilentlyContinue
         conda create --name alphapept python=3.8 -y
         conda activate alphapept
         pip install pip --upgrade --user
