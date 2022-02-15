@@ -10,11 +10,11 @@ on:
     branches: [ master, develop]
 
 jobs:
-  Install_Alphapept:
+  Quick_Test:
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
-    - name: Install package
+    - name: Install package (alphapept)
       run: |
         remove-item -path "C:\Users\admin\.conda\envs\alphapept" -Force -Recurse -ErrorAction SilentlyContinue
         conda create --name alphapept python=3.8 -y
@@ -24,21 +24,11 @@ jobs:
         pip install pymongo
         pip install dnspython
         pip install wget
-  IRT_Thermo_Win:
-    needs: Install_Alphapept
-    runs-on: self-hosted
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run Alphapept on Thermo
+    - name: Run Alphapept on Thermo (IRT_Thermo_Win)
       run: |
         conda activate alphapept
         python test_ci.py "${{ env.TMP_FOLDER }}" thermo_irt "${{ secrets.MONGODB_PW }}"
-  IRT_Bruker_Win:
-    needs: [Install_Alphapept, IRT_Thermo_Win]
-    runs-on: self-hosted
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run Alphapept on Bruker
+    - name: Run Alphapept on Bruker (IRT_Bruker_Win)
       run: |
         conda activate alphapept
         python test_ci.py "${{ env.TMP_FOLDER }}" bruker_irt "${{ secrets.MONGODB_PW }}"
