@@ -1,4 +1,4 @@
-__version__ = "0.3.32"
+__version__ = "0.3.33"
 
 __requirements__ = {
     "": "requirements/requirements.txt",

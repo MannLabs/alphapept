@@ -1,9 +1,15 @@
 # Changelog
 
-Last change: 12-Jan-2021, MTS
+Last change: 15-Feb-2022, MTS
+
+## 0.3.33
+* Versionbump for requirements
 
 ## 0.3.32
 * Bugfixes for fragment calibration
+* Bugfixes for matching
+* Bugfix for duplicate hills in Thermo  #386
+* Bugfix calling LFQ on MaxQuant files w/o calling delayed normalization
 
 ## 0.3.30
 * Improved fragment calibration, this increases performance
