@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  Install_Alphapept:
+  GPU_Test:
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
@@ -17,12 +17,7 @@ jobs:
         pip install pymongo
         pip install dnspython
         pip install wget
-        pip install cupy-cuda111
-  GPU_Test:
-    needs: Install_Alphapept
-    runs-on: self-hosted
-    steps:
-    - uses: actions/checkout@v2
+        pip install cupy-cuda111s
     - name: Run CPU test script
       run: |
         conda activate alphapept_gpu

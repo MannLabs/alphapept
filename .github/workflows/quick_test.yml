@@ -10,7 +10,7 @@ on:
     branches: [ master, develop]
 
 jobs:
-  Install_Alphapept:
+  Quick_Test:
     runs-on: self-hosted
     steps:
     - uses: actions/checkout@v2
