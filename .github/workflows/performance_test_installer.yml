@@ -16,37 +16,37 @@ jobs:
           conda deactivate
           cd installer\one_click_windows
           .\create_installer_windows.bat
-    - name: Install package
-      run: |
-        conda activate alphapeptinstaller
-        pip install pymongo
-        pip install dnspython
-        pip install wget
-    - name: Run Alphapept on Thermo (HeLa_Thermo_Win)
-      run: |
-        conda activate alphapeptinstaller
-        python test_ci.py "${{ env.TMP_FOLDER }}" thermo_hela "${{ secrets.MONGODB_PW }}"
-    - name: Run Alphapept on Thermo (HeLa_Thermo_Win_LargeFasta)
-      run: |
-        conda activate alphapeptinstaller
-        python test_ci.py "${{ env.TMP_FOLDER }}" thermo_hela_large_fasta "${{ secrets.MONGODB_PW }}"
-    - name: Run Alphapept on Thermo (HeLa_Thermo_Win_Modifications)
-      run: |
-        conda activate alphapeptinstaller
-        python test_ci.py "${{ env.TMP_FOLDER }}" thermo_hela_modifications "${{ secrets.MONGODB_PW }}"
-    - name: Run Alphapept on Bruker (HeLa_Bruker_Win)
-      run: |
-        conda activate alphapeptinstaller
-        python test_ci.py "${{ env.TMP_FOLDER }}" bruker_hela "${{ secrets.MONGODB_PW }}"
-    - name: Run Alphapept on PXD006109
-      run: |
-        conda activate alphapeptinstaller
-        python test_ci.py "${{ env.TMP_FOLDER }}" PXD006109 "${{ secrets.MONGODB_PW }}"
-    - name: Run Alphapept on PXD010012
-      run: |
-        conda activate alphapeptinstaller
-        python test_ci.py "${{ env.TMP_FOLDER }}" PXD010012 "${{ secrets.MONGODB_PW }}"
-    - name: Run Alphapept on PXD015087
-      run: |
-        conda activate alphapeptinstaller
-        python test_ci.py "${{ env.TMP_FOLDER }}" PXD015087 "${{ secrets.MONGODB_PW }}"
+      - name: Install package
+        run: |
+          conda activate alphapeptinstaller
+          pip install pymongo
+          pip install dnspython
+          pip install wget
+      - name: Run Alphapept on Thermo (HeLa_Thermo_Win)
+        run: |
+          conda activate alphapeptinstaller
+          python test_ci.py "${{ env.TMP_FOLDER }}" thermo_hela "${{ secrets.MONGODB_PW }}"
+      - name: Run Alphapept on Thermo (HeLa_Thermo_Win_LargeFasta)
+        run: |
+          conda activate alphapeptinstaller
+          python test_ci.py "${{ env.TMP_FOLDER }}" thermo_hela_large_fasta "${{ secrets.MONGODB_PW }}"
+      - name: Run Alphapept on Thermo (HeLa_Thermo_Win_Modifications)
+        run: |
+          conda activate alphapeptinstaller
+          python test_ci.py "${{ env.TMP_FOLDER }}" thermo_hela_modifications "${{ secrets.MONGODB_PW }}"
+      - name: Run Alphapept on Bruker (HeLa_Bruker_Win)
+        run: |
+          conda activate alphapeptinstaller
+          python test_ci.py "${{ env.TMP_FOLDER }}" bruker_hela "${{ secrets.MONGODB_PW }}"
+      - name: Run Alphapept on PXD006109
+        run: |
+          conda activate alphapeptinstaller
+          python test_ci.py "${{ env.TMP_FOLDER }}" PXD006109 "${{ secrets.MONGODB_PW }}"
+      - name: Run Alphapept on PXD010012
+        run: |
+          conda activate alphapeptinstaller
+          python test_ci.py "${{ env.TMP_FOLDER }}" PXD010012 "${{ secrets.MONGODB_PW }}"
+      - name: Run Alphapept on PXD015087
+        run: |
+          conda activate alphapeptinstaller
+          python test_ci.py "${{ env.TMP_FOLDER }}" PXD015087 "${{ secrets.MONGODB_PW }}"
