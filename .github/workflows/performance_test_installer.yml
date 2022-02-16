@@ -8,6 +8,7 @@ on:
 jobs:
   Performance_test_pyinstaller:
     runs-on: self-hosted
+    timeout-minutes: 1440
     steps:
       - uses: actions/checkout@v2
       - name: Freezing code
