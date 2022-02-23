@@ -151,6 +151,12 @@ def submit_experiment(recorder: dict):
         st.info(
             f"Filename will be: {escape_markdown(long_name)}. Click submit button to add to queue."
         )
+
+        if (recorder['workflow']['match']) | (recorder['workflow']['match']):
+            if len(recorder['experiment']['shortnames']) > 100:
+                st.warning('Performance Warning: More than 100 files are selected and matching / align is selected.'
+                'Matching / Align could take a long time. If you experience issues please contact mstrauss@biochem.mpg.de')
+
         if st.button("Submit"):
             settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
             for group in recorder:
