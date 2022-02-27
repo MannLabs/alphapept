@@ -1059,11 +1059,12 @@ import datetime
 import alphapept.utils
 
 
-def extract_median_unique(settings: dict) -> tuple:
+def extract_median_unique(settings: dict, fields: list) -> tuple:
     """Extract the medion protein FDR and number of unique proteins.
 
     Args:
         settings (dict): A dictionary with settings how to process the data.
+        fields (list): A list with colum names to calculate summary statistics.
 
     Returns:
         tuple: Two arrays with the median protein FDR per file and the unique number of protein hits
@@ -1073,24 +1074,26 @@ def extract_median_unique(settings: dict) -> tuple:
     cols = [_ for _ in ['protein','protein_group','precursor','naked_sequence','sequence'] if _ in protein_fdr.columns]
     n_unique = protein_fdr.groupby('filename')[cols].nunique()
     n_unique.index = [os.path.split(_)[1][:-12] for _ in n_unique.index]
-    cols = [_ for _ in ['fwhm','int_sum','rt_length','rt_tail','prec_offset_raw_ppm '] if _ in protein_fdr.columns]
-    median = protein_fdr.groupby('filename')[cols].median()
+    cols = [_ for _ in fields if _ in protein_fdr.columns]
+    median = protein_fdr[['filename']+cols].groupby('filename').median()
     median.index = [os.path.split(_)[1][:-12] for _ in median.index]
 
     return median, n_unique
 
 
-def get_file_summary(ms_data: alphapept.io.MS_Data_File) -> dict:
+def get_file_summary(ms_data: alphapept.io.MS_Data_File, fields: list) -> dict:
     """Get summarize statitics from an MS_Data file.
 
     Args:
         ms_data (alphapept.io.MS_Data_File): An MS_Data file which has been fully identified and quantified.
+        fields (list): A list with colum names to calculate summary statistics.
 
     Returns:
         dict: A dictionary with summary statistics.
 
     """
     f_summary = {}
+
 
     try:
         f_summary['acquisition_date_time'] = ms_data.read(group_name = 'Raw', attr_name = 'acquisition_date_time')
@@ -1116,7 +1119,7 @@ def get_file_summary(ms_data: alphapept.io.MS_Data_File) -> dict:
                     f_summary['id_rate (peptide_fdr)'] = float(df['raw_idx'].nunique() / n_ms2)
 
             if key in ['feature_table','peptide_fdr']:
-                for field in ['fwhm','int_sum','rt_length','rt_tail','prec_offset_raw_ppm ']:
+                for field in fields:
                     if field in df.columns:
                         f_summary[f'{field} ({key}, median)'] = float(df[field].median())
 
@@ -1137,6 +1140,8 @@ def get_summary(settings: dict, summary: dict) -> dict:
 
     summary['file_sizes'] = {}
 
+    fields = ['fwhm','int_sum','rt_length','rt_tail','prec_offset_raw_ppm', 'prec_offset_ppm','mobility']
+
     file_sizes = {}
     for _ in settings['experiment']['file_paths']:
 
@@ -1148,13 +1153,13 @@ def get_summary(settings: dict, summary: dict) -> dict:
 
         ms_data = alphapept.io.MS_Data_File(os.path.splitext(_)[0] + ".ms_data.hdf")
 
-        summary[filename] = get_file_summary(ms_data)
+        summary[filename] = get_file_summary(ms_data, fields)
 
     summary['file_sizes']['files'] = file_sizes
     if os.path.isfile(settings['experiment']['results_path']):
         summary['file_sizes']['results'] = os.path.getsize(settings['experiment']['results_path'])/1024**2
 
-        median, n_unique = extract_median_unique(settings)
+        median, n_unique = extract_median_unique(settings, fields)
 
         for col in median.columns:
             for _ in range(len(median)):

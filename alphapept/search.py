@@ -572,11 +572,13 @@ def score(
 
         ions = get_hits(query_frag, query_int, db_frag, db_int, frag_type, mtol, ppm, LOSSES)
 
+        psms_['mass_db'][i] = db_masses[db_idx]
+
         psms_['prec_offset'][i] = query_masses[query_idx] - db_masses[db_idx]
         psms_['prec_offset_ppm'][i] = 2 * psms_['prec_offset'][i] / (query_masses[query_idx]  + db_masses[db_idx] ) * 1e6
 
-        psms_['prec_offset_raw '][i] = query_masses_raw[query_idx] - db_masses[db_idx]
-        psms_['prec_offset_raw_ppm '][i] = 2 * psms_['prec_offset'][i] / (query_masses_raw[query_idx]  + db_masses[db_idx] ) * 1e6
+        psms_['prec_offset_raw'][i] = query_masses_raw[query_idx] - db_masses[db_idx]
+        psms_['prec_offset_raw_ppm'][i] = 2 * psms_['prec_offset_raw'][i] / (query_masses_raw[query_idx]  + db_masses[db_idx] ) * 1e6
 
         psms_['delta_m'][i] = np.mean(ions[:,4]-ions[:,5])
         psms_['delta_m_ppm'][i] = np.mean(2 * psms_['delta_m'][i] / (ions[:,4]  + ions[:,5] ) * 1e6)
@@ -740,7 +742,7 @@ def get_score_columns(
         query_mz = query_data['mono_mzs2']
         query_rt = query_data['rt_list_ms2']
 
-    float_fields = ['prec_offset', 'prec_offset_ppm', 'prec_offset_raw ','prec_offset_raw_ppm ','delta_m','delta_m_ppm','matched_int_ratio','int_ratio']
+    float_fields = ['mass_db','prec_offset', 'prec_offset_ppm', 'prec_offset_raw','prec_offset_raw_ppm','delta_m','delta_m_ppm','matched_int_ratio','int_ratio']
     int_fields = ['total_int','matched_int','n_ions','ion_idx'] + [a+_+'_hits' for _ in LOSS_DICT for a in ['b','y']]
 
     psms_dtype = np.dtype([(_,np.float32) for _ in float_fields] + [(_,np.int64) for _ in int_fields])
