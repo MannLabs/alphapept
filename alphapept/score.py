@@ -905,8 +905,28 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
                     logging.info('No second search psms for scoring found. Using first search.')
                 except KeyError:
                     df = pd.DataFrame()
-            df["localexp"] = idx_start
 
+            #TODO: This will break the search w/o feature finding...
+            feature_mapping = ms_file_.read(dataset_name='feature_cluster_mapping')
+
+            isotope_intensities = []
+            for _ in df['feature_idx']:
+                sub = feature_mapping[feature_mapping['feature_id'] == _]
+                isotope_intensities.append(';'.join(sub['int_sum'].astype('int').astype('str')))
+
+            df['isotope_intensities'] = isotope_intensities
+
+            ids = df.copy()
+
+            ids['score'] = get_x_tandem_score(ids)
+            ids = filter_score(ids)
+
+            ms_file_.write(ids, dataset_name="identifications")
+            logging.info('Saved identifications')
+
+            ids.to_csv(ms_filename[:-12]+'_ids.csv')
+
+            df["localexp"] = idx_start
 
             df.index = df.index+idx_start
             ms_file2idx[ms_file_] = df.index

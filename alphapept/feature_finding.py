@@ -9,7 +9,7 @@ __all__ = ['connect_centroids_unidirection', 'find_centroid_connections', 'conve
            'get_trails', 'plot_pattern', 'get_minpos', 'get_local_minima', 'is_local_minima', 'truncate',
            'check_averagine', 'pattern_to_mz', 'cosine_averagine', 'int_list_to_array', 'mz_to_mass', 'M_PROTON',
            'isolate_isotope_pattern', 'get_isotope_patterns', 'report_', 'feature_finder_report', 'extract_bruker',
-           'convert_bruker', 'map_bruker', 'find_features', 'replace_infs', 'map_ms2']
+           'convert_bruker', 'map_bruker', 'get_stats', 'find_features', 'replace_infs', 'map_ms2']
 
 # Cell
 import numpy as np
@@ -1729,7 +1729,7 @@ def convert_bruker(feature_path:str)->pd.DataFrame:
     """
     engine_featurefile = db.create_engine('sqlite:///{}'.format(feature_path))
     feature_table = pd.read_sql_table('LcTimsMsFeature', engine_featurefile)
-
+    feature_cluster_mapping = pd.read_sql_table('FeatureClusterMapping', engine_featurefile)
     from .constants import mass_dict
 
     M_PROTON = mass_dict['Proton']
@@ -1739,7 +1739,9 @@ def convert_bruker(feature_path:str)->pd.DataFrame:
     feature_table['rt_start'] = feature_table['rt_start']/60
     feature_table['rt_end'] = feature_table['rt_end']/60
 
-    return feature_table
+    feature_cluster_mapping = feature_cluster_mapping.rename(columns={"FeatureId": "feature_id", "ClusterId": "cluster_id", "Monoisotopic": "monoisotopic", "Intensity": "intensity"})
+
+    return feature_table, feature_cluster_mapping
 
 
 def map_bruker(feature_path:str, feature_table:pd.DataFrame, query_data:dict)->pd.DataFrame:
@@ -1801,6 +1803,29 @@ def map_bruker(feature_path:str, feature_table:pd.DataFrame, query_data:dict)->p
     return features
 
 # Cell
+def get_stats(isotope_patterns, iso_idx, stats):
+    columns = ['average_mz','delta_m','int_sum','int_area','rt_min','rt_max']
+
+    stats_idx = np.zeros(iso_idx[-1], dtype=np.int64)
+    stats_map = np.zeros(iso_idx[-1], dtype=np.int64)
+
+    start_ = 0
+    end_ = 0
+
+    for idx in range(len(iso_idx)-1):
+        k = isotope_patterns[iso_idx[idx]:iso_idx[idx+1]]
+        end_ += len(k)
+        stats_idx[start_:end_] = k
+        stats_map[start_:end_] = idx
+        start_ = end_
+
+    k = pd.DataFrame(stats[stats_idx], columns=columns)
+
+    k['feature_id'] = stats_map
+
+    return k
+
+# Cell
 import numpy as np
 
 import logging
@@ -1860,6 +1885,8 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
         if not skip:
             ms_file = alphapept.io.MS_Data_File(out_file, is_read_only=False)
             query_data = ms_file.read_DDA_query_data()
+
+            feature_cluster_mapping = pd.DataFrame()
 
             if not settings['workflow']["find_features"]:
                 features = query_data_to_features(query_data)
@@ -1930,12 +1957,16 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
                     lookup_idx_df = pd.DataFrame(lookup_idx, columns = ['isotope_pattern', 'isotope_pattern_hill'])
                     ms_file.write(lookup_idx_df, dataset_name="feature_table_idx")
 
+                    feature_cluster_mapping = get_stats(isotope_patterns, iso_idx, stats)
+
+
                     logging.info('Report complete.')
 
                 elif datatype == 'bruker':
                     logging.info('Feature finding on {}'.format(file_name))
                     feature_path = extract_bruker(file_name)
-                    feature_table = convert_bruker(feature_path)
+                    feature_table, feature_cluster_mapping = convert_bruker(feature_path)
+
                     logging.info('Bruker featurer finder complete. Extracted {:,} features.'.format(len(feature_table)))
 
                 # Calculate additional params
@@ -1954,6 +1985,7 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
 
                 logging.info('Saving feature table.')
                 ms_file.write(feature_table, dataset_name="feature_table")
+                ms_file.write(feature_cluster_mapping, dataset_name="feature_cluster_mapping")
                 logging.info('Feature table saved to {}'.format(out_file))
 
 
