@@ -89,8 +89,9 @@ def calib_table(table: pd.DataFrame, delta: pd.Series, offset_dict: dict):
 # Cell
 import logging
 from sklearn.linear_model import LinearRegression
+import sys
 
-def align(deltas: pd.DataFrame, filenames: list, weights:np.ndarray=None) -> np.ndarray:
+def align(deltas: pd.DataFrame, filenames: list, weights:np.ndarray=None, n_jobs=None) -> np.ndarray:
     """Align multiple datasets.
     This function creates a matrix to represent the shifts from each dataset to another.
     This effectively is an overdetermined equation system and is solved with a linear regression.
@@ -99,6 +100,7 @@ def align(deltas: pd.DataFrame, filenames: list, weights:np.ndarray=None) -> np.
         deltas (pd.DataFrame): Distances from each dataset to another.
         filenames (list): The filenames of the datasts that were compared.
         weights (np.ndarray, optional): Distances can be weighted by their number of shared elements. Defaults to None.
+        n_jobs (optional): Number of processes to be used. Defaults to None (=1).
 
     Returns:
         np.ndarray: alignment values.
@@ -125,10 +127,10 @@ def align(deltas: pd.DataFrame, filenames: list, weights:np.ndarray=None) -> np.
         logging.info('Low overlap between datasets detected. Alignment may fail.')
 
     if weights is not None:
-        reg = LinearRegression(fit_intercept=False).fit(matrix, deltas_.values, sample_weight = weights[not_nan])
+        reg = LinearRegression(fit_intercept=False, n_jobs=n_jobs).fit(matrix, deltas_.values, sample_weight = weights[not_nan])
         score= reg.score(matrix, deltas_.values)
     else:
-        reg = LinearRegression(fit_intercept=False).fit(matrix, deltas_.values)
+        reg = LinearRegression(fit_intercept=False, n_jobs=n_jobs).fit(matrix, deltas_.values)
         score= reg.score(matrix, deltas_.values)
 
     logging.info(f"Regression score is {score}")
@@ -254,9 +256,11 @@ def align_datasets(settings:dict, callback:callable=None):
         logging.info(f'Total deviation before calibration {before_sum}')
         logging.info(f'Mean deviation before calibration {before_mean}')
 
-        logging.info(f'Solving equation system')
+        n_jobs = settings['general']['n_processes']
 
-        alignment = pd.DataFrame(align(deltas, filenames, weights), columns = cols)
+        logging.info(f'Solving equation system with {n_jobs} jobs.')
+
+        alignment = pd.DataFrame(align(deltas, filenames, weights, n_jobs), columns = cols)
         alignment = pd.concat([pd.DataFrame(np.zeros((1, alignment.shape[1])), columns= cols), alignment])
         alignment -= alignment.mean()
 
