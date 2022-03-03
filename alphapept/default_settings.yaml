@@ -87,6 +87,7 @@ calibration:
 matching:
   match_p_min: 0.05
   match_d_min: 3
+  match_group_tol: 0
 isobaric_label:
   label: None
   reporter_frag_tolerance: 15

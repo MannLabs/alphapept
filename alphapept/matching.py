@@ -344,14 +344,31 @@ def convert_decoy(float_):
 # The function will be revised when implementing issue #255: https://github.com/MannLabs/alphapept/issues/255
 def match_datasets(settings:dict, callback:Callable = None):
     """Match datasets: Wrapper function to match datasets based on a settings file.
+    This implementation uses matchin groups but not fractions.
 
     Args:
         settings (dict): Dictionary containg specifications of the run
         callback (Callable): Callback function to indicate progress.
     """
 
+
     if len(settings['experiment']['file_paths']) > 2:
-        xx = alphapept.utils.assemble_df(settings, field='peptide_fdr')
+
+        match_p_min = settings['matching']['match_p_min']
+        match_d_min = settings['matching']['match_d_min']
+
+        filenames = settings['experiment']['file_paths']
+
+        shortnames_lookup = dict(zip(settings['experiment']['shortnames'], settings['experiment']['file_paths']))
+
+        matching_groups = np.array(settings['experiment']['matching_groups'])
+        n_matching_groups = len(set(matching_groups))
+        match_tolerance = settings['matching']['match_group_tol']
+        logging.info(f'A total of {n_matching_groups} matching groups set.')
+
+        x = alphapept.utils.assemble_df(settings, field='peptide_fdr')
+
+        logging.info(f'A total of {len(x):,} peptides for matching in peptide_fdr.')
 
         base_col = ['precursor']
         alignment_cols = ['mz_calib','rt_calib']
@@ -363,93 +380,107 @@ def match_datasets(settings:dict, callback:Callable = None):
         else:
             use_mobility = False
 
-        grouped = xx[base_col + alignment_cols + extra_cols].groupby('precursor').mean()
+        for group in set(settings['experiment']['matching_groups']):
+            logging.info(f'Matching group {group} with a tolerance of {match_tolerance}.')
+            file_index_from = (matching_groups <= (group+match_tolerance)) & (matching_groups >= (group-match_tolerance))
+            file_index_to = matching_groups == group
+            files_from = np.array(settings['experiment']['shortnames'])[file_index_from].tolist()
+            files_to = np.array(settings['experiment']['shortnames'])[file_index_to].tolist()
+            logging.info(f'Matching from {len(files_from)} files to {len(files_to)} files.')
+            logging.info(f'Matching from {files_from} to {files_to}.')
 
-        grouped['decoy'] = grouped['decoy'].apply(lambda x: convert_decoy(x))
-        grouped['target'] = grouped['target'].apply(lambda x: convert_decoy(x))
+            if len(files_from) > 2:
+                xx = x[x['shortname'].apply(lambda x: x in files_from)].copy()
 
-        std_ = xx[base_col + alignment_cols].groupby('precursor').std()
+                grouped = xx[base_col + alignment_cols + extra_cols].groupby('precursor').mean()
 
-        grouped[[_+'_std' for _ in alignment_cols]] = std_
+                grouped['decoy'] = grouped['decoy'].apply(lambda x: convert_decoy(x))
+                grouped['target'] = grouped['target'].apply(lambda x: convert_decoy(x))
 
-        std_range = np.nanmedian(std_.values, axis=0)
+                std_ = xx[base_col + alignment_cols].groupby('precursor').std()
 
-        match_p_min = settings['matching']['match_p_min']
-        match_d_min = settings['matching']['match_d_min']
+                grouped[[_+'_std' for _ in alignment_cols]] = std_
 
-        filenames = settings['experiment']['file_paths']
+                std_range = np.nanmedian(std_.values, axis=0)
 
-        lookup_dict = xx.set_index('precursor')[['sequence']].to_dict()
+                lookup_dict = xx.set_index('precursor')[['sequence','naked_sequence','db_idx']].to_dict()
 
-        for idx, filename in enumerate(filenames):
-            file = os.path.splitext(filename)[0] + '.ms_data.hdf'
+                for file_to in files_to:
+                    filename = shortnames_lookup[file_to]
+                    file = os.path.splitext(filename)[0] + '.ms_data.hdf'
 
-            df = alphapept.io.MS_Data_File(file).read(dataset_name='peptide_fdr')
-            features = alphapept.io.MS_Data_File(file).read(dataset_name='feature_table')
-            features['feature_idx'] = features.index
+                    df = alphapept.io.MS_Data_File(file).read(dataset_name='peptide_fdr')
+                    features = alphapept.io.MS_Data_File(file).read(dataset_name='feature_table')
+                    features['feature_idx'] = features.index
 
-            matching_set = set(grouped.index) - set(df['precursor'])
-            logging.info(f'Trying to match file {file} with database of {len(matching_set):,} unidentified candidates')
+                    matching_set = set(grouped.index) - set(df['precursor'])
+                    logging.info(f'Trying to match file {file} with database of {len(matching_set):,} unidentified candidates')
 
-            mz_range = std_range[0]
-            rt_range = std_range[1]
+                    mz_range = std_range[0]
+                    rt_range = std_range[1]
 
-            tree_points = features[alignment_cols].values
-            tree_points[:,0] = tree_points[:,0]/mz_range
-            tree_points[:,1] = tree_points[:,1]/rt_range
+                    tree_points = features[alignment_cols].values
+                    tree_points[:,0] = tree_points[:,0]/mz_range
+                    tree_points[:,1] = tree_points[:,1]/rt_range
 
-            query_points = grouped.loc[matching_set][alignment_cols].values
-            query_points[:,0] = query_points[:,0]/mz_range
-            query_points[:,1] = query_points[:,1]/rt_range
+                    query_points = grouped.loc[matching_set][alignment_cols].values
+                    query_points[:,0] = query_points[:,0]/mz_range
+                    query_points[:,1] = query_points[:,1]/rt_range
 
-            if use_mobility:
-                logging.info("Using mobility")
-                i_range = std_range[2]
+                    if use_mobility:
+                        logging.info("Using mobility")
+                        i_range = std_range[2]
 
-                tree_points[:,2] = tree_points[:,2]/i_range
-                query_points[:,2] = query_points[:,2]/i_range
+                        tree_points[:,2] = tree_points[:,2]/i_range
+                        query_points[:,2] = query_points[:,2]/i_range
 
-            matching_tree = KDTree(tree_points, metric="minkowski")
+                    matching_tree = KDTree(tree_points, metric="euclidean")
 
-            dist, idx = matching_tree.query(query_points, k=1)
+                    dist, idx = matching_tree.query(query_points, k=1)
 
-            matched = features.iloc[idx[:,0]]
+                    matched = features.iloc[idx[:,0]].reset_index()
 
-            for _ in extra_cols:
-                matched[_] = grouped.loc[matching_set, _].values
+                    for _ in extra_cols:
+                        matched[_] = grouped.loc[matching_set, _].values
 
-            to_keep = dist < match_d_min
+                    to_keep = dist < match_d_min
 
-            matched = matched[to_keep]
+                    matched = matched[to_keep]
 
-            ref = grouped.loc[matching_set][alignment_cols][to_keep]
-            sigma = std_.loc[matching_set][to_keep]
+                    ref = grouped.loc[matching_set][alignment_cols][to_keep]
+                    sigma = std_.loc[matching_set][to_keep]
 
-            logging.info(f'{len(matched):,} possible features for matching based on distance of {match_d_min}')
+                    logging.info(f'{len(matched):,} possible features for matching based on distance of {match_d_min}')
 
-            matched['matching_p'] = [get_probability(matched[alignment_cols], ref, sigma, i) for i in range(len(matched))]
-            matched['precursor'] = grouped.loc[matching_set][to_keep].index.values
-            matched['score'] = grouped.loc[matching_set][to_keep]['score'].values
+                    matched['matching_p'] = [get_probability(matched[alignment_cols], ref, sigma, i) for i in range(len(matched))]
+                    matched['precursor'] = grouped.loc[matching_set][to_keep].index.values
+                    matched['score'] = grouped.loc[matching_set][to_keep]['score'].values
 
-            matched = matched[matched['matching_p']< match_p_min]
+                    matched = matched[matched['matching_p']< match_p_min]
 
-            logging.info(f'{len(matched):,} possible features for matching based on probability of {match_p_min}')
+                    logging.info(f'{len(matched):,} possible features for matching based on probability of {match_p_min}')
 
-            matched['type'] = 'matched'
+                    matched['type'] = 'matched'
 
-            for _ in lookup_dict.keys():
-                matched[_] = [lookup_dict[_][x] for x in matched['precursor']]
+                    for _ in lookup_dict.keys():
+                        matched[_] = [lookup_dict[_][x] for x in matched['precursor']]
 
-            df['type'] = 'msms'
-            df['matching_p'] = np.nan
+                    df['type'] = 'msms'
+                    df['matching_p'] = np.nan
 
-            shared_columns = set(matched.columns).intersection(set(df.columns))
+                    shared_columns = set(matched.columns).intersection(set(df.columns))
 
-            df_ = pd.concat([df, matched[shared_columns]], ignore_index=True)
+                    df_ = pd.concat([df, matched[shared_columns]], ignore_index=True)
 
-            logging.info(f"Saving {file} - peptide_fdr.")
-            ms_file = alphapept.io.MS_Data_File(file, is_overwritable=True)
+                    logging.info(f"Saving {file} - peptide_fdr.")
+                    ms_file = alphapept.io.MS_Data_File(file, is_overwritable=True)
 
-            ms_file.write(df_, dataset_name='peptide_fdr')
+                    ms_file.write(df_, dataset_name='peptide_fdr')
+
+            else:
+                logging.info(f'Less than 3 datasets present in matching group {group}. Skipping matching.')
+
     else:
         logging.info('Less than 3 datasets present. Skipping matching.')
+
+    logging.info('Matching complete.')
