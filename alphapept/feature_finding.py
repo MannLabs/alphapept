@@ -1739,7 +1739,7 @@ def convert_bruker(feature_path:str)->pd.DataFrame:
     feature_table['rt_start'] = feature_table['rt_start']/60
     feature_table['rt_end'] = feature_table['rt_end']/60
 
-    feature_cluster_mapping = feature_cluster_mapping.rename(columns={"FeatureId": "feature_id", "ClusterId": "cluster_id", "Monoisotopic": "monoisotopic", "Intensity": "intensity"})
+    feature_cluster_mapping = feature_cluster_mapping.rename(columns={"FeatureId": "feature_id", "ClusterId": "cluster_id", "Monoisotopic": "monoisotopic", "Intensity": "int_sum"})
 
     return feature_table, feature_cluster_mapping
 
@@ -1983,9 +1983,25 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
                 else:
                     features = map_ms2(feature_table, query_data, **settings['features'])
 
+                ms_file.write(feature_cluster_mapping, dataset_name="feature_cluster_mapping")
+
+                if False:
+                    try:
+                        logging.info('Mapping isotope clusters.')
+                        #TODO: This will break the search w/o feature finding...
+                        feature_mapping = ms_file.read(dataset_name='feature_cluster_mapping')
+
+                        feature_table['isotope_mzs'] = feature_mapping.groupby('feature_id')['average_mz'].apply(list)
+                        feature_table['isotope_ints'] = feature_mapping.groupby('feature_id')['int_sum'].apply(list)
+
+                        logging.info('Mapping isotope clusters complete.')
+
+                    except KeyError:
+                        logging.info('Field feature_cluster_mapping not found.')
+
                 logging.info('Saving feature table.')
                 ms_file.write(feature_table, dataset_name="feature_table")
-                ms_file.write(feature_cluster_mapping, dataset_name="feature_cluster_mapping")
+
                 logging.info('Feature table saved to {}'.format(out_file))
 
 
@@ -2060,7 +2076,7 @@ def map_ms2(feature_table:pd.DataFrame, query_data:dict, map_mz_range:float = 1,
     for i, key in enumerate(range_dict):
         tree_points[:,i] = tree_points[:,i]/range_dict[key][1]
 
-    matching_tree = KDTree(tree_points, metric="minkowski")
+    matching_tree = KDTree(tree_points, metric="euclidean")
     ref_points = np.array([query_data[range_dict[_][0]] / range_dict[_][1] for _ in range_dict]).T
     ref_points = replace_infs(ref_points)
 
