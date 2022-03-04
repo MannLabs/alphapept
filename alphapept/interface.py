@@ -763,7 +763,7 @@ def quantification(
                         'combined_protein_fdr_dn'
                     )
 
-                    logging.info('Complete. ')
+                    logging.info('Complete.')
                     logging.info('Starting profile extraction.')
 
                     if not callback:
@@ -776,28 +776,30 @@ def quantification(
                         df_grouped,
                         callback=cb
                     )
-                    protein_table.to_hdf(
-                        settings['experiment']['results_path'],
-                        'protein_table'
-                    )
-
-                    protein_table.to_csv(base+'_proteins.csv')
-
                     logging.info('LFQ complete.')
 
-                    logging.info('Extracting protein_summary')
+            else:
+                logging.info('Exporting protein intensity.')
+                protein_table = df.groupby(['protein_group','filename'])['int_sum'].sum().unstack()
 
-                    protein_summary = pd.DataFrame(index = df['protein_group'].unique())
+            protein_table.to_hdf(
+                settings['experiment']['results_path'],
+                'protein_table'
+            )
+            protein_table.to_csv(base+'_proteins.csv')
+            logging.info('Extracting protein_summary')
 
-                    for field in ['sequence','precursor']:
-                        col_ = 'n_'+ field+' '
-                        m = df.groupby(['protein_group','filename'])[field].count().unstack()
-                        m.columns = [col_ +_ for _ in m.columns]
-                        protein_summary.loc[m.index, m.columns] = m.values
+            protein_summary = pd.DataFrame(index = df['protein_group'].unique())
 
-                    # Add intensity
-                    new_cols = ['intensity ' + _ if not _.endswith('_LFQ') else 'LFQ intensity '+_[:-4] for _ in protein_table.columns ]
-                    protein_summary.loc[protein_table.index, new_cols] = protein_table.values
+            for field in ['sequence','precursor']:
+                col_ = 'n_'+ field+' '
+                m = df.groupby(['protein_group','filename'])[field].count().unstack()
+                m.columns = [col_ +_ for _ in m.columns]
+                protein_summary.loc[m.index, m.columns] = m.values
+
+            # Add intensity
+            new_cols = ['intensity ' + _ if not _.endswith('_LFQ') else 'LFQ intensity '+_[:-4] for _ in protein_table.columns ]
+            protein_summary.loc[protein_table.index, new_cols] = protein_table.values
 
         if len(protein_summary) > 0:
             ps_out = base+'_protein_summary.csv'
