@@ -222,7 +222,7 @@ def density_scatter( x , y, ax = None, sort = True, bins = 20, **kwargs )   :
 
     return ax
 
-def save_fragment_calibration(ions, corrected, std_offset, file_name, settings):
+def save_fragment_calibration(fragment_ions, corrected, std_offset, file_name, settings):
 
     f, axes = plt.subplots(2, 2, figsize=(20,10))
 
@@ -231,13 +231,13 @@ def save_fragment_calibration(ions, corrected, std_offset, file_name, settings):
     ax3 = axes[0,1]
     ax4 = axes[1,1]
 
-    ax1 = density_scatter(ions['rt'].values, ions['delta_ppm'].values, ax = ax1)
+    ax1 = density_scatter(fragment_ions['rt'].values, fragment_ions['delta_ppm'].values, ax = ax1)
     ax1.set_title('Fragment error before correction')
     ax1.axhline(0, color='w', linestyle='-', alpha=0.5)
     ax1.set_ylabel('Error (ppm)')
     ax1.set_xlabel('RT (min)')
 
-    ax2 = density_scatter(ions['rt'].values, corrected.values, ax = ax2)
+    ax2 = density_scatter(fragment_ions['rt'].values, corrected.values, ax = ax2)
     ax1.axhline(0, color='w', linestyle='-', alpha=0.5)
     ax2.axhline(0, color='w', linestyle='-', alpha=0.5)
     ax2.axhline(0+std_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
@@ -247,7 +247,7 @@ def save_fragment_calibration(ions, corrected, std_offset, file_name, settings):
     ax2.set_ylabel('Error (ppm)')
     ax2.set_xlabel('RT (min)')
 
-    ax3 = density_scatter(ions['ion_mass'].values, ions['delta_ppm'].values, bins=50, ax = ax3)
+    ax3 = density_scatter(fragment_ions['ion_mass'].values, fragment_ions['delta_ppm'].values, bins=50, ax = ax3)
     ax3.axhline(0, color='w', linestyle='-', alpha=0.5)
 
     ax3.set_ylabel('Error (ppm)')
@@ -255,7 +255,7 @@ def save_fragment_calibration(ions, corrected, std_offset, file_name, settings):
     ax3.set_xlim([100,1500])
     ax3.set_title('Fragment error before correction')
 
-    ax4 = density_scatter(ions['ion_mass'].values, corrected.values, bins=50, ax = ax4)
+    ax4 = density_scatter(fragment_ions['ion_mass'].values, corrected.values, bins=50, ax = ax4)
 
     ax4.set_ylabel('Error (ppm)')
     ax4.set_xlabel('m/z')
@@ -281,9 +281,9 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
 
     try:
         logging.info(f'Calibrating fragments with neighbors')
-        ions = ms_file_.read(dataset_name='ions')
+        fragment_ions = ms_file_.read(dataset_name='fragment_ions')
     except KeyError:
-        logging.info('No ions to calibrate fragment masses found')
+        logging.info('No fragment_ions to calibrate fragment masses found')
         skip = True
 
     if not skip:
@@ -291,21 +291,21 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
         psms = ms_file_.read(dataset_name='first_search')
 
         #Calculate offset
-        ions['rt'] = psms['rt'][ions['psms_idx'].values.astype('int')].values
-        ions['delta_ppm'] = ((ions['db_mass'] - ions['ion_mass'])/((ions['db_mass'] + ions['ion_mass'])/2)*1e6).values
-        ions['hits'] = psms['hits'][ions['psms_idx'].values.astype('int')].values
+        fragment_ions['rt'] = psms['rt'][fragment_ions['psms_idx'].values.astype('int')].values
+        fragment_ions['delta_ppm'] = ((fragment_ions['db_mass'] - fragment_ions['ion_mass'])/((fragment_ions['db_mass'] + fragment_ions['ion_mass'])/2)*1e6).values
+        fragment_ions['hits'] = psms['hits'][fragment_ions['psms_idx'].values.astype('int')].values
 
         #Min score to only use "true hits"
 
         min_score = 12
-        ions = ions[ions['hits']> min_score]
+        fragment_ions = fragment_ions[fragment_ions['hits']> min_score]
 
 
-        if len(ions) >= calib_n_neighbors:
+        if len(fragment_ions) >= calib_n_neighbors:
 
             #Train regressor
             neigh = KNeighborsRegressor(n_neighbors=calib_n_neighbors, weights = 'distance')
-            neigh.fit(ions['rt'].values.reshape(-1, 1), ions['delta_ppm'].values)
+            neigh.fit(fragment_ions['rt'].values.reshape(-1, 1), fragment_ions['delta_ppm'].values)
 
             #Read required datasets
 
@@ -316,9 +316,9 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
 
             #Estimate offset
             y_hat = neigh.predict(rt_list_ms2.reshape(-1, 1))
-            y_hat_ = neigh.predict(ions['rt'].values.reshape(-1, 1))
+            y_hat_ = neigh.predict(fragment_ions['rt'].values.reshape(-1, 1))
 
-            delta_ppm_corrected = ions['delta_ppm'] - y_hat_
+            delta_ppm_corrected = fragment_ions['delta_ppm'] - y_hat_
             median_off_corrected = np.median(delta_ppm_corrected.values)
             delta_ppm_median_corrected = delta_ppm_corrected - median_off_corrected
 
@@ -331,8 +331,8 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
 
             offset += -y_hat[scan_idx] - median_off_corrected
 
-            delta_ppm_median = ions['delta_ppm'].median()
-            delta_ppm_std = ions['delta_ppm'].std()
+            delta_ppm_median = fragment_ions['delta_ppm'].median()
+            delta_ppm_std = fragment_ions['delta_ppm'].std()
 
             delta_ppm_median_corrected_median = delta_ppm_median_corrected.median()
             delta_ppm_median_corrected_std = delta_ppm_median_corrected.std()
@@ -341,7 +341,7 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
 
             logging.info('Saving calibration')
 
-            save_fragment_calibration(ions, delta_ppm_median_corrected, delta_ppm_median_corrected_std, file_name, settings)
+            save_fragment_calibration(fragment_ions, delta_ppm_median_corrected, delta_ppm_median_corrected_std, file_name, settings)
 
             ms_file_.write(
                 offset,
@@ -350,7 +350,7 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
 
             ms_file_.write(np.array([delta_ppm_median_corrected_std]), dataset_name="estimated_max_fragment_ppm")
         else:
-            logging.info(f'Not enough datapoints {len(ions)} for fragment calibration. Minimum is set to {calib_n_neighbors}. Skipping fragment calibration.')
+            logging.info(f'Not enough datapoints {len(fragment_ions)} for fragment calibration. Minimum is set to {calib_n_neighbors}. Skipping fragment calibration.')
 
 # Cell
 

@@ -806,7 +806,7 @@ ion_dict[0] = ''
 ion_dict[1] = '-H20'
 ion_dict[2] = '-NH3'
 
-def get_ion(i: int, df: pd.DataFrame, ions: pd.DataFrame)-> (list, np.ndarray):
+def get_ion(i: int, df: pd.DataFrame, fragment_ions: pd.DataFrame)-> (list, np.ndarray):
     """
     Helper function to extract the ion-hits for a given DataFrame index.
     This function extracts the hit type and the intensities.
@@ -815,7 +815,7 @@ def get_ion(i: int, df: pd.DataFrame, ions: pd.DataFrame)-> (list, np.ndarray):
     Args:
         i (int): Row index for the DataFrame
         df (pd.DataFrame): DataFrame with PSMs
-        ions (pd.DataFrame): DataFrame with ion hits
+        fragment_ions (pd.DataFrame): DataFrame with ion hits
 
     Returns:
         list: List with strings that describe the ion type.
@@ -824,10 +824,10 @@ def get_ion(i: int, df: pd.DataFrame, ions: pd.DataFrame)-> (list, np.ndarray):
     start = df['ion_idx'].iloc[i]
     end = df['n_ions'].iloc[i]+start
 
-    ion = [('b'+str(int(_))).replace('b-','y') for _ in ions.iloc[start:end]['ion_index']]
-    losses = [ion_dict[int(_)] for _ in ions.iloc[start:end]['ion_type']]
+    ion = [('b'+str(int(_))).replace('b-','y') for _ in fragment_ions.iloc[start:end]['ion_index']]
+    losses = [ion_dict[int(_)] for _ in fragment_ions.iloc[start:end]['ion_type']]
     ion = [a+b for a,b in zip(ion, losses)]
-    ints = ions.iloc[start:end]['ion_int'].astype('int').values
+    ints = fragment_ions.iloc[start:end]['ion_int'].astype('int').values
 
     return ion, ints
 
@@ -968,14 +968,14 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
             for ms_file_, idxs in ms_file2idx.items():
                 df_file = df.loc[df.index.intersection(idxs)]
                 try:
-                    logging.info('Extracting ions')
-                    ions = ms_file_.read(dataset_name='ions')
+                    logging.info('Extracting fragment_ions')
+                    fragment_ions = ms_file_.read(dataset_name='fragment_ions')
 
                     ion_list = []
                     ion_ints = []
 
                     for i in range(len(df_file)):
-                        ion, ints = get_ion(i, df_file, ions)
+                        ion, ints = get_ion(i, df_file, fragment_ions)
                         ion_list.append(ion)
                         ion_ints.append(ints)
 
@@ -983,10 +983,10 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
                     df_file['ion_types'] = ion_list
 
 
-                    logging.info('Extracting ions complete.')
+                    logging.info('Extracting fragment_ions complete.')
 
                 except KeyError:
-                    logging.info('No ions present.')
+                    logging.info('No fragment_ions present.')
 
             export_df = df_file.reset_index().drop(columns=['localexp'])
             if 'level_0' in export_df.columns:
