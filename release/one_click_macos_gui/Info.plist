@@ -9,9 +9,9 @@
 	<key>CFBundleIconFile</key>
 	<string>alpha_logo.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>alphapept.0.3.33</string>
+	<string>alphapept.0.4.0</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.3.33</string>
+	<string>0.4.0</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
