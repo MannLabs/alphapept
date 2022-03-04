@@ -374,7 +374,7 @@ def match_datasets(settings:dict, callback:Callable = None):
         alignment_cols = ['mz_calib','rt_calib']
         extra_cols = ['score','decoy','target']
 
-        if 'mobility' in xx.columns:
+        if 'mobility' in x.columns:
             alignment_cols += ['mobility_calib']
             use_mobility = True
         else:
