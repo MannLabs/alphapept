@@ -795,7 +795,7 @@ def get_score_columns(
         psms = add_column(psms, features.loc[psms['query_idx']]['feature_idx'].values, 'feature_idx')
         psms = add_column(psms, features.loc[psms['query_idx']]['query_idx'].values, 'raw_idx')
 
-        for key in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm','dist','mobility']:
+        for key in ['ms1_int_sum','ms1_int_apex','rt_start','rt_apex','rt_end','fwhm','dist','mobility']:
             if key in features.keys():
                 psms = add_column(psms, features.loc[psms['query_idx']][key].values, key)
 

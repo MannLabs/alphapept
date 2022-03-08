@@ -188,7 +188,7 @@ def normalize_experiment_BFGS(profiles: np.ndarray) -> np.ndarray:
     return solution
 
 # Cell
-def delayed_normalization(df: pd.DataFrame, field: str='int_sum', minimum_occurence:bool=None) -> [pd.DataFrame, np.ndarray]:
+def delayed_normalization(df: pd.DataFrame, field: str='ms1_int_sum', minimum_occurence:bool=None) -> [pd.DataFrame, np.ndarray]:
     """Returns normalization factors for given peptide intensities.
     If the solver does not converge, the unnormalized data will be used.
 

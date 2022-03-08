@@ -82,9 +82,9 @@ def filter_precursor(df: pd.DataFrame) -> pd.DataFrame:
 
     df_filtered = df[df["rank_precursor"] == 1]
 
-    if 'int_sum' in df_filtered.columns:
-        #if int_sum from feature finding is present: Remove duplicates in case there are any
-        df_filtered = df_filtered.sort_values('int_sum')[::-1]
+    if 'ms1_int_sum' in df_filtered.columns:
+        #if ms1_int_sum from feature finding is present: Remove duplicates in case there are any
+        df_filtered = df_filtered.sort_values('ms1_int_sum')[::-1]
         df_filtered = df_filtered.drop_duplicates(["precursor", "rank_precursor"] + additional_group)
 
     return df_filtered

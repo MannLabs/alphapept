@@ -544,6 +544,6 @@ quantification:
   mode:
     type: combobox
     value:
-    - int_sum
-    default: int_sum
+    - ms1_int_sum
+    default: ms1_int_sum
     description: Column to perform quantification on.
