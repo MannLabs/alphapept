@@ -247,8 +247,8 @@ def get_x_tandem_score(df: pd.DataFrame) -> np.ndarray:
         np.ndarray: np.ndarray with x_tandem scores
 
     """
-    b = df['b_hits'].astype('int').apply(lambda x: np.math.factorial(x)).values
-    y = df['y_hits'].astype('int').apply(lambda x: np.math.factorial(x)).values
+    b = df['hits_b'].astype('int').apply(lambda x: np.math.factorial(x)).values
+    y = df['hits_y'].astype('int').apply(lambda x: np.math.factorial(x)).values
     x_tandem = np.log(b.astype('float')*y.astype('float')*df['fragments_matched_int_sum'].values)
 
     x_tandem[x_tandem==-np.inf] = 0
@@ -321,13 +321,13 @@ def filter_with_score(df: pd.DataFrame):
 
 # Cell
 
-def score_psms(df: pd.DataFrame, score: str='y_hits', fdr_level: float=0.01, plot: bool=True, **kwargs) -> pd.DataFrame:
+def score_psms(df: pd.DataFrame, score: str='hits_y', fdr_level: float=0.01, plot: bool=True, **kwargs) -> pd.DataFrame:
     """
     Uses the specified score in df to filter psms and to apply the fdr_level threshold.
 
     Args:
         df (pd.DataFrame): psms table of search results from alphapept.
-        score (str, optional): string specifying the column in df to use as score. Defaults to 'y_hits'.
+        score (str, optional): string specifying the column in df to use as score. Defaults to 'hits_y'.
         fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
         plot (bool, optional): flag to enable plot. Defaults to 'True'.
 

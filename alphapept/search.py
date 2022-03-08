@@ -588,14 +588,14 @@ def score(
         psms_['fragments_matched_int_ratio'][i] = psms_['fragments_matched_int_sum'][i] / psms_['fragments_int_sum'][i]
         psms_['fragment_int_ratio'][i] = np.mean(fragment_ions[:,2]/fragment_ions[:,3]) #3 is db_int, 2 is query_int
 
-        psms_['b_hits'][i] = np.sum(fragment_ions[fragment_ions[:,1]==0][:,0]>0)
-        psms_['y_hits'][i] = np.sum(fragment_ions[fragment_ions[:,1]==0][:,0]<0)
+        psms_['hits_b'][i] = np.sum(fragment_ions[fragment_ions[:,1]==0][:,0]>0)
+        psms_['hits_y'][i] = np.sum(fragment_ions[fragment_ions[:,1]==0][:,0]<0)
 
-        psms_['b-H2O_hits'][i] = np.sum(fragment_ions[fragment_ions[:,1]==1][:,0]>0)
-        psms_['y-H2O_hits'][i] = np.sum(fragment_ions[fragment_ions[:,1]==1][:,0]<0)
+        psms_['hits_b-H2O'][i] = np.sum(fragment_ions[fragment_ions[:,1]==1][:,0]>0)
+        psms_['hits_y-H2O'][i] = np.sum(fragment_ions[fragment_ions[:,1]==1][:,0]<0)
 
-        psms_['b-NH3_hits'][i] = np.sum(fragment_ions[fragment_ions[:,1]==2][:,0]>0)
-        psms_['y-NH3_hits'][i] = np.sum(fragment_ions[fragment_ions[:,1]==2][:,0]<0)
+        psms_['hits_b-NH3'][i] = np.sum(fragment_ions[fragment_ions[:,1]==2][:,0]>0)
+        psms_['hits_y-NH3'][i] = np.sum(fragment_ions[fragment_ions[:,1]==2][:,0]<0)
 
         n_fragments_matched = len(fragment_ions)
 
@@ -743,7 +743,7 @@ def get_score_columns(
         query_rt = query_data['rt_list_ms2']
 
     float_fields = ['mass_db','prec_offset', 'prec_offset_ppm', 'prec_offset_raw','prec_offset_raw_ppm','delta_m','delta_m_ppm','fragments_matched_int_ratio','fragment_int_ratio']
-    int_fields = ['fragments_int_sum','fragments_matched_int_sum','n_fragments_matched','fragment_ion_idx'] + [f'hits_{a}' for _ in LOSS_DICT for a in ['b','y']]
+    int_fields = ['fragments_int_sum','fragments_matched_int_sum','n_fragments_matched','fragment_ion_idx'] + [f'hits_{a}{_}' for _ in LOSS_DICT for a in ['b','y']]
 
     psms_dtype = np.dtype([(_,np.float32) for _ in float_fields] + [(_,np.int64) for _ in int_fields])
 
@@ -861,7 +861,7 @@ def plot_psms(index, ms_file):
     for i in range(len(masses)):
         plt.text(masses[i], (1+0.1*ion_type[i])*max(query_int), ion[i])
 
-    figure_title = f"{spectrum['precursor']} - b-hits {spectrum['b_hits']}, y-hits {spectrum['y_hits']}, matched int {spectrum['fragments_matched_int_ratio']*100:.2f} %"
+    figure_title = f"{spectrum['precursor']} - b-hits {spectrum['hits_b']}, y-hits {spectrum['hits_y']}, matched int {spectrum['fragments_matched_int_ratio']*100:.2f} %"
 
     plt.xlabel("m/z")
     plt.ylabel('Intensity')

@@ -997,7 +997,7 @@ def run_complete_workflow(
                         settings['fasta'][_].append(mod)
 
     for idx, step in enumerate(steps):
-        logging.info(f'=== {step.__name__} ===')
+        logging.info(f'==== {step.__name__} ====')
         if callback_task:
             callback_task(step.__name__)
 
