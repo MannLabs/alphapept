@@ -403,7 +403,7 @@ def match_datasets(settings:dict, callback:Callable = None):
 
                 std_range = np.nanmedian(std_.values, axis=0)
 
-                lookup_dict = xx.set_index('precursor')[['sequence','naked_sequence','db_idx']].to_dict()
+                lookup_dict = xx.set_index('precursor')[['sequence','sequence_naked','db_idx']].to_dict()
 
                 for file_to in files_to:
                     filename = shortnames_lookup[file_to]

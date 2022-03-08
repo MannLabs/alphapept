@@ -31,15 +31,15 @@ def filter_score(df: pd.DataFrame, mode: str='multiple') -> pd.DataFrame:
     else:
         additional_group = []
 
-    df["rank"] = df.groupby(["query_idx"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
-    df = df[df["rank"] == 1]
+    df["score_rank"] = df.groupby(["query_idx"] + additional_group)["score"].score_rank("dense", ascending=False).astype("int")
+    df = df[df["score_rank"] == 1]
 
-    # in case two hits have the same score and therfore the same rank only accept the first one
+    # in case two hits have the same score and therfore the same score_rank only accept the first one
     df = df.drop_duplicates(["query_idx"] + additional_group)
 
     if 'dist' in df.columns:
-        df["feature_rank"] = df.groupby(["feature_idx"] + additional_group)["dist"].rank("dense", ascending=True).astype("int")
-        df["raw_rank"] = df.groupby(["raw_idx"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
+        df["feature_rank"] = df.groupby(["feature_idx"] + additional_group)["dist"].score_rank("dense", ascending=True).astype("int")
+        df["raw_rank"] = df.groupby(["raw_idx"] + additional_group)["score"].score_rank("dense", ascending=False).astype("int")
 
         if mode == 'single':
             df_filtered = df[(df["feature_rank"] == 1) & (df["raw_rank"] == 1) ]
@@ -76,16 +76,16 @@ def filter_precursor(df: pd.DataFrame) -> pd.DataFrame:
     else:
         additional_group = []
 
-    df["rank_precursor"] = (
-        df.groupby(["precursor"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
+    df["precursor_rank"] = (
+        df.groupby(["precursor"] + additional_group)["score"].score_rank("dense", ascending=False).astype("int")
     )
 
-    df_filtered = df[df["rank_precursor"] == 1]
+    df_filtered = df[df["precursor_rank"] == 1]
 
     if 'ms1_int_sum' in df_filtered.columns:
         #if ms1_int_sum from feature finding is present: Remove duplicates in case there are any
         df_filtered = df_filtered.sort_values('ms1_int_sum')[::-1]
-        df_filtered = df_filtered.drop_duplicates(["precursor", "rank_precursor"] + additional_group)
+        df_filtered = df_filtered.drop_duplicates(["precursor", "precursor_rank"] + additional_group)
 
     return df_filtered
 
@@ -249,7 +249,7 @@ def get_x_tandem_score(df: pd.DataFrame) -> np.ndarray:
     """
     b = df['b_hits'].astype('int').apply(lambda x: np.math.factorial(x)).values
     y = df['y_hits'].astype('int').apply(lambda x: np.math.factorial(x)).values
-    x_tandem = np.log(b.astype('float')*y.astype('float')*df['matched_int'].values)
+    x_tandem = np.log(b.astype('float')*y.astype('float')*df['fragments_matched_int_sum'].values)
 
     x_tandem[x_tandem==-np.inf] = 0
 
@@ -379,19 +379,19 @@ def get_ML_features(df: pd.DataFrame, protease: str='trypsin', **kwargs) -> pd.D
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
     df['delta_m_ppm_abs'] = np.abs(df['delta_m_ppm'])
-    df['naked_sequence'] = df['sequence'].apply(lambda x: ''.join([_ for _ in x if _.isupper()]))
-    df['n_AA']= df['naked_sequence'].str.len()
-    df['matched_ion_fraction'] = df['hits']/(2*df['n_AA'])
+    df['sequence_naked'] = df['sequence'].apply(lambda x: ''.join([_ for _ in x if _.isupper()]))
+    df['n_AA']= df['sequence_naked'].str.len()
+    df['fragments_matched_n_ratio'] = df['hits']/(2*df['n_AA'])
 
-    df['n_missed'] = df['naked_sequence'].apply(lambda x: count_missed_cleavages(x, protease))
-    df['n_internal'] = df['naked_sequence'].apply(lambda x: count_internal_cleavages(x, protease))
+    df['n_missed'] = df['sequence_naked'].apply(lambda x: count_missed_cleavages(x, protease))
+    df['n_internal'] = df['sequence_naked'].apply(lambda x: count_internal_cleavages(x, protease))
 
     df['x_tandem'] = get_x_tandem_score(df)
 
     return df
 
 def train_RF(df: pd.DataFrame,
-             exclude_features: list = ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence','target'],
+             exclude_features: list = ['precursor_idx','fragment_ion_idx','fasta_index','feature_rank','raw_rank','score_rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','sequence_naked','target'],
              train_fdr_level:  float = 0.1,
              ini_score: str = 'x_tandem',
              min_train: int = 1000,
@@ -409,7 +409,7 @@ def train_RF(df: pd.DataFrame,
 
     Args:
         df (pd.DataFrame): psms table of search results from alphapept.
-        exclude_features (list, optional): list with features to exclude for ML. Defaults to ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence','target'].
+        exclude_features (list, optional): list with features to exclude for ML. Defaults to ['precursor_idx','fragment_ion_idx','fasta_index','feature_rank','raw_rank','score_rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','sequence_naked','target'].
         train_fdr_level (float, optional): Only targets below the train_fdr_level cutoff are considered for training the classifier. Defaults to 0.1.
         ini_score (str, optional): Initial score to select psms set for semi-supervised learning. Defaults to 'x_tandem'.
         min_train (int, optional): Minimum number of psms in the training set. Defaults to 1000.
@@ -821,13 +821,13 @@ def get_ion(i: int, df: pd.DataFrame, fragment_ions: pd.DataFrame)-> (list, np.n
         list: List with strings that describe the ion type.
         np.ndarray: Array with intensity information
     """
-    start = df['ion_idx'].iloc[i]
-    end = df['n_ions'].iloc[i]+start
+    start = df['fragment_ion_idx'].iloc[i]
+    end = df['n_fragments_matched'].iloc[i]+start
 
     ion = [('b'+str(int(_))).replace('b-','y') for _ in fragment_ions.iloc[start:end]['ion_index']]
     losses = [ion_dict[int(_)] for _ in fragment_ions.iloc[start:end]['ion_type']]
     ion = [a+b for a,b in zip(ion, losses)]
-    ints = fragment_ions.iloc[start:end]['ion_int'].astype('int').values
+    ints = fragment_ions.iloc[start:end]['fragment_ion_int'].astype('int').values
 
     return ion, ints
 
@@ -979,8 +979,8 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
                         ion_list.append(ion)
                         ion_ints.append(ints)
 
-                    df_file['ion_int'] = ion_ints
-                    df_file['ion_types'] = ion_list
+                    df_file['fragment_ion_int'] = ion_ints
+                    df_file['fragment_ion_type'] = ion_list
 
 
                     logging.info('Extracting fragment_ions complete.')

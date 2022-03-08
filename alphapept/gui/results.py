@@ -405,8 +405,8 @@ def sequence_coverage_map(file: str, options: list, results_yaml: dict):
                 else:
                     selection_label = 'across all files'
 
-                if any(target_protein_peptide_matches['naked_sequence'].tolist()):
-                    peptide_list = target_protein_peptide_matches['naked_sequence'].tolist()
+                if any(target_protein_peptide_matches['sequence_naked'].tolist()):
+                    peptide_list = target_protein_peptide_matches['sequence_naked'].tolist()
                 else:
                     peptide_list = target_protein_peptide_matches['sequence'].tolist()
 

@@ -997,6 +997,7 @@ def run_complete_workflow(
                         settings['fasta'][_].append(mod)
 
     for idx, step in enumerate(steps):
+        logging.info(f'=== {step.__name__} ===')
         if callback_task:
             callback_task(step.__name__)
 
@@ -1073,7 +1074,7 @@ def extract_median_unique(settings: dict, fields: list) -> tuple:
 
     """
     protein_fdr = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
-    cols = [_ for _ in ['protein','protein_group','precursor','naked_sequence','sequence'] if _ in protein_fdr.columns]
+    cols = [_ for _ in ['protein','protein_group','precursor','sequence_naked','sequence'] if _ in protein_fdr.columns]
     n_unique = protein_fdr.groupby('filename')[cols].nunique()
     n_unique.index = [os.path.split(_)[1][:-12] for _ in n_unique.index]
     cols = [_ for _ in fields if _ in protein_fdr.columns]

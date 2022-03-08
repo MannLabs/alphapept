@@ -583,10 +583,10 @@ def score(
         psms_['delta_m'][i] = np.mean(fragment_ions[:,4]-fragment_ions[:,5])
         psms_['delta_m_ppm'][i] = np.mean(2 * psms_['delta_m'][i] / (fragment_ions[:,4]  + fragment_ions[:,5] ) * 1e6)
 
-        psms_['total_int'][i] = np.sum(query_int)
-        psms_['matched_int'][i] = np.sum(fragment_ions[:,2])
-        psms_['matched_int_ratio'][i] = psms_['matched_int'][i] / psms_['total_int'][i]
-        psms_['int_ratio'][i] = np.mean(fragment_ions[:,2]/fragment_ions[:,3]) #3 is db_int, 2 is query_int
+        psms_['fragments_int_sum'][i] = np.sum(query_int)
+        psms_['fragments_matched_int_sum'][i] = np.sum(fragment_ions[:,2])
+        psms_['fragments_matched_int_ratio'][i] = psms_['fragments_matched_int_sum'][i] / psms_['fragments_int_sum'][i]
+        psms_['fragment_int_ratio'][i] = np.mean(fragment_ions[:,2]/fragment_ions[:,3]) #3 is db_int, 2 is query_int
 
         psms_['b_hits'][i] = np.sum(fragment_ions[fragment_ions[:,1]==0][:,0]>0)
         psms_['y_hits'][i] = np.sum(fragment_ions[fragment_ions[:,1]==0][:,0]<0)
@@ -597,12 +597,12 @@ def score(
         psms_['b-NH3_hits'][i] = np.sum(fragment_ions[fragment_ions[:,1]==2][:,0]>0)
         psms_['y-NH3_hits'][i] = np.sum(fragment_ions[fragment_ions[:,1]==2][:,0]<0)
 
-        n_ions = len(fragment_ions)
+        n_fragments_matched = len(fragment_ions)
 
-        psms_['n_ions'][i] = n_ions
-        psms_['ion_idx'][i] = ion_count
+        psms_['n_fragments_matched'][i] = n_fragments_matched
+        psms_['fragment_ion_idx'][i] = ion_count
 
-        ion_count += n_ions
+        ion_count += n_fragments_matched
 
         fragment_ions[:,8] = i #Save psms index
 
@@ -742,8 +742,8 @@ def get_score_columns(
         query_mz = query_data['mono_mzs2']
         query_rt = query_data['rt_list_ms2']
 
-    float_fields = ['mass_db','prec_offset', 'prec_offset_ppm', 'prec_offset_raw','prec_offset_raw_ppm','delta_m','delta_m_ppm','matched_int_ratio','int_ratio']
-    int_fields = ['total_int','matched_int','n_ions','ion_idx'] + [a+_+'_hits' for _ in LOSS_DICT for a in ['b','y']]
+    float_fields = ['mass_db','prec_offset', 'prec_offset_ppm', 'prec_offset_raw','prec_offset_raw_ppm','delta_m','delta_m_ppm','fragments_matched_int_ratio','fragment_int_ratio']
+    int_fields = ['fragments_int_sum','fragments_matched_int_sum','n_fragments_matched','fragment_ion_idx'] + [f'hits_{a}' for _ in LOSS_DICT for a in ['b','y']]
 
     psms_dtype = np.dtype([(_,np.float32) for _ in float_fields] + [(_,np.int64) for _ in int_fields])
 
@@ -825,8 +825,8 @@ def plot_psms(index, ms_file):
     ion_dict[2] = '-NH3'
 
     spectrum = df.iloc[index]
-    start = spectrum['ion_idx']
-    end = spectrum['n_ions'] + start
+    start = spectrum['fragment_ion_idx']
+    end = spectrum['n_fragments_matched'] + start
 
     query_data = ms_file.read_DDA_query_data()
     fragment_ions = ms_file.read(dataset_name="fragment_ions")
@@ -834,7 +834,7 @@ def plot_psms(index, ms_file):
     ion = [('b'+str(int(_))).replace('b-','y') for _ in fragment_ions.iloc[start:end]['ion_index']]
     losses = [ion_dict[int(_)] for _ in fragment_ions.iloc[start:end]['ion_type']]
     ion = [a+b for a,b in zip(ion, losses)]
-    ints = fragment_ions.iloc[start:end]['ion_int'].astype('int').values
+    ints = fragment_ions.iloc[start:end]['fragment_ion_int'].astype('int').values
     masses = fragment_ions.iloc[start:end]['ion_mass'].astype('float').values
     ion_type = fragment_ions.iloc[start:end]['ion_type'].abs().values
 
@@ -861,7 +861,7 @@ def plot_psms(index, ms_file):
     for i in range(len(masses)):
         plt.text(masses[i], (1+0.1*ion_type[i])*max(query_int), ion[i])
 
-    figure_title = f"{spectrum['precursor']} - b-hits {spectrum['b_hits']}, y-hits {spectrum['y_hits']}, matched int {spectrum['matched_int_ratio']*100:.2f} %"
+    figure_title = f"{spectrum['precursor']} - b-hits {spectrum['b_hits']}, y-hits {spectrum['y_hits']}, matched int {spectrum['fragments_matched_int_ratio']*100:.2f} %"
 
     plt.xlabel("m/z")
     plt.ylabel('Intensity')
@@ -977,7 +977,7 @@ def search_db(to_process:tuple, callback:Callable = None, parallel:bool=False, f
                     save_field = 'second_search'
 
                 store_hdf(pd.DataFrame(psms), ms_file_, save_field, replace=True)
-                ion_columns = ['ion_index','ion_type','ion_int','db_int','ion_mass','db_mass','query_idx','db_idx','psms_idx']
+                ion_columns = ['ion_index','ion_type','fragment_ion_int','db_int','ion_mass','db_mass','query_idx','db_idx','psms_idx']
                 store_hdf(pd.DataFrame(fragment_ions, columns = ion_columns), ms_file_, 'fragment_ions', replace=True)
             else:
                 logging.info('No psms found.')
@@ -1183,12 +1183,12 @@ def ion_extractor(df: pd.DataFrame, ms_file, frag_tol:float, ppm:bool)->(np.ndar
 
         fragment_ions = get_hits(query_frag, query_int, db_frag, db_int, frag_type, frag_tol, ppm, LOSSES)
 
-        n_ions = len(fragment_ions)
+        n_fragments_matched = len(fragment_ions)
 
-        psms['n_ions'][i] = n_ions
-        psms['ion_idx'][i] = ion_count
+        psms['n_fragments_matched'][i] = n_fragments_matched
+        psms['fragment_ion_idx'][i] = ion_count
 
-        ion_count += n_ions
+        ion_count += n_fragments_matched
         ions_.append(fragment_ions)
 
     ions_ = np.vstack(ions_)
@@ -1297,7 +1297,7 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
             psms, fragment_ions = ion_extractor(x, ms_file, frag_tol, ppm)
 
             store_hdf(pd.DataFrame(psms), ms_file, save_field, replace=True)
-            ion_columns = ['ion_index','ion_type','ion_int','db_int','ion_mass','db_mass','query_idx','db_idx','psms_idx']
+            ion_columns = ['ion_index','ion_type','fragment_ion_int','db_int','ion_mass','db_mass','query_idx','db_idx','psms_idx']
             store_hdf(pd.DataFrame(fragment_ions, columns = ion_columns), ms_file, 'fragment_ions', replace=True)
 
     #Todo? Callback
