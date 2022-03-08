@@ -31,15 +31,15 @@ def filter_score(df: pd.DataFrame, mode: str='multiple') -> pd.DataFrame:
     else:
         additional_group = []
 
-    df["score_rank"] = df.groupby(["query_idx"] + additional_group)["score"].score_rank("dense", ascending=False).astype("int")
+    df["score_rank"] = df.groupby(["query_idx"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
     df = df[df["score_rank"] == 1]
 
     # in case two hits have the same score and therfore the same score_rank only accept the first one
     df = df.drop_duplicates(["query_idx"] + additional_group)
 
-    if 'dist' in df.columns:
-        df["feature_rank"] = df.groupby(["feature_idx"] + additional_group)["dist"].score_rank("dense", ascending=True).astype("int")
-        df["raw_rank"] = df.groupby(["raw_idx"] + additional_group)["score"].score_rank("dense", ascending=False).astype("int")
+    if 'feature_dist' in df.columns:
+        df["feature_rank"] = df.groupby(["feature_idx"] + additional_group)["feature_dist"].rank("dense", ascending=True).astype("int")
+        df["raw_rank"] = df.groupby(["raw_idx"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
 
         if mode == 'single':
             df_filtered = df[(df["feature_rank"] == 1) & (df["raw_rank"] == 1) ]
@@ -77,7 +77,7 @@ def filter_precursor(df: pd.DataFrame) -> pd.DataFrame:
         additional_group = []
 
     df["precursor_rank"] = (
-        df.groupby(["precursor"] + additional_group)["score"].score_rank("dense", ascending=False).astype("int")
+        df.groupby(["precursor"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
     )
 
     df_filtered = df[df["precursor_rank"] == 1]
@@ -825,7 +825,7 @@ def get_ion(i: int, df: pd.DataFrame, fragment_ions: pd.DataFrame)-> (list, np.n
     end = df['n_fragments_matched'].iloc[i]+start
 
     ion = [('b'+str(int(_))).replace('b-','y') for _ in fragment_ions.iloc[start:end]['ion_index']]
-    losses = [ion_dict[int(_)] for _ in fragment_ions.iloc[start:end]['ion_type']]
+    losses = [ion_dict[int(_)] for _ in fragment_ions.iloc[start:end]['fragment_ion_type']]
     ion = [a+b for a,b in zip(ion, losses)]
     ints = fragment_ions.iloc[start:end]['fragment_ion_int'].astype('int').values
 

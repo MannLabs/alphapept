@@ -1804,7 +1804,7 @@ def map_bruker(feature_path:str, feature_table:pd.DataFrame, query_data:dict)->p
 
 # Cell
 def get_stats(isotope_patterns, iso_idx, stats):
-    columns = ['average_mz','delta_m','ms1_int_sum','ms1_int_area','rt_min','rt_max']
+    columns = ['mz_average','delta_m','int_sum','int_area','rt_min','rt_max']
 
     stats_idx = np.zeros(iso_idx[-1], dtype=np.int64)
     stats_map = np.zeros(iso_idx[-1], dtype=np.int64)
@@ -1985,20 +1985,6 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
 
                 ms_file.write(feature_cluster_mapping, dataset_name="feature_cluster_mapping")
 
-                if False:
-                    try:
-                        logging.info('Mapping isotope clusters.')
-                        #TODO: This will break the search w/o feature finding...
-                        feature_mapping = ms_file.read(dataset_name='feature_cluster_mapping')
-
-                        feature_table['isotope_mzs'] = feature_mapping.groupby('feature_id')['average_mz'].apply(list)
-                        feature_table['isotope_ints'] = feature_mapping.groupby('feature_id')['ms1_int_sum'].apply(list)
-
-                        logging.info('Mapping isotope clusters complete.')
-
-                    except KeyError:
-                        logging.info('Field feature_cluster_mapping not found.')
-
                 logging.info('Saving feature table.')
                 ms_file.write(feature_table, dataset_name="feature_table")
 
@@ -2110,7 +2096,7 @@ def map_ms2(feature_table:pd.DataFrame, query_data:dict, map_mz_range:float = 1,
             _check &= mob_check
 
         ref_matched |= _check
-        ref_df['dist'] = dist[:,neighbor]
+        ref_df['feature_dist'] = dist[:,neighbor]
         ref_df = ref_df[_check]
 
         all_df.append(ref_df)
@@ -2139,7 +2125,7 @@ def map_ms2(feature_table:pd.DataFrame, query_data:dict, map_mz_range:float = 1,
         for field in ['ms1_int_sum','ms1_int_apex','rt_start','rt_apex','rt_end','fwhm']:
             if field in feature_table.keys():
                 unmatched_ref[field] = np.nan
-        unmatched_ref['dist'] = np.nan
+        unmatched_ref['feature_dist'] = np.nan
 
         all_df.append(unmatched_ref)
 

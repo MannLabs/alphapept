@@ -252,7 +252,7 @@ def save_fragment_calibration(fragment_ions, corrected, std_offset, file_name, s
     ax2.set_ylabel('Error (ppm)')
     ax2.set_xlabel('RT (min)')
 
-    ax3 = density_scatter(fragment_ions['ion_mass'].values, fragment_ions['delta_ppm'].values, bins=50, ax = ax3)
+    ax3 = density_scatter(fragment_ions['fragment_ion_mass'].values, fragment_ions['delta_ppm'].values, bins=50, ax = ax3)
     ax3.axhline(0, color='w', linestyle='-', alpha=0.5)
 
     ax3.set_ylabel('Error (ppm)')
@@ -260,7 +260,7 @@ def save_fragment_calibration(fragment_ions, corrected, std_offset, file_name, s
     ax3.set_xlim([100,1500])
     ax3.set_title('Fragment error before correction')
 
-    ax4 = density_scatter(fragment_ions['ion_mass'].values, corrected.values, bins=50, ax = ax4)
+    ax4 = density_scatter(fragment_ions['fragment_ion_mass'].values, corrected.values, bins=50, ax = ax4)
 
     ax4.set_ylabel('Error (ppm)')
     ax4.set_xlabel('m/z')
@@ -297,7 +297,7 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
 
         #Calculate offset
         fragment_ions['rt'] = psms['rt'][fragment_ions['psms_idx'].values.astype('int')].values
-        fragment_ions['delta_ppm'] = ((fragment_ions['db_mass'] - fragment_ions['ion_mass'])/((fragment_ions['db_mass'] + fragment_ions['ion_mass'])/2)*1e6).values
+        fragment_ions['delta_ppm'] = ((fragment_ions['db_mass'] - fragment_ions['fragment_ion_mass'])/((fragment_ions['db_mass'] + fragment_ions['fragment_ion_mass'])/2)*1e6).values
         fragment_ions['hits'] = psms['hits'][fragment_ions['psms_idx'].values.astype('int')].values
 
         #Min score to only use "true hits"
