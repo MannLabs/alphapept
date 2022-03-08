@@ -378,7 +378,7 @@ def get_ML_features(df: pd.DataFrame, protease: str='trypsin', **kwargs) -> pd.D
     """
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
-    df['abs_delta_m_ppm'] = np.abs(df['delta_m_ppm'])
+    df['delta_m_ppm_abs'] = np.abs(df['delta_m_ppm'])
     df['naked_sequence'] = df['sequence'].apply(lambda x: ''.join([_ for _ in x if _.isupper()]))
     df['n_AA']= df['naked_sequence'].str.len()
     df['matched_ion_fraction'] = df['hits']/(2*df['n_AA'])
