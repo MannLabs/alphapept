@@ -45,12 +45,12 @@ def create_single_plot(
         if plot == "timing (min)":
             try:
                 vals[idx] = all_results[_]["summary"]["timing"]["total (min)"]
-            except KeyError:
+            except (KeyError, ValueError):
                 vals[idx] = np.nan
         else:
             try:
                 vals[idx] = all_results[_]["summary"][files[idx]][plot]
-            except KeyError:
+            except (KeyError, ValueError):
                 vals[idx] = np.nan
 
     plot_df = pd.DataFrame([files, acquisition_date_times, vals]).T
@@ -129,13 +129,38 @@ def create_multiple_plots(all_results: dict, groups: list, to_plot: list):
                 all_results, files, acquisition_date_times, mode, groups, plot, minimum_date,
             )
 
+@st.cache
+def filter_for_single_file(results):
+
+    results_list = []
+    for _ in results.keys():
+
+        if len(results[_]['experiment']['shortnames']) == 1:
+            try:
+                x = results[_]['summary'][results[_]['experiment']['shortnames'][0]]
+                x['timing (min)'] = results[_]['summary']['timing']['total (min)']
+                x['filename'] = results[_]['experiment']['shortnames'][0]
+
+                results_list.append(x)
+            except Exception as e:
+                pass
+
+    result_df = pd.DataFrame(results_list)
+
+    return result_df
+
+@st.cache
+def convert_df(df):
+    return df.to_csv().encode('utf-8')
+
 def history():
     """Streamlit page to plot a historical overview of previous results."""
     st.write("# History")
     st.text(
-        f"History allows to visualize summary information from multiple previous analysis."
+        f"History allows to display summary information from multiple previous analysis."
         f"\nIt checks {PROCESSED_PATH} for *.yaml files."
         "\nFiles can be filtered to only include a subset."
+        "\nOnly experiments with a single file will be displayed."
     )
 
     processed_files = files_in_folder(PROCESSED_PATH, ".yaml")
@@ -164,8 +189,54 @@ def history():
         )
         st.write(history_settings)
 
-    filtered = filter_by_tag(processed_files)
-    all_results = load_files(filtered, callback=st.progress(0))
 
-    if len(all_results) > 0:
-        create_multiple_plots(all_results, groups, to_plot)
+    all_results = load_files(processed_files, callback=st.progress(0))
+
+    filtered = filter_by_tag(all_results)
+
+    if len(filtered) > 0:
+        mode = st.selectbox('Select Mode', ['Graph', 'Table'])
+        if mode == 'Table':
+            st.table(filtered.style.bar(color='lightgreen').format(precision=3))
+            csv = convert_df(filtered)
+            st.download_button(
+            f"Click to download as (csv)",
+            csv,
+            "file.csv",
+            "text/csv",
+            key='download-csv'
+            )
+        else:
+            plot_df = filtered.copy()
+            c1, c2 = st.columns(2)
+            x = c1.selectbox('X axis', filtered.columns)
+            y = c2.selectbox('Y axis', [_ for _ in filtered.columns if _ is not x])
+
+            if groups != []:
+                plot_df["group"] = plot_df["file_in_experiment"].apply(lambda x: check_group(x, groups))
+            else:
+                plot_df["group"] = "None"
+
+            try:
+                median_ = plot_df[y].median()
+                plot_df = plot_df.sort_values(x)
+
+                if mode == "Filename":
+                    height = 800
+                else:
+                    height = 400
+
+                fig = px.scatter(
+                    plot_df,
+                    x=x,
+                    y=y,
+                    color="group",
+                    hover_name="file_in_experiment",
+                    hover_data=["acquisition_date_time"],
+                    title=f"{x} - median {median_:.2f}",
+                    height=height,
+                ).update_traces(mode="lines+markers")
+                fig.add_hline(y=median_, line_dash="dash")
+                st.plotly_chart(fig)
+            except Exception as e:
+                st.warning(e)
