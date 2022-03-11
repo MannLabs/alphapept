@@ -31,14 +31,14 @@ def filter_score(df: pd.DataFrame, mode: str='multiple') -> pd.DataFrame:
     else:
         additional_group = []
 
-    df["rank"] = df.groupby(["query_idx"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
-    df = df[df["rank"] == 1]
+    df["score_rank"] = df.groupby(["query_idx"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
+    df = df[df["score_rank"] == 1]
 
-    # in case two hits have the same score and therfore the same rank only accept the first one
+    # in case two hits have the same score and therfore the same score_rank only accept the first one
     df = df.drop_duplicates(["query_idx"] + additional_group)
 
-    if 'dist' in df.columns:
-        df["feature_rank"] = df.groupby(["feature_idx"] + additional_group)["dist"].rank("dense", ascending=True).astype("int")
+    if 'feature_dist' in df.columns:
+        df["feature_rank"] = df.groupby(["feature_idx"] + additional_group)["feature_dist"].rank("dense", ascending=True).astype("int")
         df["raw_rank"] = df.groupby(["raw_idx"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
 
         if mode == 'single':
@@ -76,16 +76,16 @@ def filter_precursor(df: pd.DataFrame) -> pd.DataFrame:
     else:
         additional_group = []
 
-    df["rank_precursor"] = (
+    df["precursor_rank"] = (
         df.groupby(["precursor"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
     )
 
-    df_filtered = df[df["rank_precursor"] == 1]
+    df_filtered = df[df["precursor_rank"] == 1]
 
-    if 'int_sum' in df_filtered.columns:
-        #if int_sum from feature finding is present: Remove duplicates in case there are any
-        df_filtered = df_filtered.sort_values('int_sum')[::-1]
-        df_filtered = df_filtered.drop_duplicates(["precursor", "rank_precursor"] + additional_group)
+    if 'ms1_int_sum' in df_filtered.columns:
+        #if ms1_int_sum from feature finding is present: Remove duplicates in case there are any
+        df_filtered = df_filtered.sort_values('ms1_int_sum')[::-1]
+        df_filtered = df_filtered.drop_duplicates(["precursor", "precursor_rank"] + additional_group)
 
     return df_filtered
 
@@ -118,7 +118,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 #Note that the test function for cut_fdr is further down in the notebook to also test protein-level FDR.
-def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True) -> (float, pd.DataFrame):
+def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True, cut:bool=True) -> (float, pd.DataFrame):
     """
     Cuts a dataframe with a given fdr level
 
@@ -126,6 +126,7 @@ def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True) -> (float, p
         df (pd.DataFrame): psms table of search results from alphapept.
         fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
         plot (bool, optional): flag to enable plot. Defaults to 'True'.
+        cut (bool, optional): flag to cut above fdr threshold. Defaults to 'True'.
 
     Returns:
         float: numerical value of the applied score cutoff
@@ -159,7 +160,11 @@ def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True) -> (float, p
         cutoff_index = df[df["q_value"].gt(fdr_level)].index[0] - 1
 
     cutoff_value = df.loc[cutoff_index]["score"]
-    cutoff = df[df["score"] >= cutoff_value]
+
+    if cut:
+        cutoff = df[df["score"] >= cutoff_value]
+    else:
+        cutoff= df
 
     targets = df.loc[cutoff_index, "target_cum"]
     decoy = df.loc[cutoff_index, "decoys_cum"]
@@ -224,6 +229,8 @@ def cut_global_fdr(data: pd.DataFrame, analyte_level: str='sequence', fdr_level:
 
     agg_cval, agg_cutoff = cut_fdr(agg_score, fdr_level=fdr_level, plot=plot)
 
+    logging.info(f'Global FDR cutoff at {agg_cval}.')
+
     agg_report = data.reset_index().merge(
                         agg_cutoff,
                         how = 'inner',
@@ -247,9 +254,9 @@ def get_x_tandem_score(df: pd.DataFrame) -> np.ndarray:
         np.ndarray: np.ndarray with x_tandem scores
 
     """
-    b = df['b_hits'].astype('int').apply(lambda x: np.math.factorial(x)).values
-    y = df['y_hits'].astype('int').apply(lambda x: np.math.factorial(x)).values
-    x_tandem = np.log(b.astype('float')*y.astype('float')*df['matched_int'].values)
+    b = df['hits_b'].astype('int').apply(lambda x: np.math.factorial(x)).values
+    y = df['hits_y'].astype('int').apply(lambda x: np.math.factorial(x)).values
+    x_tandem = np.log(b.astype('float')*y.astype('float')*df['fragments_matched_int_sum'].values)
 
     x_tandem[x_tandem==-np.inf] = 0
 
@@ -321,13 +328,13 @@ def filter_with_score(df: pd.DataFrame):
 
 # Cell
 
-def score_psms(df: pd.DataFrame, score: str='y_hits', fdr_level: float=0.01, plot: bool=True, **kwargs) -> pd.DataFrame:
+def score_psms(df: pd.DataFrame, score: str='hits_y', fdr_level: float=0.01, plot: bool=True, **kwargs) -> pd.DataFrame:
     """
     Uses the specified score in df to filter psms and to apply the fdr_level threshold.
 
     Args:
         df (pd.DataFrame): psms table of search results from alphapept.
-        score (str, optional): string specifying the column in df to use as score. Defaults to 'y_hits'.
+        score (str, optional): string specifying the column in df to use as score. Defaults to 'hits_y'.
         fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
         plot (bool, optional): flag to enable plot. Defaults to 'True'.
 
@@ -378,20 +385,20 @@ def get_ML_features(df: pd.DataFrame, protease: str='trypsin', **kwargs) -> pd.D
     """
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
-    df['abs_delta_m_ppm'] = np.abs(df['delta_m_ppm'])
-    df['naked_sequence'] = df['sequence'].apply(lambda x: ''.join([_ for _ in x if _.isupper()]))
-    df['n_AA']= df['naked_sequence'].str.len()
-    df['matched_ion_fraction'] = df['hits']/(2*df['n_AA'])
+    df['delta_m_ppm_abs'] = np.abs(df['delta_m_ppm'])
+    df['sequence_naked'] = df['sequence'].apply(lambda x: ''.join([_ for _ in x if _.isupper()]))
+    df['n_AA']= df['sequence_naked'].str.len()
+    df['fragments_matched_n_ratio'] = df['hits']/(2*df['n_AA'])
 
-    df['n_missed'] = df['naked_sequence'].apply(lambda x: count_missed_cleavages(x, protease))
-    df['n_internal'] = df['naked_sequence'].apply(lambda x: count_internal_cleavages(x, protease))
+    df['n_missed'] = df['sequence_naked'].apply(lambda x: count_missed_cleavages(x, protease))
+    df['n_internal'] = df['sequence_naked'].apply(lambda x: count_internal_cleavages(x, protease))
 
     df['x_tandem'] = get_x_tandem_score(df)
 
     return df
 
 def train_RF(df: pd.DataFrame,
-             exclude_features: list = ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence','target'],
+             exclude_features: list = ['precursor_idx','fragment_ion_idx','fasta_index','feature_rank','raw_rank','score_rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','sequence_naked','target'],
              train_fdr_level:  float = 0.1,
              ini_score: str = 'x_tandem',
              min_train: int = 1000,
@@ -409,7 +416,7 @@ def train_RF(df: pd.DataFrame,
 
     Args:
         df (pd.DataFrame): psms table of search results from alphapept.
-        exclude_features (list, optional): list with features to exclude for ML. Defaults to ['precursor_idx','ion_idx','fasta_index','feature_rank','raw_rank','rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','naked_sequence','target'].
+        exclude_features (list, optional): list with features to exclude for ML. Defaults to ['precursor_idx','fragment_ion_idx','fasta_index','feature_rank','raw_rank','score_rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','sequence_naked','target'].
         train_fdr_level (float, optional): Only targets below the train_fdr_level cutoff are considered for training the classifier. Defaults to 0.1.
         ini_score (str, optional): Initial score to select psms set for semi-supervised learning. Defaults to 'x_tandem'.
         min_train (int, optional): Minimum number of psms in the training set. Defaults to 1000.
@@ -806,7 +813,7 @@ ion_dict[0] = ''
 ion_dict[1] = '-H20'
 ion_dict[2] = '-NH3'
 
-def get_ion(i: int, df: pd.DataFrame, ions: pd.DataFrame)-> (list, np.ndarray):
+def get_ion(i: int, df: pd.DataFrame, fragment_ions: pd.DataFrame)-> (list, np.ndarray):
     """
     Helper function to extract the ion-hits for a given DataFrame index.
     This function extracts the hit type and the intensities.
@@ -815,19 +822,19 @@ def get_ion(i: int, df: pd.DataFrame, ions: pd.DataFrame)-> (list, np.ndarray):
     Args:
         i (int): Row index for the DataFrame
         df (pd.DataFrame): DataFrame with PSMs
-        ions (pd.DataFrame): DataFrame with ion hits
+        fragment_ions (pd.DataFrame): DataFrame with ion hits
 
     Returns:
         list: List with strings that describe the ion type.
         np.ndarray: Array with intensity information
     """
-    start = df['ion_idx'].iloc[i]
-    end = df['n_ions'].iloc[i]+start
+    start = df['fragment_ion_idx'].iloc[i]
+    end = df['n_fragments_matched'].iloc[i]+start
 
-    ion = [('b'+str(int(_))).replace('b-','y') for _ in ions.iloc[start:end]['ion_index']]
-    losses = [ion_dict[int(_)] for _ in ions.iloc[start:end]['ion_type']]
+    ion = [('b'+str(int(_))).replace('b-','y') for _ in fragment_ions.iloc[start:end]['ion_index']]
+    losses = [ion_dict[int(_)] for _ in fragment_ions.iloc[start:end]['fragment_ion_type']]
     ion = [a+b for a,b in zip(ion, losses)]
-    ints = ions.iloc[start:end]['ion_int'].astype('int').values
+    ints = fragment_ions.iloc[start:end]['fragment_ion_int'].astype('int').values
 
     return ion, ints
 
@@ -905,8 +912,8 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
                     logging.info('No second search psms for scoring found. Using first search.')
                 except KeyError:
                     df = pd.DataFrame()
-            df["localexp"] = idx_start
 
+            df["localexp"] = idx_start
 
             df.index = df.index+idx_start
             ms_file2idx[ms_file_] = df.index
@@ -925,22 +932,22 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
 
             if settings["score"]["method"] == 'random_forest':
                 try:
-                    cv, features = train_RF(df)
-                    df = filter_with_ML(df_, cv, features = features)
+                    classifier, features = train_RF(df_)
+                    df_['score'] = classifier.predict_proba(df_[features])[:,1]
                 except ValueError as e:
                     logging.info('ML failed. Defaulting to x_tandem score')
                     logging.info(f"{e}")
 
                     logging.info('Converting x_tandem score to probabilities')
 
-                    x_, y_ = ecdf(df_['score'].values)
+                    x_, y_ = ecdf(df_['x_tandem'].values)
                     f = interp1d(x_, y_, bounds_error = False, fill_value=(y_.min(), y_.max()))
 
-                    df_['score'] = df_['score'].apply(lambda x: f(x))
-                    df = filter_with_score(df_)
+                    df_['score'] = df_['x_tandem'].apply(lambda x: f(x))
+
 
             elif settings["score"]["method"] == 'x_tandem':
-                df = filter_with_x_tandem(df)
+                df_['score'] = df_['x_tandem']
             else:
                 try:
                     import importlib
@@ -949,37 +956,55 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
                 except Exception as e:
                     raise NotImplementedError('Scoring method {} not implemented. Other exception info: {}'.format(settings["score"]["method"], e))
 
+
+            #Save identifications
+            ids = df_.copy()
+            ids = filter_score(ids)
+
+            agg_cval, ids = cut_fdr(ids, plot=False, cut=False)
+
+            logging.info('Saving identifications to ms_data file.')
+            ms_file_.write(ids, dataset_name="identifications")
+            logging.info('Saving identifications to ms_data file complete.')
+            ids.to_csv(ms_filename[:-12]+'_ids.csv')
+            logging.info('Saving identifications to csv file complete.')
+
+
+            df = filter_with_score(df_)
+
             df_pfdr = cut_global_fdr(df, analyte_level='precursor',  plot=False, fdr_level = settings["search"]["peptide_fdr"], **settings['search'])
 
-            logging.info('FDR on peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
+            logging.info('FDR on peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df_pfdr['target'].sum(), df_pfdr['decoy'].sum()) )
+
+            df = df_pfdr
 
             for ms_file_, idxs in ms_file2idx.items():
                 df_file = df.loc[df.index.intersection(idxs)]
                 try:
-                    logging.info('Extracting ions')
-                    ions = ms_file_.read(dataset_name='ions')
+                    logging.info('Extracting fragment_ions')
+                    fragment_ions = ms_file_.read(dataset_name='fragment_ions')
 
                     ion_list = []
                     ion_ints = []
 
                     for i in range(len(df_file)):
-                        ion, ints = get_ion(i, df_file, ions)
+                        ion, ints = get_ion(i, df_file, fragment_ions)
                         ion_list.append(ion)
                         ion_ints.append(ints)
 
-                    df_file['ion_int'] = ion_ints
-                    df_file['ion_types'] = ion_list
+                    df_file['fragment_ion_int'] = ion_ints
+                    df_file['fragment_ion_type'] = ion_list
 
 
-                    logging.info('Extracting ions complete.')
+                    logging.info('Extracting fragment_ions complete.')
 
                 except KeyError:
-                    logging.info('No ions present.')
+                    logging.info('No fragment_ions present.')
 
             export_df = df_file.reset_index().drop(columns=['localexp'])
             if 'level_0' in export_df.columns:
                 export_df = export_df.drop(columns = ['level_0'])
-
+            #Note: Peptide FDR can be misleading here as we don't filter here, so this has not the set peptide fdr.
             ms_file_.write(export_df, dataset_name="peptide_fdr")
 
             logging.info(f'Scoring of files {list(ms_file2idx.keys())} complete.')

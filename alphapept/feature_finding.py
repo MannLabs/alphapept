@@ -9,7 +9,7 @@ __all__ = ['connect_centroids_unidirection', 'find_centroid_connections', 'conve
            'get_trails', 'plot_pattern', 'get_minpos', 'get_local_minima', 'is_local_minima', 'truncate',
            'check_averagine', 'pattern_to_mz', 'cosine_averagine', 'int_list_to_array', 'mz_to_mass', 'M_PROTON',
            'isolate_isotope_pattern', 'get_isotope_patterns', 'report_', 'feature_finder_report', 'extract_bruker',
-           'convert_bruker', 'map_bruker', 'find_features', 'replace_infs', 'map_ms2']
+           'convert_bruker', 'map_bruker', 'get_stats', 'find_features', 'replace_infs', 'map_ms2']
 
 # Cell
 import numpy as np
@@ -628,8 +628,8 @@ def hill_stats(idx:np.ndarray, hill_range:np.ndarray, hill_ptrs:np.ndarray, hill
     int_ = int_data[idx_]
     mz_ = mass_data[idx_]
 
-    int_sum = np.sum(int_)
-    int_area = np.abs(np.trapz(rt_[rt_idx[idx_]], int_)) #Area
+    ms1_int_sum = np.sum(int_)
+    ms1_int_area = np.abs(np.trapz(rt_[rt_idx[idx_]], int_)) #Area
 
     rt_min = rt_[rt_idx[idx_]].min()
     rt_max = rt_[rt_idx[idx_]].max()
@@ -657,8 +657,8 @@ def hill_stats(idx:np.ndarray, hill_range:np.ndarray, hill_ptrs:np.ndarray, hill
 
     stats[idx,0] = average_mz
     stats[idx,1] = delta_m
-    stats[idx,2] = int_sum
-    stats[idx,3] = int_area
+    stats[idx,2] = ms1_int_sum
+    stats[idx,3] = ms1_int_area
     stats[idx,4] = rt_min
     stats[idx,5] = rt_max
 
@@ -1574,7 +1574,7 @@ def report_(idx:np.ndarray, isotope_charges:list, isotope_patterns:list, iso_idx
         left_apex = np.abs(trace[:rt_apex_idx]-half_max).argmin()
     right_apex = np.abs(trace[rt_apex_idx:]-half_max).argmin()+rt_apex_idx
 
-    int_apex = trace_sum[rt_apex_idx]
+    ms1_int_apex = trace_sum[rt_apex_idx]
     fwhm = rt_range[right_apex] - rt_range[left_apex]
 
     n_isotopes = len(pattern)
@@ -1602,10 +1602,10 @@ def report_(idx:np.ndarray, isotope_charges:list, isotope_patterns:list, iso_idx
     rt_start = rt_range[rt_min_idx]
     rt_end = rt_range[rt_max_idx]
 
-    int_area = np.abs(np.trapz(trace_sum[rt_min_idx:rt_max_idx], rt_range[rt_min_idx:rt_max_idx]))
-    int_sum = trace_sum.sum()
+    ms1_int_area = np.abs(np.trapz(trace_sum[rt_min_idx:rt_max_idx], rt_range[rt_min_idx:rt_max_idx]))
+    ms1_int_sum = trace_sum.sum()
 
-    results[idx,:] = np.array([mz, mz_std, mz_most_abundant, charge, rt_start, rt_apex, rt_end, fwhm, n_isotopes, mass, int_apex, int_area, int_sum])
+    results[idx,:] = np.array([mz, mz_std, mz_most_abundant, charge, rt_start, rt_apex, rt_end, fwhm, n_isotopes, mass, ms1_int_apex, ms1_int_area, ms1_int_sum])
 
 # Cell
 import pandas as pd
@@ -1639,7 +1639,7 @@ def feature_finder_report(query_data:dict, isotope_patterns:list, isotope_charge
 
     report_(range(len(isotope_charges)), isotope_charges, isotope_patterns, iso_idx, stats, sortindex_, hill_ptrs, hill_data, int_data, rt_, rt_idx, results, lookup_idx)
 
-    df = pd.DataFrame(results, columns = ['mz','mz_std','mz_most_abundant','charge','rt_start','rt_apex','rt_end','fwhm','n_isotopes','mass','int_apex','int_area', 'int_sum'])
+    df = pd.DataFrame(results, columns = ['mz','mz_std','mz_most_abundant','charge','rt_start','rt_apex','rt_end','fwhm','n_isotopes','mass','ms1_int_apex','ms1_int_area', 'ms1_int_sum'])
 
     df.sort_values(['rt_start','mz'])
 
@@ -1729,17 +1729,19 @@ def convert_bruker(feature_path:str)->pd.DataFrame:
     """
     engine_featurefile = db.create_engine('sqlite:///{}'.format(feature_path))
     feature_table = pd.read_sql_table('LcTimsMsFeature', engine_featurefile)
-
+    feature_cluster_mapping = pd.read_sql_table('FeatureClusterMapping', engine_featurefile)
     from .constants import mass_dict
 
     M_PROTON = mass_dict['Proton']
     feature_table['Mass'] = feature_table['MZ'].values * feature_table['Charge'].values - feature_table['Charge'].values*M_PROTON
-    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "RT_lower":"rt_start", "RT_upper":"rt_end", "Mobility": "mobility", "Mobility_lower": "mobility_lower", "Mobility_upper": "mobility_upper", "Charge":"charge","Intensity":'int_sum',"ClusterCount":'n_isotopes'})
+    feature_table = feature_table.rename(columns={"MZ": "mz","Mass": "mass", "RT": "rt_apex", "RT_lower":"rt_start", "RT_upper":"rt_end", "Mobility": "mobility", "Mobility_lower": "mobility_lower", "Mobility_upper": "mobility_upper", "Charge":"charge","Intensity":'ms1_int_sum',"ClusterCount":'n_isotopes'})
     feature_table['rt_apex'] = feature_table['rt_apex']/60
     feature_table['rt_start'] = feature_table['rt_start']/60
     feature_table['rt_end'] = feature_table['rt_end']/60
 
-    return feature_table
+    feature_cluster_mapping = feature_cluster_mapping.rename(columns={"FeatureId": "feature_id", "ClusterId": "cluster_id", "Monoisotopic": "monoisotopic", "Intensity": "ms1_int_sum"})
+
+    return feature_table, feature_cluster_mapping
 
 
 def map_bruker(feature_path:str, feature_table:pd.DataFrame, query_data:dict)->pd.DataFrame:
@@ -1801,6 +1803,29 @@ def map_bruker(feature_path:str, feature_table:pd.DataFrame, query_data:dict)->p
     return features
 
 # Cell
+def get_stats(isotope_patterns, iso_idx, stats):
+    columns = ['mz_average','delta_m','int_sum','int_area','rt_min','rt_max']
+
+    stats_idx = np.zeros(iso_idx[-1], dtype=np.int64)
+    stats_map = np.zeros(iso_idx[-1], dtype=np.int64)
+
+    start_ = 0
+    end_ = 0
+
+    for idx in range(len(iso_idx)-1):
+        k = isotope_patterns[iso_idx[idx]:iso_idx[idx+1]]
+        end_ += len(k)
+        stats_idx[start_:end_] = k
+        stats_map[start_:end_] = idx
+        start_ = end_
+
+    k = pd.DataFrame(stats[stats_idx], columns=columns)
+
+    k['feature_id'] = stats_map
+
+    return k
+
+# Cell
 import numpy as np
 
 import logging
@@ -1860,6 +1885,8 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
         if not skip:
             ms_file = alphapept.io.MS_Data_File(out_file, is_read_only=False)
             query_data = ms_file.read_DDA_query_data()
+
+            feature_cluster_mapping = pd.DataFrame()
 
             if not settings['workflow']["find_features"]:
                 features = query_data_to_features(query_data)
@@ -1930,12 +1957,16 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
                     lookup_idx_df = pd.DataFrame(lookup_idx, columns = ['isotope_pattern', 'isotope_pattern_hill'])
                     ms_file.write(lookup_idx_df, dataset_name="feature_table_idx")
 
+                    feature_cluster_mapping = get_stats(isotope_patterns, iso_idx, stats)
+
+
                     logging.info('Report complete.')
 
                 elif datatype == 'bruker':
                     logging.info('Feature finding on {}'.format(file_name))
                     feature_path = extract_bruker(file_name)
-                    feature_table = convert_bruker(feature_path)
+                    feature_table, feature_cluster_mapping = convert_bruker(feature_path)
+
                     logging.info('Bruker featurer finder complete. Extracted {:,} features.'.format(len(feature_table)))
 
                 # Calculate additional params
@@ -1952,8 +1983,11 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
                 else:
                     features = map_ms2(feature_table, query_data, **settings['features'])
 
+                ms_file.write(feature_cluster_mapping, dataset_name="feature_cluster_mapping")
+
                 logging.info('Saving feature table.')
                 ms_file.write(feature_table, dataset_name="feature_table")
+
                 logging.info('Feature table saved to {}'.format(out_file))
 
 
@@ -2028,7 +2062,7 @@ def map_ms2(feature_table:pd.DataFrame, query_data:dict, map_mz_range:float = 1,
     for i, key in enumerate(range_dict):
         tree_points[:,i] = tree_points[:,i]/range_dict[key][1]
 
-    matching_tree = KDTree(tree_points, metric="minkowski")
+    matching_tree = KDTree(tree_points, metric="euclidean")
     ref_points = np.array([query_data[range_dict[_][0]] / range_dict[_][1] for _ in range_dict]).T
     ref_points = replace_infs(ref_points)
 
@@ -2047,7 +2081,7 @@ def map_ms2(feature_table:pd.DataFrame, query_data:dict, map_mz_range:float = 1,
         ref_df['query_idx'] = ref_df.index
         ref_df['feature_idx'] = idx[:,neighbor]
 
-        for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm','mobility_lower','mobility_upper']:
+        for field in ['ms1_int_sum','ms1_int_apex','rt_start','rt_apex','rt_end','fwhm','mobility_lower','mobility_upper']:
             if field in feature_table.keys():
                 ref_df[field] = feature_table.iloc[idx[:,neighbor]][field].values
 
@@ -2062,7 +2096,7 @@ def map_ms2(feature_table:pd.DataFrame, query_data:dict, map_mz_range:float = 1,
             _check &= mob_check
 
         ref_matched |= _check
-        ref_df['dist'] = dist[:,neighbor]
+        ref_df['feature_dist'] = dist[:,neighbor]
         ref_df = ref_df[_check]
 
         all_df.append(ref_df)
@@ -2088,10 +2122,10 @@ def map_ms2(feature_table:pd.DataFrame, query_data:dict, map_mz_range:float = 1,
             ref_df['mobility_matched'] = unmatched_ref['mobility']
             ref_df['mobility_offset'] = np.nan
 
-        for field in ['int_sum','int_apex','rt_start','rt_apex','rt_end','fwhm']:
+        for field in ['ms1_int_sum','ms1_int_apex','rt_start','rt_apex','rt_end','fwhm']:
             if field in feature_table.keys():
                 unmatched_ref[field] = np.nan
-        unmatched_ref['dist'] = np.nan
+        unmatched_ref['feature_dist'] = np.nan
 
         all_df.append(unmatched_ref)
 

@@ -5,7 +5,7 @@ workflow:
   find_features: true
   search_data: true
   recalibrate_data: true
-  align: true
+  align: false
   match: false
   lfq_quantification: true
 general:
@@ -87,6 +87,7 @@ calibration:
 matching:
   match_p_min: 0.05
   match_d_min: 3
+  match_group_tol: 0
 isobaric_label:
   label: None
   reporter_frag_tolerance: 15
@@ -94,4 +95,4 @@ isobaric_label:
 quantification:
   max_lfq: true
   lfq_ratio_min: 1
-  mode: int_sum
+  mode: ms1_int_sum

@@ -351,30 +351,30 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
     <tr>
       <th>0</th>
       <td>L-BFGS-B</td>
-      <td>0.017805</td>
-      <td>0.803683</td>
-      <td>0.678804</td>
+      <td>0.028414</td>
+      <td>0.767214</td>
+      <td>0.630689</td>
     </tr>
     <tr>
       <th>1</th>
       <td>TNC</td>
-      <td>0.024241</td>
-      <td>0.876287</td>
-      <td>0.740127</td>
+      <td>0.023116</td>
+      <td>0.808149</td>
+      <td>0.664340</td>
     </tr>
     <tr>
       <th>2</th>
       <td>SLSQP</td>
-      <td>0.003425</td>
-      <td>0.803683</td>
-      <td>0.678804</td>
+      <td>0.003840</td>
+      <td>0.767214</td>
+      <td>0.630689</td>
     </tr>
     <tr>
       <th>3</th>
       <td>trf</td>
-      <td>0.215827</td>
-      <td>0.803703</td>
-      <td>0.678821</td>
+      <td>0.232000</td>
+      <td>0.771106</td>
+      <td>0.633888</td>
     </tr>
   </tbody>
 </table>
@@ -472,7 +472,7 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="delayed_normalization" class="doc_header"><code>delayed_normalization</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L191" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>delayed_normalization</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>field</code></strong>:<code>str</code>=<em><code>'int_sum'</code></em>, <strong><code>minimum_occurence</code></strong>:<code>bool</code>=<em><code>None</code></em>)</p>
+<h4 id="delayed_normalization" class="doc_header"><code>delayed_normalization</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L191" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>delayed_normalization</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>field</code></strong>:<code>str</code>=<em><code>'ms1_int_sum'</code></em>, <strong><code>minimum_occurence</code></strong>:<code>bool</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Returns normalization factors for given peptide intensities.
 If the solver does not converge, the unnormalized data will be used.</p>
@@ -512,10 +512,10 @@ If the solver does not converge, the unnormalized data will be used.</p>
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">6</span>
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;fraction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="mi">6</span>
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;ms1_int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
 
 <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
-<span class="n">test_df</span><span class="p">,</span> <span class="n">normalization</span> <span class="o">=</span> <span class="n">delayed_normalization</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;int_sum&#39;</span><span class="p">,</span> <span class="n">minimum_occurence</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">test_df</span><span class="p">,</span> <span class="n">normalization</span> <span class="o">=</span> <span class="n">delayed_normalization</span><span class="p">(</span><span class="n">test_df</span><span class="p">,</span> <span class="n">field</span><span class="o">=</span><span class="s1">&#39;ms1_int_sum&#39;</span><span class="p">,</span> <span class="n">minimum_occurence</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
 <span class="n">display</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">normalization</span><span class="p">))</span>
 <span class="n">display</span><span class="p">(</span><span class="n">test_df</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">6</span><span class="p">))</span>
@@ -597,7 +597,7 @@ If the solver does not converge, the unnormalized data will be used.</p>
       <th>precursor</th>
       <th>fraction</th>
       <th>filename</th>
-      <th>int_sum</th>
+      <th>ms1_int_sum</th>
       <th>int_sum_dn</th>
     </tr>
   </thead>
@@ -918,7 +918,7 @@ If the solver does not converge, the unnormalized data will be used.</p>
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;precursor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Prec_1&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_2&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Prec_3&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;filename&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span><span class="s1">&#39;B&#39;</span><span class="p">,</span><span class="s1">&#39;C&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span>
 <span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;protein_group&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">9</span>
-<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">]</span>
+<span class="n">sample_data</span><span class="p">[</span><span class="s1">&#39;ms1_int_sum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">]</span>
 
 <span class="n">test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sample_data</span><span class="p">)</span>
 
@@ -972,7 +972,7 @@ If the solver does not converge, the unnormalized data will be used.</p>
       <th>precursor</th>
       <th>filename</th>
       <th>protein_group</th>
-      <th>int_sum</th>
+      <th>ms1_int_sum</th>
     </tr>
   </thead>
   <tbody>

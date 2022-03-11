@@ -151,6 +151,12 @@ def submit_experiment(recorder: dict):
         st.info(
             f"Filename will be: {escape_markdown(long_name)}. Click submit button to add to queue."
         )
+
+        if (recorder['workflow']['match']) | (recorder['workflow']['match']):
+            if len(recorder['experiment']['shortnames']) > 100:
+                st.warning('Performance Warning: More than 100 files are selected and matching / align is selected.'
+                'Matching / Align could take a long time. If you experience issues please contact mstrauss@biochem.mpg.de')
+
         if st.button("Submit"):
             settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
             for group in recorder:
@@ -287,7 +293,7 @@ def experiment():
 
                 file_df = file_df_from_files(raw_files, file_folder)
                 file_df["Fraction"] = [str(i+1) for i in range(len(file_df))]
-                #file_df["Matching group"] = ""
+                file_df["Matching group"] = [str(0)]*len(file_df)
 
                 gb = GridOptionsBuilder.from_dataframe(file_df)
                 gb.configure_default_column(
@@ -315,13 +321,21 @@ def experiment():
                         " \n- Creation date of file."
                         " \n- Size (GB): Size in GB of the file."
                         " \n- Shortname: Unique shortname for each file."
-                        " \n- Fraction: Fraction of each file."
-                        #" \n- Matching Group: Match-between-runs only among members of this group."
+                        " \n- Fraction: Fraction of each file. Files of the same fraction will be scored together. If dataset is not fractionated leave as is."
+                        " \n- Matching Group: Match-between-runs only among members of this group or neighboring groups. Leave as is if matching between all files."
                     )
 
                 shortnames = file_df_selected["Shortname"].values.tolist()
                 if len(shortnames) != len(set(shortnames)):
                     st.warning("Warning: Shortnames are not unique.")
+                    error += 1
+
+                try:
+                    matching_groups = file_df_selected["Matching group"].values.astype('int').tolist()
+                except:
+                    matching_groups = [str(0)]*len(file_df)
+
+                    st.warning("Warning: Matching groups contain non-integer values. Please only use integers (0,1,2...).")
                     error += 1
 
                 fasta_files_home_dir = files_in_folder(FASTA_PATH, ".fasta")
@@ -351,9 +365,7 @@ def experiment():
                 recorder["experiment"]["fractions"] = file_df_selected[
                     "Fraction"
                 ].values.tolist()
-                #recorder["experiment"]["matching_groups"] = file_df_selected[
-                #    "Matching group"
-                #].values.tolist()
+                recorder["experiment"]["matching_groups"] = matching_groups
 
                 f_dict = file_df_selected.groupby('Fraction')['Filename'].unique().to_dict()
                 f_dict = {k: list(v) for k,v in f_dict.items()}

@@ -24,11 +24,11 @@ def remove_mods(sequence):
 def ap_to_mq_sequence(sequence, mod_translation):
     """
     Converts AlphaPept sequence format to MaxQuant Format
-    returns naked_sequence, len_sequence, modifications_, mq_sequence
+    returns sequence_naked, len_sequence, modifications_, mq_sequence
 
     """
     # Add leading and trailing modification
-    naked_sequence = remove_mods(sequence)
+    sequence_naked = remove_mods(sequence)
     parsed_sequence = parse(sequence)
 
     mq_sequence = '_'
@@ -37,7 +37,7 @@ def ap_to_mq_sequence(sequence, mod_translation):
 
     for idx, AA in enumerate(parsed_sequence):
 
-        mq_sequence += naked_sequence[idx]
+        mq_sequence += sequence_naked[idx]
         if len(AA) != 1:
             if mod_translation[AA] is not None:
                 if mod_translation[AA] in modifications:
@@ -68,9 +68,9 @@ def ap_to_mq_sequence(sequence, mod_translation):
 
     mq_sequence += '_'
 
-    n_AA = len(naked_sequence)
+    n_AA = len(sequence_naked)
 
-    return naked_sequence, n_AA, modifications_, mq_sequence
+    return sequence_naked, n_AA, modifications_, mq_sequence
 
 
 # Cell
@@ -100,9 +100,9 @@ def prepare_ap_results(ref_ap):
 
     ref_ap['id'] = ref_ap.index
 
-    naked_sequence, nAA, mq_modifications, mq_sequence = zip(*ref_ap['sequence'].apply(lambda x: ap_to_mq_sequence(x, mod_translation)))
+    sequence_naked, nAA, mq_modifications, mq_sequence = zip(*ref_ap['sequence'].apply(lambda x: ap_to_mq_sequence(x, mod_translation)))
 
-    ref_ap['naked_sequence'] = naked_sequence
+    ref_ap['sequence_naked'] = sequence_naked
     ref_ap['n_AA'] = nAA
     ref_ap['mq_modifications'] = mq_modifications
     ref_ap['mq_sequence'] = mq_sequence

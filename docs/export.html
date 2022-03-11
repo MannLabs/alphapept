@@ -95,7 +95,7 @@ nb_path: "nbs\13_export.ipynb"
 <h4 id="ap_to_mq_sequence" class="doc_header"><code>ap_to_mq_sequence</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/export.py#L24" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>ap_to_mq_sequence</code>(<strong><code>sequence</code></strong>, <strong><code>mod_translation</code></strong>)</p>
 </blockquote>
 <p>Converts AlphaPept sequence format to MaxQuant Format
-returns naked_sequence, len<em>sequence, modifications</em>, mq_sequence</p>
+returns sequence_naked, len<em>sequence, modifications</em>, mq_sequence</p>
 
 </div>
 
@@ -173,7 +173,7 @@ for _ in evidence.columns:
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">mq_dict_evidence</span> <span class="o">=</span> <span class="p">{}</span>
 
-<span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Sequence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;naked_sequence&#39;</span>
+<span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Sequence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;sequence_naked&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Length&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;n_AA&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Modifications&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;mq_modifications&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Modified sequence&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;mq_sequence&#39;</span>
@@ -208,7 +208,7 @@ for _ in evidence.columns:
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Number of scans&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Number of isotopic peaks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;n_isotopes&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;PIF&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span>
-<span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Fraction of total spectrum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;matched_int_ratio&#39;</span>
+<span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Fraction of total spectrum&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;fragments_matched_int_ratio&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Base peak fraction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;PEP&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;MS/MS count&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span>
@@ -216,7 +216,7 @@ for _ in evidence.columns:
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;score&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Delta score&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Combinatorics&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;undefined&#39;</span>
-<span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Intensity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;int_sum&#39;</span>
+<span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Intensity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;ms1_int_sum&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Reverse&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;reverse&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;Potential contaminant&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;contaminant&#39;</span>
 <span class="n">mq_dict_evidence</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;id&#39;</span>

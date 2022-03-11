@@ -92,18 +92,18 @@ def ion_plot(ms_file: MS_Data_File, options: list):
             with st.spinner("Creating plot."):
                 ions = ms_file.read(dataset_name="ions")
                 delta_ppm = (
-                    (ions["db_mass"] - ions["ion_mass"])
-                    / ((ions["db_mass"] + ions["ion_mass"]) / 2)
+                    (ions["db_mass"] - ions["fragment_ion_mass"])
+                    / ((ions["db_mass"] + ions["fragment_ion_mass"]) / 2)
                     * 1e6
                 ).values
                 counts, bins = np.histogram(delta_ppm, bins=100, density=True)
                 bin_edges = bins[1:] + (bins[1] - bins[0]) / 2
                 bins = np.arange(ions["db_mass"].min(), ions["db_mass"].max(), 1)
                 offset = stats.binned_statistic(
-                    ions["ion_mass"].values, delta_ppm, "mean", bins=bins
+                    ions["fragment_ion_mass"].values, delta_ppm, "mean", bins=bins
                 )
                 counts_ = stats.binned_statistic(
-                    ions["ion_mass"].values, delta_ppm, "count", bins=bins
+                    ions["fragment_ion_mass"].values, delta_ppm, "count", bins=bins
                 )
                 counts_ = counts_.statistic
 
@@ -405,8 +405,8 @@ def sequence_coverage_map(file: str, options: list, results_yaml: dict):
                 else:
                     selection_label = 'across all files'
 
-                if any(target_protein_peptide_matches['naked_sequence'].tolist()):
-                    peptide_list = target_protein_peptide_matches['naked_sequence'].tolist()
+                if any(target_protein_peptide_matches['sequence_naked'].tolist()):
+                    peptide_list = target_protein_peptide_matches['sequence_naked'].tolist()
                 else:
                     peptide_list = target_protein_peptide_matches['sequence'].tolist()
 

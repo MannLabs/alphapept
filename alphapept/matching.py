@@ -89,8 +89,9 @@ def calib_table(table: pd.DataFrame, delta: pd.Series, offset_dict: dict):
 # Cell
 import logging
 from sklearn.linear_model import LinearRegression
+import sys
 
-def align(deltas: pd.DataFrame, filenames: list, weights:np.ndarray=None) -> np.ndarray:
+def align(deltas: pd.DataFrame, filenames: list, weights:np.ndarray=None, n_jobs=None) -> np.ndarray:
     """Align multiple datasets.
     This function creates a matrix to represent the shifts from each dataset to another.
     This effectively is an overdetermined equation system and is solved with a linear regression.
@@ -99,6 +100,7 @@ def align(deltas: pd.DataFrame, filenames: list, weights:np.ndarray=None) -> np.
         deltas (pd.DataFrame): Distances from each dataset to another.
         filenames (list): The filenames of the datasts that were compared.
         weights (np.ndarray, optional): Distances can be weighted by their number of shared elements. Defaults to None.
+        n_jobs (optional): Number of processes to be used. Defaults to None (=1).
 
     Returns:
         np.ndarray: alignment values.
@@ -125,10 +127,10 @@ def align(deltas: pd.DataFrame, filenames: list, weights:np.ndarray=None) -> np.
         logging.info('Low overlap between datasets detected. Alignment may fail.')
 
     if weights is not None:
-        reg = LinearRegression(fit_intercept=False).fit(matrix, deltas_.values, sample_weight = weights[not_nan])
+        reg = LinearRegression(fit_intercept=False, n_jobs=n_jobs).fit(matrix, deltas_.values, sample_weight = weights[not_nan])
         score= reg.score(matrix, deltas_.values)
     else:
-        reg = LinearRegression(fit_intercept=False).fit(matrix, deltas_.values)
+        reg = LinearRegression(fit_intercept=False, n_jobs=n_jobs).fit(matrix, deltas_.values)
         score= reg.score(matrix, deltas_.values)
 
     logging.info(f"Regression score is {score}")
@@ -254,9 +256,11 @@ def align_datasets(settings:dict, callback:callable=None):
         logging.info(f'Total deviation before calibration {before_sum}')
         logging.info(f'Mean deviation before calibration {before_mean}')
 
-        logging.info(f'Solving equation system')
+        n_jobs = settings['general']['n_processes']
 
-        alignment = pd.DataFrame(align(deltas, filenames, weights), columns = cols)
+        logging.info(f'Solving equation system with {n_jobs} jobs.')
+
+        alignment = pd.DataFrame(align(deltas, filenames, weights, n_jobs), columns = cols)
         alignment = pd.concat([pd.DataFrame(np.zeros((1, alignment.shape[1])), columns= cols), alignment])
         alignment -= alignment.mean()
 
@@ -340,112 +344,143 @@ def convert_decoy(float_):
 # The function will be revised when implementing issue #255: https://github.com/MannLabs/alphapept/issues/255
 def match_datasets(settings:dict, callback:Callable = None):
     """Match datasets: Wrapper function to match datasets based on a settings file.
+    This implementation uses matchin groups but not fractions.
 
     Args:
         settings (dict): Dictionary containg specifications of the run
         callback (Callable): Callback function to indicate progress.
     """
 
+
     if len(settings['experiment']['file_paths']) > 2:
-        xx = alphapept.utils.assemble_df(settings, field='peptide_fdr')
-
-        base_col = ['precursor']
-        alignment_cols = ['mz_calib','rt_calib']
-        extra_cols = ['score','decoy','target']
-
-        if 'mobility' in xx.columns:
-            alignment_cols += ['mobility_calib']
-            use_mobility = True
-        else:
-            use_mobility = False
-
-        grouped = xx[base_col + alignment_cols + extra_cols].groupby('precursor').mean()
-
-        grouped['decoy'] = grouped['decoy'].apply(lambda x: convert_decoy(x))
-        grouped['target'] = grouped['target'].apply(lambda x: convert_decoy(x))
-
-        std_ = xx[base_col + alignment_cols].groupby('precursor').std()
-
-        grouped[[_+'_std' for _ in alignment_cols]] = std_
-
-        std_range = np.nanmedian(std_.values, axis=0)
 
         match_p_min = settings['matching']['match_p_min']
         match_d_min = settings['matching']['match_d_min']
 
         filenames = settings['experiment']['file_paths']
 
-        lookup_dict = xx.set_index('precursor')[['sequence']].to_dict()
+        shortnames_lookup = dict(zip(settings['experiment']['shortnames'], settings['experiment']['file_paths']))
 
-        for idx, filename in enumerate(filenames):
-            file = os.path.splitext(filename)[0] + '.ms_data.hdf'
+        matching_groups = np.array(settings['experiment']['matching_groups'])
+        n_matching_groups = len(set(matching_groups))
+        match_tolerance = settings['matching']['match_group_tol']
+        logging.info(f'A total of {n_matching_groups} matching groups set.')
 
-            df = alphapept.io.MS_Data_File(file).read(dataset_name='peptide_fdr')
-            features = alphapept.io.MS_Data_File(file).read(dataset_name='feature_table')
-            features['feature_idx'] = features.index
+        x = alphapept.utils.assemble_df(settings, field='peptide_fdr')
 
-            matching_set = set(grouped.index) - set(df['precursor'])
-            logging.info(f'Trying to match file {file} with database of {len(matching_set):,} unidentified candidates')
+        logging.info(f'A total of {len(x):,} peptides for matching in peptide_fdr.')
 
-            mz_range = std_range[0]
-            rt_range = std_range[1]
+        base_col = ['precursor']
+        alignment_cols = ['mz_calib','rt_calib']
+        extra_cols = ['score','decoy','target']
 
-            tree_points = features[alignment_cols].values
-            tree_points[:,0] = tree_points[:,0]/mz_range
-            tree_points[:,1] = tree_points[:,1]/rt_range
+        if 'mobility' in x.columns:
+            alignment_cols += ['mobility_calib']
+            use_mobility = True
+        else:
+            use_mobility = False
 
-            query_points = grouped.loc[matching_set][alignment_cols].values
-            query_points[:,0] = query_points[:,0]/mz_range
-            query_points[:,1] = query_points[:,1]/rt_range
+        for group in set(settings['experiment']['matching_groups']):
+            logging.info(f'Matching group {group} with a tolerance of {match_tolerance}.')
+            file_index_from = (matching_groups <= (group+match_tolerance)) & (matching_groups >= (group-match_tolerance))
+            file_index_to = matching_groups == group
+            files_from = np.array(settings['experiment']['shortnames'])[file_index_from].tolist()
+            files_to = np.array(settings['experiment']['shortnames'])[file_index_to].tolist()
+            logging.info(f'Matching from {len(files_from)} files to {len(files_to)} files.')
+            logging.info(f'Matching from {files_from} to {files_to}.')
 
-            if use_mobility:
-                logging.info("Using mobility")
-                i_range = std_range[2]
+            if len(files_from) > 2:
+                xx = x[x['shortname'].apply(lambda x: x in files_from)].copy()
 
-                tree_points[:,2] = tree_points[:,2]/i_range
-                query_points[:,2] = query_points[:,2]/i_range
+                grouped = xx[base_col + alignment_cols + extra_cols].groupby('precursor').mean()
 
-            matching_tree = KDTree(tree_points, metric="minkowski")
+                grouped['decoy'] = grouped['decoy'].apply(lambda x: convert_decoy(x))
+                grouped['target'] = grouped['target'].apply(lambda x: convert_decoy(x))
 
-            dist, idx = matching_tree.query(query_points, k=1)
+                std_ = xx[base_col + alignment_cols].groupby('precursor').std()
 
-            matched = features.iloc[idx[:,0]]
+                grouped[[_+'_std' for _ in alignment_cols]] = std_
 
-            for _ in extra_cols:
-                matched[_] = grouped.loc[matching_set, _].values
+                std_range = np.nanmedian(std_.values, axis=0)
 
-            to_keep = dist < match_d_min
+                lookup_dict = xx.set_index('precursor')[['sequence','sequence_naked','db_idx']].to_dict()
 
-            matched = matched[to_keep]
+                for file_to in files_to:
+                    filename = shortnames_lookup[file_to]
+                    file = os.path.splitext(filename)[0] + '.ms_data.hdf'
 
-            ref = grouped.loc[matching_set][alignment_cols][to_keep]
-            sigma = std_.loc[matching_set][to_keep]
+                    df = alphapept.io.MS_Data_File(file).read(dataset_name='peptide_fdr')
+                    features = alphapept.io.MS_Data_File(file).read(dataset_name='feature_table')
+                    features['feature_idx'] = features.index
 
-            logging.info(f'{len(matched):,} possible features for matching based on distance of {match_d_min}')
+                    matching_set = set(grouped.index) - set(df['precursor'])
+                    logging.info(f'Trying to match file {file} with database of {len(matching_set):,} unidentified candidates')
 
-            matched['matching_p'] = [get_probability(matched[alignment_cols], ref, sigma, i) for i in range(len(matched))]
-            matched['precursor'] = grouped.loc[matching_set][to_keep].index.values
-            matched['score'] = grouped.loc[matching_set][to_keep]['score'].values
+                    mz_range = std_range[0]
+                    rt_range = std_range[1]
 
-            matched = matched[matched['matching_p']< match_p_min]
+                    tree_points = features[alignment_cols].values
+                    tree_points[:,0] = tree_points[:,0]/mz_range
+                    tree_points[:,1] = tree_points[:,1]/rt_range
 
-            logging.info(f'{len(matched):,} possible features for matching based on probability of {match_p_min}')
+                    query_points = grouped.loc[matching_set][alignment_cols].values
+                    query_points[:,0] = query_points[:,0]/mz_range
+                    query_points[:,1] = query_points[:,1]/rt_range
 
-            matched['type'] = 'matched'
+                    if use_mobility:
+                        logging.info("Using mobility")
+                        i_range = std_range[2]
 
-            for _ in lookup_dict.keys():
-                matched[_] = [lookup_dict[_][x] for x in matched['precursor']]
+                        tree_points[:,2] = tree_points[:,2]/i_range
+                        query_points[:,2] = query_points[:,2]/i_range
 
-            df['type'] = 'msms'
-            df['matching_p'] = np.nan
+                    matching_tree = KDTree(tree_points, metric="euclidean")
 
-            shared_columns = set(matched.columns).intersection(set(df.columns))
+                    dist, idx = matching_tree.query(query_points, k=1)
 
-            df_ = pd.concat([df, matched[shared_columns]], ignore_index=True)
+                    matched = features.iloc[idx[:,0]].reset_index()
 
-            logging.info(f"Saving {file} - peptide_fdr.")
-            ms_file = alphapept.io.MS_Data_File(file, is_overwritable=True)
+                    for _ in extra_cols:
+                        matched[_] = grouped.loc[matching_set, _].values
 
-            ms_file.write(df_, dataset_name='peptide_fdr')
+                    to_keep = dist < match_d_min
+
+                    matched = matched[to_keep]
+
+                    ref = grouped.loc[matching_set][alignment_cols][to_keep]
+                    sigma = std_.loc[matching_set][to_keep]
+
+                    logging.info(f'{len(matched):,} possible features for matching based on distance of {match_d_min}')
+
+                    matched['matching_p'] = [get_probability(matched[alignment_cols], ref, sigma, i) for i in range(len(matched))]
+                    matched['precursor'] = grouped.loc[matching_set][to_keep].index.values
+                    matched['score'] = grouped.loc[matching_set][to_keep]['score'].values
+
+                    matched = matched[matched['matching_p']< match_p_min]
+
+                    logging.info(f'{len(matched):,} possible features for matching based on probability of {match_p_min}')
+
+                    matched['type'] = 'matched'
+
+                    for _ in lookup_dict.keys():
+                        matched[_] = [lookup_dict[_][x] for x in matched['precursor']]
+
+                    df['type'] = 'msms'
+                    df['matching_p'] = np.nan
+
+                    shared_columns = set(matched.columns).intersection(set(df.columns))
+
+                    df_ = pd.concat([df, matched[shared_columns]], ignore_index=True)
+
+                    logging.info(f"Saving {file} - peptide_fdr.")
+                    ms_file = alphapept.io.MS_Data_File(file, is_overwritable=True)
+
+                    ms_file.write(df_, dataset_name='peptide_fdr')
+
+            else:
+                logging.info(f'Less than 3 datasets present in matching group {group}. Skipping matching.')
+
     else:
         logging.info('Less than 3 datasets present. Skipping matching.')
+
+    logging.info('Matching complete.')

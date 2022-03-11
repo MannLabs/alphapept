@@ -67,9 +67,11 @@ def queue_watcher():
                 settings_["error"] = f"{e}"
                 save_settings(settings_, os.path.join(FAILED_PATH, file_to_process))
 
-            os.remove(file_path)
+
             if os.path.isfile(current_file_path):
                 os.remove(current_file_path)
+            os.remove(file_path)
+
         else:
             time.sleep(15)
 

@@ -188,7 +188,7 @@ def normalize_experiment_BFGS(profiles: np.ndarray) -> np.ndarray:
     return solution
 
 # Cell
-def delayed_normalization(df: pd.DataFrame, field: str='int_sum', minimum_occurence:bool=None) -> [pd.DataFrame, np.ndarray]:
+def delayed_normalization(df: pd.DataFrame, field: str='ms1_int_sum', minimum_occurence:bool=None) -> [pd.DataFrame, np.ndarray]:
     """Returns normalization factors for given peptide intensities.
     If the solver does not converge, the unnormalized data will be used.
 
@@ -481,9 +481,9 @@ def protein_profile(files: list, minimum_ratios: int, chunk:tuple) -> (np.ndarra
 
     else:
         invalid = ((np.nansum(ratios, axis=1) == 0) & (np.nansum(ratios, axis=0) == 0))
-        total_int = pre_lfq.sum() * solution
-        total_int[invalid] = 0
-        profile = total_int * pre_lfq.sum() / np.sum(total_int) #Normalize inensity again
+        peptide_int_sum = pre_lfq.sum() * solution
+        peptide_int_sum[invalid] = 0
+        profile = peptide_int_sum * pre_lfq.sum() / np.sum(peptide_int_sum) #Normalize inensity again
 
 
     return profile, pre_lfq, protein

@@ -26,7 +26,7 @@ workflow:
     description: Flag to perform recalibration.
   align:
     type: checkbox
-    default: true
+    default: false
     description: Flag to align the data.
   match:
     type: checkbox
@@ -499,13 +499,19 @@ matching:
     min: 0.001
     max: 1.0
     default: 0.05
-    description: Minimum probability cutoff for matching
+    description: Minimum probability cutoff for matching.
   match_d_min:
     type: doublespinbox
     min: 0.001
     max: 10.0
     default: 3
-    description: Minimum distance cutoff for matching
+    description: Minimum distance cutoff for matching.
+  match_group_tol:
+    type: spinbox
+    min: 0
+    max: 100
+    default: 0
+    description: When having matching groups, match neighboring groups.
 isobaric_label:
   label:
     type: combobox
@@ -538,6 +544,6 @@ quantification:
   mode:
     type: combobox
     value:
-    - int_sum
-    default: int_sum
+    - ms1_int_sum
+    default: ms1_int_sum
     description: Column to perform quantification on.

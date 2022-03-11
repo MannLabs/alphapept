@@ -35,16 +35,25 @@ def load_files(file_list: list, callback: Union[Callable, None] = None) -> dict:
     Returns:
         dict: A dictionary containing the summary of all results.yaml files.
     """
-    all_results = {}
+    all_results = []
 
     for idx, _ in enumerate(file_list):
         base, ext = os.path.splitext(_)
-        all_results[base] = load_file(_)
+        results = load_file(_)
+
+        f = results['summary']['processed_files']
+
+        for f_ in f:
+            f__ = os.path.splitext(f_)[0]
+            res_ = results['summary'][f__]
+            res_['file_in_experiment'] = f__
+            res_['experiment'] = base
+            all_results.append(res_)
 
         if callback:
             callback.progress((idx + 1) / len(file_list))
 
-    return all_results
+    return pd.DataFrame(all_results)
 
 
 def filter_by_tag(files: list) -> list:
@@ -60,9 +69,12 @@ def filter_by_tag(files: list) -> list:
         multi = filter.split('&')
         multi = [_.replace(' ', '') for _ in multi]
         st.write(f"Searching for files containing {multi}")
+        #files['keep'] = False
+        #for tag in multi:
+        #    files['keep'].apply.lambda(x)
+
+        #filtered = files[files['file_in_experiment'].str.contains(multi)]
         filtered = files
-        for tag in multi:
-            filtered = [_ for _ in filtered if tag in _]
     else:
         filtered = files
 

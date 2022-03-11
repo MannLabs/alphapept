@@ -81,7 +81,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 </thead>
 <tbody>
 <tr>
-<td>abs_delta_m_ppm</td>
+<td>delta_m_ppm_abs</td>
 <td>absolute value  of <code>delta_m</code> in ppm</td>
 </tr>
 <tr>
@@ -93,7 +93,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <td>b-ion hit with a NH3 loss</td>
 </tr>
 <tr>
-<td>b_hits</td>
+<td>hits_b</td>
 <td>number of b ion hits</td>
 </tr>
 <tr>
@@ -130,7 +130,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 </tr>
 <tr>
 <td>fdr</td>
-<td>calculated false discovery rate value for this peptide in the table. As the PSM score decreases more decoys will be found the FDR score increases until you reach your FDR threshold cutoff, below which we don’t count any more hits.</td>
+<td>calculated false discovery rate value for this peptide in the table. As the PSM score decreases more decoys will be found the FDR score increases until you reach your FDR threshold cutoff, below which we donï¿½t count any more hits.</td>
 </tr>
 <tr>
 <td>feature_idx</td>
@@ -138,7 +138,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 </tr>
 <tr>
 <td>feature_rank</td>
-<td>multiple ms1 features will be mapped to a single ms2 spectra. The rank indicates the how close the feature was to the spectrum in comparison to other features in close distance.</td>
+<td>multiple ms1 features will be mapped to a single ms2 spectra. The score_rank indicates the how close the feature was to the spectrum in comparison to other features in close distance.</td>
 </tr>
 <tr>
 <td>fwhm</td>
@@ -153,7 +153,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <td>intensity at feature apex</td>
 </tr>
 <tr>
-<td>int_ratio</td>
+<td>fragments_int_ratio</td>
 <td>mean intensity ratio: experimental fragment intensity divided by theoretical intensity (if no db intensity is available db intensity is set to 1) for each matched ion</td>
 </tr>
 <tr>
@@ -161,15 +161,15 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <td>summed intensity of the MS1-feature</td>
 </tr>
 <tr>
-<td>ion_idx</td>
+<td>fragment_ion_idx</td>
 <td>index to ion dataframe for this PSM</td>
 </tr>
 <tr>
-<td>ion_int</td>
+<td>fragment_ion_int</td>
 <td>intensity of each matched ion</td>
 </tr>
 <tr>
-<td>ion_types</td>
+<td>fragment_ion_type</td>
 <td>type of the matched ion</td>
 </tr>
 <tr>
@@ -177,15 +177,15 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <td>mass </td>
 </tr>
 <tr>
-<td>matched_int</td>
+<td>fragments_matched_int_sum</td>
 <td>sum of the intensity of fragments found in the PSM</td>
 </tr>
 <tr>
-<td>matched_int_ratio</td>
-<td>ratio of the matched_int to the total intensity in a spectrum</td>
+<td>fragments_matched_int_ratio</td>
+<td>ratio of the fragments_matched_int_sum to the total intensity in a spectrum</td>
 </tr>
 <tr>
-<td>matched_ion_fraction</td>
+<td>fragments_matched_n_ratio</td>
 <td>number of ions that were found (hits) divided by the number of AAs in the matched sequence</td>
 </tr>
 <tr>
@@ -201,7 +201,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <td>number of internal cleavage sites</td>
 </tr>
 <tr>
-<td>n_ions</td>
+<td>n_fragments_matched</td>
 <td>number of matched ions</td>
 </tr>
 <tr>
@@ -209,7 +209,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <td>number of missed cleavages</td>
 </tr>
 <tr>
-<td>naked_sequence</td>
+<td>sequence_naked</td>
 <td>naked sequence (i.e. withouth modifications)</td>
 </tr>
 <tr>
@@ -241,12 +241,12 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <td>index to query (for the spectrum index use raw_idx)</td>
 </tr>
 <tr>
-<td>rank</td>
-<td>one query can have multiple matching PSMs. This is the rank of the PSM to the query with respect to the score. See also raw_rank</td>
+<td>score_rank</td>
+<td>one query can have multiple matching PSMs. This is the score_rank of the PSM to the query with respect to the score. See also raw_rank</td>
 </tr>
 <tr>
-<td>rank_precursor</td>
-<td>if a precursor is measured multiple times, this is the rank with respect to the score</td>
+<td>precursor_rank</td>
+<td>if a precursor is measured multiple times, this is the score_rank with respect to the score</td>
 </tr>
 <tr>
 <td>raw_idx</td>
@@ -254,7 +254,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 </tr>
 <tr>
 <td>raw_rank</td>
-<td>one spectrum can have multiple matching PSMs. This is the rank of the PSM to the spectrum with respect to the score.</td>
+<td>one spectrum can have multiple matching PSMs. This is the score_rank of the PSM to the spectrum with respect to the score.</td>
 </tr>
 <tr>
 <td>rt</td>
@@ -293,7 +293,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <td>cumulative number of targets (used for FDR estiamtion)</td>
 </tr>
 <tr>
-<td>total_int</td>
+<td>fragments_int_sum</td>
 <td>summed intensity of all fragments in experimental spectrum</td>
 </tr>
 <tr>
@@ -309,7 +309,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <td>number of y-ion hits with ammonia loss</td>
 </tr>
 <tr>
-<td>y_hits</td>
+<td>hits_y</td>
 <td>number of y-ion hits</td>
 </tr>
 <tr>

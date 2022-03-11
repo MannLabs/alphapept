@@ -3,10 +3,10 @@
 __all__ = ['tqdm_wrapper', 'check_version_and_hardware', 'wrapped_partial', 'create_database', 'import_raw_data',
            'feature_finding', 'search_data', 'recalibrate_data', 'score', 'isobaric_labeling', 'protein_grouping',
            'align', 'match', 'read_label_intensity', 'quantification', 'export', 'run_complete_workflow',
-           'extract_median_unique', 'get_file_summary', 'get_summary', 'parallel_execute', 'bcolors', 'run_cli',
-           'cli_overview', 'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search', 'cli_recalibrate',
-           'cli_score', 'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui',
-           'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
+           'extract_median_unique', 'get_file_summary', 'get_summary', 'parallel_execute', 'bcolors', 'is_port_in_use',
+           'run_cli', 'cli_overview', 'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search',
+           'cli_recalibrate', 'cli_score', 'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow',
+           'cli_gui', 'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
 
 # Cell
 
@@ -719,6 +719,7 @@ def quantification(
         results_path = settings['experiment']['results_path']
         base, ext = os.path.splitext(results_path)
 
+        logging.info('Reading protein_fdr for quantification.')
         df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
 
         if 'isobaric_label' in settings:
@@ -757,13 +758,13 @@ def quantification(
                             ['filename', 'precursor', 'protein_group']
                         )[field].sum().reset_index()
 
-
+                    logging.info('Saving protein_groups after delayed normalization to combined_protein_fdr_dn')
                     df.to_hdf(
                         settings['experiment']['results_path'],
                         'combined_protein_fdr_dn'
                     )
 
-                    logging.info('Complete. ')
+                    logging.info('Complete.')
                     logging.info('Starting profile extraction.')
 
                     if not callback:
@@ -776,28 +777,30 @@ def quantification(
                         df_grouped,
                         callback=cb
                     )
-                    protein_table.to_hdf(
-                        settings['experiment']['results_path'],
-                        'protein_table'
-                    )
-
-                    protein_table.to_csv(base+'_proteins.csv')
-
                     logging.info('LFQ complete.')
 
-                    logging.info('Extracting protein_summary')
+            else:
+                logging.info('Exporting protein intensity.')
+                protein_table = df.groupby(['protein_group','filename'])['ms1_int_sum'].sum().unstack()
 
-                    protein_summary = pd.DataFrame(index = df['protein_group'].unique())
+            protein_table.to_hdf(
+                settings['experiment']['results_path'],
+                'protein_table'
+            )
+            protein_table.to_csv(base+'_proteins.csv')
+            logging.info('Extracting protein_summary')
 
-                    for field in ['sequence','precursor']:
-                        col_ = 'n_'+ field+' '
-                        m = df.groupby(['protein_group','filename'])[field].count().unstack()
-                        m.columns = [col_ +_ for _ in m.columns]
-                        protein_summary.loc[m.index, m.columns] = m.values
+            protein_summary = pd.DataFrame(index = df['protein_group'].unique())
 
-                    # Add intensity
-                    new_cols = ['intensity ' + _ if not _.endswith('_LFQ') else 'LFQ intensity '+_[:-4] for _ in protein_table.columns ]
-                    protein_summary.loc[protein_table.index, new_cols] = protein_table.values
+            for field in ['sequence','precursor']:
+                col_ = 'n_'+ field+' '
+                m = df.groupby(['protein_group','filename'])[field].count().unstack()
+                m.columns = [col_ +_ for _ in m.columns]
+                protein_summary.loc[m.index, m.columns] = m.values
+
+            # Add intensity
+            new_cols = ['intensity ' + _ if not _.endswith('_LFQ') else 'LFQ intensity '+_[:-4] for _ in protein_table.columns ]
+            protein_summary.loc[protein_table.index, new_cols] = protein_table.values
 
         if len(protein_summary) > 0:
             ps_out = base+'_protein_summary.csv'
@@ -995,6 +998,7 @@ def run_complete_workflow(
                         settings['fasta'][_].append(mod)
 
     for idx, step in enumerate(steps):
+        logging.info(f'==== {step.__name__} ====')
         if callback_task:
             callback_task(step.__name__)
 
@@ -1059,38 +1063,41 @@ import datetime
 import alphapept.utils
 
 
-def extract_median_unique(settings: dict) -> tuple:
+def extract_median_unique(settings: dict, fields: list) -> tuple:
     """Extract the medion protein FDR and number of unique proteins.
 
     Args:
         settings (dict): A dictionary with settings how to process the data.
+        fields (list): A list with colum names to calculate summary statistics.
 
     Returns:
         tuple: Two arrays with the median protein FDR per file and the unique number of protein hits
 
     """
     protein_fdr = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
-    cols = [_ for _ in ['protein','protein_group','precursor','naked_sequence','sequence'] if _ in protein_fdr.columns]
+    cols = [_ for _ in ['protein','protein_group','precursor','sequence_naked','sequence'] if _ in protein_fdr.columns]
     n_unique = protein_fdr.groupby('filename')[cols].nunique()
     n_unique.index = [os.path.split(_)[1][:-12] for _ in n_unique.index]
-    cols = [_ for _ in ['fwhm','int_sum','rt_length','rt_tail','prec_offset_raw_ppm '] if _ in protein_fdr.columns]
-    median = protein_fdr.groupby('filename')[cols].median()
+    cols = [_ for _ in fields if _ in protein_fdr.columns]
+    median = protein_fdr[['filename']+cols].groupby('filename').median()
     median.index = [os.path.split(_)[1][:-12] for _ in median.index]
 
     return median, n_unique
 
 
-def get_file_summary(ms_data: alphapept.io.MS_Data_File) -> dict:
+def get_file_summary(ms_data: alphapept.io.MS_Data_File, fields: list) -> dict:
     """Get summarize statitics from an MS_Data file.
 
     Args:
         ms_data (alphapept.io.MS_Data_File): An MS_Data file which has been fully identified and quantified.
+        fields (list): A list with colum names to calculate summary statistics.
 
     Returns:
         dict: A dictionary with summary statistics.
 
     """
     f_summary = {}
+
 
     try:
         f_summary['acquisition_date_time'] = ms_data.read(group_name = 'Raw', attr_name = 'acquisition_date_time')
@@ -1109,14 +1116,14 @@ def get_file_summary(ms_data: alphapept.io.MS_Data_File) -> dict:
 
             f_summary[f"{key} (n in table)"] = len(df)
 
-            if key in ['peptide_fdr']:
-                if 'type' in df.columns:
-                    f_summary['id_rate (peptide_fdr)'] = float(df[df['type'] == 'msms']['raw_idx'].nunique() / n_ms2)
-                else:
-                    f_summary['id_rate (peptide_fdr)'] = float(df['raw_idx'].nunique() / n_ms2)
+            if key in ['identifications']:
+
+                m = df[df["q_value"].gt(0.01)]
+
+                f_summary['id_rate (0.01)'] = round(float( m['raw_idx'].nunique() / n_ms2),2)
 
             if key in ['feature_table','peptide_fdr']:
-                for field in ['fwhm','int_sum','rt_length','rt_tail','prec_offset_raw_ppm ']:
+                for field in fields:
                     if field in df.columns:
                         f_summary[f'{field} ({key}, median)'] = float(df[field].median())
 
@@ -1137,6 +1144,8 @@ def get_summary(settings: dict, summary: dict) -> dict:
 
     summary['file_sizes'] = {}
 
+    fields = ['fwhm','ms1_int_sum','rt_length','rt_tail','prec_offset_raw_ppm', 'prec_offset_ppm','mobility']
+
     file_sizes = {}
     for _ in settings['experiment']['file_paths']:
 
@@ -1148,13 +1157,13 @@ def get_summary(settings: dict, summary: dict) -> dict:
 
         ms_data = alphapept.io.MS_Data_File(os.path.splitext(_)[0] + ".ms_data.hdf")
 
-        summary[filename] = get_file_summary(ms_data)
+        summary[filename] = get_file_summary(ms_data, fields)
 
     summary['file_sizes']['files'] = file_sizes
     if os.path.isfile(settings['experiment']['results_path']):
         summary['file_sizes']['results'] = os.path.getsize(settings['experiment']['results_path'])/1024**2
 
-        median, n_unique = extract_median_unique(settings)
+        median, n_unique = extract_median_unique(settings, fields)
 
         for col in median.columns:
             for _ in range(len(median)):
@@ -1304,6 +1313,11 @@ from .__version__ import VERSION_NO
 from .__version__ import COPYRIGHT
 from .__version__ import URL
 from .utils import check_github_version
+
+def is_port_in_use(port: int) -> bool:
+    import socket
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(('localhost', port)) == 0
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 CLICK_SETTINGS_OPTION = click.argument(
@@ -1513,67 +1527,79 @@ def cli_workflow(settings_file, progress):
     type=click.IntRange(1, 49151)
 )
 
+
 def cli_gui(port):
     _this_file = os.path.abspath(__file__)
     _this_directory = os.path.dirname(_this_file)
 
     if not port:
-        port = 8501
+        port = 8505
 
-    file_path = os.path.join(_this_directory, 'webui.py')
+    if is_port_in_use(port):
 
-    print('Starting AlphaPept Background Process')
+        print(f'AlphaPept port {port} is already in use. Please check if AlphaPept is running at http://127.0.0.1:{port}.')
+        print('It is not recommended to start multiple AlphaPept instances but instead to queue experiments.')
+        print('Attempting to open existing AlphaPept Sesssion...')
+        import webbrowser
 
-    from .gui.utils import start_process
-    from .gui.status import queue_watcher, check_process
+        webbrowser.open(f'http://127.0.0.1:{port}')
 
-    from .paths import PROCESS_FILE
+    else:
 
-    start_process(target=queue_watcher, process_file=PROCESS_FILE, verbose=False)
+        file_path = os.path.join(_this_directory, 'webui.py')
 
-    running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
+        print('Starting AlphaPept Background Process')
 
-    print('Starting AlphaPept Server')
+        from .gui.utils import start_process
+        from .gui.status import queue_watcher, check_process
 
-    #if __name__ == '__main__':
-    #    sys.argv = ["streamlit", "run", "webui.py"]
-    #    sys.exit(stcli.main())
+        from .paths import PROCESS_FILE
 
-    #args = '--theme.primaryColor #18212b --theme.backgroundColor #FFFFFF --theme.secondaryBackgroundColor #f0f2f6 --theme.textColor #262730 --theme.font "sans serif"'
+        start_process(target=queue_watcher, process_file=PROCESS_FILE, verbose=False)
 
-    #sys.argv = ["streamlit", "run", file_path, args]
+        running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
 
-    HOME = os.path.expanduser("~")
+        print('Starting AlphaPept Server')
 
-    ST_PATH = os.path.join(HOME, ".streamlit")
+        #if __name__ == '__main__':
+        #    sys.argv = ["streamlit", "run", "webui.py"]
+        #    sys.exit(stcli.main())
 
-    for folder in [ST_PATH]:
-        if not os.path.isdir(folder):
-            os.mkdir(folder)
+        #args = '--theme.primaryColor #18212b --theme.backgroundColor #FFFFFF --theme.secondaryBackgroundColor #f0f2f6 --theme.textColor #262730 --theme.font "sans serif"'
 
-    #Check if streamlit credentials exists
-    ST_CREDENTIALS = os.path.join(ST_PATH, 'credentials.toml')
-    if not os.path.isfile(ST_CREDENTIALS):
-        with open(ST_CREDENTIALS, 'w') as file:
-            file.write("[general]\n")
-            file.write('\nemail = ""')
+        #sys.argv = ["streamlit", "run", file_path, args]
+
+        HOME = os.path.expanduser("~")
+
+        ST_PATH = os.path.join(HOME, ".streamlit")
+
+        for folder in [ST_PATH]:
+            if not os.path.isdir(folder):
+                os.mkdir(folder)
+
+        #Check if streamlit credentials exists
+        ST_CREDENTIALS = os.path.join(ST_PATH, 'credentials.toml')
+        if not os.path.isfile(ST_CREDENTIALS):
+            with open(ST_CREDENTIALS, 'w') as file:
+                file.write("[general]\n")
+                file.write('\nemail = ""')
 
 
-    import sys
-    from streamlit import cli as stcli
+        import sys
+        from streamlit import cli as stcli
 
-    theme = []
+        theme = []
 
-    theme.append("--theme.backgroundColor=#FFFFFF")
-    theme.append("--theme.secondaryBackgroundColor=#f0f2f6")
-    theme.append("--theme.textColor=#262730")
-    theme.append("--theme.font=sans serif")
-    theme.append("--theme.primaryColor=#18212b")
+        theme.append("--theme.backgroundColor=#FFFFFF")
+        theme.append("--theme.secondaryBackgroundColor=#f0f2f6")
+        theme.append("--theme.textColor=#262730")
+        theme.append("--theme.font=sans serif")
+        theme.append("--theme.primaryColor=#18212b")
 
-    args = ["streamlit", "run", file_path, "--global.developmentMode=false", f"--server.port={port}", "--browser.gatherUsageStats=False"]
+        args = ["streamlit", "run", file_path, "--global.developmentMode=false", f"--server.port={port}", "--browser.gatherUsageStats=False"]
 
-    args.extend(theme)
+        args.extend(theme)
 
-    sys.argv = args
+        sys.argv = args
 
-    sys.exit(stcli.main())
+        sys.exit(stcli.main())

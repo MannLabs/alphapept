@@ -1995,7 +1995,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="map_bruker" class="doc_header"><code>map_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1745" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_bruker</code>(<strong><code>feature_path</code></strong>:<code>str</code>, <strong><code>feature_table</code></strong>:<code>DataFrame</code>, <strong><code>query_data</code></strong>:<code>dict</code>)</p>
+<h4 id="map_bruker" class="doc_header"><code>map_bruker</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1747" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_bruker</code>(<strong><code>feature_path</code></strong>:<code>str</code>, <strong><code>feature_table</code></strong>:<code>DataFrame</code>, <strong><code>query_data</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Map Ms1 to Ms2 via Table FeaturePrecursorMapping from Bruker FF.</p>
 <p>Args:
@@ -2004,6 +2004,43 @@ Returns:
     query_data (dict): Data structure containing the query data.</p>
 <p>Returns:
     pd.DataFrame: DataFrame containing features information.</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    {% endraw %}
+
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+</div>
+    {% endraw %}
+
+<div class="cell border-box-sizing text_cell rendered"><div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Isotope-Export">Isotope Export<a class="anchor-link" href="#Isotope-Export"> </a></h2>
+</div>
+</div>
+</div>
+    {% raw %}
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_markdown rendered_html output_subarea ">
+<h4 id="get_stats" class="doc_header"><code>get_stats</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1806" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_stats</code>(<strong><code>isotope_patterns</code></strong>, <strong><code>iso_idx</code></strong>, <strong><code>stats</code></strong>)</p>
+</blockquote>
 
 </div>
 
@@ -2039,7 +2076,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="find_features" class="doc_header"><code>find_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1813" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_features</code>(<strong><code>to_process</code></strong>:<code>tuple</code>, <strong><code>callback</code></strong>:<code>Optional</code>[<code>Callable</code>]=<em><code>None</code></em>, <strong><code>parallel</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
+<h4 id="find_features" class="doc_header"><code>find_features</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1838" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>find_features</code>(<strong><code>to_process</code></strong>:<code>tuple</code>, <strong><code>callback</code></strong>:<code>Optional</code>[<code>Callable</code>]=<em><code>None</code></em>, <strong><code>parallel</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Wrapper for feature finding.</p>
 <p>Args:
@@ -2086,7 +2123,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="replace_infs" class="doc_header"><code>replace_infs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1975" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>replace_infs</code>(<strong><code>array</code></strong>:<code>ndarray</code>)</p>
+<h4 id="replace_infs" class="doc_header"><code>replace_infs</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L2009" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>replace_infs</code>(<strong><code>array</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Replace nans and infs with 0</p>
 <p>Args:
@@ -2115,7 +2152,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="map_ms2" class="doc_header"><code>map_ms2</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L1990" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_ms2</code>(<strong><code>feature_table</code></strong>:<code>DataFrame</code>, <strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>map_mz_range</code></strong>:<code>float</code>=<em><code>1</code></em>, <strong><code>map_rt_range</code></strong>:<code>float</code>=<em><code>0.5</code></em>, <strong><code>map_mob_range</code></strong>:<code>float</code>=<em><code>0.3</code></em>, <strong><code>map_n_neighbors</code></strong>:<code>int</code>=<em><code>5</code></em>, <strong><code>search_unidentified</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
+<h4 id="map_ms2" class="doc_header"><code>map_ms2</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/feature_finding.py#L2024" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>map_ms2</code>(<strong><code>feature_table</code></strong>:<code>DataFrame</code>, <strong><code>query_data</code></strong>:<code>dict</code>, <strong><code>map_mz_range</code></strong>:<code>float</code>=<em><code>1</code></em>, <strong><code>map_rt_range</code></strong>:<code>float</code>=<em><code>0.5</code></em>, <strong><code>map_mob_range</code></strong>:<code>float</code>=<em><code>0.3</code></em>, <strong><code>map_n_neighbors</code></strong>:<code>int</code>=<em><code>5</code></em>, <strong><code>search_unidentified</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong>**<code>kwargs</code></strong>)</p>
 </blockquote>
 <p>Map MS1 features to MS2 based on rt and mz.
 If ccs is included also add.

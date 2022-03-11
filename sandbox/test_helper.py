@@ -59,7 +59,7 @@ def prepare_files(path1, path2):
     df2['protein'] = df2['Leading razor protein']
     df2['decoy'] = df2['Reverse'] == '+'
     df2['score'] = df2['Score']
-    df2['int_sum'] = df2['Intensity']
+    df2['ms1_int_sum'] = df2['Intensity']
     df2['missed_cleavages'] = df2['sequence'].str[:-1].str.count('K') + df2['sequence'].str[:-1].str.count('R')
 
     return df1, df2
@@ -164,14 +164,14 @@ def compare_intensities(df1, df2,software_1, software_2):
     for idx, _ in enumerate(['protein','precursor']):
 
         ax = axes[idx]
-        d1 = np.log(ref_df1[[_,'total_int']].groupby(_).sum())
-        d2 = np.log(ref_df2[[_,'int_sum']].groupby(_).sum())
+        d1 = np.log(ref_df1[[_,'fragments_int_sum']].groupby(_).sum())
+        d2 = np.log(ref_df2[[_,'ms1_int_sum']].groupby(_).sum())
 
-        d2 = d2[~np.isinf(d2['int_sum'].values)]
+        d2 = d2[~np.isinf(d2['ms1_int_sum'].values)]
 
         shared = set(d1.index.values).intersection(set(d2.index.values))
 
-        ax = density_scatter(d1.loc[shared]['total_int'].values, d2.loc[shared]['int_sum'].values, ax = ax, bins=30)
+        ax = density_scatter(d1.loc[shared]['fragments_int_sum'].values, d2.loc[shared]['ms1_int_sum'].values, ax = ax, bins=30)
 
         ax.set_xlabel(software_1)
         ax.set_ylabel(software_2)
@@ -204,18 +204,18 @@ def compare_intensities(df1, df2,software_1, software_2):
 
 
 def protein_rank(df1, df2, software_1, software_2):
-    data_1 = df1[['protein','total_int']].groupby('protein').sum()
-    data_1 = data_1.sort_values(by='total_int', ascending=False) #.head(20)
+    data_1 = df1[['protein','fragments_int_sum']].groupby('protein').sum()
+    data_1 = data_1.sort_values(by='fragments_int_sum', ascending=False) #.head(20)
     data_1 = data_1[data_1>0]
 
     data_2 = df2[['Leading proteins','Intensity']].groupby('Leading proteins').sum()
     data_2 = data_2.sort_values(by='Intensity', ascending=False) #.head(20)
     data_2 = data_2[data_2>0]
 
-    data_1 = df1[['protein','total_int']].groupby('protein').sum()
-    data_1 = data_1.sort_values(by='total_int', ascending=False) #.head(20)
+    data_1 = df1[['protein','fragments_int_sum']].groupby('protein').sum()
+    data_1 = data_1.sort_values(by='fragments_int_sum', ascending=False) #.head(20)
     data_1 = data_1.reset_index()
-    data_1 = data_1[data_1['total_int']>0]
+    data_1 = data_1[data_1['fragments_int_sum']>0]
 
     data_2 = df2[['Leading proteins','Intensity']].groupby('Leading proteins').sum()
     data_2 = data_2.sort_values(by='Intensity', ascending=False) #.head(20)
@@ -226,9 +226,9 @@ def protein_rank(df1, df2, software_1, software_2):
 
     ax1 = axes
 
-    ax1.plot(data_1['total_int'].values, label=software_1, color='r')
-    ax1.axhline(data_1['total_int'].min(), color='r', linestyle=':')
-    ax1.axhline(data_1['total_int'].max(), color='r', linestyle=':')
+    ax1.plot(data_1['fragments_int_sum'].values, label=software_1, color='r')
+    ax1.axhline(data_1['fragments_int_sum'].min(), color='r', linestyle=':')
+    ax1.axhline(data_1['fragments_int_sum'].max(), color='r', linestyle=':')
 
     ax1.plot(data_2['Intensity'].values, label=software_2, color='b')
     ax1.axhline(data_2['Intensity'].min(), color='b', linestyle=':')
