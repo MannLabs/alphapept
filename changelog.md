@@ -5,10 +5,11 @@ Last change: 15-Feb-2022, MTS
 
 ## 0.4.0
 This version contains a lot of variable renaming to be more consistent with other Alpha*-packages.
-This will probably lead to incompatibility with previous history modes. 
+This will probably lead to incompatibility with previous history modes.
 * Optimized recalibration to be more memory efficient
 * Fixed a bug where peptide_fdr was not accurately saved. This should affect reported protein / peptide ids.
 * Included additional export of `identifications`, e.g. the best sequence for each recorded MS2-spectrum
+* Usability improvements when starting AlphaPept multiple times
 
 ## 0.3.33
 * Versionbump for requirements

@@ -42,6 +42,7 @@ def queue_watcher():
 
             file_path = os.path.join(QUEUE_PATH, file_to_process)
             settings = load_settings_as_template(file_path)
+            os.remove(file_path)
 
             current_file = {}
             current_file["started"] = datetime.datetime.now()
@@ -67,7 +68,7 @@ def queue_watcher():
                 settings_["error"] = f"{e}"
                 save_settings(settings_, os.path.join(FAILED_PATH, file_to_process))
 
-            os.remove(file_path)
+
             if os.path.isfile(current_file_path):
                 os.remove(current_file_path)
         else:

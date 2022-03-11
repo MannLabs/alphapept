@@ -3,10 +3,10 @@
 __all__ = ['tqdm_wrapper', 'check_version_and_hardware', 'wrapped_partial', 'create_database', 'import_raw_data',
            'feature_finding', 'search_data', 'recalibrate_data', 'score', 'isobaric_labeling', 'protein_grouping',
            'align', 'match', 'read_label_intensity', 'quantification', 'export', 'run_complete_workflow',
-           'extract_median_unique', 'get_file_summary', 'get_summary', 'parallel_execute', 'bcolors', 'run_cli',
-           'cli_overview', 'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search', 'cli_recalibrate',
-           'cli_score', 'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow', 'cli_gui',
-           'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
+           'extract_median_unique', 'get_file_summary', 'get_summary', 'parallel_execute', 'bcolors', 'is_port_in_use',
+           'run_cli', 'cli_overview', 'cli_database', 'cli_import', 'cli_feature_finding', 'cli_search',
+           'cli_recalibrate', 'cli_score', 'cli_align', 'cli_match', 'cli_quantify', 'cli_export', 'cli_workflow',
+           'cli_gui', 'CONTEXT_SETTINGS', 'CLICK_SETTINGS_OPTION']
 
 # Cell
 
@@ -1314,6 +1314,11 @@ from .__version__ import COPYRIGHT
 from .__version__ import URL
 from .utils import check_github_version
 
+def is_port_in_use(port: int) -> bool:
+    import socket
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        return s.connect_ex(('localhost', port)) == 0
+
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 CLICK_SETTINGS_OPTION = click.argument(
     "settings_file",
@@ -1522,67 +1527,79 @@ def cli_workflow(settings_file, progress):
     type=click.IntRange(1, 49151)
 )
 
+
 def cli_gui(port):
     _this_file = os.path.abspath(__file__)
     _this_directory = os.path.dirname(_this_file)
 
     if not port:
-        port = 8501
+        port = 8505
 
-    file_path = os.path.join(_this_directory, 'webui.py')
+    if is_port_in_use(port):
 
-    print('Starting AlphaPept Background Process')
+        print(f'AlphaPept port {port} is already in use. Please check if AlphaPept is running at http://127.0.0.1:{port}.')
+        print('It is not recommended to start multiple AlphaPept instances but instead to queue experiments.')
+        print('Attempting to open existing AlphaPept Sesssion...')
+        import webbrowser
 
-    from .gui.utils import start_process
-    from .gui.status import queue_watcher, check_process
+        webbrowser.open(f'http://127.0.0.1:{port}')
 
-    from .paths import PROCESS_FILE
+    else:
 
-    start_process(target=queue_watcher, process_file=PROCESS_FILE, verbose=False)
+        file_path = os.path.join(_this_directory, 'webui.py')
 
-    running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
+        print('Starting AlphaPept Background Process')
 
-    print('Starting AlphaPept Server')
+        from .gui.utils import start_process
+        from .gui.status import queue_watcher, check_process
 
-    #if __name__ == '__main__':
-    #    sys.argv = ["streamlit", "run", "webui.py"]
-    #    sys.exit(stcli.main())
+        from .paths import PROCESS_FILE
 
-    #args = '--theme.primaryColor #18212b --theme.backgroundColor #FFFFFF --theme.secondaryBackgroundColor #f0f2f6 --theme.textColor #262730 --theme.font "sans serif"'
+        start_process(target=queue_watcher, process_file=PROCESS_FILE, verbose=False)
 
-    #sys.argv = ["streamlit", "run", file_path, args]
+        running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
 
-    HOME = os.path.expanduser("~")
+        print('Starting AlphaPept Server')
 
-    ST_PATH = os.path.join(HOME, ".streamlit")
+        #if __name__ == '__main__':
+        #    sys.argv = ["streamlit", "run", "webui.py"]
+        #    sys.exit(stcli.main())
 
-    for folder in [ST_PATH]:
-        if not os.path.isdir(folder):
-            os.mkdir(folder)
+        #args = '--theme.primaryColor #18212b --theme.backgroundColor #FFFFFF --theme.secondaryBackgroundColor #f0f2f6 --theme.textColor #262730 --theme.font "sans serif"'
 
-    #Check if streamlit credentials exists
-    ST_CREDENTIALS = os.path.join(ST_PATH, 'credentials.toml')
-    if not os.path.isfile(ST_CREDENTIALS):
-        with open(ST_CREDENTIALS, 'w') as file:
-            file.write("[general]\n")
-            file.write('\nemail = ""')
+        #sys.argv = ["streamlit", "run", file_path, args]
+
+        HOME = os.path.expanduser("~")
+
+        ST_PATH = os.path.join(HOME, ".streamlit")
+
+        for folder in [ST_PATH]:
+            if not os.path.isdir(folder):
+                os.mkdir(folder)
+
+        #Check if streamlit credentials exists
+        ST_CREDENTIALS = os.path.join(ST_PATH, 'credentials.toml')
+        if not os.path.isfile(ST_CREDENTIALS):
+            with open(ST_CREDENTIALS, 'w') as file:
+                file.write("[general]\n")
+                file.write('\nemail = ""')
 
 
-    import sys
-    from streamlit import cli as stcli
+        import sys
+        from streamlit import cli as stcli
 
-    theme = []
+        theme = []
 
-    theme.append("--theme.backgroundColor=#FFFFFF")
-    theme.append("--theme.secondaryBackgroundColor=#f0f2f6")
-    theme.append("--theme.textColor=#262730")
-    theme.append("--theme.font=sans serif")
-    theme.append("--theme.primaryColor=#18212b")
+        theme.append("--theme.backgroundColor=#FFFFFF")
+        theme.append("--theme.secondaryBackgroundColor=#f0f2f6")
+        theme.append("--theme.textColor=#262730")
+        theme.append("--theme.font=sans serif")
+        theme.append("--theme.primaryColor=#18212b")
 
-    args = ["streamlit", "run", file_path, "--global.developmentMode=false", f"--server.port={port}", "--browser.gatherUsageStats=False"]
+        args = ["streamlit", "run", file_path, "--global.developmentMode=false", f"--server.port={port}", "--browser.gatherUsageStats=False"]
 
-    args.extend(theme)
+        args.extend(theme)
 
-    sys.argv = args
+        sys.argv = args
 
-    sys.exit(stcli.main())
+        sys.exit(stcli.main())
