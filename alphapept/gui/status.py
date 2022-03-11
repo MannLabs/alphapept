@@ -42,7 +42,6 @@ def queue_watcher():
 
             file_path = os.path.join(QUEUE_PATH, file_to_process)
             settings = load_settings_as_template(file_path)
-            os.remove(file_path)
 
             current_file = {}
             current_file["started"] = datetime.datetime.now()
@@ -71,6 +70,8 @@ def queue_watcher():
 
             if os.path.isfile(current_file_path):
                 os.remove(current_file_path)
+            os.remove(file_path)
+
         else:
             time.sleep(15)
 
