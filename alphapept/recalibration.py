@@ -294,17 +294,32 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
     if not skip:
         calib_n_neighbors = 400
         psms = ms_file_.read(dataset_name='first_search')
+        psms['psms_index'] = np.arange(len(psms))
+
+        df = score_x_tandem(
+            psms,
+            fdr_level=settings["search"]["peptide_fdr"],
+            plot=False,
+            verbose=False,
+            **settings["search"]
+        )
 
         #Calculate offset
+        psms['keep'] = False
+        psms.loc[df['psms_index'].tolist(),'keep'] = True
+
+        fragment_ions['hits'] = psms['hits'][fragment_ions['psms_idx'].values.astype('int')].values
+        fragment_ions['keep'] = psms['keep'][fragment_ions['psms_idx'].values.astype('int')].values
+
+        min_score = fragment_ions['hits'].min()
+        logging.info(f'Minimum hits for fragments before score {min_score:.2f}.')
+
+        fragment_ions = fragment_ions[fragment_ions['keep']]
+        min_score = fragment_ions['hits'].min()
+        logging.info(f'Minimum hits for fragments after score {min_score:.2f}.')
+
         fragment_ions['rt'] = psms['rt'][fragment_ions['psms_idx'].values.astype('int')].values
         fragment_ions['delta_ppm'] = ((fragment_ions['db_mass'] - fragment_ions['fragment_ion_mass'])/((fragment_ions['db_mass'] + fragment_ions['fragment_ion_mass'])/2)*1e6).values
-        fragment_ions['hits'] = psms['hits'][fragment_ions['psms_idx'].values.astype('int')].values
-
-        #Min score to only use "true hits"
-
-        min_score = 12
-        fragment_ions = fragment_ions[fragment_ions['hits']> min_score]
-
 
         if len(fragment_ions) >= calib_n_neighbors:
 
@@ -394,6 +409,8 @@ def calibrate_hdf(
             psms =  ms_file_.read(dataset_name='first_search')
         except KeyError: #no elements in search
             psms = pd.DataFrame()
+
+        df = None
 
         if len(psms) > 0 :
             df = score_x_tandem(

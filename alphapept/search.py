@@ -1183,6 +1183,8 @@ def ion_extractor(df: pd.DataFrame, ms_file, frag_tol:float, ppm:bool)->(np.ndar
 
         fragment_ions = get_hits(query_frag, query_int, db_frag, db_int, frag_type, frag_tol, ppm, LOSSES)
 
+        fragment_ions[:,-1] = i
+
         n_fragments_matched = len(fragment_ions)
 
         psms['n_fragments_matched'][i] = n_fragments_matched
@@ -1289,10 +1291,12 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
 
             ppm = custom_settings[idx]['search']['ppm']
 
-            if calibration:
+            if not calibration:
                 save_field = 'first_search'
             else:
                 save_field = 'second_search'
+
+            logging.info(f'Saving as {save_field}')
 
             psms, fragment_ions = ion_extractor(x, ms_file, frag_tol, ppm)
 
