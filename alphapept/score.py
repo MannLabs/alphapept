@@ -118,7 +118,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 #Note that the test function for cut_fdr is further down in the notebook to also test protein-level FDR.
-def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True) -> (float, pd.DataFrame):
+def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True, cut:bool=True) -> (float, pd.DataFrame):
     """
     Cuts a dataframe with a given fdr level
 
@@ -126,6 +126,7 @@ def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True) -> (float, p
         df (pd.DataFrame): psms table of search results from alphapept.
         fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
         plot (bool, optional): flag to enable plot. Defaults to 'True'.
+        cut (bool, optional): flag to cut above fdr threshold. Defaults to 'True'.
 
     Returns:
         float: numerical value of the applied score cutoff
@@ -159,7 +160,11 @@ def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True) -> (float, p
         cutoff_index = df[df["q_value"].gt(fdr_level)].index[0] - 1
 
     cutoff_value = df.loc[cutoff_index]["score"]
-    cutoff = df[df["score"] >= cutoff_value]
+
+    if cut:
+        cutoff = df[df["score"] >= cutoff_value]
+    else:
+        cutoff= df
 
     targets = df.loc[cutoff_index, "target_cum"]
     decoy = df.loc[cutoff_index, "decoys_cum"]
@@ -223,6 +228,8 @@ def cut_global_fdr(data: pd.DataFrame, analyte_level: str='sequence', fdr_level:
         raise Exception('analyte_level should be either sequence or protein. The selected analyte_level was: {}'.format(analyte_level))
 
     agg_cval, agg_cutoff = cut_fdr(agg_score, fdr_level=fdr_level, plot=plot)
+
+    logging.info(f'Global FDR cutoff at {agg_cval}.')
 
     agg_report = data.reset_index().merge(
                         agg_cutoff,
@@ -906,18 +913,6 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
                 except KeyError:
                     df = pd.DataFrame()
 
-            ids = df.copy()
-
-            ids['score'] = get_x_tandem_score(ids)
-            ids = filter_score(ids)
-            logging.info('Saving identifications to ms_data file.')
-            ms_file_.write(ids, dataset_name="identifications")
-            logging.info('Saving identifications to ms_data file complete.')
-
-            ids.to_csv(ms_filename[:-12]+'_ids.csv')
-
-            logging.info('Saving identifications to csv file complete.')
-
             df["localexp"] = idx_start
 
             df.index = df.index+idx_start
@@ -937,22 +932,22 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
 
             if settings["score"]["method"] == 'random_forest':
                 try:
-                    cv, features = train_RF(df)
-                    df = filter_with_ML(df_, cv, features = features)
+                    classifier, features = train_RF(df_)
+                    df_['score'] = classifier.predict_proba(df_[features])[:,1]
                 except ValueError as e:
                     logging.info('ML failed. Defaulting to x_tandem score')
                     logging.info(f"{e}")
 
                     logging.info('Converting x_tandem score to probabilities')
 
-                    x_, y_ = ecdf(df_['score'].values)
+                    x_, y_ = ecdf(df_['x_tandem'].values)
                     f = interp1d(x_, y_, bounds_error = False, fill_value=(y_.min(), y_.max()))
 
-                    df_['score'] = df_['score'].apply(lambda x: f(x))
-                    df = filter_with_score(df_)
+                    df_['score'] = df_['x_tandem'].apply(lambda x: f(x))
+
 
             elif settings["score"]["method"] == 'x_tandem':
-                df = filter_with_x_tandem(df)
+                df_['score'] = df_['x_tandem']
             else:
                 try:
                     import importlib
@@ -961,9 +956,27 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
                 except Exception as e:
                     raise NotImplementedError('Scoring method {} not implemented. Other exception info: {}'.format(settings["score"]["method"], e))
 
+
+            #Save identifications
+            ids = df_.copy()
+            ids = filter_score(ids)
+
+            agg_cval, ids = cut_fdr(ids, plot=False, cut=False)
+
+            logging.info('Saving identifications to ms_data file.')
+            ms_file_.write(ids, dataset_name="identifications")
+            logging.info('Saving identifications to ms_data file complete.')
+            ids.to_csv(ms_filename[:-12]+'_ids.csv')
+            logging.info('Saving identifications to csv file complete.')
+
+
+            df = filter_with_score(df_)
+
             df_pfdr = cut_global_fdr(df, analyte_level='precursor',  plot=False, fdr_level = settings["search"]["peptide_fdr"], **settings['search'])
 
-            logging.info('FDR on peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df['target'].sum(), df['decoy'].sum()) )
+            logging.info('FDR on peptides complete. For {} FDR found {:,} targets and {:,} decoys.'.format(settings["search"]["peptide_fdr"], df_pfdr['target'].sum(), df_pfdr['decoy'].sum()) )
+
+            df = df_pfdr
 
             for ms_file_, idxs in ms_file2idx.items():
                 df_file = df.loc[df.index.intersection(idxs)]
@@ -991,7 +1004,7 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
             export_df = df_file.reset_index().drop(columns=['localexp'])
             if 'level_0' in export_df.columns:
                 export_df = export_df.drop(columns = ['level_0'])
-
+            #Note: Peptide FDR can be misleading here as we don't filter here, so this has not the set peptide fdr.
             ms_file_.write(export_df, dataset_name="peptide_fdr")
 
             logging.info(f'Scoring of files {list(ms_file2idx.keys())} complete.')

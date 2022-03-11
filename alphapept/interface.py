@@ -719,6 +719,7 @@ def quantification(
         results_path = settings['experiment']['results_path']
         base, ext = os.path.splitext(results_path)
 
+        logging.info('Reading protein_fdr for quantification.')
         df = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
 
         if 'isobaric_label' in settings:
@@ -757,7 +758,7 @@ def quantification(
                             ['filename', 'precursor', 'protein_group']
                         )[field].sum().reset_index()
 
-
+                    logging.info('Saving protein_groups after delayed normalization to combined_protein_fdr_dn')
                     df.to_hdf(
                         settings['experiment']['results_path'],
                         'combined_protein_fdr_dn'
@@ -1115,11 +1116,11 @@ def get_file_summary(ms_data: alphapept.io.MS_Data_File, fields: list) -> dict:
 
             f_summary[f"{key} (n in table)"] = len(df)
 
-            if key in ['peptide_fdr']:
-                if 'type' in df.columns:
-                    f_summary['id_rate (peptide_fdr)'] = float(df[df['type'] == 'msms']['raw_idx'].nunique() / n_ms2)
-                else:
-                    f_summary['id_rate (peptide_fdr)'] = float(df['raw_idx'].nunique() / n_ms2)
+            if key in ['identifications']:
+
+                m = df[df["q_value"].gt(0.01)]
+
+                f_summary['id_rate (0.01)'] = round(float( m['raw_idx'].nunique() / n_ms2),2)
 
             if key in ['feature_table','peptide_fdr']:
                 for field in fields:
