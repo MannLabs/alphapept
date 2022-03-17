@@ -1395,12 +1395,14 @@ def cli_database(settings_file):
 
 @click.command(
     "import",
-    help="Import and convert raw data from vendor to `.ms_data.hdf` file.",
-    short_help="Import and convert raw data from vendor to `.ms_data.hdf` file."
+    help="Import and convert raw data from vendor to `.ms_data.hdf` file with default settings.",
+    short_help="Import and convert raw data from vendor to `.ms_data.hdf` file with default settings."
 )
 @CLICK_SETTINGS_OPTION
 def cli_import(settings_file):
-    settings = alphapept.settings.load_settings(settings_file)
+    from .paths import DEFAULT_SETTINGS_PATH
+    settings = alphapept.settings.load_settings_as_template(DEFAULT_SETTINGS_PATH)
+    settings['experiment']['file_paths'] = [settings_file]
     import_raw_data(settings)
 
 
