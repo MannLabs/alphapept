@@ -449,42 +449,48 @@ def protein_profile(files: list, minimum_ratios: int, chunk:tuple) -> (np.ndarra
     """
     grouped, protein = chunk
 
-    column_combinations = List()
-    [column_combinations.append(_) for _ in combinations(range(len(files)), 2)]
+    files_ = grouped.index.get_level_values('filename').unique().tolist()
 
     selection = grouped.unstack().T.copy()
     selection = selection.replace(0, np.nan)
 
-    if not selection.shape[1] == len(files):
-        selection[[_ for _ in files if _ not in selection.columns]] = np.nan
+    if len(files_) > 1:
+        column_combinations = List()
+        [column_combinations.append(_) for _ in combinations(range(len(files_)), 2)]
 
-    selection = selection[files]
+        ratios = get_protein_ratios(selection.values, column_combinations, minimum_ratios)
 
-    ratios = get_protein_ratios(selection.values, column_combinations, minimum_ratios)
+        retry = False
+        try:
+            solution, success = solve_profile(ratios, 'L-BFGS-B')
+        except ValueError:
+            retry = True
 
-    retry = False
-    try:
-        solution, success = solve_profile(ratios, 'L-BFGS-B')
-    except ValueError:
-        retry = True
+        if retry or not success:
+            logging.info('Normalization with L-BFGS-B failed. Trying Powell')
+            solution, success = solve_profile(ratios, 'Powell')
 
-    if retry or not success:
-        logging.info('Normalization with L-BFGS-B failed. Trying Powell')
-        solution, success = solve_profile(ratios, 'Powell')
+        pre_lfq = selection.sum().values
 
-    pre_lfq = selection.sum().values
+        if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
+            profile = np.zeros_like(files_)
+            if np.sum(np.isnan(ratios)) != ratios.size:
+                logging.info(f'Solver failed for protein {protein} despite available ratios:\n {ratios}')
 
-    if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
-        profile = np.zeros_like(pre_lfq)
-        if np.sum(np.isnan(ratios)) != ratios.size:
-            logging.info(f'Solver failed for protein {protein} despite available ratios:\n {ratios}')
-
+        else:
+            invalid = ((np.nansum(ratios, axis=1) == 0) & (np.nansum(ratios, axis=0) == 0))
+            peptide_int_sum = pre_lfq.sum() * solution
+            peptide_int_sum[invalid] = 0
+            profile = peptide_int_sum * pre_lfq.sum() / np.sum(peptide_int_sum) #Normalize inensity again
     else:
-        invalid = ((np.nansum(ratios, axis=1) == 0) & (np.nansum(ratios, axis=0) == 0))
-        peptide_int_sum = pre_lfq.sum() * solution
-        peptide_int_sum[invalid] = 0
-        profile = peptide_int_sum * pre_lfq.sum() / np.sum(peptide_int_sum) #Normalize inensity again
+        pre_lfq = profile = selection.values[0]
 
+
+    #Rewrite ratios
+    profile_dict = dict(zip(files_, profile))
+    pre_dict = dict(zip(files_, pre_lfq))
+    profile = np.array([0 if file not in profile_dict else profile_dict[file] for file in files])
+    pre_lfq = np.array([0 if file not in pre_dict else pre_dict[file] for file in files])
 
     return profile, pre_lfq, protein
 
@@ -518,9 +524,6 @@ def protein_profile_parallel(df: pd.DataFrame, minimum_ratios: int, field: str, 
 
     #Take the best precursor for protein quantification. .max()
     grouped = df[[field, 'filename','precursor','protein_group']].groupby(['protein_group','filename','precursor']).max()
-
-    column_combinations = List()
-    [column_combinations.append(_) for _ in combinations(range(len(files)), 2)]
 
     files = df['filename'].unique().tolist()
     files.sort()
