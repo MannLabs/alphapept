@@ -473,7 +473,7 @@ def protein_profile(files: list, minimum_ratios: int, chunk:tuple) -> (np.ndarra
         pre_lfq = selection.sum().values
 
         if not success or np.sum(~np.isnan(ratios)) == 0: # or np.sum(solution) == len(pre_lfq):
-            profile = np.zeros_like(files_)
+            profile = np.zeros(len(files_))
             if np.sum(np.isnan(ratios)) != ratios.size:
                 logging.info(f'Solver failed for protein {protein} despite available ratios:\n {ratios}')
 
