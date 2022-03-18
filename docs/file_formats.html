@@ -54,7 +54,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <div class="text_cell_render border-box-sizing rendered_html">
 <h2 id="Output-Files">Output Files<a class="anchor-link" href="#Output-Files"> </a></h2><p>For each run, AlphaPept creates several output files:</p>
 <ul>
-<li>For each raw file, there will a <code>.ms_data.hdf</code>-file with raw-specific data, such as <code>feature_table</code>, <code>first_search</code>, <code>second_search</code> and <code>peptide_fdr</code>.</li>
+<li>For each raw file, there will a <code>.ms_data.hdf</code>-file with raw-specific data, such as <code>feature_table</code>, <code>first_search</code>, <code>second_search</code>, <code>peptide_fdr</code> and <code>identifications</code>. Note that the table <code>peptide_fdr</code> does not apply the set fdr cutoff.</li>
 <li>For the entire experiment, there will be a <code>results.hdf</code> (name can be defined in the settings), which contains experiment-specific data, such as <code>protein_fdr</code> and the <code>protein_table</code> (containing quantified proteins over all files).</li>
 <li>Additionally to the <code>results.hdf</code>, there will be a <code>*.yaml</code>-file which contains the run settings and summary information of the run. This <code>*.yaml</code> can be used to serve as a template to rerun other files with the same settings.</li>
 <li>If a database is created from <code>FASTA</code>-files there will be a <code>database.hdf</code> (name can be defined in the settings). This contains theoretical spectra and can be reused for other experiments (and speedup total analysis time)</li>
@@ -62,8 +62,10 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <p>The <code>ms_data.hdf</code>, <code>results.hdf</code> and database containers can be accessed via the <code>alphapept.io</code> library. The GUI also allows to explore these files. Additionally, the <code>results.hdf</code> can be directly loaded via the pandas-package (e.g. <code>pd.read_hdf('results.hdf', 'protein_table')</code>.</p>
 <p>For easier access, AlphaPept directly exports the most relevant tables as <code>*.csv</code>:</p>
 <ul>
+<li>for each raw file: a <code>_ids.csv</code>-file with the best peptide-spectrum match per sepctrum.</li>
+<li>for each raw file: if calibration was successfull, a <code>_calibration.png</code> to show the fragment calibration.</li>
 <li><code>results_peptides.csv</code>: The identified peptides after protein FDR.</li>
-<li><code>results_proteins.csv</code>: A table containing quantified proteins per file. Each column that additionally ends with <code>_LFQ</code> has the lfq intensity.</li>
+<li><code>results_proteins.csv</code>: A table containing quantified proteins per file. Each column that additionally ends with <code>_LFQ</code> has the lfq intensity. This is after <code>delayed normalization</code> and <code>extraction of optimal protein ratios</code> (see the MaxLFQ paper). The column w/o <code>_LFQ</code>. Has the protein intensity after <code>delayed normalization</code>. Note: When LFQ is disabled, there is only one column per File and this is w/o delayed normalization. This leads to different intensities when comparing results w/ and w/o LFQ enabled and checking the non-<code>LFQ</code>-table.</li>
 <li><code>results_protein_summary.csv</code>: A table containing quantified proteins per file. This contains additional summary, e.g. the number of sequences that were found to identify the protein.</li>
 </ul>
 
@@ -130,7 +132,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 </tr>
 <tr>
 <td>fdr</td>
-<td>calculated false discovery rate value for this peptide in the table. As the PSM score decreases more decoys will be found the FDR score increases until you reach your FDR threshold cutoff, below which we donï¿½t count any more hits.</td>
+<td>calculated false discovery rate value for this peptide in the table. As the PSM score decreases more decoys will be found the FDR score increases until you reach your FDR threshold cutoff, below which we don’t count any more hits.</td>
 </tr>
 <tr>
 <td>feature_idx</td>
@@ -149,7 +151,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <td>total number of b- and y-ion hits. A hit occurs when a theoretical fragment can be found within the <code>frag_tol</code> of an experimentally recorded fragment</td>
 </tr>
 <tr>
-<td>int_apex</td>
+<td>ms1_int_apex</td>
 <td>intensity at feature apex</td>
 </tr>
 <tr>
@@ -157,7 +159,7 @@ The server is centered around three folders, <code>Queue</code>, <code>Failed</c
 <td>mean intensity ratio: experimental fragment intensity divided by theoretical intensity (if no db intensity is available db intensity is set to 1) for each matched ion</td>
 </tr>
 <tr>
-<td>int_sum</td>
+<td>ms1_int_sum</td>
 <td>summed intensity of the MS1-feature</td>
 </tr>
 <tr>

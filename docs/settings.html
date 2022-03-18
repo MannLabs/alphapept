@@ -261,7 +261,7 @@ field1: 0
 
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>align:
-  default: true
+  default: false
   description: Flag to align the data.
   type: checkbox
 continue_runs:
@@ -1097,13 +1097,19 @@ outlier_std:
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>match_d_min:
   default: 3
-  description: Minimum distance cutoff for matching
+  description: Minimum distance cutoff for matching.
   max: 10.0
   min: 0.001
   type: doublespinbox
+match_group_tol:
+  default: 0
+  description: When having matching groups, match neighboring groups.
+  max: 100
+  min: 0
+  type: spinbox
 match_p_min:
   default: 0.05
-  description: Minimum probability cutoff for matching
+  description: Minimum probability cutoff for matching.
   max: 1.0
   min: 0.001
   type: doublespinbox
@@ -1184,11 +1190,11 @@ max_lfq:
   description: Perform max lfq type quantification.
   type: checkbox
 mode:
-  default: int_sum
+  default: ms1_int_sum
   description: Column to perform quantification on.
   type: combobox
   value:
-  - int_sum
+  - ms1_int_sum
 
 </pre>
 </div>
