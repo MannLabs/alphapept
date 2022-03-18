@@ -296,14 +296,18 @@ def assemble_df(settings, field = 'protein_fdr', callback=None):
 
 def check_file(file):
     if not os.path.isfile(file):
-        raise FileNotFoundError(f"{file}")
+        base, ext = os.path.splitext(file)
+        if not os.path.isfile(base+'.ms_data.hdf'):
+            raise FileNotFoundError(f"{file}")
 
 def get_size_mb(file):
     return os.path.getsize(file)/(1024**2)
 
 def check_dir(dir):
     if not os.path.isdir(dir):
-        raise FileNotFoundError(f"{dir}")
+        base, ext = os.path.splitext(dir)
+        if not os.path.isfile(base+'.ms_data.hdf'):
+            raise FileNotFoundError(f"{dir}")
 
 def delete_file(filename):
     if os.path.isfile(filename):
