@@ -1,6 +1,14 @@
 # Changelog
 
-Last change: 11-Mar-2022, MTS
+Last change: 21-Mar-2022, MTS
+
+## 0.4.2
+* Better logging for LFQ
+* Correct setting of cores when searching w/o saving database
+* Fixed Docs 
+
+## 0.4.1
+* Fixed a bug in LFQ
 
 ## 0.4.0
 This version contains a lot of variable renaming to be more consistent with other Alpha*-packages.
