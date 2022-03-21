@@ -524,13 +524,12 @@ def score_ML(df: pd.DataFrame,
     Args:
         df (pd.DataFrame): psms table of search results from alphapept.
         trained_classifier (GridSearchCV): GridSearchCV object returned by train_RF.
-        features (list): list with features returned by train_RF. Defaults to 'None'.
+        features (list): list with features returned by train_RF. Defaults to None.
         fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.
-        plot (bool, optional): flag to enable plot. Defaults to 'True'.
+        plot (bool, optional): flag to enable plot. Defaults to True.
 
     Returns:
         pd.DataFrame: filtered df with psms within fdr
-
     """
     logging.info('Scoring using Machine Learning')
     # Apply the classifier to the entire dataset
