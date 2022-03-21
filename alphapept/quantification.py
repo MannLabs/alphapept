@@ -455,6 +455,7 @@ def protein_profile(files: list, minimum_ratios: int, chunk:tuple) -> (np.ndarra
     selection = selection.replace(0, np.nan)
 
     if len(files_) > 1:
+        success = False
         column_combinations = List()
         [column_combinations.append(_) for _ in combinations(range(len(files_)), 2)]
 
@@ -483,6 +484,7 @@ def protein_profile(files: list, minimum_ratios: int, chunk:tuple) -> (np.ndarra
             peptide_int_sum[invalid] = 0
             profile = peptide_int_sum * pre_lfq.sum() / np.sum(peptide_int_sum) #Normalize inensity again
     else:
+        success = True
         pre_lfq = profile = selection.values[0]
 
 
@@ -492,7 +494,7 @@ def protein_profile(files: list, minimum_ratios: int, chunk:tuple) -> (np.ndarra
     profile = np.array([0 if file not in profile_dict else profile_dict[file] for file in files])
     pre_lfq = np.array([0 if file not in pre_dict else pre_dict[file] for file in files])
 
-    return profile, pre_lfq, protein
+    return profile, pre_lfq, protein, success
 
 
 # Cell
@@ -550,11 +552,14 @@ def protein_profile_parallel(df: pd.DataFrame, minimum_ratios: int, field: str, 
             max_ = len(split_df)
             for i, _ in enumerate(p.imap_unordered(partial(protein_profile, files, minimum_ratios), split_df)):
                 results.append(_)
+
+                if not _[-1]:
+                    logging.info(f'LFQ profile extraction for protein {_[-2]} did not converge. Setting to zero.')
                 if callback:
                     callback((i+1)/max_*4/5+1/5)
 
         for result in results:
-            profile, pre_lfq, protein = result
+            profile, pre_lfq, protein, success = result
             protein_table.loc[protein, [_+'_LFQ' for _ in files]] = profile
             protein_table.loc[protein, files] = pre_lfq
 
