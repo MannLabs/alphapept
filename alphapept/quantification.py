@@ -485,8 +485,7 @@ def protein_profile(files: list, minimum_ratios: int, chunk:tuple) -> (np.ndarra
             profile = peptide_int_sum * pre_lfq.sum() / np.sum(peptide_int_sum) #Normalize inensity again
     else:
         success = True
-        pre_lfq = profile = selection.values[0]
-
+        pre_lfq = profile = selection.sum(axis=0).values
 
     #Rewrite ratios
     profile_dict = dict(zip(files_, profile))
