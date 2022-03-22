@@ -1,11 +1,14 @@
 # Changelog
 
-Last change: 21-Mar-2022, MTS
+Last change: 23-Mar-2022, MTS
+
+## 0.4.3
+* LFQ Fix
 
 ## 0.4.2
 * Better logging for LFQ
 * Correct setting of cores when searching w/o saving database
-* Fixed Docs 
+* Fixed Docs
 
 ## 0.4.1
 * Fixed a bug in LFQ
