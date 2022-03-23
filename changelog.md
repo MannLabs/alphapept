@@ -3,7 +3,7 @@
 Last change: 23-Mar-2022, MTS
 
 ## 0.4.3
-* LFQ Fix
+* LFQ Fix @hugokitano
 
 ## 0.4.2
 * Better logging for LFQ
