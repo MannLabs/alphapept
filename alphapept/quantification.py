@@ -161,7 +161,7 @@ def normalize_experiment_SLSQP(profiles: np.ndarray) -> np.ndarray:
     """
     x0 = np.ones(profiles.shape[0] * profiles.shape[1])
     bounds = [(0.1, 1) for _ in x0]
-    res = minimize(get_total_error, args = profiles , x0 = x0*0.5, bounds=bounds, method='SLSQP', options={'disp': False} )
+    res = minimize(get_total_error, args = profiles , x0 = x0*0.5, bounds=bounds, method='SLSQP', options={'disp': False, 'maxiter':100*profiles.shape[1]})
 
     solution = res.x/np.max(res.x)
     solution = solution.reshape(profiles.shape[:2])
@@ -180,7 +180,7 @@ def normalize_experiment_BFGS(profiles: np.ndarray) -> np.ndarray:
     """
     x0 = np.ones(profiles.shape[0] * profiles.shape[1])
     bounds = [(0.1, 1) for _ in x0]
-    res = minimize(get_total_error, args = profiles , x0 = x0*0.5, bounds=bounds, method='L-BFGS-B', options={'disp': False} )
+    res = minimize(get_total_error, args = profiles , x0 = x0*0.5, bounds=bounds, method='L-BFGS-B', options={'disp': False, 'maxiter':100*profiles.shape[1]} )
 
     solution = res.x/np.max(res.x)
     solution = solution.reshape(profiles.shape[:2])
@@ -394,14 +394,11 @@ from scipy.optimize import minimize, least_squares
 
 def solve_profile(ratios: np.ndarray, method: str) -> [np.ndarray, bool]:
     """Calculates protein pseudointensities with a specified solver.
-
     Args:
         ratios (np.ndarray): np.array[:,:] matrix containing all estimated protein ratios between samples.
         method (str): string specifying which solver to use.
-
     Raises:
         NotImplementedError: if the solver is not implemented.
-
     Returns:
         [np.ndarray, bool]: np.ndarray: the protein pseudointensities, bool: wether the solver was successful.
     """
@@ -419,7 +416,10 @@ def solve_profile(ratios: np.ndarray, method: str) -> [np.ndarray, bool]:
             res_wrapped = least_squares(triangle_error, args = [ratios] , x0 = x0, bounds=bounds, verbose=0, method = 'trf')
             solution = res_wrapped.x
         else:
-            res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = method)
+
+            ncor = max((20, int(2*np.ceil(np.sqrt(ratios.shape[0])))))
+
+            res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = method, options={'disp': 1, 'maxiter':int(1e6),'maxfun':int(ratios.shape[0]*2e4), 'eps': 1e-06, 'ncor':ncor}, )
             solution = res_wrapped.x
 
     solution = solution/np.max(solution)
