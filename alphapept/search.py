@@ -1240,7 +1240,9 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
     to_process = [(idx_start, fasta_list[idx_start:idx_end], ms_file_path, custom_settings) for idx_start, idx_end in block_idx(len(fasta_list), fasta_block)]
 
     memory_available = psutil.virtual_memory().available/1024**3
-    n_processes = min(int(memory_available // 4 ), settings['general']['n_processes'])
+
+    n_processes = int(memory_available // 5 )
+
     logging.info(f'Setting Process limit to {n_processes}')
 
     n_processes = alphapept.performance.set_worker_count(
@@ -1253,13 +1255,16 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
     df_cache = {}
     ion_cache = {}
 
+    failed = []
+    to_process_ = []
+
     with alphapept.performance.AlphaPool(n_processes) as p:
         max_ = len(to_process)
 
-        for i, (psm_container, n_seqs) in enumerate(p.imap_unordered(search_fasta_block, to_process)):
+        for i, (psm_container, n_seqs, success) in enumerate(p.imap_unordered(search_fasta_block, to_process)):
             n_seqs_ += n_seqs
 
-            logging.info(f'Block {i+1} of {max_} complete - {((i+1)/max_*100):.2f} % - created peptides {n_seqs:,} ')
+            logging.info(f'Block {i+1} of {max_} complete - {((i+1)/max_*100):.2f} % - created peptides {n_seqs:,} - total peptides {n_seqs_:,} ')
             for j in range(len(psm_container)): #Temporary hdf files for avoiding saving issues
                 output = [_ for _ in psm_container[j]]
                 if len(output) > 0:
@@ -1273,6 +1278,35 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
 
             if callback:
                 callback((i+1)/max_)
+
+            if not success:
+                failed.append(i)
+                to_process_.append(to_process_[i])
+
+    n_failed = len(failed)
+    if n_failed > 0:
+        ## Retry failed with more memory
+        n_processes_ = max((1, int(n_processes // 2)))
+        logging.info(f'Attempting to rerun failed runs with {n_processes_} processes')
+
+        max_ = n_failed
+
+        with alphapept.performance.AlphaPool(n_processes) as p:
+            for i, (psm_container, n_seqs, success) in enumerate(p.imap_unordered(search_fasta_block, to_process_)):
+                n_seqs_ += n_seqs
+
+                logging.info(f'Block {i+1} of {max_} complete - {((i+1)/max_*100):.2f} % - created peptides {n_seqs:,} - total peptides {n_seqs_:,} ')
+                for j in range(len(psm_container)): #Temporary hdf files for avoiding saving issues
+                    output = [_ for _ in psm_container[j]]
+                    if len(output) > 0:
+                        psms = pd.concat(output)
+                        if ms_file_path[j] in df_cache:
+                            temp = filter_top_n(pd.concat([df_cache[ms_file_path[j]], psms]))
+                            selector = temp['temp_idx'].values
+                            df_cache[ms_file_path[j]] = temp
+                        else:
+                            df_cache[ms_file_path[j]] = psms
+
 
     for idx, _ in enumerate(ms_file_path):
         if _ in df_cache:
