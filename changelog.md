@@ -1,6 +1,10 @@
 # Changelog
 
-Last change: 23-Mar-2022, MTS
+Last change: 26-Mar-2022, MTS
+
+## 0.4.4
+* New maximum iterations for LFQ
+* Auto-adjustment of settings for non-specific search
 
 ## 0.4.3
 * LFQ Fix @hugokitano
