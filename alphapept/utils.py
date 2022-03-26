@@ -253,6 +253,12 @@ def check_settings(settings):
                 settings['fasta']['n_missed_cleavages'] = settings['fasta']['pep_length_max']
                 settings['fasta']['fasta_block'] = 100
 
+    if getattr(sys, 'frozen', False):
+        logging.info('You are are using the frozen one-click installation.')
+
+        if len(settings['experiment']['file_paths']) > 100:
+            logging.info('Processing more than 100 files and using frozen one-click installation version. It is recommended to install the Python version for improved performance.')
+
     return settings
 
 
