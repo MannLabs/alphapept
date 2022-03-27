@@ -1011,97 +1011,103 @@ def search_fasta_block(to_process:tuple) -> (list, int):
         int: Number of new peptides that were generated in this iteration.
     """
 
+    try:
+        fasta_index, fasta_block, ms_files, settings = to_process
 
-    fasta_index, fasta_block, ms_files, settings = to_process
+        settings_ = settings[0]
+        spectra_block = settings_['fasta']['spectra_block']
+        to_add = List()
 
-    settings_ = settings[0]
-    spectra_block = settings_['fasta']['spectra_block']
-    to_add = List()
+        psms_container = [list() for _ in ms_files]
 
-    psms_container = [list() for _ in ms_files]
+        f_index = 0
 
-    f_index = 0
+        pept_dict = {}
+        for element in fasta_block:
+            sequence = element["sequence"]
+            mod_peptides = generate_peptides(sequence, **settings_['fasta'])
 
-    pept_dict = {}
-    for element in fasta_block:
-        sequence = element["sequence"]
-        mod_peptides = generate_peptides(sequence, **settings_['fasta'])
+            pept_dict, added_peptides = add_to_pept_dict(pept_dict, mod_peptides, fasta_index+f_index)
 
-        pept_dict, added_peptides = add_to_pept_dict(pept_dict, mod_peptides, fasta_index+f_index)
+            if len(added_peptides) > 0:
+                to_add.extend(added_peptides)
 
-        if len(added_peptides) > 0:
-            to_add.extend(added_peptides)
-
-        f_index += 1
+            f_index += 1
 
 
-    if len(to_add) > 0:
-        for seq_block in blocks(to_add, spectra_block):
+        if len(to_add) > 0:
+            for seq_block in blocks(to_add, spectra_block):
 
-            spectra = generate_spectra(seq_block, mass_dict)
+                spectra = generate_spectra(seq_block, mass_dict)
 
-            precmasses, seqs, fragmasses, fragtypes = zip(*spectra)
-            sortindex = np.argsort(precmasses)
+                precmasses, seqs, fragmasses, fragtypes = zip(*spectra)
+                sortindex = np.argsort(precmasses)
 
-            fragmasses = np.array(fragmasses, dtype=object)[sortindex]
-            fragtypes = np.array(fragtypes, dtype=object)[sortindex]
+                fragmasses = np.array(fragmasses, dtype=object)[sortindex]
+                fragtypes = np.array(fragtypes, dtype=object)[sortindex]
 
-            lens = [len(_) for _ in fragmasses]
+                lens = [len(_) for _ in fragmasses]
 
-            n_frags = sum(lens)
+                n_frags = sum(lens)
 
-            frags = np.zeros(n_frags, dtype=fragmasses[0].dtype)
-            frag_types = np.zeros(n_frags, dtype=fragtypes[0].dtype)
+                frags = np.zeros(n_frags, dtype=fragmasses[0].dtype)
+                frag_types = np.zeros(n_frags, dtype=fragtypes[0].dtype)
 
-            indices = np.zeros(len(lens) + 1, np.int64)
-            indices[1:] = lens
-            indices = np.cumsum(indices)
+                indices = np.zeros(len(lens) + 1, np.int64)
+                indices[1:] = lens
+                indices = np.cumsum(indices)
 
-            #Fill data
+                #Fill data
 
-            for _ in range(len(indices)-1):
-                start = indices[_]
-                end = indices[_+1]
-                frags[start:end] = fragmasses[_]
-                frag_types[start:end] = fragtypes[_]
+                for _ in range(len(indices)-1):
+                    start = indices[_]
+                    end = indices[_+1]
+                    frags[start:end] = fragmasses[_]
+                    frag_types[start:end] = fragtypes[_]
 
-            db_data = {}
+                db_data = {}
 
-            db_data["precursors"] = np.array(precmasses)[sortindex]
-            db_data["seqs"] = np.array(seqs)[sortindex]
+                db_data["precursors"] = np.array(precmasses)[sortindex]
+                db_data["seqs"] = np.array(seqs)[sortindex]
 
-            db_data["fragmasses"] = frags
-            db_data["fragtypes"] = frag_types
-            db_data["indices"] = indices
+                db_data["fragmasses"] = frags
+                db_data["fragtypes"] = frag_types
+                db_data["indices"] = indices
 
-            for file_idx, ms_file in enumerate(ms_files):
-                query_data = alphapept.io.MS_Data_File(
-                    f"{ms_file}"
-                ).read_DDA_query_data(swmr=True)
+                for file_idx, ms_file in enumerate(ms_files):
+                    query_data = alphapept.io.MS_Data_File(
+                        f"{ms_file}"
+                    ).read_DDA_query_data(swmr=True)
 
-                try:
-                    features = alphapept.io.MS_Data_File(
-                        ms_file
-                    ).read(dataset_name="features",swmr=True)
-                except FileNotFoundError:
-                    features = None
-                except KeyError:
-                    features = None
+                    try:
+                        features = alphapept.io.MS_Data_File(
+                            ms_file
+                        ).read(dataset_name="features",swmr=True)
+                    except FileNotFoundError:
+                        features = None
+                    except KeyError:
+                        features = None
 
-                psms, num_specs_compared = get_psms(query_data, db_data, features, **settings[file_idx]["search"])
+                    psms, num_specs_compared = get_psms(query_data, db_data, features, **settings[file_idx]["search"])
 
-                if len(psms) > 0:
-                    #This could be speed up..
-                    psms, fragment_ions = get_score_columns(psms, query_data, db_data, features, **settings[file_idx]["search"])
+                    if len(psms) > 0:
+                        #This could be speed up..
+                        psms, fragment_ions = get_score_columns(psms, query_data, db_data, features, **settings[file_idx]["search"])
 
-                    fasta_indices = [set(x for x in pept_dict[_]) for _ in psms['sequence']]
+                        fasta_indices = [set(x for x in pept_dict[_]) for _ in psms['sequence']]
 
-                    psms_df = pd.DataFrame(psms)
-                    psms_df['fasta_index'] = fasta_indices
+                        psms_df = pd.DataFrame(psms)
+                        psms_df['fasta_index'] = fasta_indices
 
-                    psms_container[file_idx].append(psms_df)
+                        psms_container[file_idx].append(psms_df)
 
-    return psms_container, len(to_add)
+        success = True
+
+    except Exception as e:
+        logging.error(f'Search of block {fasta_index} failed. Exception {e}.')
+        success = f"{e}"
+
+    return psms_container, len(to_add), success
 
 # Cell
 
