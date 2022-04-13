@@ -204,7 +204,7 @@ def check_settings(settings):
         check_file(file)
         fasta_size += get_size_mb(file)
 
-    logging.info(f'FASTA Files have a total size of {fasta_size:.2f} Mb')
+    logging.info(f'FASTA Files have a total size of {fasta_size:.3f} Mb')
 
     if not settings['experiment']['results_path']:
         file_dir = os.path.dirname(settings['experiment']['file_paths'][0])
@@ -246,8 +246,18 @@ def check_settings(settings):
 
             protease = settings['fasta']['protease']
             if protease == 'non-specific':
-                logging.info(f'Protease is {protease}, possibly causing a very large search space. Database will be generated on the fly.')
+                logging.info(f'Protease is {protease}, possibly causing a very large search space. Adjusting settings.')
+                logging.info('Setting save_db to False, Database will be generated on the fly.')
                 settings['fasta']['save_db'] = False
+                logging.info(f'Ssetting n_missed_cleavages to pep_length_max and fasta_block to 100.')
+                settings['fasta']['n_missed_cleavages'] = settings['fasta']['pep_length_max']
+                settings['fasta']['fasta_block'] = 100
+
+    if getattr(sys, 'frozen', False):
+        logging.info('You are are using the frozen one-click installation.')
+
+        if len(settings['experiment']['file_paths']) > 100:
+            logging.info('Processing more than 100 files and using frozen one-click installation version. It is recommended to install the Python version for improved performance.')
 
     return settings
 

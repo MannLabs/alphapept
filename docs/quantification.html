@@ -351,30 +351,30 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
     <tr>
       <th>0</th>
       <td>L-BFGS-B</td>
-      <td>0.028414</td>
-      <td>0.767214</td>
-      <td>0.630689</td>
+      <td>0.010438</td>
+      <td>0.751366</td>
+      <td>0.600378</td>
     </tr>
     <tr>
       <th>1</th>
       <td>TNC</td>
-      <td>0.023116</td>
-      <td>0.808149</td>
-      <td>0.664340</td>
+      <td>0.023342</td>
+      <td>0.760188</td>
+      <td>0.607428</td>
     </tr>
     <tr>
       <th>2</th>
       <td>SLSQP</td>
-      <td>0.003840</td>
-      <td>0.767214</td>
-      <td>0.630689</td>
+      <td>0.003293</td>
+      <td>0.750036</td>
+      <td>0.599316</td>
     </tr>
     <tr>
       <th>3</th>
       <td>trf</td>
-      <td>0.232000</td>
-      <td>0.771106</td>
-      <td>0.633888</td>
+      <td>0.238631</td>
+      <td>0.751442</td>
+      <td>0.600439</td>
     </tr>
   </tbody>
 </table>
@@ -598,7 +598,7 @@ If the solver does not converge, the unnormalized data will be used.</p>
       <th>fraction</th>
       <th>filename</th>
       <th>ms1_int_sum</th>
-      <th>int_sum_dn</th>
+      <th>ms1_int_sum_dn</th>
     </tr>
   </thead>
   <tbody>
@@ -930,7 +930,7 @@ If the solver does not converge, the unnormalized data will be used.</p>
 <span class="n">chunk</span> <span class="o">=</span> <span class="p">(</span><span class="n">grouped</span><span class="p">,</span> <span class="s1">&#39;X&#39;</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="kc">False</span><span class="p">:</span> <span class="c1">#TODO: this test seems to break the CI</span>
-    <span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">protein</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">minimum_ratios</span><span class="p">,</span> <span class="n">chunk</span><span class="p">)</span>
+    <span class="n">profile</span><span class="p">,</span> <span class="n">pre_lfq</span><span class="p">,</span> <span class="n">protein</span><span class="p">,</span> <span class="n">success</span> <span class="o">=</span> <span class="n">protein_profile</span><span class="p">(</span><span class="n">files</span><span class="p">,</span> <span class="n">minimum_ratios</span><span class="p">,</span> <span class="n">chunk</span><span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Protein ratio&#39;</span><span class="p">)</span>
@@ -1054,7 +1054,7 @@ If the solver does not converge, the unnormalized data will be used.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile_parallel" class="doc_header"><code>protein_profile_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L499" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>, <strong><code>field</code></strong>:<code>str</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="protein_profile_parallel" class="doc_header"><code>protein_profile_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L507" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>, <strong><code>field</code></strong>:<code>str</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Derives LFQ intensities from the feature table.</p>
 <p>Args:
@@ -1093,7 +1093,7 @@ If the solver does not converge, the unnormalized data will be used.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile_parallel_ap" class="doc_header"><code>protein_profile_parallel_ap</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L574" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_ap</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="protein_profile_parallel_ap" class="doc_header"><code>protein_profile_parallel_ap</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L582" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_ap</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Derives protein LFQ intensities from the alphapept quantified feature table</p>
 <p>Args:
@@ -1126,7 +1126,7 @@ If the solver does not converge, the unnormalized data will be used.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile_parallel_mq" class="doc_header"><code>protein_profile_parallel_mq</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L604" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_mq</code>(<strong><code>evidence_path</code></strong>:<code>str</code>, <strong><code>protein_groups_path</code></strong>:<code>str</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>=<em><code>1</code></em>, <strong><code>minimum_occurence</code></strong>:<code>bool</code>=<em><code>None</code></em>, <strong><code>delayed</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="protein_profile_parallel_mq" class="doc_header"><code>protein_profile_parallel_mq</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L612" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_mq</code>(<strong><code>evidence_path</code></strong>:<code>str</code>, <strong><code>protein_groups_path</code></strong>:<code>str</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>=<em><code>1</code></em>, <strong><code>minimum_occurence</code></strong>:<code>bool</code>=<em><code>None</code></em>, <strong><code>delayed</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Derives protein LFQ intensities from Maxquant quantified features.</p>
 <p>Args:
