@@ -12,6 +12,6 @@ pyteomics==4.4.2
 pyyaml==5.4.1
 scikit-learn==1.0.2
 scipy==1.7.1
-SQLAlchemy==1.4.23
+SQLAlchemy==1.4.35
 tables==3.6.1
 tqdm==4.56.0
