@@ -14,4 +14,4 @@ scikit-learn==1.0.2
 scipy==1.7.1
 SQLAlchemy==1.4.35
 tables==3.6.1
-tqdm==4.56.0
+tqdm==4.64.0
