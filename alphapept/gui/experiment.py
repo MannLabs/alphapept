@@ -370,7 +370,7 @@ def experiment():
                 f_dict = file_df_selected.groupby('Fraction')['Filename'].unique().to_dict()
                 f_dict = {k: list(v) for k,v in f_dict.items()}
 
-                recorder['experiment']["fraction_dict"] = f_dict
+                recorder['experiment']["experiment_dict"] = f_dict
 
                 st.write(f"## Workflow")
 

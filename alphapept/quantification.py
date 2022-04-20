@@ -210,12 +210,12 @@ def delayed_normalization(df: pd.DataFrame, field: str='ms1_int_sum', minimum_oc
     profiles[:] = np.nan
 
     #get dictionaries
-    fraction_dict = {_:i for i,_ in enumerate(fractions)}
+    experiment_dict = {_:i for i,_ in enumerate(fractions)}
     filename_dict = {_:i for i,_ in enumerate(files)}
     precursor_dict = {_:i for i,_ in enumerate(precs)}
 
     prec_id = [precursor_dict[_] for _ in selected_precs['precursor']]
-    frac_id = [fraction_dict[_] for _ in selected_precs['fraction']]
+    frac_id = [experiment_dict[_] for _ in selected_precs['fraction']]
     file_id = [filename_dict[_] for _ in selected_precs['filename']]
 
     profiles[frac_id,file_id, prec_id] = selected_precs[field]
@@ -240,7 +240,7 @@ def delayed_normalization(df: pd.DataFrame, field: str='ms1_int_sum', minimum_oc
 
     #intensity normalization: total intensity to remain unchanged
 
-    df[field+'_dn'] = df[field]*normalization[[fraction_dict[_] for _ in df['fraction']], [filename_dict[_] for _ in df['filename']]]
+    df[field+'_dn'] = df[field]*normalization[[experiment_dict[_] for _ in df['fraction']], [filename_dict[_] for _ in df['filename']]]
     df[field+'_dn'] *= df[field].sum()/df[field+'_dn'].sum()
 
     return df, normalization

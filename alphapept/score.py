@@ -883,8 +883,8 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
 
     try:
         #This part collects all ms_data files that belong to one sample.
-        exp_name = sorted(settings['experiment']['fraction_dict'].keys())[index]
-        shortnames = settings['experiment']['fraction_dict'].get(exp_name)
+        exp_name = sorted(settings['experiment']['experiment_dict'].keys())[index]
+        shortnames = settings['experiment']['experiment_dict'].get(exp_name)
         file_paths = settings['experiment']['file_paths']
         relevant_files = []
         for shortname in shortnames:
