@@ -354,6 +354,9 @@ def match_datasets(settings:dict, callback:Callable = None):
 
     if len(settings['experiment']['file_paths']) > 2:
 
+        if settings['experiment']['matching_groups'] == []:
+            settings['experiment']['matching_groups'] = [0 for _ in settings['experiment']['shortnames']]
+
         match_p_min = settings['matching']['match_p_min']
         match_d_min = settings['matching']['match_d_min']
 
