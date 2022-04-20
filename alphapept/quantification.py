@@ -223,6 +223,7 @@ def delayed_normalization(df: pd.DataFrame, field: str='ms1_int_sum', minimum_oc
 
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=RuntimeWarning)
+        logging.info(f'Delayed normalization with SLSQP on {profiles.shape}')
 
         try:
             normalization = normalize_experiment_SLSQP(profiles)
@@ -398,7 +399,7 @@ def solve_profile(ratios: np.ndarray, method: str) -> [np.ndarray, bool]:
 
             ncor = max((20, int(2*np.ceil(np.sqrt(ratios.shape[0])))))
 
-            res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = method, options={'disp': 1, 'maxiter':int(1e6),'maxfun':int(ratios.shape[0]*2e4), 'eps': 1e-06, 'ncor':ncor}, )
+            res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = method, options={'maxiter':int(1e6),'maxfun':int(ratios.shape[0]*2e4), 'eps': 1e-06, 'ncor':ncor}, )
             solution = res_wrapped.x
 
     solution = solution/np.max(solution)
