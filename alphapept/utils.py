@@ -284,12 +284,8 @@ def assemble_df(settings, field = 'protein_fdr', callback=None):
             df['filename'] = file_name
             df['shortname'] = shortnames[idx]
 
-            if 'fraction' in settings['experiment'].keys():
-                if settings['experiment']['fraction'] != []:
-                    df['fraction'] = settings['experiment']['fraction'][idx]
-
             all_dfs.append(df)
-        except KeyError: # e.g. field does not exist
+        except KeyError: # e.g. field does not exist, for fractions only the first will be saved 
             pass
 
         if callback:
