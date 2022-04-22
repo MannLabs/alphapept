@@ -226,6 +226,14 @@ def check_settings(settings):
         ]
         settings['experiment']['shortnames'] = shortnames
 
+    if settings['experiment']['sample_group'] == []:
+        logging.info('Sample group not set. Setting to shortname.')
+        settings['experiment']['sample_group'] = settings['experiment']['shortnames']
+
+    if settings['experiment']['fraction'] == []:
+        logging.info('Fraction not set. Setting to 1.')
+        settings['experiment']['fraction'] = [1 for _ in settings['experiment']['shortnames']]
+
     if settings['fasta']['save_db']:
         if not settings['experiment']['database_path']:
             file_dir = os.path.dirname(settings['experiment']['file_paths'][0])
