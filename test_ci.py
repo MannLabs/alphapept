@@ -163,14 +163,10 @@ class TestRun():
         self.settings['experiment']['file_paths'] =  [os.path.join(TEST_DIR, _) for _ in self.file_paths]
         self.settings['experiment']['fasta_paths'] = [os.path.join(TEST_DIR, _) for _ in self.fasta_paths]
 
-        if self.sample == None:
-            self.settings['experiment']['sample_group'] = ['A' for _ in self.settings['experiment']['file_paths']]
-        else:
+        if not self.sample == None:
             self.settings['experiment']['sample_group'] = self.sample
 
-        if self.fraction == None:
-            self.settings['experiment']['fraction'] = [1 for _ in self.settings['experiment']['file_paths']]
-        else:
+        if not self.fraction == None:
             self.settings['experiment']['fraction'] = self.fraction
 
 
