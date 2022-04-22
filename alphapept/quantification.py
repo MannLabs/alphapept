@@ -179,17 +179,14 @@ def delayed_normalization(df: pd.DataFrame, field: str='ms1_int_sum', minimum_oc
     Returns:
         [pd.DataFrame, np.ndarray]: pd.DataFrame: alphapept quantified features table extended with the normalized intensities, np.ndarray: normalized intensities
     """
-    files = np.sort(df['filename'].unique()).tolist()
-    n_files = len(files)
-
-    if 'fraction' not in df.keys():
-        df['fraction'] = [1 for x in range(len(df.index))]
+    samples = np.sort(df['sample_group'].unique()).tolist()
+    n_samples = len(samples)
 
     fractions = np.sort(df['fraction'].unique()).tolist()
 
     n_fractions = len(fractions)
 
-    df_max = df.groupby(['precursor','fraction','filename'])[field].max() #Maximum per fraction
+    df_max = df.groupby(['precursor','fraction','sample_group'])[field].max() #Maximum per fraction
 
     prec_count = df_max.index.get_level_values('precursor').value_counts()
 
@@ -206,17 +203,17 @@ def delayed_normalization(df: pd.DataFrame, field: str='ms1_int_sum', minimum_oc
     selected_precs = df_max.loc[precs]
     selected_precs = selected_precs.reset_index()
 
-    profiles = np.empty((n_fractions, n_files, n_profiles))
+    profiles = np.empty((n_fractions, n_samples, n_profiles))
     profiles[:] = np.nan
 
     #get dictionaries
     experiment_dict = {_:i for i,_ in enumerate(fractions)}
-    filename_dict = {_:i for i,_ in enumerate(files)}
+    samples_dict = {_:i for i,_ in enumerate(samples)}
     precursor_dict = {_:i for i,_ in enumerate(precs)}
 
     prec_id = [precursor_dict[_] for _ in selected_precs['precursor']]
     frac_id = [experiment_dict[_] for _ in selected_precs['fraction']]
-    file_id = [filename_dict[_] for _ in selected_precs['filename']]
+    file_id = [samples_dict[_] for _ in selected_precs['sample_group']]
 
     profiles[frac_id,file_id, prec_id] = selected_precs[field]
 
@@ -240,7 +237,7 @@ def delayed_normalization(df: pd.DataFrame, field: str='ms1_int_sum', minimum_oc
 
     #intensity normalization: total intensity to remain unchanged
 
-    df[field+'_dn'] = df[field]*normalization[[experiment_dict[_] for _ in df['fraction']], [filename_dict[_] for _ in df['filename']]]
+    df[field+'_dn'] = df[field]*normalization[[experiment_dict[_] for _ in df['fraction']], [samples_dict[_] for _ in df['sample_group']]]
     df[field+'_dn'] *= df[field].sum()/df[field+'_dn'].sum()
 
     return df, normalization
@@ -399,7 +396,7 @@ def solve_profile(ratios: np.ndarray, method: str) -> [np.ndarray, bool]:
 
             ncor = max((20, int(2*np.ceil(np.sqrt(ratios.shape[0])))))
 
-            res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = method, options={'maxiter':int(1e6),'maxfun':int(ratios.shape[0]*2e4), 'eps': 1e-06, 'ncor':ncor}, )
+            res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = method, options={'maxiter':int(1e6),'maxfun':int(ratios.shape[0]*2e4), 'eps': 1e-06, 'maxcor':ncor}, )
             solution = res_wrapped.x
 
     solution = solution/np.max(solution)
@@ -429,7 +426,7 @@ def protein_profile(files: list, minimum_ratios: int, chunk:tuple) -> (np.ndarra
     """
     grouped, protein = chunk
 
-    files_ = grouped.index.get_level_values('filename').unique().tolist()
+    files_ = grouped.index.get_level_values('sample_group').unique().tolist()
 
     selection = grouped.unstack().T.copy()
     selection = selection.replace(0, np.nan)
@@ -497,21 +494,19 @@ def protein_profile_parallel(df: pd.DataFrame, minimum_ratios: int, field: str, 
     """
     unique_proteins = df['protein_group'].unique().tolist()
 
-    files = df['filename'].unique().tolist()
-    files.sort()
+    samples = df['sample_group'].unique().tolist()
+    samples.sort()
 
-    columnes_ext = [_+'_LFQ' for _ in files]
-    protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + files)
+    columnes_ext = [_+'_LFQ' for _ in samples]
+    protein_table = pd.DataFrame(index=unique_proteins, columns=columnes_ext + samples)
 
-    #Take the best precursor for protein quantification. .max()
-    grouped = df[[field, 'filename','precursor','protein_group']].groupby(['protein_group','filename','precursor']).max()
+    # Used to be max, now sum() (to group fractions)
+    grouped = df[[field, 'sample_group','precursor','protein_group']].groupby(['protein_group','sample_group','precursor']).sum()
 
-    files = df['filename'].unique().tolist()
-    files.sort()
 
     results = []
 
-    if len(files) > 1:
+    if len(samples) > 1:
         logging.info('Preparing protein table for parallel processing.')
         split_df = []
 
@@ -529,7 +524,7 @@ def protein_profile_parallel(df: pd.DataFrame, minimum_ratios: int, field: str, 
         )
         with alphapept.performance.AlphaPool(n_processes) as p:
             max_ = len(split_df)
-            for i, _ in enumerate(p.imap_unordered(partial(protein_profile, files, minimum_ratios), split_df)):
+            for i, _ in enumerate(p.imap_unordered(partial(protein_profile, samples, minimum_ratios), split_df)):
                 results.append(_)
 
                 if not _[-1]:
@@ -539,8 +534,8 @@ def protein_profile_parallel(df: pd.DataFrame, minimum_ratios: int, field: str, 
 
         for result in results:
             profile, pre_lfq, protein, success = result
-            protein_table.loc[protein, [_+'_LFQ' for _ in files]] = profile
-            protein_table.loc[protein, files] = pre_lfq
+            protein_table.loc[protein, [_+'_LFQ' for _ in samples]] = profile
+            protein_table.loc[protein, samples] = pre_lfq
 
         protein_table[protein_table == 0] = np.nan
         protein_table = protein_table.astype('float')
@@ -548,7 +543,7 @@ def protein_profile_parallel(df: pd.DataFrame, minimum_ratios: int, field: str, 
         protein_table = df.groupby(['protein_group'])[field].sum().to_frame().reset_index()
         protein_table = protein_table.set_index('protein_group')
         protein_table.index.name = None
-        protein_table.columns=[files[0]]
+        protein_table.columns=[samples[0]]
 
         if callback:
             callback(1)
@@ -614,7 +609,7 @@ def protein_profile_parallel_mq(evidence_path : str, protein_groups_path: str, m
     evd = pd.read_csv(evidence_path, sep='\t')
     ref = pd.read_csv(protein_groups_path, sep='\t')
 
-    experiments = evd['Raw file'].unique().tolist()
+    experiments = evd['Experiment'].unique().tolist()
     logging.info(f'A total of {len(experiments):,} files.')
 
     protein_df = []
@@ -626,7 +621,8 @@ def protein_profile_parallel_mq(evidence_path : str, protein_groups_path: str, m
         subset = evd.loc[evd_ids].copy()
 
         subset['protein_group'] =  investigate['Protein IDs']
-        subset['filename'] = subset['Raw file']
+        subset['sample_group'] = subset['Experiment']
+        subset['fraction'] = subset['Fraction']
         subset['precursor']  = ['_'.join(_) for _ in zip(subset['Sequence'].values, subset['Charge'].values.astype('str'))]
 
         protein_df.append(subset)

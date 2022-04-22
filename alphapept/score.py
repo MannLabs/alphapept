@@ -26,24 +26,19 @@ def filter_score(df: pd.DataFrame, mode: str='multiple') -> pd.DataFrame:
         pd.DataFrame: table containing the filtered psms results.
     """
 
-    if "localexp" in df.columns:
-        additional_group = ['localexp']
-    else:
-        additional_group = []
-
-    df["score_rank"] = df.groupby(["query_idx"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
+    df["score_rank"] = df.groupby("query_idx")["score"].rank("dense", ascending=False).astype("int")
     df = df[df["score_rank"] == 1]
 
     # in case two hits have the same score and therfore the same score_rank only accept the first one
-    df = df.drop_duplicates(["query_idx"] + additional_group)
+    df = df.drop_duplicates("query_idx")
 
     if 'feature_dist' in df.columns:
-        df["feature_rank"] = df.groupby(["feature_idx"] + additional_group)["feature_dist"].rank("dense", ascending=True).astype("int")
-        df["raw_rank"] = df.groupby(["raw_idx"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
+        df["feature_rank"] = df.groupby("feature_idx")["feature_dist"].rank("dense", ascending=True).astype("int")
+        df["raw_rank"] = df.groupby("raw_idx")["score"].rank("dense", ascending=False).astype("int")
 
         if mode == 'single':
             df_filtered = df[(df["feature_rank"] == 1) & (df["raw_rank"] == 1) ]
-            df_filtered = df_filtered.drop_duplicates(["raw_idx"] + additional_group)
+            df_filtered = df_filtered.drop_duplicates("raw_idx")
 
         elif mode == 'multiple':
             df_filtered = df[(df["feature_rank"] == 1)]
@@ -71,13 +66,8 @@ def filter_precursor(df: pd.DataFrame) -> pd.DataFrame:
         pd.DataFrame: table containing the filtered psms results.
 
     """
-    if "localexp" in df.columns:
-        additional_group = ['localexp']
-    else:
-        additional_group = []
-
     df["precursor_rank"] = (
-        df.groupby(["precursor"] + additional_group)["score"].rank("dense", ascending=False).astype("int")
+        df.groupby("precursor")["score"].rank("dense", ascending=False).astype("int")
     )
 
     df_filtered = df[df["precursor_rank"] == 1]
@@ -85,7 +75,7 @@ def filter_precursor(df: pd.DataFrame) -> pd.DataFrame:
     if 'ms1_int_sum' in df_filtered.columns:
         #if ms1_int_sum from feature finding is present: Remove duplicates in case there are any
         df_filtered = df_filtered.sort_values('ms1_int_sum')[::-1]
-        df_filtered = df_filtered.drop_duplicates(["precursor", "precursor_rank"] + additional_group)
+        df_filtered = df_filtered.drop_duplicates(["precursor", "precursor_rank"])
 
     return df_filtered
 
@@ -274,8 +264,7 @@ def score_x_tandem(df: pd.DataFrame, fdr_level: float = 0.01, plot: bool = True,
         pd.DataFrame: psms table with an extra 'score' column for x_tandem, filtered for no feature or precursor to be assigned multiple times.
     """
     logging.info('Scoring using X-Tandem')
-    if 'localexp' not in df.columns:
-        df['localexp'] = 0
+
     df['score'] = get_x_tandem_score(df)
     df['decoy'] = df['sequence'].str[-1].str.islower()
 
@@ -882,45 +871,24 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
     index, settings = to_process
 
     try:
-        #This part collects all ms_data files that belong to one sample.
-        exp_name = sorted(settings['experiment']['experiment_dict'].keys())[index]
-        shortnames = settings['experiment']['experiment_dict'].get(exp_name)
-        file_paths = settings['experiment']['file_paths']
-        relevant_files = []
-        for shortname in shortnames:
-            for file_path in file_paths:
-                if shortname in file_path:
-                    relevant_files.append(file_path)
-                    break
+        index, settings = to_process
+        file_name = settings['experiment']['file_paths'][index]
+        base_file_name, ext = os.path.splitext(file_name)
+        ms_file = base_file_name+".ms_data.hdf"
 
-        ms_file_names = [os.path.splitext(x)[0]+".ms_data.hdf" for x in relevant_files]
         skip = False
 
-        all_dfs = []
-        ms_file2idx = {}
-        idx_start = 0
-        for ms_filename in ms_file_names:
-            ms_file_ = alphapept.io.MS_Data_File(ms_filename, is_overwritable=True)
+        ms_file_ = alphapept.io.MS_Data_File(ms_file, is_overwritable=True)
 
+        try:
+            df = ms_file_.read(dataset_name='second_search')
+            logging.info('Found second search psms for scoring.')
+        except KeyError:
             try:
-                df = ms_file_.read(dataset_name='second_search')
-                logging.info('Found second search psms for scoring.')
+                df = ms_file_.read(dataset_name='first_search')
+                logging.info('No second search psms for scoring found. Using first search.')
             except KeyError:
-                try:
-                    df = ms_file_.read(dataset_name='first_search')
-                    logging.info('No second search psms for scoring found. Using first search.')
-                except KeyError:
-                    df = pd.DataFrame()
-
-            df["localexp"] = idx_start
-
-            df.index = df.index+idx_start
-            ms_file2idx[ms_file_] = df.index
-            all_dfs.append(df)
-            idx_start+=len(df.index)
-
-        df = pd.concat(all_dfs)
-
+                df = pd.DataFrame()
 
         if len(df) == 0:
             skip = True
@@ -965,7 +933,7 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
             logging.info('Saving identifications to ms_data file.')
             ms_file_.write(ids, dataset_name="identifications")
             logging.info('Saving identifications to ms_data file complete.')
-            ids.to_csv(ms_filename[:-12]+'_ids.csv')
+            ids.to_csv(file_name[:-12]+'_ids.csv')
             logging.info('Saving identifications to csv file complete.')
 
 
@@ -977,36 +945,33 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
 
             df = df_pfdr
 
-            for ms_file_, idxs in ms_file2idx.items():
-                df_file = df.loc[df.index.intersection(idxs)]
-                try:
-                    logging.info('Extracting fragment_ions')
-                    fragment_ions = ms_file_.read(dataset_name='fragment_ions')
+            try:
+                logging.info('Extracting fragment_ions')
+                fragment_ions = ms_file_.read(dataset_name='fragment_ions')
 
-                    ion_list = []
-                    ion_ints = []
+                ion_list = []
+                ion_ints = []
 
-                    for i in range(len(df_file)):
-                        ion, ints = get_ion(i, df_file, fragment_ions)
-                        ion_list.append(ion)
-                        ion_ints.append(ints)
+                for i in range(len(df)):
+                    ion, ints = get_ion(i, df, fragment_ions)
+                    ion_list.append(ion)
+                    ion_ints.append(ints)
 
-                    df_file['fragment_ion_int'] = ion_ints
-                    df_file['fragment_ion_type'] = ion_list
+                df['fragment_ion_int'] = ion_ints
+                df['fragment_ion_type'] = ion_list
 
 
-                    logging.info('Extracting fragment_ions complete.')
+                logging.info('Extracting fragment_ions complete.')
 
-                except KeyError:
-                    logging.info('No fragment_ions present.')
+            except KeyError:
+                logging.info('No fragment_ions present.')
 
-            export_df = df_file.reset_index().drop(columns=['localexp'])
-            if 'level_0' in export_df.columns:
-                export_df = export_df.drop(columns = ['level_0'])
+            export_df = df.reset_index()
+
             #Note: Peptide FDR can be misleading here as we don't filter here, so this has not the set peptide fdr.
             ms_file_.write(export_df, dataset_name="peptide_fdr")
 
-            logging.info(f'Scoring of files {list(ms_file2idx.keys())} complete.')
+            logging.info(f'Scoring of files {file_name} complete.')
         return True
     except Exception as e:
         logging.info(f'Scoring of file {index} failed. Exception {e}')

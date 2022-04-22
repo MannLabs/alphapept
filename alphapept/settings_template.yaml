@@ -60,15 +60,19 @@ experiment:
     type: list
     default: []
     description: Filepaths of the experiments.
-  fractions:
+  sample_group:
     type: list
     default: []
-    description: List of fractions for the raw files.
-  matching_groups:
+    description: Sample group, for raw files that should be quanted together.
+  matching_group:
     type: list
     default: []
     description: List of macthing groups for the raw files. This only allows match-between-runs
       of files within the same groups.
+  fraction:
+    type: list
+    default: []
+    description: List of fraction numbers for fractionated samples.
   database_path:
     type: path
     default: null

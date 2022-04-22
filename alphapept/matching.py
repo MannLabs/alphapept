@@ -344,7 +344,7 @@ def convert_decoy(float_):
 # The function will be revised when implementing issue #255: https://github.com/MannLabs/alphapept/issues/255
 def match_datasets(settings:dict, callback:Callable = None):
     """Match datasets: Wrapper function to match datasets based on a settings file.
-    This implementation uses matchin groups but not fractions.
+    This implementation uses matching groups but not fractions.
 
     Args:
         settings (dict): Dictionary containg specifications of the run
@@ -354,8 +354,8 @@ def match_datasets(settings:dict, callback:Callable = None):
 
     if len(settings['experiment']['file_paths']) > 2:
 
-        if settings['experiment']['matching_groups'] == []:
-            settings['experiment']['matching_groups'] = [0 for _ in settings['experiment']['shortnames']]
+        if settings['experiment']['matching_group'] == []:
+            settings['experiment']['matching_group'] = [0 for _ in settings['experiment']['shortnames']]
 
         match_p_min = settings['matching']['match_p_min']
         match_d_min = settings['matching']['match_d_min']
@@ -364,10 +364,10 @@ def match_datasets(settings:dict, callback:Callable = None):
 
         shortnames_lookup = dict(zip(settings['experiment']['shortnames'], settings['experiment']['file_paths']))
 
-        matching_groups = np.array(settings['experiment']['matching_groups'])
-        n_matching_groups = len(set(matching_groups))
+        matching_group = np.array(settings['experiment']['matching_group'])
+        n_matching_group = len(set(matching_group))
         match_tolerance = settings['matching']['match_group_tol']
-        logging.info(f'A total of {n_matching_groups} matching groups set.')
+        logging.info(f'A total of {n_matching_group} matching groups set.')
 
         x = alphapept.utils.assemble_df(settings, field='peptide_fdr')
 
@@ -383,10 +383,10 @@ def match_datasets(settings:dict, callback:Callable = None):
         else:
             use_mobility = False
 
-        for group in set(settings['experiment']['matching_groups']):
+        for group in set(settings['experiment']['matching_group']):
             logging.info(f'Matching group {group} with a tolerance of {match_tolerance}.')
-            file_index_from = (matching_groups <= (group+match_tolerance)) & (matching_groups >= (group-match_tolerance))
-            file_index_to = matching_groups == group
+            file_index_from = (matching_group <= (group+match_tolerance)) & (matching_group >= (group-match_tolerance))
+            file_index_to = matching_group == group
             files_from = np.array(settings['experiment']['shortnames'])[file_index_from].tolist()
             files_to = np.array(settings['experiment']['shortnames'])[file_index_to].tolist()
             logging.info(f'Matching from {len(files_from)} files to {len(files_to)} files.')
@@ -441,7 +441,7 @@ def match_datasets(settings:dict, callback:Callable = None):
 
                     dist, idx = matching_tree.query(query_points, k=1)
 
-                    matched = features.iloc[idx[:,0]].reset_index()
+                    matched = features.iloc[idx[:,0]].reset_index(drop=True)
 
                     for _ in extra_cols:
                         matched[_] = grouped.loc[matching_set, _].values
