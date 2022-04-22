@@ -292,7 +292,7 @@ def experiment():
                 raw_files = [_ for _ in raw_files if _ not in exclude]
 
                 file_df = file_df_from_files(raw_files, file_folder)
-                file_df['Sample group'] = ['G_'+str(i+1) for i in range(len(file_df))]
+                file_df['Sample group'] = file_df['Shortname']
                 file_df['Fraction'] = [1 for i in range(len(file_df))]
                 file_df["Matching group"] = [str(0)]*len(file_df)
 
