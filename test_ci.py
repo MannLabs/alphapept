@@ -417,6 +417,31 @@ def main(runtype = None, password = None, new_files = True):
         #run.settings['workflow'] = {'continue_runs': True, 'create_database': False, 'import_raw_data': False, 'find_features': False, 'search_data': False, 'recalibrate_data': False, 'align': True, 'match': False, 'lfq_quantification': True}
         run.run(password=password)
 
+    elif runtype == 'PXD015087_matching':
+        files = ['Hela_P035210_BA1_S00_A00_R1.raw', 'Hela_P035210_BA1_S00_A00_R5.raw', 'Hela_P035210_BA1_S00_A00_R14.raw', 'Hela_P035210_BA1_S00_A00_R19.raw']
+        fasta_files = ['human.fasta', 'contaminants.fasta']
+
+        custom_settings = {}
+        workflow = {}
+        workflow['match'] = True
+        custom_settings['workflow'] = workflow
+        run = TestRun(runtype, files, fasta_files, new_files, custom_settings = custom_settings)
+
+        run.run(password=password)
+
+    elif runtype == 'PXD015087_matching_fraction':
+        files = ['Hela_P035210_BA1_S00_A00_R1.raw', 'Hela_P035210_BA1_S00_A00_R5.raw', 'Hela_P035210_BA1_S00_A00_R14.raw', 'Hela_P035210_BA1_S00_A00_R19.raw']
+        fasta_files = ['human.fasta', 'contaminants.fasta']
+        sample = ['A','A','B','B']
+        fraction = [1,2,1,2]
+
+        custom_settings = {}
+        workflow = {}
+        workflow['match'] = True
+        custom_settings['workflow'] = workflow
+        run = TestRun(runtype, files, fasta_files, new_files, sample = sample, fraction = fraction, custom_settings = custom_settings)
+
+        run.run(password=password)
 
     else:
         raise NotImplementedError(f"Runtime {runtype} not found. Available are {AVAILABLE}")

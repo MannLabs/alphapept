@@ -612,6 +612,11 @@ def protein_profile_parallel_mq(evidence_path : str, protein_groups_path: str, m
     experiments = evd['Experiment'].unique().tolist()
     logging.info(f'A total of {len(experiments):,} files.')
 
+
+    if 'Fraction' not in evd.keys():
+        logging.info('File does not contain Fractions. Setting Fractions to 1')
+        evd['Fraction'] = 1
+
     protein_df = []
 
     max_ = len(ref)

@@ -463,7 +463,7 @@ def simulate_biased_peptides(num_pep, samplevec, fractionvec):
 
     proteins = [pep2prot.get(x) for x in precursor]
     species = ['X' for x in precursor]
-    df_simul = pd.DataFrame({"protein_group": proteins, "precursor": precursor, "filename" : shortname,"fraction": fraction, "Intensity" : intensity,
+    df_simul = pd.DataFrame({"protein_group": proteins, "precursor": precursor, "sample_group" : shortname,"fraction": fraction, "Intensity" : intensity,
     'Species' : species})
 
     return df_simul
