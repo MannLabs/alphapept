@@ -13,7 +13,7 @@ call RMDIR /Q/S build
 call RMDIR /Q/S dist
 call python setup.py sdist bdist_wheel
 call pip install dist/alphapept-0.4.5-py3-none-any.whl[stable,gui-stable]
-call pip install pyinstaller==4.7
+call pip install pyinstaller==5.0
 call cd installer/one_click_windows
 call pyinstaller ../alphapept.spec -y
 call conda deactivate
