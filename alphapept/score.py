@@ -966,9 +966,14 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
             except KeyError:
                 logging.info('No fragment_ions present.')
 
-            export_df = df.reset_index()
+            export_df = df.reset_index(drop=True)
+
+            #if 'level_0' in export_df.keys(): #Todo: Why is this in here?
+            #    export_df.drop(columns=['level_0'])
+            #   logging.info('Dropped level_0 from df.')
 
             #Note: Peptide FDR can be misleading here as we don't filter here, so this has not the set peptide fdr.
+            logging.info('Exporting peptide_fdr on {file_name}.')
             ms_file_.write(export_df, dataset_name="peptide_fdr")
 
             logging.info(f'Scoring of files {file_name} complete.')
