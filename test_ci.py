@@ -344,7 +344,7 @@ def main(runtype = None, password = None, new_files = True):
         MONGODB_URL = 'ci.yue0n.mongodb.net/'
         config_test_paths(BASE_DIR, TEST_DIR, ARCHIVE_DIR, MONGODB_USER, MONGODB_URL)
 
-    AVAILABLE = ['bruker_irt', 'bruker_hela', 'thermo_irt', 'thermo_hela', 'thermo_hela_large_fasta', 'thermo_hela_modifications', 'PXD006109', 'PXD010012']
+    AVAILABLE = ['bruker_irt', 'bruker_hela', 'thermo_irt', 'thermo_hela', 'thermo_hela_large_fasta', 'thermo_hela_modifications', 'PXD006109', 'PXD010012', 'PXD015087', 'PXD015087_matching', 'PXD015087_matching_fraction']
 
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']
