@@ -88,13 +88,14 @@ class TestRun():
     """
     Class to prepare and download files to make a default test run
     """
-    def __init__(self, id, experimental_files, fasta_paths, new_files, fraction_dict = None, custom_settings = None):
+    def __init__(self, id, experimental_files, fasta_paths, new_files, sample = None, fraction = None, custom_settings = None):
 
         self.id = id
         self.file_paths = experimental_files
         self.fasta_paths = fasta_paths
         self.new_files = new_files
-        self.fraction_dict = fraction_dict
+        self.sample = sample
+        self.fraction = fraction
 
         self.custom_settings = custom_settings
 
@@ -161,10 +162,12 @@ class TestRun():
 
         self.settings['experiment']['file_paths'] =  [os.path.join(TEST_DIR, _) for _ in self.file_paths]
         self.settings['experiment']['fasta_paths'] = [os.path.join(TEST_DIR, _) for _ in self.fasta_paths]
-        if self.fraction_dict == None:
-            self.settings['experiment']['fraction_dict'] = {k:[k] for k in self.settings['experiment']['file_paths']}
-        else:
-            self.settings['experiment']['fraction_dict'] = self.fraction_dict
+
+        if not self.sample == None:
+            self.settings['experiment']['sample_group'] = self.sample
+
+        if not self.fraction == None:
+            self.settings['experiment']['fraction'] = self.fraction
 
 
     def run(self, password=None):
@@ -341,7 +344,7 @@ def main(runtype = None, password = None, new_files = True):
         MONGODB_URL = 'ci.yue0n.mongodb.net/'
         config_test_paths(BASE_DIR, TEST_DIR, ARCHIVE_DIR, MONGODB_USER, MONGODB_URL)
 
-    AVAILABLE = ['bruker_irt', 'bruker_hela', 'thermo_irt', 'thermo_hela', 'thermo_hela_large_fasta', 'thermo_hela_modifications', 'PXD006109', 'PXD010012']
+    AVAILABLE = ['bruker_irt', 'bruker_hela', 'thermo_irt', 'thermo_hela', 'thermo_hela_large_fasta', 'thermo_hela_modifications', 'PXD006109', 'PXD010012', 'PXD015087', 'PXD015087_matching', 'PXD015087_matching_fraction']
 
     if runtype == 'bruker_irt':
         files = ['bruker_IRT.d']
@@ -406,13 +409,39 @@ def main(runtype = None, password = None, new_files = True):
     elif runtype == 'PXD015087':
         files = ['Hela_P035210_BA1_S00_A00_R1.raw', 'Hela_P035210_BA1_S00_A00_R5.raw', 'Hela_P035210_BA1_S00_A00_R14.raw', 'Hela_P035210_BA1_S00_A00_R19.raw']
         fasta_files = ['human.fasta', 'contaminants.fasta']
-        fraction_dict = {'Hela_P035210_BA1_S00_A00': ['Hela_P035210_BA1_S00_A00_R1.raw', 'Hela_P035210_BA1_S00_A00_R5.raw', 'Hela_P035210_BA1_S00_A00_R14.raw', 'Hela_P035210_BA1_S00_A00_R19.raw']}
-        run = TestRun(runtype, files, fasta_files, new_files, fraction_dict = fraction_dict)
+        sample = ['A','A','A','A']
+        fraction = [1,2,3,4]
+        run = TestRun(runtype, files, fasta_files, new_files, sample = sample, fraction = fraction)
         #run.prepare_settings()
         #print(run.file_paths)
         #run.settings['workflow'] = {'continue_runs': True, 'create_database': False, 'import_raw_data': False, 'find_features': False, 'search_data': False, 'recalibrate_data': False, 'align': True, 'match': False, 'lfq_quantification': True}
         run.run(password=password)
 
+    elif runtype == 'PXD015087_matching':
+        files = ['Hela_P035210_BA1_S00_A00_R1.raw', 'Hela_P035210_BA1_S00_A00_R5.raw', 'Hela_P035210_BA1_S00_A00_R14.raw', 'Hela_P035210_BA1_S00_A00_R19.raw']
+        fasta_files = ['human.fasta', 'contaminants.fasta']
+
+        custom_settings = {}
+        workflow = {}
+        workflow['match'] = True
+        custom_settings['workflow'] = workflow
+        run = TestRun(runtype, files, fasta_files, new_files, custom_settings = custom_settings)
+
+        run.run(password=password)
+
+    elif runtype == 'PXD015087_matching_fraction':
+        files = ['Hela_P035210_BA1_S00_A00_R1.raw', 'Hela_P035210_BA1_S00_A00_R5.raw', 'Hela_P035210_BA1_S00_A00_R14.raw', 'Hela_P035210_BA1_S00_A00_R19.raw']
+        fasta_files = ['human.fasta', 'contaminants.fasta']
+        sample = ['A','A','B','B']
+        fraction = [1,2,1,2]
+
+        custom_settings = {}
+        workflow = {}
+        workflow['match'] = True
+        custom_settings['workflow'] = workflow
+        run = TestRun(runtype, files, fasta_files, new_files, sample = sample, fraction = fraction, custom_settings = custom_settings)
+
+        run.run(password=password)
 
     else:
         raise NotImplementedError(f"Runtime {runtype} not found. Available are {AVAILABLE}")

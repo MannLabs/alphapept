@@ -226,6 +226,14 @@ def check_settings(settings):
         ]
         settings['experiment']['shortnames'] = shortnames
 
+    if settings['experiment']['sample_group'] == []:
+        logging.info('Sample group not set. Setting to shortname.')
+        settings['experiment']['sample_group'] = settings['experiment']['shortnames']
+
+    if settings['experiment']['fraction'] == []:
+        logging.info('Fraction not set. Setting to 1.')
+        settings['experiment']['fraction'] = [1 for _ in settings['experiment']['shortnames']]
+
     if settings['fasta']['save_db']:
         if not settings['experiment']['database_path']:
             file_dir = os.path.dirname(settings['experiment']['file_paths'][0])
@@ -273,7 +281,10 @@ def assemble_df(settings, field = 'protein_fdr', callback=None):
         )[0]+'.ms_data.hdf' for file_name in settings['experiment']['file_paths']
     ]
     shortnames = settings['experiment']['shortnames']
+    sample_group = settings['experiment']['sample_group']
+    fraction = settings['experiment']['fraction']
     all_dfs = []
+
     for idx, file_name in enumerate(paths):
 
         try:
@@ -283,13 +294,12 @@ def assemble_df(settings, field = 'protein_fdr', callback=None):
 
             df['filename'] = file_name
             df['shortname'] = shortnames[idx]
-
-            if 'fraction' in settings['experiment'].keys():
-                if settings['experiment']['fraction'] != []:
-                    df['fraction'] = settings['experiment']['fraction'][idx]
+            df['sample_group'] = sample_group[idx]
+            df['fraction'] = fraction[idx]
 
             all_dfs.append(df)
-        except KeyError: # e.g. field does not exist
+        except KeyError: # e.g. if nothing was found in the search.
+            logging.info(f'No dataset {field} found in {file_name}. Skipping.')
             pass
 
         if callback:

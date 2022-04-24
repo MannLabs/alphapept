@@ -51,3 +51,11 @@ jobs:
         run: |
           conda activate alphapeptinstaller
           python test_ci.py "${{ env.TMP_FOLDER }}" PXD015087 "${{ secrets.MONGODB_PW }}"
+      - name: Run Alphapept on PXD015087 w. Matching
+        run: |
+          conda activate alphapeptinstaller
+          python test_ci.py "${{ env.TMP_FOLDER }}" PXD015087_matching "${{ secrets.MONGODB_PW }}"
+      - name: Run Alphapept on PXD015087 w. Matching + Fractions
+        run: |
+          conda activate alphapeptinstaller
+          python test_ci.py "${{ env.TMP_FOLDER }}" PXD015087_matching_fraction "${{ secrets.MONGODB_PW }}"

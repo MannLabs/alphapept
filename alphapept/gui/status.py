@@ -31,10 +31,13 @@ def queue_watcher():
 
         if len(queue_files) > 0:
 
-            created = [
-                time.ctime(os.path.getctime(os.path.join(QUEUE_PATH, _)))
-                for _ in queue_files
-            ]
+            try:
+                created = [
+                    time.ctime(os.path.getctime(os.path.join(QUEUE_PATH, _)))
+                    for _ in queue_files
+                ]
+            except FileNotFoundError: #File moved / deleted.
+                break
             queue_df = pd.DataFrame(queue_files, columns=["File"])
             queue_df["Created"] = created
 

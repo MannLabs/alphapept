@@ -14,8 +14,9 @@ experiment:
   results_path: null
   shortnames: []
   file_paths: []
-  fractions: []
-  matching_groups: []
+  sample_group: []
+  matching_group: []
+  fraction: []
   database_path: null
   fasta_paths: []
 raw:

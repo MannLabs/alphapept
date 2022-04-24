@@ -292,7 +292,8 @@ def experiment():
                 raw_files = [_ for _ in raw_files if _ not in exclude]
 
                 file_df = file_df_from_files(raw_files, file_folder)
-                file_df["Fraction"] = [str(i+1) for i in range(len(file_df))]
+                file_df['Sample group'] = file_df['Shortname']
+                file_df['Fraction'] = [1 for i in range(len(file_df))]
                 file_df["Matching group"] = [str(0)]*len(file_df)
 
                 gb = GridOptionsBuilder.from_dataframe(file_df)
@@ -321,8 +322,9 @@ def experiment():
                         " \n- Creation date of file."
                         " \n- Size (GB): Size in GB of the file."
                         " \n- Shortname: Unique shortname for each file."
-                        " \n- Fraction: Fraction of each file. Files of the same fraction will be scored together. If dataset is not fractionated leave as is."
-                        " \n- Matching Group: Match-between-runs only among members of this group or neighboring groups. Leave as is if matching between all files."
+                        " \n- Sample group: Files with the same sample group will be quanted together (e.g. for fractionated samples)."
+                        " \n- Fraction: Fraction number, if you have fractionated samples. Leave at 1 if no fractions exists."
+                        " \n- Matching group: Match-between-runs only among members of this group or neighboring groups. Leave as is if matching between all files."
                     )
 
                 shortnames = file_df_selected["Shortname"].values.tolist()
@@ -331,9 +333,9 @@ def experiment():
                     error += 1
 
                 try:
-                    matching_groups = file_df_selected["Matching group"].values.astype('int').tolist()
+                    matching_group = file_df_selected["Matching group"].values.astype('int').tolist()
                 except:
-                    matching_groups = [str(0)]*len(file_df)
+                    matching_group = [str(0)]*len(file_df)
 
                     st.warning("Warning: Matching groups contain non-integer values. Please only use integers (0,1,2...).")
                     error += 1
@@ -362,15 +364,13 @@ def experiment():
                     for _ in file_df_selected["Filename"].values.tolist()
                 ]
 
-                recorder["experiment"]["fractions"] = file_df_selected[
-                    "Fraction"
+                recorder["experiment"]['sample_group'] = file_df_selected[
+                    'Sample group'
                 ].values.tolist()
-                recorder["experiment"]["matching_groups"] = matching_groups
-
-                f_dict = file_df_selected.groupby('Fraction')['Filename'].unique().to_dict()
-                f_dict = {k: list(v) for k,v in f_dict.items()}
-
-                recorder['experiment']["fraction_dict"] = f_dict
+                recorder["experiment"]['fraction'] = file_df_selected[
+                    'Fraction'
+                ].values.tolist()
+                recorder["experiment"]["matching_group"] = matching_group
 
                 st.write(f"## Workflow")
 

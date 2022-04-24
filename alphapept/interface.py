@@ -738,9 +738,9 @@ def quantification(
                 if field in df.keys():  # Check if the quantification information exists.
                     # We could include another protein fdr in here..
 
-                    files = df['filename'].unique().tolist()
+                    samples = df['sample_group'].unique().tolist()
 
-                    if len(files) > 1:
+                    if len(samples) > 1:
                         logging.info('Delayed Normalization.')
                         df, normalization = alphapept.quantification.delayed_normalization(
                             df,
@@ -751,11 +751,11 @@ def quantification(
                             'fraction_normalization'
                         )
                         df_grouped = df.groupby(
-                            ['filename', 'precursor', 'protein_group']
+                            ['sample_group', 'precursor', 'protein_group']
                         )[['{}_dn'.format(field)]].sum().reset_index()
                     else:
                         df_grouped = df.groupby(
-                            ['filename', 'precursor', 'protein_group']
+                            ['sample_group', 'precursor', 'protein_group']
                         )[field].sum().reset_index()
 
                     logging.info('Saving protein_groups after delayed normalization to combined_protein_fdr_dn')
@@ -781,7 +781,7 @@ def quantification(
 
             else:
                 logging.info('Exporting protein intensity.')
-                protein_table = df.groupby(['protein_group','filename'])['ms1_int_sum'].sum().unstack()
+                protein_table = df.groupby(['protein_group','sample_group'])['ms1_int_sum'].sum().unstack()
 
             protein_table.to_hdf(
                 settings['experiment']['results_path'],
@@ -794,7 +794,7 @@ def quantification(
 
             for field in ['sequence','precursor']:
                 col_ = 'n_'+ field+' '
-                m = df.groupby(['protein_group','filename'])[field].count().unstack()
+                m = df.groupby(['protein_group','sample_group'])[field].count().unstack()
                 m.columns = [col_ +_ for _ in m.columns]
                 protein_summary.loc[m.index, m.columns] = m.values
 
@@ -915,10 +915,10 @@ def run_complete_workflow(
 
     steps = []
 
+    N_FILES = len(settings['experiment']['file_paths'])
+
     workflow = settings['workflow']
 
-    if not "fraction_dict" in settings['experiment']:
-        settings['experiment']['fraction_dict'] = {k:[k] for k in settings['experiment']['file_paths']}
     if "continue_runs" in workflow:
         if not workflow["continue_runs"]:
             for _ in settings['experiment']['file_paths']:
@@ -935,9 +935,9 @@ def run_complete_workflow(
         steps.append(recalibrate_data)
         steps.append(search_data)
     steps.append(score)
-    if workflow["align"] & (len(settings["experiment"]["fraction_dict"].keys())!=1):
+    if workflow["align"] & N_FILES >1:
         steps.append(align)
-    if workflow["match"] & (len(settings["experiment"]["fraction_dict"].keys())!=1):
+    if workflow["match"] & N_FILES >1:
         if align not in steps:
             steps.append(align)
         steps.append(match)
@@ -1218,10 +1218,6 @@ def parallel_execute(
     to_process = [(i, settings) for i in range(n_files)]
 
     failed = []
-
-    if step.__name__ == 'score_hdf':
-        num_exps_w_fractions = len(settings['experiment']['fraction_dict'].keys())#all fractions of a biological sample map to the fractionated sample. Note that the fraction number must not be contained in the name
-        to_process = [(i, settings) for i in range(num_exps_w_fractions)] #process the fractions together
 
     if n_files == 1:
         if not step(to_process[0], callback=callback, parallel=True):
