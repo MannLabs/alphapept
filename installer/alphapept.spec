@@ -58,10 +58,10 @@ while requirements:
 	datas += datas_
 	# binaries += binaries_
 
-	hidden_imports_.append([sklearn'])
-	hidden_imports_.append([sklearn.neighbors.typedefs]))
-	hidden_imports_.append([sklearn.utils._typedefs]))
-	
+	hidden_imports_.append(['sklearn'])
+	hidden_imports_.append(['sklearn.neighbors.typedefs']))
+	hidden_imports_.append(['sklearn.utils._typedefs']))
+
 	hidden_imports_ = set(hidden_imports_)
 	if "" in hidden_imports_:
 		hidden_imports_.remove("")
