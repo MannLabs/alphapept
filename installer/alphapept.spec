@@ -61,6 +61,7 @@ while requirements:
 	hidden_imports_.append('sklearn')
 	hidden_imports_.append('sklearn.neighbors.typedefs')
 	hidden_imports_.append('sklearn.utils._typedefs')
+	hidden_imports_.append('sklearn.neighbors._partition_nodes')
 
 	hidden_imports_ = set(hidden_imports_)
 	if "" in hidden_imports_:
