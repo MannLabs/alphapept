@@ -548,6 +548,6 @@ quantification:
   mode:
     type: combobox
     value:
-    - ms1_int_sum
-    default: ms1_int_sum
+    - ms1_int_sum_apex
+    default: ms1_int_sum_apex
     description: Column to perform quantification on.
