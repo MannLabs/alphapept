@@ -352,8 +352,10 @@ def match_datasets(settings:dict, callback:Callable = None):
         callback (Callable): Callback function to indicate progress.
     """
 
+    logging.info(f"Matching datasets.")
 
     if len(settings['experiment']['file_paths']) > 2:
+
 
         if settings['experiment']['matching_group'] == []:
             settings['experiment']['matching_group'] = [0 for _ in settings['experiment']['shortnames']]
