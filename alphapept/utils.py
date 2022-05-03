@@ -136,6 +136,16 @@ def show_platform_info() -> None:
     )
     logging.info("")
 
+
+def log_dict(a_dict) -> None:
+    """
+    Helper function to log a dictionary with proper formatting.
+    """
+    max_len = max(len(key) for key in a_dict)
+    for key, value in sorted(a_dict.items()):
+        logging.info(f"{key:<{max_len}} - {value}")
+    logging.info("")
+
 def show_python_info() -> None:
     """Log all Python information.
     This is done in the following format:
@@ -168,9 +178,7 @@ def show_python_info() -> None:
             module_versions[module_name] = module_version
         max_len = max(len(key) for key in module_versions)
         logging.info("Python information:")
-        for key, value in sorted(module_versions.items()):
-            logging.info(f"{key:<{max_len}} - {value}")
-        logging.info("")
+        log_dict(module_versions)
 
 
 def check_python_env():
@@ -190,8 +198,7 @@ def check_settings(settings):
     logging.info('Check for settings not completely implemented yet.')
 
     logging.info('Workflow Settings:')
-    for k,v in settings['workflow'].items():
-        logging.info(f"{k}    - {v}")
+    log_dict(settings['workflow'])
 
     if settings['experiment']['file_paths'] == []:
         raise FileNotFoundError('No files selected')
