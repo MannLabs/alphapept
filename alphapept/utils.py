@@ -189,6 +189,10 @@ def check_settings(settings):
     import multiprocessing
     logging.info('Check for settings not completely implemented yet.')
 
+    logging.info('Workflow Settings:')
+    for k,v in settings['workflow'].items():
+        logging.info(f"{k}}    - {v}")
+
     if settings['experiment']['file_paths'] == []:
         raise FileNotFoundError('No files selected')
 
