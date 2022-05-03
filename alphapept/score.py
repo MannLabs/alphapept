@@ -973,7 +973,7 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
             #   logging.info('Dropped level_0 from df.')
 
             #Note: Peptide FDR can be misleading here as we don't filter here, so this has not the set peptide fdr.
-            logging.info('Exporting peptide_fdr on {file_name}.')
+            logging.info(f'Exporting peptide_fdr on {file_name}.')
             ms_file_.write(export_df, dataset_name="peptide_fdr")
 
             logging.info(f'Scoring of files {file_name} complete.')
