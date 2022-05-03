@@ -191,7 +191,7 @@ def check_settings(settings):
 
     logging.info('Workflow Settings:')
     for k,v in settings['workflow'].items():
-        logging.info(f"{k}}    - {v}")
+        logging.info(f"{k}    - {v}")
 
     if settings['experiment']['file_paths'] == []:
         raise FileNotFoundError('No files selected')
