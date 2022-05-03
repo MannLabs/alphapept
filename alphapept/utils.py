@@ -16,6 +16,42 @@ LATEST_GITHUB_INIT_FILE = (
     "master/alphapept/__init__.py"
 )
 
+def get_size(path: str ) -> float:
+    """
+    Helper function to get size of a path (file / folder)
+
+    Args:
+        path (str): Path to the folder / file.
+
+    Returns:
+        float: Total size in bytes.
+    """
+    if path.endswith(".d"):
+        size_function = get_folder_size
+    else:
+        size_function = os.path.getsize
+
+    return size_function(path)
+
+def get_folder_size(start_path: str ) -> float:
+    """Returns the total size of a given folder.
+
+    Args:
+        start_path (str): Path to the folder that should be checked.
+
+    Returns:
+        float: Total size in bytes.
+    """
+
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(start_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            # skip if it is symbolic link
+            if not os.path.islink(fp):
+                total_size += os.path.getsize(fp)
+    return total_size
+
 
 def set_logger(
     *,
@@ -191,11 +227,41 @@ def check_python_env():
             'Numba version {} not sufficient'.format(numba.__version__)
         )
 
+def check_size(settings):
+    sizes = [get_size(_) / 1024 ** 3 for _ in settings['experiment']['file_paths']]
+    base_dirs = [os.path.splitdrive(_)[0] for _ in settings['experiment']['file_paths']]
+
+    size_gb = sum(sizes)
+    logging.info(f'Size of job (raw files) {size_gb:.2f} Gb')
+
+    required_size_dict = {}
+
+    for base, size in zip(base_dirs, sizes):
+        if base in required_size_dict:
+            required_size_dict[base] += size
+        else:
+            required_size_dict[base] = size
+
+    #Require at least file size of raw files as disk space (file conversion, search etc.)
+    for base, size in required_size_dict.items():
+        free = psutil.disk_usage(base).free/1024**3
+        if free < size:
+            logging.info(f'Required disk space for {base} - {size:.2f} Gb, Available {free:.2f} Gb.')
+            logging.info('Not enough disk space for analysis. Please free disk space.')
+            raise
+        else:
+            logging.info(f'Required disk space for {base} - {size:.2f} Gb, Available {free:.2f} Gb OK.')
+
+    logging.info("")
+
 def check_settings(settings):
     # _this_file = os.path.abspath(__file__)
     # _this_directory = os.path.dirname(_this_file)
     import multiprocessing
     logging.info('Check for settings not completely implemented yet.')
+
+    logging.info('Size check:')
+    check_size(settings)
 
     logging.info('Workflow Settings:')
     log_dict(settings['workflow'])
