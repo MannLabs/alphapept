@@ -6,7 +6,8 @@ import psutil
 
 import streamlit as st
 from alphapept.paths import FILE_WATCHER_FILE, DEFAULT_SETTINGS_PATH, QUEUE_PATH
-from alphapept.gui.utils import check_process, init_process, start_process, get_size
+from alphapept.gui.utils import check_process, init_process, start_process
+from alphapept.utils import get_size
 from alphapept.settings import load_settings_as_template, save_settings
 
 

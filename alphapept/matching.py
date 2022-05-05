@@ -288,14 +288,15 @@ def align_datasets(settings:dict, callback:callable=None):
         logging.info(f'Solving equation system with {n_jobs} jobs.')
 
         alignment = pd.DataFrame(align(deltas, filenames, weights, n_jobs), columns = cols)
-        alignment = pd.concat([pd.DataFrame(np.zeros((1, alignment.shape[1])), columns= cols), alignment])
+        alignment = pd.concat([alignment, pd.DataFrame(np.zeros((1, alignment.shape[1])), columns= cols)])
+
         alignment -= alignment.mean()
 
         logging.info(f'Solving equation system complete.')
 
         logging.info(f'Applying offset')
 
-        align_files(filenames, -alignment, offset_dict)
+        align_files(filenames, alignment, offset_dict)
 
         if cb:
             progress_wrapper(0, 2, 1)
@@ -378,8 +379,10 @@ def match_datasets(settings:dict, callback:Callable = None):
         callback (Callable): Callback function to indicate progress.
     """
 
+    logging.info(f"Matching datasets.")
 
     if len(settings['experiment']['file_paths']) > 2:
+
 
         if settings['experiment']['matching_group'] == []:
             settings['experiment']['matching_group'] = [0 for _ in settings['experiment']['shortnames']]
