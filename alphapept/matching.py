@@ -193,6 +193,7 @@ def calculate_deltas(combos: list, calib:bool = False, callback:Callable=None) -
         dists, weight = calculate_distance(df_1_mean, df_2_mean, offset_dict, calib)
 
         deltas[combo] = dists
+
         weights.append(weight)
 
         if callback:
@@ -286,6 +287,10 @@ def align_datasets(settings:dict, callback:callable=None):
         n_jobs = settings['general']['n_processes']
 
         logging.info(f'Solving equation system with {n_jobs} jobs.')
+
+        if n_jobs > 60:
+            n_jobs = 60 #See https://github.com/pycaret/pycaret/issues/38
+            logging.info('Capping n_jobs at 60.')
 
         alignment = pd.DataFrame(align(deltas, filenames, weights, n_jobs), columns = cols)
         alignment = pd.concat([alignment, pd.DataFrame(np.zeros((1, alignment.shape[1])), columns= cols)])
@@ -446,7 +451,7 @@ def match_datasets(settings:dict, callback:Callable = None):
                     features = alphapept.io.MS_Data_File(file).read(dataset_name='feature_table')
                     features['feature_idx'] = features.index
 
-                    matching_set = set(grouped.index) - set(df['precursor'])
+                    matching_set = list(set(grouped.index) - set(df['precursor']))
                     logging.info(f'Trying to match file {file} with database of {len(matching_set):,} unidentified candidates')
 
                     mz_range = std_range[0]
@@ -501,7 +506,7 @@ def match_datasets(settings:dict, callback:Callable = None):
                     df['type'] = 'msms'
                     df['matching_p'] = np.nan
 
-                    shared_columns = set(matched.columns).intersection(set(df.columns))
+                    shared_columns = list(set(matched.columns).intersection(set(df.columns)))
 
                     df_ = pd.concat([df, matched[shared_columns]], ignore_index=True)
 

@@ -426,6 +426,10 @@ def train_RF(df: pd.DataFrame,
         logging.info('Using frozen pyinstaller version. Setting n_jobs to 1')
         n_jobs = 1
 
+    if n_jobs > 60:
+        n_jobs = 60 #See https://github.com/pycaret/pycaret/issues/38
+        logging.info('Capping n_jobs at 60.')
+
     features = [_ for _ in df.columns if _ not in exclude_features]
 
     # Setup ML pipeline
