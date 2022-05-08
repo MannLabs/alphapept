@@ -259,6 +259,10 @@ def align_datasets(settings:dict, callback:callable=None):
 
         logging.info(f'Solving equation system with {n_jobs} jobs.')
 
+        if n_jobs > 60:
+            n_jobs = 60 #See https://github.com/pycaret/pycaret/issues/38
+            logging.info('Capping n_jobs at 60.')
+
         alignment = pd.DataFrame(align(deltas, filenames, weights, n_jobs), columns = cols)
         alignment = pd.concat([alignment, pd.DataFrame(np.zeros((1, alignment.shape[1])), columns= cols)])
 
@@ -473,7 +477,7 @@ def match_datasets(settings:dict, callback:Callable = None):
                     df['type'] = 'msms'
                     df['matching_p'] = np.nan
 
-                    shared_columns = set(matched.columns).intersection(set(df.columns))
+                    shared_columns = list(set(matched.columns).intersection(set(df.columns)))
 
                     df_ = pd.concat([df, matched[shared_columns]], ignore_index=True)
 
