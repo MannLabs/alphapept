@@ -185,8 +185,7 @@ def calculate_deltas(combos: list, calib:bool = False, callback:Callable=None) -
              deltas = pd.DataFrame(columns = cols)
 
         dists, weight = calculate_distance(df_1, df_2, offset_dict, calib = calib)
-        deltas = deltas.append(pd.DataFrame([dists], columns = cols, index=[combo]))
-
+        deltas = pd.concat([deltas, pd.DataFrame([dists], columns = cols, index=[combo])])
         weights.append(weight)
 
         if callback:
@@ -419,7 +418,7 @@ def match_datasets(settings:dict, callback:Callable = None):
                     features = alphapept.io.MS_Data_File(file).read(dataset_name='feature_table')
                     features['feature_idx'] = features.index
 
-                    matching_set = set(grouped.index) - set(df['precursor'])
+                    matching_set = list(set(grouped.index) - set(df['precursor']))
                     logging.info(f'Trying to match file {file} with database of {len(matching_set):,} unidentified candidates')
 
                     mz_range = std_range[0]
