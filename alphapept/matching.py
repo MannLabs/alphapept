@@ -185,7 +185,7 @@ def calculate_deltas(combos: list, calib:bool = False, callback:Callable=None) -
 
                 cache_size_in_kbytes += sys.getsizeof(df_mean)/1024
                 if not i % 100:
-                    print(f"cache info: iteration {i} items {len(df_cache)} size {cache_size_in_kbytes:.1f} kB")
+                    logging.info(f"cache info: iteration {i} items {len(df_cache)} size {cache_size_in_kbytes:.1f} kB")
 
         df_1_mean = df_cache[filename1]
         df_2_mean = df_cache[filename2]
@@ -193,7 +193,6 @@ def calculate_deltas(combos: list, calib:bool = False, callback:Callable=None) -
         dists, weight = calculate_distance(df_1_mean, df_2_mean, offset_dict, calib)
 
         deltas[combo] = dists
-
         weights.append(weight)
 
         if callback:
