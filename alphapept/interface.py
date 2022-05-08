@@ -935,9 +935,9 @@ def run_complete_workflow(
         steps.append(recalibrate_data)
         steps.append(search_data)
     steps.append(score)
-    if workflow["align"] & (N_FILES >1):
+    if workflow["align"] and (N_FILES >1):
         steps.append(align)
-    if workflow["match"] & (N_FILES >1):
+    if workflow["match"] and (N_FILES >1):
         if align not in steps:
             steps.append(align)
         steps.append(match)
