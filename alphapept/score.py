@@ -426,6 +426,10 @@ def train_RF(df: pd.DataFrame,
         logging.info('Using frozen pyinstaller version. Setting n_jobs to 1')
         n_jobs = 1
 
+    if n_jobs > 60:
+        n_jobs = 60 #See https://github.com/pycaret/pycaret/issues/38
+        logging.info('Capping n_jobs at 60.')
+
     features = [_ for _ in df.columns if _ not in exclude_features]
 
     # Setup ML pipeline
@@ -973,7 +977,7 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
             #   logging.info('Dropped level_0 from df.')
 
             #Note: Peptide FDR can be misleading here as we don't filter here, so this has not the set peptide fdr.
-            logging.info('Exporting peptide_fdr on {file_name}.')
+            logging.info(f'Exporting peptide_fdr on {file_name}.')
             ms_file_.write(export_df, dataset_name="peptide_fdr")
 
             logging.info(f'Scoring of files {file_name} complete.')

@@ -96,4 +96,4 @@ isobaric_label:
 quantification:
   max_lfq: true
   lfq_ratio_min: 1
-  mode: ms1_int_sum
+  mode: ms1_int_sum_apex
