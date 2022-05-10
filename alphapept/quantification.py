@@ -142,6 +142,7 @@ def normalize_experiment_SLSQP(profiles: np.ndarray) -> np.ndarray:
     median_estimate = 1/np.nanmedian(x, axis=2, keepdims=1) #median of all proteins, inverse
     x0 = median_estimate/np.max(median_estimate, axis=1, keepdims=1) #normalize
     x0 = x0.reshape(profiles.shape[0] * profiles.shape[1])
+    x0 = np.nan_to_num(x0, nan=1)
 
     bounds = [(0.1, 1) for _ in x0]
     res = minimize(get_total_error, args = profiles , x0 = x0, bounds=bounds, method='SLSQP', options={'disp': False, 'maxiter':100*profiles.shape[1]})
@@ -165,6 +166,7 @@ def normalize_experiment_BFGS(profiles: np.ndarray) -> np.ndarray:
     median_estimate = 1/np.nanmedian(x, axis=2, keepdims=1) #median of all proteins, inverse
     x0 = median_estimate/np.max(median_estimate, axis=1, keepdims=1) #normalize
     x0 = x0.reshape(profiles.shape[0] * profiles.shape[1])
+    x0 = np.nan_to_num(x0, nan=1)
 
     bounds = [(0.1, 1) for _ in x0]
     res = minimize(get_total_error, args = profiles , x0 = x0, bounds=bounds, method='L-BFGS-B', options={'disp': False, 'maxiter':100*profiles.shape[1]} )
