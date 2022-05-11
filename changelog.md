@@ -1,21 +1,11 @@
 # Changelog
 
-Last change: 05-MAY-2022, MTS
+Last change: 24-APR-2022, MTS
 
-## 0.4.6
-* Link to Renku @cmdoret
-* Optimized quantification (proper integration of signal on MS1 level), now uses apex of isotope envelope
-* Caching of dataframes for matching @mschwoer
-* Minor code reorganization
-* Bugfixes in interface @hugokitano
-* Initial estimates for delayed normalization
-* Bugfix for Threadripper Systems #434, #264
-* Updated docs
-
-## 0.4.5
+## 0.45
 * Revision of how fractions are handled
 * LFQ Acceleration @hugokitano
-* Update of various packages
+* Update of various packages 
 
 ## 0.4.4
 * New maximum iterations for LFQ

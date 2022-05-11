@@ -781,7 +781,7 @@ def quantification(
 
             else:
                 logging.info('Exporting protein intensity.')
-                protein_table = df.groupby(['protein_group','sample_group'])[field].sum().unstack()
+                protein_table = df.groupby(['protein_group','sample_group'])['ms1_int_sum'].sum().unstack()
 
             protein_table.to_hdf(
                 settings['experiment']['results_path'],
@@ -935,9 +935,9 @@ def run_complete_workflow(
         steps.append(recalibrate_data)
         steps.append(search_data)
     steps.append(score)
-    if workflow["align"] and (N_FILES >1):
+    if workflow["align"] & N_FILES >1:
         steps.append(align)
-    if workflow["match"] and (N_FILES >1):
+    if workflow["match"] & N_FILES >1:
         if align not in steps:
             steps.append(align)
         steps.append(match)
@@ -1144,7 +1144,7 @@ def get_summary(settings: dict, summary: dict) -> dict:
 
     summary['file_sizes'] = {}
 
-    fields = ['fwhm','ms1_int_sum_area','ms1_int_sum_apex','ms1_int_max_area','ms1_int_max_apex','rt_length','rt_tail','prec_offset_raw_ppm', 'prec_offset_ppm','mobility']
+    fields = ['fwhm','ms1_int_sum','rt_length','rt_tail','prec_offset_raw_ppm', 'prec_offset_ppm','mobility']
 
     file_sizes = {}
     for _ in settings['experiment']['file_paths']:

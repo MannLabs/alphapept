@@ -13,8 +13,7 @@ from alphapept.paths import (
     FASTA_PATH,
 )
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
-from alphapept.gui.utils import escape_markdown, files_in_folder
-from alphapept.utils import get_size
+from alphapept.gui.utils import escape_markdown, files_in_folder, get_size
 from st_aggrid import GridOptionsBuilder, AgGrid
 
 # Dict to match workflow

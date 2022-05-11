@@ -9,7 +9,6 @@ import pandas as pd
 from typing import Callable, Union, Tuple
 
 from alphapept.paths import PROCESSED_PATH
-from alphapept.utils import get_size
 
 
 @st.cache(allow_output_mutation=True)
@@ -98,6 +97,43 @@ def check_group(filename: str, groups: list) -> Union[str, None]:
         if group in filename:
             return group
     return "None"
+
+
+def get_size(path: str ) -> float:
+    """
+    Helper function to get size of a path (file / folder)
+
+    Args:
+        path (str): Path to the folder / file.
+
+    Returns:
+        float: Total size in bytes.
+    """
+    if path.endswith(".d"):
+        size_function = get_folder_size
+    else:
+        size_function = os.path.getsize
+
+    return size_function(path)
+
+def get_folder_size(start_path: str ) -> float:
+    """Returns the total size of a given folder.
+
+    Args:
+        start_path (str): Path to the folder that should be checked.
+
+    Returns:
+        float: Total size in bytes.
+    """
+
+    total_size = 0
+    for dirpath, dirnames, filenames in os.walk(start_path):
+        for f in filenames:
+            fp = os.path.join(dirpath, f)
+            # skip if it is symbolic link
+            if not os.path.islink(fp):
+                total_size += os.path.getsize(fp)
+    return total_size
 
 
 def escape_markdown(text: str) -> str:
