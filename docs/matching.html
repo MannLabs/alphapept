@@ -51,7 +51,7 @@ Offset is either applied relative (mz, mobility) or absolute (rt).</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calculate_distance" class="doc_header"><code>calculate_distance</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L12" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_distance</code>(<strong><code>table_1</code></strong>:<code>DataFrame</code>, <strong><code>table_2</code></strong>:<code>DataFrame</code>, <strong><code>offset_dict</code></strong>:<code>dict</code>, <strong><code>calib</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
+<h4 id="calculate_distance" class="doc_header"><code>calculate_distance</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L11" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_distance</code>(<strong><code>table_1</code></strong>:<code>DataFrame</code>, <strong><code>table_2</code></strong>:<code>DataFrame</code>, <strong><code>offset_dict</code></strong>:<code>dict</code>, <strong><code>calib</code></strong>:<code>bool</code>=<em><code>False</code></em>)</p>
 </blockquote>
 <p>Calculate the distance between two precursors for different columns
 Distance can either be relative or absolute.</p>
@@ -92,7 +92,7 @@ Distance can either be relative or absolute.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calib_table" class="doc_header"><code>calib_table</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L57" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calib_table</code>(<strong><code>table</code></strong>:<code>DataFrame</code>, <strong><code>delta</code></strong>:<code>Series</code>, <strong><code>offset_dict</code></strong>:<code>dict</code>)</p>
+<h4 id="calib_table" class="doc_header"><code>calib_table</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L61" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calib_table</code>(<strong><code>table</code></strong>:<code>DataFrame</code>, <strong><code>delta</code></strong>:<code>Series</code>, <strong><code>offset_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Apply offset to a table. Different operations for offsets exist.
 Offsets will be saved with a '_calib'-suffix. If this does not already exist,
@@ -132,7 +132,7 @@ it will be created.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="align" class="doc_header"><code>align</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L90" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align</code>(<strong><code>deltas</code></strong>:<code>DataFrame</code>, <strong><code>filenames</code></strong>:<code>list</code>, <strong><code>weights</code></strong>:<code>ndarray</code>=<em><code>None</code></em>, <strong><code>n_jobs</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="align" class="doc_header"><code>align</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L94" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align</code>(<strong><code>deltas</code></strong>:<code>DataFrame</code>, <strong><code>filenames</code></strong>:<code>list</code>, <strong><code>weights</code></strong>:<code>ndarray</code>=<em><code>None</code></em>, <strong><code>n_jobs</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Align multiple datasets.
 This function creates a matrix to represent the shifts from each dataset to another.
@@ -173,7 +173,7 @@ This effectively is an overdetermined equation system and is solved with a linea
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="calculate_deltas" class="doc_header"><code>calculate_deltas</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L144" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_deltas</code>(<strong><code>combos</code></strong>:<code>list</code>, <strong><code>calib</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>typing.Callable</code>=<em><code>None</code></em>)</p>
+<h4 id="calculate_deltas" class="doc_header"><code>calculate_deltas</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L147" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>calculate_deltas</code>(<strong><code>combos</code></strong>:<code>list</code>, <strong><code>calib</code></strong>:<code>bool</code>=<em><code>False</code></em>, <strong><code>callback</code></strong>:<code>Callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Wrapper function to calculate the distances of multiple files.</p>
 <p>In here, we define the offset_dict to make a relative comparison for mz and mobility and absolute for rt.</p>
@@ -215,7 +215,7 @@ This effectively is an overdetermined equation system and is solved with a linea
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="align_files" class="doc_header"><code>align_files</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L233" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_files</code>(<strong><code>filenames</code></strong>:<code>list</code>, <strong><code>alignment</code></strong>:<code>DataFrame</code>, <strong><code>offset_dict</code></strong>:<code>dict</code>)</p>
+<h4 id="align_files" class="doc_header"><code>align_files</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L205" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_files</code>(<strong><code>filenames</code></strong>:<code>list</code>, <strong><code>alignment</code></strong>:<code>DataFrame</code>, <strong><code>offset_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Wrapper function that aligns a list of files.</p>
 <p>Args:
@@ -244,7 +244,7 @@ This effectively is an overdetermined equation system and is solved with a linea
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="align_datasets" class="doc_header"><code>align_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L255" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_datasets</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="align_datasets" class="doc_header"><code>align_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L227" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_datasets</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Wrapper function that aligns all experimental files specified a settings file.</p>
 <p>Args:
@@ -287,7 +287,7 @@ This effectively is an overdetermined equation system and is solved with a linea
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_probability" class="doc_header"><code>get_probability</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L329" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_probability</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>ref</code></strong>:<code>DataFrame</code>, <strong><code>sigma</code></strong>:<code>DataFrame</code>, <strong><code>index</code></strong>:<code>int</code>)</p>
+<h4 id="get_probability" class="doc_header"><code>get_probability</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L296" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_probability</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>ref</code></strong>:<code>DataFrame</code>, <strong><code>sigma</code></strong>:<code>DataFrame</code>, <strong><code>index</code></strong>:<code>int</code>)</p>
 </blockquote>
 <p>Probablity estimate of a transfered identification using the Mahalanobis distance.</p>
 <p>The function calculates the probability that a feature is a reference feature.
@@ -338,6 +338,22 @@ The reference features containing std deviations so that a probability can be es
 </div>
 </div>
 
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>First element: (ideal match): 0.00
+Second element: (rt slightly off): 0.12
+Third element: (mass completely off): 1.00
+</pre>
+</div>
+</div>
+
+</div>
+</div>
+
 </div>
     {% endraw %}
 
@@ -352,7 +368,7 @@ The reference features containing std deviations so that a probability can be es
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="convert_decoy" class="doc_header"><code>convert_decoy</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L366" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_decoy</code>(<strong><code>float_</code></strong>)</p>
+<h4 id="convert_decoy" class="doc_header"><code>convert_decoy</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L333" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_decoy</code>(<strong><code>float_</code></strong>)</p>
 </blockquote>
 <p>Utility function to convert type for decoy after grouping.</p>
 
@@ -377,10 +393,10 @@ The reference features containing std deviations so that a probability can be es
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="match_datasets" class="doc_header"><code>match_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L378" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>match_datasets</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>:<code>typing.Callable</code>=<em><code>None</code></em>)</p>
+<h4 id="match_datasets" class="doc_header"><code>match_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L345" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>match_datasets</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>:<code>Callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Match datasets: Wrapper function to match datasets based on a settings file.
-This implementation uses matching groups but not fractions.</p>
+This implementation uses matchin groups but not fractions.</p>
 <p>Args:
     settings (dict): Dictionary containg specifications of the run
     callback (Callable): Callback function to indicate progress.</p>

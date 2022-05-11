@@ -6,7 +6,6 @@
 ![Quick Test](https://github.com/MannLabs/alphapept/workflows/Quick%20Test/badge.svg)
 ![Performance test](https://github.com/MannLabs/alphapept/workflows/Performance%20test/badge.svg)
 ![Windows Installer](https://github.com/MannLabs/alphapept/workflows/Windows%20Installer/badge.svg)
-[![launch - renku](https://renkulab.io/renku-badge.svg)](https://renkulab.io/projects/renku-stories/alphapept-gui-streamlit)
 
 [![DOI:10.1101/2021.07.23.453379](http://img.shields.io/badge/DOI-10.1101/2021.07.23.453379-B31B1B.svg)](https://www.biorxiv.org/content/10.1101/2021.07.23.453379v1)
 
