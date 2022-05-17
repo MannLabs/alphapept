@@ -1063,7 +1063,7 @@ import datetime
 import alphapept.utils
 
 
-def extract_median_unique(settings: dict, fields: list) -> tuple:
+def extract_median_unique(settings: dict, fields: list, summary_type='filename') -> tuple:
     """Extract the medion protein FDR and number of unique proteins.
 
     Args:
@@ -1076,11 +1076,13 @@ def extract_median_unique(settings: dict, fields: list) -> tuple:
     """
     protein_fdr = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
     cols = [_ for _ in ['protein','protein_group','precursor','sequence_naked','sequence'] if _ in protein_fdr.columns]
-    n_unique = protein_fdr.groupby('filename')[cols].nunique()
-    n_unique.index = [os.path.split(_)[1][:-12] for _ in n_unique.index]
+    n_unique = protein_fdr.groupby(summary_type)[cols].nunique()
+    if(summary_type=='filename'):
+        n_unique.index = [os.path.split(_)[1][:-12] for _ in n_unique.index]
     cols = [_ for _ in fields if _ in protein_fdr.columns]
-    median = protein_fdr[['filename']+cols].groupby('filename').median()
-    median.index = [os.path.split(_)[1][:-12] for _ in median.index]
+    median = protein_fdr[[summary_type]+cols].groupby(summary_type).median()
+    if(summary_type=='filename'):
+        median.index = [os.path.split(_)[1][:-12] for _ in median.index]
 
     return median, n_unique
 
@@ -1172,6 +1174,18 @@ def get_summary(settings: dict, summary: dict) -> dict:
         for col in n_unique.columns:
             for _ in range(len(n_unique)):
                 summary[n_unique.index[_]][f'{col} (protein_fdr, n unique)'] = int(n_unique.iloc[_][col])
+
+        s_median, s_n_unique = extract_median_unique(settings, fields,summary_type='sample_group')
+
+
+        for _ in range(len(s_median)):
+            summary[s_median.index[_]]={}
+            for col in s_median.columns:
+                summary[s_median.index[_]][f'{col} (protein_fdr, median)'] = float(s_median.iloc[_][col])
+
+        for _ in range(len(s_n_unique)):
+            for col in s_n_unique.columns:
+                summary[s_n_unique.index[_]][f'{col} (protein_fdr, n unique)'] = int(s_n_unique.iloc[_][col])
 
     return summary
 
