@@ -655,7 +655,8 @@ def results():
 
             with st.spinner("Loading data.."):
                 plot_summary(results_yaml, selection)
-                plot_sample_summary(results_yaml, selection)
+                if(len(list(dict.fromkeys(results_yaml["experiment"]["fraction"])))>1):
+                    plot_sample_summary(results_yaml, selection)
 
             with st.expander("Run summary"):
                 st.write(results_yaml["summary"])
