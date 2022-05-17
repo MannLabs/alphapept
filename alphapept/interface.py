@@ -1175,17 +1175,17 @@ def get_summary(settings: dict, summary: dict) -> dict:
             for _ in range(len(n_unique)):
                 summary[n_unique.index[_]][f'{col} (protein_fdr, n unique)'] = int(n_unique.iloc[_][col])
 
-        s_median, s_n_unique = extract_median_unique(settings, fields,summary_type='sample_group')
+        if(len(list(dict.fromkeys(settings["experiment"]["fraction"])))>1):
+            s_median, s_n_unique = extract_median_unique(settings, fields,summary_type='sample_group')
 
+            for _ in range(len(s_median)):
+                summary[s_median.index[_]]={}
+                for col in s_median.columns:
+                    summary[s_median.index[_]][f'{col} (protein_fdr, median)'] = float(s_median.iloc[_][col])
 
-        for _ in range(len(s_median)):
-            summary[s_median.index[_]]={}
-            for col in s_median.columns:
-                summary[s_median.index[_]][f'{col} (protein_fdr, median)'] = float(s_median.iloc[_][col])
-
-        for _ in range(len(s_n_unique)):
-            for col in s_n_unique.columns:
-                summary[s_n_unique.index[_]][f'{col} (protein_fdr, n unique)'] = int(s_n_unique.iloc[_][col])
+            for _ in range(len(s_n_unique)):
+                for col in s_n_unique.columns:
+                    summary[s_n_unique.index[_]][f'{col} (protein_fdr, n unique)'] = int(s_n_unique.iloc[_][col])
 
     return summary
 
