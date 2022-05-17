@@ -495,7 +495,6 @@ def parse_file_and_display(file: str, results_yaml: dict):
 
 def plot_summary(results_yaml: dict, selection: str):
     """Plot summary information of a selected resutlts.yaml
-
     Args:
         results_yaml (dict): Results yaml dict.
         selection (str): Selected file.
@@ -563,10 +562,74 @@ def plot_summary(results_yaml: dict, selection: str):
     )
 
     fig.update_layout(showlegend=False)
-    fig.update_layout(title_text="Run Summary")
+    fig.update_layout(title_text="Run File Summary")
 
     st.write(fig)
+    
+def plot_sample_summary(results_yaml: dict, selection: str):
+    """Plot samlple summary information of a selected resutlts.yaml
 
+    Args:
+        results_yaml (dict): Results yaml dict.
+        selection (str): Selected file.
+    """
+    
+    samples = list(dict.fromkeys(results_yaml["experiment"]["sample_group"]))
+    data = [results_yaml["summary"][_] for _ in samples]
+
+    data_df = pd.DataFrame(data)
+    data_df["sample_group"] = samples
+    
+    for _ in [
+        "sequence (protein_fdr, n unique)",
+        "protein_group (protein_fdr, n unique)",
+    ]:
+        if _ not in data_df:
+            data_df[_] = 0
+
+    median_peptides = int(data_df["sequence (protein_fdr, n unique)"].median())
+    median_protein_groups = int(
+        data_df["protein_group (protein_fdr, n unique)"].median()
+    )
+
+    st.write(
+        f"### {median_peptides:,} peptides | {median_protein_groups:,}  protein groups (median)"
+    )
+
+    fig = make_subplots(
+        rows=1,
+        cols=2,
+        subplot_titles=(
+            "Peptides",
+            "Protein Groups",
+        ),
+    )
+
+    hovertext = list(data_df["sample_group"].values)
+
+  
+    fig.add_bar(
+        x=data_df.index,
+        y=data_df["sequence (protein_fdr, n unique)"],
+        hovertext=hovertext,
+        row=1,
+        col=1,
+        marker_color="#42dee1",
+    )
+    fig.add_bar(
+        x=data_df.index,
+        y=data_df["protein_group (protein_fdr, n unique)"],
+        hovertext=hovertext,
+        row=1,
+        col=2,
+        marker_color="#6eecb9",
+    )
+
+    fig.update_layout(showlegend=False)
+    fig.update_layout(title_text="Run Sample Summary")
+    
+    st.write(fig)
+    
 
 def results():
     """Streamlit page that displays information on how to get started."""
@@ -592,6 +655,7 @@ def results():
 
             with st.spinner("Loading data.."):
                 plot_summary(results_yaml, selection)
+                plot_sample_summary(results_yaml, selection)
 
             with st.expander("Run summary"):
                 st.write(results_yaml["summary"])
