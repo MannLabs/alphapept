@@ -1069,19 +1069,19 @@ def extract_median_unique(settings: dict, fields: list, summary_type='filename')
     Args:
         settings (dict): A dictionary with settings how to process the data.
         fields (list): A list with colum names to calculate summary statistics.
+        summary_type (str): A str of column name used for summarizing ('filename' or 'sample_group')
 
     Returns:
-        tuple: Two arrays with the median protein FDR per file and the unique number of protein hits
+        tuple: Two arrays with the median protein FDR per file/sample_group and the unique number of protein hits
 
     """
     protein_fdr = pd.read_hdf(settings['experiment']['results_path'], 'protein_fdr')
     cols = [_ for _ in ['protein','protein_group','precursor','sequence_naked','sequence'] if _ in protein_fdr.columns]
     n_unique = protein_fdr.groupby(summary_type)[cols].nunique()
-    if(summary_type=='filename'):
-        n_unique.index = [os.path.split(_)[1][:-12] for _ in n_unique.index]
     cols = [_ for _ in fields if _ in protein_fdr.columns]
     median = protein_fdr[[summary_type]+cols].groupby(summary_type).median()
     if(summary_type=='filename'):
+        n_unique.index = [os.path.split(_)[1][:-12] for _ in n_unique.index]
         median.index = [os.path.split(_)[1][:-12] for _ in median.index]
 
     return median, n_unique
