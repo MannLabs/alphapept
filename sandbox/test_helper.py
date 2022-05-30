@@ -80,41 +80,47 @@ def compare_field(df1, df2, software_1, software_2, field, exclude_decoy=True):
         df2 = df2[~df2['decoy']]
 
     #Some pre-defined boundaries
-    plt.figure(figsize=(5,5))
+    fig, ax = plt.subplots(figsize=(5,5))
 
     if field == 'charge':
         ratios = df1[field].value_counts() / df2[field].value_counts()
+
+        bars = ax.bar(ratios.index, ratios.values, label='Ratio {}/{}'.format(software_1, software_2))
+        ax.bar_label(bars)
         plt.axhline(1, color='k', linestyle=':')
-        plt.bar(ratios.index, ratios.values, label='Ratio {}/{}'.format(software_1, software_2))
-        plt.legend()
-        #bins = np.arange(1,6,0.5)
-
-        #plt.hist(df1[field].values, bins=bins,label=software_1)
-        #plt.hist(df2[field].values-0.5, bins=bins, label=software_2)
-
         plt.legend()
 
     elif (field == 'protein') or (field == 'sequence') or (field == 'precursor'):
-        plt.bar(software_1, len(set(df1[field])))
-        plt.bar(software_2, len(set(df2[field])))
+
+        bars = ax.bar(software_1, len(set(df1[field])))
+        ax.bar_label(bars)
+        bars = ax.bar(software_2, len(set(df2[field])))
+        ax.bar_label(bars)
+        plt.axhline(1, color='k', linestyle=':')
 
     elif (field == 'digestion'):
         ratios = df1['sequence'].str[-1].value_counts() / df2['sequence'].str[-1].value_counts()
+
+        bars = ax.bar(ratios.index, ratios.values, label='Ratio {}/{}'.format(software_1, software_2))
+        ax.bar_label(bars)
         plt.axhline(1, color='k', linestyle=':')
-        plt.bar(ratios.index, ratios.values, label='Ratio {}/{}'.format(software_1, software_2))
         plt.legend()
 
 
     elif (field == 'total_missed_cleavages'):
         field_ = 'missed_cleavages'
-        plt.bar(software_1, df1[field_].sum())
-        plt.bar(software_2, df2[field_].sum())
+        bars = ax.bar(software_1, df1[field_].sum())
+        ax.bar_label(bars)
+        bars = ax.bar(software_2, df2[field_].sum())
+        ax.bar_label(bars)
 
 
     elif (field == 'missed_cleavages'):
         ratios = df1[field].value_counts() / df2[field].value_counts()
+        bars = ax.bar(ratios.index, ratios.values, label='Ratio {}/{}'.format(software_1, software_2))
+        ax.bar_label(bars)
         plt.axhline(1, color='k', linestyle=':')
-        plt.bar(ratios.index, ratios.values, label='Ratio {}/{}'.format(software_1, software_2))
+        plt.legend()
 
     else:
         raise NotImplementedError
