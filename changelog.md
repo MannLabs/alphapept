@@ -11,6 +11,7 @@ Last change: 05-MAY-2022, MTS
 * Initial estimates for delayed normalization
 * Bugfix for Threadripper Systems #434, #264
 * Updated docs
+* More flexibility for custom modifications 
 
 ## 0.4.5
 * Revision of how fractions are handled
