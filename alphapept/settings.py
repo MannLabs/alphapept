@@ -60,7 +60,7 @@ def save_settings(settings: dict, path: str):
     base_dir = os.path.dirname(path)
 
     if base_dir != '':
-        os.makedirs(os.path.dirname(path), exist_ok=False)
+        os.makedirs(os.path.dirname(path), exist_ok=True)
 
     with open(path, "w") as file:
         yaml.dump(settings, file, sort_keys=False)
