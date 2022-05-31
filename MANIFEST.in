@@ -3,6 +3,6 @@ include LICENSE
 include CONTRIBUTING.md
 include README.md
 include modifications.tsv
-include amin_acids.tsv
+include amino_acids.tsv
 recursive-include alphapept *
 recursive-exclude * __pycache__
