@@ -7,6 +7,7 @@ __all__ = ['print_settings', 'load_settings', 'load_settings_as_template', 'save
 
 # Cell
 import yaml
+import os
 
 def print_settings(settings: dict):
     """Print a yaml settings file
@@ -55,6 +56,12 @@ def save_settings(settings: dict, path: str):
         settings (dict): A yaml dictionary.
         path (str): Path to the settings file.
     """
+
+    base_dir = os.path.dirname(path)
+
+    if base_dir != '':
+        os.makedirs(os.path.dirname(path), exist_ok=False)
+
     with open(path, "w") as file:
         yaml.dump(settings, file, sort_keys=False)
 
