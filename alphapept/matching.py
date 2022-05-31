@@ -7,6 +7,7 @@ __all__ = ['calculate_distance', 'calib_table', 'align', 'calculate_deltas', 'al
 
 import pandas as pd
 import numpy as np
+from numba import njit
 
 def calculate_distance(table_1: pd.DataFrame, table_2: pd.DataFrame, offset_dict: dict, calib: bool = False) -> (list, int):
     """Calculate the distance between two precursors for different columns
@@ -24,37 +25,32 @@ def calculate_distance(table_1: pd.DataFrame, table_2: pd.DataFrame, offset_dict
         KeyError: If either table_1 or table_2 is not indexed by precursor
 
     """
-
-    if table_1.index.name != 'precursor':
-        raise KeyError('table_1 is not indexed by precursor')
-
-    if table_2.index.name != 'precursor':
-        raise KeyError('table_2 is not indexed by precursor')
-
     shared_precursors = list(set(table_1.index).intersection(set(table_2.index)))
 
     table_1_ = table_1.loc[shared_precursors]
     table_2_ = table_2.loc[shared_precursors]
 
-    table_1_ = table_1_.groupby('precursor').mean()
-    table_2_ = table_2_.groupby('precursor').mean()
-
     deltas = []
-
     for col in offset_dict:
-        if calib:
-            col_ = col+'_calib'
-        else:
-            col_ = col
+        col_ = col + '_calib' if calib else col
 
         if offset_dict[col] == 'absolute':
-            deltas.append(np.nanmedian(table_1_[col_] - table_2_[col_]))
+            deltas.append(_calculate_deltas_abs(table_1_[col_].values,  table_2_[col_].values))
         elif offset_dict[col] == 'relative':
-            deltas.append(np.nanmedian((table_1_[col_] - table_2_[col_]) / (table_1_[col_] + table_2_[col_]) * 2))
+            deltas.append(_calculate_deltas_rel(table_1_[col_].values, table_2_[col_].values))
         else:
-            raise NotImplementedError(f"Calculating delta for {offset_dict[col_]} not implemented.")
+            raise NotImplementedError(f"Calculating delta for {offset_dict[col]} not implemented.")
 
     return deltas, len(shared_precursors)
+
+@njit
+def _calculate_deltas_abs(values1, values2):
+    return np.nanmedian(values1 - values2)
+
+@njit
+def _calculate_deltas_rel(values1, values2):
+    return np.nanmedian((values1 - values2) / (values1 + values2) * 2)
+
 
 # Cell
 
@@ -142,10 +138,10 @@ def align(deltas: pd.DataFrame, filenames: list, weights:np.ndarray=None, n_jobs
 # Cell
 import alphapept.io
 import os
-from typing import Callable
+from typing import Callable, Tuple, Dict, List
+
 
 def calculate_deltas(combos: list, calib:bool = False, callback:Callable=None) -> (pd.DataFrame, np.ndarray, dict):
-
     """Wrapper function to calculate the distances of multiple files.
 
     In here, we define the offset_dict to make a relative comparison for mz and mobility and absolute for rt.
@@ -165,34 +161,65 @@ def calculate_deltas(combos: list, calib:bool = False, callback:Callable=None) -
     """
 
     offset_dict = {}
-    deltas = pd.DataFrame()
+    deltas = {}
     weights = []
 
+    df_cache = {}
+    cache_size_in_kbytes = 0
+
     for i, combo in enumerate(combos):
-        file1 = os.path.splitext(combo[0])[0] + '.ms_data.hdf'
-        file2 = os.path.splitext(combo[1])[0] + '.ms_data.hdf'
-        df_1 = alphapept.io.MS_Data_File(file1).read(dataset_name="peptide_fdr").set_index('precursor')
-        df_2 = alphapept.io.MS_Data_File(file2).read(dataset_name="peptide_fdr").set_index('precursor')
+        filename1 = os.path.splitext(combo[0])[0] + '.ms_data.hdf'
+        filename2 = os.path.splitext(combo[1])[0] + '.ms_data.hdf'
 
-        if not offset_dict:
-            offset_dict = {'mz':'relative', 'rt':'absolute'}
-            if 'mobility' in df_1.columns:
-                logging.info("Also using mobility for calibration.")
-                offset_dict['mobility'] = 'relative'
-            cols = list(offset_dict.keys())
+        for filename in [filename1, filename2]:
+            if filename not in df_cache:
+                df = alphapept.io.MS_Data_File(filename).read(dataset_name="peptide_fdr")
 
-        if len(deltas) == 0:
-             deltas = pd.DataFrame(columns = cols)
+                if not offset_dict:
+                    offset_dict, columns_to_drop = _get_offset_dict_and_columns_to_drop(df.columns, calib)
 
-        dists, weight = calculate_distance(df_1, df_2, offset_dict, calib = calib)
-        deltas = deltas.append(pd.DataFrame([dists], columns = cols, index=[combo]))
+                # dropping all unnecessary columns to save memory
+                df.drop(columns=columns_to_drop, inplace=True)
+                df_mean = df.groupby('precursor').mean()  # index is "precursor" now
+                df_cache[filename] = df_mean
 
+                cache_size_in_kbytes += sys.getsizeof(df_mean)/1024
+                if not i % 100:
+                    logging.info(f"cache info: iteration {i} items {len(df_cache)} size {cache_size_in_kbytes:.1f} kB")
+
+        df_1_mean = df_cache[filename1]
+        df_2_mean = df_cache[filename2]
+
+        dists, weight = calculate_distance(df_1_mean, df_2_mean, offset_dict, calib)
+
+        deltas[combo] = dists
         weights.append(weight)
 
         if callback:
             callback((i+1)/len(combos))
 
-    return deltas, np.array(weights), offset_dict
+    df_deltas = pd.DataFrame.from_dict(deltas, orient='index', columns=offset_dict.keys())
+
+    return df_deltas, np.array(weights), offset_dict,
+
+
+def _get_offset_dict_and_columns_to_drop(input_data_columns: pd.Index, calib: bool) -> Tuple[Dict[str, str], List[str]]:
+    """Get a dictionary which maps columns names to alignment modes and a list of columns not required for the alignment."""
+
+    offset_dict = {'mz': 'relative', 'rt': 'absolute'}
+
+    if 'mobility' in input_data_columns:
+        print("Also using mobility for calibration.")
+        offset_dict['mobility'] = 'relative'
+
+    suffix = "_calib" if calib else ""
+    columns_to_align = [f"{key}{suffix}" for key  in offset_dict.keys()]
+    columns_to_keep = columns_to_align + ["precursor"]
+
+    columns_to_drop = [col for col in input_data_columns if col not in columns_to_keep]
+
+    return offset_dict, columns_to_drop
+
 
 # Cell
 import pandas as pd
@@ -260,15 +287,20 @@ def align_datasets(settings:dict, callback:callable=None):
 
         logging.info(f'Solving equation system with {n_jobs} jobs.')
 
+        if n_jobs > 60:
+            n_jobs = 60 #See https://github.com/pycaret/pycaret/issues/38
+            logging.info('Capping n_jobs at 60.')
+
         alignment = pd.DataFrame(align(deltas, filenames, weights, n_jobs), columns = cols)
-        alignment = pd.concat([pd.DataFrame(np.zeros((1, alignment.shape[1])), columns= cols), alignment])
+        alignment = pd.concat([alignment, pd.DataFrame(np.zeros((1, alignment.shape[1])), columns= cols)])
+
         alignment -= alignment.mean()
 
         logging.info(f'Solving equation system complete.')
 
         logging.info(f'Applying offset')
 
-        align_files(filenames, -alignment, offset_dict)
+        align_files(filenames, alignment, offset_dict)
 
         if cb:
             progress_wrapper(0, 2, 1)
@@ -351,8 +383,10 @@ def match_datasets(settings:dict, callback:Callable = None):
         callback (Callable): Callback function to indicate progress.
     """
 
+    logging.info(f"Matching datasets.")
 
     if len(settings['experiment']['file_paths']) > 2:
+
 
         if settings['experiment']['matching_group'] == []:
             settings['experiment']['matching_group'] = [0 for _ in settings['experiment']['shortnames']]
@@ -416,7 +450,7 @@ def match_datasets(settings:dict, callback:Callable = None):
                     features = alphapept.io.MS_Data_File(file).read(dataset_name='feature_table')
                     features['feature_idx'] = features.index
 
-                    matching_set = set(grouped.index) - set(df['precursor'])
+                    matching_set = list(set(grouped.index) - set(df['precursor']))
                     logging.info(f'Trying to match file {file} with database of {len(matching_set):,} unidentified candidates')
 
                     mz_range = std_range[0]
@@ -471,7 +505,7 @@ def match_datasets(settings:dict, callback:Callable = None):
                     df['type'] = 'msms'
                     df['matching_p'] = np.nan
 
-                    shared_columns = set(matched.columns).intersection(set(df.columns))
+                    shared_columns = list(set(matched.columns).intersection(set(df.columns)))
 
                     df_ = pd.concat([df, matched[shared_columns]], ignore_index=True)
 

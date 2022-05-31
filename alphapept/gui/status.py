@@ -102,25 +102,26 @@ def terminate_process():
 
         current_file = os.path.join(QUEUE_PATH, "current_file")
 
-        with open(current_file, "r") as file:
-            cf_ = yaml.load(file, Loader=yaml.FullLoader)
-
-        cf = cf_["file"]
-        file_in_process = os.path.join(QUEUE_PATH, cf)
-        target_file = os.path.join(FAILED_PATH, cf)
-
-        os.rename(file_in_process, target_file)
-        st.success(
-            f"Moved {escape_markdown(file_in_process)} to {escape_markdown(target_file)}"
-        )
-
         if os.path.isfile(current_file):
+
+            with open(current_file, "r") as file:
+                cf_ = yaml.load(file, Loader=yaml.FullLoader)
+
+            cf = cf_["file"]
+            file_in_process = os.path.join(QUEUE_PATH, cf)
+            target_file = os.path.join(FAILED_PATH, cf)
+
+            os.rename(file_in_process, target_file)
+            st.success(
+                f"Moved {escape_markdown(file_in_process)} to {escape_markdown(target_file)}"
+            )
+
             os.remove(current_file)
-        st.success(f"Cleaned up {escape_markdown(current_file)}")
+            st.success(f"Cleaned up {escape_markdown(current_file)}")
 
         time.sleep(3)
-
-        raise st.script_runner.RerunException(st.script_request_queue.RerunData(None))
+        st.success('Please refresh page')
+        st.stop()
 
 
 def status():
@@ -176,7 +177,9 @@ def status():
                 running, last_pid, p_name, status, queue_watcher_state = check_process(PROCESS_FILE)
 
         time.sleep(1)
-        raise st.script_runner.RerunException(st.script_request_queue.RerunData(None))
+        st.success('Please refresh this page.')
+        st.stop()
+
 
     current_file = os.path.join(QUEUE_PATH, "current_file")
 

@@ -409,9 +409,9 @@ file_paths:
   default: []
   description: Filepaths of the experiments.
   type: list
-fractions:
+fraction:
   default: []
-  description: List of fractions for the raw files.
+  description: List of fraction numbers for fractionated samples.
   type: list
 matching_group:
   default: []
@@ -425,6 +425,10 @@ results_path:
   - hdf
   folder: false
   type: path
+sample_group:
+  default: []
+  description: Sample group, for raw files that should be quanted together.
+  type: list
 shortnames:
   default: []
   description: List of shortnames for the raw files.
@@ -1190,11 +1194,11 @@ max_lfq:
   description: Perform max lfq type quantification.
   type: checkbox
 mode:
-  default: ms1_int_sum
+  default: ms1_int_sum_apex
   description: Column to perform quantification on.
   type: combobox
   value:
-  - ms1_int_sum
+  - ms1_int_sum_apex
 
 </pre>
 </div>
