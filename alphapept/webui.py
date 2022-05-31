@@ -1,5 +1,5 @@
 import streamlit as st
-from alphapept.gui import history, results, filewatcher, status, experiment, fasta, start
+from alphapept.gui import history, results, filewatcher, status, experiment, fasta, start, constants
 from PIL import Image
 from alphapept.__version__ import VERSION_NO
 import os
@@ -37,7 +37,8 @@ sidebar = {'Start': start.start,
            'FASTA': fasta.fasta,
            'Results': results.results,
            'History': history.history,
-           'FileWatcher': filewatcher.filewatcher}
+           'FileWatcher': filewatcher.filewatcher,
+           'Constants': constants.constants}
 
 menu = st.sidebar.radio("", list(sidebar.keys()))
 

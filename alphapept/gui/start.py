@@ -26,6 +26,7 @@ def start():
             " \n- Results: Explore the results of a run."
             " \n- History: Explore summary statistics of multiple processed files."
             " \n- FileWatcher: Set up a file watcher to automatically process files."
+            " \n- Constants: Overview of availale modifications and proteases."
         )
 
     with st.expander("Resources"):
