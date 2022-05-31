@@ -88,7 +88,7 @@ try:
     base = os.path.abspath(__file__) #Cant do this in notebook
     base = os.path.abspath(os.path.join(os.path.join(base, os.pardir), os.pardir))
 except NameError:
-    base = '../'
+    base = os.pardir
 
 modfile_path = os.path.join(base, "modifications.tsv")
 aafile_path = os.path.join(base, "amino_acids.tsv")
