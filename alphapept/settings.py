@@ -115,10 +115,9 @@ fasta = {}
 ## Read modifications from modifications file
 
 try:
-    base = os.path.abspath(__file__) #Cant do this in notebook
-    base = os.path.abspath(os.path.join(os.path.join(base, os.pardir), os.pardir))
+    base = os.path.dirname(os.path.abspath(__file__)) #Cant do this in notebook
 except NameError:
-    base = '../'
+    base = os.path.join(os.pardir, 'alphapept')
 
 modfile_path = os.path.join(base, "modifications.tsv")
 

@@ -85,10 +85,9 @@ def get_mass_dict(modfile:str, aasfile: str, verbose:bool=True):
     return mass_dict
 
 try:
-    base = os.path.abspath(__file__) #Cant do this in notebook
-    base = os.path.abspath(os.path.join(os.path.join(base, os.pardir), os.pardir))
+    base = os.path.dirname(os.path.abspath(__file__)) #Cant do this in notebook
 except NameError:
-    base = os.pardir
+    base = os.path.join(os.pardir, 'alphapept')
 
 modfile_path = os.path.join(base, "modifications.tsv")
 aafile_path = os.path.join(base, "amino_acids.tsv")
