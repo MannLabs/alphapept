@@ -91,14 +91,15 @@ If AlphaPept is installed correctly, you should be able to import AlphaPept as a
 > Only supported for preprocessed files.
 
 ##### Thermo Support
-2. Install [brew](https://brew.sh) and pkg-config: `brew install pkg-config`3. Intall Mono from mono-project website [Mono Mac](https://www.mono-project.com/download/stable/)
+2. Install [brew](https://brew.sh) and pkg-config: `brew install pkg-config`
+3. Install Mono from mono-project website [Mono Mac](https://www.mono-project.com/download/stable/)
 4. Register the Mono-Path to your system:
 For macOS Catalina, open the configuration of zsh via the terminal:
 * Type in `cd` to navigate to the home directory.
 * Type `nano ~/.zshrc` to open the configuration of the terminal
 * Add the path to your mono installation: `export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/Current/lib/pkgconfig:$PKG_CONFIG_PATH`. Make sure that the Path matches to your version (Here 6.12.0)
 * Save everything and execute `. ~/.zshrc` 
-4. Install pythonnet with `pip install pythonnet==2.5.2`
+5. Install pythonnet with `pip install pythonnet==2.5.2`
 
 * * *
 #### Developer
