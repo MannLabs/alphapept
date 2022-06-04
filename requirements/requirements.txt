@@ -3,7 +3,7 @@ click>=7.1.2
 fastcore==1.4.2
 h5py==3.6.0
 matplotlib==3.5.1
-networkx==2.8
+networkx==2.8.3
 numba==0.55.1
 numpy==1.20.3
 pandas==1.4.2
@@ -12,6 +12,6 @@ pyteomics==4.5.3
 pyyaml==6.0
 scikit-learn==1.0.2
 scipy==1.8.0
-SQLAlchemy==1.4.35
+SQLAlchemy==1.4.36
 tables==3.6.1
 tqdm==4.64.0
