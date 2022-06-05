@@ -311,7 +311,6 @@ def experiment():
                 grid_response = AgGrid(
                     file_df,
                     height=300,
-                    width="100%",
                     gridOptions=gridOptions,
                 )
 
