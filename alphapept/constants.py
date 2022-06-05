@@ -172,7 +172,7 @@ protease_dict["hydroxylamine"] = "N(?=G)"
 protease_dict["iodosobenzoic acid"] = "W"
 protease_dict["lys_c"] = "K(?!P)" #Lys-C cuts after K if not followed by P.
 protease_dict["lys_c/p"] = "K" #Lys-C cuts after every K
-protease_dict["lys_n"] = "(?=[K])"  #Lys-N cuts before K.
+protease_dict["lys_n"] = ".K"  #Lys-N cuts before K.
 protease_dict["ntcb"] = "\w(?=C)"
 protease_dict["pepsin ph1.3"] = "((?<=[^HKR][^P])[^R](?=[FL][^P]))|((?<=[^HKR][^P])[FL](?=\w[^P]))"
 protease_dict["pepsin ph2.0"] = "((?<=[^HKR][^P])[^R](?=[FLWY][^P]))|((?<=[^HKR][^P])[FLWY](?=\w[^P]))"
