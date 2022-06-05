@@ -344,6 +344,12 @@ def load_mzml_data(
 
             scan_list.append(i)
             rt, masses, intensities, ms_order, prec_mass, mono_mz, charge = extract_mzml_info(spec)
+
+            sortindex = np.argsort(masses)
+
+            masses = masses[sortindex]
+            intensities = intensities[sortindex]
+
             if ms_order == 2:
                 masses, intensities = get_most_abundant(masses, intensities, n_most_abundant)
             rt_list.append(rt)
