@@ -937,7 +937,7 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
             logging.info('Saving identifications to ms_data file.')
             ms_file_.write(ids, dataset_name="identifications")
             logging.info('Saving identifications to ms_data file complete.')
-            ids.to_csv(file_name[:-12]+'_ids.csv')
+            ids.to_csv(base_file_name+'_ids.csv')
             logging.info('Saving identifications to csv file complete.')
 
 
