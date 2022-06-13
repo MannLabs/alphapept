@@ -42,7 +42,7 @@ APIs to access Thermo's Raw Files
 
 > #### Installing pythonnet on MacOS
 > 1. brew install pkg-config
-> 2. Intall mono from mono project website;
+> 2. Install mono from mono project website;
 > 3. "export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/Current/lib/pkgconfig:$PKG_CONFIG_PATH";
 >   `or` add these PKG_CONFIG_PATH into ~./bash_profile, and run "source ~/bash_profile". 6.12.0 is my mono version
 > 4. pip install pythonnet
