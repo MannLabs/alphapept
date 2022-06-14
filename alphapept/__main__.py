@@ -21,7 +21,8 @@ def main():
         else:
             print('\nPlease visit https://github.com/MannLabs/alphapept and report this issue or search for potential solutions. Thanks.\n')
 
-        input("Press Enter to continue...")
+        if not alphapept.interface.HEADLESS:
+            input("Press Enter to continue...")
 
 if __name__ == "__main__":
     main()
