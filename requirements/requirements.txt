@@ -11,7 +11,7 @@ psutil==5.9.0
 pyteomics==4.5.3
 pyyaml==6.0
 scikit-learn==1.1.1
-scipy==1.8.0
+scipy==1.8.1
 SQLAlchemy==1.4.36
 tables==3.6.1
 tqdm==4.64.0
