@@ -1,7 +1,7 @@
 biopython==1.79
 click>=7.1.2
 fastcore==1.4.2
-h5py==3.6.0
+h5py==3.7.0
 matplotlib==3.5.2
 networkx==2.8.3
 numba==0.55.2
