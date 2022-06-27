@@ -5,7 +5,7 @@ h5py==3.7.0
 matplotlib==3.5.2
 networkx==2.8.3
 numba==0.55.2
-numpy==1.20.3
+numpy==1.23.0
 pandas==1.4.2
 psutil==5.9.0
 pyteomics==4.5.3
