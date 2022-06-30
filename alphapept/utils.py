@@ -237,6 +237,8 @@ def check_size(settings):
     required_size_dict = {}
 
     for base, size in zip(base_dirs, sizes):
+        if base == "":
+            base = "/"
         if base in required_size_dict:
             required_size_dict[base] += size
         else:
