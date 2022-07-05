@@ -110,7 +110,7 @@ SETTINGS_TEMPLATE["experiment"] = experiment
 # Cell
 raw = {}
 
-raw["n_most_abundant"] = {'type':'spinbox', 'min':1, 'max':1000, 'default':400, 'description':"Number of most abundant peaks to be isolated from raw spectra."}
+raw["n_most_abundant"] = {'type':'spinbox', 'min':-1, 'max':1000, 'default':400, 'description':"Number of most abundant peaks to be isolated from raw spectra."}
 raw["use_profile_ms1"] = {'type':'checkbox', 'default':False, 'description':"Use profile data for MS1 and perform own centroiding."}
 
 SETTINGS_TEMPLATE["raw"] = raw
