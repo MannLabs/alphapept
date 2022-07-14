@@ -86,7 +86,7 @@ def load_thermo_raw(
         except SystemExit as e:
             raise e
         except Exception as e:
-            logging.info(f"Bad scan={i} in raw file '{raw_file}'")
+            logging.info(f"Bad scan={i} in raw file '{raw_file_name}': {e}")
 
         if callback:
             callback((idx+1)/len(spec_indices))
@@ -664,12 +664,12 @@ def get_local_intensity(intensity, window=10):
         nop.ndarray: local intensity
     """
 
-    local_intensity = np.zeros(len(query_int))
+    local_intensity = np.zeros(len(intensity))
 
-    for i in range(len(query_int)):
+    for i in range(len(intensity)):
         start = max(0, i-window)
-        end = min(len(query_int), i+window)
-        local_intensity[i] = query_int[i]/np.max(query_int[start:end])
+        end = min(len(intensity), i+window)
+        local_intensity[i] = intensity[i]/np.max(intensity[start:end])
 
     return local_intensity
 
@@ -700,7 +700,6 @@ def get_most_abundant(
 
         if window > 0:
             sortindex = np.argsort(get_local_intensity(intensity, window))[::-1][:n_max]
-
         else:
             sortindex = np.argsort(intensity)[::-1][:n_max]
 
