@@ -20,6 +20,10 @@ import sys
 import numpy as np
 import psutil
 import tqdm
+import warnings
+import pandas as pd
+
+warnings.simplefilter(action='ignore', category=pd.errors.PerformanceWarning)
 
 HEADLESS = False
 
