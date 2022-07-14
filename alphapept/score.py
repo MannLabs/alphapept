@@ -787,7 +787,7 @@ def perform_protein_grouping(data: pd.DataFrame, pept_dict: dict, fasta_dict: di
 
     protein_decoys['decoy_protein'] = True
 
-    protein_groups = protein_targets.append(protein_decoys)
+    protein_groups = pd.concat([protein_targets, protein_decoys])
     protein_groups_app = protein_groups[['sequence','decoy','protein','protein_group','razor','protein_idx','decoy_protein','n_possible_proteins']]
     protein_report = pd.merge(data,
                                 protein_groups_app,
