@@ -2,8 +2,8 @@
 
 __all__ = ['load_thermo_raw', 'load_bruker_raw', 'one_over_k0_to_CCS', 'check_sanity', 'extract_mzml_info',
            'load_mzml_data', '__extract_nested', 'extract_mq_settings', 'parse_mq_seq', 'get_peaks', 'get_centroid',
-           'gaussian_estimator', 'centroid_data', 'get_most_abundant', 'list_to_numpy_f32', 'HDF_File', 'MS_Data_File',
-           'index_ragged_list', 'raw_conversion']
+           'gaussian_estimator', 'centroid_data', 'get_local_intensity', 'get_most_abundant', 'list_to_numpy_f32',
+           'HDF_File', 'MS_Data_File', 'index_ragged_list', 'raw_conversion']
 
 # Cell
 def load_thermo_raw(
@@ -652,11 +652,32 @@ import sys
 import os
 import logging
 
+@njit
+def get_local_intensity(intensity, window=10):
+    """
+    Calculate the local intensity for a spectrum.
+
+    Args:
+        intensity (np.ndarray): An array with intensity values.
+        window (int): Window Size
+    Returns:
+        nop.ndarray: local intensity
+    """
+
+    local_intensity = np.zeros(len(query_int))
+
+    for i in range(len(query_int)):
+        start = max(0, i-window)
+        end = min(len(query_int), i+window)
+        local_intensity[i] = query_int[i]/np.max(query_int[start:end])
+
+    return local_intensity
 
 def get_most_abundant(
     mass: np.ndarray,
     intensity: np.ndarray,
-    n_max: int
+    n_max: int,
+    window: int = 10,
 ) -> tuple:
     """Returns the n_max most abundant peaks of a spectrum.
 
@@ -665,6 +686,7 @@ def get_most_abundant(
         intensity (np.ndarray): An array with intensity values.
         n_max (int): The maximum number of peaks to retain.
             Setting `n_max` to -1 returns all peaks.
+        window (int): Use local maximum in a window
 
     Returns:
         tuple: the filtered mass and intensity arrays.
@@ -675,7 +697,13 @@ def get_most_abundant(
     if len(mass) < n_max:
         return mass, intensity
     else:
-        sortindex = np.argsort(intensity)[::-1][:n_max]
+
+        if window > 0:
+            sortindex = np.argsort(get_local_intensity(intensity, window))[::-1][:n_max]
+
+        else:
+            sortindex = np.argsort(intensity)[::-1][:n_max]
+
         sortindex.sort()
 
     return mass[sortindex], intensity[sortindex]
