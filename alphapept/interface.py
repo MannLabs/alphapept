@@ -597,9 +597,6 @@ def protein_grouping(
 
 # Cell
 
-import pandas as pd
-
-
 def align(
     settings: dict,
     logger_set: bool = False,
@@ -686,9 +683,6 @@ def read_label_intensity(df : pd.DataFrame, label: NamedTuple) ->  pd.DataFrame:
     return protein_table
 
 # Cell
-
-import pandas as pd
-
 
 def quantification(
     settings: dict,
