@@ -141,10 +141,8 @@ def filewatcher():
         if st.button("Stop file watcher"):
             process = psutil.Process(last_pid)
             process.terminate()
-            st.success(f"Terminated {last_pid}")
-            raise st.script_runner.RerunException(
-                st.script_request_queue.RerunData(None)
-            )
+            st.success(f"Terminated {last_pid}. Please refresh page.")
+            st.stop()
     else:
         st.warning("FileWatcher is currently not running.")
 
@@ -219,6 +217,5 @@ def filewatcher():
                 verbose=True,
             )
             valid = False
-            raise st.script_runner.RerunException(
-                st.script_request_queue.RerunData(None)
-            )
+            st.success('Please refresh page.')
+            st.stop()
