@@ -1,6 +1,22 @@
 # Changelog
 
-Last change: 05-MAY-2022, MTS
+Last change: 20-JUL-2022, MTS
+
+## 0.4.7
+* Updated multiple packages & documentation
+* Print traceback when there is an error running AlphaPept 
+* Updated `modifications.tsv`, Button to reload modifications via GUI
+* Changed slider input widget to a number input
+* Fixed links in GUI when downloading FASTA
+* Fixed GUI Errors #460 
+* Fixed bug when launching file watcher
+* Option to use relative file paths for the size check @hugokitano 
+* New functionality to filter fragments by local rank. This should improve performance for noisy datasets.
+* Cleaned up print output/deprecation & performance warnings
+* Macbook crash fix by @swillems in https://github.com/MannLabs/alphapept/pull/465
+* FEAT: create headless option by @swillems in https://github.com/MannLabs/alphapept/pull/464 #449 
+* Develop by @straussmaximilian in https://github.com/MannLabs/alphapept/pull/478
+
 
 ## 0.4.6
 * Link to Renku @cmdoret
