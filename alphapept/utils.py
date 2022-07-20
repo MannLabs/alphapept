@@ -229,7 +229,7 @@ def check_python_env():
 
 def check_size(settings):
     sizes = [get_size(_) / 1024 ** 3 for _ in settings['experiment']['file_paths']]
-    base_dirs = [os.path.splitdrive(_)[0] for _ in settings['experiment']['file_paths']]
+    base_dirs = [os.path.splitdrive(os.path.abspath(_))[0] for _ in settings['experiment']['file_paths']]
 
     size_gb = sum(sizes)
     logging.info(f'Size of job (raw files) {size_gb:.2f} Gb')
@@ -237,6 +237,8 @@ def check_size(settings):
     required_size_dict = {}
 
     for base, size in zip(base_dirs, sizes):
+        if base == "":
+            base = "/"
         if base in required_size_dict:
             required_size_dict[base] += size
         else:

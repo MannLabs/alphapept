@@ -99,7 +99,7 @@ def widget_from_setting(
         c2 = st
 
     if _["type"] == "doublespinbox":
-        recorder[key][element] = c2.slider(
+        recorder[key][element] = c2.number_input(
             element,
             min_value=float(_["min"]),
             max_value=float(_["max"]),
@@ -107,7 +107,7 @@ def widget_from_setting(
             help=tooltip,
         )
     elif _["type"] == "spinbox":
-        recorder[key][element] = c2.slider(
+        recorder[key][element] = c2.number_input(
             element, min_value=_["min"], max_value=_["max"], value=value, help=tooltip
         )
     elif _["type"] == "checkbox":
@@ -311,7 +311,6 @@ def experiment():
                 grid_response = AgGrid(
                     file_df,
                     height=300,
-                    width="100%",
                     gridOptions=gridOptions,
                 )
 

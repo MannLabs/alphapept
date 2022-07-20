@@ -3,7 +3,7 @@
 __all__ = ['print_settings', 'load_settings', 'load_settings_as_template', 'save_settings', 'SETTINGS_TEMPLATE',
            'workflow', 'general', 'experiment', 'raw', 'fasta', 'modfile_path', 'mod_db', 'mods', 'mods_terminal',
            'mods_protein', 'proteases', 'features', 'search', 'score', 'calibration', 'matching', 'quantification',
-           'hash_file', 'HOME', 'AP_PATH', 'DEFAULT_SETTINGS_PATH', 'skip', 'previous_md5']
+           'hash_file', 'create_default_settings', 'HOME', 'AP_PATH', 'DEFAULT_SETTINGS_PATH', 'skip', 'previous_md5']
 
 # Cell
 import yaml
@@ -110,7 +110,7 @@ SETTINGS_TEMPLATE["experiment"] = experiment
 # Cell
 raw = {}
 
-raw["n_most_abundant"] = {'type':'spinbox', 'min':1, 'max':1000, 'default':400, 'description':"Number of most abundant peaks to be isolated from raw spectra."}
+raw["n_most_abundant"] = {'type':'spinbox', 'min':-1, 'max':1000, 'default':400, 'description':"Number of most abundant peaks to be isolated from raw spectra."}
 raw["use_profile_ms1"] = {'type':'checkbox', 'default':False, 'description':"Use profile data for MS1 and perform own centroiding."}
 
 SETTINGS_TEMPLATE["raw"] = raw
@@ -125,6 +125,10 @@ try:
     base = os.path.dirname(os.path.abspath(__file__)) #Cant do this in notebook
 except NameError:
     base = os.path.join(os.pardir, 'alphapept')
+
+if not os.path.isfile(os.path.join(base, "modifications.tsv")):
+    #Calling nbdev build_docs from parent dir
+    base = os.path.join(base, 'alphapept')
 
 modfile_path = os.path.join(base, "modifications.tsv")
 
@@ -294,6 +298,27 @@ def hash_file(path):
 
 
 # Cell
+
+def create_default_settings():
+
+    settings = {}
+
+    for category in SETTINGS_TEMPLATE.keys():
+
+        temp_settings = {}
+
+        for key in SETTINGS_TEMPLATE[category].keys():
+            temp_settings[key] = SETTINGS_TEMPLATE[category][key]['default']
+
+        settings[category] = temp_settings
+
+    md5, sha1 = hash_file(modfile_path)
+    settings['general']['modfile_hash'] = md5
+
+    save_settings(settings, DEFAULT_SETTINGS_PATH) #Save in home folder to be able to modify
+    save_settings(SETTINGS_TEMPLATE,  os.path.join(AP_PATH, 'settings_template.yaml'))
+
+
 import os
 import logging
 
@@ -317,21 +342,6 @@ if previous_md5 is not None:
 
 if not skip:
     logging.info('Creating default settings.')
-    settings = {}
-
-    for category in SETTINGS_TEMPLATE.keys():
-
-        temp_settings = {}
-
-        for key in SETTINGS_TEMPLATE[category].keys():
-            temp_settings[key] = SETTINGS_TEMPLATE[category][key]['default']
-
-        settings[category] = temp_settings
-
-    settings['general']['modfile_hash'] = md5
-
-    save_settings(settings, DEFAULT_SETTINGS_PATH) #Save in home folder to be able to modify
-
-    save_settings(SETTINGS_TEMPLATE,  os.path.join(AP_PATH, 'settings_template.yaml'))
+    create_default_settings()
 else:
     logging.info('Using existing settings.')

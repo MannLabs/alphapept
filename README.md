@@ -17,6 +17,8 @@ Our preprint **AlphaPept, a modern and open framework for MS-based proteomics** 
 Be sure to check out other packages of our ecosystem:
 - [alphatims](https://github.com/MannLabs/alphatims): Fast access to TimsTOF data.
 - [alphamap](https://github.com/MannLabs/alphamap): Peptide level MS data exploration.
+- [alphapeptdeep](https://github.com/MannLabs/alphapeptdeep): Predicting properties from peptides.
+- [alphaviz](https://github.com/MannLabs/alphaviz): Vizualization of MS data.
 
 ## Windows Quickstart
 ![](https://i.imgur.com/UO64YPx.jpg)
@@ -54,7 +56,7 @@ Therefore, you can install AlphaPept in multiple ways:
 
 - The default `alphapept`
 - With GUI-packages `alphapept[gui]`
-- With pacakges for development `alphapept[develop]` (`alphapept[develop,gui]` respectively
+- With pacakges for development `alphapept[develop]` (`alphapept[develop,gui]`) respectively
 
 The requirements typically contain pinned versions and will be automatically upgraded and tested with `dependabot`. This `stable` version allows having a reproducible workflow. However, in order to avoid conflicts with package versions that are too strict, the requirements are not pinned when being installed. To use the strict version use the `-stable`-flag, e.g. `alphapept[stable]`.
 
@@ -91,7 +93,7 @@ If AlphaPept is installed correctly, you should be able to import AlphaPept as a
 > Only supported for preprocessed files.
 
 ##### Thermo Support
-2. Install [brew](https://brew.sh) and pkg-config: `brew install pkg-config`3. Intall Mono from mono-project website [Mono Mac](https://www.mono-project.com/download/stable/)
+2. Install [brew](https://brew.sh) and pkg-config: `brew install pkg-config` 3. Install Mono from mono-project website [Mono Mac](https://www.mono-project.com/download/stable/)
 4. Register the Mono-Path to your system:
 For macOS Catalina, open the configuration of zsh via the terminal:
 * Type in `cd` to navigate to the home directory.

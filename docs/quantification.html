@@ -313,30 +313,30 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
     <tr>
       <th>0</th>
       <td>L-BFGS-B</td>
-      <td>0.012100</td>
-      <td>0.709122</td>
-      <td>0.574486</td>
+      <td>0.011602</td>
+      <td>0.632681</td>
+      <td>0.521154</td>
     </tr>
     <tr>
       <th>1</th>
       <td>TNC</td>
-      <td>0.014036</td>
-      <td>0.745641</td>
-      <td>0.604071</td>
+      <td>0.014123</td>
+      <td>0.693485</td>
+      <td>0.571240</td>
     </tr>
     <tr>
       <th>2</th>
       <td>SLSQP</td>
-      <td>0.001711</td>
-      <td>0.709122</td>
-      <td>0.574486</td>
+      <td>0.001568</td>
+      <td>0.632681</td>
+      <td>0.521154</td>
     </tr>
     <tr>
       <th>3</th>
       <td>trf</td>
-      <td>0.147151</td>
-      <td>0.709624</td>
-      <td>0.574893</td>
+      <td>0.131659</td>
+      <td>0.632946</td>
+      <td>0.521373</td>
     </tr>
   </tbody>
 </table>
@@ -397,7 +397,7 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="normalize_experiment_BFGS" class="doc_header"><code>normalize_experiment_BFGS</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L155" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>normalize_experiment_BFGS</code>(<strong><code>profiles</code></strong>:<code>ndarray</code>)</p>
+<h4 id="normalize_experiment_BFGS" class="doc_header"><code>normalize_experiment_BFGS</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L156" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>normalize_experiment_BFGS</code>(<strong><code>profiles</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Calculates normalization with BFGS approach.</p>
 <p>Args:
@@ -433,7 +433,7 @@ with peptide intensities $I$, which are determined by the peptide $P$ the sample
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="delayed_normalization" class="doc_header"><code>delayed_normalization</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L178" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>delayed_normalization</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>field</code></strong>:<code>str</code>=<em><code>'ms1_int_sum'</code></em>, <strong><code>minimum_occurence</code></strong>:<code>bool</code>=<em><code>None</code></em>)</p>
+<h4 id="delayed_normalization" class="doc_header"><code>delayed_normalization</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L180" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>delayed_normalization</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>field</code></strong>:<code>str</code>=<em><code>'ms1_int_sum'</code></em>, <strong><code>minimum_occurence</code></strong>:<code>bool</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Returns normalization factors for given peptide intensities.
 If the solver does not converge, the unnormalized data will be used.</p>
@@ -646,7 +646,7 @@ If the solver does not converge, the unnormalized data will be used.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="generate_dummy_data" class="doc_header"><code>generate_dummy_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L261" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_dummy_data</code>(<strong><code>n_sequences</code></strong>:<code>int</code>, <strong><code>n_samples</code></strong>:<code>int</code>, <strong><code>noise</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>remove</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>peptide_ratio</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>abundance</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>signal_level</code></strong>:<code>int</code>=<em><code>100</code></em>, <strong><code>noise_divider</code></strong>:<code>int</code>=<em><code>10</code></em>, <strong><code>keep</code></strong>:<code>float</code>=<em><code>0.8</code></em>)</p>
+<h4 id="generate_dummy_data" class="doc_header"><code>generate_dummy_data</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L263" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>generate_dummy_data</code>(<strong><code>n_sequences</code></strong>:<code>int</code>, <strong><code>n_samples</code></strong>:<code>int</code>, <strong><code>noise</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>remove</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>peptide_ratio</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>abundance</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>signal_level</code></strong>:<code>int</code>=<em><code>100</code></em>, <strong><code>noise_divider</code></strong>:<code>int</code>=<em><code>10</code></em>, <strong><code>keep</code></strong>:<code>float</code>=<em><code>0.8</code></em>)</p>
 </blockquote>
 <p>Simulate an input dataset of peptide intensities.</p>
 <p>Args:
@@ -697,7 +697,7 @@ If the solver does not converge, the unnormalized data will be used.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_protein_ratios" class="doc_header"><code>get_protein_ratios</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L326" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_protein_ratios</code>(<strong><code>signal</code></strong>:<code>ndarray</code>, <strong><code>column_combinations</code></strong>:<code>list</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>=<em><code>1</code></em>)</p>
+<h4 id="get_protein_ratios" class="doc_header"><code>get_protein_ratios</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L328" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_protein_ratios</code>(<strong><code>signal</code></strong>:<code>ndarray</code>, <strong><code>column_combinations</code></strong>:<code>list</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>=<em><code>1</code></em>)</p>
 </blockquote>
 <p>Calculates the protein ratios between samples for one protein.</p>
 <p>Args:
@@ -742,7 +742,7 @@ If the solver does not converge, the unnormalized data will be used.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="triangle_error" class="doc_header"><code>triangle_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L360" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>triangle_error</code>(<strong><code>normalization</code></strong>:<code>ndarray</code>, <strong><code>ratios</code></strong>:<code>ndarray</code>)</p>
+<h4 id="triangle_error" class="doc_header"><code>triangle_error</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L362" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>triangle_error</code>(<strong><code>normalization</code></strong>:<code>ndarray</code>, <strong><code>ratios</code></strong>:<code>ndarray</code>)</p>
 </blockquote>
 <p>Calculates the difference between calculated ratios and expected ratios.</p>
 <p>Args:
@@ -786,7 +786,7 @@ If the solver does not converge, the unnormalized data will be used.</p>
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="solve_profile" class="doc_header"><code>solve_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L380" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>solve_profile</code>(<strong><code>ratios</code></strong>:<code>ndarray</code>, <strong><code>method</code></strong>:<code>str</code>)</p>
+<h4 id="solve_profile" class="doc_header"><code>solve_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L382" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>solve_profile</code>(<strong><code>ratios</code></strong>:<code>ndarray</code>, <strong><code>method</code></strong>:<code>str</code>)</p>
 </blockquote>
 <p>Calculates protein pseudointensities with a specified solver.
 Args:
@@ -831,7 +831,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile" class="doc_header"><code>protein_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L420" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile</code>(<strong><code>files</code></strong>:<code>list</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>, <strong><code>chunk</code></strong>:<code>tuple</code>)</p>
+<h4 id="protein_profile" class="doc_header"><code>protein_profile</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L422" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile</code>(<strong><code>files</code></strong>:<code>list</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>, <strong><code>chunk</code></strong>:<code>tuple</code>)</p>
 </blockquote>
 <p>Function to extract optimal protein ratios for a given input of peptides.</p>
 <p>Note for the chunk argument: This construction is needed to call this function from a parallel pool.</p>
@@ -1009,7 +1009,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile_parallel" class="doc_header"><code>protein_profile_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L491" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>, <strong><code>field</code></strong>:<code>str</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="protein_profile_parallel" class="doc_header"><code>protein_profile_parallel</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L493" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>, <strong><code>field</code></strong>:<code>str</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Derives LFQ intensities from the feature table.</p>
 <p>Args:
@@ -1048,7 +1048,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile_parallel_ap" class="doc_header"><code>protein_profile_parallel_ap</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L564" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_ap</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="protein_profile_parallel_ap" class="doc_header"><code>protein_profile_parallel_ap</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L566" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_ap</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Derives protein LFQ intensities from the alphapept quantified feature table</p>
 <p>Args:
@@ -1081,7 +1081,7 @@ Returns:
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="protein_profile_parallel_mq" class="doc_header"><code>protein_profile_parallel_mq</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L594" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_mq</code>(<strong><code>evidence_path</code></strong>:<code>str</code>, <strong><code>protein_groups_path</code></strong>:<code>str</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>=<em><code>1</code></em>, <strong><code>minimum_occurence</code></strong>:<code>bool</code>=<em><code>None</code></em>, <strong><code>delayed</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
+<h4 id="protein_profile_parallel_mq" class="doc_header"><code>protein_profile_parallel_mq</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/quantification.py#L596" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>protein_profile_parallel_mq</code>(<strong><code>evidence_path</code></strong>:<code>str</code>, <strong><code>protein_groups_path</code></strong>:<code>str</code>, <strong><code>minimum_ratios</code></strong>:<code>int</code>=<em><code>1</code></em>, <strong><code>minimum_occurence</code></strong>:<code>bool</code>=<em><code>None</code></em>, <strong><code>delayed</code></strong>:<code>bool</code>=<em><code>True</code></em>, <strong><code>callback</code></strong>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Derives protein LFQ intensities from Maxquant quantified features.</p>
 <p>Args:
@@ -1114,5 +1114,5 @@ Returns:
     {% endraw %}
 
 </div>
- 
+
 

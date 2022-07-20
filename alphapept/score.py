@@ -162,7 +162,7 @@ def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True, cut:bool=Tru
     fdr = df.loc[cutoff_index, "fdr"]
 
 
-    logging.info(f"{targets:,} target ({decoy:,} decoy) of {len(df)} PSMs. fdr {fdr:.6f} for a cutoff of {cutoff_value:.2f} (set fdr was {fdr_level})")
+    logging.info(f"{targets:,} target ({decoy:,} decoy) of {len(df):,} PSMs. FDR {fdr:.6f} for a cutoff of {cutoff_value:.2f} (set FDR was {fdr_level}).")
 
     if plot:
         import matplotlib.pyplot as plt
@@ -219,7 +219,7 @@ def cut_global_fdr(data: pd.DataFrame, analyte_level: str='sequence', fdr_level:
 
     agg_cval, agg_cutoff = cut_fdr(agg_score, fdr_level=fdr_level, plot=plot)
 
-    logging.info(f'Global FDR cutoff at {agg_cval}.')
+    logging.info(f'Global FDR cutoff at {agg_cval:.3f}.')
 
     agg_report = data.reset_index().merge(
                         agg_cutoff,
@@ -466,7 +466,7 @@ def train_RF(df: pd.DataFrame,
         raise ValueError("There are fewer high scoring targets or decoys than required by 'min_train'.")
 
     # Subset the targets and decoys datasets to result in a balanced dataset
-    df_training = dfT_high.sample(n=n_train, random_state=random_state).append(dfD.sample(n=n_train, random_state=random_state))
+    df_training = pd.concat([dfT_high.sample(n=n_train, random_state=random_state), dfD.sample(n=n_train, random_state=random_state)])
 
     # Select training and test sets
     X = df_training[features]
@@ -474,13 +474,16 @@ def train_RF(df: pd.DataFrame,
     X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, test_size=test_size, random_state=random_state, stratify=y.values)
 
     # Train the classifier on the training set via 5-fold cross-validation and subsequently test on the test set
-    logging.info('Training & cross-validation on {} targets and {} decoys'.format(np.sum(y_train),X_train.shape[0]-np.sum(y_train)))
+    n_targets = np.sum(y_train)
+    n_decoys = X_train.shape[0]-n_targets
+
+    logging.info(f'Training & cross-validation on {n_targets:,} targets and {n_decoys:,} decoys')
     cv.fit(X_train,y_train)
 
-    logging.info('The best parameters selected by 5-fold cross-validation were {}'.format(cv.best_params_))
-    logging.info('The train {} was {}'.format(scoring, cv.score(X_train, y_train)))
-    logging.info('Testing on {} targets and {} decoys'.format(np.sum(y_test),X_test.shape[0]-np.sum(y_test)))
-    logging.info('The test {} was {}'.format(scoring, cv.score(X_test, y_test)))
+    logging.info(f'The best parameters selected by 5-fold cross-validation were {cv.best_params_}')
+    logging.info(f'The train {scoring} was {cv.score(X_train, y_train):.3f}')
+    logging.info(f'Testing on {np.sum(y_test):,} targets and {X_test.shape[0]-np.sum(y_test):,} decoys')
+    logging.info(f'The test {scoring} was {cv.score(X_test, y_test):.3f}')
 
     feature_importances=cv.best_estimator_.named_steps['clf'].feature_importances_
     indices = np.argsort(feature_importances)[::-1][:40]
@@ -488,8 +491,10 @@ def train_RF(df: pd.DataFrame,
     top_features = X.columns[indices][:40]
     top_score = feature_importances[indices][:40]
 
-    feature_dict = dict(zip(top_features, top_score))
-    logging.info(f"Top features {feature_dict}")
+    logging.info(f"ML Top features")
+
+    for i in range(len(top_features)):
+        logging.info(f"{i+1}\t{top_features[i].ljust(30)} {top_score[i]:.4f}")
 
     # Inspect feature importances
     if plot:
@@ -787,7 +792,7 @@ def perform_protein_grouping(data: pd.DataFrame, pept_dict: dict, fasta_dict: di
 
     protein_decoys['decoy_protein'] = True
 
-    protein_groups = protein_targets.append(protein_decoys)
+    protein_groups = pd.concat([protein_targets, protein_decoys])
     protein_groups_app = protein_groups[['sequence','decoy','protein','protein_group','razor','protein_idx','decoy_protein','n_possible_proteins']]
     protein_report = pd.merge(data,
                                 protein_groups_app,
@@ -937,7 +942,7 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
             logging.info('Saving identifications to ms_data file.')
             ms_file_.write(ids, dataset_name="identifications")
             logging.info('Saving identifications to ms_data file complete.')
-            ids.to_csv(file_name[:-12]+'_ids.csv')
+            ids.to_csv(base_file_name+'_ids.csv')
             logging.info('Saving identifications to csv file complete.')
 
 

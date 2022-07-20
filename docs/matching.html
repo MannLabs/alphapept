@@ -215,7 +215,7 @@ This effectively is an overdetermined equation system and is solved with a linea
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="align_files" class="doc_header"><code>align_files</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L233" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_files</code>(<strong><code>filenames</code></strong>:<code>list</code>, <strong><code>alignment</code></strong>:<code>DataFrame</code>, <strong><code>offset_dict</code></strong>:<code>dict</code>)</p>
+<h4 id="align_files" class="doc_header"><code>align_files</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L232" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_files</code>(<strong><code>filenames</code></strong>:<code>list</code>, <strong><code>alignment</code></strong>:<code>DataFrame</code>, <strong><code>offset_dict</code></strong>:<code>dict</code>)</p>
 </blockquote>
 <p>Wrapper function that aligns a list of files.</p>
 <p>Args:
@@ -244,7 +244,7 @@ This effectively is an overdetermined equation system and is solved with a linea
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="align_datasets" class="doc_header"><code>align_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L255" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_datasets</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
+<h4 id="align_datasets" class="doc_header"><code>align_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L254" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>align_datasets</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>:<code>callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Wrapper function that aligns all experimental files specified a settings file.</p>
 <p>Args:
@@ -287,7 +287,7 @@ This effectively is an overdetermined equation system and is solved with a linea
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="get_probability" class="doc_header"><code>get_probability</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L329" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_probability</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>ref</code></strong>:<code>DataFrame</code>, <strong><code>sigma</code></strong>:<code>DataFrame</code>, <strong><code>index</code></strong>:<code>int</code>)</p>
+<h4 id="get_probability" class="doc_header"><code>get_probability</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L328" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>get_probability</code>(<strong><code>df</code></strong>:<code>DataFrame</code>, <strong><code>ref</code></strong>:<code>DataFrame</code>, <strong><code>sigma</code></strong>:<code>DataFrame</code>, <strong><code>index</code></strong>:<code>int</code>)</p>
 </blockquote>
 <p>Probablity estimate of a transfered identification using the Mahalanobis distance.</p>
 <p>The function calculates the probability that a feature is a reference feature.
@@ -352,7 +352,7 @@ The reference features containing std deviations so that a probability can be es
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="convert_decoy" class="doc_header"><code>convert_decoy</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L366" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_decoy</code>(<strong><code>float_</code></strong>)</p>
+<h4 id="convert_decoy" class="doc_header"><code>convert_decoy</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L365" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>convert_decoy</code>(<strong><code>float_</code></strong>)</p>
 </blockquote>
 <p>Utility function to convert type for decoy after grouping.</p>
 
@@ -377,7 +377,7 @@ The reference features containing std deviations so that a probability can be es
 
 
 <div class="output_markdown rendered_html output_subarea ">
-<h4 id="match_datasets" class="doc_header"><code>match_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L378" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>match_datasets</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>:<code>typing.Callable</code>=<em><code>None</code></em>)</p>
+<h4 id="match_datasets" class="doc_header"><code>match_datasets</code><a href="https://github.com/mannlabs/alphapept/tree/master/alphapept/matching.py#L377" class="source_link" style="float:right">[source]</a></h4><blockquote><p><code>match_datasets</code>(<strong><code>settings</code></strong>:<code>dict</code>, <strong><code>callback</code></strong>:<code>typing.Callable</code>=<em><code>None</code></em>)</p>
 </blockquote>
 <p>Match datasets: Wrapper function to match datasets based on a settings file.
 This implementation uses matching groups but not fractions.</p>
@@ -403,5 +403,5 @@ This implementation uses matching groups but not fractions.</p>
     {% endraw %}
 
 </div>
- 
+
 
