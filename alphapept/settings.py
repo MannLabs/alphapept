@@ -216,8 +216,8 @@ SETTINGS_TEMPLATE["features"] = features
 # Search Settings
 search = {}
 
-search["prec_tol"] = {'type':'spinbox', 'min':1, 'max':500, 'default':30, 'description':"Maximum allowed precursor mass offset."}
-search["frag_tol"] = {'type':'spinbox', 'min':1, 'max':500, 'default':30, 'description':"Maximum fragment mass tolerance."}
+search["prec_tol"] = {'type':'spinbox', 'min':1, 'max':500, 'default':50, 'description':"Maximum allowed precursor mass offset."}
+search["frag_tol"] = {'type':'spinbox', 'min':1, 'max':500, 'default':50, 'description':"Maximum fragment mass tolerance."}
 search["min_frag_hits"] = {'type':'spinbox', 'min':1, 'max':99, 'default':7, 'description':"Minimum number of fragment hits."}
 search["ppm"] = {'type':'checkbox', 'default':True, 'description':"Use ppm instead of Dalton."}
 search["calibrate"] = {'type':'checkbox', 'default':True, 'description':"Recalibrate masses."}
