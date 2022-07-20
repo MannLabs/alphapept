@@ -126,6 +126,10 @@ try:
 except NameError:
     base = os.path.join(os.pardir, 'alphapept')
 
+if not os.path.isfile(os.path.join(base, "modifications.tsv")):
+    #Calling nbdev build_docs from parent dir
+    base = os.path.join(base, 'alphapept')
+
 modfile_path = os.path.join(base, "modifications.tsv")
 
 mod_db = pd.read_csv(modfile_path, sep='\t')

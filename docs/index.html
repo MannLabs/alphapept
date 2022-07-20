@@ -48,6 +48,8 @@ nb_path: "nbs\index.ipynb"
 <ul>
 <li><a href="https://github.com/MannLabs/alphatims">alphatims</a>: Fast access to TimsTOF data.</li>
 <li><a href="https://github.com/MannLabs/alphamap">alphamap</a>: Peptide level MS data exploration.</li>
+<li><a href="https://github.com/MannLabs/alphapeptdeep">alphapeptdeep</a>: Predicting properties from peptides.</li>
+<li><a href="https://github.com/MannLabs/alphaviz">alphaviz</a>: Vizualization of MS data.</li>
 </ul>
 
 </div>
@@ -112,7 +114,7 @@ nb_path: "nbs\index.ipynb"
 <ul>
 <li>The default <code>alphapept</code></li>
 <li>With GUI-packages <code>alphapept[gui]</code></li>
-<li>With pacakges for development <code>alphapept[develop]</code> (<code>alphapept[develop,gui]</code> respectively</li>
+<li>With pacakges for development <code>alphapept[develop]</code> (<code>alphapept[develop,gui]</code>) respectively</li>
 </ul>
 <p>The requirements typically contain pinned versions and will be automatically upgraded and tested with <code>dependabot</code>. This <code>stable</code> version allows having a reproducible workflow. However, in order to avoid conflicts with package versions that are too strict, the requirements are not pinned when being installed. To use the strict version use the <code>-stable</code>-flag, e.g. <code>alphapept[stable]</code>.</p>
 <p>For end-users that want to set up a processing environment in Python, the <code>"alphapept[stable,gui-stable]"</code> is the <code>batteries-included</code>-version that you want to use.</p>
@@ -143,7 +145,7 @@ nb_path: "nbs\index.ipynb"
 <h5 id="Bruker-Support">Bruker Support<a class="anchor-link" href="#Bruker-Support"> </a></h5><blockquote><p>Only supported for preprocessed files.</p>
 </blockquote>
 <h5 id="Thermo-Support">Thermo Support<a class="anchor-link" href="#Thermo-Support"> </a></h5><ol>
-<li>Install <a href="https://brew.sh">brew</a> and pkg-config: <code>brew install pkg-config</code>3. Intall Mono from mono-project website <a href="https://www.mono-project.com/download/stable/">Mono Mac</a></li>
+<li>Install <a href="https://brew.sh">brew</a> and pkg-config: <code>brew install pkg-config</code> 3. Install Mono from mono-project website <a href="https://www.mono-project.com/download/stable/">Mono Mac</a></li>
 <li>Register the Mono-Path to your system:
 For macOS Catalina, open the configuration of zsh via the terminal:</li>
 </ol>
@@ -346,5 +348,5 @@ settings = alphapept.interface.feature_finding(settings)</code></pre>
 </div>
 </div>
 </div>
- 
+
 
