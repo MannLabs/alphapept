@@ -304,6 +304,9 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
             **settings["search"]
         )
 
+        #Only calibrate on b & y
+        fragment_ions = fragment_ions[fragment_ions['fragment_ion_type'] == 0]
+
         #Calculate offset
         psms['keep'] = False
         psms.loc[df['psms_index'].tolist(),'keep'] = True
