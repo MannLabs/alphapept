@@ -187,13 +187,14 @@ class TestRun():
                 for key in self.custom_settings[group]:
                     settings[group][key] = self.custom_settings[group][key]
 
+        dirname = os.path.dirname(settings['experiment']['results_path'])
+        settings_path = os.path.join(dirname, '_.yaml')
+        with open(settings_path, "w") as file:
+            yaml.dump(settings, file)
+
         start = time()
         if self.exe_path is not None: #call compiled exe file
             settings = alphapept.interface.check_version_and_hardware(settings)
-            dirname = os.path.dirname(settings['experiment']['results_path'])
-            settings_path = os.path.join(dirname, '_.yaml')
-            with open(settings_path, "w") as file:
-                yaml.dump(settings, file)
 
             logging.info(f'Starting exe from {self.exe_path}') #TODO: Change for different OS
             process = subprocess.Popen(f'"{self.exe_path}" workflow "{settings_path}"', stdout=subprocess.PIPE)
