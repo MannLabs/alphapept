@@ -568,6 +568,8 @@ def score(
 
         psms_['mass_db'][i] = db_masses[db_idx]
 
+        psms_['n_frags_db'][i] = len(db_frag)
+
         psms_['prec_offset'][i] = query_masses[query_idx] - db_masses[db_idx]
         psms_['prec_offset_ppm'][i] = 2 * psms_['prec_offset'][i] / (query_masses[query_idx]  + db_masses[db_idx] ) * 1e6
 
@@ -742,7 +744,7 @@ def get_score_columns(
         query_rt = query_data['rt_list_ms2']
 
     float_fields = ['mass_db','prec_offset', 'prec_offset_ppm', 'prec_offset_raw','prec_offset_raw_ppm','delta_m','delta_m_ppm','fragments_matched_int_ratio','fragments_int_ratio']
-    int_fields = ['fragments_int_sum','fragments_matched_int_sum','n_fragments_matched','fragment_ion_idx'] + [f'hits_{a}{_}' for _ in LOSS_DICT for a in ['b','y']]
+    int_fields = ['fragments_int_sum','fragments_matched_int_sum','n_fragments_matched','fragment_ion_idx', 'n_frags_db'] + [f'hits_{a}{_}' for _ in LOSS_DICT for a in ['b','y']]
 
     psms_dtype = np.dtype([(_,np.float32) for _ in float_fields] + [(_,np.int64) for _ in int_fields])
 

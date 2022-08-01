@@ -364,7 +364,7 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
         psms = ms_file_.read(dataset_name='first_search')
         psms['psms_index'] = np.arange(len(psms))
 
-        df = score_x_tandem(
+        df = score_generic(
             psms,
             fdr_level=settings["search"]["peptide_fdr"],
             plot=False,
@@ -460,7 +460,7 @@ def calibrate_fragments_nn(ms_file_, file_name, settings):
 
 from typing import Union
 import alphapept.io
-from .score import score_x_tandem
+from .score import score_generic
 import os
 
 
@@ -496,7 +496,7 @@ def calibrate_hdf(
         df = None
 
         if len(psms) > 0 :
-            df = score_x_tandem(
+            df = score_generic(
                 psms,
                 fdr_level=settings["search"]["peptide_fdr"],
                 plot=False,
