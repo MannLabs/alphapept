@@ -135,7 +135,7 @@ def get_calibration(
     settings = None,
     outlier_std: float = 3,
     calib_n_neighbors: int = 100,
-    calib_mz_range: int = 20,
+    calib_mz_range: int = 100,
     calib_rt_range: float = 0.5,
     calib_mob_range: float = 0.3,
     **kwargs) -> (np.ndarray, float):
@@ -259,8 +259,8 @@ def save_fragment_calibration(fragment_ions, corrected, std_offset, file_name, s
     ax2 = density_scatter(fragment_ions['rt'].values, corrected.values, ax = ax2)
     ax1.axhline(0, color='w', linestyle='-', alpha=0.5)
     ax2.axhline(0, color='w', linestyle='-', alpha=0.5)
-    ax2.axhline(0+std_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
-    ax2.axhline(0-std_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
+    ax2.axhline(0+std_offset*settings['search']['calibration_std_frag'], color='r', linestyle=':', alpha=0.5)
+    ax2.axhline(0-std_offset*settings['search']['calibration_std_frag'], color='r', linestyle=':', alpha=0.5)
 
     ax2.set_title('Fragment error after correction')
     ax2.set_ylabel('Error (ppm)')
@@ -282,8 +282,8 @@ def save_fragment_calibration(fragment_ions, corrected, std_offset, file_name, s
     ax4.set_title('Fragment error after correction')
 
     ax4.axhline(0, color='w', linestyle='-', alpha=0.5)
-    ax4.axhline(0+std_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
-    ax4.axhline(0-std_offset*settings['search']['calibration_std_frag'], color='w', linestyle=':', alpha=0.5)
+    ax4.axhline(0+std_offset*settings['search']['calibration_std_frag'], color='r', linestyle=':', alpha=0.5)
+    ax4.axhline(0-std_offset*settings['search']['calibration_std_frag'], color='r', linestyle=':', alpha=0.5)
 
     base, ext = os.path.splitext(file_name)
 
@@ -312,8 +312,8 @@ def save_precursor_calibration(df, corrected, std_offset, file_name, settings):
     ax2 = density_scatter(df['rt'].values, corrected, ax = ax2)
     ax1.axhline(0, color='w', linestyle='-', alpha=0.5)
     ax2.axhline(0, color='w', linestyle='-', alpha=0.5)
-    ax2.axhline(0+std_offset*settings['search']['calibration_std_prec'], color='w', linestyle=':', alpha=0.5)
-    ax2.axhline(0-std_offset*settings['search']['calibration_std_prec'], color='w', linestyle=':', alpha=0.5)
+    ax2.axhline(0+std_offset*settings['search']['calibration_std_prec'], color='r', linestyle=':', alpha=0.5)
+    ax2.axhline(0-std_offset*settings['search']['calibration_std_prec'], color='r', linestyle=':', alpha=0.5)
 
     ax2.set_title('Precursor error after correction')
     ax2.set_ylabel('Error (ppm)')
@@ -335,8 +335,8 @@ def save_precursor_calibration(df, corrected, std_offset, file_name, settings):
     ax4.set_title('Precursor error after correction')
 
     ax4.axhline(0, color='w', linestyle='-', alpha=0.5)
-    ax4.axhline(0+std_offset*settings['search']['calibration_std_prec'], color='w', linestyle=':', alpha=0.5)
-    ax4.axhline(0-std_offset*settings['search']['calibration_std_prec'], color='w', linestyle=':', alpha=0.5)
+    ax4.axhline(0+std_offset*settings['search']['calibration_std_prec'], color='r', linestyle=':', alpha=0.5)
+    ax4.axhline(0-std_offset*settings['search']['calibration_std_prec'], color='r', linestyle=':', alpha=0.5)
 
     base, ext = os.path.splitext(file_name)
 
