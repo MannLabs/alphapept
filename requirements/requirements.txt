@@ -1,6 +1,6 @@
 biopython==1.79
 click>=7.1.2
-fastcore==1.5.6
+fastcore==1.5.11
 h5py==3.7.0
 matplotlib==3.5.2
 networkx==2.8.4
