@@ -355,6 +355,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.model_selection import GridSearchCV
 
+import psutil
 import matplotlib.pyplot as plt
 
 from .fasta import count_missed_cleavages, count_internal_cleavages
@@ -386,34 +387,36 @@ def get_ML_features(df: pd.DataFrame, protease: str='trypsin', **kwargs) -> pd.D
 
     return df
 
+
 def train_RF(df: pd.DataFrame,
-             exclude_features: list = ['precursor_idx','fragment_ion_idx','fasta_index','feature_rank','raw_rank','score_rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','sequence_naked','target'],
-             train_fdr_level:  float = 0.1,
+             exclude_features: list = ['precursor_idx', 'fragment_ion_idx', 'fasta_index', 'feature_rank', 'raw_rank',
+                                       'score_rank', 'db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx',
+                                       'sequence', 'decoy', 'sequence_naked', 'target'],
+             train_fdr_level: float = 0.1,
              ini_score: str = 'x_tandem',
              min_train: int = 1000,
              test_size: float = 0.8,
-             max_depth: list = [5,25,50],
-             max_leaf_nodes: list = [150,200,250],
+             max_depth: list = [5, 25, 50],
+             max_leaf_nodes: list = [150, 200, 250],
              n_jobs: int = -1,
              scoring: str = 'accuracy',
-             plot:bool = False,
+             plot: bool = False,
              random_state: int = 42,
              **kwargs) -> (GridSearchCV, list):
-
     """
     Function to train a random forest classifier to separate targets from decoys via semi-supervised learning.
 
     Args:
         df (pd.DataFrame): psms table of search results from alphapept.
-        exclude_features (list, optional): list with features to exclude for ML. Defaults to ['precursor_idx','fragment_ion_idx','fasta_index','feature_rank','raw_rank','score_rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','sequence_naked','target'].
+        exclude_features (list, optional): list with column names of features to exclude for ML. Defaults to ['precursor_idx','fragment_ion_idx','fasta_index','feature_rank','raw_rank','score_rank','db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx','sequence','decoy','sequence_naked','target'].
         train_fdr_level (float, optional): Only targets below the train_fdr_level cutoff are considered for training the classifier. Defaults to 0.1.
         ini_score (str, optional): Initial score to select psms set for semi-supervised learning. Defaults to 'x_tandem'.
         min_train (int, optional): Minimum number of psms in the training set. Defaults to 1000.
         test_size (float, optional): Fraction of psms used for testing. Defaults to 0.8.
         max_depth (list, optional): List of clf__max_depth parameters to test in the grid search. Defaults to [5,25,50].
         max_leaf_nodes (list, optional): List of clf__max_leaf_nodes parameters to test in the grid search. Defaults to [150,200,250].
-        n_jobs (int, optional): Number of jobs to use for parallelizing the gridsearch. Defaults to -1.
-        scoring (str, optional): Scoring method for the gridsearch. Defaults to'accuracy'.
+        n_jobs (int, optional): Number of jobs to use for parallelizing the gridsearch. Defaults to -1, which in GridSearchCV corresponds to 'use all available cores'.
+        scoring (str, optional): Scoring method for the gridsearch. Defaults to 'accuracy'.
         plot (bool, optional): flag to enable plot. Defaults to 'False'.
         random_state (int, optional): Random state for initializing the RandomForestClassifier. Defaults to 42.
 
@@ -422,25 +425,17 @@ def train_RF(df: pd.DataFrame,
 
     """
 
-    if getattr(sys, 'frozen', False):
-        logging.info('Using frozen pyinstaller version. Setting n_jobs to 1')
-        n_jobs = 1
-
-    if n_jobs > 60:
-        n_jobs = 60 #See https://github.com/pycaret/pycaret/issues/38
-        logging.info('Capping n_jobs at 60.')
-
-    features = [_ for _ in df.columns if _ not in exclude_features]
+    features = [col for col in df.columns if col not in exclude_features]
 
     # Setup ML pipeline
     scaler = StandardScaler()
-    rfc = RandomForestClassifier(random_state=random_state) # class_weight={False:1,True:5},
+    rfc = RandomForestClassifier(random_state=random_state)  # class_weight={False:1,True:5},
     ## Initiate scaling + classification pipeline
     pipeline = Pipeline([('scaler', scaler), ('clf', rfc)])
-    parameters = {'clf__max_depth':(max_depth), 'clf__max_leaf_nodes': (max_leaf_nodes)}
+    parameters = {'clf__max_depth': max_depth, 'clf__max_leaf_nodes': max_leaf_nodes}
     ## Setup grid search framework for parameter selection and internal cross validation
     cv = GridSearchCV(pipeline, param_grid=parameters, cv=5, scoring=scoring,
-                     verbose=0,return_train_score=True,n_jobs=n_jobs)
+                      verbose=0, return_train_score=True, n_jobs=_get_limited_n_jobs(n_jobs))
 
     # Prepare target and decoy df
     df['decoy'] = df['sequence'].str[-1].str.islower()
@@ -452,8 +447,8 @@ def train_RF(df: pd.DataFrame,
     # Select high scoring targets (<= train_fdr_level)
     df_prescore = filter_score(df)
     df_prescore = filter_precursor(df_prescore)
-    scored = cut_fdr(df_prescore, fdr_level = train_fdr_level, plot=False)[1]
-    highT = scored[scored.decoy==False]
+    scored = cut_fdr(df_prescore, fdr_level=train_fdr_level, plot=False)[1]
+    highT = scored[scored.decoy == False]
     dfT_high = dfT[dfT['query_idx'].isin(highT.query_idx)]
     dfT_high = dfT_high[dfT_high['db_idx'].isin(highT.db_idx)]
 
@@ -466,26 +461,28 @@ def train_RF(df: pd.DataFrame,
         raise ValueError("There are fewer high scoring targets or decoys than required by 'min_train'.")
 
     # Subset the targets and decoys datasets to result in a balanced dataset
-    df_training = pd.concat([dfT_high.sample(n=n_train, random_state=random_state), dfD.sample(n=n_train, random_state=random_state)])
+    df_training = pd.concat(
+        [dfT_high.sample(n=n_train, random_state=random_state), dfD.sample(n=n_train, random_state=random_state)])
 
     # Select training and test sets
     X = df_training[features]
     y = df_training['target'].astype(int)
-    X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, test_size=test_size, random_state=random_state, stratify=y.values)
+    X_train, X_test, y_train, y_test = train_test_split(X.values, y.values, test_size=test_size,
+                                                        random_state=random_state, stratify=y.values)
 
     # Train the classifier on the training set via 5-fold cross-validation and subsequently test on the test set
     n_targets = np.sum(y_train)
-    n_decoys = X_train.shape[0]-n_targets
+    n_decoys = X_train.shape[0] - n_targets
 
     logging.info(f'Training & cross-validation on {n_targets:,} targets and {n_decoys:,} decoys')
-    cv.fit(X_train,y_train)
+    cv.fit(X_train, y_train)
 
     logging.info(f'The best parameters selected by 5-fold cross-validation were {cv.best_params_}')
     logging.info(f'The train {scoring} was {cv.score(X_train, y_train):.3f}')
-    logging.info(f'Testing on {np.sum(y_test):,} targets and {X_test.shape[0]-np.sum(y_test):,} decoys')
+    logging.info(f'Testing on {np.sum(y_test):,} targets and {X_test.shape[0] - np.sum(y_test):,} decoys')
     logging.info(f'The test {scoring} was {cv.score(X_test, y_test):.3f}')
 
-    feature_importances=cv.best_estimator_.named_steps['clf'].feature_importances_
+    feature_importances = cv.best_estimator_.named_steps['clf'].feature_importances_
     indices = np.argsort(feature_importances)[::-1][:40]
 
     top_features = X.columns[indices][:40]
@@ -494,21 +491,48 @@ def train_RF(df: pd.DataFrame,
     logging.info(f"ML Top features")
 
     for i in range(len(top_features)):
-        logging.info(f"{i+1}\t{top_features[i].ljust(30)} {top_score[i]:.4f}")
+        logging.info(f"{i + 1}\t{top_features[i].ljust(30)} {top_score[i]:.4f}")
 
     # Inspect feature importances
     if plot:
         import seaborn as sns
         g = sns.barplot(y=X.columns[indices][:40],
-                        x = feature_importances[indices][:40],
+                        x=feature_importances[indices][:40],
                         orient='h', palette='RdBu')
-        g.set_xlabel("Relative importance",fontsize=12)
-        g.set_ylabel("Features",fontsize=12)
+        g.set_xlabel("Relative importance", fontsize=12)
+        g.set_ylabel("Features", fontsize=12)
         g.tick_params(labelsize=9)
         g.set_title("Feature importance")
         plt.show()
 
     return cv, features
+
+
+def _get_limited_n_jobs(n_jobs_max: int) -> int:
+    """
+    Limit number of jobs for train_RF() if required due to type of installation or if it exceeds the maximum number allowed.
+
+    Args:
+        n_jobs_max (int): Number of jobs to use at most.
+
+    Returns:
+        int: Actual number of jobs to use.
+    """
+
+    n_jobs = n_jobs_max
+
+    if getattr(sys, 'frozen', False):
+        logging.info('Using frozen pyinstaller version. Setting n_jobs to 1 for train_RF().')
+        return 1
+
+    # to circumvent https://github.com/pycaret/pycaret/issues/38 :
+    n_jobs_limit = 60
+    if n_jobs > n_jobs_limit or (n_jobs == -1 and psutil.cpu_count() > n_jobs_limit):
+        n_jobs = n_jobs_limit
+        logging.info(f'Capping n_jobs at {n_jobs_limit} for train_RF().')
+
+    return n_jobs
+
 
 def score_ML(df: pd.DataFrame,
              trained_classifier: GridSearchCV,
@@ -908,7 +932,7 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
 
             if settings["score"]["method"] == 'random_forest':
                 try:
-                    classifier, features = train_RF(df_)
+                    classifier, features = train_RF(df_, n_jobs = settings['general']['n_processes'])
                     df_['score'] = classifier.predict_proba(df_[features])[:,1]
                 except ValueError as e:
                     logging.info('ML failed. Defaulting to x_tandem score')
