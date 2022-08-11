@@ -135,6 +135,8 @@ def set_logger(
         root.addHandler(file_handler)
 
     logging.info(f"Logging to {log_file_name}.")
+    logging.info(f"Code location {os.path.dirname(os.path.abspath(__file__))}")
+    logging.info(f"Python location {sys.executable}")
     return log_file_name
 
 def show_platform_info() -> None:
@@ -170,7 +172,7 @@ def show_platform_info() -> None:
         f"{psutil.virtual_memory().total/1024**3:.1f} Gb "
         f"(available/total)"
     )
-    logging.info("")
+    logging.info(f"processor  - {platform.processor()}")
 
 
 def log_dict(a_dict) -> None:

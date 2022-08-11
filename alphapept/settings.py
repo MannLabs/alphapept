@@ -217,7 +217,7 @@ SETTINGS_TEMPLATE["features"] = features
 search = {}
 
 search["prec_tol"] = {'type':'spinbox', 'min':1, 'max':500, 'default':30, 'description':"Maximum allowed precursor mass offset."}
-search["frag_tol"] = {'type':'spinbox', 'min':1, 'max':500, 'default':30, 'description':"Maximum fragment mass tolerance."}
+search["frag_tol"] = {'type':'spinbox', 'min':1, 'max':500, 'default':60, 'description':"Maximum fragment mass tolerance."}
 search["min_frag_hits"] = {'type':'spinbox', 'min':1, 'max':99, 'default':7, 'description':"Minimum number of fragment hits."}
 search["ppm"] = {'type':'checkbox', 'default':True, 'description':"Use ppm instead of Dalton."}
 search["calibrate"] = {'type':'checkbox', 'default':True, 'description':"Recalibrate masses."}
@@ -243,7 +243,7 @@ calibration = {}
 
 calibration["outlier_std"] = {'type':'spinbox', 'min':1, 'max':5, 'default':3, 'description':"Number of std. deviations to filter outliers in psms."}
 calibration["calib_n_neighbors"] = {'type':'spinbox', 'min':1, 'max':1000, 'default':100, 'description':"Number of neighbors that are used for offset interpolation."}
-calibration["calib_mz_range"] = {'type':'spinbox', 'min':1, 'max':1000, 'default':20, 'description':"Scaling factor for mz axis."}
+calibration["calib_mz_range"] = {'type':'spinbox', 'min':1, 'max':100, 'default':2000, 'description':"Scaling factor for mz axis."}
 calibration["calib_rt_range"] = {'type':'doublespinbox', 'min':0.0, 'max':10, 'default':0.5, 'description':"Scaling factor for rt axis."}
 calibration["calib_mob_range"] = {'type':'doublespinbox', 'min':0.0, 'max':1.0, 'default':0.3, 'description':"Scaling factor for mobility axis."}
 
