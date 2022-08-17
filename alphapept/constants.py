@@ -73,7 +73,7 @@ def get_mass_dict(modfile:str, aasfile: str, verbose:bool=True):
     mass_dict["OH"] = mass_dict["Oxygen"] + mass_dict["Hydrogen"]  # OH mass
     mass_dict["H2O"] = mass_dict["Oxygen"] + 2 * mass_dict["Hydrogen"]  # H2O mass
 
-    mass_dict["NH3"] = 17.03052
+    mass_dict["NH3"] = 17.02654910112
     mass_dict["delta_M"] = 1.00286864
     mass_dict["delta_S"] = 0.0109135
 

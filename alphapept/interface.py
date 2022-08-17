@@ -1258,6 +1258,7 @@ def parallel_execute(
             memory_available = psutil.virtual_memory().available/1024**3
             n_processes_temp = max((int(memory_available //8 ), 1)) # 8 gb per file: Todo: make this better
             n_processes = min((n_processes, n_processes_temp))
+            n_processes = min((n_processes, n_files)) #not more processes than files.
             logging.info(f'Searching. Setting Process limit to {n_processes}.')
 
 
