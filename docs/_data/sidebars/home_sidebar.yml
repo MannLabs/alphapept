@@ -28,7 +28,7 @@ entries:
       title: Search
       url: search.html
     - output: web,pdf
-      title: score
+      title: Score
       url: score.html
     - output: web,pdf
       title: Recalibration

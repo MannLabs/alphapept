@@ -938,7 +938,7 @@ calibration_std_prec:
   min: 1
   type: spinbox
 frag_tol:
-  default: 30
+  default: 50
   description: Maximum fragment mass tolerance.
   max: 500
   min: 1
@@ -964,7 +964,7 @@ ppm:
   description: Use ppm instead of Dalton.
   type: checkbox
 prec_tol:
-  default: 30
+  default: 20
   description: Maximum allowed precursor mass offset.
   max: 500
   min: 1
@@ -1083,9 +1083,9 @@ recalibration_min:
   min: 0.0
   type: doublespinbox
 calib_mz_range:
-  default: 20
-  description: Scaling factor for mz axis.
-  max: 1000
+  default: 2000
+  description: Scaling factor for mz axis in ppm.
+  max: 10000
   min: 1
   type: spinbox
 calib_n_neighbors:

@@ -243,7 +243,7 @@ calibration = {}
 
 calibration["outlier_std"] = {'type':'spinbox', 'min':1, 'max':5, 'default':3, 'description':"Number of std. deviations to filter outliers in psms."}
 calibration["calib_n_neighbors"] = {'type':'spinbox', 'min':1, 'max':1000, 'default':100, 'description':"Number of neighbors that are used for offset interpolation."}
-calibration["calib_mz_range"] = {'type':'spinbox', 'min':1, 'max':100, 'default':2000, 'description':"Scaling factor for mz axis."}
+calibration["calib_mz_range"] = {'type':'spinbox', 'min':1, 'max':10000, 'default':2000, 'description':"Scaling factor for mz axis in ppm."}
 calibration["calib_rt_range"] = {'type':'doublespinbox', 'min':0.0, 'max':10, 'default':0.5, 'description':"Scaling factor for rt axis."}
 calibration["calib_mob_range"] = {'type':'doublespinbox', 'min':0.0, 'max':1.0, 'default':0.3, 'description':"Scaling factor for mobility axis."}
 
