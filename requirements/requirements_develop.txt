@@ -1,7 +1,7 @@
 bumpversion>=0.6.0
 jupyter_contrib_nbextensions>=0.5.1
 jupyter>=1.0.0
-nbdev>=1.1.22
+nbdev=1.1.22
 pyinstaller==5.2
 twine>=3.4.1
 wget==3.2
