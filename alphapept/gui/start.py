@@ -41,7 +41,7 @@ def start():
         )
         markdown_link("Installation manual", "https://github.com/MannLabs/alphapept")
         markdown_link(
-            "Understanding column names", "https://github.com/MannLabs/alphapept"
+            "Understanding column names", "https://mannlabs.github.io/alphapept/file_formats.html#Output-Files"
         )
         markdown_link(
             "Version performance",
