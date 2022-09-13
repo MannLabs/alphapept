@@ -1,0 +1,37 @@
+ipynb-filters: [nbdev_filter]
+
+project:
+  type: website
+  output-dir: _docs
+  preview:
+    port: 3000
+    browser: false
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-depth: 4
+
+website:
+  title: "alphapept"
+  site-url: "https://mannlabs.github.io/alphapept/"
+  description: "A modular, python-based framework for mass spectrometry."
+  twitter-card: true
+  open-graph: true
+  repo-branch: master
+  repo-url: "https://github.com/mannlabs/alphapept/tree/master/"
+  repo-actions: [issue]
+  navbar:
+    background: primary
+    search: true
+    right:
+      - icon: github
+        href: "https://github.com/mannlabs/alphapept/tree/master/"
+  sidebar:
+    style: "floating"
+
+metadata-files: 
+  - sidebar.yml
+  - custom.yml

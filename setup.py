@@ -1,40 +1,32 @@
-import setuptools
-from configparser import ConfigParser
 from pkg_resources import parse_version
-import os
-import re
-assert parse_version(setuptools.__version__) >= parse_version('36.2')
+from configparser import ConfigParser
+import setuptools
+assert parse_version(setuptools.__version__)>=parse_version('36.2')
 
-import alphapept as package2install
-
+# note: all settings are in settings.ini; edit there, not here
 config = ConfigParser(delimiters=['='])
 config.read('settings.ini')
 cfg = config['DEFAULT']
 
-license_options = {
-    'apache2': (
-        'Apache Software License 2.0',
-        'OSI Approved :: Apache Software License'
-    ),
-    'MIT': (
-        'MIT License',
-        'OSI Approved :: MIT License'
-    )
-}
-status_options = {
-    '1': 'Planning',
-    '2': 'Pre-Alpha',
-    '3': 'Alpha',
-    '4': 'Beta',
-    '5': 'Production/Stable',
-    '6': 'Mature',
-    '7': 'Inactive'
-}
-maximum_python3_available = 8
+cfg_keys = 'version description keywords author author_email'.split()
+expected = cfg_keys + "lib_name user branch license status min_python audience language".split()
+for o in expected: assert o in cfg, "missing expected setting: {}".format(o)
+setup_cfg = {o:cfg[o] for o in cfg_keys}
 
-with open("README.md") as readme_file:
-    long_description = readme_file.read()
+licenses = {
+    'apache2': ('Apache Software License 2.0','OSI Approved :: Apache Software License'),
+    'mit': ('MIT License', 'OSI Approved :: MIT License'),
+    'gpl2': ('GNU General Public License v2', 'OSI Approved :: GNU General Public License v2 (GPLv2)'),
+    'gpl3': ('GNU General Public License v3', 'OSI Approved :: GNU General Public License v3 (GPLv3)'),
+    'bsd3': ('BSD License', 'OSI Approved :: BSD License'),
+}
+statuses = [ '1 - Planning', '2 - Pre-Alpha', '3 - Alpha',
+    '4 - Beta', '5 - Production/Stable', '6 - Mature', '7 - Inactive' ]
+py_versions = '3.6 3.7 3.8 3.9 3.10'.split()
 
+if cfg.get('pip_requirements'): requirements += cfg.get('pip_requirements','').split()
+min_python = cfg['min_python']
+lic = licenses.get(cfg['license'].lower(), (cfg['license'], None))
 
 extra_requirements = {}
 for extra, requirement_file_name in package2install.__requirements__.items():
@@ -54,40 +46,29 @@ for extra, requirement_file_name in package2install.__requirements__.items():
 requirements = extra_requirements.pop("")
 
 setuptools.setup(
-    name=cfg["lib_name"],
-    license=license_options[cfg["license"]][0],
-    classifiers=[
-        f'Development Status :: {cfg["status"]} - {status_options[cfg["status"]]}',
-        f'Intended Audience :: {cfg["audience"]}',
-        f'License :: {license_options[cfg["license"]][1]}',
-        f'Natural Language :: {cfg["language"]}',
-    ] + [
-        f'Programming Language :: Python :: 3.{i}' for i in range(
-            int(cfg["min_python"].split(".")[1]),
-            maximum_python3_available + 1
-        )
-    ],
-    version=cfg["version"],
-    description=cfg["description"],
-    keywords=cfg["keywords"],
-    author=cfg["author"],
-    author_email=cfg["author_email"],
-    url=cfg["url"],
-    packages=setuptools.find_packages(),
-    # TODO: Modifying this should allow to remove the MAINFEST.in
-    include_package_data=True,
+    name = cfg['lib_name'],
+    license = lic[0],
+    classifiers = [
+        'Development Status :: ' + statuses[int(cfg['status'])],
+        'Intended Audience :: ' + cfg['audience'].title(),
+        'Natural Language :: ' + cfg['language'].title(),
+    ] + ['Programming Language :: Python :: '+o for o in py_versions[py_versions.index(min_python):]] + (['License :: ' + lic[1] ] if lic[1] else []),
+    url = cfg['git_url'],
+    packages = setuptools.find_packages(),
+    include_package_data = True,
     install_requires=requirements + [
         "pywin32==225; sys_platform=='win32'",
         "pythonnet==2.5.2; sys_platform=='win32'",
         "tables==3.6.1; sys_platform=='win32'"
     ],
     extras_require=extra_requirements,
-    python_requires=f'>={cfg["min_python"]},<{cfg["max_python"]}',
-    long_description=long_description,
-    long_description_content_type='text/markdown',
-    zip_safe=False,
-    entry_points={
-        'console_scripts': cfg.get('console_scripts', '').split()
+    dependency_links = cfg.get('dep_links','').split(),
+    python_requires  = '>=' + cfg['min_python'],
+    long_description = open('README.md').read(),
+    long_description_content_type = 'text/markdown',
+    zip_safe = False,
+    entry_points = {
+        'console_scripts': cfg.get('console_scripts','').split(),
+        'nbdev': [f'{cfg.get("lib_path")}={cfg.get("lib_path")}._modidx:d']
     },
-
-)
+    **setup_cfg)
