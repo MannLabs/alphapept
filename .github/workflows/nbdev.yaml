@@ -1,4 +1,4 @@
-name: NBDEV_CI
+name: nbdev CI
 on:  [workflow_dispatch, pull_request, push]
 
 jobs:
