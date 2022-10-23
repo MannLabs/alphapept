@@ -52,14 +52,6 @@ def load_thermo_raw(
                 mono_mz, charge = rawfile.GetMS2MonoMzAndChargeFromScanNum(i)
             else:
                 prec_mz, mono_mz, charge = 0,0,0
-            #trailer_extra = rawfile.GetTrailerExtraForScanNum(i)
-            #mono_mz = float(trailer_extra["Monoisotopic M/Z:"])
-            #charge = int(trailer_extra["Charge State:"])
-            # if mono_mz == 0: mono_mz = prec_mz
-            # if mono_mz != 0 and abs(mono_mz - prec_mz) > 0.1:
-            #    print(f'MSn={ms_order}, mono_mz={mono_mz}, perc_mz={prec_mz}, charge={charge}')
-
-            # may be centroid for MS2 and profile for MS1 is better？
 
             if use_profile_ms1:
                 if ms_order == 2:
