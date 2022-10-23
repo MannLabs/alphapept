@@ -1589,7 +1589,7 @@ def cli_gui(port):
 
 
         import sys
-        from streamlit import cli as stcli
+        from streamlit.web import cli as stcli
 
         theme = []
 
