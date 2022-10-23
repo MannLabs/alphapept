@@ -161,6 +161,7 @@ def history():
         f"\nIt checks {PROCESSED_PATH} for *.yaml files."
         "\nFiles can be filtered to only include a subset."
         "\nOnly experiments with a single file will be displayed."
+        "\nIf retention time (rt) is displayed, the unit is minutes."
     )
 
     processed_files = files_in_folder(PROCESSED_PATH, ".yaml")
