@@ -10,7 +10,7 @@ pandas==1.4.3
 psutil==5.9.1
 pyteomics==4.5.5
 pyyaml==6.0
-scikit-learn==1.1.1
+scikit-learn==1.1.2
 scipy==1.8.1
 SQLAlchemy==1.4.39
 tables==3.6.1
