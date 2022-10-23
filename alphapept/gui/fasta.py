@@ -30,11 +30,12 @@ def fasta():
     for p_ in proteomes:
         if st.button(p_):
 
-            download_link = f"https://rest.uniprot.org/uniprotkb/stream?compressed=true&format=fasta&query={proteomes[p_]}%20AND%20%28reviewed%3Atrue%29"
+            download_link = f"https://rest.uniprot.org/uniprotkb/stream?compressed=false&format=fasta&query={proteomes[p_]}%20AND%20%28reviewed%3Atrue%29"
             new_file = os.path.join(
                 FASTA_PATH,
                 datetime.datetime.today().strftime("%Y_%m_%d_") + p_ + ".fasta",
             )
+
 
             st.code(f"Downloading {p_} to {new_file}.")
 
