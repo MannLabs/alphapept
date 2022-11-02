@@ -147,3 +147,5 @@ checklink/cookies.txt
 .gitconfig
 
 logs
+_docs/
+sidebar.yml

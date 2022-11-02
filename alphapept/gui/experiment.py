@@ -383,6 +383,12 @@ def experiment():
 
                 st.write("## Modify settings")
 
+                st.text(
+                    f"AlphaPept should run best with the default settings."
+                    "\nYou can overwrite the default setting by ticking a checkbox in Settings below and modifing a parameter."
+                    "\nIf you uncheck a selected checkbox the values will be reset to default."
+                )
+
                 prev_settings = st.checkbox("Use previous settings as template")
 
                 loaded = False
