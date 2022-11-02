@@ -1326,15 +1326,21 @@ CLICK_SETTINGS_OPTION = click.argument(
 def run_cli() -> None:
     """Run the command line interface."""
     
+    from packaging import version
 
     remote_version = check_github_version()
 
     version_str = '.{}.'.format(VERSION_NO.center(50))
 
     if remote_version:
-        if remote_version != VERSION_NO:
+        if version.parse(remote_version) > version.parse(VERSION_NO):
             version_str = f'{VERSION_NO} {bcolors.OKGREEN} -> Update available ({remote_version}){bcolors.ENDC}'
             version_str = f".{version_str.center(50+len(bcolors.ENDC)+len(bcolors.OKGREEN))}."
+        elif version.parse(remote_version) < version.parse(VERSION_NO):
+            version_str = f'{VERSION_NO} {bcolors.OKCYAN} -> Current is newer than remote ({remote_version}){bcolors.ENDC}'
+            version_str = f".{version_str.center(50+len(bcolors.ENDC)+len(bcolors.OKCYAN))}."
+        else:
+            pass
 
     print(
         "\n".join(

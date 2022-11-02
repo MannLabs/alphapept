@@ -2,6 +2,7 @@ import streamlit as st
 from alphapept.gui.utils import markdown_link
 from alphapept.utils import check_github_version
 from alphapept.__version__ import VERSION_NO
+from packaging import version
 
 SHOW_WARNING = False
 try:
@@ -77,8 +78,19 @@ def start():
         st.write("Put both files in one folder and go to the New experiment tab.")
 
 
-    latest_version = check_github_version()
-    if latest_version and (VERSION_NO != latest_version):
-        st.info(
-            f"You're using AlphaPept {VERSION_NO} but version {latest_version} is now avaliable! See [here](https://github.com/MannLabs/alphapept) for details"
-        )
+    remote_version = check_github_version()
+
+
+    if remote_version:
+        if version.parse(remote_version) > version.parse(VERSION_NO):
+            st.info(
+                f"You're using AlphaPept {VERSION_NO} but version {remote_version} is now avaliable! See [here](https://github.com/MannLabs/alphapept) for details."
+            )
+        elif version.parse(remote_version) < version.parse(VERSION_NO):
+            st.info(
+                f"You're using AlphaPept {VERSION_NO} which is newer than the remote version {remote_version} on [GitHub](https://github.com/MannLabs/alphapept)."
+            )
+        else:
+            st.info(
+            f"You're using AlphaPept {VERSION_NO}. This is the latest version."
+            )
