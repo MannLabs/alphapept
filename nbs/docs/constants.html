@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Where all constats are stored">
+
+<title>alphapept - Constants</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="alphapept - Constants">
+<meta property="og:description" content="Where all constats are stored">
+<meta property="og:site-name" content="alphapept">
+<meta name="twitter:title" content="alphapept - Constants">
+<meta name="twitter:description" content="Where all constats are stored">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">alphapept</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Constants</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">AlphaPept</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./settings.html" class="sidebar-item-text sidebar-link">Settings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chem.html" class="sidebar-item-text sidebar-link">Chem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./io.html" class="sidebar-item-text sidebar-link">Input / Output</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fasta.html" class="sidebar-item-text sidebar-link">FASTA</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./feature_finding.html" class="sidebar-item-text sidebar-link">Feature Finding</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./search.html" class="sidebar-item-text sidebar-link">Search</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./score.html" class="sidebar-item-text sidebar-link">Score</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./recalibration.html" class="sidebar-item-text sidebar-link">Recalibration</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quantification.html" class="sidebar-item-text sidebar-link">Quantification</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./matching.html" class="sidebar-item-text sidebar-link">Matching</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link active">Constants</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interface.html" class="sidebar-item-text sidebar-link">Interface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./performance.html" class="sidebar-item-text sidebar-link">Performance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./export.html" class="sidebar-item-text sidebar-link">Export</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./label.html" class="sidebar-item-text sidebar-link">Label</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./additional_code.html" class="sidebar-item-text sidebar-link">Additional code</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#amino-acids" id="toc-amino-acids" class="nav-link active" data-scroll-target="#amino-acids">Amino Acids</a></li>
+  <li><a href="#mass-dict" id="toc-mass-dict" class="nav-link" data-scroll-target="#mass-dict">Mass dict</a>
+  <ul>
+  <li><a href="#get_mass_dict" id="toc-get_mass_dict" class="nav-link" data-scroll-target="#get_mass_dict">get_mass_dict</a></li>
+  </ul></li>
+  <li><a href="#isotopes" id="toc-isotopes" class="nav-link" data-scroll-target="#isotopes">Isotopes</a>
+  <ul>
+  <li><a href="#isotope" id="toc-isotope" class="nav-link" data-scroll-target="#isotope">Isotope</a></li>
+  </ul></li>
+  <li><a href="#averagine-model" id="toc-averagine-model" class="nav-link" data-scroll-target="#averagine-model">Averagine Model</a></li>
+  <li><a href="#protease-dict" id="toc-protease-dict" class="nav-link" data-scroll-target="#protease-dict">Protease dict</a></li>
+  <li><a href="#losses" id="toc-losses" class="nav-link" data-scroll-target="#losses">Losses</a></li>
+  <li><a href="#labels" id="toc-labels" class="nav-link" data-scroll-target="#labels">Labels</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Constants</h1>
+</div>
+
+<div>
+  <div class="description">
+    Where all constats are stored
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>This notebook stores all constants.</p>
+<section id="amino-acids" class="level2">
+<h2 class="anchored" data-anchor-id="amino-acids">Amino Acids</h2>
+<p>A set of valid amino acids.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(AAs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{'U', 'R', 'S', 'M', 'P', 'I', 'E', 'H', 'L', 'N', 'C', 'G', 'D', 'W', 'K', 'F', 'T', 'V', 'A', 'Q', 'Y'}</code></pre>
+</div>
+</div>
+</section>
+<section id="mass-dict" class="level2">
+<h2 class="anchored" data-anchor-id="mass-dict">Mass dict</h2>
+<p>A numba compatible mass dict dictionary. This is created from the <code>modifications.tsv</code>. Change to allow custom modifications.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/constants.py#L16" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="get_mass_dict" class="level3">
+<h3 class="anchored" data-anchor-id="get_mass_dict">get_mass_dict</h3>
+<blockquote class="blockquote">
+<pre><code> get_mass_dict (modfile:str, aasfile:str, verbose:bool=True)</code></pre>
+</blockquote>
+<p>Function to create a mass dict based on tsv files. This is used to create the hardcoded dict in the constants notebook. The dict needs to be hardcoded because of importing restrictions when using numba. More specifically, a global needs to be typed at runtime.</p>
+<p>Args: modfile (str): Filename of modifications file. aasfile (str): Filename of AAs file. verbose (bool, optional): Flag to print dict.</p>
+<p>Returns: Returns a numba compatible dictionary with masses.</p>
+<p>Raises: FileNotFoundError: If files are not found.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> mass_dict:</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>_<span class="op">+</span><span class="st">':'</span><span class="sc">: &lt;12}{</span>mass_dict[_]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>A:          71.0371138
+C:          103.0091845
+D:          115.0269431
+E:          129.0425931
+F:          147.0684139
+G:          57.02146373
+H:          137.0589119
+I:          113.084064
+K:          128.094963
+L:          113.084064
+M:          131.0404846
+N:          114.0429275
+P:          97.05276386
+Q:          128.0585775
+R:          156.101111
+S:          87.03202843
+T:          101.0476785
+U:          150.9536333957
+V:          99.06841392
+W:          186.079313
+Y:          163.0633286
+cC:         160.03064823
+oxM:        147.03539923000002
+aA:         113.04767849000001
+aC:         145.01974919
+aD:         157.03750779
+aE:         171.05315779
+aF:         189.07897859
+aG:         99.03202842
+aH:         179.06947659
+aI:         155.09462869
+aK:         170.10552769
+aL:         155.09462869
+aM:         173.05104929
+aN:         156.05349219000001
+aP:         139.06332855
+aQ:         170.06914219
+aR:         198.11167569
+aS:         129.04259312
+aT:         143.05824319
+aU:         192.9641980857
+aV:         141.07897861
+aW:         228.08987769
+aY:         205.07389329
+amA:        70.053098207
+amC:        102.02516890700001
+amD:        114.042927507
+amE:        128.058577507
+amF:        146.084398307
+amG:        56.037448137
+amH:        136.074896307
+amI:        112.100048407
+amK:        127.11094740700001
+amL:        112.100048407
+amM:        130.056469007
+amN:        113.05891190700001
+amP:        96.068748267
+amQ:        127.07456190700002
+amR:        155.117095407
+amS:        86.048012837
+amT:        100.06366290700001
+amU:        149.9696178027
+amV:        98.084398327
+amW:        185.095297407
+amY:        162.079313007
+pS:         166.99835935
+pT:         181.01400942
+pY:         243.02965952
+deamN:      115.026943093
+deamQ:      129.04259309300002
+cmC:        85.9826354
+pgE:        111.03202841000001
+pgQ:        111.03202840000002
+tmt0A:      295.1895917
+tmt0C:      327.1616624
+tmt0D:      339.179421
+tmt0E:      353.195071
+tmt0F:      371.2208918
+tmt0G:      281.17394163
+tmt0H:      361.2113898
+tmt0I:      337.2365419
+tmt0K:      352.2474409
+tmt0L:      337.2365419
+tmt0M:      355.1929625
+tmt0N:      338.1954054
+tmt0P:      321.20524176000004
+tmt0Q:      352.2110554
+tmt0R:      380.2535889
+tmt0S:      311.18450633
+tmt0T:      325.2001564
+tmt0U:      375.1061112957
+tmt0V:      323.22089182
+tmt0W:      410.2317909
+tmt0Y:      387.2158065
+tmt2A:      296.1929466
+tmt2C:      328.16501730000004
+tmt2D:      340.1827759
+tmt2E:      354.1984259
+tmt2F:      372.2242467
+tmt2G:      282.17729653000004
+tmt2H:      362.2147447
+tmt2I:      338.2398968
+tmt2K:      353.2507958
+tmt2L:      338.2398968
+tmt2M:      356.1963174
+tmt2N:      339.1987603
+tmt2P:      322.20859666
+tmt2Q:      353.21441030000005
+tmt2R:      381.25694380000004
+tmt2S:      312.18786123
+tmt2T:      326.2035113
+tmt2U:      376.1094661957
+tmt2V:      324.22424672
+tmt2W:      411.23514580000005
+tmt2Y:      388.2191614
+tmt6A:      300.200046
+tmt6C:      332.1721167
+tmt6D:      344.1898753
+tmt6E:      358.2055253
+tmt6F:      376.2313461
+tmt6G:      286.18439593
+tmt6H:      366.2218441
+tmt6I:      342.2469962
+tmt6K:      357.2578952
+tmt6L:      342.2469962
+tmt6M:      360.2034168
+tmt6N:      343.2058597
+tmt6P:      326.21569606
+tmt6Q:      357.2215097
+tmt6R:      385.2640432
+tmt6S:      316.19496062999997
+tmt6T:      330.2106107
+tmt6U:      380.11656559569997
+tmt6V:      328.23134612
+tmt6W:      415.2422452
+tmt6Y:      392.2262608
+itraq4KA:   215.13952419999998
+itraq4KC:   247.1115949
+itraq4KD:   259.1293535
+itraq4KE:   273.14500350000003
+itraq4KF:   291.1708243
+itraq4KG:   201.12387413
+itraq4KH:   281.1613223
+itraq4KI:   257.1864744
+itraq4KK:   272.1973734
+itraq4KL:   257.1864744
+itraq4KM:   275.142895
+itraq4KN:   258.1453379
+itraq4KP:   241.15517426
+itraq4KQ:   272.1609879
+itraq4KR:   300.2035214
+itraq4KS:   231.13443883
+itraq4KT:   245.15008890000001
+itraq4KU:   295.0560437957
+itraq4KV:   243.17082432
+itraq4KW:   330.1817234
+itraq4KY:   307.16573900000003
+itraq4K:    272.1973734
+itraq4Y:    307.16573900000003
+itraq8KA:   375.2393133
+itraq8KC:   407.211384
+itraq8KD:   419.2291426
+itraq8KE:   433.2447926
+itraq8KF:   451.2706134
+itraq8KG:   361.22366323
+itraq8KH:   441.2611114
+itraq8KI:   417.2862635
+itraq8KK:   432.2971625
+itraq8KL:   417.2862635
+itraq8KM:   435.2426841
+itraq8KN:   418.245127
+itraq8KP:   401.25496336000003
+itraq8KQ:   432.260777
+itraq8KR:   460.3033105
+itraq8KS:   391.23422793
+itraq8KT:   405.249878
+itraq8KU:   455.1558328957
+itraq8KV:   403.27061342
+itraq8KW:   490.2815125
+itraq8KY:   467.2655281
+itraq8K:    432.2971625
+itraq8Y:    467.2655281
+eA:         337.1209813
+eC:         369.093052
+eD:         381.1108106
+eE:         395.1264606
+eF:         413.1522814
+eG:         323.10533123
+eH:         403.1427794
+eI:         379.1679315
+eK:         394.1788305
+eL:         379.1679315
+eM:         397.1243521
+eN:         380.126795
+eP:         363.13663136
+eQ:         394.142445
+eR:         422.1849785
+eS:         353.11589592999997
+eT:         367.131546
+eU:         417.03750089569996
+eV:         365.15228142
+eW:         452.1631805
+eY:         429.1471961
+arg10R:     166.10938057776002
+arg6R:      162.121241
+lys8K:      136.10916278888
+Electron:   0.00054857990907
+Proton:     1.00727646687
+Hydrogen:   1.00782503223
+C13:        13.003354835
+Oxygen:     15.994914619
+OH:         17.002739651229998
+H2O:        18.01056468346
+NH3:        17.02654910112
+delta_M:    1.00286864
+delta_S:    0.0109135</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Test that there is an entry for each AA</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> AAs:</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span> _ <span class="kw">in</span> mass_dict.keys()</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mass_dict[<span class="st">'A'</span>])</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mass_dict[<span class="st">'K'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>71.0371138
+128.094963</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="isotopes" class="level2">
+<h2 class="anchored" data-anchor-id="isotopes">Isotopes</h2>
+<p>We define a <code>jitclass</code> that stores the base mass, the number of isotopes, and their abundances. We create the typed dictionary <code>isotopes</code> that stores different default isotopes.</p>
+<hr>
+<section id="isotope" class="level3">
+<h3 class="anchored" data-anchor-id="isotope">Isotope</h3>
+<blockquote class="blockquote">
+<pre><code> Isotope (*args, **kwargs)</code></pre>
+</blockquote>
+<p>Jit-compatible class to store isotopes</p>
+<p>Attributes: m0 (int): Mass of pattern dm0 (int): dm of pattern (number of isotopes) int0 (np.float32[:]): Intensities of pattern</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> isotopes:</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Element </span><span class="sc">{</span>_<span class="sc">}</span><span class="ss">: base mass </span><span class="sc">{</span>isotopes[_]<span class="sc">.</span>m0<span class="sc">:&lt;20}</span><span class="ss"> intensities </span><span class="sc">{</span>isotopes[_]<span class="sc">.</span>intensities<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Element C: base mass 12.0                 intensities [0.9893 0.0107 0.    ]
+Element H: base mass 1.0079400539398193   intensities [9.99885e-01 1.15000e-04 0.00000e+00]
+Element O: base mass 15.994915008544922   intensities [9.9757e-01 3.8000e-04 2.0500e-03]
+Element N: base mass 14.003073692321777   intensities [0.99636 0.00364]
+Element S: base mass 31.972070693969727   intensities [9.499e-01 7.500e-03 4.250e-02 1.000e-04]
+Element I: base mass 126.90447235107422   intensities [1.]
+Element K: base mass 38.963706970214844   intensities [9.32581e-01 1.17000e-04 6.73020e-02]</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="averagine-model" class="level2">
+<h2 class="anchored" data-anchor-id="averagine-model">Averagine Model</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Masses of the averagine model</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> averagine_aa:</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>_<span class="sc">}</span><span class="ss"> </span><span class="sc">{</span>averagine_aa[_]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>C 4.9384
+H 7.7583
+N 1.3577
+O 1.4773
+S 0.0417</code></pre>
+</div>
+</div>
+</section>
+<section id="protease-dict" class="level2">
+<h2 class="anchored" data-anchor-id="protease-dict">Protease dict</h2>
+<p>A numba compatible dictionary that stores different regular expressions needed for digestion. The dictionary was largely taken from the <a href="https://pyteomics.readthedocs.io/en/latest/_modules/pyteomics/parser.html">Pyteomics</a> website which in turn derived the rules are from <a href="https://web.expasy.org/peptide_cutter/peptidecutter_enzymes.html">expasy</a>. Some entries (Lys-C/ Lys-N) were updated according to <a href="https://github.com/OpenMS/OpenMS/blob/develop/share/OpenMS/CHEMISTRY/Enzymes.xml">OpenMS</a>. A useful resource for testing Regex can be found <a href="https://regex101.com/">here</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Entries in the protease_dict:</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> protease_dict:</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>_<span class="sc">:&lt;35}</span><span class="ss"> </span><span class="sc">{</span>protease_dict[_]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>arg-c                               R
+asp-n                               \w(?=D)
+bnps-skatole                        W
+caspase 1                           (?&lt;=[FWYL]\w[HAT])D(?=[^PEDQKR])
+caspase 2                           (?&lt;=DVA)D(?=[^PEDQKR])
+caspase 3                           (?&lt;=DMQ)D(?=[^PEDQKR])
+caspase 4                           (?&lt;=LEV)D(?=[^PEDQKR])
+caspase 5                           (?&lt;=[LW]EH)D
+caspase 6                           (?&lt;=VE[HI])D(?=[^PEDQKR])
+caspase 7                           (?&lt;=DEV)D(?=[^PEDQKR])
+caspase 8                           (?&lt;=[IL]ET)D(?=[^PEDQKR])
+caspase 9                           (?&lt;=LEH)D
+caspase 10                          (?&lt;=IEA)D
+chymotrypsin high specificity       ([FY](?=[^P]))|(W(?=[^MP]))
+chymotrypsin low specificity        ([FLY](?=[^P]))|(W(?=[^MP]))|(M(?=[^PY]))|(H(?=[^DMPW]))
+clostripain                         R
+cnbr                                M
+enterokinase                        (?&lt;=[DE]{3})K
+factor xa                           (?&lt;=[AFGILTVM][DE]G)R
+formic acid                         D
+glutamyl endopeptidase              E
+granzyme b                          (?&lt;=IEP)D
+hydroxylamine                       N(?=G)
+iodosobenzoic acid                  W
+lys_c                               K(?!P)
+lys_c/p                             K
+lys_n                               .K
+ntcb                                \w(?=C)
+pepsin ph1.3                        ((?&lt;=[^HKR][^P])[^R](?=[FL][^P]))|((?&lt;=[^HKR][^P])[FL](?=\w[^P]))
+pepsin ph2.0                        ((?&lt;=[^HKR][^P])[^R](?=[FLWY][^P]))|((?&lt;=[^HKR][^P])[FLWY](?=\w[^P]))
+proline endopeptidase               (?&lt;=[HKR])P(?=[^P])
+proteinase k                        [AEFILTVWY]
+staphylococcal peptidase i          (?&lt;=[^E])E
+thermolysin                         [^DE](?=[AFILMV])
+thrombin                            ((?&lt;=G)R(?=G))|((?&lt;=[AFGILTVM][AFGILTVWA]P)R(?=[^DE][^DE]))
+trypsin_full                        ([KR](?=[^P]))|((?&lt;=W)K(?=P))|((?&lt;=M)R(?=P))
+trypsin_exception                   ((?&lt;=[CD])K(?=D))|((?&lt;=C)K(?=[HY]))|((?&lt;=C)R(?=K))|((?&lt;=R)R(?=[HR]))
+non-specific                        ()
+trypsin                             ([KR](?=[^P]))</code></pre>
+</div>
+</div>
+</section>
+<section id="losses" class="level2">
+<h2 class="anchored" data-anchor-id="losses">Losses</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Entries in the loss_dict:</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> loss_dict:</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>_<span class="sc">:&lt;5}</span><span class="ss"> </span><span class="sc">{</span>loss_dict[_]<span class="sc">}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      0.0
+-H2O  18.01056468346
+-NH3  17.03052</code></pre>
+</div>
+</div>
+</section>
+<section id="labels" class="level2">
+<h2 class="anchored" data-anchor-id="labels">Labels</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> label <span class="kw">in</span> label_dict:</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(label_dict[label])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>label(mod_name='tmt6', channels=['tmt10-126', 'tmt10-127N', 'tmt10-127C', 'tmt10-128N', 'tmt10-128C', 'tmt10-129N', 'tmt10-129C', 'tmt10-130N', 'tmt10-130C', 'tmt10-131', 'tmt10-131C'], masses=array([126.127726, 127.124761, 127.131081, 128.128116, 128.134436,
+       129.131471, 129.13779 , 130.134825, 130.141145, 131.13818 ,
+       131.144499]), reference_channel='tmt10-126', mods_fixed_terminal=['tmt6&lt;^'], mods_variable=['tmt6Y', 'tmt6K'])</code></pre>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

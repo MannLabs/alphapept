@@ -16,7 +16,7 @@ format:
 
 website:
   title: "alphapept"
-  site-url: "https://mannlabs.github.io/alphapept/"
+  site-url: "https://mannlabs.github.io/alphapept"
   description: "A modular, python-based framework for mass spectrometry."
   twitter-card: true
   open-graph: true

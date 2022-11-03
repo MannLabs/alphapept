@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Functions related to quantification">
+
+<title>alphapept - Quantification</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="alphapept - Quantification">
+<meta property="og:description" content="Functions related to quantification">
+<meta property="og:site-name" content="alphapept">
+<meta name="twitter:title" content="alphapept - Quantification">
+<meta name="twitter:description" content="Functions related to quantification">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">alphapept</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Quantification</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">AlphaPept</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./settings.html" class="sidebar-item-text sidebar-link">Settings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chem.html" class="sidebar-item-text sidebar-link">Chem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./io.html" class="sidebar-item-text sidebar-link">Input / Output</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fasta.html" class="sidebar-item-text sidebar-link">FASTA</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./feature_finding.html" class="sidebar-item-text sidebar-link">Feature Finding</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./search.html" class="sidebar-item-text sidebar-link">Search</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./score.html" class="sidebar-item-text sidebar-link">Score</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./recalibration.html" class="sidebar-item-text sidebar-link">Recalibration</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quantification.html" class="sidebar-item-text sidebar-link active">Quantification</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./matching.html" class="sidebar-item-text sidebar-link">Matching</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link">Constants</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interface.html" class="sidebar-item-text sidebar-link">Interface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./performance.html" class="sidebar-item-text sidebar-link">Performance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./export.html" class="sidebar-item-text sidebar-link">Export</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./label.html" class="sidebar-item-text sidebar-link">Label</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./additional_code.html" class="sidebar-item-text sidebar-link">Additional code</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#label-free-quantification" id="toc-label-free-quantification" class="nav-link active" data-scroll-target="#label-free-quantification">Label-free quantification</a></li>
+  <li><a href="#delayed-normalization" id="toc-delayed-normalization" class="nav-link" data-scroll-target="#delayed-normalization">Delayed Normalization</a>
+  <ul>
+  <li><a href="#in-silico-test-data" id="toc-in-silico-test-data" class="nav-link" data-scroll-target="#in-silico-test-data">In Silico Test data</a></li>
+  <li><a href="#gaussian" id="toc-gaussian" class="nav-link" data-scroll-target="#gaussian">gaussian</a></li>
+  <li><a href="#return_elution_profile" id="toc-return_elution_profile" class="nav-link" data-scroll-target="#return_elution_profile">return_elution_profile</a></li>
+  <li><a href="#simulate_sample_profiles" id="toc-simulate_sample_profiles" class="nav-link" data-scroll-target="#simulate_sample_profiles">simulate_sample_profiles</a></li>
+  </ul></li>
+  <li><a href="#delayed-normalization-1" id="toc-delayed-normalization-1" class="nav-link" data-scroll-target="#delayed-normalization-1">Delayed Normalization</a>
+  <ul>
+  <li><a href="#get_total_error" id="toc-get_total_error" class="nav-link" data-scroll-target="#get_total_error">get_total_error</a></li>
+  </ul></li>
+  <li><a href="#benchmarking-different-optimiziers" id="toc-benchmarking-different-optimiziers" class="nav-link" data-scroll-target="#benchmarking-different-optimiziers">Benchmarking different optimiziers</a>
+  <ul>
+  <li><a href="#normalize_experiment_slsqp" id="toc-normalize_experiment_slsqp" class="nav-link" data-scroll-target="#normalize_experiment_slsqp">normalize_experiment_SLSQP</a></li>
+  <li><a href="#normalize_experiment_bfgs" id="toc-normalize_experiment_bfgs" class="nav-link" data-scroll-target="#normalize_experiment_bfgs">normalize_experiment_BFGS</a></li>
+  <li><a href="#delayed_normalization" id="toc-delayed_normalization" class="nav-link" data-scroll-target="#delayed_normalization">delayed_normalization</a></li>
+  </ul></li>
+  <li><a href="#constructing-protein-intensity-profiles" id="toc-constructing-protein-intensity-profiles" class="nav-link" data-scroll-target="#constructing-protein-intensity-profiles">Constructing protein intensity profiles</a></li>
+  <li><a href="#in-silico-test-data-1" id="toc-in-silico-test-data-1" class="nav-link" data-scroll-target="#in-silico-test-data-1">In-silico test data</a>
+  <ul>
+  <li><a href="#generate_dummy_data" id="toc-generate_dummy_data" class="nav-link" data-scroll-target="#generate_dummy_data">generate_dummy_data</a></li>
+  </ul></li>
+  <li><a href="#determine-pair-wise-intenisty-ratios" id="toc-determine-pair-wise-intenisty-ratios" class="nav-link" data-scroll-target="#determine-pair-wise-intenisty-ratios">Determine pair-wise intenisty ratios</a>
+  <ul>
+  <li><a href="#get_protein_ratios" id="toc-get_protein_ratios" class="nav-link" data-scroll-target="#get_protein_ratios">get_protein_ratios</a></li>
+  </ul></li>
+  <li><a href="#error-function" id="toc-error-function" class="nav-link" data-scroll-target="#error-function">Error Function</a>
+  <ul>
+  <li><a href="#triangle_error" id="toc-triangle_error" class="nav-link" data-scroll-target="#triangle_error">triangle_error</a></li>
+  </ul></li>
+  <li><a href="#solver-implementation" id="toc-solver-implementation" class="nav-link" data-scroll-target="#solver-implementation">Solver implementation</a>
+  <ul>
+  <li><a href="#solve_profile" id="toc-solve_profile" class="nav-link" data-scroll-target="#solve_profile">solve_profile</a></li>
+  </ul></li>
+  <li><a href="#solving-single-profiles" id="toc-solving-single-profiles" class="nav-link" data-scroll-target="#solving-single-profiles">Solving single profiles</a>
+  <ul>
+  <li><a href="#protein_profile" id="toc-protein_profile" class="nav-link" data-scroll-target="#protein_profile">protein_profile</a></li>
+  </ul></li>
+  <li><a href="#wrapper-functions" id="toc-wrapper-functions" class="nav-link" data-scroll-target="#wrapper-functions">Wrapper functions</a>
+  <ul>
+  <li><a href="#protein_profile_parallel" id="toc-protein_profile_parallel" class="nav-link" data-scroll-target="#protein_profile_parallel">protein_profile_parallel</a></li>
+  <li><a href="#protein_profile_parallel_mq" id="toc-protein_profile_parallel_mq" class="nav-link" data-scroll-target="#protein_profile_parallel_mq">protein_profile_parallel_mq</a></li>
+  <li><a href="#protein_profile_parallel_ap" id="toc-protein_profile_parallel_ap" class="nav-link" data-scroll-target="#protein_profile_parallel_ap">protein_profile_parallel_ap</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Quantification</h1>
+</div>
+
+<div>
+  <div class="description">
+    Functions related to quantification
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="label-free-quantification" class="level2">
+<h2 class="anchored" data-anchor-id="label-free-quantification">Label-free quantification</h2>
+<p>Algorithms related to label-free quantifications are motivated by the <a href="https://doi.org/10.1074/mcp.m113.031591">MaxLFQ paper</a>. The main goal is to derive relative protein intensities that can be used for downstream analyses. In a first step, constant normalization coefficients are derived for each run. In a second step, pseudointensities are derived for each protein, such that differing conditions can be compared.</p>
+</section>
+<section id="delayed-normalization" class="level2">
+<h2 class="anchored" data-anchor-id="delayed-normalization">Delayed Normalization</h2>
+<p>Delayed normalization describes the process of normalizing the differences that occur from prefractionation as well as from sample handling. For each sample, a constant scaling factor is derived by minimizing the term <span class="math display">\[H(\vec{N}) = \sum_{P \in peptides} \sum_{A,B \in sample pairs} |\frac{I(N_A, P, A)}{I(N_B, P, B)}|, \]</span> with peptide intensities <span class="math inline">\(I\)</span>, which are determined by the peptide <span class="math inline">\(P\)</span> the sample <span class="math inline">\(A\)</span> or <span class="math inline">\(B\)</span> and the normalization factors <span class="math inline">\(N_A\)</span>, <span class="math inline">\(N_B\)</span>. In principle H(N) quantifies the variation of peptides over the samples. Minimizing this variation gives appropriate scaling factors under the assumption that most peptides do not change between the samples. Peptide intensities for fractionated samples are described as the sum of the intensities over the fractions, with fraction-specific normalization factors. Therefore, calculation of the summed intensities is <em>delayed</em> until the normalization is finished.</p>
+<section id="in-silico-test-data" class="level3">
+<h3 class="anchored" data-anchor-id="in-silico-test-data">In Silico Test data</h3>
+<p>To test the delayed normalization approach we create an in silico test dataset with a known ground truth. We therefore know, which systematic changes are between the samples and we employ different solvers to recover the normalization parameters.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L14" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="gaussian" class="level3">
+<h3 class="anchored" data-anchor-id="gaussian">gaussian</h3>
+<blockquote class="blockquote">
+<pre><code> gaussian (mu:float, sigma:float, grid:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Calculates normally distributed probability densities along an input array.</p>
+<p>Args: mu (float): mean of ND. sigma (float): standard deviation of ND. grid (np.ndarray): input array np.int[:]. For each element of the array, the probability density is calculated.</p>
+<p>Returns: np.ndarray: probability density array, np.float[:].</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L29" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="return_elution_profile" class="level3">
+<h3 class="anchored" data-anchor-id="return_elution_profile">return_elution_profile</h3>
+<blockquote class="blockquote">
+<pre><code> return_elution_profile (timepoint:float, sigma:float, n_runs:int)</code></pre>
+</blockquote>
+<p>Simulates a gaussian elution profile.</p>
+<p>Args: timepoint (float): coordinate of the peak apex. sigma (float): standard deviation of the gaussian. n_runs (int): number of points along which the density is calculated.</p>
+<p>Returns: np.ndarray: probability density array, np.float[:].</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L43" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="simulate_sample_profiles" class="level3">
+<h3 class="anchored" data-anchor-id="simulate_sample_profiles">simulate_sample_profiles</h3>
+<blockquote class="blockquote">
+<pre><code> simulate_sample_profiles (n_peptides:int, n_runs:int, n_samples:int,
+                           threshold:float=0.2, use_noise:bool=True)</code></pre>
+</blockquote>
+<p>Generates random profiles to serve as test_data.</p>
+<p>Args: n_peptides (int): number of peptides to be simulated. n_runs (int): number of runs to be simulated. n_samples (int): number of samples to be simulated. threshold (float, optional): threshold below which a simulated intensity will be discarded. Defaults to 0.2. use_noise (bool, optional): add simulated noise to the profile values. Defaults to True.</p>
+<p>Returns: Tuple[np.ndarray, np.ndarray]: profiles: np.float[:,:,:] array containing the simulated profiles, true_normalization: np.float[:,:,:] array containing the ground truth.</p>
+</section>
+</section>
+<section id="delayed-normalization-1" class="level2">
+<h2 class="anchored" data-anchor-id="delayed-normalization-1">Delayed Normalization</h2>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L96" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="get_total_error" class="level3">
+<h3 class="anchored" data-anchor-id="get_total_error">get_total_error</h3>
+<blockquote class="blockquote">
+<pre><code> get_total_error (normalization:numpy.ndarray, profiles:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Computes the summed peptide errors over the whole dataset.</p>
+<p>Args: normalization (np.ndarray): per sample normalization factors. profiles (np.ndarray): peptide intensity profiles over the dataset.</p>
+<p>Returns: float: summed peptide error.</p>
+</section>
+</section>
+<section id="benchmarking-different-optimiziers" class="level2">
+<h2 class="anchored" data-anchor-id="benchmarking-different-optimiziers">Benchmarking different optimiziers</h2>
+<p>The normalization step is in principle a quadratic minimization of the normalization factors. Such minimization problems can be solved in various ways and a variety of approaches are realized in python community packages. We compare different solvers using our benchmarking set and uncover substantial differences in precision and runtime. We observe that the <em>Sequential Least Squares Quadratic Programming</em> (SLSQP) approach is a robust solution in our benchmarking, which gives substantial speed improvements.</p>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.optimize <span class="im">import</span> minimize</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> time <span class="im">import</span> time</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.optimize <span class="im">import</span> least_squares</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> warnings</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>n_peptides <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>n_runs <span class="op">=</span> <span class="dv">10</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>n_samples <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>profiles, true_normalization <span class="op">=</span> simulate_sample_profiles(n_peptides, n_runs, n_samples)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>methods <span class="op">=</span> [<span class="st">'L-BFGS-B'</span>, <span class="st">'TNC'</span>, <span class="st">'SLSQP'</span>,<span class="st">'trf'</span>]</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> []</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> method <span class="kw">in</span> methods:</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    start <span class="op">=</span> time()</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> warnings.catch_warnings():</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        warnings.filterwarnings(<span class="st">"ignore"</span>, category<span class="op">=</span><span class="pp">RuntimeWarning</span>)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> method <span class="kw">in</span> [<span class="st">'trf'</span>]:</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>            x0 <span class="op">=</span> np.ones(profiles.shape[<span class="dv">0</span>] <span class="op">*</span> profiles.shape[<span class="dv">1</span>])</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>            bounds <span class="op">=</span> (x0<span class="op">*</span><span class="fl">0.1</span>, x0)</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>            res <span class="op">=</span> least_squares(get_total_error, args <span class="op">=</span> [profiles], bounds <span class="op">=</span> bounds, x0 <span class="op">=</span> x0<span class="op">*</span><span class="fl">0.5</span>, verbose<span class="op">=</span><span class="dv">0</span>, method <span class="op">=</span> method)</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>            x0 <span class="op">=</span> np.ones(profiles.shape[<span class="dv">0</span>] <span class="op">*</span> profiles.shape[<span class="dv">1</span>])</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>            bounds <span class="op">=</span> [(<span class="fl">0.1</span>, <span class="dv">1</span>) <span class="cf">for</span> _ <span class="kw">in</span> x0]</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>            res <span class="op">=</span> minimize(get_total_error, args <span class="op">=</span> profiles , x0 <span class="op">=</span> x0<span class="op">*</span><span class="fl">0.5</span>, bounds<span class="op">=</span>bounds, method<span class="op">=</span>method)</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    solution <span class="op">=</span> res.x<span class="op">/</span>np.<span class="bu">max</span>(res.x)</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    solution <span class="op">=</span> solution.reshape(profiles.shape[:<span class="dv">2</span>])</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    end <span class="op">=</span> time()</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    time_elapsed_min <span class="op">=</span> (end<span class="op">-</span>start)<span class="op">/</span><span class="dv">60</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    optimality <span class="op">=</span> get_total_error(solution, profiles) <span class="op">/</span>get_total_error(x0, profiles)</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>    optimality_ <span class="op">=</span> get_total_error(solution, profiles) <span class="op">/</span> get_total_error(true_normalization, profiles)</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    results.append((method, time_elapsed_min, optimality, optimality_))</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>pd.DataFrame(results, columns<span class="op">=</span>[<span class="st">'Method'</span>, <span class="st">'Time Elapsed (min)'</span>,<span class="st">'Error / Baseline Error'</span>,<span class="st">'Error / Ground Truth'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="5">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>Method</th>
+      <th>Time Elapsed (min)</th>
+      <th>Error / Baseline Error</th>
+      <th>Error / Ground Truth</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>L-BFGS-B</td>
+      <td>0.004574</td>
+      <td>0.709227</td>
+      <td>0.584782</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>TNC</td>
+      <td>0.005655</td>
+      <td>0.723398</td>
+      <td>0.596467</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>SLSQP</td>
+      <td>0.000702</td>
+      <td>0.709346</td>
+      <td>0.584880</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>trf</td>
+      <td>0.058068</td>
+      <td>0.709508</td>
+      <td>0.585013</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L133" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="normalize_experiment_slsqp" class="level3">
+<h3 class="anchored" data-anchor-id="normalize_experiment_slsqp">normalize_experiment_SLSQP</h3>
+<blockquote class="blockquote">
+<pre><code> normalize_experiment_SLSQP (profiles:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Calculates normalization with SLSQP approach.</p>
+<p>Args: profiles (np.ndarray): peptide intensities.</p>
+<p>Returns: np.ndarray: normalization factors.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L157" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="normalize_experiment_bfgs" class="level3">
+<h3 class="anchored" data-anchor-id="normalize_experiment_bfgs">normalize_experiment_BFGS</h3>
+<blockquote class="blockquote">
+<pre><code> normalize_experiment_BFGS (profiles:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Calculates normalization with BFGS approach.</p>
+<p>Args: profiles (np.ndarray): peptide intensities.</p>
+<p>Returns: np.ndarray: normalization factors.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L181" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="delayed_normalization" class="level3">
+<h3 class="anchored" data-anchor-id="delayed_normalization">delayed_normalization</h3>
+<blockquote class="blockquote">
+<pre><code> delayed_normalization (df:pandas.core.frame.DataFrame,
+                        field:str='ms1_int_sum',
+                        minimum_occurence:bool=None)</code></pre>
+</blockquote>
+<p>Returns normalization factors for given peptide intensities. If the solver does not converge, the unnormalized data will be used.</p>
+<p>Args: df (pd.DataFrame): alphapept quantified features table. field (str, optional): The column in df containing the quantitative peptide information (i.e.&nbsp;precursor intensities). minimum_occurence (bool, optional): minimum number of replicates the peptide must be observed in. Defaults to None.</p>
+<p>Returns: [pd.DataFrame, np.ndarray]: pd.DataFrame: alphapept quantified features table extended with the normalized intensities, np.ndarray: normalized intensities</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>sample_data <span class="op">=</span> {}</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>sample_data[<span class="st">'precursor'</span>] <span class="op">=</span> [<span class="st">'Prec_1'</span>] <span class="op">*</span> <span class="dv">6</span> <span class="op">+</span> [<span class="st">'Prec_2'</span>] <span class="op">*</span> <span class="dv">6</span> <span class="op">+</span> [<span class="st">'Prec_3'</span>] <span class="op">*</span> <span class="dv">6</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>sample_data[<span class="st">'fraction'</span>] <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">2</span>]<span class="op">*</span><span class="dv">6</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>sample_data[<span class="st">'sample_group'</span>] <span class="op">=</span> [<span class="st">'A'</span>,<span class="st">'A'</span>,<span class="st">'A'</span>, <span class="st">'B'</span>,<span class="st">'B'</span>,<span class="st">'B'</span>] <span class="op">*</span> <span class="dv">3</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>sample_data[<span class="st">'ms1_int_sum'</span>] <span class="op">=</span> [<span class="fl">0.6</span>, <span class="fl">0.8</span>, <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">1.6</span>, <span class="fl">1.2</span>] <span class="op">*</span> <span class="dv">3</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>test_df <span class="op">=</span> pd.DataFrame(sample_data)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>test_df, normalization <span class="op">=</span> delayed_normalization(test_df, field<span class="op">=</span><span class="st">'ms1_int_sum'</span>, minimum_occurence<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>display(pd.DataFrame(normalization))</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>display(test_df.head(<span class="dv">6</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>0</th>
+      <th>1</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1.0</td>
+      <td>0.5</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1.0</td>
+      <td>0.5</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>precursor</th>
+      <th>fraction</th>
+      <th>sample_group</th>
+      <th>ms1_int_sum</th>
+      <th>ms1_int_sum_dn</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Prec_1</td>
+      <td>1</td>
+      <td>A</td>
+      <td>0.6</td>
+      <td>0.9</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Prec_1</td>
+      <td>1</td>
+      <td>A</td>
+      <td>0.8</td>
+      <td>1.2</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Prec_1</td>
+      <td>2</td>
+      <td>A</td>
+      <td>0.6</td>
+      <td>0.9</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Prec_1</td>
+      <td>1</td>
+      <td>B</td>
+      <td>1.2</td>
+      <td>0.9</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Prec_1</td>
+      <td>1</td>
+      <td>B</td>
+      <td>1.6</td>
+      <td>1.2</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Prec_1</td>
+      <td>2</td>
+      <td>B</td>
+      <td>1.2</td>
+      <td>0.9</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="constructing-protein-intensity-profiles" class="level2">
+<h2 class="anchored" data-anchor-id="constructing-protein-intensity-profiles">Constructing protein intensity profiles</h2>
+<p>Protein intensity profiles are constructed for each protein individually. All possible protein fold changes between the samples are derived from the median peptide fold changes. Subsequently, pseudointensities are chosen such that the fold changes between the pseudointensities ideally reconstruct the actually observed fold changes. Similar to the delayed normalization, this is formulated as a quadratic minimization, which we solve with the SLSQP solver.</p>
+<p>Codewise, we start with simulating in-silico test data to serve as a ground-truth for assessing solvers for the optimization problem. For the algorithmic optimization, we define the function <a href="https://mannlabs.github.io/quantification.html#get_protein_ratios"><code>get_protein_ratios</code></a> that allows to quickly calculate the protein ratios. Next, we define an error function <a href="https://mannlabs.github.io/quantification.html#triangle_error"><code>triangle_error</code></a> that we use for the optimization problem. Lastly, we have several wrapper functions to access the functions.</p>
+</section>
+<section id="in-silico-test-data-1" class="level2">
+<h2 class="anchored" data-anchor-id="in-silico-test-data-1">In-silico test data</h2>
+<p>Create a simulated input dataset of peptide intensities.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L264" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="generate_dummy_data" class="level3">
+<h3 class="anchored" data-anchor-id="generate_dummy_data">generate_dummy_data</h3>
+<blockquote class="blockquote">
+<pre><code> generate_dummy_data (n_sequences:int, n_samples:int, noise:bool=True,
+                      remove:bool=True, peptide_ratio:bool=True,
+                      abundance:bool=True, signal_level:int=100,
+                      noise_divider:int=10, keep:float=0.8)</code></pre>
+</blockquote>
+<p>Simulate an input dataset of peptide intensities.</p>
+<p>Args: n_sequences (int): number of peptides to simulate. n_samples (int): number of samples to simulate. noise (bool, optional): add random signal to distort the simulated intensity levels. Defaults to True. remove (bool, optional): remove intensities (i.e.&nbsp;add missing values). Defaults to True. peptide_ratio (bool, optional): simulate different peptide intensities. Defaults to True. abundance (bool, optional): simulate different abundances for each sample (i.e.&nbsp;systematic shifts). Defaults to True. signal_level (int, optional): signal level for simulated intensity. Defaults to 100. noise_divider (int, optional): the factor through which the noise is divided (higher factor -&gt; higher signal to noise). Defaults to 10. keep (float, optional): aimed-at fraction of non-missing values, applies if ‘remove’ is set. Defaults to 0.8.</p>
+<p>Returns: [pd.DataFrame, list, np.ndarray]: pd.DataFrame: simulated dataset with peptide intensities, list: sample names: np.ndarray: shift factors of each sample</p>
+</section>
+</section>
+<section id="determine-pair-wise-intenisty-ratios" class="level2">
+<h2 class="anchored" data-anchor-id="determine-pair-wise-intenisty-ratios">Determine pair-wise intenisty ratios</h2>
+<p>The pair-wise protein ratios are determined from the median peptide ratio.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L330" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="get_protein_ratios" class="level3">
+<h3 class="anchored" data-anchor-id="get_protein_ratios">get_protein_ratios</h3>
+<blockquote class="blockquote">
+<pre><code> get_protein_ratios (signal:numpy.ndarray, column_combinations:list,
+                     minimum_ratios:int=1)</code></pre>
+</blockquote>
+<p>Calculates the protein ratios between samples for one protein.</p>
+<p>Args: signal (np.ndarray): np.array[:,:] containing peptide intensities for each sample. column_combinations (list): list of all index combinations to compare (usually all sample combinations). minimum_ratios (int, optional): minimum number of peptide ratios necessary to calculate a protein ratio. Defaults to 1.</p>
+<p>Returns: np.ndarray: np.array[:,:] matrix comparing the ratios for all column combinations.</p>
+</section>
+</section>
+<section id="error-function" class="level2">
+<h2 class="anchored" data-anchor-id="error-function">Error Function</h2>
+<p>The error function evaluates the difference between the actual observed fold change and the fold change that is derived from the pseudointensities.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L364" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="triangle_error" class="level3">
+<h3 class="anchored" data-anchor-id="triangle_error">triangle_error</h3>
+<blockquote class="blockquote">
+<pre><code> triangle_error (normalization:numpy.ndarray, ratios:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Calculates the difference between calculated ratios and expected ratios.</p>
+<p>Args: normalization (np.ndarray): Used normalization. ratios (np.ndarray): Peptide ratios.</p>
+<p>Returns: float: summed quadratic difference.</p>
+</section>
+</section>
+<section id="solver-implementation" class="level2">
+<h2 class="anchored" data-anchor-id="solver-implementation">Solver implementation</h2>
+<p>As with the delayed normalization we implement multiple solvers from scipy.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L383" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="solve_profile" class="level3">
+<h3 class="anchored" data-anchor-id="solve_profile">solve_profile</h3>
+<blockquote class="blockquote">
+<pre><code> solve_profile (ratios:numpy.ndarray, method:str)</code></pre>
+</blockquote>
+<p>Calculates protein pseudointensities with a specified solver. Args: ratios (np.ndarray): np.array[:,:] matrix containing all estimated protein ratios between samples. method (str): string specifying which solver to use. Raises: NotImplementedError: if the solver is not implemented. Returns: [np.ndarray, bool]: np.ndarray: the protein pseudointensities, bool: wether the solver was successful.</p>
+</section>
+</section>
+<section id="solving-single-profiles" class="level2">
+<h2 class="anchored" data-anchor-id="solving-single-profiles">Solving single profiles</h2>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L423" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="protein_profile" class="level3">
+<h3 class="anchored" data-anchor-id="protein_profile">protein_profile</h3>
+<blockquote class="blockquote">
+<pre><code> protein_profile (files:list, minimum_ratios:int, chunk:tuple)</code></pre>
+</blockquote>
+<p>Function to extract optimal protein ratios for a given input of peptides.</p>
+<p>Note for the chunk argument: This construction is needed to call this function from a parallel pool.</p>
+<p>Args: files (list): A list of files for which the profile shall be extracted. minimum_ratios (int): A minimum number of peptide ratios to be considered for optimization. chunk: (tuple[pd.DataFrame, str]): A pandas dataframe with the peptide information and a string to identify the protein.</p>
+<p>Returns: np.ndarray: optimized profile np.ndarray: profile w/o optimization str: protein identifier</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>sample_data <span class="op">=</span> {}</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>sample_data[<span class="st">'precursor'</span>] <span class="op">=</span> [<span class="st">'Prec_1'</span>] <span class="op">*</span> <span class="dv">3</span> <span class="op">+</span> [<span class="st">'Prec_2'</span>] <span class="op">*</span> <span class="dv">3</span> <span class="op">+</span> [<span class="st">'Prec_3'</span>] <span class="op">*</span> <span class="dv">3</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>sample_data[<span class="st">'sample_group'</span>] <span class="op">=</span> [<span class="st">'A'</span>,<span class="st">'B'</span>,<span class="st">'C'</span>] <span class="op">*</span> <span class="dv">3</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>sample_data[<span class="st">'protein_group'</span>] <span class="op">=</span> [<span class="st">'X'</span>] <span class="op">*</span> <span class="dv">9</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>sample_data[<span class="st">'ms1_int_sum'</span>] <span class="op">=</span> [<span class="fl">0.6</span>, <span class="fl">0.8</span>, <span class="fl">1.0</span>, <span class="fl">0.6</span>, <span class="fl">1.2</span>, <span class="fl">1.4</span>, <span class="fl">1.6</span>, <span class="fl">1.2</span>, <span class="fl">1.8</span>]</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>test_df <span class="op">=</span> pd.DataFrame(sample_data)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>display(test_df.head(<span class="dv">6</span>))</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>grouped <span class="op">=</span> test_df.groupby([<span class="st">'protein_group'</span>,<span class="st">'sample_group'</span>,<span class="st">'precursor'</span>]).<span class="bu">sum</span>().loc[<span class="st">'X'</span>]</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>files <span class="op">=</span> [<span class="st">'A'</span>,<span class="st">'B'</span>,<span class="st">'C'</span>]</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>minimum_ratios <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>chunk <span class="op">=</span> (grouped, <span class="st">'X'</span>)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">False</span>: <span class="co">#TODO: this test seems to break the CI</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    profile, pre_lfq, protein, success <span class="op">=</span> protein_profile(files, minimum_ratios, chunk)</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">5</span>,<span class="dv">5</span>))</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">'Protein ratio'</span>)</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    plt.plot(pre_lfq, <span class="st">'o'</span>, label<span class="op">=</span><span class="st">'before optimization'</span>)</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    plt.plot(profile, <span class="st">'o'</span>, label<span class="op">=</span><span class="st">'after optimization'</span>)</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>precursor</th>
+      <th>sample_group</th>
+      <th>protein_group</th>
+      <th>ms1_int_sum</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Prec_1</td>
+      <td>A</td>
+      <td>X</td>
+      <td>0.6</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Prec_1</td>
+      <td>B</td>
+      <td>X</td>
+      <td>0.8</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Prec_1</td>
+      <td>C</td>
+      <td>X</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Prec_2</td>
+      <td>A</td>
+      <td>X</td>
+      <td>0.6</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Prec_2</td>
+      <td>B</td>
+      <td>X</td>
+      <td>1.2</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>Prec_2</td>
+      <td>C</td>
+      <td>X</td>
+      <td>1.4</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="wrapper-functions" class="level2">
+<h2 class="anchored" data-anchor-id="wrapper-functions">Wrapper functions</h2>
+<p>To be compatible with interface, we have three wrapper functions:</p>
+<ul>
+<li>protein_profile_parallel: A wrapper that executes protein_profile in parallel</li>
+<li>protein_profile_parallel_ap: A wrapper function to calculate protein ratios based on AlphaPept tabular data</li>
+<li>protein_profile_prallalel_mq: A wrapper function to calculate protein ratios based on MaxQuant tabular data</li>
+</ul>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L493" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="protein_profile_parallel" class="level3">
+<h3 class="anchored" data-anchor-id="protein_profile_parallel">protein_profile_parallel</h3>
+<blockquote class="blockquote">
+<pre><code> protein_profile_parallel (df:pandas.core.frame.DataFrame,
+                           minimum_ratios:int, field:str, callback=None)</code></pre>
+</blockquote>
+<p>Derives LFQ intensities from the feature table.</p>
+<p>Args: df (pd.DataFrame): Feature table by alphapept. minimum_ratios (int): Minimum number of peptide ratios necessary to derive a protein ratio. field (str): The field containing the quantitative peptide information (i.e.&nbsp;precursor intensities). callback ([type], optional): Callback function. Defaults to None.</p>
+<p>Returns: pd.DataFrame: table containing the LFQ intensities of each protein in each sample.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L595" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="protein_profile_parallel_mq" class="level3">
+<h3 class="anchored" data-anchor-id="protein_profile_parallel_mq">protein_profile_parallel_mq</h3>
+<blockquote class="blockquote">
+<pre><code> protein_profile_parallel_mq (evidence_path:str, protein_groups_path:str,
+                              minimum_ratios:int=1,
+                              minimum_occurence:bool=None,
+                              delayed:bool=True, callback=None)</code></pre>
+</blockquote>
+<p>Derives protein LFQ intensities from Maxquant quantified features.</p>
+<p>Args: evidence_path (str): path to the Maxquant standard output table evidence.txt. protein_groups_path (str): path to the Maxquant standard output table proteinGroups.txt. minimum_ratios (int): minimum ratios (LFQ parameter) minimum_occurence (int): minimum occurence (LFQ parameter) delayed (bool): toggle for delayed normalization (on/off) callback ([type], optional): [description]. Defaults to None.</p>
+<p>Raises: FileNotFoundError: if Maxquant files cannot be found.</p>
+<p>Returns: pd.DataFrame: table containing the LFQ intensities of each protein in each sample.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L565" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="protein_profile_parallel_ap" class="level3">
+<h3 class="anchored" data-anchor-id="protein_profile_parallel_ap">protein_profile_parallel_ap</h3>
+<blockquote class="blockquote">
+<pre><code> protein_profile_parallel_ap (settings:dict,
+                              df:pandas.core.frame.DataFrame,
+                              callback=None)</code></pre>
+</blockquote>
+<p>Derives protein LFQ intensities from the alphapept quantified feature table</p>
+<p>Args: settings (dict): alphapept settings dictionary. df (pd.DataFrame): alphapept feature table. callback ([type], optional): [description]. Defaults to None.</p>
+<p>Raises: ValueError: raised in case of observed negative intensities.</p>
+<p>Returns: pd.DataFrame: table containing the LFQ intensities of each protein in each sample.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

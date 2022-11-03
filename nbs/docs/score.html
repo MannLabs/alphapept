@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Functions related to the score">
+
+<title>alphapept - Score</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="alphapept - Score">
+<meta property="og:description" content="Functions related to the score">
+<meta property="og:site-name" content="alphapept">
+<meta name="twitter:title" content="alphapept - Score">
+<meta name="twitter:description" content="Functions related to the score">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">alphapept</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Score</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">AlphaPept</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./settings.html" class="sidebar-item-text sidebar-link">Settings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chem.html" class="sidebar-item-text sidebar-link">Chem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./io.html" class="sidebar-item-text sidebar-link">Input / Output</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fasta.html" class="sidebar-item-text sidebar-link">FASTA</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./feature_finding.html" class="sidebar-item-text sidebar-link">Feature Finding</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./search.html" class="sidebar-item-text sidebar-link">Search</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./score.html" class="sidebar-item-text sidebar-link active">Score</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./recalibration.html" class="sidebar-item-text sidebar-link">Recalibration</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quantification.html" class="sidebar-item-text sidebar-link">Quantification</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./matching.html" class="sidebar-item-text sidebar-link">Matching</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link">Constants</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interface.html" class="sidebar-item-text sidebar-link">Interface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./performance.html" class="sidebar-item-text sidebar-link">Performance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./export.html" class="sidebar-item-text sidebar-link">Export</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./label.html" class="sidebar-item-text sidebar-link">Label</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./additional_code.html" class="sidebar-item-text sidebar-link">Additional code</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#filtering" id="toc-filtering" class="nav-link active" data-scroll-target="#filtering">Filtering</a>
+  <ul>
+  <li><a href="#filter_score" id="toc-filter_score" class="nav-link" data-scroll-target="#filter_score">filter_score</a></li>
+  <li><a href="#filter_precursor" id="toc-filter_precursor" class="nav-link" data-scroll-target="#filter_precursor">filter_precursor</a></li>
+  </ul></li>
+  <li><a href="#q-values" id="toc-q-values" class="nav-link" data-scroll-target="#q-values">Q-Values</a>
+  <ul>
+  <li><a href="#get_q_values" id="toc-get_q_values" class="nav-link" data-scroll-target="#get_q_values">get_q_values</a></li>
+  </ul></li>
+  <li><a href="#fdr" id="toc-fdr" class="nav-link" data-scroll-target="#fdr">FDR</a>
+  <ul>
+  <li><a href="#cut_fdr" id="toc-cut_fdr" class="nav-link" data-scroll-target="#cut_fdr">cut_fdr</a></li>
+  </ul></li>
+  <li><a href="#global-fdr" id="toc-global-fdr" class="nav-link" data-scroll-target="#global-fdr">Global FDR</a>
+  <ul>
+  <li><a href="#cut_global_fdr" id="toc-cut_global_fdr" class="nav-link" data-scroll-target="#cut_global_fdr">cut_global_fdr</a></li>
+  </ul></li>
+  <li><a href="#scoring" id="toc-scoring" class="nav-link" data-scroll-target="#scoring">Scoring</a>
+  <ul>
+  <li><a href="#xtandem-scoring" id="toc-xtandem-scoring" class="nav-link" data-scroll-target="#xtandem-scoring">X!tandem scoring</a></li>
+  <li><a href="#filter_with_score" id="toc-filter_with_score" class="nav-link" data-scroll-target="#filter_with_score">filter_with_score</a></li>
+  <li><a href="#filter_with_x_tandem" id="toc-filter_with_x_tandem" class="nav-link" data-scroll-target="#filter_with_x_tandem">filter_with_x_tandem</a></li>
+  <li><a href="#score_generic" id="toc-score_generic" class="nav-link" data-scroll-target="#score_generic">score_generic</a></li>
+  <li><a href="#get_generic_score" id="toc-get_generic_score" class="nav-link" data-scroll-target="#get_generic_score">get_generic_score</a></li>
+  <li><a href="#score_x_tandem" id="toc-score_x_tandem" class="nav-link" data-scroll-target="#score_x_tandem">score_x_tandem</a></li>
+  <li><a href="#get_x_tandem_score" id="toc-get_x_tandem_score" class="nav-link" data-scroll-target="#get_x_tandem_score">get_x_tandem_score</a></li>
+  <li><a href="#score-and-filter-psms-by-any-specified-score" id="toc-score-and-filter-psms-by-any-specified-score" class="nav-link" data-scroll-target="#score-and-filter-psms-by-any-specified-score">Score and filter PSMs by any specified score</a></li>
+  <li><a href="#score_psms" id="toc-score_psms" class="nav-link" data-scroll-target="#score_psms">score_psms</a></li>
+  </ul></li>
+  <li><a href="#machine-learning-based-scoring-of-psms" id="toc-machine-learning-based-scoring-of-psms" class="nav-link" data-scroll-target="#machine-learning-based-scoring-of-psms">Machine learning based scoring of PSMs</a>
+  <ul>
+  <li><a href="#filter_with_ml" id="toc-filter_with_ml" class="nav-link" data-scroll-target="#filter_with_ml">filter_with_ML</a></li>
+  <li><a href="#score_ml" id="toc-score_ml" class="nav-link" data-scroll-target="#score_ml">score_ML</a></li>
+  <li><a href="#train_rf" id="toc-train_rf" class="nav-link" data-scroll-target="#train_rf">train_RF</a></li>
+  <li><a href="#get_ml_features" id="toc-get_ml_features" class="nav-link" data-scroll-target="#get_ml_features">get_ML_features</a></li>
+  </ul></li>
+  <li><a href="#protein-grouping" id="toc-protein-grouping" class="nav-link" data-scroll-target="#protein-grouping">Protein grouping</a>
+  <ul>
+  <li><a href="#perform_protein_grouping" id="toc-perform_protein_grouping" class="nav-link" data-scroll-target="#perform_protein_grouping">perform_protein_grouping</a></li>
+  <li><a href="#get_protein_groups" id="toc-get_protein_groups" class="nav-link" data-scroll-target="#get_protein_groups">get_protein_groups</a></li>
+  <li><a href="#get_shared_proteins" id="toc-get_shared_proteins" class="nav-link" data-scroll-target="#get_shared_proteins">get_shared_proteins</a></li>
+  <li><a href="#assign_proteins" id="toc-assign_proteins" class="nav-link" data-scroll-target="#assign_proteins">assign_proteins</a></li>
+  <li><a href="#get_ion" id="toc-get_ion" class="nav-link" data-scroll-target="#get_ion">get_ion</a></li>
+  <li><a href="#ecdf" id="toc-ecdf" class="nav-link" data-scroll-target="#ecdf">ecdf</a></li>
+  </ul></li>
+  <li><a href="#helper-functions" id="toc-helper-functions" class="nav-link" data-scroll-target="#helper-functions">Helper functions</a>
+  <ul>
+  <li><a href="#protein_grouping_all" id="toc-protein_grouping_all" class="nav-link" data-scroll-target="#protein_grouping_all">protein_grouping_all</a></li>
+  <li><a href="#score_hdf" id="toc-score_hdf" class="nav-link" data-scroll-target="#score_hdf">score_hdf</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Score</h1>
+</div>
+
+<div>
+  <div class="description">
+    Functions related to the score
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>This notebook contains all functions related to the scoring of peptide-spectrum-matches (PSMS).</p>
+<p>In brief, this notebook includes the following:</p>
+<ul>
+<li>Functions for target-decoy based FDR estimation</li>
+<li>X!tandem based scoring of PSMs</li>
+<li>Machine learning based scoring of PSMs</li>
+<li>Protein grouping by the razor approach</li>
+</ul>
+<section id="filtering" class="level2">
+<h2 class="anchored" data-anchor-id="filtering">Filtering</h2>
+<p>The filtering functions are essential base functions for scoring in AlphaPept. They make sure that only the ‘best precursor per spectum’ and the ‘best spectrum per precursor’ is used.</p>
+<p>Recall from the search that when having feautres, <code>raw_idx</code> refers to the actual index from the raw data. Otherwise it is<code>query_data</code>.</p>
+<p>For filtering, we have several functions. When applying for a score, we first use <a href="https://mannlabs.github.io/score.html#filter_score"><code>filter_score</code></a> and then <a href="https://mannlabs.github.io/score.html#filter_precursor"><code>filter_precursor</code></a>. <a href="https://mannlabs.github.io/score.html#filter_score"><code>filter_score</code></a> is keeping the best score per experimental spectrum. First we rank by score for each <code>query_idx</code>. As we have multiple hits for each experimental spectrum from the search we only want to keep the best one.</p>
+<p>When performing feature finding, we assign multiple possible features to each experimental spectrum. The idea here is that a spectrum could originate from various precursors. To disentangle these psms we can use the following modes:</p>
+<ul>
+<li><code>single</code>: This mode will only keep one feature per experimental spectrum (the one with the highest score and the closest distance). Each feature can only occur once.</li>
+<li><code>multiple</code>: Allow multiple features per experimental spectrum. Each feature can only occur once.</li>
+</ul>
+<p><a href="https://mannlabs.github.io/score.html#filter_precursor"><code>filter_precursor</code></a> is intended for the case that a precursor (charge + sequence) occurs more than once. Only the one with the highest score will be kept.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L16" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="filter_score" class="level3">
+<h3 class="anchored" data-anchor-id="filter_score">filter_score</h3>
+<blockquote class="blockquote">
+<pre><code> filter_score (df:pandas.core.frame.DataFrame, mode:str='multiple')</code></pre>
+</blockquote>
+<p>Filter psms feature table by keeping only the best scoring psm per experimental spectrum.</p>
+<p>TODO: psms could still have the same score when having modifications at multiple positions that are not distinguishable. Only keep one.</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept. mode (str, optional): string specifying which mode to use for psms filtering. The two options are ‘single’ and ‘multiple’. ‘single’ will only keep one feature per experimental spectrum. ‘multiple’ will allow multiple features per experimental spectrum. In either option, each feature can only occur once. Defaults to ‘multiple’.</p>
+<p>Returns: pd.DataFrame: table containing the filtered psms results.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L58" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="filter_precursor" class="level3">
+<h3 class="anchored" data-anchor-id="filter_precursor">filter_precursor</h3>
+<blockquote class="blockquote">
+<pre><code> filter_precursor (df:pandas.core.frame.DataFrame)</code></pre>
+</blockquote>
+<p>Filter psms feature table by precursor. Allow each precursor only once.</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept.</p>
+<p>Returns: pd.DataFrame: table containing the filtered psms results.</p>
+</section>
+</section>
+<section id="q-values" class="level2">
+<h2 class="anchored" data-anchor-id="q-values">Q-Values</h2>
+<p><a href="https://mannlabs.github.io/score.html#get_q_values"><code>get_q_values</code></a> is used to calculate q-values from FDR values. The direct relationship is illustrated further down in the notebook.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L86" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="get_q_values" class="level3">
+<h3 class="anchored" data-anchor-id="get_q_values">get_q_values</h3>
+<blockquote class="blockquote">
+<pre><code> get_q_values (fdr_values:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Calculate q-values from fdr_values.</p>
+<p>Args: fdr_values (np.ndarray): np.ndarray of fdr values.</p>
+<p>Returns: np.ndarray: np.ndarray of q-values.</p>
+</section>
+</section>
+<section id="fdr" class="level2">
+<h2 class="anchored" data-anchor-id="fdr">FDR</h2>
+<p>The employed FDR strategy is based on a classical target-decoy competition approach. The procedure works as follows: 1. Consider only the best scoring target or decoy PSM per spectrum. 2. Sort all PSMs by decreasing scores. 3. Estimate the FDR as #decoys / #targets, where #targets (#decoys) is the number of positive target (decoy) PSMs at a given score threshold t (i.e.&nbsp;PSMs with scores higher than t). 4. Convert the estimated FDR to q-values by selecting the minimum FDR at which the identification could be made, i.e.&nbsp;the lowest score threshold t that could be set to include an identification without increasing the number of false positives. 5. Report the set of target PSMs with q-values smaller or equal to the selected <code>fdr_level</code>.</p>
+<p>Informative literature describing and discussing different FDR estimation approaches for shotgun proteomics can be found here (the implemented strategy in alphapept is referred to as T-TDC in this article): &gt; Keich, Uri et al.&nbsp;“Improved False Discovery Rate Estimation Procedure for Shotgun Proteomics.” Journal of proteome research vol.&nbsp;14,8 (2015): 3148-61. <a href="https://pubs.acs.org/doi/10.1021/acs.jproteome.5b00081" class="uri">https://pubs.acs.org/doi/10.1021/acs.jproteome.5b00081</a></p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L112" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="cut_fdr" class="level3">
+<h3 class="anchored" data-anchor-id="cut_fdr">cut_fdr</h3>
+<blockquote class="blockquote">
+<pre><code> cut_fdr (df:pandas.core.frame.DataFrame, fdr_level:float=0.01,
+          plot:bool=True, cut:bool=True)</code></pre>
+</blockquote>
+<p>Cuts a dataframe with a given fdr level</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept. fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01. plot (bool, optional): flag to enable plot. Defaults to ‘True’. cut (bool, optional): flag to cut above fdr threshold. Defaults to ‘True’.</p>
+<p>Returns: float: numerical value of the applied score cutoff pd.DataFrame: df with psms within fdr</p>
+<p>Note that the test function for cut_fdr is further down in the notebook to also test protein-level FDR.</p>
+<p>Simulation of random scores for 50’000 measurements (corresponding to spectra). Simulated are decoys, true targets and false targets. We assume a false traget raio (pi0) of 0.8 and a mean score difference of 3.5.</p>
+<p>Simulated score distribution for a separate target and decoy database search:</p>
+<p>Simulated score distribution for a corresponding concatinated target-decoy database search with target-decoy-competition:</p>
+<p>Application of the <a href="https://mannlabs.github.io/score.html#cut_fdr"><code>cut_fdr</code></a> function to the simulated target-decoy competition dataset saved in <code>TDC</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cval, cut_TDC <span class="op">=</span> cut_fdr(TDC, fdr_level<span class="op">=</span><span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_score_files/figure-html/cell-6-output-1.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="06_score_files/figure-html/cell-6-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Evaluation of the FDR estimated by the target-decoy approach versus the true FDR confirms accurate FDR estimation by our approach. The true FDR is capped by the selected fraction of false targets (pi0 = 0.8) and by the effect of target decoy competition. Similarly, the true positive rate (TPR) is limited by the effect of target decoy competition and can only reach 1 in cases where not a single decoy scores higher than a true target.</p>
+<p>The following figure illustrates the difference between <code>fdr</code> and <code>q_value</code>.</p>
+<p>Please be aware that the shown simulations are not an accurate model for PSMS scoring and they were designed only for illustrative purposes and to test the implemeted functions.</p>
+</section>
+</section>
+<section id="global-fdr" class="level2">
+<h2 class="anchored" data-anchor-id="global-fdr">Global FDR</h2>
+<p>The <a href="https://mannlabs.github.io/score.html#cut_global_fdr"><code>cut_global_fdr</code></a> function has two specific applications: 1. <strong>Estimate q-values on the peptide and protein level</strong> <br> The concept here is based on selecting the best scoring precursor per peptide (or protein) to then estimate the FDR by target-decoy competition using the <a href="https://mannlabs.github.io/score.html#cut_fdr"><code>cut_fdr</code></a> function. 2. <strong>Estimate q-values across an entire dataset on either precursor, peptide or protein level</strong> <br> The concept here is based on selecting the best scoring precursor, peptide or protein signal across an entire dataset to then estimate the FDR by target-decoy competition using the <a href="https://mannlabs.github.io/score.html#cut_fdr"><code>cut_fdr</code></a> function.</p>
+<p>This strategy was extensively tested and discussed in the following publications:</p>
+<ul>
+<li><p>Nesvizhskii, Alexey I. “A survey of computational methods and error rate estimation procedures for peptide and protein identification in shotgun proteomics.” Journal of proteomics vol.&nbsp;73,11 (2010): 2092-123. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2956504/" class="uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2956504/</a></p></li>
+<li><p>Savitski, Mikhail M et al.&nbsp;“A Scalable Approach for Protein False Discovery Rate Estimation in Large Proteomic Data Sets.” Molecular &amp; cellular proteomics : MCP vol.&nbsp;14,9 (2015): 2394-404. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4563723/" class="uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4563723/</a></p></li>
+<li><p>The, Matthew et al.&nbsp;“Fast and Accurate Protein False Discovery Rates on Large-Scale Proteomics Data Sets with Percolator 3.0.” Journal of the American Society for Mass Spectrometry vol.&nbsp;27,11 (2016): 1719-1727. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5059416/" class="uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5059416/</a></p></li>
+<li><p>Gupta, Nitin, and Pavel A Pevzner. “False discovery rates of protein identifications: a strike against the two-peptide rule.” Journal of proteome research vol.&nbsp;8,9 (2009): 4173-81. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3398614/" class="uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3398614/</a></p></li>
+</ul>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L195" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="cut_global_fdr" class="level3">
+<h3 class="anchored" data-anchor-id="cut_global_fdr">cut_global_fdr</h3>
+<blockquote class="blockquote">
+<pre><code> cut_global_fdr (data:pandas.core.frame.DataFrame,
+                 analyte_level:str='sequence', fdr_level:float=0.01,
+                 plot:bool=True, **kwargs)</code></pre>
+</blockquote>
+<p>Function to estimate and filter by global peptide or protein fdr</p>
+<p>Args: data (pd.DataFrame): psms table of search results from alphapept. analyte_level (str, optional): string specifying the analyte level to apply the fdr threshold. Options include: ‘precursor’, ‘sequence’, ‘protein_group’ and ‘protein’. Defaults to ‘sequence’. fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01. plot (bool, optional): flag to enable plot. Defaults to ‘True’.</p>
+<p>Returns: pd.DataFrame: df with filtered results</p>
+<p>Similar to the sequence level simulations we can simulatae score distributions for peptides beloning to proteins. In our simulation we assumed a poisson distribution for the number of peptides for each protein centered at 4 peptides.</p>
+<p>Application of the <a href="https://mannlabs.github.io/score.html#cut_global_fdr"><code>cut_global_fdr</code></a> function to the simulated protein-level target-decoy competition dataset saved in <code>TDC_prot</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cut_TDC_prot <span class="op">=</span> cut_global_fdr(TDC_prot, fdr_level<span class="op">=</span><span class="fl">0.01</span>, analyte_level<span class="op">=</span><span class="st">'protein'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="06_score_files/figure-html/cell-8-output-1.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="06_score_files/figure-html/cell-8-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Evaluation of the protein-level FDR estimated by the target-decoy approach versus the true FDR confirms accurate FDR estimation by our approach:</p>
+<p>Investigating the peptide-level statistics after protein-level FDR filtering shows a conservative pattern.</p>
+<p>Please be aware that the shown simulations are not an accurate model for PSMS scoring and they were designed only for illustrative purposes and to test the implemeted functions.</p>
+</section>
+</section>
+<section id="scoring" class="level2">
+<h2 class="anchored" data-anchor-id="scoring">Scoring</h2>
+<section id="xtandem-scoring" class="level3">
+<h3 class="anchored" data-anchor-id="xtandem-scoring">X!tandem scoring</h3>
+<ul>
+<li><p><a href="https://mannlabs.github.io/score.html#get_x_tandem_score"><code>get_x_tandem_score</code></a> performs scoring of PSMs according to the X!tandem strategy:</p></li>
+<li><p><a href="https://mannlabs.github.io/score.html#score_x_tandem"><code>score_x_tandem</code></a> first calls <a href="https://mannlabs.github.io/score.html#get_x_tandem_score"><code>get_x_tandem_score</code></a> and and subsequently applies the <a href="https://mannlabs.github.io/score.html#cut_fdr"><code>cut_fdr</code></a> function to filter PSMs at the specified <code>fdr_level</code>.</p></li>
+</ul>
+<blockquote class="blockquote">
+<p>X!Tandem, Craig,R. and Beavis,R.C. (2003) Rapid Commun. Mass Spectrom., 17, 2310-2316</p>
+</blockquote>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L338" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="filter_with_score" class="level3">
+<h3 class="anchored" data-anchor-id="filter_with_score">filter_with_score</h3>
+<blockquote class="blockquote">
+<pre><code> filter_with_score (df:pandas.core.frame.DataFrame)</code></pre>
+</blockquote>
+<p>Filters the psms table by using the score column, no fdr filter. TODO: Remove redundancy with score functions, see issue: #275</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept.</p>
+<p>Returns: pd.DataFrame: psms table filtered for no feature or precursor to be assigned multiple times.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L317" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="filter_with_x_tandem" class="level3">
+<h3 class="anchored" data-anchor-id="filter_with_x_tandem">filter_with_x_tandem</h3>
+<blockquote class="blockquote">
+<pre><code> filter_with_x_tandem (df:pandas.core.frame.DataFrame)</code></pre>
+</blockquote>
+<p>Filters the psms table by using the x_tandem score, no fdr filter. TODO: Remove redundancy with score functions, see issue: #275</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept.</p>
+<p>Returns: pd.DataFrame: psms table with an extra ‘score’ column for x_tandem, filtered for no feature or precursor to be assigned multiple times.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L293" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="score_generic" class="level3">
+<h3 class="anchored" data-anchor-id="score_generic">score_generic</h3>
+<blockquote class="blockquote">
+<pre><code> score_generic (df:pandas.core.frame.DataFrame, fdr_level:float=0.01,
+                plot:bool=True, **kwargs)</code></pre>
+</blockquote>
+<p>Filters the psms table by using a generic score and filtering the results for fdr_level.</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept. fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.</p>
+<p>Returns: pd.DataFrame: psms table with an extra ‘score’ column for the generic score, filtered for no feature or precursor to be assigned multiple times.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L277" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_generic_score" class="level3">
+<h3 class="anchored" data-anchor-id="get_generic_score">get_generic_score</h3>
+<blockquote class="blockquote">
+<pre><code> get_generic_score (df:pandas.core.frame.DataFrame)</code></pre>
+</blockquote>
+<p>Function to calculate the a generic score</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept.</p>
+<p>Returns: np.ndarray: np.ndarray with x_tandem scores</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L254" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="score_x_tandem" class="level3">
+<h3 class="anchored" data-anchor-id="score_x_tandem">score_x_tandem</h3>
+<blockquote class="blockquote">
+<pre><code> score_x_tandem (df:pandas.core.frame.DataFrame, fdr_level:float=0.01,
+                 plot:bool=True, **kwargs)</code></pre>
+</blockquote>
+<p>Filters the psms table by using the x_tandem score and filtering the results for fdr_level.</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept. fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.</p>
+<p>Returns: pd.DataFrame: psms table with an extra ‘score’ column for x_tandem, filtered for no feature or precursor to be assigned multiple times.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L235" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_x_tandem_score" class="level3">
+<h3 class="anchored" data-anchor-id="get_x_tandem_score">get_x_tandem_score</h3>
+<blockquote class="blockquote">
+<pre><code> get_x_tandem_score (df:pandas.core.frame.DataFrame)</code></pre>
+</blockquote>
+<p>Function to calculate the x tandem score</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept.</p>
+<p>Returns: np.ndarray: np.ndarray with x_tandem scores</p>
+</section>
+<section id="score-and-filter-psms-by-any-specified-score" class="level3">
+<h3 class="anchored" data-anchor-id="score-and-filter-psms-by-any-specified-score">Score and filter PSMs by any specified score</h3>
+<p><a href="https://mannlabs.github.io/score.html#score_psms"><code>score_psms</code></a> uses the specified <a href="https://mannlabs.github.io/search.html#score"><code>score</code></a> and applies the <a href="https://mannlabs.github.io/score.html#cut_fdr"><code>cut_fdr</code></a> function to filter PSMs at the specified <code>fdr_level</code>. <a href="https://mannlabs.github.io/score.html#filter_score"><code>filter_score</code></a> and <a href="https://mannlabs.github.io/score.html#filter_precursor"><code>filter_precursor</code></a> are applied to only report the best PSM per acquired spectrum and the best signal per precursor (i.e.&nbsp;sequence + charge combination).</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L359" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="score_psms" class="level3">
+<h3 class="anchored" data-anchor-id="score_psms">score_psms</h3>
+<blockquote class="blockquote">
+<pre><code> score_psms (df:pandas.core.frame.DataFrame, score:str='hits_y',
+             fdr_level:float=0.01, plot:bool=True, **kwargs)</code></pre>
+</blockquote>
+<p>Uses the specified score in df to filter psms and to apply the fdr_level threshold.</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept. score (str, optional): string specifying the column in df to use as score. Defaults to ‘hits_y’. fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01. plot (bool, optional): flag to enable plot. Defaults to ‘True’.</p>
+<p>Returns: pd.DataFrame: filtered df with psms within fdr</p>
+</section>
+</section>
+<section id="machine-learning-based-scoring-of-psms" class="level2">
+<h2 class="anchored" data-anchor-id="machine-learning-based-scoring-of-psms">Machine learning based scoring of PSMs</h2>
+<ul>
+<li><p><a href="https://mannlabs.github.io/score.html#get_ml_features"><code>get_ML_features</code></a> extracts additional scoring metrics for the machine learning, including the number of amino acids per precursor, the number of missed cleavages and the logarithmic number of times the same peptide occurs in the set of PSMs</p></li>
+<li><p><a href="https://mannlabs.github.io/score.html#train_rf"><code>train_RF</code></a> trains a random forest classifier for scoring all PSMs. For this, we use the scikit-learn library.</p>
+<ul>
+<li>First, a machine learning pipeline is created including the sklearn <code>StandardScaler</code> and <code>RandomForestClassifier</code>. The <code>StandardScaler</code> is used to standardize all features by removing the mean and scaling to unit variance. For details on the <code>RandomForestClassifier</code> see: <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html" class="uri">https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html</a>.</li>
+<li>Next, a grid search is initialized for testing the hyperparameter space (<code>max_depth</code> and <code>max_leaf_nodes</code>) of the random forest classifier by a 5-fold cross-validation using <code>GridSearchCV</code>.</li>
+<li>To train the classifier, we first select a suitable set of PSMSs. This is achieved by an initial scoring and FDR estimation of the input PSMs based on the <code>ini_score</code>. Only targets below the <code>train_fdr_level</code> cutoff are considered for training the classifier. To ensure a balanced dataset for training (i.e.&nbsp;same number of targets and decoys), the number of PSMs per category is selected to be the minimum of either the number of high scoring targets below the <code>train_fdr_level</code> cutoff or the overall number of decoys among the PSMs. <code>min_train</code> specifies the minimum number of targets and decoys that should be available.</li>
+<li>Once a balanced set of PSMs is established, the PSMs are split into a training and test set accoring to the <code>test_size</code> argument using <code>train_test_split</code> from sklearn while ensuring the PSMs are split in a stratified fashion (i.e.&nbsp;equal number of targets and decoys in both the training and test sets).</li>
+<li>The grid search and training of the random forest classifier is performed on the training set of PSMs. The <code>GridSearchCV</code> returns the classifier which performed best across all cross-validation hold-out sets according to the <code>scoring</code> function (classification <em>‘accuracy’</em> is set as default score). The grid search is parallelize dinto <code>n_jobs</code>.</li>
+<li>Next, the trained classifier is applied to the testing set of PSMs and the test score is reported.</li>
+<li>If <code>plot</code> is enabled, a figure illustrating the weights of each feature is produced.</li>
+<li>Finally the function returns the trained random forest classifier for subsequent application to the entire set of PSMs or for transfering to a different dataset.</li>
+</ul></li>
+<li><p><a href="https://mannlabs.github.io/score.html#score_ml"><code>score_ML</code></a> applies a classifier trained by <a href="https://mannlabs.github.io/score.html#train_rf"><code>train_RF</code></a> to a complete set of PSMs. It calls the <a href="https://mannlabs.github.io/score.html#cut_fdr"><code>cut_fdr</code></a> function and filters for the specified <code>fdr_level</code>. <a href="https://mannlabs.github.io/score.html#filter_score"><code>filter_score</code></a> and <a href="https://mannlabs.github.io/score.html#filter_precursor"><code>filter_precursor</code></a> are applied to only report the best PSM per acquired spectrum and the best signal per precursor (i.e.&nbsp;sequence + charge combination).</p></li>
+</ul>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L606" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="filter_with_ml" class="level3">
+<h3 class="anchored" data-anchor-id="filter_with_ml">filter_with_ML</h3>
+<blockquote class="blockquote">
+<pre><code> filter_with_ML (df:pandas.core.frame.DataFrame,
+                 trained_classifier:sklearn.model_selection._search.GridSe
+                 archCV, features:list=None, **kwargs)</code></pre>
+</blockquote>
+<p>Filters the psms table by using the x_tandem score, no fdr filter. TODO: Remove redundancy with score functions, see issue: #275</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept. trained_classifier (GridSearchCV): GridSearchCV object returned by train_RF. features (list): list with features returned by train_RF. Defaults to ‘None’.</p>
+<p>Returns: pd.DataFrame: psms table with an extra ‘score’ column from the trained_classifier by ML, filtered for no feature or precursor to be assigned multiple times.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L576" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="score_ml" class="level3">
+<h3 class="anchored" data-anchor-id="score_ml">score_ML</h3>
+<blockquote class="blockquote">
+<pre><code> score_ML (df:pandas.core.frame.DataFrame,
+           trained_classifier:sklearn.model_selection._search.GridSearchCV
+           , features:list=None, fdr_level:float=0.01, plot:bool=True,
+           **kwargs)</code></pre>
+</blockquote>
+<p>Applies a trained ML classifier to df and uses the ML score to filter psms and to apply the fdr_level threshold.</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept. trained_classifier (GridSearchCV): GridSearchCV object returned by train_RF. features (list): list with features returned by train_RF. Defaults to None. fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01. plot (bool, optional): flag to enable plot. Defaults to True.</p>
+<p>Returns: pd.DataFrame: filtered df with psms within fdr</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L430" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="train_rf" class="level3">
+<h3 class="anchored" data-anchor-id="train_rf">train_RF</h3>
+<blockquote class="blockquote">
+<pre><code> train_RF (df:pandas.core.frame.DataFrame,
+           exclude_features:list=['precursor_idx', 'fragment_ion_idx',
+           'fasta_index', 'feature_rank', 'raw_rank', 'score_rank',
+           'db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx',
+           'sequence', 'decoy', 'sequence_naked', 'target'],
+           train_fdr_level:float=0.1, ini_score:str='x_tandem',
+           min_train:int=1000, test_size:float=0.8, max_depth:list=[5, 25,
+           50], max_leaf_nodes:list=[150, 200, 250], n_jobs:int=-1,
+           scoring:str='accuracy', plot:bool=False, random_state:int=42,
+           **kwargs)</code></pre>
+</blockquote>
+<p>Function to train a random forest classifier to separate targets from decoys via semi-supervised learning.</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept. exclude_features (list, optional): list with column names of features to exclude for ML. Defaults to [‘precursor_idx’,‘fragment_ion_idx’,‘fasta_index’,‘feature_rank’,‘raw_rank’,‘score_rank’,‘db_idx’, ‘feature_idx’, ‘precursor’, ‘query_idx’, ‘raw_idx’,‘sequence’,‘decoy’,‘sequence_naked’,‘target’]. train_fdr_level (float, optional): Only targets below the train_fdr_level cutoff are considered for training the classifier. Defaults to 0.1. ini_score (str, optional): Initial score to select psms set for semi-supervised learning. Defaults to ‘x_tandem’. min_train (int, optional): Minimum number of psms in the training set. Defaults to 1000. test_size (float, optional): Fraction of psms used for testing. Defaults to 0.8. max_depth (list, optional): List of clf__max_depth parameters to test in the grid search. Defaults to [5,25,50]. max_leaf_nodes (list, optional): List of clf__max_leaf_nodes parameters to test in the grid search. Defaults to [150,200,250]. n_jobs (int, optional): Number of jobs to use for parallelizing the gridsearch. Defaults to -1, which in GridSearchCV corresponds to ‘use all available cores’. scoring (str, optional): Scoring method for the gridsearch. Defaults to ‘accuracy’. plot (bool, optional): flag to enable plot. Defaults to ‘False’. random_state (int, optional): Random state for initializing the RandomForestClassifier. Defaults to 42.</p>
+<p>Returns: [GridSearchCV, list]: GridSearchCV: GridSearchCV object with trained RandomForestClassifier. list: list of features used for training the classifier.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L402" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_ml_features" class="level3">
+<h3 class="anchored" data-anchor-id="get_ml_features">get_ML_features</h3>
+<blockquote class="blockquote">
+<pre><code> get_ML_features (df:pandas.core.frame.DataFrame, protease:str='trypsin',
+                  **kwargs)</code></pre>
+</blockquote>
+<p>Uses the specified score in df to filter psms and to apply the fdr_level threshold.</p>
+<p>Args: df (pd.DataFrame): psms table of search results from alphapept. protease (str, optional): string specifying the protease that was used for proteolytic digestion. Defaults to ‘trypsin’.</p>
+<p>Returns: pd.DataFrame: df including additional scores for subsequent ML.</p>
+</section>
+</section>
+<section id="protein-grouping" class="level2">
+<h2 class="anchored" data-anchor-id="protein-grouping">Protein grouping</h2>
+<p>What is a protein group? A introduction and explanation can be found here [1]:</p>
+<pre><code>The proteome is characterized by a relatively high sequence redundancy. This results from different evolutionary processes and the presence of isoforms. In bottom-up proteomics, this situation leads to the problem that often a peptide cannot be uniquely associated with one protein of origin, which makes it impossible to unambiguously claim the presence of one protein over another. MaxQuant resolves this issue by collapsing all proteins that cannot be distinguished based on the identified peptides into protein groups.
+The rule is that if all peptides of a given protein are a subset of the peptides used for identification of another protein, these proteins will be merged in a protein group. A more complex situation arises when two protein groups are identified with distinct peptides, except for one that is shared between the two. In this case, the two groups cannot be combined, as they contain group-unique peptides and will thus be reported separately in the MaxQuant output table. Depending on the user-defined setting, the shared peptide will not be used for quantification (unique peptides only), or it will be used for the quantification of the protein group with a larger number of associated peptides (unique + razor peptides).
+</code></pre>
+<p>In AlphaPept we employ the following strategy: First, we check whether a peptide is proteotypic, meaning that the peptide can only belong to one protein. For peptides that are shared between multiple proteins, we employ a razor approach.</p>
+<p>We create a network and add all connections between the peptides and proteins. Then, we extract all connected components, referring to all peptides and proteins that are connected. For a cluster of connected components, we then iterate over all proteins and count the number of peptides that are connected to the particular protein. The protein with the most peptides will then be the razor protein.</p>
+<p>We remove this protein and the respective peptides and continue with the extraction from the cluster until no more peptides are present.</p>
+<p>For efficient implementation, the proteins and peptides are encoded as indexes. To distinguish proteins from peptides, proteins have a leading ‘p’.</p>
+<ul>
+<li>[1] Tyanova, S., Temu, T. &amp; Cox, J. The MaxQuant computational platform for mass spectrometry-based shotgun proteomics. Nat Protoc 11, 2301–2319 (2016). https://doi.org/10.1038/nprot.2016.136</li>
+</ul>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L831" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="perform_protein_grouping" class="level3">
+<h3 class="anchored" data-anchor-id="perform_protein_grouping">perform_protein_grouping</h3>
+<blockquote class="blockquote">
+<pre><code> perform_protein_grouping (data:pandas.core.frame.DataFrame,
+                           pept_dict:dict, fasta_dict:dict, **kwargs)</code></pre>
+</blockquote>
+<p>Wrapper function to perform protein grouping by razor approach</p>
+<p>Args: data (pd.DataFrame): psms table of scored and filtered search results from alphapept. pept_dict (dict): A dictionary mapping peptide indices to the originating proteins as a list. fasta_dict (dict): A dictionary with fasta sequences.</p>
+<p>Returns: pd.DataFrame: alphapept results table now including protein level information.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L762" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_protein_groups" class="level3">
+<h3 class="anchored" data-anchor-id="get_protein_groups">get_protein_groups</h3>
+<blockquote class="blockquote">
+<pre><code> get_protein_groups (data:pandas.core.frame.DataFrame, pept_dict:dict,
+                     fasta_dict:dict, decoy=False, callback=None,
+                     **kwargs)</code></pre>
+</blockquote>
+<p>Function to perform protein grouping by razor approach. This function calls <code>assign_proteins</code> and <code>get_shared_proteins</code>. ToDo: implement callback for solving Each protein is indicated with a p -&gt; protein index</p>
+<p>Args: data (pd.DataFrame): psms table of scored and filtered search results from alphapept. pept_dict (dict): A dictionary mapping peptide indices to the originating proteins as a list. fasta_dict (dict): A dictionary with fasta sequences. decoy (bool, optional): Defaults to False. callback (bool, optional): Defaults to None.</p>
+<p>Returns: pd.DataFrame: alphapept results table now including protein level information.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L673" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_shared_proteins" class="level3">
+<h3 class="anchored" data-anchor-id="get_shared_proteins">get_shared_proteins</h3>
+<blockquote class="blockquote">
+<pre><code> get_shared_proteins (data:pandas.core.frame.DataFrame,
+                      found_proteins:dict, pept_dict:dict)</code></pre>
+</blockquote>
+<p>Assign peptides to razor proteins.</p>
+<p>Args: data (pd.DataFrame): psms table of scored and filtered search results from alphapept, appended with <code>n_possible_proteins</code>. found_proteins (dict): dictionary mapping psms indices to proteins pept_dict (dict): dictionary mapping peptide indices to the originating proteins as a list</p>
+<p>Returns: dict: dictionary mapping peptides to razor proteins</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L635" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="assign_proteins" class="level3">
+<h3 class="anchored" data-anchor-id="assign_proteins">assign_proteins</h3>
+<blockquote class="blockquote">
+<pre><code> assign_proteins (data:pandas.core.frame.DataFrame, pept_dict:dict)</code></pre>
+</blockquote>
+<p>Assign psms to proteins. This function appends the dataframe with a column ‘n_possible_proteins’ which indicates how many proteins a psm could be matched to. It returns the appended dataframe and a dictionary <code>found_proteins</code> where each protein is mapped to the psms indices.</p>
+<p>Args: data (pd.DataFrame): psms table of scored and filtered search results from alphapept. pept_dict (dict): dictionary that matches peptide sequences to proteins</p>
+<p>Returns: pd.DataFrame: psms table of search results from alphapept appended with the number of matched proteins. dict: dictionary mapping psms indices to proteins.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L875" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_ion" class="level3">
+<h3 class="anchored" data-anchor-id="get_ion">get_ion</h3>
+<blockquote class="blockquote">
+<pre><code> get_ion (i:int, df:pandas.core.frame.DataFrame,
+          fragment_ions:pandas.core.frame.DataFrame)</code></pre>
+</blockquote>
+<p>Helper function to extract the ion-hits for a given DataFrame index. This function extracts the hit type and the intensities. E.g.: [‘b1’,‘y1’], np.array([10,20]).</p>
+<p>Args: i (int): Row index for the DataFrame df (pd.DataFrame): DataFrame with PSMs fragment_ions (pd.DataFrame): DataFrame with ion hits</p>
+<p>Returns: list: List with strings that describe the ion type. np.ndarray: Array with intensity information</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L901" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ecdf" class="level3">
+<h3 class="anchored" data-anchor-id="ecdf">ecdf</h3>
+<blockquote class="blockquote">
+<pre><code> ecdf (data:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Compute ECDF. Helper function to calculate the ECDF of a score distribution. This is later used to normalize the score from an arbitrary range to [0,1].</p>
+<p>Args: data (np.ndarray): Array containting the score.</p>
+<p>Returns: np.ndarray: Array containg the score, sorted. np.ndarray: Noramalized counts.</p>
+</section>
+</section>
+<section id="helper-functions" class="level2">
+<h2 class="anchored" data-anchor-id="helper-functions">Helper functions</h2>
+<p>To call the functions from the interface with a process pool, we define the helper functions <a href="https://mannlabs.github.io/score.html#score_hdf"><code>score_hdf</code></a> and <a href="https://mannlabs.github.io/score.html#protein_grouping_all"><code>protein_grouping_all</code></a>.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L1060" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="protein_grouping_all" class="level3">
+<h3 class="anchored" data-anchor-id="protein_grouping_all">protein_grouping_all</h3>
+<blockquote class="blockquote">
+<pre><code> protein_grouping_all (settings:dict, pept_dict:dict, fasta_dict:dict,
+                       callback=None)</code></pre>
+</blockquote>
+<p>Apply protein grouping on all files in an experiment. This function will load all dataframes (peptide_fdr level) and perform protein grouping.</p>
+<p>Args: settings: (dict): Settings file for the experiment pept_dict: (dict): A peptide dictionary. fast_dict: (dict): A FASTA dictionary. callback: (Callable): Optional callback.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L927" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="score_hdf" class="level3">
+<h3 class="anchored" data-anchor-id="score_hdf">score_hdf</h3>
+<blockquote class="blockquote">
+<pre><code> score_hdf (to_process:tuple, callback:Callable=None, parallel:bool=False)</code></pre>
+</blockquote>
+<p>Apply scoring on an hdf file to be called from a parallel pool. This function does not raise errors but returns the exception as a string. Args: to_process: (int, dict): Tuple containg a file index and the settings. callback: (Callable): Optional callback parallel: (bool): Parallel flag (unused).</p>
+<p>Returns: Union[bool, str]: True if no eo exception occured, the exception if things failed.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
