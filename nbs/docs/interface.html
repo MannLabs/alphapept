@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>alphapept - Interface</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="alphapept - Interface">
+<meta property="og:description" content="Several generic utility functions include:">
+<meta property="og:site-name" content="alphapept">
+<meta name="twitter:title" content="alphapept - Interface">
+<meta name="twitter:description" content="Several generic utility functions include:">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">alphapept</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Interface</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">AlphaPept</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./settings.html" class="sidebar-item-text sidebar-link">Settings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chem.html" class="sidebar-item-text sidebar-link">Chem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./io.html" class="sidebar-item-text sidebar-link">Input / Output</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fasta.html" class="sidebar-item-text sidebar-link">FASTA</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./feature_finding.html" class="sidebar-item-text sidebar-link">Feature Finding</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./search.html" class="sidebar-item-text sidebar-link">Search</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./score.html" class="sidebar-item-text sidebar-link">Score</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./recalibration.html" class="sidebar-item-text sidebar-link">Recalibration</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quantification.html" class="sidebar-item-text sidebar-link">Quantification</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./matching.html" class="sidebar-item-text sidebar-link">Matching</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link">Constants</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interface.html" class="sidebar-item-text sidebar-link active">Interface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./performance.html" class="sidebar-item-text sidebar-link">Performance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./export.html" class="sidebar-item-text sidebar-link">Export</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./label.html" class="sidebar-item-text sidebar-link">Label</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./additional_code.html" class="sidebar-item-text sidebar-link">Additional code</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#general-utilities" id="toc-general-utilities" class="nav-link active" data-scroll-target="#general-utilities">General utilities</a>
+  <ul>
+  <li><a href="#tqdm_wrapper" id="toc-tqdm_wrapper" class="nav-link" data-scroll-target="#tqdm_wrapper">tqdm_wrapper</a></li>
+  <li><a href="#check_version_and_hardware" id="toc-check_version_and_hardware" class="nav-link" data-scroll-target="#check_version_and_hardware">check_version_and_hardware</a></li>
+  <li><a href="#wrapped_partial" id="toc-wrapped_partial" class="nav-link" data-scroll-target="#wrapped_partial">wrapped_partial</a></li>
+  </ul></li>
+  <li><a href="#functions" id="toc-functions" class="nav-link" data-scroll-target="#functions">Functions</a>
+  <ul>
+  <li><a href="#create_database" id="toc-create_database" class="nav-link" data-scroll-target="#create_database">create_database</a></li>
+  <li><a href="#import_raw_data" id="toc-import_raw_data" class="nav-link" data-scroll-target="#import_raw_data">import_raw_data</a></li>
+  <li><a href="#feature_finding" id="toc-feature_finding" class="nav-link" data-scroll-target="#feature_finding">feature_finding</a></li>
+  <li><a href="#search_data" id="toc-search_data" class="nav-link" data-scroll-target="#search_data">search_data</a></li>
+  <li><a href="#recalibrate_data" id="toc-recalibrate_data" class="nav-link" data-scroll-target="#recalibrate_data">recalibrate_data</a></li>
+  <li><a href="#score" id="toc-score" class="nav-link" data-scroll-target="#score">score</a></li>
+  <li><a href="#isobaric_labeling" id="toc-isobaric_labeling" class="nav-link" data-scroll-target="#isobaric_labeling">isobaric_labeling</a></li>
+  <li><a href="#protein_grouping" id="toc-protein_grouping" class="nav-link" data-scroll-target="#protein_grouping">protein_grouping</a></li>
+  <li><a href="#match" id="toc-match" class="nav-link" data-scroll-target="#match">match</a></li>
+  <li><a href="#align" id="toc-align" class="nav-link" data-scroll-target="#align">align</a></li>
+  <li><a href="#read_label_intensity" id="toc-read_label_intensity" class="nav-link" data-scroll-target="#read_label_intensity">read_label_intensity</a></li>
+  <li><a href="#quantification" id="toc-quantification" class="nav-link" data-scroll-target="#quantification">quantification</a></li>
+  <li><a href="#export" id="toc-export" class="nav-link" data-scroll-target="#export">export</a></li>
+  <li><a href="#run_complete_workflow" id="toc-run_complete_workflow" class="nav-link" data-scroll-target="#run_complete_workflow">run_complete_workflow</a></li>
+  <li><a href="#parallel_execute" id="toc-parallel_execute" class="nav-link" data-scroll-target="#parallel_execute">parallel_execute</a></li>
+  <li><a href="#get_summary" id="toc-get_summary" class="nav-link" data-scroll-target="#get_summary">get_summary</a></li>
+  <li><a href="#get_file_summary" id="toc-get_file_summary" class="nav-link" data-scroll-target="#get_file_summary">get_file_summary</a></li>
+  <li><a href="#extract_median_unique" id="toc-extract_median_unique" class="nav-link" data-scroll-target="#extract_median_unique">extract_median_unique</a></li>
+  </ul></li>
+  <li><a href="#cli" id="toc-cli" class="nav-link" data-scroll-target="#cli">CLI</a>
+  <ul>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"><command gui=""></command></a></li>
+  <li><a href="#section-1" id="toc-section-1" class="nav-link" data-scroll-target="#section-1"><command workflow=""></command></a></li>
+  <li><a href="#section-2" id="toc-section-2" class="nav-link" data-scroll-target="#section-2"><command export=""></command></a></li>
+  <li><a href="#section-3" id="toc-section-3" class="nav-link" data-scroll-target="#section-3"><command quantify=""></command></a></li>
+  <li><a href="#section-4" id="toc-section-4" class="nav-link" data-scroll-target="#section-4"><command match=""></command></a></li>
+  <li><a href="#section-5" id="toc-section-5" class="nav-link" data-scroll-target="#section-5"><command align=""></command></a></li>
+  <li><a href="#section-6" id="toc-section-6" class="nav-link" data-scroll-target="#section-6"><command score=""></command></a></li>
+  <li><a href="#section-7" id="toc-section-7" class="nav-link" data-scroll-target="#section-7"><command recalibrate=""></command></a></li>
+  <li><a href="#section-8" id="toc-section-8" class="nav-link" data-scroll-target="#section-8"><command search=""></command></a></li>
+  <li><a href="#section-9" id="toc-section-9" class="nav-link" data-scroll-target="#section-9"><command features=""></command></a></li>
+  <li><a href="#section-10" id="toc-section-10" class="nav-link" data-scroll-target="#section-10"><command import=""></command></a></li>
+  <li><a href="#section-11" id="toc-section-11" class="nav-link" data-scroll-target="#section-11"><command database=""></command></a></li>
+  <li><a href="#section-12" id="toc-section-12" class="nav-link" data-scroll-target="#section-12"><group cli-overview=""></group></a></li>
+  <li><a href="#run_cli" id="toc-run_cli" class="nav-link" data-scroll-target="#run_cli">run_cli</a></li>
+  <li><a href="#is_port_in_use" id="toc-is_port_in_use" class="nav-link" data-scroll-target="#is_port_in_use">is_port_in_use</a></li>
+  <li><a href="#bcolors" id="toc-bcolors" class="nav-link" data-scroll-target="#bcolors">bcolors</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Interface</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="general-utilities" class="level2">
+<h2 class="anchored" data-anchor-id="general-utilities">General utilities</h2>
+<p>Several generic utility functions include:</p>
+<ul>
+<li>Callback function to track progress</li>
+<li>Logging function</li>
+<li>Version/hardware/settings checks</li>
+</ul>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L30" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="tqdm_wrapper" class="level3">
+<h3 class="anchored" data-anchor-id="tqdm_wrapper">tqdm_wrapper</h3>
+<blockquote class="blockquote">
+<pre><code> tqdm_wrapper (pbar, update:float)</code></pre>
+</blockquote>
+<p>Update a qdm progress bar.</p>
+<p>Args: pbar (type): a tqd,.tqdm objet. update (float): The new value for the progressbar.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L43" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="check_version_and_hardware" class="level3">
+<h3 class="anchored" data-anchor-id="check_version_and_hardware">check_version_and_hardware</h3>
+<blockquote class="blockquote">
+<pre><code> check_version_and_hardware (settings:dict)</code></pre>
+</blockquote>
+<p>Show platform and python information and parse settings.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data.</p>
+<p>Returns: dict: The parsed settings.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L64" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="wrapped_partial" class="level3">
+<h3 class="anchored" data-anchor-id="wrapped_partial">wrapped_partial</h3>
+<blockquote class="blockquote">
+<pre><code> wrapped_partial (func:&lt;built-infunctioncallable&gt;, *args, **kwargs)</code></pre>
+</blockquote>
+<p>Wrap a function with partial args and kwargs.</p>
+<p>Args: func (callable): The function to be wrapped. *args (type): Args to be wrapped. **kwargs (type): Kwargs to be wrapped.</p>
+<p>Returns: callable: The wrapped function.</p>
+</section>
+</section>
+<section id="functions" class="level2">
+<h2 class="anchored" data-anchor-id="functions">Functions</h2>
+<p>The implemented functions are as follows:</p>
+<ul>
+<li>Create database</li>
+<li>Import raw data</li>
+<li>Perform feature finding</li>
+<li>Search data with fasta</li>
+<li>Recalibrate</li>
+<li>Score data with fasta</li>
+<li>Perform LFQ</li>
+<li>Export results</li>
+<li>Run whole workflow</li>
+</ul>
+<p>The last command allows to run the whole pipeline at once.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L85" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="create_database" class="level3">
+<h3 class="anchored" data-anchor-id="create_database">create_database</h3>
+<blockquote class="blockquote">
+<pre><code> create_database (settings:dict, logger_set:bool=False,
+                  settings_parsed:bool=False, callback:&lt;built-
+                  infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Create the search database.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<p>Raises: FileNotFoundError: If the FASTA file is not found.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L213" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="import_raw_data" class="level3">
+<h3 class="anchored" data-anchor-id="import_raw_data">import_raw_data</h3>
+<blockquote class="blockquote">
+<pre><code> import_raw_data (settings:dict, logger_set:bool=False,
+                  settings_parsed:bool=False, callback:&lt;built-
+                  infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Import raw data.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L248" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="feature_finding" class="level3">
+<h3 class="anchored" data-anchor-id="feature_finding">feature_finding</h3>
+<blockquote class="blockquote">
+<pre><code> feature_finding (settings:dict, logger_set:bool=False,
+                  settings_parsed:bool=False, callback:&lt;built-
+                  infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Find features.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L283" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="search_data" class="level3">
+<h3 class="anchored" data-anchor-id="search_data">search_data</h3>
+<blockquote class="blockquote">
+<pre><code> search_data (settings:dict, first_search:bool=True,
+              logger_set:bool=False, settings_parsed:bool=False,
+              callback:&lt;built-infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Create the search database.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. first_search (bool): If True, save the intermediary results as <code>first search</code>. Otherwise, calibrate mz_values are used and results are saved as <code>second search</code>. Defaults to True. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<p>Raises: FileNotFoundError: If the FASTA file is not found.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L403" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="recalibrate_data" class="level3">
+<h3 class="anchored" data-anchor-id="recalibrate_data">recalibrate_data</h3>
+<blockquote class="blockquote">
+<pre><code> recalibrate_data (settings:dict, logger_set:bool=False,
+                   settings_parsed:bool=False, callback:&lt;built-
+                   infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Recalibrate mz values.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L503" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="score" class="level3">
+<h3 class="anchored" data-anchor-id="score">score</h3>
+<blockquote class="blockquote">
+<pre><code> score (settings:dict, pept_dict:dict=None, fasta_dict:dict=None,
+        logger_set:bool=False, settings_parsed:bool=False,
+        callback:&lt;built-infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Score PSMs and calculate FDR.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. pept_dict (dict): A dictionary with peptides. Defaults to None. fasta_dict (dict): A dictionary with fasta sequences. Defaults to None. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L487" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="isobaric_labeling" class="level3">
+<h3 class="anchored" data-anchor-id="isobaric_labeling">isobaric_labeling</h3>
+<blockquote class="blockquote">
+<pre><code> isobaric_labeling (settings:dict, logger_set:bool=False,
+                    settings_parsed:bool=False, callback:&lt;built-
+                    infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Search for isobaric labels.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L526" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="protein_grouping" class="level3">
+<h3 class="anchored" data-anchor-id="protein_grouping">protein_grouping</h3>
+<blockquote class="blockquote">
+<pre><code> protein_grouping (settings:dict, pept_dict:dict=None,
+                   fasta_dict:dict=None, logger_set:bool=False,
+                   settings_parsed:bool=False, callback:&lt;built-
+                   infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Group peptides into proteins.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. pept_dict (dict): A dictionary with peptides. Defaults to None. fasta_dict (dict): A dictionary with fasta sequences. Defaults to None. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L619" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="match" class="level3">
+<h3 class="anchored" data-anchor-id="match">match</h3>
+<blockquote class="blockquote">
+<pre><code> match (settings:dict, logger_set:bool=False, settings_parsed:bool=False,
+        callback:&lt;built-infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Match datasets.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/matching.py#L89" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="align" class="level3">
+<h3 class="anchored" data-anchor-id="align">align</h3>
+<blockquote class="blockquote">
+<pre><code> align (settings:dict, logger_set:bool=False, settings_parsed:bool=False,
+        callback:&lt;built-infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Align multiple samples.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L652" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="read_label_intensity" class="level3">
+<h3 class="anchored" data-anchor-id="read_label_intensity">read_label_intensity</h3>
+<blockquote class="blockquote">
+<pre><code> read_label_intensity (df:pandas.core.frame.DataFrame,
+                       label:&lt;class'NamedTuple'&gt;)</code></pre>
+</blockquote>
+<p>Reads the label intensities from peptides and sums them by protein group.</p>
+<p>Args: df (pd.DataFrame): Table with peptide information. label (NamedTuple): Label used for the experiment.</p>
+<p>Returns: pd.DataFrame: Summary protein table containing proteins and their intensity for each channel.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L675" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="quantification" class="level3">
+<h3 class="anchored" data-anchor-id="quantification">quantification</h3>
+<blockquote class="blockquote">
+<pre><code> quantification (settings:dict, logger_set:bool=False,
+                 settings_parsed:bool=False, callback:&lt;built-
+                 infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Normalize and quantify datasets.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L830" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="export" class="level3">
+<h3 class="anchored" data-anchor-id="export">export</h3>
+<blockquote class="blockquote">
+<pre><code> export (settings:dict, logger_set:bool=False, settings_parsed:bool=False,
+         callback:&lt;built-infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Export settings.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L869" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="run_complete_workflow" class="level3">
+<h3 class="anchored" data-anchor-id="run_complete_workflow">run_complete_workflow</h3>
+<blockquote class="blockquote">
+<pre><code> run_complete_workflow (settings:dict, progress:bool=False,
+                        logger_set:bool=False, settings_parsed:bool=False,
+                        callback:&lt;built-infunctioncallable&gt;=None,
+                        callback_overall:&lt;built-infunctioncallable&gt;=None,
+                        callback_task:&lt;built-infunctioncallable&gt;=None,
+                        logfile:str=None)</code></pre>
+</blockquote>
+<p>Run all AlphaPept steps from a settings dict.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. progress (bool): Track progress. Defaults to False. logger_set (bool): If False, reset the default logger. Defaults to False. settings_parsed (bool): If True, reparse the settings. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None. callback_overall (callable): Same as callback, but for the overall progress. Defaults to None. callback_task (callable): Same as callback, but for the task progress. Defaults to None. logfile (str): The name of a logfile. Defaults to None.</p>
+<p>Returns: dict: the parsed settings.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L1186" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="parallel_execute" class="level3">
+<h3 class="anchored" data-anchor-id="parallel_execute">parallel_execute</h3>
+<blockquote class="blockquote">
+<pre><code> parallel_execute (settings:dict, step:&lt;built-infunctioncallable&gt;,
+                   callback:&lt;built-infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Generic function to execute worklow steps in parallel on a per-file basis.</p>
+<p>Args: settings (dict): The settings for processing the step function. step (callable): A function that accepts settings as input parameter. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: dict: The settings after processing.</p>
+<p>Raises: NotImplementedError: When the step is feature finding on files other then Thermo or Bruker.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L1120" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_summary" class="level3">
+<h3 class="anchored" data-anchor-id="get_summary">get_summary</h3>
+<blockquote class="blockquote">
+<pre><code> get_summary (settings:dict, summary:dict)</code></pre>
+</blockquote>
+<p>Append file summary statistics to a summary dictionary.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. summary (dict): A dictionary with summary statistics of the experiment.</p>
+<p>Returns: dict: The summary in which file summary statistcs are appended.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L1075" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_file_summary" class="level3">
+<h3 class="anchored" data-anchor-id="get_file_summary">get_file_summary</h3>
+<blockquote class="blockquote">
+<pre><code> get_file_summary (ms_data:alphapept.io.MS_Data_File, fields:list)</code></pre>
+</blockquote>
+<p>Get summarize statitics from an MS_Data file.</p>
+<p>Args: ms_data (alphapept.io.MS_Data_File): An MS_Data file which has been fully identified and quantified. fields (list): A list with colum names to calculate summary statistics.</p>
+<p>Returns: dict: A dictionary with summary statistics.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L1051" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="extract_median_unique" class="level3">
+<h3 class="anchored" data-anchor-id="extract_median_unique">extract_median_unique</h3>
+<blockquote class="blockquote">
+<pre><code> extract_median_unique (settings:dict, fields:list,
+                        summary_type='filename')</code></pre>
+</blockquote>
+<p>Extract the medion protein FDR and number of unique proteins.</p>
+<p>Args: settings (dict): A dictionary with settings how to process the data. fields (list): A list with colum names to calculate summary statistics. summary_type (str): A str of column name used for summarizing (‘filename’ or ‘sample_group’)</p>
+<p>Returns: tuple: Two arrays with the median protein FDR per file/sample_group and the unique number of protein hits</p>
+</section>
+</section>
+<section id="cli" class="level2">
+<h2 class="anchored" data-anchor-id="cli">CLI</h2>
+<p>All workflow functions can be called with the command line interface (CLI). To implement this CLI, we use the <a href="https://click.palletsprojects.com/en/8.0.x/">click</a> package.</p>
+<p>In brief, <code>click</code> allows to create a CLI with minimal effort by simply adding decorators to already defined functions. These decorators create a help text for each function and describe all their parameters. Functions that are decorated by <code>click</code> can be added to a central <a href="https://mannlabs.github.io/interface.html#run_cli"><code>run_cli</code></a> functions to be incorporated in the CLI automatically.</p>
+<p>While AlphaTims allows modular execution of individual steps to process MS data, it is common for these steps to be combined and reuse multiple parameters. We therefore opt to use a singe YAML settings file containing all parameters in dictionary format as a single parameter instead of providing all parameters individually to each function.</p>
+<hr>
+<section id="section" class="level3">
+<h3 class="anchored" data-anchor-id="section"><command gui=""></command></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Command gui&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="section-1" class="level3">
+<h3 class="anchored" data-anchor-id="section-1"><command workflow=""></command></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Command workflow&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="section-2" class="level3">
+<h3 class="anchored" data-anchor-id="section-2"><command export=""></command></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Command export&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="section-3" class="level3">
+<h3 class="anchored" data-anchor-id="section-3"><command quantify=""></command></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Command quantify&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="section-4" class="level3">
+<h3 class="anchored" data-anchor-id="section-4"><command match=""></command></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Command match&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="section-5" class="level3">
+<h3 class="anchored" data-anchor-id="section-5"><command align=""></command></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Command align&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="section-6" class="level3">
+<h3 class="anchored" data-anchor-id="section-6"><command score=""></command></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Command score&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="section-7" class="level3">
+<h3 class="anchored" data-anchor-id="section-7"><command recalibrate=""></command></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Command recalibrate&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="section-8" class="level3">
+<h3 class="anchored" data-anchor-id="section-8"><command search=""></command></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Command search&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="section-9" class="level3">
+<h3 class="anchored" data-anchor-id="section-9"><command features=""></command></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Command features&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="section-10" class="level3">
+<h3 class="anchored" data-anchor-id="section-10"><command import=""></command></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Command import&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="section-11" class="level3">
+<h3 class="anchored" data-anchor-id="section-11"><command database=""></command></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Command database&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+</section>
+<section id="section-12" class="level3">
+<h3 class="anchored" data-anchor-id="section-12"><group cli-overview=""></group></h3>
+<blockquote class="blockquote">
+<pre><code> &lt;Group cli-overview&gt; (*args:Any, **kwargs:Any)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L1326" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="run_cli" class="level3">
+<h3 class="anchored" data-anchor-id="run_cli">run_cli</h3>
+<blockquote class="blockquote">
+<pre><code> run_cli ()</code></pre>
+</blockquote>
+<p>Run the command line interface.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L1312" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="is_port_in_use" class="level3">
+<h3 class="anchored" data-anchor-id="is_port_in_use">is_port_in_use</h3>
+<blockquote class="blockquote">
+<pre><code> is_port_in_use (port:int)</code></pre>
+</blockquote>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/interface.py#L1293" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="bcolors" class="level3">
+<h3 class="anchored" data-anchor-id="bcolors">bcolors</h3>
+<blockquote class="blockquote">
+<pre><code> bcolors ()</code></pre>
+</blockquote>
+<p>Initialize self. See help(type(self)) for accurate signature.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

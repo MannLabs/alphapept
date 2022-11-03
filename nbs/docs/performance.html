@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Paralellization for GPU and CPU">
+
+<title>alphapept - Performance</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="alphapept - Performance">
+<meta property="og:description" content="Paralellization for GPU and CPU">
+<meta property="og:site-name" content="alphapept">
+<meta name="twitter:title" content="alphapept - Performance">
+<meta name="twitter:description" content="Paralellization for GPU and CPU">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">alphapept</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Performance</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">AlphaPept</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./settings.html" class="sidebar-item-text sidebar-link">Settings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chem.html" class="sidebar-item-text sidebar-link">Chem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./io.html" class="sidebar-item-text sidebar-link">Input / Output</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fasta.html" class="sidebar-item-text sidebar-link">FASTA</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./feature_finding.html" class="sidebar-item-text sidebar-link">Feature Finding</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./search.html" class="sidebar-item-text sidebar-link">Search</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./score.html" class="sidebar-item-text sidebar-link">Score</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./recalibration.html" class="sidebar-item-text sidebar-link">Recalibration</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quantification.html" class="sidebar-item-text sidebar-link">Quantification</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./matching.html" class="sidebar-item-text sidebar-link">Matching</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link">Constants</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interface.html" class="sidebar-item-text sidebar-link">Interface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./performance.html" class="sidebar-item-text sidebar-link active">Performance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./export.html" class="sidebar-item-text sidebar-link">Export</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./label.html" class="sidebar-item-text sidebar-link">Label</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./additional_code.html" class="sidebar-item-text sidebar-link">Additional code</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#is_valid_compilation_mode" id="toc-is_valid_compilation_mode" class="nav-link active" data-scroll-target="#is_valid_compilation_mode">is_valid_compilation_mode</a></li>
+  <li><a href="#set_worker_count" id="toc-set_worker_count" class="nav-link" data-scroll-target="#set_worker_count">set_worker_count</a></li>
+  <li><a href="#compile_function" id="toc-compile_function" class="nav-link" data-scroll-target="#compile_function">compile_function</a></li>
+  <li><a href="#set_compilation_mode" id="toc-set_compilation_mode" class="nav-link" data-scroll-target="#set_compilation_mode">set_compilation_mode</a></li>
+  <li><a href="#performance_function" id="toc-performance_function" class="nav-link" data-scroll-target="#performance_function">performance_function</a></li>
+  <li><a href="#alphapool" id="toc-alphapool" class="nav-link" data-scroll-target="#alphapool">AlphaPool</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Performance</h1>
+</div>
+
+<div>
+  <div class="description">
+    Paralellization for GPU and CPU
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>AlphaPept deals with high-throughput data. As this can be computationally intensive, we try to make all functions as performant as possible. To do so, we rely on two principles: * <strong>Compilation</strong> * <strong>Parallelization</strong></p>
+<p>A first step of <strong>compilation</strong> can be achieved by using NumPy arrays which are already heavily c-optimized. Net we consider three kinds of compilation: * <strong>Python</strong> This allows to use no compilation * <strong>Numba</strong> This allows to use just-in-time (JIT) compilation. * <strong>Cuda</strong> This allows compilation on the GPU.</p>
+<p>All of these compilation approaches can be combined with <strong>parallelization</strong> approaches. We consider the following possibilities: * <strong>No parallelization</strong> Not all functionality can be parallelized. * <strong>Multithreading</strong> This is only performant when Python’s global interpreter lock (GIL) is released or when mostly using input-/output (IO) functions. * <strong>GPU</strong> This is only available if an NVIDIA GPU is available and properly configured.</p>
+<p>Note that not all compilation approaches can sensibly be combined with all parallelization approaches.</p>
+<p>Next we import all libraries, taking into account that not every machine has a GPU (with NVidia cuda cores) available:</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/performance.py#L44" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="is_valid_compilation_mode" class="level3">
+<h3 class="anchored" data-anchor-id="is_valid_compilation_mode">is_valid_compilation_mode</h3>
+<blockquote class="blockquote">
+<pre><code> is_valid_compilation_mode (compilation_mode:str)</code></pre>
+</blockquote>
+<p>Check if the provided string is a valid compilation mode.</p>
+<p>Args: compilation_mode (str): The compilation mode to verify.</p>
+<p>Raises: ModuleNotFoundError: When trying to use an unavailable GPU. NotImplementedError: When the compilation mode is not valid.</p>
+<p>By default, we will use <code>cuda</code> if it is available. If not, <code>numba-multithread</code> will be used as default.</p>
+<p>To consistently use multiple threads or processes, we can set a global MAX_WORKER_COUNT parameter.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/performance.py#L72" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="set_worker_count" class="level3">
+<h3 class="anchored" data-anchor-id="set_worker_count">set_worker_count</h3>
+<blockquote class="blockquote">
+<pre><code> set_worker_count (worker_count:int=1, set_global:bool=True)</code></pre>
+</blockquote>
+<p>Parse and set the (global) number of threads.</p>
+<p>Args: worker_count (int): The number of workers. If larger than available cores, it is trimmed to the available maximum. If 0, it is set to the maximum cores available. If negative, it indicates how many cores NOT to use. Default is 1 set_global (bool): If False, the number of workers is only parsed to a valid value. If True, the number of workers is saved as a global variable. Default is True.</p>
+<p>Returns: int: The parsed worker_count.</p>
+<p>Compiled functions are intended to be very fast. However, they do not have the same flexibility as pure Python functions. In general, we recommend to use staticly defined compilation functions for optimal performance. We provide the option to define a default compilation mode for decorated functions, while also allowing to define the compilation mode for each individual function.</p>
+<p><strong>NOTE</strong>: Compiled functions are by default expected to be performed on a single thread. Thus, ‘cuda’ funtions are always assumed to be device functions which makes them callable from within the GPU, unless explicitly stated otherwise. Similarly, ‘numba’ functions are always assumed to bo ‘nopython’ and ‘nogil’.</p>
+<p><strong>NOTE</strong> If the global compilation mode is set to Python, all decorators default to python, even if a specific compilation_mode is provided.</p>
+<p>In addition, we allow to enable dynamic compilation, meaning the compilation mode of functions can be changed at runtime. Do note that this comes at the cost of some performance, as compilation needs to be done at runtime as well. Moreover, functions that are defined with dynamic compilation can not be called from within other compiled functions (with the exception of ‘python’ compilation, which means no compilation is actually performe|d).</p>
+<p><strong>NOTE</strong>: Dynamic compilation must be enabled before functions are decorated to take effect at runtime, otherwise they are statically compiled with the current settings at the time they are defined! Alternatively, statically compiled functions of a an ‘imported_module’ can reloaded (and thus statically be recompiled) with the commands:</p>
+<pre><code>import importlib
+importlib.reload(imported_module)</code></pre>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/performance.py#L129" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="compile_function" class="level3">
+<h3 class="anchored" data-anchor-id="compile_function">compile_function</h3>
+<blockquote class="blockquote">
+<pre><code> compile_function (_func:&lt;built-infunctioncallable&gt;=None,
+                   compilation_mode:str=None, **decorator_kwargs)</code></pre>
+</blockquote>
+<p>A decorator to compile a given function.</p>
+<p>Numba functions are by default set to use <code>nogil=True</code> and <code>nopython=True</code>, unless explicitly defined otherwise. Cuda functions are by default set to use <code>device=True</code>, unless explicitly defined otherwise..</p>
+<p>Args: compilation_mode (str): The compilation mode to use. Will be checked with <code>is_valid_compilation_mode</code>. If None, the global COMPILATION_MODE will be used as soon as the function is decorated for static compilation. If DYNAMIC_COMPILATION_ENABLED, the function will always be compiled at runtime and thus by default returns a Python function. Static recompilation can be enforced by reimporting a module containing the function with importlib.reload(imported_module). If COMPILATION_MODE is Python and not DYNAMIC_COMPILATION_ENABLED, no compilation will be used. Default is None **decorator_kwargs: Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.</p>
+<p>Returns: callable: A decorated function that is compiled.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/performance.py#L103" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="set_compilation_mode" class="level3">
+<h3 class="anchored" data-anchor-id="set_compilation_mode">set_compilation_mode</h3>
+<blockquote class="blockquote">
+<pre><code> set_compilation_mode (compilation_mode:str=None,
+                       enable_dynamic_compilation:bool=None)</code></pre>
+</blockquote>
+<p>Set the global compilation mode to use.</p>
+<p>Args: compilation_mode (str): The compilation mode to use. Will be checked with <code>is_valid_compilation_mode</code>. Default is None enable_dynamic_compilation (bool): Enable dynamic compilation. If enabled, code will generally be slower and no other functions can be called from within a compiled function anymore, as they are compiled at runtime. WARNING: Enabling this is strongly disadvised in almost all cases! Default is None.</p>
+<p>Testing yields the expected results:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> types</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>set_compilation_mode(compilation_mode<span class="op">=</span><span class="st">"numba-multithread"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="at">@compile_function</span>(compilation_mode<span class="op">=</span><span class="st">"python"</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_func_python(x):</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Docstring test"""</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    x[<span class="dv">0</span>] <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="at">@compile_function</span>(compilation_mode<span class="op">=</span><span class="st">"numba"</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_func_numba(x):</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Docstring test"""</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    x[<span class="dv">0</span>] <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>set_compilation_mode(enable_dynamic_compilation<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="at">@compile_function</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_func_dynamic_runtime(x):</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Docstring test"""</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    x[<span class="dv">0</span>] <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>set_compilation_mode(enable_dynamic_compilation<span class="op">=</span><span class="va">False</span>, compilation_mode<span class="op">=</span><span class="st">"numba-multithread"</span>)</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="at">@compile_function</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> test_func_static_runtime_numba(x):</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Docstring test"""</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    x[<span class="dv">0</span>] <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.zeros(<span class="dv">1</span>, dtype<span class="op">=</span>np.int64)</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span>(<span class="bu">isinstance</span>(test_func_python, types.FunctionType))</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>test_func_python(a)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span>(np.<span class="bu">all</span>(a <span class="op">==</span> np.ones(<span class="dv">1</span>)))</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.zeros(<span class="dv">1</span>)</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span>(<span class="bu">isinstance</span>(test_func_numba, numba.core.registry.CPUDispatcher))</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>test_func_numba(a)</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span>(np.<span class="bu">all</span>(a <span class="op">==</span> np.ones(<span class="dv">1</span>)))</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> __GPU_AVAILABLE:</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    <span class="at">@compile_function</span>(compilation_mode<span class="op">=</span><span class="st">"cuda"</span>, device<span class="op">=</span><span class="va">None</span>)</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> test_func_cuda(x):</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>        <span class="co">"""Docstring test"""</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>        x[<span class="dv">0</span>] <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Cuda function cannot be tested from outside the GPU</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    a <span class="op">=</span> np.zeros(<span class="dv">1</span>)</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span>(<span class="bu">isinstance</span>(test_func_cuda, numba.cuda.compiler.Dispatcher))</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>    test_func_cuda.forall(<span class="dv">1</span>,<span class="dv">1</span>)(a)</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">assert</span>(np.<span class="bu">all</span>(a <span class="op">==</span> np.ones(<span class="dv">1</span>)))</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>set_compilation_mode(compilation_mode<span class="op">=</span><span class="st">"python"</span>)</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.zeros(<span class="dv">1</span>)</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span>(<span class="bu">isinstance</span>(test_func_static_runtime_numba, numba.core.registry.CPUDispatcher))</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>test_func_static_runtime_numba(a)</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span>(np.<span class="bu">all</span>(a <span class="op">==</span> np.ones(<span class="dv">1</span>)))</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>set_compilation_mode(compilation_mode<span class="op">=</span><span class="st">"python"</span>)</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.zeros(<span class="dv">1</span>)</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span>(<span class="bu">isinstance</span>(test_func_dynamic_runtime, types.FunctionType))</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>test_func_dynamic_runtime(a)</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span>(np.<span class="bu">all</span>(a <span class="op">==</span> np.ones(<span class="dv">1</span>)))</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>set_compilation_mode(compilation_mode<span class="op">=</span><span class="st">"numba"</span>)</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> np.zeros(<span class="dv">1</span>)</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span>(<span class="bu">isinstance</span>(test_func_dynamic_runtime, types.FunctionType))</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>test_func_dynamic_runtime(a)</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a><span class="cf">assert</span>(np.<span class="bu">all</span>(a <span class="op">==</span> np.ones(<span class="dv">1</span>)))</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a><span class="co"># # Cuda function cannot be tested from outside the GPU</span></span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a><span class="co"># set_compilation_mode(compilation_mode="cuda")</span></span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a><span class="co"># a = np.zeros(1)</span></span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a><span class="co"># assert(isinstance(test_func_dynamic_runtime, types.FunctionType))</span></span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a><span class="co"># test_func_dynamic_runtime.forall(1,1)(a)</span></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a><span class="co"># assert(np.all(a == np.ones(1)))</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, we define the ‘performance_function’ decorator to take full advantage of both compilation and parallelization for maximal performance. Note that a ‘performance_function’ can not return values. Instead, it should store results in provided buffer arrays.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/performance.py#L215" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="performance_function" class="level3">
+<h3 class="anchored" data-anchor-id="performance_function">performance_function</h3>
+<blockquote class="blockquote">
+<pre><code> performance_function (_func:&lt;built-infunctioncallable&gt;=None,
+                       worker_count:int=None, compilation_mode:str=None,
+                       **decorator_kwargs)</code></pre>
+</blockquote>
+<p>A decorator to compile a given function and allow multithreading over an multiple indices.</p>
+<p>NOTE This should only be used on functions that are compilable. Functions that need to be decorated need to have an <code>index</code> argument as first argument. If an iterable is provided to the decorated function, the original (compiled) function will be applied to all elements of this iterable. The most efficient way to provide iterables are with ranges, but numpy arrays work as well. Functions can not return values, results should be stored in buffer arrays inside thge function instead.</p>
+<p>Args: worker_count (int): The number of workers to use for multithreading. If None, the global MAX_WORKER_COUNT is used at runtime. Default is None. compilation_mode (str): The compilation mode to use. Will be forwarded to the <code>compile_function</code> decorator. **decorator_kwargs: Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.</p>
+<p>Returns: callable: A decorated function that is compiled and parallelized.</p>
+<p>We test this function with a simple smoothing algorithm.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> smooth_func(index, in_array, out_array, window_size):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    min_index <span class="op">=</span> <span class="bu">max</span>(index <span class="op">-</span> window_size, <span class="dv">0</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    max_index <span class="op">=</span> <span class="bu">min</span>(index <span class="op">+</span> window_size <span class="op">+</span> <span class="dv">1</span>, <span class="bu">len</span>(in_array))</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    smooth_value <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(min_index, max_index):</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        smooth_value <span class="op">+=</span> in_array[i]</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    out_array[index] <span class="op">+=</span> smooth_value <span class="op">/</span> (max_index <span class="op">-</span> min_index)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>set_compilation_mode(compilation_mode<span class="op">=</span><span class="st">"numba-multithread"</span>)</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>set_worker_count(<span class="dv">0</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>array_size <span class="op">=</span> <span class="dv">10</span><span class="op">**</span><span class="dv">6</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>smooth_factor <span class="op">=</span> <span class="dv">10</span><span class="op">**</span><span class="dv">4</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="co"># python test</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>in_array <span class="op">=</span> np.arange(array_size)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>out_array <span class="op">=</span> np.zeros_like(in_array)</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>func <span class="op">=</span> performance_function(compilation_mode<span class="op">=</span><span class="st">"python"</span>)(smooth_func)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co"># numba test</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>in_array <span class="op">=</span> np.arange(array_size)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>out_array <span class="op">=</span> np.zeros_like(in_array)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>func <span class="op">=</span> performance_function(compilation_mode<span class="op">=</span><span class="st">"numba"</span>)(smooth_func)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="co"># numba-multithread test</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>in_array <span class="op">=</span> np.arange(array_size)</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>out_array <span class="op">=</span> np.zeros_like(in_array)</span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>func <span class="op">=</span> performance_function(compilation_mode<span class="op">=</span><span class="st">"numba-multithread"</span>)(smooth_func)</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="co"># cuda test</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> __GPU_AVAILABLE:</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    in_array <span class="op">=</span> cupy.arange(array_size)</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    out_array <span class="op">=</span> cupy.zeros_like(in_array)</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    func <span class="op">=</span> performance_function(compilation_mode<span class="op">=</span><span class="st">"cuda"</span>)(smooth_func)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>CPU times: total: 2.55 s
+Wall time: 2.54 s
+CPU times: total: 7.47 s
+Wall time: 7.49 s
+CPU times: total: 11 s
+Wall time: 887 ms</code></pre>
+</div>
+</div>
+<p>Finally, we also provide functionality to use multiprocessing instead of multithreading.</p>
+<p><strong>NOTE</strong>: There are some inherent limitation with the number of processes that Python can spawn. As such, no process Pool should use more than 50 processes.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/performance.py#L376" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="alphapool" class="level3">
+<h3 class="anchored" data-anchor-id="alphapool">AlphaPool</h3>
+<blockquote class="blockquote">
+<pre><code> AlphaPool (process_count:int)</code></pre>
+</blockquote>
+<p>Create a multiprocessing.Pool object.</p>
+<p>Args: process_count (int): The number of processes. If larger than available cores, it is trimmed to the available maximum.</p>
+<p>Returns: multiprocessing.Pool: A Pool object to parallelize functions with multiple processes.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

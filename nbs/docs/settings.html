@@ -1,0 +1,1195 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="A template for settings">
+
+<title>alphapept - Settings</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="alphapept - Settings">
+<meta property="og:description" content="A template for settings">
+<meta property="og:site-name" content="alphapept">
+<meta name="twitter:title" content="alphapept - Settings">
+<meta name="twitter:description" content="A template for settings">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">alphapept</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
+</i> 
+ </a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Settings</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">AlphaPept</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./settings.html" class="sidebar-item-text sidebar-link active">Settings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chem.html" class="sidebar-item-text sidebar-link">Chem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./io.html" class="sidebar-item-text sidebar-link">Input / Output</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fasta.html" class="sidebar-item-text sidebar-link">FASTA</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./feature_finding.html" class="sidebar-item-text sidebar-link">Feature Finding</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./search.html" class="sidebar-item-text sidebar-link">Search</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./score.html" class="sidebar-item-text sidebar-link">Score</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./recalibration.html" class="sidebar-item-text sidebar-link">Recalibration</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quantification.html" class="sidebar-item-text sidebar-link">Quantification</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./matching.html" class="sidebar-item-text sidebar-link">Matching</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link">Constants</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interface.html" class="sidebar-item-text sidebar-link">Interface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./performance.html" class="sidebar-item-text sidebar-link">Performance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./export.html" class="sidebar-item-text sidebar-link">Export</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./label.html" class="sidebar-item-text sidebar-link">Label</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./additional_code.html" class="sidebar-item-text sidebar-link">Additional code</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#settings" id="toc-settings" class="nav-link active" data-scroll-target="#settings">Settings</a>
+  <ul>
+  <li><a href="#saving-and-loading" id="toc-saving-and-loading" class="nav-link" data-scroll-target="#saving-and-loading">Saving and Loading</a></li>
+  <li><a href="#save_settings" id="toc-save_settings" class="nav-link" data-scroll-target="#save_settings">save_settings</a></li>
+  <li><a href="#load_settings_as_template" id="toc-load_settings_as_template" class="nav-link" data-scroll-target="#load_settings_as_template">load_settings_as_template</a></li>
+  <li><a href="#load_settings" id="toc-load_settings" class="nav-link" data-scroll-target="#load_settings">load_settings</a></li>
+  <li><a href="#print_settings" id="toc-print_settings" class="nav-link" data-scroll-target="#print_settings">print_settings</a></li>
+  </ul></li>
+  <li><a href="#settings-template" id="toc-settings-template" class="nav-link" data-scroll-target="#settings-template">Settings Template</a>
+  <ul>
+  <li><a href="#worfklow-settings" id="toc-worfklow-settings" class="nav-link" data-scroll-target="#worfklow-settings">Worfklow settings</a></li>
+  <li><a href="#experimental-settings" id="toc-experimental-settings" class="nav-link" data-scroll-target="#experimental-settings">Experimental Settings</a></li>
+  <li><a href="#raw-file-handling" id="toc-raw-file-handling" class="nav-link" data-scroll-target="#raw-file-handling">Raw file handling</a></li>
+  <li><a href="#fasta-settings" id="toc-fasta-settings" class="nav-link" data-scroll-target="#fasta-settings">FASTA settings</a></li>
+  <li><a href="#feature-finding" id="toc-feature-finding" class="nav-link" data-scroll-target="#feature-finding">Feature Finding</a></li>
+  <li><a href="#search" id="toc-search" class="nav-link" data-scroll-target="#search">Search</a></li>
+  <li><a href="#score" id="toc-score" class="nav-link" data-scroll-target="#score">Score</a></li>
+  <li><a href="#calibration" id="toc-calibration" class="nav-link" data-scroll-target="#calibration">Calibration</a></li>
+  <li><a href="#matching" id="toc-matching" class="nav-link" data-scroll-target="#matching">Matching</a></li>
+  <li><a href="#isobaric-labeling" id="toc-isobaric-labeling" class="nav-link" data-scroll-target="#isobaric-labeling">Isobaric Labeling</a></li>
+  <li><a href="#quantification" id="toc-quantification" class="nav-link" data-scroll-target="#quantification">Quantification</a></li>
+  <li><a href="#hash_file" id="toc-hash_file" class="nav-link" data-scroll-target="#hash_file">hash_file</a></li>
+  <li><a href="#create_default_settings" id="toc-create_default_settings" class="nav-link" data-scroll-target="#create_default_settings">create_default_settings</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Settings</h1>
+</div>
+
+<div>
+  <div class="description">
+    A template for settings
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>AlphaPept stores all settings in <code>*.yaml</code>-files. This notebook contains functions to load, save, and print settings. Additionally, a settings template is defined. Here we define parameters, default values, and a range and what kind of parameter this is (e.g., float value, list, etc.). The idea here is to have definitions to automatically create graphical user interfaces for the settings.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#hide</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nbdev.showdoc <span class="im">import</span> <span class="op">*</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="settings" class="level2">
+<h2 class="anchored" data-anchor-id="settings">Settings</h2>
+<section id="saving-and-loading" class="level3">
+<h3 class="anchored" data-anchor-id="saving-and-loading">Saving and Loading</h3>
+<p>The default scheme for saving settings are <code>*.yaml</code>-files. These files can be easily modified when opening with a text editor.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/settings.py#L54" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="save_settings" class="level3">
+<h3 class="anchored" data-anchor-id="save_settings">save_settings</h3>
+<blockquote class="blockquote">
+<pre><code> save_settings (settings:dict, path:str)</code></pre>
+</blockquote>
+<p>Save settings file to path.</p>
+<p>Args: settings (dict): A yaml dictionary. path (str): Path to the settings file.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/settings.py#L34" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="load_settings_as_template" class="level3">
+<h3 class="anchored" data-anchor-id="load_settings_as_template">load_settings_as_template</h3>
+<blockquote class="blockquote">
+<pre><code> load_settings_as_template (path:str)</code></pre>
+</blockquote>
+<p>Loads settings but removes fields that contain summary information.</p>
+<p>Args: path (str): Path to the settings file.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/settings.py#L23" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="load_settings" class="level3">
+<h3 class="anchored" data-anchor-id="load_settings">load_settings</h3>
+<blockquote class="blockquote">
+<pre><code> load_settings (path:str)</code></pre>
+</blockquote>
+<p>Load a yaml settings file.</p>
+<p>Args: path (str): Path to the settings file.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/settings.py#L14" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="print_settings" class="level3">
+<h3 class="anchored" data-anchor-id="print_settings">print_settings</h3>
+<blockquote class="blockquote">
+<pre><code> print_settings (settings:dict)</code></pre>
+</blockquote>
+<p>Print a yaml settings file</p>
+<p>Args: settings (dict): A yaml dictionary.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>settings <span class="op">=</span> {<span class="st">'field1'</span>: <span class="dv">0</span>,<span class="st">'summary'</span>:<span class="dv">123</span>}</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>dummy_path <span class="op">=</span> <span class="st">'to_delete.yaml'</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'--- print_settings ---'</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>print_settings(settings)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>save_settings(settings, dummy_path)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'--- load_settings ---'</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>print_settings(load_settings(dummy_path))</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'--- load_settings_as_template ---'</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>print_settings(load_settings_as_template(dummy_path))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>--- print_settings ---
+field1: 0
+summary: 123
+
+--- load_settings ---
+field1: 0
+summary: 123
+
+--- load_settings_as_template ---
+field1: 0
+</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="settings-template" class="level2">
+<h2 class="anchored" data-anchor-id="settings-template">Settings Template</h2>
+<p>The settings template defines individual settings. The idea is to provide a template so that a graphical user interface can be automatically generated. The list below represents what each item would be when using <code>streamlit</code>. This could be adapted for any kind of GUI library.</p>
+<p>Each entry has a type, default values, and a description.</p>
+<ul>
+<li>spinbox -&gt; <code>st.range</code>, range with minimum and maximum values (int)</li>
+<li>doublespinbox -&gt; <code>st.range</code>, range with minimum and maximum values (float)</li>
+<li>path -&gt; <code>st.button</code>, clickable button to select a path to save / load files.</li>
+<li>combobox -&gt; <code>st.selectbox</code>, dropdown menu with values to choose from</li>
+<li>checkbox -&gt; <code>st.checkbox</code>, checkbox that can be selected</li>
+<li>checkgroup -&gt; <code>st.multiselect</code>, creates a list of options that can be selected</li>
+<li>string -&gt; <code>st.text_input</code>, generic string input</li>
+<li>list -&gt; Creates a list that is displayed</li>
+<li>placeholder -&gt; This just prints the parameter and cannot be changed</li>
+</ul>
+<section id="worfklow-settings" class="level3">
+<h3 class="anchored" data-anchor-id="worfklow-settings">Worfklow settings</h3>
+<p>Workflow settings regarding the workflow - which algorithmic steps should be performed.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(yaml.dump(SETTINGS_TEMPLATE[<span class="st">'workflow'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>align:
+  default: false
+  description: Flag to align the data.
+  type: checkbox
+continue_runs:
+  default: false
+  description: Flag to continue previously computated runs. If False existing ms_data
+    will be deleted.
+  type: checkbox
+create_database:
+  default: true
+  description: Flag to create a database.
+  type: checkbox
+find_features:
+  default: true
+  description: Flag to perform feature finding.
+  type: checkbox
+import_raw_data:
+  default: true
+  description: Flag to import the raw data.
+  type: checkbox
+lfq_quantification:
+  default: true
+  description: Flag to perfrom lfq normalization.
+  type: checkbox
+match:
+  default: false
+  description: Flag to perform match-between runs.
+  type: checkbox
+recalibrate_data:
+  default: true
+  description: Flag to perform recalibration.
+  type: checkbox
+search_data:
+  default: true
+  description: Flag to perform search.
+  type: checkbox
+</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(yaml.dump(SETTINGS_TEMPLATE[<span class="st">'general'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>n_processes:
+  default: 60
+  description: Maximum number of processes for multiprocessing. If larger than number
+    of processors it will be capped.
+  max: 60
+  min: 1
+  type: spinbox
+</code></pre>
+</div>
+</div>
+</section>
+<section id="experimental-settings" class="level3">
+<h3 class="anchored" data-anchor-id="experimental-settings">Experimental Settings</h3>
+<p>Core defintions of the experiment, regarding the filepaths..</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(yaml.dump(SETTINGS_TEMPLATE[<span class="st">'experiment'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>database_path:
+  default: null
+  description: Path to library file (.hdf).
+  filetype:
+  - hdf
+  folder: false
+  type: path
+fasta_paths:
+  default: []
+  description: List of paths for FASTA files.
+  type: list
+file_paths:
+  default: []
+  description: Filepaths of the experiments.
+  type: list
+fraction:
+  default: []
+  description: List of fraction numbers for fractionated samples.
+  type: list
+matching_group:
+  default: []
+  description: List of macthing groups for the raw files. This only allows match-between-runs
+    of files within the same groups.
+  type: list
+results_path:
+  default: null
+  description: Path where the results should be stored.
+  filetype:
+  - hdf
+  folder: false
+  type: path
+sample_group:
+  default: []
+  description: Sample group, for raw files that should be quanted together.
+  type: list
+shortnames:
+  default: []
+  description: List of shortnames for the raw files.
+  type: list
+</code></pre>
+</div>
+</div>
+</section>
+<section id="raw-file-handling" class="level3">
+<h3 class="anchored" data-anchor-id="raw-file-handling">Raw file handling</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(yaml.dump(SETTINGS_TEMPLATE[<span class="st">'raw'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>n_most_abundant:
+  default: 400
+  description: Number of most abundant peaks to be isolated from raw spectra.
+  max: 1000
+  min: -1
+  type: spinbox
+use_profile_ms1:
+  default: false
+  description: Use profile data for MS1 and perform own centroiding.
+  type: checkbox
+</code></pre>
+</div>
+</div>
+</section>
+<section id="fasta-settings" class="level3">
+<h3 class="anchored" data-anchor-id="fasta-settings">FASTA settings</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(yaml.dump(SETTINGS_TEMPLATE[<span class="st">'fasta'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>AL_swap:
+  default: false
+  description: Swap A and L for decoy generation.
+  type: checkbox
+KR_swap:
+  default: false
+  description: Swap K and R (only if terminal) for decoy generation.
+  type: checkbox
+fasta_block:
+  default: 1000
+  description: Number of fasta entries to be processed in one block.
+  max: 10000
+  min: 100
+  type: spinbox
+fasta_size_max:
+  default: 100
+  description: Maximum size of FASTA (MB) when switching on-the-fly.
+  max: 1000000
+  min: 1
+  type: spinbox
+isoforms_max:
+  default: 1024
+  description: Maximum number of isoforms per peptide.
+  max: 4096
+  min: 1
+  type: spinbox
+mods_fixed:
+  default:
+  - cC
+  description: Fixed modifications.
+  type: checkgroup
+  value:
+    aK: acetylation of lysine
+    cC: carbamidomethylation of C
+    deamN: deamidation of N
+    deamQ: deamidation of Q
+    eK: EASItag 6-plex on K
+    itraq4K: iTRAQ 4-plex on K
+    itraq4Y: iTRAQ 4-plex on Y
+    itraq8K: iTRAQ 8-plex on K
+    itraq8Y: iTRAQ 8-plex on Y
+    oxM: oxidation of M
+    pS: phosphorylation of S
+    pT: phosphorylation of T
+    pY: phosphorylation of Y
+    tmt0K: TMT zero on K
+    tmt0Y: TMT zero on Y
+    tmt2K: TMT duplex on K
+    tmt2Y: TMT duplex on Y
+    tmt6K: TMT sixplex/tenplex on K
+    tmt6Y: TMT sixplex/tenplex on Y
+mods_fixed_terminal:
+  default: []
+  description: Fixed terminal modifications.
+  type: checkgroup
+  value:
+    arg10&gt;R: Arg 10 on peptide C-terminus
+    arg6&gt;R: Arg 6 on peptide C-terminus
+    cm&lt;C: pyro-cmC
+    e&lt;^: EASItag 6-plex on peptide N-terminus
+    itraq4K&lt;^: iTRAQ 4-plex on peptide N-terminus
+    itraq8K&lt;^: iTRAQ 8-plex on peptide N-terminus
+    lys8&gt;K: Lys 8 on peptide C-terminus
+    pg&lt;E: pyro-E
+    pg&lt;Q: pyro-Q
+    tmt0&lt;^: TMT zero on peptide N-terminus
+    tmt2&lt;^: TMT duplex on peptide N-terminus
+    tmt6&lt;^: TMT sixplex/tenplex on peptide N-terminus
+mods_fixed_terminal_prot:
+  default: []
+  description: Fixed terminal modifications on proteins.
+  type: checkgroup
+  value:
+    a&lt;^: acetylation of protein N-terminus
+    am&gt;^: amidation of protein C-terminus
+mods_variable:
+  default:
+  - oxM
+  description: Variable modifications.
+  type: checkgroup
+  value:
+    aK: acetylation of lysine
+    cC: carbamidomethylation of C
+    deamN: deamidation of N
+    deamQ: deamidation of Q
+    eK: EASItag 6-plex on K
+    itraq4K: iTRAQ 4-plex on K
+    itraq4Y: iTRAQ 4-plex on Y
+    itraq8K: iTRAQ 8-plex on K
+    itraq8Y: iTRAQ 8-plex on Y
+    oxM: oxidation of M
+    pS: phosphorylation of S
+    pT: phosphorylation of T
+    pY: phosphorylation of Y
+    tmt0K: TMT zero on K
+    tmt0Y: TMT zero on Y
+    tmt2K: TMT duplex on K
+    tmt2Y: TMT duplex on Y
+    tmt6K: TMT sixplex/tenplex on K
+    tmt6Y: TMT sixplex/tenplex on Y
+mods_variable_terminal:
+  default: []
+  description: Varibale terminal modifications.
+  type: checkgroup
+  value:
+    arg10&gt;R: Arg 10 on peptide C-terminus
+    arg6&gt;R: Arg 6 on peptide C-terminus
+    cm&lt;C: pyro-cmC
+    e&lt;^: EASItag 6-plex on peptide N-terminus
+    itraq4K&lt;^: iTRAQ 4-plex on peptide N-terminus
+    itraq8K&lt;^: iTRAQ 8-plex on peptide N-terminus
+    lys8&gt;K: Lys 8 on peptide C-terminus
+    pg&lt;E: pyro-E
+    pg&lt;Q: pyro-Q
+    tmt0&lt;^: TMT zero on peptide N-terminus
+    tmt2&lt;^: TMT duplex on peptide N-terminus
+    tmt6&lt;^: TMT sixplex/tenplex on peptide N-terminus
+mods_variable_terminal_prot:
+  default:
+  - a&lt;^
+  description: Varibale terminal modifications on proteins.
+  type: checkgroup
+  value:
+    a&lt;^: acetylation of protein N-terminus
+    am&gt;^: amidation of protein C-terminus
+n_missed_cleavages:
+  default: 2
+  description: Number of missed cleavages.
+  max: 99
+  min: 0
+  type: spinbox
+n_modifications_max:
+  default: 3
+  description: Limit the number of modifications per peptide.
+  max: 10
+  min: 1
+  type: spinbox
+pep_length_max:
+  default: 27
+  description: Maximum peptide length.
+  max: 99
+  min: 7
+  type: spinbox
+pep_length_min:
+  default: 7
+  description: Minimum peptide length.
+  max: 99
+  min: 7
+  type: spinbox
+protease:
+  default: trypsin
+  description: Protease for digestions.
+  type: combobox
+  value:
+  - arg-c
+  - asp-n
+  - bnps-skatole
+  - caspase 1
+  - caspase 2
+  - caspase 3
+  - caspase 4
+  - caspase 5
+  - caspase 6
+  - caspase 7
+  - caspase 8
+  - caspase 9
+  - caspase 10
+  - chymotrypsin high specificity
+  - chymotrypsin low specificity
+  - clostripain
+  - cnbr
+  - enterokinase
+  - factor xa
+  - formic acid
+  - glutamyl endopeptidase
+  - granzyme b
+  - hydroxylamine
+  - iodosobenzoic acid
+  - lys_c
+  - lys_c/p
+  - lys_n
+  - ntcb
+  - pepsin ph1.3
+  - pepsin ph2.0
+  - proline endopeptidase
+  - proteinase k
+  - staphylococcal peptidase i
+  - thermolysin
+  - thrombin
+  - trypsin_full
+  - trypsin_exception
+  - non-specific
+  - trypsin
+pseudo_reverse:
+  default: true
+  description: Use pseudo-reverse strategy instead of reverse.
+  type: checkbox
+save_db:
+  default: true
+  description: Save DB or create on the fly.
+  type: checkbox
+spectra_block:
+  default: 100000
+  description: Maximum number of sequences to be collected before theoretical spectra
+    are generated.
+  max: 1000000
+  min: 1000
+  type: spinbox
+</code></pre>
+</div>
+</div>
+</section>
+<section id="feature-finding" class="level3">
+<h3 class="anchored" data-anchor-id="feature-finding">Feature Finding</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(yaml.dump(SETTINGS_TEMPLATE[<span class="st">'features'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>centroid_tol:
+  default: 8
+  max: 25
+  min: 1
+  type: spinbox
+hill_check_large:
+  default: 40
+  max: 100
+  min: 1
+  type: spinbox
+hill_length_min:
+  default: 3
+  max: 10
+  min: 1
+  type: spinbox
+hill_nboot:
+  default: 150
+  max: 500
+  min: 1
+  type: spinbox
+hill_nboot_max:
+  default: 300
+  max: 500
+  min: 1
+  type: spinbox
+hill_smoothing:
+  default: 1
+  max: 10
+  min: 1
+  type: spinbox
+hill_split_level:
+  default: 1.3
+  max: 10.0
+  min: 0.1
+  type: doublespinbox
+iso_charge_max:
+  default: 6
+  max: 6
+  min: 1
+  type: spinbox
+iso_charge_min:
+  default: 1
+  max: 6
+  min: 1
+  type: spinbox
+iso_corr_min:
+  default: 0.6
+  max: 1
+  min: 0.1
+  type: doublespinbox
+iso_mass_range:
+  default: 5
+  max: 10
+  min: 1
+  type: spinbox
+iso_n_seeds:
+  default: 100
+  max: 500
+  min: 1
+  type: spinbox
+iso_split_level:
+  default: 1.3
+  max: 10.0
+  min: 0.1
+  type: doublespinbox
+map_mob_range:
+  default: 0.3
+  max: 1
+  min: 0.1
+  type: doublespinbox
+map_mz_range:
+  default: 1.5
+  max: 2
+  min: 0.1
+  type: doublespinbox
+map_n_neighbors:
+  default: 5
+  max: 10
+  min: 1
+  type: spinbox
+map_rt_range:
+  default: 0.5
+  max: 1
+  min: 0.1
+  type: doublespinbox
+max_gap:
+  default: 2
+  max: 10
+  min: 1
+  type: spinbox
+search_unidentified:
+  default: false
+  description: Search MSMS w/o feature.
+  type: checkbox
+</code></pre>
+</div>
+</div>
+</section>
+<section id="search" class="level3">
+<h3 class="anchored" data-anchor-id="search">Search</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(yaml.dump(SETTINGS_TEMPLATE[<span class="st">'search'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>calibrate:
+  default: true
+  description: Recalibrate masses.
+  type: checkbox
+calibration_std_frag:
+  default: 5
+  description: Std range for fragment tolerance after calibration.
+  max: 10
+  min: 1
+  type: spinbox
+calibration_std_prec:
+  default: 5
+  description: Std range for precursor tolerance after calibration.
+  max: 10
+  min: 1
+  type: spinbox
+frag_tol:
+  default: 50
+  description: Maximum fragment mass tolerance.
+  max: 500
+  min: 1
+  type: spinbox
+min_frag_hits:
+  default: 7
+  description: Minimum number of fragment hits.
+  max: 99
+  min: 1
+  type: spinbox
+parallel:
+  default: true
+  description: Use parallel processing.
+  type: checkbox
+peptide_fdr:
+  default: 0.01
+  description: FDR level for peptides.
+  max: 1.0
+  min: 0.0
+  type: doublespinbox
+ppm:
+  default: true
+  description: Use ppm instead of Dalton.
+  type: checkbox
+prec_tol:
+  default: 20
+  description: Maximum allowed precursor mass offset.
+  max: 500
+  min: 1
+  type: spinbox
+protein_fdr:
+  default: 0.01
+  description: FDR level for proteins.
+  max: 1.0
+  min: 0.0
+  type: doublespinbox
+recalibration_min:
+  default: 100
+  description: Minimum number of datapoints to perform calibration.
+  max: 10000
+  min: 100
+  type: spinbox
+</code></pre>
+</div>
+</div>
+</section>
+<section id="score" class="level3">
+<h3 class="anchored" data-anchor-id="score">Score</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(yaml.dump(SETTINGS_TEMPLATE[<span class="st">'score'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>method:
+  default: random_forest
+  description: Scoring method.
+  type: combobox
+  value:
+  - x_tandem
+  - random_forest
+</code></pre>
+</div>
+</div>
+</section>
+<section id="calibration" class="level3">
+<h3 class="anchored" data-anchor-id="calibration">Calibration</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(yaml.dump(SETTINGS_TEMPLATE[<span class="st">'calibration'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>calib_mob_range:
+  default: 0.3
+  description: Scaling factor for mobility axis.
+  max: 1.0
+  min: 0.0
+  type: doublespinbox
+calib_mz_range:
+  default: 2000
+  description: Scaling factor for mz axis in ppm.
+  max: 10000
+  min: 1
+  type: spinbox
+calib_n_neighbors:
+  default: 100
+  description: Number of neighbors that are used for offset interpolation.
+  max: 1000
+  min: 1
+  type: spinbox
+calib_rt_range:
+  default: 0.5
+  description: Scaling factor for rt axis.
+  max: 10
+  min: 0.0
+  type: doublespinbox
+outlier_std:
+  default: 3
+  description: Number of std. deviations to filter outliers in psms.
+  max: 5
+  min: 1
+  type: spinbox
+</code></pre>
+</div>
+</div>
+</section>
+<section id="matching" class="level3">
+<h3 class="anchored" data-anchor-id="matching">Matching</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(yaml.dump(SETTINGS_TEMPLATE[<span class="st">'matching'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>match_d_min:
+  default: 3
+  description: Minimum distance cutoff for matching.
+  max: 10.0
+  min: 0.001
+  type: doublespinbox
+match_group_tol:
+  default: 0
+  description: When having matching groups, match neighboring groups.
+  max: 100
+  min: 0
+  type: spinbox
+match_p_min:
+  default: 0.05
+  description: Minimum probability cutoff for matching.
+  max: 1.0
+  min: 0.001
+  type: doublespinbox
+</code></pre>
+</div>
+</div>
+</section>
+<section id="isobaric-labeling" class="level3">
+<h3 class="anchored" data-anchor-id="isobaric-labeling">Isobaric Labeling</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>isobaric_label <span class="op">=</span> {}</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>isobaric_label[<span class="st">"label"</span>] <span class="op">=</span> {<span class="st">'type'</span>:<span class="st">'combobox'</span>, <span class="st">'value'</span>:[<span class="st">'None'</span>,<span class="st">'TMT10plex'</span>], <span class="st">'default'</span>:<span class="st">'None'</span>, <span class="st">'description'</span>:<span class="st">"Type of isobaric label present."</span>}</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>isobaric_label[<span class="st">"reporter_frag_tolerance"</span>] <span class="op">=</span> {<span class="st">'type'</span>:<span class="st">'spinbox'</span>, <span class="st">'min'</span>:<span class="dv">1</span>, <span class="st">'max'</span>:<span class="dv">500</span>, <span class="st">'default'</span>:<span class="dv">15</span>, <span class="st">'description'</span>:<span class="st">"Maximum fragment mass tolerance for a reporter."</span>}</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>isobaric_label[<span class="st">"reporter_frag_tolerance_ppm"</span>] <span class="op">=</span> {<span class="st">'type'</span>:<span class="st">'checkbox'</span>, <span class="st">'default'</span>:<span class="va">True</span>, <span class="st">'description'</span>:<span class="st">"Use ppm instead of Dalton."</span>}</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>SETTINGS_TEMPLATE[<span class="st">"isobaric_label"</span>] <span class="op">=</span> isobaric_label</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="quantification" class="level3">
+<h3 class="anchored" data-anchor-id="quantification">Quantification</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(yaml.dump(SETTINGS_TEMPLATE[<span class="st">'quantification'</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>lfq_ratio_min:
+  default: 1
+  description: Minimum number of ratios for LFQ.
+  max: 10
+  min: 1
+  type: spinbox
+max_lfq:
+  default: true
+  description: Perform max lfq type quantification.
+  type: checkbox
+mode:
+  default: ms1_int_sum_apex
+  description: Column to perform quantification on.
+  type: combobox
+  value:
+  - ms1_int_sum_apex
+</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/settings.py#L279" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="hash_file" class="level3">
+<h3 class="anchored" data-anchor-id="hash_file">hash_file</h3>
+<blockquote class="blockquote">
+<pre><code> hash_file (path)</code></pre>
+</blockquote>
+<p>Helper function to hash a file Taken from https://stackoverflow.com/questions/22058048/hashing-a-file-in-python</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/settings.py#L302" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="create_default_settings" class="level3">
+<h3 class="anchored" data-anchor-id="create_default_settings">create_default_settings</h3>
+<blockquote class="blockquote">
+<pre><code> create_default_settings ()</code></pre>
+</blockquote>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
