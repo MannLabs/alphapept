@@ -144,19 +144,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -284,22 +272,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#comparing-spectra" id="toc-comparing-spectra" class="nav-link active" data-scroll-target="#comparing-spectra">Comparing spectra</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#compare_frags" id="toc-compare_frags" class="nav-link" data-scroll-target="#compare_frags">compare_frags</a></li>
   </ul></li>
   <li><a href="#comparing-spectra-1" id="toc-comparing-spectra-1" class="nav-link" data-scroll-target="#comparing-spectra-1">Comparing Spectra</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#ppm_to_dalton" id="toc-ppm_to_dalton" class="nav-link" data-scroll-target="#ppm_to_dalton">ppm_to_dalton</a></li>
   <li><a href="#get_idxs" id="toc-get_idxs" class="nav-link" data-scroll-target="#get_idxs">get_idxs</a></li>
   <li><a href="#compare_spectrum_parallel" id="toc-compare_spectrum_parallel" class="nav-link" data-scroll-target="#compare_spectrum_parallel">compare_spectrum_parallel</a></li>
   </ul></li>
   <li><a href="#wrapper" id="toc-wrapper" class="nav-link" data-scroll-target="#wrapper">Wrapper</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#query_data_to_features" id="toc-query_data_to_features" class="nav-link" data-scroll-target="#query_data_to_features">query_data_to_features</a></li>
   <li><a href="#get_psms" id="toc-get_psms" class="nav-link" data-scroll-target="#get_psms">get_psms</a></li>
   </ul></li>
   <li><a href="#extracting-columns-for-scoring" id="toc-extracting-columns-for-scoring" class="nav-link" data-scroll-target="#extracting-columns-for-scoring">Extracting columns for scoring</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#frag-delta" id="toc-frag-delta" class="nav-link" data-scroll-target="#frag-delta">Frag Delta</a></li>
   <li><a href="#frag_delta" id="toc-frag_delta" class="nav-link" data-scroll-target="#frag_delta">frag_delta</a></li>
   <li><a href="#intensity-fraction" id="toc-intensity-fraction" class="nav-link" data-scroll-target="#intensity-fraction">Intensity Fraction</a></li>
@@ -309,7 +297,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#add_column" id="toc-add_column" class="nav-link" data-scroll-target="#add_column">add_column</a></li>
   </ul></li>
   <li><a href="#extracting-features-for-scoring" id="toc-extracting-features-for-scoring" class="nav-link" data-scroll-target="#extracting-features-for-scoring">Extracting features for scoring</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#indices" id="toc-indices" class="nav-link" data-scroll-target="#indices">Indices</a></li>
   <li><a href="#features" id="toc-features" class="nav-link" data-scroll-target="#features">Features</a></li>
   <li><a href="#get_hits" id="toc-get_hits" class="nav-link" data-scroll-target="#get_hits">get_hits</a></li>
@@ -318,23 +306,23 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#get_score_columns" id="toc-get_score_columns" class="nav-link" data-scroll-target="#get_score_columns">get_score_columns</a></li>
   </ul></li>
   <li><a href="#plot" id="toc-plot" class="nav-link" data-scroll-target="#plot">Plot</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#plot_psms" id="toc-plot_psms" class="nav-link" data-scroll-target="#plot_psms">plot_psms</a></li>
   </ul></li>
   <li><a href="#searching-with-database" id="toc-searching-with-database" class="nav-link" data-scroll-target="#searching-with-database">Searching with database</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#search_db" id="toc-search_db" class="nav-link" data-scroll-target="#search_db">search_db</a></li>
   <li><a href="#store_hdf" id="toc-store_hdf" class="nav-link" data-scroll-target="#store_hdf">store_hdf</a></li>
   </ul></li>
   <li><a href="#searching-large-fasta-and-or-search-space" id="toc-searching-large-fasta-and-or-search-space" class="nav-link" data-scroll-target="#searching-large-fasta-and-or-search-space">Searching Large Fasta and or Search Space</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#search_fasta_block" id="toc-search_fasta_block" class="nav-link" data-scroll-target="#search_fasta_block">search_fasta_block</a></li>
   <li><a href="#filter_top_n" id="toc-filter_top_n" class="nav-link" data-scroll-target="#filter_top_n">filter_top_n</a></li>
   <li><a href="#search_parallel" id="toc-search_parallel" class="nav-link" data-scroll-target="#search_parallel">search_parallel</a></li>
   <li><a href="#ion_extractor" id="toc-ion_extractor" class="nav-link" data-scroll-target="#ion_extractor">ion_extractor</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -366,7 +354,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="comparing-spectra">Comparing spectra</h2>
 <p>To efficiently compare two spectra, we use a pointer based approach. We start with two sorted arrays, the <code>query_frag</code> that contains the m/z positions of the experimental query spectrum and the <code>db_frag</code> which contains the database fragment that is compared against to. The two pointers compare each m/z position with each other and check wheter they are within a certain tolerance <code>frag_tol</code>. Depending on their delta, either of the pointers is advanced. The function returns an arrray named <code>hits</code> that is the same length as the database spectrum and encodes the hit positions.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L15" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L15" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="compare_frags" class="level3">
 <h3 class="anchored" data-anchor-id="compare_frags">compare_frags</h3>
 <blockquote class="blockquote">
@@ -442,11 +430,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="comparing-spectra-1" class="level2">
 <h2 class="anchored" data-anchor-id="comparing-spectra-1">Comparing Spectra</h2>
-<p>To compare multiple spectra against a database, we first need some helper functions. First, we need a conversion function to convert from Dalton masses to ppm, which is implemented in the <a href="https://mannlabs.github.io/search.html#ppm_to_dalton"><code>ppm_to_dalton</code></a> function.</p>
-<p>To minimize the search space, we typically only compare spectra with precursors in the same mass range as defined by <code>prec_tol</code>. To look up the limits for search, we define the function <a href="https://mannlabs.github.io/search.html#get_idxs"><code>get_idxs</code></a>, which is a wrapper to the fast <code>searchsorted</code> method from <code>NumPy</code>.</p>
-<p>The actual search takes place in <a href="https://mannlabs.github.io/search.html#compare_spectrum_parallel"><code>compare_spectrum_parallel</code></a>, which utilizes the performance decorator from the performance notebook. Here we save the top matching spectra for each query spectrum. Note that for code compilation reasons, the code of the previously defined function <a href="https://mannlabs.github.io/search.html#compare_frags"><code>compare_frags</code></a> is duplicated in here.</p>
+<p>To compare multiple spectra against a database, we first need some helper functions. First, we need a conversion function to convert from Dalton masses to ppm, which is implemented in the <a href="https://mannlabs.github.io/alphapept/search.html#ppm_to_dalton"><code>ppm_to_dalton</code></a> function.</p>
+<p>To minimize the search space, we typically only compare spectra with precursors in the same mass range as defined by <code>prec_tol</code>. To look up the limits for search, we define the function <a href="https://mannlabs.github.io/alphapept/search.html#get_idxs"><code>get_idxs</code></a>, which is a wrapper to the fast <code>searchsorted</code> method from <code>NumPy</code>.</p>
+<p>The actual search takes place in <a href="https://mannlabs.github.io/alphapept/search.html#compare_spectrum_parallel"><code>compare_spectrum_parallel</code></a>, which utilizes the performance decorator from the performance notebook. Here we save the top matching spectra for each query spectrum. Note that for code compilation reasons, the code of the previously defined function <a href="https://mannlabs.github.io/alphapept/search.html#compare_frags"><code>compare_frags</code></a> is duplicated in here.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L55" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L55" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="ppm_to_dalton" class="level3">
 <h3 class="anchored" data-anchor-id="ppm_to_dalton">ppm_to_dalton</h3>
 <blockquote class="blockquote">
@@ -456,7 +444,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: mass (float): Base mass. prec_tol (int): Tolerance.</p>
 <p>Returns: float: Tolerance in Dalton.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L68" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L68" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_idxs" class="level3">
 <h3 class="anchored" data-anchor-id="get_idxs">get_idxs</h3>
@@ -468,7 +456,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: db_masses (np.ndarray): Array containing database masses. query_masses (np.ndarray): Array containing query masses. prec_tol (float): Precursor tolerance for search. ppm: Flag to use ppm instead of Dalton.</p>
 <p>Returns: (np.ndarray, np.ndarray): Indices to lower and upper bounds.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L95" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L95" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="compare_spectrum_parallel" class="level3">
 <h3 class="anchored" data-anchor-id="compare_spectrum_parallel">compare_spectrum_parallel</h3>
@@ -490,9 +478,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="wrapper" class="level2">
 <h2 class="anchored" data-anchor-id="wrapper">Wrapper</h2>
-<p>To conveniently perform peptide-spectrum matches on multiple datasets we define a wrapper <a href="https://mannlabs.github.io/search.html#get_psms"><code>get_psms</code></a> that returns the PSMS when handing over <code>query_data</code> and <code>db_data</code>.</p>
+<p>To conveniently perform peptide-spectrum matches on multiple datasets we define a wrapper <a href="https://mannlabs.github.io/alphapept/search.html#get_psms"><code>get_psms</code></a> that returns the PSMS when handing over <code>query_data</code> and <code>db_data</code>.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L191" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L191" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="query_data_to_features" class="level3">
 <h3 class="anchored" data-anchor-id="query_data_to_features">query_data_to_features</h3>
 <blockquote class="blockquote">
@@ -502,7 +490,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: query_data (dict): Data structure containing the query data.</p>
 <p>Returns: pd.DataFrame: Pandas dataframe so that it can be used for subsequent processing.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L218" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L218" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_psms" class="level3">
 <h3 class="anchored" data-anchor-id="get_psms">get_psms</h3>
@@ -523,9 +511,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The basic fragment comparison only counts the number of hits and matched intensity fraction when comparing a theoretical spectrum to an experimental one. Based on this metric, we can drastically reduce the number of candidates one wants to analyze for an in-depth comparison, which requires additional features. The following section describes several functions which extract parameters to compare spectrum matches better.</p>
 <section id="frag-delta" class="level3">
 <h3 class="anchored" data-anchor-id="frag-delta">Frag Delta</h3>
-<p><a href="https://mannlabs.github.io/search.html#frag_delta"><code>frag_delta</code></a> substracts the experimental fragment masses from the theoretical fragment masses for each hit.</p>
+<p><a href="https://mannlabs.github.io/alphapept/search.html#frag_delta"><code>frag_delta</code></a> substracts the experimental fragment masses from the theoretical fragment masses for each hit.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L358" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L358" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="frag_delta" class="level3">
 <h3 class="anchored" data-anchor-id="frag_delta">frag_delta</h3>
@@ -539,9 +527,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="intensity-fraction" class="level3">
 <h3 class="anchored" data-anchor-id="intensity-fraction">Intensity Fraction</h3>
-<p><a href="https://mannlabs.github.io/search.html#intensity_fraction"><code>intensity_fraction</code></a> calculates the fraction of matched intensity. This refers to the intensity of all hits compared to the intensity of all peaks in the query spectrum.</p>
+<p><a href="https://mannlabs.github.io/alphapept/search.html#intensity_fraction"><code>intensity_fraction</code></a> calculates the fraction of matched intensity. This refers to the intensity of all hits compared to the intensity of all peaks in the query spectrum.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L379" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L379" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="intensity_fraction" class="level3">
 <h3 class="anchored" data-anchor-id="intensity_fraction">intensity_fraction</h3>
@@ -554,9 +542,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="file-format" class="level3">
 <h3 class="anchored" data-anchor-id="file-format">File Format</h3>
-<p>To have an efficient data format to store PSMs in the search. We use <code>numpy</code>-recarrays and define the utility functions <a href="https://mannlabs.github.io/search.html#add_column"><code>add_column</code></a> and <a href="https://mannlabs.github.io/search.html#remove_column"><code>remove_column</code></a> to append and remove data.</p>
+<p>To have an efficient data format to store PSMs in the search. We use <code>numpy</code>-recarrays and define the utility functions <a href="https://mannlabs.github.io/alphapept/search.html#add_column"><code>add_column</code></a> and <a href="https://mannlabs.github.io/alphapept/search.html#remove_column"><code>remove_column</code></a> to append and remove data.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L422" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L422" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="remove_column" class="level3">
 <h3 class="anchored" data-anchor-id="remove_column">remove_column</h3>
@@ -567,7 +555,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: recarray (np.ndarray): NumPy record array. name (str): Column name of the column to be removed.</p>
 <p>Returns: np.ndarray: NumPy record array with removed column.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L403" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L403" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="add_column" class="level3">
 <h3 class="anchored" data-anchor-id="add_column">add_column</h3>
@@ -595,9 +583,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="features" class="level3">
 <h3 class="anchored" data-anchor-id="features">Features</h3>
-<p>In the <a href="https://mannlabs.github.io/search.html#score"><code>score</code></a>-function we use the pre-filtered PSMs to extract additional columns for scoring such as the offset from theoretical to experimental precursor or the number of b- and y-ion hits.</p>
+<p>In the <a href="https://mannlabs.github.io/alphapept/search.html#score"><code>score</code></a>-function we use the pre-filtered PSMs to extract additional columns for scoring such as the offset from theoretical to experimental precursor or the number of b- and y-ion hits.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L443" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L443" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_hits" class="level3">
 <h3 class="anchored" data-anchor-id="get_hits">get_hits</h3>
@@ -611,7 +599,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: query_frag (np.ndarray): Array with query fragments. query_int (np.ndarray): Array with query intensities. db_frag (np.ndarray): Array with database fragments. db_int (np.ndarray): Array with database intensities. frag_type (np.ndarray): Array with fragment types. mtol (float): Mass tolerance. ppm (bool): Flag to use ppm instead of Dalton. losses (list): List of losses.</p>
 <p>Returns: np.ndarray: NumPy array that stores ion information.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L503" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L503" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="score" class="level3">
 <h3 class="anchored" data-anchor-id="score">score</h3>
@@ -628,7 +616,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: psms (np.recarray): Recordarray containing PSMs. query_masses (np.ndarray): Array with query masses. query_masses_raw (np.ndarray): Array with raw query masses. query_frags (np.ndarray): Array with frag types of the query data. query_ints (np.ndarray): Array with fragment intensities from the query. query_indices (np.ndarray): Array with indices to the query data. db_masses (np.ndarray): Array with database masses. db_frags (np.ndarray): Array with fragment masses. frag_types (np.ndarray): Array with fragment types. mtol (float): Mass tolerance. db_indices (np.ndarray): Array with indices to the database array. ppm (bool): Flag to use ppm instead of Dalton. psms_dtype (list): List describing the dtype of the PSMs record array. db_ints (np.ndarray, optional): Array with database intensities. Defaults to None. parallel (bool, optional): Flag to use parallel processing. Defaults to False.</p>
 <p>Returns: np.recarray: Recordarray containing PSMs with additional columns. np.ndarray: NumPy array containing ion information.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L613" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L613" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_sequences" class="level3">
 <h3 class="anchored" data-anchor-id="get_sequences">get_sequences</h3>
@@ -639,7 +627,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: psms (np.recarray): Recordarray containing PSMs. db_seqs (np.ndarray): NumPy array containing sequences.</p>
 <p>Returns: np.ndarray: NumPy array containing a subset of sequences.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L631" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L631" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_score_columns" class="level3">
 <h3 class="anchored" data-anchor-id="get_score_columns">get_score_columns</h3>
@@ -659,7 +647,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="plot" class="level2">
 <h2 class="anchored" data-anchor-id="plot">Plot</h2>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L812" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L812" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="plot_psms" class="level3">
 <h3 class="anchored" data-anchor-id="plot_psms">plot_psms</h3>
 <blockquote class="blockquote">
@@ -679,7 +667,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="searching-with-database">Searching with database</h2>
 <p>We save intermediate results to hdf5 files</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L903" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L903" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="search_db" class="level3">
 <h3 class="anchored" data-anchor-id="search_db">search_db</h3>
 <blockquote class="blockquote">
@@ -690,7 +678,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: to_process (tuple): Tuple containing an index to the file and the experiment settings. callback (Callable, optional): Callback function to indicate progress. Defaults to None. parallel (bool, optional): Flag to use parallel processing. Defaults to False. first_search (bool, optional): Flag to indicate this is the first search. Defaults to True.</p>
 <p>Returns: Union[bool, str]: Returns True if the search was successfull, otherwise returns a string containing the Exception.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L876" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L876" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="store_hdf" class="level3">
 <h3 class="anchored" data-anchor-id="store_hdf">store_hdf</h3>
@@ -705,7 +693,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="searching-large-fasta-and-or-search-space" class="level2">
 <h2 class="anchored" data-anchor-id="searching-large-fasta-and-or-search-space">Searching Large Fasta and or Search Space</h2>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L994" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L994" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="search_fasta_block" class="level3">
 <h3 class="anchored" data-anchor-id="search_fasta_block">search_fasta_block</h3>
 <blockquote class="blockquote">
@@ -715,7 +703,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: to_process (tuple): Tuple containing a fasta_index, fasta_block, a list of files and a list of experimental settings.</p>
 <p>Returns: list: A list of dataframes when searching the respective file. int: Number of new peptides that were generated in this iteration.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L1105" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L1105" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="filter_top_n" class="level3">
 <h3 class="anchored" data-anchor-id="filter_top_n">filter_top_n</h3>
@@ -726,7 +714,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: temp (pd.DataFrame): Pandas DataFrame containing PSMs. top_n (int, optional): Number of top-n entries to be kept. Defaults to 10.</p>
 <p>Returns: pd.DataFrame: Filtered DataFrame.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L1199" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L1199" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="search_parallel" class="level3">
 <h3 class="anchored" data-anchor-id="search_parallel">search_parallel</h3>
@@ -739,7 +727,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: settings (dict): Settings file containg the experimental definitions. calibration (Union[list, None], optional): List of calibrated offsets. Defaults to None. fragment_calibration (Union[list, None], optional): List of calibrated fragment offsets. Defaults to None. callback (Union[Callable, None], optional): Callback function. Defaults to None.</p>
 <p>Returns: dict: FASTA dictionary.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/search.py#L1143" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L1143" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="ion_extractor" class="level3">
 <h3 class="anchored" data-anchor-id="ion_extractor">ion_extractor</h3>

@@ -144,19 +144,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -284,16 +272,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#label-search" id="toc-label-search" class="nav-link active" data-scroll-target="#label-search">Label search</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#label_search" id="toc-label_search" class="nav-link" data-scroll-target="#label_search">label_search</a></li>
   </ul></li>
   <li><a href="#ms2-search" id="toc-ms2-search" class="nav-link" data-scroll-target="#ms2-search">MS2 Search</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#search_label_on_ms_file" id="toc-search_label_on_ms_file" class="nav-link" data-scroll-target="#search_label_on_ms_file">search_label_on_ms_file</a></li>
   <li><a href="#find_labels" id="toc-find_labels" class="nav-link" data-scroll-target="#find_labels">find_labels</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -329,7 +317,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p><a href="https://assets.thermofisher.com/TFS-Assets/CMD/Reference-Materials/PP-TMT-Multiplexed-Protein-Quantification-HUPO2015-EN.pdf">TMT Talk from Hupo 2015</a></p></li>
 </ul>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/label.py#L12" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/label.py#L12" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="label_search" class="level3">
 <h3 class="anchored" data-anchor-id="label_search">label_search</h3>
 <blockquote class="blockquote">
@@ -392,7 +380,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="ms2-search" class="level2">
 <h2 class="anchored" data-anchor-id="ms2-search">MS2 Search</h2>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/label.py#L46" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/label.py#L46" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="search_label_on_ms_file" class="level3">
 <h3 class="anchored" data-anchor-id="search_label_on_ms_file">search_label_on_ms_file</h3>
 <blockquote class="blockquote">
@@ -402,7 +390,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Wrapper function to search labels on an ms_file and write results to the peptide_fdr of the file.</p>
 <p>Args: file_name (str): Path to ms_file: label (NamedTuple): Label with channels, mod_name and masses. reporter_frag_tol (float): Fragment tolerance for search. ppm (bool): Flag to use ppm instead of Dalton.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/label.py#L97" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/label.py#L97" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="find_labels" class="level3">
 <h3 class="anchored" data-anchor-id="find_labels">find_labels</h3>

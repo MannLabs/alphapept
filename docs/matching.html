@@ -144,19 +144,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -284,7 +272,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#dataset-alignment" id="toc-dataset-alignment" class="nav-link active" data-scroll-target="#dataset-alignment">Dataset Alignment</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#relative-offset" id="toc-relative-offset" class="nav-link" data-scroll-target="#relative-offset">Relative offset</a></li>
   <li><a href="#absolute-correction" id="toc-absolute-correction" class="nav-link" data-scroll-target="#absolute-correction">Absolute correction</a></li>
   <li><a href="#calculate_distance" id="toc-calculate_distance" class="nav-link" data-scroll-target="#calculate_distance">calculate_distance</a></li>
@@ -295,13 +283,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#align_files" id="toc-align_files" class="nav-link" data-scroll-target="#align_files">align_files</a></li>
   </ul></li>
   <li><a href="#matching" id="toc-matching" class="nav-link" data-scroll-target="#matching">Matching</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#get_probability" id="toc-get_probability" class="nav-link" data-scroll-target="#get_probability">get_probability</a></li>
   <li><a href="#match_datasets" id="toc-match_datasets" class="nav-link" data-scroll-target="#match_datasets">match_datasets</a></li>
   <li><a href="#convert_decoy" id="toc-convert_decoy" class="nav-link" data-scroll-target="#convert_decoy">convert_decoy</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -339,7 +327,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="absolute-correction">Absolute correction</h3>
 <p>In contrast to the relative correction, sometimes absolute correction is more applicable. Consider the case of retention time. Here one would rather not expect a relative offset but rather an absolute offset. As an example, consider a lag time of 0.5 Minutes. This would be constant for all retention times and not differ e.g., for later retention times.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/matching.py#L12" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L12" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="calculate_distance" class="level3">
 <h3 class="anchored" data-anchor-id="calculate_distance">calculate_distance</h3>
@@ -353,7 +341,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: table_1 (pd.DataFrame): Dataframe with precusor data. table_2 (pd.DataFrame): Dataframe with precusor data. offset_dict (dict): Dictionary with column names and how the distance should be calculated. calib (bool): Flag to indicate that distances should be calculated on calibrated columns. Defaults to False.</p>
 <p>Raises: KeyError: If either table_1 or table_2 is not indexed by precursor</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/matching.py#L56" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L56" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="calib_table" class="level3">
 <h3 class="anchored" data-anchor-id="calib_table">calib_table</h3>
@@ -365,7 +353,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: table_1 (pd.DataFrame): Dataframe with data. delta (pd.Series): Series cotaining the offset. offset_dict (dict): Dictionary with column names and how the distance should be calculated.</p>
 <p>Raises: NotImplementedError: If the type of vonversion is not implemented.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/matching.py#L89" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L89" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="align" class="level3">
 <h3 class="anchored" data-anchor-id="align">align</h3>
@@ -377,7 +365,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: deltas (pd.DataFrame): Distances from each dataset to another. filenames (list): The filenames of the datasts that were compared. weights (np.ndarray, optional): Distances can be weighted by their number of shared elements. Defaults to None. n_jobs (optional): Number of processes to be used. Defaults to None (=1).</p>
 <p>Returns: np.ndarray: alignment values.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/matching.py#L143" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L143" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="calculate_deltas" class="level3">
 <h3 class="anchored" data-anchor-id="calculate_deltas">calculate_deltas</h3>
@@ -390,7 +378,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: combos (list): A list containing tuples of filenames that should be compared. calib (bool): Boolean flag to indicate distance should be calculated on calibrated data. callback (Callable): A callback function to track progress.</p>
 <p>Returns: pd.DataFrame: Dataframe containing the deltas of the files np.ndarray: Numpy array containing the weights of each comparison (i.e.&nbsp;number of shared elements) dict: Offset dictionary whicch was used for comparing.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/matching.py#L253" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L253" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="align_datasets" class="level3">
 <h3 class="anchored" data-anchor-id="align_datasets">align_datasets</h3>
@@ -400,7 +388,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Wrapper function that aligns all experimental files specified a settings file.</p>
 <p>Args: settings (dict): A list with raw file names. callback (Callable): Callback function to indicate progress.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/matching.py#L231" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L231" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="align_files" class="level3">
 <h3 class="anchored" data-anchor-id="align_files">align_files</h3>
@@ -417,7 +405,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Transfer MS2 identifications to similar MS1 features.</p>
 <p>For “match-between-runs” we start with aligning datasets. To create a reference we use for matching, we combine all datasets of a matching group. When using the default settings, the matching group consists of all files. We then group the dataset by precursor and calculate it’s average properties (rt, mz, mobility). By combining several files we further are able to calculate a standard deviation. This allows us to know where and with what deviation we would expect an MS1 feature and have the corresponding identification. This is our matching reference. In the matching step, we go through each dataset individually and check if there are precursors in the reference that were not identified in this dataset. We then perform a nearest-neighbor lookup to find if any MS1 features exist that are in close proximity to the reference. The distance metric we use is normed by the median standard of the deviation. Lastly we assess the confidence in a transfered identifcation by using the <a href="https://stats.stackexchange.com/questions/331283/how-to-calculate-the-probability-of-a-data-point-belonging-to-a-multivariate-nor"><code>Mahalanobis</code></a> distance.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/matching.py#L327" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L327" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="get_probability" class="level3">
 <h3 class="anchored" data-anchor-id="get_probability">get_probability</h3>
 <blockquote class="blockquote">
@@ -447,7 +435,7 @@ Third element: (mass completely off): 1.00</code></pre>
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/matching.py#L376" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L376" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="match_datasets" class="level3">
 <h3 class="anchored" data-anchor-id="match_datasets">match_datasets</h3>
@@ -457,7 +445,7 @@ Third element: (mass completely off): 1.00</code></pre>
 <p>Match datasets: Wrapper function to match datasets based on a settings file. This implementation uses matching groups but not fractions.</p>
 <p>Args: settings (dict): Dictionary containg specifications of the run callback (Callable): Callback function to indicate progress.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/matching.py#L364" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L364" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="convert_decoy" class="level3">
 <h3 class="anchored" data-anchor-id="convert_decoy">convert_decoy</h3>

@@ -145,19 +145,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -285,22 +273,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#cleaving" id="toc-cleaving" class="nav-link active" data-scroll-target="#cleaving">Cleaving</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#cleave_sequence" id="toc-cleave_sequence" class="nav-link" data-scroll-target="#cleave_sequence">cleave_sequence</a></li>
   <li><a href="#get_missed_cleavages" id="toc-get_missed_cleavages" class="nav-link" data-scroll-target="#get_missed_cleavages">get_missed_cleavages</a></li>
   </ul></li>
   <li><a href="#counting-missed-and-internal-cleavages" id="toc-counting-missed-and-internal-cleavages" class="nav-link" data-scroll-target="#counting-missed-and-internal-cleavages">Counting missed and internal cleavages</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#count_internal_cleavages" id="toc-count_internal_cleavages" class="nav-link" data-scroll-target="#count_internal_cleavages">count_internal_cleavages</a></li>
   <li><a href="#count_missed_cleavages" id="toc-count_missed_cleavages" class="nav-link" data-scroll-target="#count_missed_cleavages">count_missed_cleavages</a></li>
   </ul></li>
   <li><a href="#parsing" id="toc-parsing" class="nav-link" data-scroll-target="#parsing">Parsing</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#list_to_numba" id="toc-list_to_numba" class="nav-link" data-scroll-target="#list_to_numba">list_to_numba</a></li>
   <li><a href="#parse" id="toc-parse" class="nav-link" data-scroll-target="#parse">parse</a></li>
   </ul></li>
   <li><a href="#decoy" id="toc-decoy" class="nav-link" data-scroll-target="#decoy">Decoy</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#add_decoy_tag" id="toc-add_decoy_tag" class="nav-link" data-scroll-target="#add_decoy_tag">add_decoy_tag</a></li>
   <li><a href="#get_decoys" id="toc-get_decoys" class="nav-link" data-scroll-target="#get_decoys">get_decoys</a></li>
   <li><a href="#swap_al" id="toc-swap_al" class="nav-link" data-scroll-target="#swap_al">swap_AL</a></li>
@@ -308,7 +296,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#get_decoy_sequence" id="toc-get_decoy_sequence" class="nav-link" data-scroll-target="#get_decoy_sequence">get_decoy_sequence</a></li>
   </ul></li>
   <li><a href="#modifications" id="toc-modifications" class="nav-link" data-scroll-target="#modifications">Modifications</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#fixed-modifications" id="toc-fixed-modifications" class="nav-link" data-scroll-target="#fixed-modifications">Fixed Modifications</a></li>
   <li><a href="#add_fixed_mods" id="toc-add_fixed_mods" class="nav-link" data-scroll-target="#add_fixed_mods">add_fixed_mods</a></li>
   <li><a href="#variable-modifications" id="toc-variable-modifications" class="nav-link" data-scroll-target="#variable-modifications">Variable Modifications</a></li>
@@ -326,7 +314,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#generate_peptides" id="toc-generate_peptides" class="nav-link" data-scroll-target="#generate_peptides">generate_peptides</a></li>
   </ul></li>
   <li><a href="#mass-calculations" id="toc-mass-calculations" class="nav-link" data-scroll-target="#mass-calculations">Mass Calculations</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#precursor" id="toc-precursor" class="nav-link" data-scroll-target="#precursor">Precursor</a></li>
   <li><a href="#get_precmass" id="toc-get_precmass" class="nav-link" data-scroll-target="#get_precmass">get_precmass</a></li>
   <li><a href="#fragments" id="toc-fragments" class="nav-link" data-scroll-target="#fragments">Fragments</a></li>
@@ -337,24 +325,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#get_spectrum" id="toc-get_spectrum" class="nav-link" data-scroll-target="#get_spectrum">get_spectrum</a></li>
   </ul></li>
   <li><a href="#reading-fasta" id="toc-reading-fasta" class="nav-link" data-scroll-target="#reading-fasta">Reading FASTA</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#check_sequence" id="toc-check_sequence" class="nav-link" data-scroll-target="#check_sequence">check_sequence</a></li>
   <li><a href="#read_fasta_file_entries" id="toc-read_fasta_file_entries" class="nav-link" data-scroll-target="#read_fasta_file_entries">read_fasta_file_entries</a></li>
   <li><a href="#read_fasta_file" id="toc-read_fasta_file" class="nav-link" data-scroll-target="#read_fasta_file">read_fasta_file</a></li>
   </ul></li>
   <li><a href="#peptide-dictionary" id="toc-peptide-dictionary" class="nav-link" data-scroll-target="#peptide-dictionary">Peptide Dictionary</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#add_to_pept_dict" id="toc-add_to_pept_dict" class="nav-link" data-scroll-target="#add_to_pept_dict">add_to_pept_dict</a></li>
   <li><a href="#merge_pept_dicts" id="toc-merge_pept_dicts" class="nav-link" data-scroll-target="#merge_pept_dicts">merge_pept_dicts</a></li>
   </ul></li>
   <li><a href="#generating-a-database" id="toc-generating-a-database" class="nav-link" data-scroll-target="#generating-a-database">Generating a database</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#generate_fasta_list" id="toc-generate_fasta_list" class="nav-link" data-scroll-target="#generate_fasta_list">generate_fasta_list</a></li>
   <li><a href="#generate_database" id="toc-generate_database" class="nav-link" data-scroll-target="#generate_database">generate_database</a></li>
   <li><a href="#generate_spectra" id="toc-generate_spectra" class="nav-link" data-scroll-target="#generate_spectra">generate_spectra</a></li>
   </ul></li>
   <li><a href="#parallelized-version" id="toc-parallelized-version" class="nav-link" data-scroll-target="#parallelized-version">Parallelized version</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#blocks" id="toc-blocks" class="nav-link" data-scroll-target="#blocks">blocks</a></li>
   <li><a href="#block_idx" id="toc-block_idx" class="nav-link" data-scroll-target="#block_idx">block_idx</a></li>
   <li><a href="#generate_database_parallel" id="toc-generate_database_parallel" class="nav-link" data-scroll-target="#generate_database_parallel">generate_database_parallel</a></li>
@@ -363,12 +351,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#pept_dict_from_search" id="toc-pept_dict_from_search" class="nav-link" data-scroll-target="#pept_dict_from_search">pept_dict_from_search</a></li>
   </ul></li>
   <li><a href="#saving" id="toc-saving" class="nav-link" data-scroll-target="#saving">Saving</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#save_database" id="toc-save_database" class="nav-link" data-scroll-target="#save_database">save_database</a></li>
   <li><a href="#read_database" id="toc-read_database" class="nav-link" data-scroll-target="#read_database">read_database</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -404,9 +392,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Currently, <code>numba</code> has only limited string support. A lot of the functions are therefore Python-native.</p>
 <section id="cleaving" class="level2">
 <h2 class="anchored" data-anchor-id="cleaving">Cleaving</h2>
-<p>We use regular expressions to find potential cleavage sites for cleaving and write the wrapper <a href="https://mannlabs.github.io/fasta.html#cleave_sequence"><code>cleave_sequence</code></a> to use it.</p>
+<p>We use regular expressions to find potential cleavage sites for cleaving and write the wrapper <a href="https://mannlabs.github.io/alphapept/fasta.html#cleave_sequence"><code>cleave_sequence</code></a> to use it.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L33" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L33" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="cleave_sequence" class="level3">
 <h3 class="anchored" data-anchor-id="cleave_sequence">cleave_sequence</h3>
 <blockquote class="blockquote">
@@ -416,7 +404,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Cleave a sequence with a given protease. Filters to have a minimum and maximum length. Args: sequence (str): the given (protein) sequence. n_missed_cleavages (int): the number of max missed cleavages. protease (str): the protease/enzyme name, the regular expression can be found in alphapept.constants.protease_dict. pep_length_min (int): min peptide length. pep_length_max (int): max peptide length. Returns: list (of str): cleaved peptide sequences with missed cleavages.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L17" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L17" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_missed_cleavages" class="level3">
 <h3 class="anchored" data-anchor-id="get_missed_cleavages">get_missed_cleavages</h3>
@@ -440,7 +428,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="counting-missed-and-internal-cleavages">Counting missed and internal cleavages</h2>
 <p>The following are helper functions to retrieve the number of missed cleavages and internal cleavage sites for each sequence.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L92" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L92" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="count_internal_cleavages" class="level3">
 <h3 class="anchored" data-anchor-id="count_internal_cleavages">count_internal_cleavages</h3>
 <blockquote class="blockquote">
@@ -449,7 +437,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Counts the number of internal cleavage sites for a given sequence and protease Args: sequence (str): the given (peptide) sequence. protease (str): the protease/enzyme name, the regular expression can be found in alphapept.constants.protease_dict. Returns: int (0 or 1): if the sequence is from internal cleavage.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L77" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L77" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="count_missed_cleavages" class="level3">
 <h3 class="anchored" data-anchor-id="count_missed_cleavages">count_missed_cleavages</h3>
@@ -473,9 +461,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="parsing" class="level2">
 <h2 class="anchored" data-anchor-id="parsing">Parsing</h2>
-<p>Peptides are composed out of amino acids that are written in capital letters - <code>PEPTIDE</code>. To distinguish modifications, they are written in lowercase such as <code>PEPTIoxDE</code> and can be of arbitrary length. For a modified amino acid (AA), the modification precedes the letter of the amino acid. Decoys are indicated with an underscore. Therefore, the <a href="https://mannlabs.github.io/fasta.html#parse"><code>parse</code></a> function splits after <code>_</code>. When parsing, the peptide string is converted into a <code>numba</code>-compatible list, like so: <code>PEPoxTIDE</code> -&gt; <code>[P, E, P, oxT, I, D, E]</code>. This allows that we can use the <code>mass_dict</code> from <code>alphapept.constants</code> to directly determine the masses for the corresponding amino acids.</p>
+<p>Peptides are composed out of amino acids that are written in capital letters - <code>PEPTIDE</code>. To distinguish modifications, they are written in lowercase such as <code>PEPTIoxDE</code> and can be of arbitrary length. For a modified amino acid (AA), the modification precedes the letter of the amino acid. Decoys are indicated with an underscore. Therefore, the <a href="https://mannlabs.github.io/alphapept/fasta.html#parse"><code>parse</code></a> function splits after <code>_</code>. When parsing, the peptide string is converted into a <code>numba</code>-compatible list, like so: <code>PEPoxTIDE</code> -&gt; <code>[P, E, P, oxT, I, D, E]</code>. This allows that we can use the <code>mass_dict</code> from <code>alphapept.constants</code> to directly determine the masses for the corresponding amino acids.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L136" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L136" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="list_to_numba" class="level3">
 <h3 class="anchored" data-anchor-id="list_to_numba">list_to_numba</h3>
 <blockquote class="blockquote">
@@ -483,7 +471,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Convert Python list to numba.typed.List Args: a_list (list): Python list. Return: List (numba.typed.List): Numba typed list.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L115" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L115" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="parse" class="level3">
 <h3 class="anchored" data-anchor-id="parse">parse</h3>
@@ -503,9 +491,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="decoy" class="level2">
 <h2 class="anchored" data-anchor-id="decoy">Decoy</h2>
-<p>The decoy strategy employed is a pseudo-reversal of the peptide sequence, keeping only the terminal amino acid and reversing the rest. Additionally, we can call the functions <a href="https://mannlabs.github.io/fasta.html#swap_kr"><code>swap_KR</code></a> and and <a href="https://mannlabs.github.io/fasta.html#swap_al"><code>swap_AL</code></a> that will swap the respective AAs. The function <a href="https://mannlabs.github.io/fasta.html#swap_kr"><code>swap_KR</code></a> will only swap terminal AAs. The swapping functions only work if the AA is not modified.</p>
+<p>The decoy strategy employed is a pseudo-reversal of the peptide sequence, keeping only the terminal amino acid and reversing the rest. Additionally, we can call the functions <a href="https://mannlabs.github.io/alphapept/fasta.html#swap_kr"><code>swap_KR</code></a> and and <a href="https://mannlabs.github.io/alphapept/fasta.html#swap_al"><code>swap_AL</code></a> that will swap the respective AAs. The function <a href="https://mannlabs.github.io/alphapept/fasta.html#swap_kr"><code>swap_KR</code></a> will only swap terminal AAs. The swapping functions only work if the AA is not modified.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L240" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L240" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="add_decoy_tag" class="level3">
 <h3 class="anchored" data-anchor-id="add_decoy_tag">add_decoy_tag</h3>
 <blockquote class="blockquote">
@@ -513,7 +501,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Adds a ’_decoy’ tag to a list of peptides</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L225" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L225" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_decoys" class="level3">
 <h3 class="anchored" data-anchor-id="get_decoys">get_decoys</h3>
@@ -523,7 +511,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Wrapper to get decoys for lists of peptides Args: peptide_list (list): the list of peptides to be reversed. pseudo_reverse (bool): If True, reverse the peptide bug keep the C-terminal amino acid; otherwise reverse the whole peptide. (Default: False) AL_swap (bool): replace A with L, and vice versa. (Default: False) KR_swap (bool): replace K with R at the C-terminal, and vice versa. (Default: False) Returns: list (of str): a list of decoy peptides</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L202" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L202" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="swap_al" class="level3">
 <h3 class="anchored" data-anchor-id="swap_al">swap_AL</h3>
@@ -533,7 +521,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Swaps a A with L. Note: Only if AA is not modified. Args: peptide (str): peptide.</p>
 <p>Returns: str: peptide with swapped ALs.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L183" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L183" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="swap_kr" class="level3">
 <h3 class="anchored" data-anchor-id="swap_kr">swap_KR</h3>
@@ -544,7 +532,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: peptide (str): peptide.</p>
 <p>Returns: str: peptide with swapped KRs.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L153" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L153" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_decoy_sequence" class="level3">
 <h3 class="anchored" data-anchor-id="get_decoy_sequence">get_decoy_sequence</h3>
@@ -582,7 +570,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="fixed-modifications">Fixed Modifications</h3>
 <p>Fixed modifications are implemented by passing a list with modified AAs that should be replaced. As a AA is only one letter, the remainder is the modification.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L247" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L247" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="add_fixed_mods" class="level3">
 <h3 class="anchored" data-anchor-id="add_fixed_mods">add_fixed_mods</h3>
@@ -613,7 +601,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="variable-modifications">Variable Modifications</h3>
 <p>To employ variable modifications, we loop through each variable modification and each position of the peptide and add them to the peptide list. For each iteration in get_isoforms, one more variable modification will be added.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L285" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L285" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_isoforms" class="level3">
 <h3 class="anchored" data-anchor-id="get_isoforms">get_isoforms</h3>
@@ -623,7 +611,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Function to generate modified forms (with variable modifications) for a given peptide - returns a list of modified forms. The original sequence is included in the list Args: mods_variable_dict (dict): Dicitionary with modifications. The key is AA, and value is the modified form (e.g.&nbsp;oxM). peptide (str): the peptide sequence to generate modified forms. isoforms_max (int): max number of modified forms to generate per peptide. n_modifications_max (int, optional): max number of variable modifications per peptide. Returns: list (of str): the list of peptide forms for the given peptide</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L264" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L264" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="add_variable_mod" class="level3">
 <h3 class="anchored" data-anchor-id="add_variable_mod">add_variable_mod</h3>
@@ -644,9 +632,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ['AMAMA', 'AoxMAMA', 'AMAoxMA']</code></pre>
 </div>
 </div>
-<p>Lastly, we define the wrapper <a href="https://mannlabs.github.io/fasta.html#add_variable_mods"><code>add_variable_mods</code></a> so that the functions can be called for lists of peptides and a list of variable modifications.</p>
+<p>Lastly, we define the wrapper <a href="https://mannlabs.github.io/alphapept/fasta.html#add_variable_mods"><code>add_variable_mods</code></a> so that the functions can be called for lists of peptides and a list of variable modifications.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L333" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L333" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="add_variable_mods" class="level3">
 <h3 class="anchored" data-anchor-id="add_variable_mods">add_variable_mods</h3>
@@ -676,7 +664,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <p>Additionally, if we want to have a terminal modification on any AA we indicate this <code>^</code>.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L388" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L388" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="add_fixed_mods_terminal" class="level3">
 <h3 class="anchored" data-anchor-id="add_fixed_mods_terminal">add_fixed_mods_terminal</h3>
@@ -686,7 +674,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Wrapper to add fixed mods on sequences and lists of mods Args: peptides (list of str): peptide list. mods_fixed_terminal (list of str): list of fixed terminal mods. Raises: “Invalid fixed terminal modification {mod}” exception for the given mod. Returns: list (of str): list of peptides with modification added.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L363" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L363" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="add_fixed_mod_terminal" class="level3">
 <h3 class="anchored" data-anchor-id="add_fixed_mod_terminal">add_fixed_mod_terminal</h3>
@@ -713,9 +701,9 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </section>
 <section id="terminal-modifications---variable" class="level3">
 <h3 class="anchored" data-anchor-id="terminal-modifications---variable">Terminal Modifications - Variable</h3>
-<p>Lastly, to handle terminal variable modifications, we use the function <a href="https://mannlabs.github.io/fasta.html#add_variable_mods_terminal"><code>add_variable_mods_terminal</code></a>. As the modification can only be at the terminal end, this function only adds a peptide where the terminal end is modified.</p>
+<p>Lastly, to handle terminal variable modifications, we use the function <a href="https://mannlabs.github.io/alphapept/fasta.html#add_variable_mods_terminal"><code>add_variable_mods_terminal</code></a>. As the modification can only be at the terminal end, this function only adds a peptide where the terminal end is modified.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L440" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L440" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_unique_peptides" class="level3">
 <h3 class="anchored" data-anchor-id="get_unique_peptides">get_unique_peptides</h3>
@@ -724,7 +712,7 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </blockquote>
 <p>Function to return unique elements from list. Args: peptides (list of str): peptide list. Returns: list (of str): list of peptides (unique).</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L408" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L408" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="add_variable_mods_terminal" class="level3">
 <h3 class="anchored" data-anchor-id="add_variable_mods_terminal">add_variable_mods_terminal</h3>
@@ -743,9 +731,9 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </section>
 <section id="generating-peptides" class="level3">
 <h3 class="anchored" data-anchor-id="generating-peptides">Generating Peptides</h3>
-<p>Lastly, we put all the functions into a wrapper <a href="https://mannlabs.github.io/fasta.html#generate_peptides"><code>generate_peptides</code></a>. It will accept a peptide and a dictionary with settings so that we can get all modified peptides.</p>
+<p>Lastly, we put all the functions into a wrapper <a href="https://mannlabs.github.io/alphapept/fasta.html#generate_peptides"><code>generate_peptides</code></a>. It will accept a peptide and a dictionary with settings so that we can get all modified peptides.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L506" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L506" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="check_peptide" class="level3">
 <h3 class="anchored" data-anchor-id="check_peptide">check_peptide</h3>
@@ -754,7 +742,7 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </blockquote>
 <p>Check if the peptide contains non-AA letters. Args: peptide (str): peptide sequence. AAs (set): the set of legal amino acids. See alphapept.constants.AAs Returns: bool: True if all letters in the peptide is the subset of AAs, otherwise False</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L451" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L451" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_peptides" class="level3">
 <h3 class="anchored" data-anchor-id="generate_peptides">generate_peptides</h3>
@@ -796,12 +784,12 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </section>
 <section id="mass-calculations" class="level2">
 <h2 class="anchored" data-anchor-id="mass-calculations">Mass Calculations</h2>
-<p>Using the <code>mass_dict</code> from <code>constants</code> and being able to parse sequences with <a href="https://mannlabs.github.io/fasta.html#parse"><code>parse</code></a>, one can simply look up the masses for each modified or unmodified amino acid and add everything up.</p>
+<p>Using the <code>mass_dict</code> from <code>constants</code> and being able to parse sequences with <a href="https://mannlabs.github.io/alphapept/fasta.html#parse"><code>parse</code></a>, one can simply look up the masses for each modified or unmodified amino acid and add everything up.</p>
 <section id="precursor" class="level3">
 <h3 class="anchored" data-anchor-id="precursor">Precursor</h3>
 <p>To calculate the mass of the neutral precursor, we start with the mass of an <span class="math inline">\(H_2O\)</span> and add the masses of all amino acids of the sequence.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L527" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L527" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_precmass" class="level3">
 <h3 class="anchored" data-anchor-id="get_precmass">get_precmass</h3>
@@ -818,11 +806,11 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </section>
 <section id="fragments" class="level3">
 <h3 class="anchored" data-anchor-id="fragments">Fragments</h3>
-<p>Likewise, we can calculate the masses of the fragment ions. We employ two functions: <a href="https://mannlabs.github.io/fasta.html#get_fragmass"><code>get_fragmass</code></a> and <a href="https://mannlabs.github.io/fasta.html#get_frag_dict"><code>get_frag_dict</code></a>.</p>
-<p><a href="https://mannlabs.github.io/fasta.html#get_fragmass"><code>get_fragmass</code></a> is a fast, <code>numba</code>-compatible function that calculates the fragment masses and returns an array indicating whether the ion-type was <code>b</code> or <code>y</code>.</p>
-<p><a href="https://mannlabs.github.io/fasta.html#get_frag_dict"><code>get_frag_dict</code></a> instead is not <code>numba</code>-compatible and hence a bit slower. It returns a dictionary with the respective ion and can be used for plotting theoretical spectra.</p>
+<p>Likewise, we can calculate the masses of the fragment ions. We employ two functions: <a href="https://mannlabs.github.io/alphapept/fasta.html#get_fragmass"><code>get_fragmass</code></a> and <a href="https://mannlabs.github.io/alphapept/fasta.html#get_frag_dict"><code>get_frag_dict</code></a>.</p>
+<p><a href="https://mannlabs.github.io/alphapept/fasta.html#get_fragmass"><code>get_fragmass</code></a> is a fast, <code>numba</code>-compatible function that calculates the fragment masses and returns an array indicating whether the ion-type was <code>b</code> or <code>y</code>.</p>
+<p><a href="https://mannlabs.github.io/alphapept/fasta.html#get_frag_dict"><code>get_frag_dict</code></a> instead is not <code>numba</code>-compatible and hence a bit slower. It returns a dictionary with the respective ion and can be used for plotting theoretical spectra.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L546" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L546" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_fragmass" class="level3">
 <h3 class="anchored" data-anchor-id="get_fragmass">get_fragmass</h3>
@@ -840,7 +828,7 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L583" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L583" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_frag_dict" class="level3">
 <h3 class="anchored" data-anchor-id="get_frag_dict">get_frag_dict</h3>
@@ -894,16 +882,16 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </section>
 <section id="spectra" class="level3">
 <h3 class="anchored" data-anchor-id="spectra">Spectra</h3>
-<p>The function <a href="https://mannlabs.github.io/fasta.html#get_spectrum"><code>get_spectrum</code></a> returns a tuple with the following content:</p>
+<p>The function <a href="https://mannlabs.github.io/alphapept/fasta.html#get_spectrum"><code>get_spectrum</code></a> returns a tuple with the following content:</p>
 <ul>
 <li>precursor mass</li>
 <li>peptide sequence</li>
 <li>fragmasses</li>
 <li>fragtypes</li>
 </ul>
-<p>Likewise, <a href="https://mannlabs.github.io/fasta.html#get_spectra"><code>get_spectra</code></a> returns a list of tuples. We employ a list of tuples here as this way, we can sort them easily by precursor mass.</p>
+<p>Likewise, <a href="https://mannlabs.github.io/alphapept/fasta.html#get_spectra"><code>get_spectra</code></a> returns a list of tuples. We employ a list of tuples here as this way, we can sort them easily by precursor mass.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L630" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L630" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_spectra" class="level3">
 <h3 class="anchored" data-anchor-id="get_spectra">get_spectra</h3>
@@ -913,7 +901,7 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </blockquote>
 <p>Get neutral peptide mass, fragment masses and fragment types for a list of peptides Args: peptides (list of str): the (modified) peptide list. mass_dict (numba.typed.Dict): key is the amino acid or modified amino acid, and the value is the mass. Raises: Unknown exception and pass. Returns: list of Tuple[float, str, np.ndarray(np.float64), np.ndarray(np.int8)]: See get_spectrum.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L609" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L609" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_spectrum" class="level3">
 <h3 class="anchored" data-anchor-id="get_spectrum">get_spectrum</h3>
@@ -933,10 +921,10 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </section>
 <section id="reading-fasta" class="level2">
 <h2 class="anchored" data-anchor-id="reading-fasta">Reading FASTA</h2>
-<p>To read FASTA files, we use the <code>SeqIO</code> module from the <code>Biopython</code> library. This is a generator expression so that we read one FASTA entry after another until the <code>StopIteration</code> is reached, which is implemented in <a href="https://mannlabs.github.io/fasta.html#read_fasta_file"><code>read_fasta_file</code></a>. Additionally, we define the function <a href="https://mannlabs.github.io/fasta.html#read_fasta_file_entries"><code>read_fasta_file_entries</code></a> that simply counts the number of FASTA entries.</p>
-<p>All FASTA entries that contain AAs which are not in the mass_dict can be checked with <a href="https://mannlabs.github.io/fasta.html#check_sequence"><code>check_sequence</code></a> and will be ignored.</p>
+<p>To read FASTA files, we use the <code>SeqIO</code> module from the <code>Biopython</code> library. This is a generator expression so that we read one FASTA entry after another until the <code>StopIteration</code> is reached, which is implemented in <a href="https://mannlabs.github.io/alphapept/fasta.html#read_fasta_file"><code>read_fasta_file</code></a>. Additionally, we define the function <a href="https://mannlabs.github.io/alphapept/fasta.html#read_fasta_file_entries"><code>read_fasta_file_entries</code></a> that simply counts the number of FASTA entries.</p>
+<p>All FASTA entries that contain AAs which are not in the mass_dict can be checked with <a href="https://mannlabs.github.io/alphapept/fasta.html#check_sequence"><code>check_sequence</code></a> and will be ignored.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L709" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L709" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="check_sequence" class="level3">
 <h3 class="anchored" data-anchor-id="check_sequence">check_sequence</h3>
 <blockquote class="blockquote">
@@ -944,7 +932,7 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </blockquote>
 <p>Checks wheter a sequence from a FASTA entry contains valid AAs Args: element (dict): fasta entry of the protein information. AAs (set): a set of amino acid letters. verbose (bool): logging the invalid amino acids. Returns: bool: False if the protein sequence contains non-AA letters, otherwise True.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L688" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L688" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="read_fasta_file_entries" class="level3">
 <h3 class="anchored" data-anchor-id="read_fasta_file_entries">read_fasta_file_entries</h3>
@@ -953,7 +941,7 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </blockquote>
 <p>Function to count entries in fasta file Args: fasta_filename (str): fasta. Returns: int: number of entries.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L657" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L657" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="read_fasta_file" class="level3">
 <h3 class="anchored" data-anchor-id="read_fasta_file">read_fasta_file</h3>
@@ -978,9 +966,9 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </section>
 <section id="peptide-dictionary" class="level2">
 <h2 class="anchored" data-anchor-id="peptide-dictionary">Peptide Dictionary</h2>
-<p>In order to efficiently store peptides, we rely on the Python dictionary. The idea is to have a dictionary with peptides as keys and indices to proteins as values. This way, one can quickly look up to which protein a peptide belongs to. The function <a href="https://mannlabs.github.io/fasta.html#add_to_pept_dict"><code>add_to_pept_dict</code></a> uses a regular python dictionary and allows to add peptides and stores indices to the originating proteins as a list. If a peptide is already present in the dictionary, the list is appended. The function returns a list of <code>added_peptides</code>, which were not present in the dictionary yet. One can use the function <a href="https://mannlabs.github.io/fasta.html#merge_pept_dicts"><code>merge_pept_dicts</code></a> to merge multiple peptide dicts.</p>
+<p>In order to efficiently store peptides, we rely on the Python dictionary. The idea is to have a dictionary with peptides as keys and indices to proteins as values. This way, one can quickly look up to which protein a peptide belongs to. The function <a href="https://mannlabs.github.io/alphapept/fasta.html#add_to_pept_dict"><code>add_to_pept_dict</code></a> uses a regular python dictionary and allows to add peptides and stores indices to the originating proteins as a list. If a peptide is already present in the dictionary, the list is appended. The function returns a list of <code>added_peptides</code>, which were not present in the dictionary yet. One can use the function <a href="https://mannlabs.github.io/alphapept/fasta.html#merge_pept_dicts"><code>merge_pept_dicts</code></a> to merge multiple peptide dicts.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L730" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L730" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="add_to_pept_dict" class="level3">
 <h3 class="anchored" data-anchor-id="add_to_pept_dict">add_to_pept_dict</h3>
 <blockquote class="blockquote">
@@ -1003,7 +991,7 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L753" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L753" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="merge_pept_dicts" class="level3">
 <h3 class="anchored" data-anchor-id="merge_pept_dicts">merge_pept_dicts</h3>
@@ -1024,9 +1012,9 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </section>
 <section id="generating-a-database" class="level2">
 <h2 class="anchored" data-anchor-id="generating-a-database">Generating a database</h2>
-<p>To wrap everything up, we employ two functions, <a href="https://mannlabs.github.io/fasta.html#generate_database"><code>generate_database</code></a> and <a href="https://mannlabs.github.io/fasta.html#generate_spectra"><code>generate_spectra</code></a>. The first one reads a FASTA file and generates a list of peptides, as well as the peptide dictionary and an ordered FASTA dictionary to be able to look up the protein indices later. For the <code>callback</code> we first read the whole FASTA file to determine the total number of entries in the FASTA file. For a typical FASTA file of 30 Mb with 40k entries, this should take less than a second. The progress of the digestion is monitored by processing the FASTA file one by one. The function <a href="https://mannlabs.github.io/fasta.html#generate_spectra"><code>generate_spectra</code></a> then calculates precursor masses and fragment ions. Here, we split the total_number of sequences in <code>1000</code> steps to be able to track progress with the <code>callback</code>.</p>
+<p>To wrap everything up, we employ two functions, <a href="https://mannlabs.github.io/alphapept/fasta.html#generate_database"><code>generate_database</code></a> and <a href="https://mannlabs.github.io/alphapept/fasta.html#generate_spectra"><code>generate_spectra</code></a>. The first one reads a FASTA file and generates a list of peptides, as well as the peptide dictionary and an ordered FASTA dictionary to be able to look up the protein indices later. For the <code>callback</code> we first read the whole FASTA file to determine the total number of entries in the FASTA file. For a typical FASTA file of 30 Mb with 40k entries, this should take less than a second. The progress of the digestion is monitored by processing the FASTA file one by one. The function <a href="https://mannlabs.github.io/alphapept/fasta.html#generate_spectra"><code>generate_spectra</code></a> then calculates precursor masses and fragment ions. Here, we split the total_number of sequences in <code>1000</code> steps to be able to track progress with the <code>callback</code>.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L780" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L780" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="generate_fasta_list" class="level3">
 <h3 class="anchored" data-anchor-id="generate_fasta_list">generate_fasta_list</h3>
 <blockquote class="blockquote">
@@ -1034,7 +1022,7 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </blockquote>
 <p>Function to generate a database from a fasta file Args: fasta_paths (str or list of str): fasta path or a list of fasta paths. callback (function, optional): callback function. Returns: fasta_list (list of dict): list of protein entry dict {id:str, name:str, description:str, sequence:str}. fasta_dict (dict{int:dict}): the key is the protein id, the value is the protein entry dict.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L820" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L820" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_database" class="level3">
 <h3 class="anchored" data-anchor-id="generate_database">generate_database</h3>
@@ -1044,7 +1032,7 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </blockquote>
 <p>Function to generate a database from a fasta file Args: mass_dict (dict): not used, will be removed in the future. fasta_paths (str or list of str): fasta path or a list of fasta paths. callback (function, optional): callback function. Returns: to_add (list of str): non-redundant (modified) peptides to be added. pept_dict (dict{str:list of int}): the key is peptide sequence, and the value is protein id list indicating where the peptide is from. fasta_dict (dict{int:dict}): the key is the protein id, the value is the protein entry dict {id:str, name:str, description:str, sequence:str}.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L866" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L866" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_spectra" class="level3">
 <h3 class="anchored" data-anchor-id="generate_spectra">generate_spectra</h3>
@@ -1056,9 +1044,9 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </section>
 <section id="parallelized-version" class="level2">
 <h2 class="anchored" data-anchor-id="parallelized-version">Parallelized version</h2>
-<p>To speed up spectra generated, one can use the parallelized version. The function <a href="https://mannlabs.github.io/fasta.html#generate_database_parallel"><code>generate_database_parallel</code></a> reads an entire FASTA file and splits it into multiple blocks. Each block will be processed, and the generated pept_dicts will be merged.</p>
+<p>To speed up spectra generated, one can use the parallelized version. The function <a href="https://mannlabs.github.io/alphapept/fasta.html#generate_database_parallel"><code>generate_database_parallel</code></a> reads an entire FASTA file and splits it into multiple blocks. Each block will be processed, and the generated pept_dicts will be merged.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L919" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L919" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="blocks" class="level3">
 <h3 class="anchored" data-anchor-id="blocks">blocks</h3>
 <blockquote class="blockquote">
@@ -1066,7 +1054,7 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </blockquote>
 <p>Helper function to create blocks from a given list Args: l (list): the list n (int): size per block Returns: Generator: List with splitted elements</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L899" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L899" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="block_idx" class="level3">
 <h3 class="anchored" data-anchor-id="block_idx">block_idx</h3>
@@ -1075,7 +1063,7 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </blockquote>
 <p>Helper function to split length into blocks Args: len_list (int): list length. block_size (int, optional, default 1000): size per block. Returns: list[(int, int)]: list of (start, end) positions of blocks.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L967" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L967" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="generate_database_parallel" class="level3">
 <h3 class="anchored" data-anchor-id="generate_database_parallel">generate_database_parallel</h3>
@@ -1084,7 +1072,7 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </blockquote>
 <p>Function to generate a database from a fasta file in parallel. Args: settings: alphapept settings. Returns: list: theoretical spectra. See generate_spectra() dict: peptide dict. See add_to_pept_dict() dict: fasta_dict. See generate_fasta_list()</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L937" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L937" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="digest_fasta_block" class="level3">
 <h3 class="anchored" data-anchor-id="digest_fasta_block">digest_fasta_block</h3>
@@ -1095,12 +1083,12 @@ Only A on c-term modified with x (x&lt;A): ['AMAMxA']</code></pre>
 </section>
 <section id="parallel-search-on-large-files" class="level3">
 <h3 class="anchored" data-anchor-id="parallel-search-on-large-files">Parallel search on large files</h3>
-<p>In some cases (e.g., a lot of modifications or very large FASTA files), it will not be useful to save the database as it will consume too much memory. Here, we use the function <a href="https://mannlabs.github.io/search.html#search_parallel"><code>search_parallel</code></a> from search. It creates theoretical spectra on the fly and directly searches against them. As we cannot create a pept_dict here, we need to create one from the search results. For this, we group peptides by their FASTA index and generate a lookup dictionary that can be used as a pept_dict.</p>
+<p>In some cases (e.g., a lot of modifications or very large FASTA files), it will not be useful to save the database as it will consume too much memory. Here, we use the function <a href="https://mannlabs.github.io/alphapept/search.html#search_parallel"><code>search_parallel</code></a> from search. It creates theoretical spectra on the fly and directly searches against them. As we cannot create a pept_dict here, we need to create one from the search results. For this, we group peptides by their FASTA index and generate a lookup dictionary that can be used as a pept_dict.</p>
 <blockquote class="blockquote">
 <p>Note that we are passing the settings argument here. Search results should be stored in the corresponding path in the <code>*.hdf</code> file.</p>
 </blockquote>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L1011" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L1011" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="pept_dict_from_search" class="level3">
 <h3 class="anchored" data-anchor-id="pept_dict_from_search">pept_dict_from_search</h3>
@@ -1137,7 +1125,7 @@ Note
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L1056" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L1056" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="save_database" class="level3">
 <h3 class="anchored" data-anchor-id="save_database">save_database</h3>
 <blockquote class="blockquote">
@@ -1147,7 +1135,7 @@ Note
 <p>Function to save a database to the *.hdf format. Write the database into hdf.</p>
 <p>Args: spectra (list): list: theoretical spectra. See generate_spectra(). pept_dict (dict): peptide dict. See add_to_pept_dict(). fasta_dict (dict): fasta_dict. See generate_fasta_list(). database_path (str): Path to database.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/fasta.py#L1132" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/fasta.py#L1132" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="read_database" class="level3">
 <h3 class="anchored" data-anchor-id="read_database">read_database</h3>

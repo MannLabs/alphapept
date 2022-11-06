@@ -81,19 +81,7 @@ ul.task-list li input[type="checkbox"] {
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -221,7 +209,7 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#recalibration-after-search" id="toc-recalibration-after-search" class="nav-link active" data-scroll-target="#recalibration-after-search">Recalibration after search</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#precursor-mass-calibration" id="toc-precursor-mass-calibration" class="nav-link" data-scroll-target="#precursor-mass-calibration">Precursor mass calibration</a></li>
   <li><a href="#fragment-mass-calibration" id="toc-fragment-mass-calibration" class="nav-link" data-scroll-target="#fragment-mass-calibration">Fragment mass calibration</a></li>
   <li><a href="#remove_outliers" id="toc-remove_outliers" class="nav-link" data-scroll-target="#remove_outliers">remove_outliers</a></li>
@@ -233,16 +221,13 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#save_fragment_calibration" id="toc-save_fragment_calibration" class="nav-link" data-scroll-target="#save_fragment_calibration">save_fragment_calibration</a></li>
   <li><a href="#density_scatter" id="toc-density_scatter" class="nav-link" data-scroll-target="#density_scatter">density_scatter</a></li>
   <li><a href="#chunks" id="toc-chunks" class="nav-link" data-scroll-target="#chunks">chunks</a></li>
-  <li><a href="#calibrate_hdf" id="toc-calibrate_hdf" class="nav-link" data-scroll-target="#calibrate_hdf">calibrate_hdf</a>
-  <ul class="collapse">
-  <li><a href="#database-calibration" id="toc-database-calibration" class="nav-link" data-scroll-target="#database-calibration">Database calibration</a></li>
-  </ul></li>
+  <li><a href="#calibrate_hdf" id="toc-calibrate_hdf" class="nav-link" data-scroll-target="#calibrate_hdf">calibrate_hdf</a></li>
   <li><a href="#get_db_targets" id="toc-get_db_targets" class="nav-link" data-scroll-target="#get_db_targets">get_db_targets</a></li>
   <li><a href="#align_run_to_db" id="toc-align_run_to_db" class="nav-link" data-scroll-target="#align_run_to_db">align_run_to_db</a></li>
   <li><a href="#calibrate_fragments" id="toc-calibrate_fragments" class="nav-link" data-scroll-target="#calibrate_fragments">calibrate_fragments</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -289,7 +274,7 @@ ul.task-list li input[type="checkbox"] {
 <h3 class="anchored" data-anchor-id="fragment-mass-calibration">Fragment mass calibration</h3>
 <p>The fragment mass calibration is based on the identified fragment_ions (i.e., b-hits and y-hits). For each hit, we calculate the offset to its theoretical mass. The correction is then applied by taking the median offset in ppm and applying it globally.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L12" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L12" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="remove_outliers" class="level3">
 <h3 class="anchored" data-anchor-id="remove_outliers">remove_outliers</h3>
@@ -301,7 +286,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Raises: ValueError: An error if the column is not present in the dataframe.</p>
 <p>Returns: pd.DataFrame: A dataframe w/o outliers.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L42" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L42" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="transform" class="level3">
 <h3 class="anchored" data-anchor-id="transform">transform</h3>
@@ -317,7 +302,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Raises: KeyError: An error if the column is not present in the dict. NotImplementedError: An error if the column is not present in the dict.</p>
 <p>Returns: np.ndarray: A scaled array.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L88" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L88" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="kneighbors_calibration" class="level3">
 <h3 class="anchored" data-anchor-id="kneighbors_calibration">kneighbors_calibration</h3>
@@ -331,7 +316,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Args: df (pd.DataFrame): Input dataframe that contains identified peptides (w/o outliers). features (pd.DataFrame): Features dataframe for which the masses are calibrated. cols (list): List of input columns for the calibration. target (str): Target column on which offset is calculated. scaling_dict (dict): A dictionary that contains how scaling operations are applied. calib_n_neighbors (int): Number of neighbors for calibration.</p>
 <p>Returns: np.ndarray: A numpy array with calibrated masses.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L128" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L128" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_calibration" class="level3">
 <h3 class="anchored" data-anchor-id="get_calibration">get_calibration</h3>
@@ -347,7 +332,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Args: df (pd.DataFrame): Input dataframe that contains identified peptides. features (pd.DataFrame): Features dataframe for which the masses are calibrated. outlier_std (float, optional): Range in standard deviations for outlier removal. Defaults to 3. calib_n_neighbors (int, optional): Number of neighbors used for regression. Defaults to 100. calib_mz_range (int, optional): Scaling factor for mz range. Defaults to 20. calib_rt_range (float, optional): Scaling factor for rt_range. Defaults to 0.5. calib_mob_range (float, optional): Scaling factor for mobility range. Defaults to 0.3. **kwargs: Arbitrary keyword arguments so that settings can be passes as whole.</p>
 <p>Returns: corrected_mass (np.ndarray): The calibrated mass y_hat_std (float): The standard deviation of the precursor offset after calibration</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L347" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L347" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="calibrate_fragments_nn" class="level3">
 <h3 class="anchored" data-anchor-id="calibrate_fragments_nn">calibrate_fragments_nn</h3>
@@ -355,7 +340,7 @@ ul.task-list li input[type="checkbox"] {
 <pre><code> calibrate_fragments_nn (ms_file_, file_name, settings)</code></pre>
 </blockquote>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L293" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L293" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="save_precursor_calibration" class="level3">
 <h3 class="anchored" data-anchor-id="save_precursor_calibration">save_precursor_calibration</h3>
@@ -364,7 +349,7 @@ ul.task-list li input[type="checkbox"] {
                              settings)</code></pre>
 </blockquote>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L240" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L240" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="save_fragment_calibration" class="level3">
 <h3 class="anchored" data-anchor-id="save_fragment_calibration">save_fragment_calibration</h3>
@@ -373,7 +358,7 @@ ul.task-list li input[type="checkbox"] {
                             file_name, settings)</code></pre>
 </blockquote>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L219" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L219" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="density_scatter" class="level3">
 <h3 class="anchored" data-anchor-id="density_scatter">density_scatter</h3>
@@ -382,7 +367,7 @@ ul.task-list li input[type="checkbox"] {
 </blockquote>
 <p>Scatter plot colored by 2d histogram Adapted from https://stackoverflow.com/questions/20105364/how-can-i-make-a-scatter-plot-colored-by-density-in-matplotlib</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L214" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L214" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="chunks" class="level3">
 <h3 class="anchored" data-anchor-id="chunks">chunks</h3>
@@ -391,7 +376,7 @@ ul.task-list li input[type="checkbox"] {
 </blockquote>
 <p>Yield successive n-sized chunks from lst.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L462" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L462" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="calibrate_hdf" class="level3">
 <h3 class="anchored" data-anchor-id="calibrate_hdf">calibrate_hdf</h3>
@@ -405,7 +390,7 @@ ul.task-list li input[type="checkbox"] {
 <h4 class="anchored" data-anchor-id="database-calibration">Database calibration</h4>
 <p>Another way to calibrate the fragment and precursor masses is by directly comparing them to a previously generated theoretical mass database. Here, peaks in the distribution of databases are used to align the experimental masses.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L551" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L551" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 </section>
 <section id="get_db_targets" class="level3">
@@ -419,7 +404,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Raises: ValueError: When ms_level is not valid.</p>
 <p>Returns: np.ndarray: Numpy array with calibration masses.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L610" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L610" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="align_run_to_db" class="level3">
 <h3 class="anchored" data-anchor-id="align_run_to_db">align_run_to_db</h3>
@@ -433,7 +418,7 @@ ul.task-list li input[type="checkbox"] {
 <p>Raises: ValueError: When ms_level is not valid.</p>
 <p>Returns: np.ndarray: Estimated errors</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/recalibration.py#L713" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/recalibration.py#L713" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="calibrate_fragments" class="level3">
 <h3 class="anchored" data-anchor-id="calibrate_fragments">calibrate_fragments</h3>

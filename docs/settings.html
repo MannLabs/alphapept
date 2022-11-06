@@ -144,19 +144,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -284,7 +272,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#settings" id="toc-settings" class="nav-link active" data-scroll-target="#settings">Settings</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#saving-and-loading" id="toc-saving-and-loading" class="nav-link" data-scroll-target="#saving-and-loading">Saving and Loading</a></li>
   <li><a href="#save_settings" id="toc-save_settings" class="nav-link" data-scroll-target="#save_settings">save_settings</a></li>
   <li><a href="#load_settings_as_template" id="toc-load_settings_as_template" class="nav-link" data-scroll-target="#load_settings_as_template">load_settings_as_template</a></li>
@@ -292,7 +280,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#print_settings" id="toc-print_settings" class="nav-link" data-scroll-target="#print_settings">print_settings</a></li>
   </ul></li>
   <li><a href="#settings-template" id="toc-settings-template" class="nav-link" data-scroll-target="#settings-template">Settings Template</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#worfklow-settings" id="toc-worfklow-settings" class="nav-link" data-scroll-target="#worfklow-settings">Worfklow settings</a></li>
   <li><a href="#experimental-settings" id="toc-experimental-settings" class="nav-link" data-scroll-target="#experimental-settings">Experimental Settings</a></li>
   <li><a href="#raw-file-handling" id="toc-raw-file-handling" class="nav-link" data-scroll-target="#raw-file-handling">Raw file handling</a></li>
@@ -308,7 +296,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#create_default_settings" id="toc-create_default_settings" class="nav-link" data-scroll-target="#create_default_settings">create_default_settings</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -346,7 +334,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="saving-and-loading">Saving and Loading</h3>
 <p>The default scheme for saving settings are <code>*.yaml</code>-files. These files can be easily modified when opening with a text editor.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/settings.py#L54" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/settings.py#L54" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="save_settings" class="level3">
 <h3 class="anchored" data-anchor-id="save_settings">save_settings</h3>
@@ -356,7 +344,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Save settings file to path.</p>
 <p>Args: settings (dict): A yaml dictionary. path (str): Path to the settings file.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/settings.py#L34" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/settings.py#L34" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="load_settings_as_template" class="level3">
 <h3 class="anchored" data-anchor-id="load_settings_as_template">load_settings_as_template</h3>
@@ -366,7 +354,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Loads settings but removes fields that contain summary information.</p>
 <p>Args: path (str): Path to the settings file.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/settings.py#L23" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/settings.py#L23" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="load_settings" class="level3">
 <h3 class="anchored" data-anchor-id="load_settings">load_settings</h3>
@@ -376,7 +364,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Load a yaml settings file.</p>
 <p>Args: path (str): Path to the settings file.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/settings.py#L14" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/settings.py#L14" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="print_settings" class="level3">
 <h3 class="anchored" data-anchor-id="print_settings">print_settings</h3>
@@ -1068,7 +1056,7 @@ mode:
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/settings.py#L279" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/settings.py#L279" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="hash_file" class="level3">
 <h3 class="anchored" data-anchor-id="hash_file">hash_file</h3>
@@ -1077,7 +1065,7 @@ mode:
 </blockquote>
 <p>Helper function to hash a file Taken from https://stackoverflow.com/questions/22058048/hashing-a-file-in-python</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/settings.py#L302" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/settings.py#L302" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="create_default_settings" class="level3">
 <h3 class="anchored" data-anchor-id="create_default_settings">create_default_settings</h3>

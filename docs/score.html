@@ -144,19 +144,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -284,24 +272,24 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#filtering" id="toc-filtering" class="nav-link active" data-scroll-target="#filtering">Filtering</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#filter_score" id="toc-filter_score" class="nav-link" data-scroll-target="#filter_score">filter_score</a></li>
   <li><a href="#filter_precursor" id="toc-filter_precursor" class="nav-link" data-scroll-target="#filter_precursor">filter_precursor</a></li>
   </ul></li>
   <li><a href="#q-values" id="toc-q-values" class="nav-link" data-scroll-target="#q-values">Q-Values</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#get_q_values" id="toc-get_q_values" class="nav-link" data-scroll-target="#get_q_values">get_q_values</a></li>
   </ul></li>
   <li><a href="#fdr" id="toc-fdr" class="nav-link" data-scroll-target="#fdr">FDR</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#cut_fdr" id="toc-cut_fdr" class="nav-link" data-scroll-target="#cut_fdr">cut_fdr</a></li>
   </ul></li>
   <li><a href="#global-fdr" id="toc-global-fdr" class="nav-link" data-scroll-target="#global-fdr">Global FDR</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#cut_global_fdr" id="toc-cut_global_fdr" class="nav-link" data-scroll-target="#cut_global_fdr">cut_global_fdr</a></li>
   </ul></li>
   <li><a href="#scoring" id="toc-scoring" class="nav-link" data-scroll-target="#scoring">Scoring</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#xtandem-scoring" id="toc-xtandem-scoring" class="nav-link" data-scroll-target="#xtandem-scoring">X!tandem scoring</a></li>
   <li><a href="#filter_with_score" id="toc-filter_with_score" class="nav-link" data-scroll-target="#filter_with_score">filter_with_score</a></li>
   <li><a href="#filter_with_x_tandem" id="toc-filter_with_x_tandem" class="nav-link" data-scroll-target="#filter_with_x_tandem">filter_with_x_tandem</a></li>
@@ -313,14 +301,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#score_psms" id="toc-score_psms" class="nav-link" data-scroll-target="#score_psms">score_psms</a></li>
   </ul></li>
   <li><a href="#machine-learning-based-scoring-of-psms" id="toc-machine-learning-based-scoring-of-psms" class="nav-link" data-scroll-target="#machine-learning-based-scoring-of-psms">Machine learning based scoring of PSMs</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#filter_with_ml" id="toc-filter_with_ml" class="nav-link" data-scroll-target="#filter_with_ml">filter_with_ML</a></li>
   <li><a href="#score_ml" id="toc-score_ml" class="nav-link" data-scroll-target="#score_ml">score_ML</a></li>
   <li><a href="#train_rf" id="toc-train_rf" class="nav-link" data-scroll-target="#train_rf">train_RF</a></li>
   <li><a href="#get_ml_features" id="toc-get_ml_features" class="nav-link" data-scroll-target="#get_ml_features">get_ML_features</a></li>
   </ul></li>
   <li><a href="#protein-grouping" id="toc-protein-grouping" class="nav-link" data-scroll-target="#protein-grouping">Protein grouping</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#perform_protein_grouping" id="toc-perform_protein_grouping" class="nav-link" data-scroll-target="#perform_protein_grouping">perform_protein_grouping</a></li>
   <li><a href="#get_protein_groups" id="toc-get_protein_groups" class="nav-link" data-scroll-target="#get_protein_groups">get_protein_groups</a></li>
   <li><a href="#get_shared_proteins" id="toc-get_shared_proteins" class="nav-link" data-scroll-target="#get_shared_proteins">get_shared_proteins</a></li>
@@ -329,12 +317,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#ecdf" id="toc-ecdf" class="nav-link" data-scroll-target="#ecdf">ecdf</a></li>
   </ul></li>
   <li><a href="#helper-functions" id="toc-helper-functions" class="nav-link" data-scroll-target="#helper-functions">Helper functions</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#protein_grouping_all" id="toc-protein_grouping_all" class="nav-link" data-scroll-target="#protein_grouping_all">protein_grouping_all</a></li>
   <li><a href="#score_hdf" id="toc-score_hdf" class="nav-link" data-scroll-target="#score_hdf">score_hdf</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -373,15 +361,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="filtering">Filtering</h2>
 <p>The filtering functions are essential base functions for scoring in AlphaPept. They make sure that only the ‘best precursor per spectum’ and the ‘best spectrum per precursor’ is used.</p>
 <p>Recall from the search that when having feautres, <code>raw_idx</code> refers to the actual index from the raw data. Otherwise it is<code>query_data</code>.</p>
-<p>For filtering, we have several functions. When applying for a score, we first use <a href="https://mannlabs.github.io/score.html#filter_score"><code>filter_score</code></a> and then <a href="https://mannlabs.github.io/score.html#filter_precursor"><code>filter_precursor</code></a>. <a href="https://mannlabs.github.io/score.html#filter_score"><code>filter_score</code></a> is keeping the best score per experimental spectrum. First we rank by score for each <code>query_idx</code>. As we have multiple hits for each experimental spectrum from the search we only want to keep the best one.</p>
+<p>For filtering, we have several functions. When applying for a score, we first use <a href="https://mannlabs.github.io/alphapept/score.html#filter_score"><code>filter_score</code></a> and then <a href="https://mannlabs.github.io/alphapept/score.html#filter_precursor"><code>filter_precursor</code></a>. <a href="https://mannlabs.github.io/alphapept/score.html#filter_score"><code>filter_score</code></a> is keeping the best score per experimental spectrum. First we rank by score for each <code>query_idx</code>. As we have multiple hits for each experimental spectrum from the search we only want to keep the best one.</p>
 <p>When performing feature finding, we assign multiple possible features to each experimental spectrum. The idea here is that a spectrum could originate from various precursors. To disentangle these psms we can use the following modes:</p>
 <ul>
 <li><code>single</code>: This mode will only keep one feature per experimental spectrum (the one with the highest score and the closest distance). Each feature can only occur once.</li>
 <li><code>multiple</code>: Allow multiple features per experimental spectrum. Each feature can only occur once.</li>
 </ul>
-<p><a href="https://mannlabs.github.io/score.html#filter_precursor"><code>filter_precursor</code></a> is intended for the case that a precursor (charge + sequence) occurs more than once. Only the one with the highest score will be kept.</p>
+<p><a href="https://mannlabs.github.io/alphapept/score.html#filter_precursor"><code>filter_precursor</code></a> is intended for the case that a precursor (charge + sequence) occurs more than once. Only the one with the highest score will be kept.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L16" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L16" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="filter_score" class="level3">
 <h3 class="anchored" data-anchor-id="filter_score">filter_score</h3>
 <blockquote class="blockquote">
@@ -392,7 +380,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: df (pd.DataFrame): psms table of search results from alphapept. mode (str, optional): string specifying which mode to use for psms filtering. The two options are ‘single’ and ‘multiple’. ‘single’ will only keep one feature per experimental spectrum. ‘multiple’ will allow multiple features per experimental spectrum. In either option, each feature can only occur once. Defaults to ‘multiple’.</p>
 <p>Returns: pd.DataFrame: table containing the filtered psms results.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L58" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L58" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="filter_precursor" class="level3">
 <h3 class="anchored" data-anchor-id="filter_precursor">filter_precursor</h3>
@@ -406,9 +394,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="q-values" class="level2">
 <h2 class="anchored" data-anchor-id="q-values">Q-Values</h2>
-<p><a href="https://mannlabs.github.io/score.html#get_q_values"><code>get_q_values</code></a> is used to calculate q-values from FDR values. The direct relationship is illustrated further down in the notebook.</p>
+<p><a href="https://mannlabs.github.io/alphapept/score.html#get_q_values"><code>get_q_values</code></a> is used to calculate q-values from FDR values. The direct relationship is illustrated further down in the notebook.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L86" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L86" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="get_q_values" class="level3">
 <h3 class="anchored" data-anchor-id="get_q_values">get_q_values</h3>
 <blockquote class="blockquote">
@@ -424,7 +412,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>The employed FDR strategy is based on a classical target-decoy competition approach. The procedure works as follows: 1. Consider only the best scoring target or decoy PSM per spectrum. 2. Sort all PSMs by decreasing scores. 3. Estimate the FDR as #decoys / #targets, where #targets (#decoys) is the number of positive target (decoy) PSMs at a given score threshold t (i.e.&nbsp;PSMs with scores higher than t). 4. Convert the estimated FDR to q-values by selecting the minimum FDR at which the identification could be made, i.e.&nbsp;the lowest score threshold t that could be set to include an identification without increasing the number of false positives. 5. Report the set of target PSMs with q-values smaller or equal to the selected <code>fdr_level</code>.</p>
 <p>Informative literature describing and discussing different FDR estimation approaches for shotgun proteomics can be found here (the implemented strategy in alphapept is referred to as T-TDC in this article): &gt; Keich, Uri et al.&nbsp;“Improved False Discovery Rate Estimation Procedure for Shotgun Proteomics.” Journal of proteome research vol.&nbsp;14,8 (2015): 3148-61. <a href="https://pubs.acs.org/doi/10.1021/acs.jproteome.5b00081" class="uri">https://pubs.acs.org/doi/10.1021/acs.jproteome.5b00081</a></p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L112" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L112" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="cut_fdr" class="level3">
 <h3 class="anchored" data-anchor-id="cut_fdr">cut_fdr</h3>
 <blockquote class="blockquote">
@@ -438,7 +426,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Simulation of random scores for 50’000 measurements (corresponding to spectra). Simulated are decoys, true targets and false targets. We assume a false traget raio (pi0) of 0.8 and a mean score difference of 3.5.</p>
 <p>Simulated score distribution for a separate target and decoy database search:</p>
 <p>Simulated score distribution for a corresponding concatinated target-decoy database search with target-decoy-competition:</p>
-<p>Application of the <a href="https://mannlabs.github.io/score.html#cut_fdr"><code>cut_fdr</code></a> function to the simulated target-decoy competition dataset saved in <code>TDC</code>:</p>
+<p>Application of the <a href="https://mannlabs.github.io/alphapept/score.html#cut_fdr"><code>cut_fdr</code></a> function to the simulated target-decoy competition dataset saved in <code>TDC</code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>cval, cut_TDC <span class="op">=</span> cut_fdr(TDC, fdr_level<span class="op">=</span><span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -455,7 +443,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="global-fdr" class="level2">
 <h2 class="anchored" data-anchor-id="global-fdr">Global FDR</h2>
-<p>The <a href="https://mannlabs.github.io/score.html#cut_global_fdr"><code>cut_global_fdr</code></a> function has two specific applications: 1. <strong>Estimate q-values on the peptide and protein level</strong> <br> The concept here is based on selecting the best scoring precursor per peptide (or protein) to then estimate the FDR by target-decoy competition using the <a href="https://mannlabs.github.io/score.html#cut_fdr"><code>cut_fdr</code></a> function. 2. <strong>Estimate q-values across an entire dataset on either precursor, peptide or protein level</strong> <br> The concept here is based on selecting the best scoring precursor, peptide or protein signal across an entire dataset to then estimate the FDR by target-decoy competition using the <a href="https://mannlabs.github.io/score.html#cut_fdr"><code>cut_fdr</code></a> function.</p>
+<p>The <a href="https://mannlabs.github.io/alphapept/score.html#cut_global_fdr"><code>cut_global_fdr</code></a> function has two specific applications: 1. <strong>Estimate q-values on the peptide and protein level</strong> <br> The concept here is based on selecting the best scoring precursor per peptide (or protein) to then estimate the FDR by target-decoy competition using the <a href="https://mannlabs.github.io/alphapept/score.html#cut_fdr"><code>cut_fdr</code></a> function. 2. <strong>Estimate q-values across an entire dataset on either precursor, peptide or protein level</strong> <br> The concept here is based on selecting the best scoring precursor, peptide or protein signal across an entire dataset to then estimate the FDR by target-decoy competition using the <a href="https://mannlabs.github.io/alphapept/score.html#cut_fdr"><code>cut_fdr</code></a> function.</p>
 <p>This strategy was extensively tested and discussed in the following publications:</p>
 <ul>
 <li><p>Nesvizhskii, Alexey I. “A survey of computational methods and error rate estimation procedures for peptide and protein identification in shotgun proteomics.” Journal of proteomics vol.&nbsp;73,11 (2010): 2092-123. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2956504/" class="uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2956504/</a></p></li>
@@ -464,7 +452,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li><p>Gupta, Nitin, and Pavel A Pevzner. “False discovery rates of protein identifications: a strike against the two-peptide rule.” Journal of proteome research vol.&nbsp;8,9 (2009): 4173-81. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3398614/" class="uri">https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3398614/</a></p></li>
 </ul>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L195" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L195" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="cut_global_fdr" class="level3">
 <h3 class="anchored" data-anchor-id="cut_global_fdr">cut_global_fdr</h3>
 <blockquote class="blockquote">
@@ -476,7 +464,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: data (pd.DataFrame): psms table of search results from alphapept. analyte_level (str, optional): string specifying the analyte level to apply the fdr threshold. Options include: ‘precursor’, ‘sequence’, ‘protein_group’ and ‘protein’. Defaults to ‘sequence’. fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01. plot (bool, optional): flag to enable plot. Defaults to ‘True’.</p>
 <p>Returns: pd.DataFrame: df with filtered results</p>
 <p>Similar to the sequence level simulations we can simulatae score distributions for peptides beloning to proteins. In our simulation we assumed a poisson distribution for the number of peptides for each protein centered at 4 peptides.</p>
-<p>Application of the <a href="https://mannlabs.github.io/score.html#cut_global_fdr"><code>cut_global_fdr</code></a> function to the simulated protein-level target-decoy competition dataset saved in <code>TDC_prot</code>:</p>
+<p>Application of the <a href="https://mannlabs.github.io/alphapept/score.html#cut_global_fdr"><code>cut_global_fdr</code></a> function to the simulated protein-level target-decoy competition dataset saved in <code>TDC_prot</code>:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>cut_TDC_prot <span class="op">=</span> cut_global_fdr(TDC_prot, fdr_level<span class="op">=</span><span class="fl">0.01</span>, analyte_level<span class="op">=</span><span class="st">'protein'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
@@ -496,14 +484,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="xtandem-scoring" class="level3">
 <h3 class="anchored" data-anchor-id="xtandem-scoring">X!tandem scoring</h3>
 <ul>
-<li><p><a href="https://mannlabs.github.io/score.html#get_x_tandem_score"><code>get_x_tandem_score</code></a> performs scoring of PSMs according to the X!tandem strategy:</p></li>
-<li><p><a href="https://mannlabs.github.io/score.html#score_x_tandem"><code>score_x_tandem</code></a> first calls <a href="https://mannlabs.github.io/score.html#get_x_tandem_score"><code>get_x_tandem_score</code></a> and and subsequently applies the <a href="https://mannlabs.github.io/score.html#cut_fdr"><code>cut_fdr</code></a> function to filter PSMs at the specified <code>fdr_level</code>.</p></li>
+<li><p><a href="https://mannlabs.github.io/alphapept/score.html#get_x_tandem_score"><code>get_x_tandem_score</code></a> performs scoring of PSMs according to the X!tandem strategy:</p></li>
+<li><p><a href="https://mannlabs.github.io/alphapept/score.html#score_x_tandem"><code>score_x_tandem</code></a> first calls <a href="https://mannlabs.github.io/alphapept/score.html#get_x_tandem_score"><code>get_x_tandem_score</code></a> and and subsequently applies the <a href="https://mannlabs.github.io/alphapept/score.html#cut_fdr"><code>cut_fdr</code></a> function to filter PSMs at the specified <code>fdr_level</code>.</p></li>
 </ul>
 <blockquote class="blockquote">
 <p>X!Tandem, Craig,R. and Beavis,R.C. (2003) Rapid Commun. Mass Spectrom., 17, 2310-2316</p>
 </blockquote>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L338" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L338" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="filter_with_score" class="level3">
 <h3 class="anchored" data-anchor-id="filter_with_score">filter_with_score</h3>
@@ -514,7 +502,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: df (pd.DataFrame): psms table of search results from alphapept.</p>
 <p>Returns: pd.DataFrame: psms table filtered for no feature or precursor to be assigned multiple times.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L317" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L317" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="filter_with_x_tandem" class="level3">
 <h3 class="anchored" data-anchor-id="filter_with_x_tandem">filter_with_x_tandem</h3>
@@ -525,7 +513,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: df (pd.DataFrame): psms table of search results from alphapept.</p>
 <p>Returns: pd.DataFrame: psms table with an extra ‘score’ column for x_tandem, filtered for no feature or precursor to be assigned multiple times.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L293" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L293" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="score_generic" class="level3">
 <h3 class="anchored" data-anchor-id="score_generic">score_generic</h3>
@@ -537,7 +525,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: df (pd.DataFrame): psms table of search results from alphapept. fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.</p>
 <p>Returns: pd.DataFrame: psms table with an extra ‘score’ column for the generic score, filtered for no feature or precursor to be assigned multiple times.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L277" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L277" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_generic_score" class="level3">
 <h3 class="anchored" data-anchor-id="get_generic_score">get_generic_score</h3>
@@ -548,7 +536,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: df (pd.DataFrame): psms table of search results from alphapept.</p>
 <p>Returns: np.ndarray: np.ndarray with x_tandem scores</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L254" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L254" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="score_x_tandem" class="level3">
 <h3 class="anchored" data-anchor-id="score_x_tandem">score_x_tandem</h3>
@@ -560,7 +548,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: df (pd.DataFrame): psms table of search results from alphapept. fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01.</p>
 <p>Returns: pd.DataFrame: psms table with an extra ‘score’ column for x_tandem, filtered for no feature or precursor to be assigned multiple times.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L235" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L235" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_x_tandem_score" class="level3">
 <h3 class="anchored" data-anchor-id="get_x_tandem_score">get_x_tandem_score</h3>
@@ -573,9 +561,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="score-and-filter-psms-by-any-specified-score" class="level3">
 <h3 class="anchored" data-anchor-id="score-and-filter-psms-by-any-specified-score">Score and filter PSMs by any specified score</h3>
-<p><a href="https://mannlabs.github.io/score.html#score_psms"><code>score_psms</code></a> uses the specified <a href="https://mannlabs.github.io/search.html#score"><code>score</code></a> and applies the <a href="https://mannlabs.github.io/score.html#cut_fdr"><code>cut_fdr</code></a> function to filter PSMs at the specified <code>fdr_level</code>. <a href="https://mannlabs.github.io/score.html#filter_score"><code>filter_score</code></a> and <a href="https://mannlabs.github.io/score.html#filter_precursor"><code>filter_precursor</code></a> are applied to only report the best PSM per acquired spectrum and the best signal per precursor (i.e.&nbsp;sequence + charge combination).</p>
+<p><a href="https://mannlabs.github.io/alphapept/score.html#score_psms"><code>score_psms</code></a> uses the specified <a href="https://mannlabs.github.io/alphapept/search.html#score"><code>score</code></a> and applies the <a href="https://mannlabs.github.io/alphapept/score.html#cut_fdr"><code>cut_fdr</code></a> function to filter PSMs at the specified <code>fdr_level</code>. <a href="https://mannlabs.github.io/alphapept/score.html#filter_score"><code>filter_score</code></a> and <a href="https://mannlabs.github.io/alphapept/score.html#filter_precursor"><code>filter_precursor</code></a> are applied to only report the best PSM per acquired spectrum and the best signal per precursor (i.e.&nbsp;sequence + charge combination).</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L359" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L359" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="score_psms" class="level3">
 <h3 class="anchored" data-anchor-id="score_psms">score_psms</h3>
@@ -591,8 +579,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="machine-learning-based-scoring-of-psms" class="level2">
 <h2 class="anchored" data-anchor-id="machine-learning-based-scoring-of-psms">Machine learning based scoring of PSMs</h2>
 <ul>
-<li><p><a href="https://mannlabs.github.io/score.html#get_ml_features"><code>get_ML_features</code></a> extracts additional scoring metrics for the machine learning, including the number of amino acids per precursor, the number of missed cleavages and the logarithmic number of times the same peptide occurs in the set of PSMs</p></li>
-<li><p><a href="https://mannlabs.github.io/score.html#train_rf"><code>train_RF</code></a> trains a random forest classifier for scoring all PSMs. For this, we use the scikit-learn library.</p>
+<li><p><a href="https://mannlabs.github.io/alphapept/score.html#get_ml_features"><code>get_ML_features</code></a> extracts additional scoring metrics for the machine learning, including the number of amino acids per precursor, the number of missed cleavages and the logarithmic number of times the same peptide occurs in the set of PSMs</p></li>
+<li><p><a href="https://mannlabs.github.io/alphapept/score.html#train_rf"><code>train_RF</code></a> trains a random forest classifier for scoring all PSMs. For this, we use the scikit-learn library.</p>
 <ul>
 <li>First, a machine learning pipeline is created including the sklearn <code>StandardScaler</code> and <code>RandomForestClassifier</code>. The <code>StandardScaler</code> is used to standardize all features by removing the mean and scaling to unit variance. For details on the <code>RandomForestClassifier</code> see: <a href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html" class="uri">https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html</a>.</li>
 <li>Next, a grid search is initialized for testing the hyperparameter space (<code>max_depth</code> and <code>max_leaf_nodes</code>) of the random forest classifier by a 5-fold cross-validation using <code>GridSearchCV</code>.</li>
@@ -603,10 +591,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>If <code>plot</code> is enabled, a figure illustrating the weights of each feature is produced.</li>
 <li>Finally the function returns the trained random forest classifier for subsequent application to the entire set of PSMs or for transfering to a different dataset.</li>
 </ul></li>
-<li><p><a href="https://mannlabs.github.io/score.html#score_ml"><code>score_ML</code></a> applies a classifier trained by <a href="https://mannlabs.github.io/score.html#train_rf"><code>train_RF</code></a> to a complete set of PSMs. It calls the <a href="https://mannlabs.github.io/score.html#cut_fdr"><code>cut_fdr</code></a> function and filters for the specified <code>fdr_level</code>. <a href="https://mannlabs.github.io/score.html#filter_score"><code>filter_score</code></a> and <a href="https://mannlabs.github.io/score.html#filter_precursor"><code>filter_precursor</code></a> are applied to only report the best PSM per acquired spectrum and the best signal per precursor (i.e.&nbsp;sequence + charge combination).</p></li>
+<li><p><a href="https://mannlabs.github.io/alphapept/score.html#score_ml"><code>score_ML</code></a> applies a classifier trained by <a href="https://mannlabs.github.io/alphapept/score.html#train_rf"><code>train_RF</code></a> to a complete set of PSMs. It calls the <a href="https://mannlabs.github.io/alphapept/score.html#cut_fdr"><code>cut_fdr</code></a> function and filters for the specified <code>fdr_level</code>. <a href="https://mannlabs.github.io/alphapept/score.html#filter_score"><code>filter_score</code></a> and <a href="https://mannlabs.github.io/alphapept/score.html#filter_precursor"><code>filter_precursor</code></a> are applied to only report the best PSM per acquired spectrum and the best signal per precursor (i.e.&nbsp;sequence + charge combination).</p></li>
 </ul>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L606" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L606" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="filter_with_ml" class="level3">
 <h3 class="anchored" data-anchor-id="filter_with_ml">filter_with_ML</h3>
 <blockquote class="blockquote">
@@ -618,7 +606,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: df (pd.DataFrame): psms table of search results from alphapept. trained_classifier (GridSearchCV): GridSearchCV object returned by train_RF. features (list): list with features returned by train_RF. Defaults to ‘None’.</p>
 <p>Returns: pd.DataFrame: psms table with an extra ‘score’ column from the trained_classifier by ML, filtered for no feature or precursor to be assigned multiple times.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L576" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L576" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="score_ml" class="level3">
 <h3 class="anchored" data-anchor-id="score_ml">score_ML</h3>
@@ -632,7 +620,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: df (pd.DataFrame): psms table of search results from alphapept. trained_classifier (GridSearchCV): GridSearchCV object returned by train_RF. features (list): list with features returned by train_RF. Defaults to None. fdr_level (float, optional): fdr level that should be used for filtering. The value should lie between 0 and 1. Defaults to 0.01. plot (bool, optional): flag to enable plot. Defaults to True.</p>
 <p>Returns: pd.DataFrame: filtered df with psms within fdr</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L430" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L430" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="train_rf" class="level3">
 <h3 class="anchored" data-anchor-id="train_rf">train_RF</h3>
@@ -652,7 +640,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: df (pd.DataFrame): psms table of search results from alphapept. exclude_features (list, optional): list with column names of features to exclude for ML. Defaults to [‘precursor_idx’,‘fragment_ion_idx’,‘fasta_index’,‘feature_rank’,‘raw_rank’,‘score_rank’,‘db_idx’, ‘feature_idx’, ‘precursor’, ‘query_idx’, ‘raw_idx’,‘sequence’,‘decoy’,‘sequence_naked’,‘target’]. train_fdr_level (float, optional): Only targets below the train_fdr_level cutoff are considered for training the classifier. Defaults to 0.1. ini_score (str, optional): Initial score to select psms set for semi-supervised learning. Defaults to ‘x_tandem’. min_train (int, optional): Minimum number of psms in the training set. Defaults to 1000. test_size (float, optional): Fraction of psms used for testing. Defaults to 0.8. max_depth (list, optional): List of clf__max_depth parameters to test in the grid search. Defaults to [5,25,50]. max_leaf_nodes (list, optional): List of clf__max_leaf_nodes parameters to test in the grid search. Defaults to [150,200,250]. n_jobs (int, optional): Number of jobs to use for parallelizing the gridsearch. Defaults to -1, which in GridSearchCV corresponds to ‘use all available cores’. scoring (str, optional): Scoring method for the gridsearch. Defaults to ‘accuracy’. plot (bool, optional): flag to enable plot. Defaults to ‘False’. random_state (int, optional): Random state for initializing the RandomForestClassifier. Defaults to 42.</p>
 <p>Returns: [GridSearchCV, list]: GridSearchCV: GridSearchCV object with trained RandomForestClassifier. list: list of features used for training the classifier.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L402" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L402" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_ml_features" class="level3">
 <h3 class="anchored" data-anchor-id="get_ml_features">get_ML_features</h3>
@@ -679,7 +667,7 @@ The rule is that if all peptides of a given protein are a subset of the peptides
 <li>[1] Tyanova, S., Temu, T. &amp; Cox, J. The MaxQuant computational platform for mass spectrometry-based shotgun proteomics. Nat Protoc 11, 2301–2319 (2016). https://doi.org/10.1038/nprot.2016.136</li>
 </ul>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L831" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L831" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="perform_protein_grouping" class="level3">
 <h3 class="anchored" data-anchor-id="perform_protein_grouping">perform_protein_grouping</h3>
 <blockquote class="blockquote">
@@ -690,7 +678,7 @@ The rule is that if all peptides of a given protein are a subset of the peptides
 <p>Args: data (pd.DataFrame): psms table of scored and filtered search results from alphapept. pept_dict (dict): A dictionary mapping peptide indices to the originating proteins as a list. fasta_dict (dict): A dictionary with fasta sequences.</p>
 <p>Returns: pd.DataFrame: alphapept results table now including protein level information.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L762" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L762" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_protein_groups" class="level3">
 <h3 class="anchored" data-anchor-id="get_protein_groups">get_protein_groups</h3>
@@ -699,11 +687,11 @@ The rule is that if all peptides of a given protein are a subset of the peptides
                      fasta_dict:dict, decoy=False, callback=None,
                      **kwargs)</code></pre>
 </blockquote>
-<p>Function to perform protein grouping by razor approach. This function calls <code>assign_proteins</code> and <code>get_shared_proteins</code>. ToDo: implement callback for solving Each protein is indicated with a p -&gt; protein index</p>
+<p>Function to perform protein grouping by razor approach. This function calls <a href="https://mannlabs.github.io/alphapept/score.html#assign_proteins"><code>assign_proteins</code></a> and <a href="https://mannlabs.github.io/alphapept/score.html#get_shared_proteins"><code>get_shared_proteins</code></a>. ToDo: implement callback for solving Each protein is indicated with a p -&gt; protein index</p>
 <p>Args: data (pd.DataFrame): psms table of scored and filtered search results from alphapept. pept_dict (dict): A dictionary mapping peptide indices to the originating proteins as a list. fasta_dict (dict): A dictionary with fasta sequences. decoy (bool, optional): Defaults to False. callback (bool, optional): Defaults to None.</p>
 <p>Returns: pd.DataFrame: alphapept results table now including protein level information.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L673" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L673" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_shared_proteins" class="level3">
 <h3 class="anchored" data-anchor-id="get_shared_proteins">get_shared_proteins</h3>
@@ -715,7 +703,7 @@ The rule is that if all peptides of a given protein are a subset of the peptides
 <p>Args: data (pd.DataFrame): psms table of scored and filtered search results from alphapept, appended with <code>n_possible_proteins</code>. found_proteins (dict): dictionary mapping psms indices to proteins pept_dict (dict): dictionary mapping peptide indices to the originating proteins as a list</p>
 <p>Returns: dict: dictionary mapping peptides to razor proteins</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L635" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L635" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="assign_proteins" class="level3">
 <h3 class="anchored" data-anchor-id="assign_proteins">assign_proteins</h3>
@@ -726,7 +714,7 @@ The rule is that if all peptides of a given protein are a subset of the peptides
 <p>Args: data (pd.DataFrame): psms table of scored and filtered search results from alphapept. pept_dict (dict): dictionary that matches peptide sequences to proteins</p>
 <p>Returns: pd.DataFrame: psms table of search results from alphapept appended with the number of matched proteins. dict: dictionary mapping psms indices to proteins.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L875" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L875" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_ion" class="level3">
 <h3 class="anchored" data-anchor-id="get_ion">get_ion</h3>
@@ -738,7 +726,7 @@ The rule is that if all peptides of a given protein are a subset of the peptides
 <p>Args: i (int): Row index for the DataFrame df (pd.DataFrame): DataFrame with PSMs fragment_ions (pd.DataFrame): DataFrame with ion hits</p>
 <p>Returns: list: List with strings that describe the ion type. np.ndarray: Array with intensity information</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L901" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L901" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="ecdf" class="level3">
 <h3 class="anchored" data-anchor-id="ecdf">ecdf</h3>
@@ -752,9 +740,9 @@ The rule is that if all peptides of a given protein are a subset of the peptides
 </section>
 <section id="helper-functions" class="level2">
 <h2 class="anchored" data-anchor-id="helper-functions">Helper functions</h2>
-<p>To call the functions from the interface with a process pool, we define the helper functions <a href="https://mannlabs.github.io/score.html#score_hdf"><code>score_hdf</code></a> and <a href="https://mannlabs.github.io/score.html#protein_grouping_all"><code>protein_grouping_all</code></a>.</p>
+<p>To call the functions from the interface with a process pool, we define the helper functions <a href="https://mannlabs.github.io/alphapept/score.html#score_hdf"><code>score_hdf</code></a> and <a href="https://mannlabs.github.io/alphapept/score.html#protein_grouping_all"><code>protein_grouping_all</code></a>.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L1060" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L1060" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="protein_grouping_all" class="level3">
 <h3 class="anchored" data-anchor-id="protein_grouping_all">protein_grouping_all</h3>
 <blockquote class="blockquote">
@@ -764,7 +752,7 @@ The rule is that if all peptides of a given protein are a subset of the peptides
 <p>Apply protein grouping on all files in an experiment. This function will load all dataframes (peptide_fdr level) and perform protein grouping.</p>
 <p>Args: settings: (dict): Settings file for the experiment pept_dict: (dict): A peptide dictionary. fast_dict: (dict): A FASTA dictionary. callback: (Callable): Optional callback.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/score.py#L927" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/score.py#L927" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="score_hdf" class="level3">
 <h3 class="anchored" data-anchor-id="score_hdf">score_hdf</h3>

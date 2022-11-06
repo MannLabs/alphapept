@@ -143,19 +143,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -283,7 +271,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#reading-raw-input" id="toc-reading-raw-input" class="nav-link active" data-scroll-target="#reading-raw-input">Reading raw input</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#thermo" id="toc-thermo" class="nav-link" data-scroll-target="#thermo">Thermo</a></li>
   <li><a href="#load_thermo_raw" id="toc-load_thermo_raw" class="nav-link" data-scroll-target="#load_thermo_raw">load_thermo_raw</a></li>
   <li><a href="#bruker" id="toc-bruker" class="nav-link" data-scroll-target="#bruker">Bruker</a></li>
@@ -295,13 +283,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#check_sanity" id="toc-check_sanity" class="nav-link" data-scroll-target="#check_sanity">check_sanity</a></li>
   </ul></li>
   <li><a href="#reading-other-files" id="toc-reading-other-files" class="nav-link" data-scroll-target="#reading-other-files">Reading other files</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#reading-maxquant-.xml-settings-file" id="toc-reading-maxquant-.xml-settings-file" class="nav-link" data-scroll-target="#reading-maxquant-.xml-settings-file">Reading MaxQuant .xml settings file</a></li>
   <li><a href="#extract_mq_settings" id="toc-extract_mq_settings" class="nav-link" data-scroll-target="#extract_mq_settings">extract_mq_settings</a></li>
   <li><a href="#parse_mq_seq" id="toc-parse_mq_seq" class="nav-link" data-scroll-target="#parse_mq_seq">parse_mq_seq</a></li>
   </ul></li>
   <li><a href="#preprocessing-data" id="toc-preprocessing-data" class="nav-link" data-scroll-target="#preprocessing-data">Preprocessing data</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#centroiding-profile-data" id="toc-centroiding-profile-data" class="nav-link" data-scroll-target="#centroiding-profile-data">Centroiding profile data</a></li>
   <li><a href="#get_peaks" id="toc-get_peaks" class="nav-link" data-scroll-target="#get_peaks">get_peaks</a></li>
   <li><a href="#gaussian_estimator" id="toc-gaussian_estimator" class="nav-link" data-scroll-target="#gaussian_estimator">gaussian_estimator</a></li>
@@ -313,7 +301,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#list_to_numpy_f32" id="toc-list_to_numpy_f32" class="nav-link" data-scroll-target="#list_to_numpy_f32">list_to_numpy_f32</a></li>
   </ul></li>
   <li><a href="#saving-output" id="toc-saving-output" class="nav-link" data-scroll-target="#saving-output">Saving output</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#hdf-containers-in-general" id="toc-hdf-containers-in-general" class="nav-link" data-scroll-target="#hdf-containers-in-general">HDF containers in general</a></li>
   <li><a href="#using-hdf-containers-in-alphapept" id="toc-using-hdf-containers-in-alphapept" class="nav-link" data-scroll-target="#using-hdf-containers-in-alphapept">Using HDF containers in AlphaPept</a></li>
   <li><a href="#hdf_file" id="toc-hdf_file" class="nav-link" data-scroll-target="#hdf_file">HDF_File</a></li>
@@ -326,11 +314,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#ms_data_file.read_dda_query_data" id="toc-ms_data_file.read_dda_query_data" class="nav-link" data-scroll-target="#ms_data_file.read_dda_query_data">MS_Data_File.read_DDA_query_data</a></li>
   </ul></li>
   <li><a href="#usage-in-workflows" id="toc-usage-in-workflows" class="nav-link" data-scroll-target="#usage-in-workflows">Usage in workflows</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#raw_conversion" id="toc-raw_conversion" class="nav-link" data-scroll-target="#raw_conversion">raw_conversion</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -381,7 +369,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>To read Thermo files, AlphaPept uses the <code>pyrawfilereader</code> package, a Python implementation of the commonly used <code>rawfilereader</code> tool. By using the custom python version, Thermo files can be read without having to install <code>MSFileReader</code>.</p>
 <p>The user can pass an additional flag <code>use_profile_ms1</code>. This will then use the profile data which is not centroided already an peform centroiding. Note that this will lead to slightly different intensities, as the centroided data uses the apex and the centroid algorithm the summed intensity.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L10" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L10" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="load_thermo_raw" class="level3">
 <h3 class="anchored" data-anchor-id="load_thermo_raw">load_thermo_raw</h3>
@@ -398,7 +386,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="bruker">Bruker</h3>
 <p>To access Bruker files, AlphaPept relies on the external <code>timsdata</code> library from Bruker (available in the <code>alphatims\ext</code> folder, licenses are applicable). Unfortunately, these libraries are only available on Windows and Linux. As a result, the reading of raw data is not available on macOS. However, once raw data is converted to <code>.ms_data.hdf</code> output, other workflow steps (besides feature feating) are possible without problems on macOS.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L134" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L134" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="load_bruker_raw" class="level3">
 <h3 class="anchored" data-anchor-id="load_bruker_raw">load_bruker_raw</h3>
@@ -411,7 +399,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Returns: tuple: A dictionary with all the raw data and a string with the acquisition_date_time</p>
 <p>For <code>ccs</code> (i.e., ion mobility) values, we need additional functions from the Bruker library. As the live feature-finder might not be able to determine some charge values, it is intended to perform this calculation at a later stage once we have charge values from the post-processing feature finder.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L212" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L212" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="one_over_k0_to_ccs" class="level3">
 <h3 class="anchored" data-anchor-id="one_over_k0_to_ccs">one_over_k0_to_CCS</h3>
@@ -428,7 +416,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="generic-.mzml-files">Generic <code>.mzML</code> files</h3>
 <p>To access <code>.mzML</code> files, we rely on the <code>pyteomics</code> package. For using an mzml format for performing a search, Peak Picking (data centroiding) should be applied to all MS levels of the data.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L286" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L286" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="load_mzml_data" class="level3">
 <h3 class="anchored" data-anchor-id="load_mzml_data">load_mzml_data</h3>
@@ -440,7 +428,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: filename (str): The name of a .mzml file. n_most_abundant (int): The maximum number of peaks to retain per MS2 spectrum. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
 <p>Returns: tuple: A dictionary with all the raw data, a string with the acquisition_date_time and a string with the vendor.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L257" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L257" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="extract_mzml_info" class="level3">
 <h3 class="anchored" data-anchor-id="extract_mzml_info">extract_mzml_info</h3>
@@ -451,7 +439,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: input_dict (dict): A dictionary obtained by iterating over a Pyteomics mzml.read function.</p>
 <p>Returns: tuple: The rt, masses, intensities, ms_order, prec_mass, mono_mz, charge arrays retrieved from the input_dict. If the <code>ms level</code> in the input dict does not equal 2, the charge, mono_mz and prec_mass will be equal to 0.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L241" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L241" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="check_sanity" class="level3">
 <h3 class="anchored" data-anchor-id="check_sanity">check_sanity</h3>
@@ -470,7 +458,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="reading-maxquant-.xml-settings-file">Reading MaxQuant .xml settings file</h3>
 <p>One of the most commonly used tools to analyze MS data is MaxQuant. AlphaPept reads MaxQuant .xml files as follows:</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L438" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L438" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="extract_mq_settings" class="level3">
 <h3 class="anchored" data-anchor-id="extract_mq_settings">extract_mq_settings</h3>
@@ -496,7 +484,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>AlphaPept incorporates PTMs directly in amino acid sequences with lower case identifiers. Parsing MaxQuant sequences with PTMs is done with:</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L466" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L466" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="parse_mq_seq" class="level3">
 <h3 class="anchored" data-anchor-id="parse_mq_seq">parse_mq_seq</h3>
@@ -525,9 +513,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 <section id="centroiding-profile-data" class="level3">
 <h3 class="anchored" data-anchor-id="centroiding-profile-data">Centroiding profile data</h3>
-<p>Importing raw data frequently results in profile data. When having profile data, Alphapept first needs to perform centroiding to use this data properly. For this, it needs to search local maxima (“peaks”) of the intensity as a function of m/z. For this AlphaPept uses the function <a href="https://mannlabs.github.io/io.html#get_peaks"><code>get_peaks</code></a>. A peak is described by three points, the <code>start</code> of the peak, the <code>center</code>, and the <code>end</code>. The function accepts an intensity array and calculates the delta (gradient) between consecutive data points to determine the start, center, and end.</p>
+<p>Importing raw data frequently results in profile data. When having profile data, Alphapept first needs to perform centroiding to use this data properly. For this, it needs to search local maxima (“peaks”) of the intensity as a function of m/z. For this AlphaPept uses the function <a href="https://mannlabs.github.io/alphapept/io.html#get_peaks"><code>get_peaks</code></a>. A peak is described by three points, the <code>start</code> of the peak, the <code>center</code>, and the <code>end</code>. The function accepts an intensity array and calculates the delta (gradient) between consecutive data points to determine the start, center, and end.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L491" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L491" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_peaks" class="level3">
 <h3 class="anchored" data-anchor-id="get_peaks">get_peaks</h3>
@@ -552,9 +540,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Three or more data points: Gaussian estimation of the center position.</li>
 </ul>
 <p>For the Gaussian estimation, only the three central points are used to fit a Gaussian Peak shape. The Gaussian is then approximated with the logarithm.</p>
-<p>The gaussian estimator is defined in <a href="https://mannlabs.github.io/io.html#gaussian_estimator"><code>gaussian_estimator</code></a> and is used by the wrapper <a href="https://mannlabs.github.io/io.html#get_centroid"><code>get_centroid</code></a>.</p>
+<p>The gaussian estimator is defined in <a href="https://mannlabs.github.io/alphapept/io.html#gaussian_estimator"><code>gaussian_estimator</code></a> and is used by the wrapper <a href="https://mannlabs.github.io/alphapept/io.html#get_centroid"><code>get_centroid</code></a>.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L573" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L573" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="gaussian_estimator" class="level3">
 <h3 class="anchored" data-anchor-id="gaussian_estimator">gaussian_estimator</h3>
@@ -566,7 +554,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: peak (tuple): A triplet of the form (start, center, end) mz_array (np.ndarray): An array with mz values. int_array (np.ndarray): An array with intensity values.</p>
 <p>Returns: float: The gaussian estimate of the center.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L540" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L540" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_centroid" class="level3">
 <h3 class="anchored" data-anchor-id="get_centroid">get_centroid</h3>
@@ -627,7 +615,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L610" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L610" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="centroid_data" class="level3">
 <h3 class="anchored" data-anchor-id="centroid_data">centroid_data</h3>
@@ -640,10 +628,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="trimming-spectra-to-retain-the-n-most-intense-peaks" class="level3">
 <h3 class="anchored" data-anchor-id="trimming-spectra-to-retain-the-n-most-intense-peaks">Trimming spectra to retain the <code>n</code> most intense peaks</h3>
-<p><a href="https://mannlabs.github.io/io.html#get_most_abundant"><code>get_most_abundant</code></a>: In order to save spectra in a more memory-efficient form, we only keep the n most abundant peaks. This allows us to save data in a fast, accessible matrix format.</p>
-<p><a href="https://mannlabs.github.io/io.html#get_local_intensity"><code>get_local_intensity</code></a>: This calculates the local intensity to get local maxima.</p>
+<p><a href="https://mannlabs.github.io/alphapept/io.html#get_most_abundant"><code>get_most_abundant</code></a>: In order to save spectra in a more memory-efficient form, we only keep the n most abundant peaks. This allows us to save data in a fast, accessible matrix format.</p>
+<p><a href="https://mannlabs.github.io/alphapept/io.html#get_local_intensity"><code>get_local_intensity</code></a>: This calculates the local intensity to get local maxima.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L668" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L668" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_most_abundant" class="level3">
 <h3 class="anchored" data-anchor-id="get_most_abundant">get_most_abundant</h3>
@@ -655,7 +643,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: mass (np.ndarray): An array with mz values. intensity (np.ndarray): An array with intensity values. n_max (int): The maximum number of peaks to retain. Setting <code>n_max</code> to -1 returns all peaks. window (int): Use local maximum in a window</p>
 <p>Returns: tuple: the filtered mass and intensity arrays.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L648" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L648" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_local_intensity" class="level3">
 <h3 class="anchored" data-anchor-id="get_local_intensity">get_local_intensity</h3>
@@ -665,9 +653,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Calculate the local intensity for a spectrum.</p>
 <p>Args: intensity (np.ndarray): An array with intensity values. window (int): Window Size Returns: nop.ndarray: local intensity</p>
 <p>For saving, we are currently relying on the hdf-container (see below).</p>
-<p>While we could, in principle, store the mz and int arrays as a list of variable length, this will come at a performance decrease. We, therefore, create an array of the dimensions of the n most abundant peaks and the number of spectra with the function <a href="https://mannlabs.github.io/io.html#list_to_numpy_f32"><code>list_to_numpy_f32</code></a> and fill the unoccupied cells with <code>-1</code>. This allows an increase in accessing times at the cost of additional disk space.</p>
+<p>While we could, in principle, store the mz and int arrays as a list of variable length, this will come at a performance decrease. We, therefore, create an array of the dimensions of the n most abundant peaks and the number of spectra with the function <a href="https://mannlabs.github.io/alphapept/io.html#list_to_numpy_f32"><code>list_to_numpy_f32</code></a> and fill the unoccupied cells with <code>-1</code>. This allows an increase in accessing times at the cost of additional disk space.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L703" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L703" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="list_to_numpy_f32" class="level3">
 <h3 class="anchored" data-anchor-id="list_to_numpy_f32">list_to_numpy_f32</h3>
@@ -730,7 +718,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>Traceability and reproducibility are ensured by storing a <code>last_updated</code> and a <code>check</code> function to warn users about potential compatibility issues.</li>
 </ul>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L734" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L734" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="hdf_file" class="level3">
 <h3 class="anchored" data-anchor-id="hdf_file">HDF_File</h3>
@@ -747,7 +735,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ol>
 <p>These contents can be accessed with <code>read</code> and <code>write</code> functions.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L1005" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L1005" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="hdf_file.write" class="level3">
 <h3 class="anchored" data-anchor-id="hdf_file.write">HDF_File.write</h3>
@@ -760,7 +748,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: value (type): The name of the data to write. If the <code>value</code> is pd.DataFrame, a <code>dataset_name</code> must be provided. group_name (str): The group where to write data. If no <code>group_name</code> is provided, write directly to the root group. Defaults to None. dataset_name (str): If no <code>dataset_name</code> is provided, create a new group with <code>value</code> as name. The dataset where to write data. Defaults to None. attr_name (str): The attr where to write data. Defaults to None. overwrite (bool): Overwrite pre-existing data and truncate existing groups. If the False, ignore the is_overwritable flag of this HDF_File. Defaults to None. dataset_compression (str): The compression type to use for datasets. Defaults to None. swmr (bool): Open files in swmr mode. Defaults to False.</p>
 <p>Raises: IOError: When the object is read-only. KeyError: When the group_name or attr_name does not exist. ValueError: When trying to overwrite something while overwiting is disabled.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L871" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L871" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="hdf_file.read" class="level3">
 <h3 class="anchored" data-anchor-id="hdf_file.read">HDF_File.read</h3>
@@ -785,7 +773,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="the-final-.ms_data.hdf-file">The final <code>.ms_data.hdf</code> file</h3>
 <p>Based on the generic HDF_File, a subclass that acts as an MS data container can be implemented. This class should contain all (centroided) fragment ions, all their coordinates, and all the metadata.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L1146" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L1146" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="ms_data_file" class="level3">
 <h3 class="anchored" data-anchor-id="ms_data_file">MS_Data_File</h3>
@@ -796,7 +784,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>A class to store and retrieve on-disk MS data with an HDF container.</p>
 <p>A single generic function should allow to read raw data and store spectra. Different arguments allow different vendor formats.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L1185" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L1185" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="index_ragged_list" class="level3">
 <h3 class="anchored" data-anchor-id="index_ragged_list">index_ragged_list</h3>
@@ -807,7 +795,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: value (list): Input list of arrays.</p>
 <p>Returns: indices: A numpy array with indices.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L1152" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L1152" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="ms_data_file.import_raw_dda_data" class="level3">
 <h3 class="anchored" data-anchor-id="ms_data_file.import_raw_dda_data">MS_Data_File.import_raw_DDA_data</h3>
@@ -822,7 +810,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Testing of the MS_Data_File container includes reading and writing from different file formats.</p>
 <p>While that HDF data structure could be used directly, it is often easier to read it and return a <code>query_data</code> dictionary similar to those that are returned by the readers of <code>Thermo</code>, <code>Bruker</code>, <code>mzML</code> and <code>mzXML</code> raw data.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L1343" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L1343" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="ms_data_file.read_dda_query_data" class="level3">
 <h3 class="anchored" data-anchor-id="ms_data_file.read_dda_query_data">MS_Data_File.read_DDA_query_data</h3>
@@ -840,7 +828,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="usage-in-workflows">Usage in workflows</h2>
 <p>To use all the above functionality from a workflow with several parameters, the following functions are defined. These functions also allow parallel processing.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/io.py#L1419" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L1419" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="raw_conversion" class="level3">
 <h3 class="anchored" data-anchor-id="raw_conversion">raw_conversion</h3>
 <blockquote class="blockquote">

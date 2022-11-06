@@ -151,19 +151,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -292,7 +280,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul>
   <li><a href="#loading-data" id="toc-loading-data" class="nav-link active" data-scroll-target="#loading-data">Loading Data</a></li>
   <li><a href="#connecting-centroids-to-hills" id="toc-connecting-centroids-to-hills" class="nav-link" data-scroll-target="#connecting-centroids-to-hills">Connecting Centroids to Hills</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#connecting-centroids" id="toc-connecting-centroids" class="nav-link" data-scroll-target="#connecting-centroids">Connecting centroids</a></li>
   <li><a href="#find_centroid_connections" id="toc-find_centroid_connections" class="nav-link" data-scroll-target="#find_centroid_connections">find_centroid_connections</a></li>
   <li><a href="#connect_centroids_unidirection" id="toc-connect_centroids_unidirection" class="nav-link" data-scroll-target="#connect_centroids_unidirection">connect_centroids_unidirection</a></li>
@@ -316,13 +304,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#check_large_hills" id="toc-check_large_hills" class="nav-link" data-scroll-target="#check_large_hills">check_large_hills</a></li>
   </ul></li>
   <li><a href="#calculating-hill-statistics" id="toc-calculating-hill-statistics" class="nav-link" data-scroll-target="#calculating-hill-statistics">Calculating Hill Statistics</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#get_hill_data" id="toc-get_hill_data" class="nav-link" data-scroll-target="#get_hill_data">get_hill_data</a></li>
   <li><a href="#remove_duplicates" id="toc-remove_duplicates" class="nav-link" data-scroll-target="#remove_duplicates">remove_duplicates</a></li>
   <li><a href="#hill_stats" id="toc-hill_stats" class="nav-link" data-scroll-target="#hill_stats">hill_stats</a></li>
   </ul></li>
   <li><a href="#combining-hills-to-isotope-patterns" id="toc-combining-hills-to-isotope-patterns" class="nav-link" data-scroll-target="#combining-hills-to-isotope-patterns">Combining Hills to Isotope Patterns</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#check_isotope_pattern" id="toc-check_isotope_pattern" class="nav-link" data-scroll-target="#check_isotope_pattern">check_isotope_pattern</a></li>
   <li><a href="#cosine-correlation-of-two-hills" id="toc-cosine-correlation-of-two-hills" class="nav-link" data-scroll-target="#cosine-correlation-of-two-hills">Cosine Correlation of two hills</a></li>
   <li><a href="#correlate" id="toc-correlate" class="nav-link" data-scroll-target="#correlate">correlate</a></li>
@@ -342,7 +330,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#get_minpos" id="toc-get_minpos" class="nav-link" data-scroll-target="#get_minpos">get_minpos</a></li>
   </ul></li>
   <li><a href="#isolating-isotope_patterns" id="toc-isolating-isotope_patterns" class="nav-link" data-scroll-target="#isolating-isotope_patterns">Isolating Isotope_patterns</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#mz_to_mass" id="toc-mz_to_mass" class="nav-link" data-scroll-target="#mz_to_mass">mz_to_mass</a></li>
   <li><a href="#int_list_to_array" id="toc-int_list_to_array" class="nav-link" data-scroll-target="#int_list_to_array">int_list_to_array</a></li>
   <li><a href="#cosine_averagine" id="toc-cosine_averagine" class="nav-link" data-scroll-target="#cosine_averagine">cosine_averagine</a></li>
@@ -350,7 +338,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#check_averagine" id="toc-check_averagine" class="nav-link" data-scroll-target="#check_averagine">check_averagine</a></li>
   </ul></li>
   <li><a href="#isotope-patterns" id="toc-isotope-patterns" class="nav-link" data-scroll-target="#isotope-patterns">Isotope Patterns</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#isolate_isotope_pattern" id="toc-isolate_isotope_pattern" class="nav-link" data-scroll-target="#isolate_isotope_pattern">isolate_isotope_pattern</a></li>
   <li><a href="#get_isotope_patterns" id="toc-get_isotope_patterns" class="nav-link" data-scroll-target="#get_isotope_patterns">get_isotope_patterns</a></li>
   <li><a href="#report_" id="toc-report_" class="nav-link" data-scroll-target="#report_">report_</a></li>
@@ -359,26 +347,26 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#data-output" id="toc-data-output" class="nav-link" data-scroll-target="#data-output">Data Output</a></li>
   <li><a href="#plotting" id="toc-plotting" class="nav-link" data-scroll-target="#plotting">Plotting</a></li>
   <li><a href="#external-feature-finder" id="toc-external-feature-finder" class="nav-link" data-scroll-target="#external-feature-finder">External Feature Finder</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#map_bruker" id="toc-map_bruker" class="nav-link" data-scroll-target="#map_bruker">map_bruker</a></li>
   <li><a href="#convert_bruker" id="toc-convert_bruker" class="nav-link" data-scroll-target="#convert_bruker">convert_bruker</a></li>
   <li><a href="#extract_bruker" id="toc-extract_bruker" class="nav-link" data-scroll-target="#extract_bruker">extract_bruker</a></li>
   </ul></li>
   <li><a href="#isotope-export" id="toc-isotope-export" class="nav-link" data-scroll-target="#isotope-export">Isotope Export</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#get_stats" id="toc-get_stats" class="nav-link" data-scroll-target="#get_stats">get_stats</a></li>
   </ul></li>
   <li><a href="#wrapper" id="toc-wrapper" class="nav-link" data-scroll-target="#wrapper">Wrapper</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#find_features" id="toc-find_features" class="nav-link" data-scroll-target="#find_features">find_features</a></li>
   </ul></li>
   <li><a href="#mapping" id="toc-mapping" class="nav-link" data-scroll-target="#mapping">Mapping</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#map_ms2" id="toc-map_ms2" class="nav-link" data-scroll-target="#map_ms2">map_ms2</a></li>
   <li><a href="#replace_infs" id="toc-replace_infs" class="nav-link" data-scroll-target="#replace_infs">replace_infs</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -449,9 +437,9 @@ Note
 <p><span class="math inline">\(\begin{bmatrix} 0.2 &amp; -1 &amp; -1 \\ -1 &amp; 0.1 &amp; -1\\ -1 &amp; -1 &amp; -1 \end{bmatrix}\)</span></p>
 <p>This allows us to not only easily store connections between centroids but also perform a quick lookup for the delta of an existing connection. Note that it also only stores the best connection for each centroid. To extract the connected centroids, we can use <code>np.where(results &gt;= 0)</code>. This implementation allows getting millions of connections within seconds.</p>
 <p>As we are also allowing gaps, refering to that we can have connections between Scan 0 and Scan 2, we make the aforementioned matrix multdimensional, so that e.g.&nbsp;a first matrix stores the conncetions for no gap, the second matrix the connections with a gap of 1.</p>
-<p>The functionality for this step is implemented in <a href="https://mannlabs.github.io/feature_finding.html#connect_centroids_unidirection"><code>connect_centroids_unidirection</code></a> and the wrapper <a href="https://mannlabs.github.io/feature_finding.html#find_centroid_connections"><code>find_centroid_connections</code></a>.</p>
+<p>The functionality for this step is implemented in <a href="https://mannlabs.github.io/alphapept/feature_finding.html#connect_centroids_unidirection"><code>connect_centroids_unidirection</code></a> and the wrapper <a href="https://mannlabs.github.io/alphapept/feature_finding.html#find_centroid_connections"><code>find_centroid_connections</code></a>.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L66" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L66" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="find_centroid_connections" class="level3">
 <h3 class="anchored" data-anchor-id="find_centroid_connections">find_centroid_connections</h3>
@@ -464,7 +452,7 @@ Note
 <p>Wrapper function to call connect_centroids_unidirection</p>
 <p>Args: rowwise_peaks (np.ndarray): Length of centroids with respect to the row borders. row_borders (np.ndarray): Row borders of the centroids array. centroids (np.ndarray): Array containing the centroids data. max_gap (int): Maximum gap when connecting centroids. centroid_tol (float): Centroid tolerance.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L21" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L21" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="connect_centroids_unidirection" class="level3">
 <h3 class="anchored" data-anchor-id="connect_centroids_unidirection">connect_centroids_unidirection</h3>
@@ -478,9 +466,9 @@ Note
 </blockquote>
 <p>Connect centroids.</p>
 <p>Args: x (np.ndarray): Index to datapoint. Note that this using the performance_function, so one passes an ndarray. row_borders (np.ndarray): Row borders of the centroids array. connections (np.ndarray): Connections matrix to store the connections scores (np.ndarray): Score matrix to store the connections centroids (np.ndarray): 1D Array containing the masses of the centroids data. max_gap (int): Maximum gap when connecting centroids. centroid_tol (float): Centroid tolerance.</p>
-<p>We wrap the centroid connections in the function <a href="https://mannlabs.github.io/feature_finding.html#connect_centroids"><code>connect_centroids</code></a>. This function converts the connections into an usable array.</p>
+<p>We wrap the centroid connections in the function <a href="https://mannlabs.github.io/alphapept/feature_finding.html#connect_centroids"><code>connect_centroids</code></a>. This function converts the connections into an usable array.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L158" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L158" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="connect_centroids" class="level3">
 <h3 class="anchored" data-anchor-id="connect_centroids">connect_centroids</h3>
@@ -492,7 +480,7 @@ Note
 <p>Function to connect centroids.</p>
 <p>Args: rowwise_peaks (np.ndarray): Indexes for centroids. row_borders (np.ndarray): Row borders (for indexing). centroids (np.ndarray): Centroid data. max_gap: Maximum gap. centroid_tol: Centroid tol for matching centroids. Returns: np.ndarray: From index. np.ndarray: To index. float: Median score. float: Std deviation of the score.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L144" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L144" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="eliminate_overarching_vertex" class="level3">
 <h3 class="anchored" data-anchor-id="eliminate_overarching_vertex">eliminate_overarching_vertex</h3>
@@ -503,7 +491,7 @@ Note
 <p>Eliminate overacrhing vertex.</p>
 <p>Args: x (np.ndarray): Input index. Note that we are using the performance function so this is a range. from_idx (np.ndarray): From index. to_idx (np.ndarray): To index.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L116" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L116" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="convert_connections_to_array" class="level3">
 <h3 class="anchored" data-anchor-id="convert_connections_to_array">convert_connections_to_array</h3>
@@ -560,7 +548,7 @@ Note
 <h3 class="anchored" data-anchor-id="extracting-hills.">Extracting hills.</h3>
 <p>To extract hills we extract connected components from the connections.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L374" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L374" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="remove_duplicate_hills" class="level3">
 <h3 class="anchored" data-anchor-id="remove_duplicate_hills">remove_duplicate_hills</h3>
@@ -569,7 +557,7 @@ Note
 </blockquote>
 <p>Removes hills that share datapoints. Starts from the largest hills.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L326" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L326" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="extract_hills" class="level3">
 <h3 class="anchored" data-anchor-id="extract_hills">extract_hills</h3>
@@ -580,7 +568,7 @@ Note
 <p>Args: query_data (dict): Data structure containing the query data. max_gap (int): Maximum gap when connecting centroids. centroid_tol (float): Centroid tolerance.</p>
 <p>Returns: hill_ptrs (np.ndarray): Array containing the bounds to the hill_data. hill_data (np.ndarray): Array containing the indices to hills. path_node_cnt (int): Number of elements in this path. score_median (float): Median score. score_std (float): Std deviation of the score.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L274" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L274" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_hills" class="level3">
 <h3 class="anchored" data-anchor-id="get_hills">get_hills</h3>
@@ -592,7 +580,7 @@ Note
 <p>Args: centroids (np.ndarray): 1D Array containing the masses of the centroids. from_idx (np.ndarray): From index. to_idx (np.ndarray): To index. hill_length_min (int): Minimum hill length:</p>
 <p>Returns: hill_ptrs (np.ndarray): Array containing the bounds to the hill_data. hill_data (np.ndarray): Array containing the indices to hills. path_node_cnt (int): Number of elements in this path.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L257" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L257" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="fill_path_matrix" class="level3">
 <h3 class="anchored" data-anchor-id="fill_path_matrix">fill_path_matrix</h3>
@@ -604,7 +592,7 @@ Note
 <p>Function to fill the path matrix.</p>
 <p>Args: x (np.ndarray): Input index. Note that we are using the performance function so this is a range. path_starts (np.ndarray): Array that stores the starts of the paths. forwards (np.ndarray): Forward array. out_hill_data (np.ndarray): Array containing the indices to hills. out_hill_ptr (np.ndarray): Array containing the bounds to out_hill_data.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L240" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L240" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="find_path_length" class="level3">
 <h3 class="anchored" data-anchor-id="find_path_length">find_path_length</h3>
@@ -615,7 +603,7 @@ Note
 <p>Function to extract the length of a path.</p>
 <p>Args: x (np.ndarray): Input index. Note that we are using the performance function so this is a range. path_starts (np.ndarray): Array that stores the starts of the paths. forward (np.ndarray): Array that stores forward information. path_cnt (np.ndarray): Reporting array to count the paths.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L227" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L227" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="find_path_start" class="level3">
 <h3 class="anchored" data-anchor-id="find_path_start">find_path_start</h3>
@@ -626,7 +614,7 @@ Note
 <p>Function to find the start of a path.</p>
 <p>Args: x (np.ndarray): Input index. Note that we are using the performance function so this is a range. forward (np.ndarray): Array to report forward connection. backward (np.ndarray): Array to report backward connection. path_starts (np.ndarray): Array to report path starts.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L209" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L209" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="path_finder" class="level3">
 <h3 class="anchored" data-anchor-id="path_finder">path_finder</h3>
@@ -642,7 +630,7 @@ Note
 <h3 class="anchored" data-anchor-id="hill-splitting">Hill Splitting</h3>
 <p>When having a hill with two or more maxima, we would like to split it at the minimum position. For this, we use a recursive approach. First, the minimum of a hill is detected. A hill is split at this minimum if the smaller of the surrounding maxima is at least the factor <code>hill_split_level</code> larger than the minimum. For each split, the process is repeated.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L409" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L409" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="fast_minima" class="level3">
 <h3 class="anchored" data-anchor-id="fast_minima">fast_minima</h3>
@@ -653,7 +641,7 @@ Note
 <p>Args: y (np.ndarray): Input array.</p>
 <p>Returns: np.ndarray: Array containing minima positions.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L488" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L488" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="split_hills" class="level3">
 <h3 class="anchored" data-anchor-id="split_hills">split_hills</h3>
@@ -665,7 +653,7 @@ Note
 <p>Args: hill_ptrs (np.ndarray): Array containing the bounds to the hill_data. hill_data (np.ndarray): Array containing the indices to hills. int_data (np.ndarray): Array containing the intensity to each centroid. hill_split_level (float): Split level for hills. window (int): Smoothing window.</p>
 <p>Returns: np.ndarray: Array containing the bounds to the hill_data with splits.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L437" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L437" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="split" class="level3">
 <h3 class="anchored" data-anchor-id="split">split</h3>
@@ -681,7 +669,7 @@ Note
 <h3 class="anchored" data-anchor-id="filter-hills">Filter Hills</h3>
 <p>To filter hills, we define a minimum length <code>hill_min_length</code>. All peaks below the threshold <code>hill_peak_min_length</code> are accepted as is. For longer hills, the intensity at the start and the end are compared to the maximum intensity. If the ratio of the maximum raw intensity to the smoothed intensity and the beginning and end are larger than <code>hill_peak_factor</code> the hills are accepted.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L562" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L562" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="filter_hills" class="level3">
 <h3 class="anchored" data-anchor-id="filter_hills">filter_hills</h3>
@@ -694,7 +682,7 @@ Note
 <p>Args: hill_data (np.ndarray): Array containing the indices to hills. hill_ptrs (np.ndarray): Array containing the bounds to the hill_data. int_data (np.ndarray): Array containing the intensity to each centroid. hill_check_large (int, optional): Length criterion when a hill is considered large.. Defaults to 40. window (int, optional): Smoothing window. Defaults to 1.</p>
 <p>Returns: np.ndarray: Filtered hill data. np.ndarray: Filtered hill points.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L521" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L521" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="check_large_hills" class="level3">
 <h3 class="anchored" data-anchor-id="check_large_hills">check_large_hills</h3>
@@ -718,9 +706,9 @@ Note
 \]</span></p>
 <p>To estimate the mass error, we calculate the error as a boostrap estimate:</p>
 <p><span class="math display">\[\Delta \overline{m} = \sqrt{\frac{\sum_{b=1}^{B}(\overline{m}_b - \overline{m} )}{(B-1)}}\]</span></p>
-<p>The calculation of hill statistics for a single hill is implemented in <code>get_hill_stats</code>. To calculate the hill stats for a list of hills, we can call the wrapper <a href="https://mannlabs.github.io/feature_finding.html#get_hill_data"><code>get_hill_data</code></a>.</p>
+<p>The calculation of hill statistics for a single hill is implemented in <code>get_hill_stats</code>. To calculate the hill stats for a list of hills, we can call the wrapper <a href="https://mannlabs.github.io/alphapept/feature_finding.html#get_hill_data"><code>get_hill_data</code></a>.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L696" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L696" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="get_hill_data" class="level3">
 <h3 class="anchored" data-anchor-id="get_hill_data">get_hill_data</h3>
 <blockquote class="blockquote">
@@ -732,7 +720,7 @@ Note
 <p>Args: query_data (dict): Data structure containing the query data. hill_ptrs (np.ndarray): Array containing the bounds to the hill_data. hill_data (np.ndarray): Array containing the indices to hills. hill_nboot_max (int): Maximum number of bootstrap comparisons. hill_nboot (int): Number of bootstrap comparisons</p>
 <p>Returns: np.ndarray: Hill stats. np.ndarray: Sortindex. np.ndarray: Upper index. np.ndarray: Scan index. np.ndarray: Hill data. np.ndarray: Hill points.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L663" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L663" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="remove_duplicates" class="level3">
 <h3 class="anchored" data-anchor-id="remove_duplicates">remove_duplicates</h3>
@@ -744,7 +732,7 @@ Note
 <p>Args: stats (np.ndarray): Stats array that contains summary statistics of hills. hill_data (np.ndarray): Array containing the indices to hills. hill_ptrs (np.ndarray): Array containing the bounds to the hill_data.</p>
 <p>Returns: np.ndarray: Filtered hill data. np.ndarray: Filtered hill points. np.ndarray: Filtered hill stats.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L603" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L603" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="hill_stats" class="level3">
 <h3 class="anchored" data-anchor-id="hill_stats">hill_stats</h3>
@@ -761,12 +749,12 @@ Note
 </section>
 <section id="combining-hills-to-isotope-patterns" class="level2">
 <h2 class="anchored" data-anchor-id="combining-hills-to-isotope-patterns">Combining Hills to Isotope Patterns</h2>
-<p>After obtaining summary statistics of hills, the next step is to check whether they belong together to form an isotope pattern. For this, we check wheter it is possible that they are neighbors in an isotope pattern, e.g.&nbsp;one having a 12C atom that has been replaced by a 13C version. The detailed criterion for the check is implemented in <a href="https://mannlabs.github.io/feature_finding.html#check_isotope_pattern"><code>check_isotope_pattern</code></a> and is as follows:</p>
+<p>After obtaining summary statistics of hills, the next step is to check whether they belong together to form an isotope pattern. For this, we check wheter it is possible that they are neighbors in an isotope pattern, e.g.&nbsp;one having a 12C atom that has been replaced by a 13C version. The detailed criterion for the check is implemented in <a href="https://mannlabs.github.io/alphapept/feature_finding.html#check_isotope_pattern"><code>check_isotope_pattern</code></a> and is as follows:</p>
 <p><span class="math display">\[\left | \Delta m-\frac{\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z}  \right )^{2}+\Delta {m_{1}}^{2} +\Delta {m_{2}}^{2}}\]</span></p>
 <p>The left side contains <span class="math inline">\(\Delta m\)</span>, being the delta of the precise mass estimates from the summary statistics and <span class="math inline">\(\Delta M = 1.00286864\)</span>, which is the mass difference ebtween the 13C peak and the monoisotopic peak in an averagine molecule of 1500 Da mass divided by the charge <span class="math inline">\(z\)</span>.</p>
 <p>The right side contains <span class="math inline">\(\Delta S = 0.0109135\)</span>, which is the maximum shift that a sulphur atom can cause (<span class="math inline">\(\Delta S = 2m(^{13}C) - 2m(^{12}C) - m(^{34}S) + m(^{32}S)\)</span>) and <span class="math inline">\(\Delta {m_{1}}\)</span> and <span class="math inline">\(\Delta {m_{2}}\)</span>, which are the bootstrapped mass standard deviations.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L739" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L739" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="check_isotope_pattern" class="level3">
 <h3 class="anchored" data-anchor-id="check_isotope_pattern">check_isotope_pattern</h3>
 <blockquote class="blockquote">
@@ -800,7 +788,7 @@ False</code></pre>
 <p><span class="math display">\[\frac{\sum_{s=s_{min}}^{s_{max}}I_sJ_s}{\sum_{s=s_{min}}^{s_{max}}I_s^{2} \sum_{s=s_{min}}^{s_{max}}J_s^{2}} \geq 0.6\]</span></p>
 <p>The intensities of two hills are only compared if both have an intensity value in a particular scan. Otherwise, the intensity is set to zero. Additionally, an overlap of at least three elements is required.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L765" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L765" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="correlate" class="level3">
 <h3 class="anchored" data-anchor-id="correlate">correlate</h3>
@@ -814,10 +802,10 @@ False</code></pre>
 </section>
 <section id="extracting-pre-isotope-patterns" class="level3">
 <h3 class="anchored" data-anchor-id="extracting-pre-isotope-patterns">Extracting pre-Isotope Patterns</h3>
-<p>Now having two criteria to check whether hills could, in principle, belong together, we define the wrapper functions <a href="https://mannlabs.github.io/feature_finding.html#extract_edge"><code>extract_edge</code></a> and <code>get_edges</code> to extract the connected hills. To minimize the number of comparisons we need to perform, we only compare the hills that overlap in time (i.e., the start of one hill <code>rt_min</code> needs to be before the end of the other hill <code>rt_max</code>) and are less than the sum of <span class="math inline">\(\Delta M\)</span> and <span class="math inline">\(\Delta S\)</span> apart.</p>
+<p>Now having two criteria to check whether hills could, in principle, belong together, we define the wrapper functions <a href="https://mannlabs.github.io/alphapept/feature_finding.html#extract_edge"><code>extract_edge</code></a> and <code>get_edges</code> to extract the connected hills. To minimize the number of comparisons we need to perform, we only compare the hills that overlap in time (i.e., the start of one hill <code>rt_min</code> needs to be before the end of the other hill <code>rt_max</code>) and are less than the sum of <span class="math inline">\(\Delta M\)</span> and <span class="math inline">\(\Delta S\)</span> apart.</p>
 <p>To extract all hills that belong together, we again rely on the <code>NetworkX</code>-package to extract the connected components.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L836" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L836" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="edge_correlation" class="level3">
 <h3 class="anchored" data-anchor-id="edge_correlation">edge_correlation</h3>
@@ -831,7 +819,7 @@ False</code></pre>
 <p>Correlates two edges and flag them it they should be kept.</p>
 <p>Args: idx (np.ndarray): Input index. Note that we are using the performance function so this is a range. to_keep (np.ndarray): Array with indices which edges should be kept. sortindex_ (np.ndarray): Sortindex to access the hills from stats. pre_edges (np.ndarray): Array with pre edges. hill_ptrs (np.ndarray): Array containing the bounds to the hill_data. hill_data (np.ndarray): Array containing the indices to hills. int_data (np.ndarray): Array containing the intensity to each centroid. scan_idx (np.ndarray): Array containing the scan index for a centroid. cc_cutoff (float): Cutoff value for what is considered correlating.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L803" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L803" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="extract_edge" class="level3">
 <h3 class="anchored" data-anchor-id="extract_edge">extract_edge</h3>
@@ -844,7 +832,7 @@ False</code></pre>
 <p>Args: stats (np.ndarray): Stats array that contains summary statistics of hills. idxs_upper (np.ndarray): Upper index for comparing. runner (int): Index. max_index (int): Unused. maximum_offset (float): Maximum offset when comparing edges. iso_charge_min (int, optional): Minimum isotope charge. Defaults to 1. iso_charge_max (int, optional): Maximum isotope charge. Defaults to 6. iso_mass_range (float, optional): Mass search range. Defaults to 5.</p>
 <p>Returns: list: List of edges.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L872" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L872" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_pre_isotope_patterns" class="level3">
 <h3 class="anchored" data-anchor-id="get_pre_isotope_patterns">get_pre_isotope_patterns</h3>
@@ -865,12 +853,12 @@ False</code></pre>
 <section id="extracting-isotope-patterns" class="level3">
 <h3 class="anchored" data-anchor-id="extracting-isotope-patterns">Extracting Isotope Patterns</h3>
 <p>The extracted pre-isotope patterns may not be consistent because their pair-wise mass differences may not correspond to the same charge. To extract isotope patterns from pre-isotope patterns, we need to ensure that they are consistent for a single charge.</p>
-<p>To do this, we start with the 100 most intense peaks from a pre-isotope pattern to be used as a seed. For each seed and charge we then try to extract the longest consistent isotope pattern. To check wheter a hill is consistent with the seed we employ a modified checking criterion (<a href="https://mannlabs.github.io/feature_finding.html#check_isotope_pattern_directed"><code>check_isotope_pattern_directed</code></a>) to be as follows:</p>
+<p>To do this, we start with the 100 most intense peaks from a pre-isotope pattern to be used as a seed. For each seed and charge we then try to extract the longest consistent isotope pattern. To check wheter a hill is consistent with the seed we employ a modified checking criterion (<a href="https://mannlabs.github.io/alphapept/feature_finding.html#check_isotope_pattern_directed"><code>check_isotope_pattern_directed</code></a>) to be as follows:</p>
 <p><span class="math display">\[\left | m-m_j-\frac{j\Delta M}{z} \right |\leq \sqrt{\left ( \frac{\Delta S}{z}  \right )^{2}+\Delta {m}^{2} +\Delta {m_{j}}^{2}}\]</span></p>
 <p>Here <span class="math inline">\(m\)</span> is the mass of a seed peak, and <span class="math inline">\(m_{j}\)</span> refers to a peak relative to the seed. <span class="math inline">\(j\)</span> refers to the peaks to the left or right (negative or positive index) within the pattern. <span class="math inline">\(j\)</span> needs to run over consecutive values so that gaps are not allowed. Besides this consistency check, two hills are also checked to have a cosine correlation of at least 0.6.</p>
-<p>Programmatically, this is implemented in <a href="https://mannlabs.github.io/feature_finding.html#grow_trail"><code>grow_trail</code></a> and <a href="https://mannlabs.github.io/feature_finding.html#grow"><code>grow</code></a>. These function uses a recursive approach that adds matching hills to the seed on the left and right side until no more hills can be added.</p>
+<p>Programmatically, this is implemented in <a href="https://mannlabs.github.io/alphapept/feature_finding.html#grow_trail"><code>grow_trail</code></a> and <a href="https://mannlabs.github.io/alphapept/feature_finding.html#grow"><code>grow</code></a>. These function uses a recursive approach that adds matching hills to the seed on the left and right side until no more hills can be added.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1050" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1050" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_trails" class="level3">
 <h3 class="anchored" data-anchor-id="get_trails">get_trails</h3>
@@ -886,7 +874,7 @@ False</code></pre>
 <p>Args: seed (int): Seed index. pattern (np.ndarray): Pre isotope pattern. stats (np.ndarray): Stats array that contains summary statistics of hills. charge_range (List): Charge range. iso_mass_range (float): Mass range for checking isotope patterns. sortindex_ (np.ndarray): Sortindex to access the hills from stats. hill_ptrs (np.ndarray): Array containing the bounds to the hill_data. hill_data (np.ndarray): Array containing the indices to hills. int_data (np.ndarray): Array containing the intensity to each centroid. scan_idx (np.ndarray): Array containing the scan index for a centroid. cc_cutoff (float): Cutoff value for what is considered correlating.</p>
 <p>Returns: List: Trail of consistent hills.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1021" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1021" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="grow_trail" class="level3">
 <h3 class="anchored" data-anchor-id="grow_trail">grow_trail</h3>
@@ -901,7 +889,7 @@ False</code></pre>
 <p>Args: seed (int): Seed position. pattern (np.ndarray): Isotope pattern. stats (np.ndarray): Stats array that contains summary statistics of hills. charge (int): Charge. iso_mass_range (float): Mass range for checking isotope patterns. sortindex_ (np.ndarray): Sortindex to access the hills from stats. hill_ptrs (np.ndarray): Array containing the bounds to the hill_data. hill_data (np.ndarray): Array containing the indices to hills. int_data (np.ndarray): Array containing the intensity to each centroid. scan_idx (np.ndarray): Array containing the scan index for a centroid. cc_cutoff (float): Cutoff value for what is considered correlating.</p>
 <p>Returns: List: Isotope pattern.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L942" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L942" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="grow" class="level3">
 <h3 class="anchored" data-anchor-id="grow">grow</h3>
@@ -917,7 +905,7 @@ False</code></pre>
 <p>Args: trail (List): List of hills belonging to a pattern. seed (int): Seed position. direction (int): Direction in which to grow the trail relative_pos (int): Relative position. index (int): Index. stats (np.ndarray): Stats array that contains summary statistics of hills. pattern (np.ndarray): Isotope pattern. charge (int): Charge. iso_mass_range (float): Mass range for checking isotope patterns. sortindex_ (np.ndarray): Sortindex to access the hills from stats. hill_ptrs (np.ndarray): Array containing the bounds to the hill_data. hill_data (np.ndarray): Array containing the indices to hills. int_data (np.ndarray): Array containing the intensity to each centroid. scan_idx (np.ndarray): Array containing the scan index for a centroid. cc_cutoff (float): Cutoff value for what is considered correlating.</p>
 <p>Returns: List: List of hills belonging to a pattern.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L918" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L918" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="check_isotope_pattern_directed" class="level3">
 <h3 class="anchored" data-anchor-id="check_isotope_pattern_directed">check_isotope_pattern_directed</h3>
@@ -930,7 +918,7 @@ False</code></pre>
 <p>Check if two masses could belong to the same isotope pattern.</p>
 <p>Args: mass1 (float): Mass of the first pattern. mass2 (float): Mass of the second pattern. delta_mass1 (float): Delta mass of the first pattern. delta_mass2 (float): Delta mass of the second pattern. charge (int): Charge. index (int): Index (unused). iso_mass_range (float): Isotope mass ranges. Returns: bool: Flag if two isotope patterns belong together.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1078" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1078" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="plot_pattern" class="level3">
 <h3 class="anchored" data-anchor-id="plot_pattern">plot_pattern</h3>
@@ -941,7 +929,7 @@ False</code></pre>
 <p>Helper function to plot a pattern.</p>
 <p>Args: pattern (np.ndarray): Pre isotope pattern. sorted_hills (np.ndarray): Hills, sorted. centroids (np.ndarray): 1D Array containing the masses of the centroids. hill_data (np.ndarray): Array containing the indices to hills.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1173" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1173" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="truncate" class="level3">
 <h3 class="anchored" data-anchor-id="truncate">truncate</h3>
@@ -953,7 +941,7 @@ False</code></pre>
 <p>Args: array (np.ndarray): Input array. intensity_profile (np.ndarray): Intensities for the input array. seedpos (int): Seedposition. iso_split_level (float): Split level.</p>
 <p>Returns: np.ndarray: Truncated array.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1159" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1159" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="is_local_minima" class="level3">
 <h3 class="anchored" data-anchor-id="is_local_minima">is_local_minima</h3>
@@ -964,7 +952,7 @@ False</code></pre>
 <p>Args: y (np.ndarray): Input array. i (int): Position to check.</p>
 <p>Returns: bool: Flag if position is minima or not.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1142" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1142" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_local_minima" class="level3">
 <h3 class="anchored" data-anchor-id="get_local_minima">get_local_minima</h3>
@@ -975,7 +963,7 @@ False</code></pre>
 <p>Args: y (np.ndarray): Input array.</p>
 <p>Returns: List: List with indices to minima.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1113" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1113" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_minpos" class="level3">
 <h3 class="anchored" data-anchor-id="get_minpos">get_minpos</h3>
@@ -989,13 +977,13 @@ False</code></pre>
 </section>
 <section id="isolating-isotope_patterns" class="level2">
 <h2 class="anchored" data-anchor-id="isolating-isotope_patterns">Isolating Isotope_patterns</h2>
-<p>The extraction of the longest consistent isotope pattern is implemented in <a href="https://mannlabs.github.io/feature_finding.html#isolate_isotope_pattern"><code>isolate_isotope_pattern</code></a>. Here, three additional checks for an isotope pattern are implemented.</p>
-<p>The first one is <a href="https://mannlabs.github.io/feature_finding.html#truncate"><code>truncate</code></a>. Here, one checks the seed position, whether it has a minimum to its left or right side. If a minimum is found, the isotope pattern is cut off at this position.</p>
+<p>The extraction of the longest consistent isotope pattern is implemented in <a href="https://mannlabs.github.io/alphapept/feature_finding.html#isolate_isotope_pattern"><code>isolate_isotope_pattern</code></a>. Here, three additional checks for an isotope pattern are implemented.</p>
+<p>The first one is <a href="https://mannlabs.github.io/alphapept/feature_finding.html#truncate"><code>truncate</code></a>. Here, one checks the seed position, whether it has a minimum to its left or right side. If a minimum is found, the isotope pattern is cut off at this position.</p>
 <p>The second one is a mass filter. If the seed has a mass of smaller than 1000, the intensity maximum is detected, and all smaller masses are discarded. This reflects the averagine distribution for small masses where no minimum on the left side can be found.</p>
-<p>The third one is <a href="https://mannlabs.github.io/feature_finding.html#check_averagine"><code>check_averagine</code></a> that relies on <a href="https://mannlabs.github.io/feature_finding.html#pattern_to_mz"><code>pattern_to_mz</code></a> and <a href="https://mannlabs.github.io/feature_finding.html#cosine_averagine"><code>cosine_averagine</code></a>. It is used to ensure that the extracted isotope pattern has a cosine correlation of the averagine isotope pattern of the same mass of at least 0.6.</p>
+<p>The third one is <a href="https://mannlabs.github.io/alphapept/feature_finding.html#check_averagine"><code>check_averagine</code></a> that relies on <a href="https://mannlabs.github.io/alphapept/feature_finding.html#pattern_to_mz"><code>pattern_to_mz</code></a> and <a href="https://mannlabs.github.io/alphapept/feature_finding.html#cosine_averagine"><code>cosine_averagine</code></a>. It is used to ensure that the extracted isotope pattern has a cosine correlation of the averagine isotope pattern of the same mass of at least 0.6.</p>
 <p>After the longest consistent isotope pattern is found, the hills are removed from the pre-isotope pattern, and the process is repeated until no more isotope patterns can be extracted from the pre-isotope patterns.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1320" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1320" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="mz_to_mass" class="level3">
 <h3 class="anchored" data-anchor-id="mz_to_mass">mz_to_mass</h3>
 <blockquote class="blockquote">
@@ -1006,7 +994,7 @@ False</code></pre>
 <p>Raises: NotImplementedError: When a negative charge is used.</p>
 <p>Returns: float: mass</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1300" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1300" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="int_list_to_array" class="level3">
 <h3 class="anchored" data-anchor-id="int_list_to_array">int_list_to_array</h3>
@@ -1017,7 +1005,7 @@ False</code></pre>
 <p>Args: numba_list (List): Input numba-typed List.</p>
 <p>Returns: np.ndarray: Output numpy array.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1266" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1266" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="cosine_averagine" class="level3">
 <h3 class="anchored" data-anchor-id="cosine_averagine">cosine_averagine</h3>
@@ -1029,7 +1017,7 @@ False</code></pre>
 <p>Args: int_one (np.ndarray): Intensity of the first hill. int_two (np.ndarray): Intensity of the second hill. spec_one (np.ndarray): Scan numbers of the first hill. spec_two (np.ndarray): Scan numbers of the second hill.</p>
 <p>Returns: float: Cosine</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1237" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1237" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="pattern_to_mz" class="level3">
 <h3 class="anchored" data-anchor-id="pattern_to_mz">pattern_to_mz</h3>
@@ -1040,7 +1028,7 @@ False</code></pre>
 <p>Args: stats (np.ndarray): Stats array that contains summary statistics of hills. pattern (np.ndarray): Isotope pattern. charge (int): Charge of the pattern.</p>
 <p>Returns: np.ndarray: masses np.ndarray: intensity</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1212" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1212" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="check_averagine" class="level3">
 <h3 class="anchored" data-anchor-id="check_averagine">check_averagine</h3>
@@ -1056,9 +1044,9 @@ False</code></pre>
 </section>
 <section id="isotope-patterns" class="level2">
 <h2 class="anchored" data-anchor-id="isotope-patterns">Isotope Patterns</h2>
-<p>The wrapper function <a href="https://mannlabs.github.io/feature_finding.html#get_isotope_patterns"><code>get_isotope_patterns</code></a> iterates over all pre_isotope_patterns.</p>
+<p>The wrapper function <a href="https://mannlabs.github.io/alphapept/feature_finding.html#get_isotope_patterns"><code>get_isotope_patterns</code></a> iterates over all pre_isotope_patterns.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1342" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1342" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="isolate_isotope_pattern" class="level3">
 <h3 class="anchored" data-anchor-id="isolate_isotope_pattern">isolate_isotope_pattern</h3>
 <blockquote class="blockquote">
@@ -1077,7 +1065,7 @@ False</code></pre>
 <p>Args: pre_pattern (np.ndarray): Pre isotope pattern. hill_ptrs (np.ndarray): Array containing the bounds to the hill_data. hill_data (np.ndarray): Array containing the indices to hills. int_data (np.ndarray): Array containing the intensity to each centroid. scan_idx (np.ndarray): Array containing the scan index for a centroid. stats (np.ndarray): Stats array that contains summary statistics of hills. sortindex_ (np.ndarray): Sortindex to access the hills from stats. iso_mass_range (float): Mass range for checking isotope patterns. charge_range (List): Charge range. averagine_aa (Dict): Dict containing averagine masses. isotopes (Dict): Dict containing isotopes. iso_n_seeds (int): Number of seeds. cc_cutoff (float): Cutoff value for what is considered correlating. iso_split_level (float): Split level when isotopes are split.</p>
 <p>Returns: np.ndarray: Array with the best pattern. int: Charge of the best pattern.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1416" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1416" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_isotope_patterns" class="level3">
 <h3 class="anchored" data-anchor-id="get_isotope_patterns">get_isotope_patterns</h3>
@@ -1096,7 +1084,7 @@ False</code></pre>
 <p>Wrapper function to iterate over pre_isotope_patterns.</p>
 <p>Args: pre_isotope_patterns (list): List of pre-isotope patterns. hill_ptrs (np.ndarray): Array containing the bounds to the hill_data. hill_data (np.ndarray): Array containing the indices to hills. int_data (np.ndarray): Array containing the intensity to each centroid. scan_idx (np.ndarray): Array containing the scan index for a centroid. stats (np.ndarray): Stats array that contains summary statistics of hills. sortindex_ (np.ndarray): Sortindex to access the hills from stats. averagine_aa (Dict): Dict containing averagine masses. isotopes (Dict): Dict containing isotopes. iso_charge_min (int, optional): Minimum isotope charge. Defaults to 1. iso_charge_max (int, optional): Maximum isotope charge. Defaults to 6. iso_mass_range (float, optional): Mass search range. Defaults to 5. iso_n_seeds (int, optional): Number of isotope seeds. Defaults to 100. cc_cutoff (float, optional): Cuttoff for correlation.. Defaults to 0.6. iso_split_level (float, optional): Isotope split level.. Defaults to 1.3. callback (Union[Callable, None], optional): Callback function for progress. Defaults to None. Returns: list: List of isotope patterns. np.ndarray: Iso idx. np.ndarray: Array containing isotope charges.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1495" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1495" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="report_" class="level3">
 <h3 class="anchored" data-anchor-id="report_">report_</h3>
@@ -1120,7 +1108,7 @@ False</code></pre>
 </ul>
 <p>Args: idx (np.ndarray): Input index. Note that we are using the performance function so this is a range. isotope_patterns (list): List containing isotope patterns (indices to hills). isotope_charges (list): List with charges assigned to the isotope patterns. iso_idx (np.ndarray): Index to isotope pattern. stats (np.ndarray): Stats array that contains summary statistics of hills. sortindex_ (np.ndarray): Sortindex to access the hills from stats. hill_ptrs (np.ndarray): Array containing the bounds to the hill_data. hill_data (np.ndarray): Array containing the indices to hills. int_data (np.ndarray): Array containing the intensity to each centroid. rt_ (np.ndarray): Array with retention time information for each scan. rt_idx (np.ndarray): Lookup array to match centroid idx to rt. results (np.ndarray): Recordarray with isotope pattern summary statistics. lookup_idx (np.ndarray): Lookup array for each centroid.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1627" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1627" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="feature_finder_report" class="level3">
 <h3 class="anchored" data-anchor-id="feature_finder_report">feature_finder_report</h3>
@@ -1147,7 +1135,7 @@ False</code></pre>
 <h2 class="anchored" data-anchor-id="external-feature-finder">External Feature Finder</h2>
 <p>To utilize the command-line Feature Finder from Bruker <code>4DFF-3.13</code> - <code>uff-cmdline2.exe</code>, we call it via a subprocess and wait until completion.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1761" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1761" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="map_bruker" class="level3">
 <h3 class="anchored" data-anchor-id="map_bruker">map_bruker</h3>
 <blockquote class="blockquote">
@@ -1158,7 +1146,7 @@ False</code></pre>
 <p>Args: feature_path (str): Path to the feature file from Bruker FF (.features-file). feature_table (pd.DataFrame): Pandas DataFrame containing the features. query_data (dict): Data structure containing the query data.</p>
 <p>Returns: pd.DataFrame: DataFrame containing features information.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1735" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1735" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="convert_bruker" class="level3">
 <h3 class="anchored" data-anchor-id="convert_bruker">convert_bruker</h3>
@@ -1169,7 +1157,7 @@ False</code></pre>
 <p>Args: feature_path (str): Path to the feature file from Bruker FF (.features-file).</p>
 <p>Returns: pd.DataFrame: DataFrame containing features information.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1668" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1668" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="extract_bruker" class="level3">
 <h3 class="anchored" data-anchor-id="extract_bruker">extract_bruker</h3>
@@ -1185,7 +1173,7 @@ False</code></pre>
 <section id="isotope-export" class="level2">
 <h2 class="anchored" data-anchor-id="isotope-export">Isotope Export</h2>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1820" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1820" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="get_stats" class="level3">
 <h3 class="anchored" data-anchor-id="get_stats">get_stats</h3>
 <blockquote class="blockquote">
@@ -1196,7 +1184,7 @@ False</code></pre>
 <section id="wrapper" class="level2">
 <h2 class="anchored" data-anchor-id="wrapper">Wrapper</h2>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L1852" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L1852" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="find_features" class="level3">
 <h3 class="anchored" data-anchor-id="find_features">find_features</h3>
 <blockquote class="blockquote">
@@ -1213,7 +1201,7 @@ False</code></pre>
 <h2 class="anchored" data-anchor-id="mapping">Mapping</h2>
 <p>Mapping MS1 to MS2</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L2037" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L2037" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="map_ms2" class="level3">
 <h3 class="anchored" data-anchor-id="map_ms2">map_ms2</h3>
 <blockquote class="blockquote">
@@ -1225,7 +1213,7 @@ False</code></pre>
 <p>Map MS1 features to MS2 based on rt and mz. If ccs is included also add. Args: feature_table (pd.DataFrame): Pandas DataFrame with features. query_data (dict): Data structure containing the query data. map_mz_range (float, optional): Mapping range for mz (Da). Defaults to 1. map_rt_range (float, optional): Mapping range for rt (min). Defaults to 0.5. map_mob_range (float, optional): Mapping range for mobility (%). Defaults to 0.3. map_n_neighbors (int, optional): Maximum number of neighbors to be extracted. Defaults to 5. search_unidentified (bool, optional): Flag to perform search on features that have no isotope pattern. Defaults to False.</p>
 <p>Returns: pd.DataFrame: Table with features.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/feature_finding.py#L2022" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L2022" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="replace_infs" class="level3">
 <h3 class="anchored" data-anchor-id="replace_infs">replace_infs</h3>

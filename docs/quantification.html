@@ -148,19 +148,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -289,51 +277,51 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul>
   <li><a href="#label-free-quantification" id="toc-label-free-quantification" class="nav-link active" data-scroll-target="#label-free-quantification">Label-free quantification</a></li>
   <li><a href="#delayed-normalization" id="toc-delayed-normalization" class="nav-link" data-scroll-target="#delayed-normalization">Delayed Normalization</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#in-silico-test-data" id="toc-in-silico-test-data" class="nav-link" data-scroll-target="#in-silico-test-data">In Silico Test data</a></li>
   <li><a href="#gaussian" id="toc-gaussian" class="nav-link" data-scroll-target="#gaussian">gaussian</a></li>
   <li><a href="#return_elution_profile" id="toc-return_elution_profile" class="nav-link" data-scroll-target="#return_elution_profile">return_elution_profile</a></li>
   <li><a href="#simulate_sample_profiles" id="toc-simulate_sample_profiles" class="nav-link" data-scroll-target="#simulate_sample_profiles">simulate_sample_profiles</a></li>
   </ul></li>
   <li><a href="#delayed-normalization-1" id="toc-delayed-normalization-1" class="nav-link" data-scroll-target="#delayed-normalization-1">Delayed Normalization</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#get_total_error" id="toc-get_total_error" class="nav-link" data-scroll-target="#get_total_error">get_total_error</a></li>
   </ul></li>
   <li><a href="#benchmarking-different-optimiziers" id="toc-benchmarking-different-optimiziers" class="nav-link" data-scroll-target="#benchmarking-different-optimiziers">Benchmarking different optimiziers</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#normalize_experiment_slsqp" id="toc-normalize_experiment_slsqp" class="nav-link" data-scroll-target="#normalize_experiment_slsqp">normalize_experiment_SLSQP</a></li>
   <li><a href="#normalize_experiment_bfgs" id="toc-normalize_experiment_bfgs" class="nav-link" data-scroll-target="#normalize_experiment_bfgs">normalize_experiment_BFGS</a></li>
   <li><a href="#delayed_normalization" id="toc-delayed_normalization" class="nav-link" data-scroll-target="#delayed_normalization">delayed_normalization</a></li>
   </ul></li>
   <li><a href="#constructing-protein-intensity-profiles" id="toc-constructing-protein-intensity-profiles" class="nav-link" data-scroll-target="#constructing-protein-intensity-profiles">Constructing protein intensity profiles</a></li>
   <li><a href="#in-silico-test-data-1" id="toc-in-silico-test-data-1" class="nav-link" data-scroll-target="#in-silico-test-data-1">In-silico test data</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#generate_dummy_data" id="toc-generate_dummy_data" class="nav-link" data-scroll-target="#generate_dummy_data">generate_dummy_data</a></li>
   </ul></li>
   <li><a href="#determine-pair-wise-intenisty-ratios" id="toc-determine-pair-wise-intenisty-ratios" class="nav-link" data-scroll-target="#determine-pair-wise-intenisty-ratios">Determine pair-wise intenisty ratios</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#get_protein_ratios" id="toc-get_protein_ratios" class="nav-link" data-scroll-target="#get_protein_ratios">get_protein_ratios</a></li>
   </ul></li>
   <li><a href="#error-function" id="toc-error-function" class="nav-link" data-scroll-target="#error-function">Error Function</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#triangle_error" id="toc-triangle_error" class="nav-link" data-scroll-target="#triangle_error">triangle_error</a></li>
   </ul></li>
   <li><a href="#solver-implementation" id="toc-solver-implementation" class="nav-link" data-scroll-target="#solver-implementation">Solver implementation</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#solve_profile" id="toc-solve_profile" class="nav-link" data-scroll-target="#solve_profile">solve_profile</a></li>
   </ul></li>
   <li><a href="#solving-single-profiles" id="toc-solving-single-profiles" class="nav-link" data-scroll-target="#solving-single-profiles">Solving single profiles</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#protein_profile" id="toc-protein_profile" class="nav-link" data-scroll-target="#protein_profile">protein_profile</a></li>
   </ul></li>
   <li><a href="#wrapper-functions" id="toc-wrapper-functions" class="nav-link" data-scroll-target="#wrapper-functions">Wrapper functions</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#protein_profile_parallel" id="toc-protein_profile_parallel" class="nav-link" data-scroll-target="#protein_profile_parallel">protein_profile_parallel</a></li>
   <li><a href="#protein_profile_parallel_mq" id="toc-protein_profile_parallel_mq" class="nav-link" data-scroll-target="#protein_profile_parallel_mq">protein_profile_parallel_mq</a></li>
   <li><a href="#protein_profile_parallel_ap" id="toc-protein_profile_parallel_ap" class="nav-link" data-scroll-target="#protein_profile_parallel_ap">protein_profile_parallel_ap</a></li>
   </ul></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -371,7 +359,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="in-silico-test-data">In Silico Test data</h3>
 <p>To test the delayed normalization approach we create an in silico test dataset with a known ground truth. We therefore know, which systematic changes are between the samples and we employ different solvers to recover the normalization parameters.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L14" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L14" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="gaussian" class="level3">
 <h3 class="anchored" data-anchor-id="gaussian">gaussian</h3>
@@ -382,7 +370,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: mu (float): mean of ND. sigma (float): standard deviation of ND. grid (np.ndarray): input array np.int[:]. For each element of the array, the probability density is calculated.</p>
 <p>Returns: np.ndarray: probability density array, np.float[:].</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L29" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L29" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="return_elution_profile" class="level3">
 <h3 class="anchored" data-anchor-id="return_elution_profile">return_elution_profile</h3>
@@ -393,7 +381,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: timepoint (float): coordinate of the peak apex. sigma (float): standard deviation of the gaussian. n_runs (int): number of points along which the density is calculated.</p>
 <p>Returns: np.ndarray: probability density array, np.float[:].</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L43" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L43" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="simulate_sample_profiles" class="level3">
 <h3 class="anchored" data-anchor-id="simulate_sample_profiles">simulate_sample_profiles</h3>
@@ -409,7 +397,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="delayed-normalization-1" class="level2">
 <h2 class="anchored" data-anchor-id="delayed-normalization-1">Delayed Normalization</h2>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L96" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L96" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="get_total_error" class="level3">
 <h3 class="anchored" data-anchor-id="get_total_error">get_total_error</h3>
 <blockquote class="blockquote">
@@ -488,30 +476,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <tr>
       <th>0</th>
       <td>L-BFGS-B</td>
-      <td>0.004574</td>
-      <td>0.709227</td>
-      <td>0.584782</td>
+      <td>0.006430</td>
+      <td>0.664871</td>
+      <td>0.536730</td>
     </tr>
     <tr>
       <th>1</th>
       <td>TNC</td>
-      <td>0.005655</td>
-      <td>0.723398</td>
-      <td>0.596467</td>
+      <td>0.006432</td>
+      <td>0.711535</td>
+      <td>0.574400</td>
     </tr>
     <tr>
       <th>2</th>
       <td>SLSQP</td>
-      <td>0.000702</td>
-      <td>0.709346</td>
-      <td>0.584880</td>
+      <td>0.000985</td>
+      <td>0.664871</td>
+      <td>0.536730</td>
     </tr>
     <tr>
       <th>3</th>
       <td>trf</td>
-      <td>0.058068</td>
-      <td>0.709508</td>
-      <td>0.585013</td>
+      <td>0.059646</td>
+      <td>0.666316</td>
+      <td>0.537896</td>
     </tr>
   </tbody>
 </table>
@@ -519,7 +507,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 </div>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L133" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L133" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="normalize_experiment_slsqp" class="level3">
 <h3 class="anchored" data-anchor-id="normalize_experiment_slsqp">normalize_experiment_SLSQP</h3>
 <blockquote class="blockquote">
@@ -529,7 +517,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: profiles (np.ndarray): peptide intensities.</p>
 <p>Returns: np.ndarray: normalization factors.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L157" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L157" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="normalize_experiment_bfgs" class="level3">
 <h3 class="anchored" data-anchor-id="normalize_experiment_bfgs">normalize_experiment_BFGS</h3>
@@ -540,7 +528,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: profiles (np.ndarray): peptide intensities.</p>
 <p>Returns: np.ndarray: normalization factors.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L181" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L181" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="delayed_normalization" class="level3">
 <h3 class="anchored" data-anchor-id="delayed_normalization">delayed_normalization</h3>
@@ -666,13 +654,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="constructing-protein-intensity-profiles" class="level2">
 <h2 class="anchored" data-anchor-id="constructing-protein-intensity-profiles">Constructing protein intensity profiles</h2>
 <p>Protein intensity profiles are constructed for each protein individually. All possible protein fold changes between the samples are derived from the median peptide fold changes. Subsequently, pseudointensities are chosen such that the fold changes between the pseudointensities ideally reconstruct the actually observed fold changes. Similar to the delayed normalization, this is formulated as a quadratic minimization, which we solve with the SLSQP solver.</p>
-<p>Codewise, we start with simulating in-silico test data to serve as a ground-truth for assessing solvers for the optimization problem. For the algorithmic optimization, we define the function <a href="https://mannlabs.github.io/quantification.html#get_protein_ratios"><code>get_protein_ratios</code></a> that allows to quickly calculate the protein ratios. Next, we define an error function <a href="https://mannlabs.github.io/quantification.html#triangle_error"><code>triangle_error</code></a> that we use for the optimization problem. Lastly, we have several wrapper functions to access the functions.</p>
+<p>Codewise, we start with simulating in-silico test data to serve as a ground-truth for assessing solvers for the optimization problem. For the algorithmic optimization, we define the function <a href="https://mannlabs.github.io/alphapept/quantification.html#get_protein_ratios"><code>get_protein_ratios</code></a> that allows to quickly calculate the protein ratios. Next, we define an error function <a href="https://mannlabs.github.io/alphapept/quantification.html#triangle_error"><code>triangle_error</code></a> that we use for the optimization problem. Lastly, we have several wrapper functions to access the functions.</p>
 </section>
 <section id="in-silico-test-data-1" class="level2">
 <h2 class="anchored" data-anchor-id="in-silico-test-data-1">In-silico test data</h2>
 <p>Create a simulated input dataset of peptide intensities.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L264" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L264" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="generate_dummy_data" class="level3">
 <h3 class="anchored" data-anchor-id="generate_dummy_data">generate_dummy_data</h3>
 <blockquote class="blockquote">
@@ -690,7 +678,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="determine-pair-wise-intenisty-ratios">Determine pair-wise intenisty ratios</h2>
 <p>The pair-wise protein ratios are determined from the median peptide ratio.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L330" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L330" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="get_protein_ratios" class="level3">
 <h3 class="anchored" data-anchor-id="get_protein_ratios">get_protein_ratios</h3>
 <blockquote class="blockquote">
@@ -706,7 +694,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="error-function">Error Function</h2>
 <p>The error function evaluates the difference between the actual observed fold change and the fold change that is derived from the pseudointensities.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L364" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L364" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="triangle_error" class="level3">
 <h3 class="anchored" data-anchor-id="triangle_error">triangle_error</h3>
 <blockquote class="blockquote">
@@ -721,7 +709,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="solver-implementation">Solver implementation</h2>
 <p>As with the delayed normalization we implement multiple solvers from scipy.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L383" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L383" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="solve_profile" class="level3">
 <h3 class="anchored" data-anchor-id="solve_profile">solve_profile</h3>
 <blockquote class="blockquote">
@@ -733,7 +721,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="solving-single-profiles" class="level2">
 <h2 class="anchored" data-anchor-id="solving-single-profiles">Solving single profiles</h2>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L423" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L423" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="protein_profile" class="level3">
 <h3 class="anchored" data-anchor-id="protein_profile">protein_profile</h3>
 <blockquote class="blockquote">
@@ -844,7 +832,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>protein_profile_prallalel_mq: A wrapper function to calculate protein ratios based on MaxQuant tabular data</li>
 </ul>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L493" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L493" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="protein_profile_parallel" class="level3">
 <h3 class="anchored" data-anchor-id="protein_profile_parallel">protein_profile_parallel</h3>
 <blockquote class="blockquote">
@@ -855,7 +843,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: df (pd.DataFrame): Feature table by alphapept. minimum_ratios (int): Minimum number of peptide ratios necessary to derive a protein ratio. field (str): The field containing the quantitative peptide information (i.e.&nbsp;precursor intensities). callback ([type], optional): Callback function. Defaults to None.</p>
 <p>Returns: pd.DataFrame: table containing the LFQ intensities of each protein in each sample.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L595" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L595" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="protein_profile_parallel_mq" class="level3">
 <h3 class="anchored" data-anchor-id="protein_profile_parallel_mq">protein_profile_parallel_mq</h3>
@@ -870,7 +858,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Raises: FileNotFoundError: if Maxquant files cannot be found.</p>
 <p>Returns: pd.DataFrame: table containing the LFQ intensities of each protein in each sample.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/quantification.py#L565" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L565" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="protein_profile_parallel_ap" class="level3">
 <h3 class="anchored" data-anchor-id="protein_profile_parallel_ap">protein_profile_parallel_ap</h3>

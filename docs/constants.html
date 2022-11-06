@@ -144,19 +144,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -285,11 +273,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul>
   <li><a href="#amino-acids" id="toc-amino-acids" class="nav-link active" data-scroll-target="#amino-acids">Amino Acids</a></li>
   <li><a href="#mass-dict" id="toc-mass-dict" class="nav-link" data-scroll-target="#mass-dict">Mass dict</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#get_mass_dict" id="toc-get_mass_dict" class="nav-link" data-scroll-target="#get_mass_dict">get_mass_dict</a></li>
   </ul></li>
   <li><a href="#isotopes" id="toc-isotopes" class="nav-link" data-scroll-target="#isotopes">Isotopes</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#isotope" id="toc-isotope" class="nav-link" data-scroll-target="#isotope">Isotope</a></li>
   </ul></li>
   <li><a href="#averagine-model" id="toc-averagine-model" class="nav-link" data-scroll-target="#averagine-model">Averagine Model</a></li>
@@ -297,7 +285,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#losses" id="toc-losses" class="nav-link" data-scroll-target="#losses">Losses</a></li>
   <li><a href="#labels" id="toc-labels" class="nav-link" data-scroll-target="#labels">Labels</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -339,7 +327,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="mass-dict">Mass dict</h2>
 <p>A numba compatible mass dict dictionary. This is created from the <code>modifications.tsv</code>. Change to allow custom modifications.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/constants.py#L16" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/constants.py#L16" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="get_mass_dict" class="level3">
 <h3 class="anchored" data-anchor-id="get_mass_dict">get_mass_dict</h3>
 <blockquote class="blockquote">

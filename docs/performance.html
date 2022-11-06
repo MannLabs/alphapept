@@ -144,19 +144,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -290,7 +278,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#performance_function" id="toc-performance_function" class="nav-link" data-scroll-target="#performance_function">performance_function</a></li>
   <li><a href="#alphapool" id="toc-alphapool" class="nav-link" data-scroll-target="#alphapool">AlphaPool</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -323,7 +311,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Note that not all compilation approaches can sensibly be combined with all parallelization approaches.</p>
 <p>Next we import all libraries, taking into account that not every machine has a GPU (with NVidia cuda cores) available:</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/performance.py#L44" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/performance.py#L44" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="is_valid_compilation_mode" class="level3">
 <h3 class="anchored" data-anchor-id="is_valid_compilation_mode">is_valid_compilation_mode</h3>
 <blockquote class="blockquote">
@@ -335,7 +323,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>By default, we will use <code>cuda</code> if it is available. If not, <code>numba-multithread</code> will be used as default.</p>
 <p>To consistently use multiple threads or processes, we can set a global MAX_WORKER_COUNT parameter.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/performance.py#L72" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/performance.py#L72" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="set_worker_count" class="level3">
 <h3 class="anchored" data-anchor-id="set_worker_count">set_worker_count</h3>
@@ -353,7 +341,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <pre><code>import importlib
 importlib.reload(imported_module)</code></pre>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/performance.py#L129" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/performance.py#L129" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="compile_function" class="level3">
 <h3 class="anchored" data-anchor-id="compile_function">compile_function</h3>
@@ -363,10 +351,10 @@ importlib.reload(imported_module)</code></pre>
 </blockquote>
 <p>A decorator to compile a given function.</p>
 <p>Numba functions are by default set to use <code>nogil=True</code> and <code>nopython=True</code>, unless explicitly defined otherwise. Cuda functions are by default set to use <code>device=True</code>, unless explicitly defined otherwise..</p>
-<p>Args: compilation_mode (str): The compilation mode to use. Will be checked with <code>is_valid_compilation_mode</code>. If None, the global COMPILATION_MODE will be used as soon as the function is decorated for static compilation. If DYNAMIC_COMPILATION_ENABLED, the function will always be compiled at runtime and thus by default returns a Python function. Static recompilation can be enforced by reimporting a module containing the function with importlib.reload(imported_module). If COMPILATION_MODE is Python and not DYNAMIC_COMPILATION_ENABLED, no compilation will be used. Default is None **decorator_kwargs: Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.</p>
+<p>Args: compilation_mode (str): The compilation mode to use. Will be checked with <a href="https://mannlabs.github.io/alphapept/performance.html#is_valid_compilation_mode"><code>is_valid_compilation_mode</code></a>. If None, the global COMPILATION_MODE will be used as soon as the function is decorated for static compilation. If DYNAMIC_COMPILATION_ENABLED, the function will always be compiled at runtime and thus by default returns a Python function. Static recompilation can be enforced by reimporting a module containing the function with importlib.reload(imported_module). If COMPILATION_MODE is Python and not DYNAMIC_COMPILATION_ENABLED, no compilation will be used. Default is None **decorator_kwargs: Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.</p>
 <p>Returns: callable: A decorated function that is compiled.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/performance.py#L103" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/performance.py#L103" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="set_compilation_mode" class="level3">
 <h3 class="anchored" data-anchor-id="set_compilation_mode">set_compilation_mode</h3>
@@ -375,7 +363,7 @@ importlib.reload(imported_module)</code></pre>
                        enable_dynamic_compilation:bool=None)</code></pre>
 </blockquote>
 <p>Set the global compilation mode to use.</p>
-<p>Args: compilation_mode (str): The compilation mode to use. Will be checked with <code>is_valid_compilation_mode</code>. Default is None enable_dynamic_compilation (bool): Enable dynamic compilation. If enabled, code will generally be slower and no other functions can be called from within a compiled function anymore, as they are compiled at runtime. WARNING: Enabling this is strongly disadvised in almost all cases! Default is None.</p>
+<p>Args: compilation_mode (str): The compilation mode to use. Will be checked with <a href="https://mannlabs.github.io/alphapept/performance.html#is_valid_compilation_mode"><code>is_valid_compilation_mode</code></a>. Default is None enable_dynamic_compilation (bool): Enable dynamic compilation. If enabled, code will generally be slower and no other functions can be called from within a compiled function anymore, as they are compiled at runtime. WARNING: Enabling this is strongly disadvised in almost all cases! Default is None.</p>
 <p>Testing yields the expected results:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> types</span>
@@ -455,7 +443,7 @@ importlib.reload(imported_module)</code></pre>
 </div>
 <p>Next, we define the ‘performance_function’ decorator to take full advantage of both compilation and parallelization for maximal performance. Note that a ‘performance_function’ can not return values. Instead, it should store results in provided buffer arrays.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/performance.py#L215" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/performance.py#L215" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="performance_function" class="level3">
 <h3 class="anchored" data-anchor-id="performance_function">performance_function</h3>
@@ -466,7 +454,7 @@ importlib.reload(imported_module)</code></pre>
 </blockquote>
 <p>A decorator to compile a given function and allow multithreading over an multiple indices.</p>
 <p>NOTE This should only be used on functions that are compilable. Functions that need to be decorated need to have an <code>index</code> argument as first argument. If an iterable is provided to the decorated function, the original (compiled) function will be applied to all elements of this iterable. The most efficient way to provide iterables are with ranges, but numpy arrays work as well. Functions can not return values, results should be stored in buffer arrays inside thge function instead.</p>
-<p>Args: worker_count (int): The number of workers to use for multithreading. If None, the global MAX_WORKER_COUNT is used at runtime. Default is None. compilation_mode (str): The compilation mode to use. Will be forwarded to the <code>compile_function</code> decorator. **decorator_kwargs: Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.</p>
+<p>Args: worker_count (int): The number of workers to use for multithreading. If None, the global MAX_WORKER_COUNT is used at runtime. Default is None. compilation_mode (str): The compilation mode to use. Will be forwarded to the <a href="https://mannlabs.github.io/alphapept/performance.html#compile_function"><code>compile_function</code></a> decorator. **decorator_kwargs: Keyword arguments that will be passed to numba.jit or cuda.jit compilation decorators.</p>
 <p>Returns: callable: A decorated function that is compiled and parallelized.</p>
 <p>We test this function with a simple smoothing algorithm.</p>
 <div class="cell">
@@ -523,7 +511,7 @@ Wall time: 887 ms</code></pre>
 <p>Finally, we also provide functionality to use multiprocessing instead of multithreading.</p>
 <p><strong>NOTE</strong>: There are some inherent limitation with the number of processes that Python can spawn. As such, no process Pool should use more than 50 processes.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/performance.py#L376" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/performance.py#L376" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="alphapool" class="level3">
 <h3 class="anchored" data-anchor-id="alphapool">AlphaPool</h3>

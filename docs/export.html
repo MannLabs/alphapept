@@ -143,19 +143,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <span class="navbar-title">alphapept</span>
     </a>
   </div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
-  <span class="navbar-toggler-icon"></span>
-</button>
-          <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
-  <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/mannlabs/alphapept/tree/master/"><i class="bi bi-github" role="img">
-</i> 
- </a>
-  </li>  
-</ul>
-              <div id="quarto-search" class="" title="Search"></div>
-          </div> <!-- /navcollapse -->
+          <div id="quarto-search" class="" title="Search"></div>
       </div> <!-- /container-fluid -->
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
@@ -284,17 +272,17 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul>
   <li><a href="#maxquant-output-files" id="toc-maxquant-output-files" class="nav-link active" data-scroll-target="#maxquant-output-files">MaxQuant output files</a></li>
   <li><a href="#sequence-notation" id="toc-sequence-notation" class="nav-link" data-scroll-target="#sequence-notation">Sequence Notation</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#ap_to_mq_sequence" id="toc-ap_to_mq_sequence" class="nav-link" data-scroll-target="#ap_to_mq_sequence">ap_to_mq_sequence</a></li>
   <li><a href="#remove_mods" id="toc-remove_mods" class="nav-link" data-scroll-target="#remove_mods">remove_mods</a></li>
   </ul></li>
   <li><a href="#evidence.txt" id="toc-evidence.txt" class="nav-link" data-scroll-target="#evidence.txt">evidence.txt</a>
-  <ul>
+  <ul class="collapse">
   <li><a href="#prepare_ap_results" id="toc-prepare_ap_results" class="nav-link" data-scroll-target="#prepare_ap_results">prepare_ap_results</a></li>
   </ul></li>
   <li><a href="#proteingroups" id="toc-proteingroups" class="nav-link" data-scroll-target="#proteingroups">ProteinGroups</a></li>
   </ul>
-<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/tree/master/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -324,7 +312,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="sequence-notation">Sequence Notation</h2>
 <p>Dictionary to be able to convert AlphaPept sequence notaiton to MaxQuant</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/export.py#L22" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/export.py#L22" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="ap_to_mq_sequence" class="level3">
 <h3 class="anchored" data-anchor-id="ap_to_mq_sequence">ap_to_mq_sequence</h3>
 <blockquote class="blockquote">
@@ -332,7 +320,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </blockquote>
 <p>Converts AlphaPept sequence format to MaxQuant Format returns sequence_naked, len_sequence, modifications_, mq_sequence</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/export.py#L19" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/export.py#L19" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="remove_mods" class="level3">
 <h3 class="anchored" data-anchor-id="remove_mods">remove_mods</h3>
@@ -354,7 +342,7 @@ evidence = pd.read_csv('F:/TESTDATA/DEFAULT/THERMO_IRT_MANY_MOD/combined/txt/evi
 for _ in evidence.columns:
     print(f"mq_dict_evidence['{_}'] =")</code></pre>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/tree/master/blob/master/alphapept/export.py#L78" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/export.py#L78" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="prepare_ap_results" class="level3">
 <h3 class="anchored" data-anchor-id="prepare_ap_results">prepare_ap_results</h3>
 <blockquote class="blockquote">
