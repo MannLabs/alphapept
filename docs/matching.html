@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Functions related to matching">
+
+<title>alphapept - Matching</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="alphapept - Matching">
+<meta property="og:description" content="Functions related to matching">
+<meta property="og:site-name" content="alphapept">
+<meta name="twitter:title" content="alphapept - Matching">
+<meta name="twitter:description" content="Functions related to matching">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">alphapept</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Matching</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">AlphaPept</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./settings.html" class="sidebar-item-text sidebar-link">Settings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chem.html" class="sidebar-item-text sidebar-link">Chem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./io.html" class="sidebar-item-text sidebar-link">Input / Output</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fasta.html" class="sidebar-item-text sidebar-link">FASTA</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./feature_finding.html" class="sidebar-item-text sidebar-link">Feature Finding</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./search.html" class="sidebar-item-text sidebar-link">Search</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./score.html" class="sidebar-item-text sidebar-link">Score</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./recalibration.html" class="sidebar-item-text sidebar-link">Recalibration</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quantification.html" class="sidebar-item-text sidebar-link">Quantification</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./matching.html" class="sidebar-item-text sidebar-link active">Matching</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link">Constants</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interface.html" class="sidebar-item-text sidebar-link">Interface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./performance.html" class="sidebar-item-text sidebar-link">Performance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./export.html" class="sidebar-item-text sidebar-link">Export</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./label.html" class="sidebar-item-text sidebar-link">Label</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./additional_code.html" class="sidebar-item-text sidebar-link">Additional code</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#dataset-alignment" id="toc-dataset-alignment" class="nav-link active" data-scroll-target="#dataset-alignment">Dataset Alignment</a>
+  <ul class="collapse">
+  <li><a href="#relative-offset" id="toc-relative-offset" class="nav-link" data-scroll-target="#relative-offset">Relative offset</a></li>
+  <li><a href="#absolute-correction" id="toc-absolute-correction" class="nav-link" data-scroll-target="#absolute-correction">Absolute correction</a></li>
+  <li><a href="#calculate_distance" id="toc-calculate_distance" class="nav-link" data-scroll-target="#calculate_distance">calculate_distance</a></li>
+  <li><a href="#calib_table" id="toc-calib_table" class="nav-link" data-scroll-target="#calib_table">calib_table</a></li>
+  <li><a href="#align" id="toc-align" class="nav-link" data-scroll-target="#align">align</a></li>
+  <li><a href="#calculate_deltas" id="toc-calculate_deltas" class="nav-link" data-scroll-target="#calculate_deltas">calculate_deltas</a></li>
+  <li><a href="#align_datasets" id="toc-align_datasets" class="nav-link" data-scroll-target="#align_datasets">align_datasets</a></li>
+  <li><a href="#align_files" id="toc-align_files" class="nav-link" data-scroll-target="#align_files">align_files</a></li>
+  </ul></li>
+  <li><a href="#matching" id="toc-matching" class="nav-link" data-scroll-target="#matching">Matching</a>
+  <ul class="collapse">
+  <li><a href="#get_probability" id="toc-get_probability" class="nav-link" data-scroll-target="#get_probability">get_probability</a></li>
+  <li><a href="#match_datasets" id="toc-match_datasets" class="nav-link" data-scroll-target="#match_datasets">match_datasets</a></li>
+  <li><a href="#convert_decoy" id="toc-convert_decoy" class="nav-link" data-scroll-target="#convert_decoy">convert_decoy</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Matching</h1>
+</div>
+
+<div>
+  <div class="description">
+    Functions related to matching
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="dataset-alignment" class="level2">
+<h2 class="anchored" data-anchor-id="dataset-alignment">Dataset Alignment</h2>
+<p>For matching MS2-identifications to MS1-features, we first need to align the datasets on top of each other to be able to transfer identifications correctly. Datasets are aligned by comparing shared precursors and calculating the median offset. When comparing all files to each other, we get an overdetermined linear equation system. By solving this, we find offset parameters that minimize the shift of all files to each other. Offset is either applied relative (mz, mobility) or absolute (rt).</p>
+<section id="relative-offset" class="level3">
+<h3 class="anchored" data-anchor-id="relative-offset">Relative offset</h3>
+<p>For some parameters, we would like to have a relative correction of values. Consider the case of different <code>mz</code>-values, e.g.&nbsp;300 and 600. If we assume that the offset is larger for larger m/z values, we would not want an absolute correction of e.g.&nbsp;+0.5 Da (300.5 and 600.5) but rather a relative correction of e.g.&nbsp;+0.1% (300.3 and 600.6).</p>
+</section>
+<section id="absolute-correction" class="level3">
+<h3 class="anchored" data-anchor-id="absolute-correction">Absolute correction</h3>
+<p>In contrast to the relative correction, sometimes absolute correction is more applicable. Consider the case of retention time. Here one would rather not expect a relative offset but rather an absolute offset. As an example, consider a lag time of 0.5 Minutes. This would be constant for all retention times and not differ e.g., for later retention times.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L12" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="calculate_distance" class="level3">
+<h3 class="anchored" data-anchor-id="calculate_distance">calculate_distance</h3>
+<blockquote class="blockquote">
+<pre><code> calculate_distance (table_1:pandas.core.frame.DataFrame,
+                     table_2:pandas.core.frame.DataFrame,
+                     offset_dict:dict, calib:bool=False)</code></pre>
+</blockquote>
+<p>Calculate the distance between two precursors for different columns Distance can either be relative or absolute.</p>
+<p>An example for a minimal offset_dict is: offset_dict = {‘mass’:‘absolute’}</p>
+<p>Args: table_1 (pd.DataFrame): Dataframe with precusor data. table_2 (pd.DataFrame): Dataframe with precusor data. offset_dict (dict): Dictionary with column names and how the distance should be calculated. calib (bool): Flag to indicate that distances should be calculated on calibrated columns. Defaults to False.</p>
+<p>Raises: KeyError: If either table_1 or table_2 is not indexed by precursor</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L56" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="calib_table" class="level3">
+<h3 class="anchored" data-anchor-id="calib_table">calib_table</h3>
+<blockquote class="blockquote">
+<pre><code> calib_table (table:pandas.core.frame.DataFrame,
+              delta:pandas.core.series.Series, offset_dict:dict)</code></pre>
+</blockquote>
+<p>Apply offset to a table. Different operations for offsets exist. Offsets will be saved with a ’_calib’-suffix. If this does not already exist, it will be created.</p>
+<p>Args: table_1 (pd.DataFrame): Dataframe with data. delta (pd.Series): Series cotaining the offset. offset_dict (dict): Dictionary with column names and how the distance should be calculated.</p>
+<p>Raises: NotImplementedError: If the type of vonversion is not implemented.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L89" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="align" class="level3">
+<h3 class="anchored" data-anchor-id="align">align</h3>
+<blockquote class="blockquote">
+<pre><code> align (deltas:pandas.core.frame.DataFrame, filenames:list,
+        weights:numpy.ndarray=None, n_jobs=None)</code></pre>
+</blockquote>
+<p>Align multiple datasets. This function creates a matrix to represent the shifts from each dataset to another. This effectively is an overdetermined equation system and is solved with a linear regression.</p>
+<p>Args: deltas (pd.DataFrame): Distances from each dataset to another. filenames (list): The filenames of the datasts that were compared. weights (np.ndarray, optional): Distances can be weighted by their number of shared elements. Defaults to None. n_jobs (optional): Number of processes to be used. Defaults to None (=1).</p>
+<p>Returns: np.ndarray: alignment values.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L143" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="calculate_deltas" class="level3">
+<h3 class="anchored" data-anchor-id="calculate_deltas">calculate_deltas</h3>
+<blockquote class="blockquote">
+<pre><code> calculate_deltas (combos:list, calib:bool=False, callback:Callable=None)</code></pre>
+</blockquote>
+<p>Wrapper function to calculate the distances of multiple files.</p>
+<p>In here, we define the offset_dict to make a relative comparison for mz and mobility and absolute for rt.</p>
+<p>TODO: This function could be speed-up by parallelization</p>
+<p>Args: combos (list): A list containing tuples of filenames that should be compared. calib (bool): Boolean flag to indicate distance should be calculated on calibrated data. callback (Callable): A callback function to track progress.</p>
+<p>Returns: pd.DataFrame: Dataframe containing the deltas of the files np.ndarray: Numpy array containing the weights of each comparison (i.e.&nbsp;number of shared elements) dict: Offset dictionary whicch was used for comparing.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L253" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="align_datasets" class="level3">
+<h3 class="anchored" data-anchor-id="align_datasets">align_datasets</h3>
+<blockquote class="blockquote">
+<pre><code> align_datasets (settings:dict, callback:&lt;built-infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Wrapper function that aligns all experimental files specified a settings file.</p>
+<p>Args: settings (dict): A list with raw file names. callback (Callable): Callback function to indicate progress.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L231" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="align_files" class="level3">
+<h3 class="anchored" data-anchor-id="align_files">align_files</h3>
+<blockquote class="blockquote">
+<pre><code> align_files (filenames:list, alignment:pandas.core.frame.DataFrame,
+              offset_dict:dict)</code></pre>
+</blockquote>
+<p>Wrapper function that aligns a list of files.</p>
+<p>Args: filenames (list): A list with raw file names. alignment (pd.DataFrame): A pandas dataframe containing the alignment information. offset_dict (dict): Dictionary with column names and how the distance should be calculated.</p>
+</section>
+</section>
+<section id="matching" class="level2">
+<h2 class="anchored" data-anchor-id="matching">Matching</h2>
+<p>Transfer MS2 identifications to similar MS1 features.</p>
+<p>For “match-between-runs” we start with aligning datasets. To create a reference we use for matching, we combine all datasets of a matching group. When using the default settings, the matching group consists of all files. We then group the dataset by precursor and calculate it’s average properties (rt, mz, mobility). By combining several files we further are able to calculate a standard deviation. This allows us to know where and with what deviation we would expect an MS1 feature and have the corresponding identification. This is our matching reference. In the matching step, we go through each dataset individually and check if there are precursors in the reference that were not identified in this dataset. We then perform a nearest-neighbor lookup to find if any MS1 features exist that are in close proximity to the reference. The distance metric we use is normed by the median standard of the deviation. Lastly we assess the confidence in a transfered identifcation by using the <a href="https://stats.stackexchange.com/questions/331283/how-to-calculate-the-probability-of-a-data-point-belonging-to-a-multivariate-nor"><code>Mahalanobis</code></a> distance.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L327" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="get_probability" class="level3">
+<h3 class="anchored" data-anchor-id="get_probability">get_probability</h3>
+<blockquote class="blockquote">
+<pre><code> get_probability (df:pandas.core.frame.DataFrame,
+                  ref:pandas.core.frame.DataFrame,
+                  sigma:pandas.core.frame.DataFrame, index:int)</code></pre>
+</blockquote>
+<p>Probablity estimate of a transfered identification using the Mahalanobis distance.</p>
+<p>The function calculates the probability that a feature is a reference feature. The reference features containing std deviations so that a probability can be estimated.</p>
+<p>It is required that the data frames are matched, meaning that the first entry in df matches to the first entry in ref.</p>
+<p>Args: df (pd.DataFrame): Dataset containing transferered features ref (pd.DataFrame): Dataset containing reference features sigma (pd.DataFrame): Dataset containing the standard deviations of the reference features index (int): Index to the datframes that should be compared</p>
+<p>Returns: float: Mahalanobis distance</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Example usage</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> pd.DataFrame({<span class="st">'mass'</span>:[<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">300</span>],<span class="st">'rt'</span>:[<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>]})</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> pd.DataFrame({<span class="st">'mass'</span>:[<span class="dv">100</span>,<span class="dv">200</span>,<span class="dv">302</span>],<span class="st">'rt'</span>:[<span class="dv">1</span>,<span class="fl">2.5</span>,<span class="dv">3</span>]})</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>std <span class="op">=</span> pd.DataFrame({<span class="st">'mass'</span>:[<span class="fl">0.1</span>,<span class="fl">0.1</span>,<span class="fl">0.1</span>],<span class="st">'rt'</span>:[<span class="dv">1</span>,<span class="dv">1</span>,<span class="dv">1</span>]})</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"First element: (ideal match): </span><span class="sc">{</span>get_probability(a, b, std, <span class="dv">0</span>)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Second element: (rt slightly off): </span><span class="sc">{</span>get_probability(a, b, std, <span class="dv">1</span>)<span class="sc">:.2f}</span><span class="ss">"</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"Third element: (mass completely off): </span><span class="sc">{</span>get_probability(a, b, std, <span class="dv">2</span>)<span class="sc">:.2f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>First element: (ideal match): 0.00
+Second element: (rt slightly off): 0.12
+Third element: (mass completely off): 1.00</code></pre>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L376" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="match_datasets" class="level3">
+<h3 class="anchored" data-anchor-id="match_datasets">match_datasets</h3>
+<blockquote class="blockquote">
+<pre><code> match_datasets (settings:dict, callback:Callable=None)</code></pre>
+</blockquote>
+<p>Match datasets: Wrapper function to match datasets based on a settings file. This implementation uses matching groups but not fractions.</p>
+<p>Args: settings (dict): Dictionary containg specifications of the run callback (Callable): Callback function to indicate progress.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/matching.py#L364" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="convert_decoy" class="level3">
+<h3 class="anchored" data-anchor-id="convert_decoy">convert_decoy</h3>
+<blockquote class="blockquote">
+<pre><code> convert_decoy (float_)</code></pre>
+</blockquote>
+<p>Utility function to convert type for decoy after grouping.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

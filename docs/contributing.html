@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>alphapept - How to contribute</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="alphapept - How to contribute">
+<meta property="og:description" content="Report bugs at https://github.com/MannLabs/alphapept/issues.">
+<meta property="og:site-name" content="alphapept">
+<meta name="twitter:title" content="alphapept - How to contribute">
+<meta name="twitter:description" content="Report bugs at https://github.com/MannLabs/alphapept/issues.">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">alphapept</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">How to contribute</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">AlphaPept</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./settings.html" class="sidebar-item-text sidebar-link">Settings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chem.html" class="sidebar-item-text sidebar-link">Chem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./io.html" class="sidebar-item-text sidebar-link">Input / Output</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fasta.html" class="sidebar-item-text sidebar-link">FASTA</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./feature_finding.html" class="sidebar-item-text sidebar-link">Feature Finding</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./search.html" class="sidebar-item-text sidebar-link">Search</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./score.html" class="sidebar-item-text sidebar-link">Score</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./recalibration.html" class="sidebar-item-text sidebar-link">Recalibration</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quantification.html" class="sidebar-item-text sidebar-link">Quantification</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./matching.html" class="sidebar-item-text sidebar-link">Matching</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link">Constants</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interface.html" class="sidebar-item-text sidebar-link">Interface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./performance.html" class="sidebar-item-text sidebar-link">Performance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./export.html" class="sidebar-item-text sidebar-link">Export</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./label.html" class="sidebar-item-text sidebar-link">Label</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./additional_code.html" class="sidebar-item-text sidebar-link">Additional code</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link active">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#report-bugs" id="toc-report-bugs" class="nav-link active" data-scroll-target="#report-bugs">Report Bugs</a></li>
+  <li><a href="#fix-bugs" id="toc-fix-bugs" class="nav-link" data-scroll-target="#fix-bugs">Fix Bugs</a></li>
+  <li><a href="#implement-features" id="toc-implement-features" class="nav-link" data-scroll-target="#implement-features">Implement Features</a></li>
+  <li><a href="#write-documentation" id="toc-write-documentation" class="nav-link" data-scroll-target="#write-documentation">Write Documentation</a></li>
+  <li><a href="#submit-feedback" id="toc-submit-feedback" class="nav-link" data-scroll-target="#submit-feedback">Submit Feedback</a></li>
+  <li><a href="#get-started" id="toc-get-started" class="nav-link" data-scroll-target="#get-started">Get Started!</a></li>
+  <li><a href="#pr-submission-guidelines" id="toc-pr-submission-guidelines" class="nav-link" data-scroll-target="#pr-submission-guidelines">PR submission guidelines</a></li>
+  <li><a href="#notes-for-programmers" id="toc-notes-for-programmers" class="nav-link" data-scroll-target="#notes-for-programmers">Notes for Programmers</a>
+  <ul class="collapse">
+  <li><a href="#literal-programming" id="toc-literal-programming" class="nav-link" data-scroll-target="#literal-programming">Literal Programming</a></li>
+  <li><a href="#docstring-convention" id="toc-docstring-convention" class="nav-link" data-scroll-target="#docstring-convention">Docstring convention</a></li>
+  <li><a href="#sample_function" id="toc-sample_function" class="nav-link" data-scroll-target="#sample_function">sample_function</a></li>
+  </ul></li>
+  <li><a href="#tests" id="toc-tests" class="nav-link" data-scroll-target="#tests">Tests</a>
+  <ul class="collapse">
+  <li><a href="#unit-tests" id="toc-unit-tests" class="nav-link" data-scroll-target="#unit-tests">Unit Tests</a></li>
+  <li><a href="#github-actions" id="toc-github-actions" class="nav-link" data-scroll-target="#github-actions">GitHub Actions</a></li>
+  <li><a href="#adding-an-integration-test" id="toc-adding-an-integration-test" class="nav-link" data-scroll-target="#adding-an-integration-test">Adding an integration test</a></li>
+  <li><a href="#integrating-actions" id="toc-integrating-actions" class="nav-link" data-scroll-target="#integrating-actions">Integrating Actions</a></li>
+  </ul></li>
+  <li><a href="#test-coverage" id="toc-test-coverage" class="nav-link" data-scroll-target="#test-coverage">Test Coverage</a></li>
+  <li><a href="#linting" id="toc-linting" class="nav-link" data-scroll-target="#linting">Linting</a>
+  <ul class="collapse">
+  <li><a href="#callbacks" id="toc-callbacks" class="nav-link" data-scroll-target="#callbacks">Callbacks</a></li>
+  <li><a href="#version-bumping" id="toc-version-bumping" class="nav-link" data-scroll-target="#version-bumping">Version bumping</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">How to contribute</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="report-bugs" class="level2">
+<h2 class="anchored" data-anchor-id="report-bugs">Report Bugs</h2>
+<p>Report bugs at https://github.com/MannLabs/alphapept/issues.</p>
+<p>If you are reporting a bug, please include:</p>
+<ul>
+<li>Your operating system name and version.</li>
+<li>Any details about your local setup that might be helpful in troubleshooting.</li>
+<li>Detailed steps to reproduce the bug.</li>
+</ul>
+</section>
+<section id="fix-bugs" class="level2">
+<h2 class="anchored" data-anchor-id="fix-bugs">Fix Bugs</h2>
+<p>Look through the GitHub issues for bugs. Anything tagged with “bug” and “help wanted” is open to whoever wants to implement it.</p>
+</section>
+<section id="implement-features" class="level2">
+<h2 class="anchored" data-anchor-id="implement-features">Implement Features</h2>
+<p>Look through the GitHub issues for features. Anything tagged with “enhancement” and “help wanted” is open to whoever wants to implement it.</p>
+</section>
+<section id="write-documentation" class="level2">
+<h2 class="anchored" data-anchor-id="write-documentation">Write Documentation</h2>
+<p>AlphaPept could always use more documentation, whether as part of the official AlphaPept documentation, in docstrings, or even on the web in blog posts, articles, and such. See below for our docstring convention.</p>
+</section>
+<section id="submit-feedback" class="level2">
+<h2 class="anchored" data-anchor-id="submit-feedback">Submit Feedback</h2>
+<p>The best way to send feedback is to file an issue at https://github.com/MannLabs/alphapept/issues.</p>
+<p>If you are proposing a feature:</p>
+<ul>
+<li>Explain in detail how it would work.</li>
+<li>Keep the scope as narrow as possible, to make it easier to implement.</li>
+<li>Remember that this is a volunteer-driven project, and that contributions are welcome :)</li>
+</ul>
+</section>
+<section id="get-started" class="level2">
+<h2 class="anchored" data-anchor-id="get-started">Get Started!</h2>
+<p>Ready to contribute? Here’s how to set up <code>alphapept</code> for local development.</p>
+<ol type="1">
+<li><p>Fork the <code>alphapept</code> repo on GitHub.</p></li>
+<li><p>Clone your fork locally:</p>
+<pre><code>git clone git@github.com:your_name_here/alphapept.git</code></pre></li>
+<li><p>Follow the installation instructions in the readme to install a alphapept environment.</p></li>
+<li><p>Create a branch for local development::</p>
+<pre><code>git checkout -b name-of-your-bugfix-or-feature</code></pre>
+<p>Now you can make your changes locally.</p></li>
+<li><p>See below in the Notes for Programmers about how to use the nbdev environment.</p></li>
+<li><p>Commit your changes and push your branch to GitHub::</p>
+<pre><code>git add .
+git commit -m "Your detailed description of your changes."
+git push origin name-of-your-bugfix-or-feature</code></pre></li>
+<li><p>Submit a pull request through the GitHub website.</p></li>
+</ol>
+</section>
+<section id="pr-submission-guidelines" class="level2">
+<h2 class="anchored" data-anchor-id="pr-submission-guidelines">PR submission guidelines</h2>
+<ul>
+<li>Keep each PR focused. While it’s more convenient, do not combine several unrelated fixes together. Create as many branches as needed to keep each PR focused.</li>
+<li>Do not mix style changes/fixes with “functional” changes. It’s very difficult to review such PRs, and it most likely gets rejected.</li>
+<li>Do not turn an already submitted PR into your development playground. If after you submitted PR, you discovered that more work is needed - close the PR, do the required work and then submit a new PR. Otherwise, each of your commits requires attention from maintainers of the project.</li>
+<li>If, however, you submitted a PR and received a request for changes, you should proceed with commits inside that PR, so that the maintainer can see the incremental fixes and won’t need to review the whole PR again. In the exceptional case where you realize it’ll take many many commits to complete the requests, then it’s probably best to close the PR, do the work and then submit it again. Again, use common sense where you’d choose one way over another.</li>
+</ul>
+</section>
+<section id="notes-for-programmers" class="level2">
+<h2 class="anchored" data-anchor-id="notes-for-programmers">Notes for Programmers</h2>
+<section id="literal-programming" class="level3">
+<h3 class="anchored" data-anchor-id="literal-programming">Literal Programming</h3>
+<p>A key feature is the use of <a href="https://github.com/fastai/nbdev">nbdev</a>. We like to keep the entrance barrier low to attract new coders to contribute to the AlphaPept package. For this, we see nbedv as an ideal tool to document and modify code. To install nbdev use <code>pip install nbdev</code> and then install the git hooks in the folder where your GitHub repository is cloned (<code>nbdev_install_git_hooks</code>). The key commands for nbdev are:</p>
+<ul>
+<li><code>nbdev_build_lib</code>: build the library from the notebooks</li>
+<li><code>nbdev_test_nbs</code>: test all notebooks</li>
+<li><code>nbdev_clean_nbs</code>: clean the notebooks (strip from unnecessary metadata)</li>
+</ul>
+</section>
+<section id="docstring-convention" class="level3">
+<h3 class="anchored" data-anchor-id="docstring-convention">Docstring convention</h3>
+<p>The docstring convention we adhere to is from the <a href="https://google.github.io/styleguide/pyguide.html">Google stylegyuide</a>.</p>
+<p>Below a sample docstring (Note the empty space after Args/Returns/Raises):</p>
+<pre><code>def sample_function(a_string: str, a_int: int, a_flag: bool) -&gt; str:
+    """Sample function that performs a sample calculation.
+
+    Args:
+        a_string (str): A string.
+        a_int (int): An integer.
+        a_flag (bool): A flag.
+
+    Returns:
+        str: A string based on the input
+    """    
+    </code></pre>
+<section id="examples" class="level4">
+<h4 class="anchored" data-anchor-id="examples">Examples:</h4>
+<ul>
+<li>pandas dataframes: <code>df: pd.DataFrame</code></li>
+<li>numpy arrays: <code>x:np.ndarray</code>. You can further specify the dimension (e.g.&nbsp;of numpy arrays) in the docstring.</li>
+<li>args and kwargs: list and dict. It is generally not needed to type-hint these but state in the Args what they are and what can be done with them.</li>
+<li>callbacks: typing.Callable, e.g.&nbsp;Callable[[Arg1Type, Arg2Type], ReturnType]</li>
+</ul>
+</section>
+<section id="useful-tricks" class="level4">
+<h4 class="anchored" data-anchor-id="useful-tricks">Useful tricks:</h4>
+<ul>
+<li>When using Visual Studio Code, you can use the <code>Python Docstring Generator</code> to automatically generate the docstrings with this format.</li>
+<li>When changing the docstrings in the code, you can propagate the changes back to the notebooks with <code>nbdev_update_lib [filename]</code>.</li>
+</ul>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Type hints are highly recommended but not mandatory (see also <a href="https://www.python.org/dev/peps/pep-0484/">PEP484</a>). As the Legacy codebase had no type hints, we are slowly moving towards more type hinting coverage.</p>
+</div>
+</div>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Adding additional elements (e.g lines like ——-) to the docstring could break how the documentation is displayed. Below is the function from above but exported to show how it would appear in the documentation.</p>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/contributing.py#L7" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+</section>
+<section id="sample_function" class="level3">
+<h3 class="anchored" data-anchor-id="sample_function">sample_function</h3>
+<blockquote class="blockquote">
+<pre><code> sample_function (a_string:str, a_int:int, a_flag:bool)</code></pre>
+</blockquote>
+<p>Sample function that performs a sample calculation.</p>
+<p>Args: a_string (str): A string. a_int (int): An integer. a_flag (bool): A flag.</p>
+<p>Returns: str: A string based on the input</p>
+</section>
+</section>
+<section id="tests" class="level2">
+<h2 class="anchored" data-anchor-id="tests">Tests</h2>
+<p>In order to make AlphaPept a sustainable package, it is imperative that all functions have tests. This is not only to ensure the proper execution of the function but also for the long run when wanting to keep up-to-date with package updates. For tracking package updates, we rely on <a href="https://dependabot.com">dependabot</a>. For continuous integration, we use GitHub Actions.</p>
+<section id="unit-tests" class="level3">
+<h3 class="anchored" data-anchor-id="unit-tests">Unit Tests</h3>
+<p>Within the nbdev notebooks, we try to write small tests for each function. They should be lightweight so that running (and hence testing) the notebooks should not take too long. You define your code in a cell with the <code>#export</code>-flag and you can write a text in the following cell. To prevent the cell from showing up in the documentation, you can add a <code>#hide</code>-flag. To be flexible and maybe migrate from the notebook tests to <code>pytest</code> we write the tests with leading <code>test_</code> and the function name and execute it in the cell.</p>
+<section id="example" class="level4">
+<h4 class="anchored" data-anchor-id="example">Example</h4>
+<p>Cell that defines the code:</p>
+<pre><code>#export
+
+def function_a():
+    return 5</code></pre>
+<p>Next cell with the test function and calling the test.</p>
+<pre><code>def test_function_a():
+    assert function_a() == 5
+
+test_function_a()</code></pre>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>AlphaPept contains a testfolder <code>testfiles</code> with testfiles which are used for some functions to perform tests on files.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="github-actions" class="level3">
+<h3 class="anchored" data-anchor-id="github-actions">GitHub Actions</h3>
+<p>We use GitHub Actions as part of the continuous integration framework.</p>
+<p>Within the repository, the actions are defined as yml files in <code>./.github/workflows/</code>.</p>
+<p>Currently, the following actions are present:</p>
+<ul>
+<li>cla_assistant: Action that runs a check if a contributor has signed the CLA</li>
+<li>gpu_test: Helper to run GPU tests. This is not part of the automated pipeline</li>
+<li>main: Main CI/CD from nbdev. This installs the library and runs all notebooks</li>
+<li>performance_test: This action freezes the environment and runs multiple test cases specified in <code>test_ci.py</code>. Used to benchmark new versions.</li>
+<li>quick_test: This action runs the whole AlphaPept pipeline on small test files</li>
+<li>release: This action triggers the installer compilation and creates a release draft</li>
+</ul>
+<p>The <code>quick_test</code> and <code>performance_test</code> are hooked to the MongoDB, so results are reported here.</p>
+<p>Some actions are executed on each push (e.g.&nbsp;<code>quick_test</code>, others need to be triggered manually (e.g.&nbsp;<code>release</code>).</p>
+</section>
+<section id="adding-an-integration-test" class="level3">
+<h3 class="anchored" data-anchor-id="adding-an-integration-test">Adding an integration test</h3>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Unless you are a core developer, there should not be the need to add integration tests. Feel free to create a PR in case.</p>
+</div>
+</div>
+<p>The best way to add an integration test is by specifying a new test in <code>test_ci.py</code> and then adding a job to the <code>performance_test</code> action. <code>test_ci.py</code> contains a file dictionary with links to files. The idea here is as follows: On the local machine, there should be a <code>BASE_DIR</code> that contains all files used for running the test cases. If the files are not present, the script will download them with the URL from the file dictionary. To define a test case, one needs to initiate a <code>TestRun</code>-class and provide the files to be used. Running a test will always take the current <code>default_settings.yaml</code> and modifying the respective files. You can add subsequent analysis (e.g., such as calculating the false discovery FDR for a mixed species experiment by adding a function to the test class.</p>
+<p>To test an integration test locally, simply call the <code>test_ci.py</code> with the respective test (e.g.&nbsp;thermo_irt) like so: <code>python test_ci.py thermo_irt</code>.</p>
+</section>
+<section id="integrating-actions" class="level3">
+<h3 class="anchored" data-anchor-id="integrating-actions">Integrating Actions</h3>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Unless you are a core developer, there should not be the need to add GitHub Actions. Feel free to create a PR in case.</p>
+</div>
+</div>
+<p>New actions can be added by creating a <code>.yml</code> file and placing it in the workflows folder. We can distinguish local actions, which run on our self-hosted <a href="https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners">runners</a> and cloud actions that run on GitHub servers.</p>
+<p>The local runners are meant to run computationally intensive tasks such as the <code>performance_test</code> and the <code>quick_test</code>, whereas the cloud actions are meant for unit tests.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>If you fork the repository, you will not be able to execute tests on the local runners. They are restricted to the <code>MannLabs</code> repository.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="test-coverage" class="level2">
+<h2 class="anchored" data-anchor-id="test-coverage">Test Coverage</h2>
+<p>Ideally, we would like to track test coverage. However, this isn’t easy when having numba-compiled functions. Any solutions to this are greatly appreciated.</p>
+</section>
+<section id="linting" class="level2">
+<h2 class="anchored" data-anchor-id="linting">Linting</h2>
+<p>It is planned to include a GitHub action that automatically runs a linter on the code.</p>
+<section id="callbacks" class="level3">
+<h3 class="anchored" data-anchor-id="callbacks">Callbacks</h3>
+<p>As AlphaPept is intended to be the backend of a tool with GUI, we ideally want to be able to get a progress bar out of the major functions. For this, we can pass a <code>callback</code>-argument to the major functions. If the argument is passed, it will return the current progress in the range from 0 to 1.</p>
+</section>
+<section id="version-bumping" class="level3">
+<h3 class="anchored" data-anchor-id="version-bumping">Version bumping</h3>
+<p>We are using the python package <a href="https://github.com/c4urself/bump2version"><code>bump2version</code></a>. You can use this to bump the version number (install via <code>pip install bump2version</code>). Currently specified is: <code>bump2version</code>: (<code>major</code>, <code>minor</code>, <code>patch</code>):</p>
+<ul>
+<li>e.g.: <code>bump2version patch</code> for a patch</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>alphapept - AlphaPept</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="alphapept - AlphaPept">
+<meta property="og:description" content="">
+<meta property="og:site-name" content="alphapept">
+<meta name="twitter:title" content="alphapept - AlphaPept">
+<meta name="twitter:description" content="">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">alphapept</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">AlphaPept</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link active">AlphaPept</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./settings.html" class="sidebar-item-text sidebar-link">Settings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chem.html" class="sidebar-item-text sidebar-link">Chem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./io.html" class="sidebar-item-text sidebar-link">Input / Output</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fasta.html" class="sidebar-item-text sidebar-link">FASTA</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./feature_finding.html" class="sidebar-item-text sidebar-link">Feature Finding</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./search.html" class="sidebar-item-text sidebar-link">Search</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./score.html" class="sidebar-item-text sidebar-link">Score</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./recalibration.html" class="sidebar-item-text sidebar-link">Recalibration</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quantification.html" class="sidebar-item-text sidebar-link">Quantification</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./matching.html" class="sidebar-item-text sidebar-link">Matching</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link">Constants</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interface.html" class="sidebar-item-text sidebar-link">Interface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./performance.html" class="sidebar-item-text sidebar-link">Performance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./export.html" class="sidebar-item-text sidebar-link">Export</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./label.html" class="sidebar-item-text sidebar-link">Label</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./additional_code.html" class="sidebar-item-text sidebar-link">Additional code</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#preprint" id="toc-preprint" class="nav-link active" data-scroll-target="#preprint">Preprint</a></li>
+  <li><a href="#windows-quickstart" id="toc-windows-quickstart" class="nav-link" data-scroll-target="#windows-quickstart">Windows Quickstart</a></li>
+  <li><a href="#current-functionality" id="toc-current-functionality" class="nav-link" data-scroll-target="#current-functionality">Current functionality</a></li>
+  <li><a href="#python-installation-instructions" id="toc-python-installation-instructions" class="nav-link" data-scroll-target="#python-installation-instructions">Python Installation Instructions</a>
+  <ul class="collapse">
+  <li><a href="#requirements" id="toc-requirements" class="nav-link" data-scroll-target="#requirements">Requirements</a></li>
+  <li><a href="#python" id="toc-python" class="nav-link" data-scroll-target="#python">Python</a></li>
+  <li><a href="#additional-notes" id="toc-additional-notes" class="nav-link" data-scroll-target="#additional-notes">Additional Notes</a></li>
+  </ul></li>
+  <li><a href="#standalone-windows-installer" id="toc-standalone-windows-installer" class="nav-link" data-scroll-target="#standalone-windows-installer">Standalone Windows Installer</a></li>
+  <li><a href="#additional-documentation" id="toc-additional-documentation" class="nav-link" data-scroll-target="#additional-documentation">Additional Documentation</a></li>
+  <li><a href="#version-performance" id="toc-version-performance" class="nav-link" data-scroll-target="#version-performance">Version Performance</a></li>
+  <li><a href="#how-to-use" id="toc-how-to-use" class="nav-link" data-scroll-target="#how-to-use">How to use</a>
+  <ul class="collapse">
+  <li><a href="#windows-standalone-installation" id="toc-windows-standalone-installation" class="nav-link" data-scroll-target="#windows-standalone-installation">Windows Standalone Installation</a></li>
+  <li><a href="#python-package" id="toc-python-package" class="nav-link" data-scroll-target="#python-package">Python Package</a></li>
+  <li><a href="#using-as-a-tool" id="toc-using-as-a-tool" class="nav-link" data-scroll-target="#using-as-a-tool">Using as a tool</a></li>
+  <li><a href="#cmd-python" id="toc-cmd-python" class="nav-link" data-scroll-target="#cmd-python">CMD / Python</a></li>
+  </ul></li>
+  <li><a href="#notebooks" id="toc-notebooks" class="nav-link" data-scroll-target="#notebooks">Notebooks</a></li>
+  <li><a href="#contributing" id="toc-contributing" class="nav-link" data-scroll-target="#contributing">Contributing</a></li>
+  <li><a href="#cite-us" id="toc-cite-us" class="nav-link" data-scroll-target="#cite-us">Cite us</a></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">AlphaPept</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p><img src="https://github.com/MannLabs/alphapept/workflows/CI/badge.svg" class="img-fluid" alt="CI"> <img src="https://github.com/MannLabs/alphapept/workflows/Quick%20Test/badge.svg" class="img-fluid" alt="Quick Test"> <img src="https://github.com/MannLabs/alphapept/workflows/Performance%20test/badge.svg" class="img-fluid" alt="Performance test"> <img src="https://github.com/MannLabs/alphapept/workflows/Windows%20Installer/badge.svg" class="img-fluid" alt="Windows Installer"> <a href="https://renkulab.io/projects/renku-stories/alphapept-gui-streamlit"><img src="https://renkulab.io/renku-badge.svg" class="img-fluid" alt="launch - renku"></a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://www.biorxiv.org/content/10.1101/2021.07.23.453379v1"><img src="http://img.shields.io/badge/DOI-10.1101/2021.07.23.453379-B31B1B.svg" class="img-fluid figure-img"></a></p>
+<p></p><figcaption class="figure-caption">DOI:10.1101/2021.07.23.453379</figcaption><p></p>
+</figure>
+</div>
+<section id="preprint" class="level2">
+<h2 class="anchored" data-anchor-id="preprint">Preprint</h2>
+<p>Our preprint <strong>AlphaPept, a modern and open framework for MS-based proteomics</strong> is now available <a href="https://www.biorxiv.org/content/10.1101/2021.07.23.453379v1">here.</a></p>
+<p>Be sure to check out other packages of our ecosystem: - <a href="https://github.com/MannLabs/alphatims">alphatims</a>: Fast access to TimsTOF data. - <a href="https://github.com/MannLabs/alphamap">alphamap</a>: Peptide level MS data exploration. - <a href="https://github.com/MannLabs/alphapeptdeep">alphapeptdeep</a>: Predicting properties from peptides. - <a href="https://github.com/MannLabs/alphaviz">alphaviz</a>: Vizualization of MS data.</p>
+</section>
+<section id="windows-quickstart" class="level2">
+<h2 class="anchored" data-anchor-id="windows-quickstart">Windows Quickstart</h2>
+<p><img src="https://i.imgur.com/UO64YPx.jpg" class="img-fluid"></p>
+<ol type="1">
+<li>Download the latest installer <a href="https://github.com/MannLabs/alphapept/releases/latest">here</a>, install and click the shortcut on the desktop. A browser window with the AlphaPept interface should open. In the case of Windows Firewall asking for network access for AlphaPept, please allow.</li>
+<li>In the <code>New Experiment</code>, select a folder with raw files and FASTA files.</li>
+<li>Specify additional settings such as modifications with <code>Settings</code>.</li>
+<li>Click <code>Start</code> and run the analysis.</li>
+</ol>
+<p>See also below for more detailed instructions.</p>
+</section>
+<section id="current-functionality" class="level2">
+<h2 class="anchored" data-anchor-id="current-functionality">Current functionality</h2>
+<table class="table">
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Implemented</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Type</td>
+<td>DDA</td>
+</tr>
+<tr class="even">
+<td>Filetypes</td>
+<td>Bruker, Thermo</td>
+</tr>
+<tr class="odd">
+<td>Quantification</td>
+<td>LFQ</td>
+</tr>
+<tr class="even">
+<td>Isobaric labels</td>
+<td>None</td>
+</tr>
+<tr class="odd">
+<td>Platform</td>
+<td>Windows</td>
+</tr>
+</tbody>
+</table>
+<p>Linux and macOS should, in principle, work but are not heavily tested and might require additional work to set up (see detailed instructions below). To read Thermo files, we use Mono, which can be used on Mac and Linux. For Bruker files, we can use Linux but not yet macOS.</p>
+</section>
+<section id="python-installation-instructions" class="level2">
+<h2 class="anchored" data-anchor-id="python-installation-instructions">Python Installation Instructions</h2>
+<section id="requirements" class="level3">
+<h3 class="anchored" data-anchor-id="requirements">Requirements</h3>
+<p>We highly recommend the <a href="https://www.anaconda.com">Anaconda</a> or <a href="https://docs.conda.io/en/latest/miniconda.html">Miniconda</a> Python distribution, which comes with a powerful package manager. See below for additional instructions for Linux and Mac as they require additional installation of Mono to use the RawFileReader.</p>
+<p>AlphaPept can be used as an application as a whole or as a Python Package where individual modules are called. Depending on the use case, AlphaPept will need different requirements, and you might not want to install all of them.</p>
+<p>Currently, we have the default <code>requirements.txt</code>, additional requirements to run the GUI <code>gui</code> and packages used for developing <code>develop</code>.</p>
+<p>Therefore, you can install AlphaPept in multiple ways:</p>
+<ul>
+<li>The default <code>alphapept</code></li>
+<li>With GUI-packages <code>alphapept[gui]</code></li>
+<li>With pacakges for development <code>alphapept[develop]</code> (<code>alphapept[develop,gui]</code>) respectively</li>
+</ul>
+<p>The requirements typically contain pinned versions and will be automatically upgraded and tested with <code>dependabot</code>. This <code>stable</code> version allows having a reproducible workflow. However, in order to avoid conflicts with package versions that are too strict, the requirements are not pinned when being installed. To use the strict version use the <code>-stable</code>-flag, e.g.&nbsp;<code>alphapept[stable]</code>.</p>
+<p>For end-users that want to set up a processing environment in Python, the <code>"alphapept[stable,gui-stable]"</code> is the <code>batteries-included</code>-version that you want to use.</p>
+</section>
+<section id="python" class="level3">
+<h3 class="anchored" data-anchor-id="python">Python</h3>
+<p>It is strongly recommended to install AlphaPept in its own environment. 1. Open the console and create a new conda environment: <code>conda create --name alphapept python=3.8</code> 2. Activate the environment: <code>conda activate alphapept</code> 3. Install AlphaPept via pip: <code>pip install "alphapept[stable,gui-stable]"</code>. If you want to use AlphaPept as a package without the GUI dependencies and without strict version dependencies, use <code>pip install alphapept</code>.</p>
+<p>If AlphaPept is installed correctly, you should be able to import AlphaPept as a package within the environment; see below.</p>
+<hr>
+<section id="linux" class="level4">
+<h4 class="anchored" data-anchor-id="linux">Linux</h4>
+<ol type="1">
+<li>Install the build-essentials: <code>sudo apt-get install build-essential</code>.</li>
+<li>Install AlphaPept via pip: <code>pip install "alphapept[stable,gui-stable]"</code>. If you want to use AlphaPept as a package withouth the GUI dependencies and strict version dependencies use <code>pip install alphapept</code>.</li>
+<li>Install libgomp.1 with <code>sudo apt-get install libgomp1</code>.</li>
+</ol>
+<section id="bruker-support" class="level5">
+<h5 class="anchored" data-anchor-id="bruker-support">Bruker Support</h5>
+<ol start="4" type="1">
+<li>Copy-paste the Bruker library for feature finding to your /usr/lib folder with <code>sudo cp alphapept/ext/bruker/FF/linux64/alphapeptlibtbb.so.2 /usr/lib/libtbb.so.2</code>.</li>
+</ol>
+</section>
+<section id="thermo-support" class="level5">
+<h5 class="anchored" data-anchor-id="thermo-support">Thermo Support</h5>
+<ol start="5" type="1">
+<li>Install Mono from mono-project website <a href="https://www.mono-project.com/download/stable/#download-lin">Mono Linux</a>. NOTE, the installed mono version should be at least 6.10, which requires you to add the ppa to your trusted sources!</li>
+<li>Install pythonnet with <code>pip install pythonnet==2.5.2</code></li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="mac" class="level4">
+<h4 class="anchored" data-anchor-id="mac">Mac</h4>
+<ol type="1">
+<li>Install AlphaPept via pip: <code>pip install "alphapept[stable,gui-stable]"</code>. If you want to use AlphaPept as a package withouth the GUI dependencies and strict version dependencies use <code>pip install alphapept</code>.</li>
+</ol>
+<section id="bruker-support-1" class="level5">
+<h5 class="anchored" data-anchor-id="bruker-support-1">Bruker Support</h5>
+<blockquote class="blockquote">
+<p>Only supported for preprocessed files.</p>
+</blockquote>
+</section>
+<section id="thermo-support-1" class="level5">
+<h5 class="anchored" data-anchor-id="thermo-support-1">Thermo Support</h5>
+<ol start="2" type="1">
+<li>Install <a href="https://brew.sh">brew</a> and pkg-config: <code>brew install pkg-config</code></li>
+<li>Install Mono from mono-project website <a href="https://www.mono-project.com/download/stable/">Mono Mac</a></li>
+<li>Register the Mono-Path to your system: For macOS Catalina, open the configuration of zsh via the terminal:</li>
+</ol>
+<ul>
+<li>Type in <code>cd</code> to navigate to the home directory.</li>
+<li>Type <code>nano ~/.zshrc</code> to open the configuration of the terminal</li>
+<li>Add the path to your mono installation: <code>export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:/usr/lib/pkgconfig:/Library/Frameworks/Mono.framework/Versions/Current/lib/pkgconfig:$PKG_CONFIG_PATH</code>. Make sure that the Path matches to your version (Here 6.12.0)</li>
+<li>Save everything and execute <code>. ~/.zshrc</code></li>
+</ul>
+<ol start="4" type="1">
+<li>Install pythonnet with <code>pip install pythonnet==2.5.2</code></li>
+</ol>
+<hr>
+</section>
+</section>
+<section id="developer" class="level4">
+<h4 class="anchored" data-anchor-id="developer">Developer</h4>
+<ol type="1">
+<li>Redirect to the folder of choice and clone the repository: <code>git clone https://github.com/MannLabs/alphapept.git</code></li>
+<li>Navigate to the alphapept folder with <code>cd alphapept</code> and install the package with <code>pip install .</code> (default users) or with <code>pip install -e .</code> to enable developers mode. Note that you can use the different requirements here aswell (e.g.&nbsp;<code>pip install ".[gui-stable]"</code>)</li>
+</ol>
+</section>
+<section id="gpu-support" class="level4">
+<h4 class="anchored" data-anchor-id="gpu-support">GPU Support</h4>
+<p>Some functionality of AlphaPept is GPU optimized that uses Nvidia’s CUDA. To enable this, additional packages need to be installed.</p>
+<ol type="1">
+<li>Make sure to have a working <a href="https://developer.nvidia.com/cuda-toolkit">CUDA toolkit</a> installation that is compatible with CuPy. To check type <code>nvcc --version</code> in your terminal.</li>
+<li>Install <a href="https://cupy.dev">cupy</a>. Make sure to install the cupy version matching your CUDA toolkit (e.g.&nbsp;<code>pip install cupy-cuda110</code> for CUDA toolkit 11.0.</li>
+</ol>
+</section>
+</section>
+<section id="additional-notes" class="level3">
+<h3 class="anchored" data-anchor-id="additional-notes">Additional Notes</h3>
+<blockquote class="blockquote">
+<p>To access Thermo files, we have integrated <a href="https://planetorbitrap.com/rawfilereader">RawFileReader</a> into AlphaPept. We rely on <a href="https://www.mono-project.com/">Mono</a> for Linux/Mac systems.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>To access Bruker files, we rely on the <code>timsdata</code>-library. Currently, only Windows is supported. For feature finding, we use the Bruker Feature Finder, which can be found in the <code>ext</code> folder of this repository.</p>
+</blockquote>
+<section id="notes-for-nbdev" class="level4">
+<h4 class="anchored" data-anchor-id="notes-for-nbdev">Notes for NBDEV</h4>
+<ul>
+<li>For developing with the notebooks, install the nbdev package (see the development requirements)</li>
+<li>To facilitate navigating the notebooks, use jupyter notebook extensions. They can be called from a running jupyter instance like so: <code>http://localhost:8888/nbextensions</code>. The extensions <code>collapsible headings</code> and <code>toc2</code> are very beneficial.</li>
+</ul>
+</section>
+</section>
+</section>
+<section id="standalone-windows-installer" class="level2">
+<h2 class="anchored" data-anchor-id="standalone-windows-installer">Standalone Windows Installer</h2>
+<p>To use AlphaPept as a stand-alone program for end-users, it can be installed on Windows machines via a one-click installer. Download the latest version <a href="https://github.com/MannLabs/alphapept/releases/latest">here</a>.</p>
+</section>
+<section id="additional-documentation" class="level2">
+<h2 class="anchored" data-anchor-id="additional-documentation">Additional Documentation</h2>
+<p>The documentation is automatically built based on the jupyter notebooks (nbs/index.ipynb) and can be found <a href="https://mannlabs.github.io/alphapept/">here</a>:</p>
+</section>
+<section id="version-performance" class="level2">
+<h2 class="anchored" data-anchor-id="version-performance">Version Performance</h2>
+<p>An overview of the performance of different versions can be found <a href="https://charts.mongodb.com/charts-alphapept-itfxv/public/dashboards/5f671dcf-bcd6-4d90-8494-8c7f724b727b">here</a>. We re-run multiple tests on datasets for different versions so that users can assess what changes from version to version. Feel free to <a href="https://github.com/MannLabs/alphapept/discussions">suggest</a> a test set in case.</p>
+</section>
+<section id="how-to-use" class="level2">
+<h2 class="anchored" data-anchor-id="how-to-use">How to use</h2>
+<p>AlphaPept is meant to be a framework to implement and test new ideas quickly but also to serve as a performant processing pipeline. In principle, there are three use-cases:</p>
+<ul>
+<li>GUI: Use the graphical user interface to select settings and process files manually.</li>
+<li>CMD: Use the command-line interface to process files. Useful when building automatic pipelines.</li>
+<li>Python: Use python modules to build individual workflows. Useful when building customized pipelines and using Python as a scripting language or when implementing new ideas.</li>
+</ul>
+<section id="windows-standalone-installation" class="level3">
+<h3 class="anchored" data-anchor-id="windows-standalone-installation">Windows Standalone Installation</h3>
+<p>For the <a href="https://github.com/MannLabs/alphapept/releases/latest">windows installation</a>, simply click on the shortcut after installation. The windows installation also installs the command-line tool so that you can call alphapept via <code>alphapept</code> in the command line.</p>
+<p><img src="https://i.imgur.com/SQikLHQ.jpg" class="img-fluid"></p>
+</section>
+<section id="python-package" class="level3">
+<h3 class="anchored" data-anchor-id="python-package">Python Package</h3>
+<p>Once AlphaPept is correctly installed, you can use it like any other python module.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> alphapept.fasta <span class="im">import</span> get_frag_dict, parse</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> alphapept <span class="im">import</span> constants</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>peptide <span class="op">=</span> <span class="st">'PEPT'</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>get_frag_dict(parse(peptide), constants.mass_dict)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'b1': 98.06004032687,
+ 'b2': 227.10263342687,
+ 'b3': 324.15539728686997,
+ 'y1': 120.06551965033,
+ 'y2': 217.11828351033,
+ 'y3': 346.16087661033}</code></pre>
+</div>
+</div>
+</section>
+<section id="using-as-a-tool" class="level3">
+<h3 class="anchored" data-anchor-id="using-as-a-tool">Using as a tool</h3>
+<p>If alphapept is installed an a conda or virtual environment, launch this environment first.</p>
+<p>To launch the command line interface use: * <code>alphapept</code></p>
+<p>This allows us to select different modules. To start the GUI use: * <code>alphapept gui</code></p>
+<p>To run a workflow, use: * <code>alphapept workflow your_own_workflow.yaml</code> An example workflow is easily generated by running the GUI once and saving the settings which can be modified on a per-project basis.</p>
+</section>
+<section id="cmd-python" class="level3">
+<h3 class="anchored" data-anchor-id="cmd-python">CMD / Python</h3>
+<ol type="1">
+<li>Create a settings-file. This can be done by changing the <code>default_settings.yaml</code> in the repository or using the GUI.</li>
+<li>Run the analysis with the new settings file. <code>alphapept run new_settings.yaml</code></li>
+</ol>
+<p>Within Python (i.e., Jupyter notebook) the following code would be required)</p>
+<pre><code>from alphapept.settings import load_settings
+import alphapept.interface
+settings = load_settings('new_settings.yaml')
+r = alphapept.interface.run_complete_workflow(settings)</code></pre>
+<p>This also allows you to break the workflow down in indiviudal steps, e.g.:</p>
+<pre><code>settings = alphapept.interface.import_raw_data(settings)
+settings = alphapept.interface.feature_finding(settings)</code></pre>
+</section>
+</section>
+<section id="notebooks" class="level2">
+<h2 class="anchored" data-anchor-id="notebooks">Notebooks</h2>
+<p>Within the notebooks, we try to cover most aspects of a proteomics workflow:</p>
+<ul>
+<li>Settings: General settings to define a workflow</li>
+<li>Chem: Chemistry related functions, e.g., for calculating isotope distributions</li>
+<li>Input / Output: Everything related to importing and exporting and the file formats used</li>
+<li>FASTA: Generating theoretical databases from FASTA files</li>
+<li>Feature Finding: How to extract MS1 features for quantification</li>
+<li>Search: Comparing theoretical databases to experimental spectra and getting Peptide-Spectrum-Matches (PSMs)</li>
+<li>Score: Scoring PSMs</li>
+<li>Recalibration: Recalibration of data based on identified peptides</li>
+<li>Quantification: Functions for quantification, e.g., LFQ</li>
+<li>Matching: Functions for Match-between-runs</li>
+<li>Constants: A collection of constants</li>
+<li>Interface: Code that generates the command-line-interface (CLI) and makes workflow steps callable</li>
+<li>Performance: Helper functions to speed up code with CPU / GPU</li>
+<li>Export: Helper functions to make exports compatbile to other Software tools</li>
+<li>Label: Code for support isobaric label search</li>
+<li>Display: Code related to displaying in the streamlit gui</li>
+<li>Additional code: Overview of additional code not covered by the notebooks</li>
+<li>How to contribute: Contribution guidelines</li>
+<li>AlphaPept workflow and files: Overview of the worfklow, files and column names</li>
+</ul>
+</section>
+<section id="contributing" class="level2">
+<h2 class="anchored" data-anchor-id="contributing">Contributing</h2>
+<p>If you have a feature request or a bug report, please post it either as an idea in the <a href="https://github.com/MannLabs/alphapept/discussions">discussions</a> or as an issue on the <a href="https://github.com/MannLabs/alphapept/issues">GitHub issue tracker</a>. Upvoting features in the discussions page will help to prioritize what to implement next. If you want to contribute, put a PR for it. You can find more guidelines for contributing and how to get started <a href="https://mannlabs.github.io/alphapept/contributing.html">here</a>. We will gladly guide you through the codebase and credit you accordingly. Additionally, you can check out the Projects page on GitHub. You can also contact us via opensource@alphapept.com.</p>
+<p>If you like the project, consider starring it!</p>
+</section>
+<section id="cite-us" class="level2">
+<h2 class="anchored" data-anchor-id="cite-us">Cite us</h2>
+<pre><code>@article {Strauss2021.07.23.453379,
+    author = {Strauss, Maximilian T and Bludau, Isabell and Zeng, Wen-Feng and Voytik, Eugenia and Ammar, Constantin and Schessner, Julia and Ilango, Rajesh and Gill, Michelle and Meier, Florian and Willems, Sander and Mann, Matthias},
+    title = {AlphaPept, a modern and open framework for MS-based proteomics},
+    elocation-id = {2021.07.23.453379},
+    year = {2021},
+    doi = {10.1101/2021.07.23.453379},
+    publisher = {Cold Spring Harbor Laboratory},
+    URL = {https://www.biorxiv.org/content/early/2021/07/26/2021.07.23.453379},
+    eprint = {https://www.biorxiv.org/content/early/2021/07/26/2021.07.23.453379.full.pdf},
+    journal = {bioRxiv}
+}</code></pre>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

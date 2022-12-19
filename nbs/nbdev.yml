@@ -3,7 +3,7 @@ project:
 
 website:
   title: "alphapept"
-  site-url: "https://mannlabs.github.io/alphapept/"
+  site-url: "https://mannlabs.github.io/alphapept"
   description: "A modular, python-based framework for mass spectrometry."
   repo-branch: master
-  repo-url: "https://github.com/mannlabs/alphapept/tree/master/"
+  repo-url: "https://github.com/mannlabs/alphapept"

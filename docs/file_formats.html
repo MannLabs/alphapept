@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>alphapept - AlphaPept workflow and files</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="alphapept - AlphaPept workflow and files">
+<meta property="og:description" content="The core function of Alphapept is interface.run_complete_workflow(). This function requires a settings file (a dictionary containing the settings and file paths).">
+<meta property="og:site-name" content="alphapept">
+<meta name="twitter:title" content="alphapept - AlphaPept workflow and files">
+<meta name="twitter:description" content="The core function of Alphapept is interface.run_complete_workflow(). This function requires a settings file (a dictionary containing the settings and file paths).">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">alphapept</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">AlphaPept workflow and files</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">AlphaPept</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./settings.html" class="sidebar-item-text sidebar-link">Settings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chem.html" class="sidebar-item-text sidebar-link">Chem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./io.html" class="sidebar-item-text sidebar-link">Input / Output</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fasta.html" class="sidebar-item-text sidebar-link">FASTA</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./feature_finding.html" class="sidebar-item-text sidebar-link">Feature Finding</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./search.html" class="sidebar-item-text sidebar-link">Search</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./score.html" class="sidebar-item-text sidebar-link">Score</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./recalibration.html" class="sidebar-item-text sidebar-link">Recalibration</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quantification.html" class="sidebar-item-text sidebar-link">Quantification</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./matching.html" class="sidebar-item-text sidebar-link">Matching</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link">Constants</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interface.html" class="sidebar-item-text sidebar-link">Interface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./performance.html" class="sidebar-item-text sidebar-link">Performance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./export.html" class="sidebar-item-text sidebar-link">Export</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./label.html" class="sidebar-item-text sidebar-link">Label</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./additional_code.html" class="sidebar-item-text sidebar-link">Additional code</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link active">AlphaPept workflow and files</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#core" id="toc-core" class="nav-link active" data-scroll-target="#core">Core</a></li>
+  <li><a href="#gui" id="toc-gui" class="nav-link" data-scroll-target="#gui">GUI</a>
+  <ul class="collapse">
+  <li><a href="#fasta-files" id="toc-fasta-files" class="nav-link" data-scroll-target="#fasta-files">FASTA files</a></li>
+  <li><a href="#history-and-results" id="toc-history-and-results" class="nav-link" data-scroll-target="#history-and-results">History and Results</a></li>
+  </ul></li>
+  <li><a href="#output-files" id="toc-output-files" class="nav-link" data-scroll-target="#output-files">Output Files</a></li>
+  <li><a href="#column-headers" id="toc-column-headers" class="nav-link" data-scroll-target="#column-headers">Column headers</a>
+  <ul class="collapse">
+  <li><a href="#protein_fdr" id="toc-protein_fdr" class="nav-link" data-scroll-target="#protein_fdr">protein_fdr</a></li>
+  </ul></li>
+  <li><a href="#downstream-analysis" id="toc-downstream-analysis" class="nav-link" data-scroll-target="#downstream-analysis">Downstream analysis</a>
+  <ul class="collapse">
+  <li><a href="#using-with-perseus" id="toc-using-with-perseus" class="nav-link" data-scroll-target="#using-with-perseus">Using with Perseus</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">AlphaPept workflow and files</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="core" class="level2">
+<h2 class="anchored" data-anchor-id="core">Core</h2>
+<p>The core function of Alphapept is <code>interface.run_complete_workflow()</code>. This function requires a settings file (a dictionary containing the settings and file paths). Filewise, we store settings files as <code>*.yaml</code> file. When calling the core function, it will run a complete workflow based on the settings given.</p>
+<p><img src="https://i.imgur.com/ODuDWIA.jpg" class="img-fluid"></p>
+</section>
+<section id="gui" class="level2">
+<h2 class="anchored" data-anchor-id="gui">GUI</h2>
+<p>When starting the AlphaPept GUI via the shortcut that the one-click installer created or via python (<code>python -m alphapept gui</code>), the AlphaPept server will be started. It can be accessed via a browser and provides a graphical user interface (GUI) to the AlphaPept functionality. The server extends the core function to a processing framework. The server is centered around three folders, <code>Queue</code>, <code>Failed</code>, and <code>Finished,</code> which will be created in the <code>.alphapept</code>-folder in the user’s home directory. Whenever a new <code>*.yaml</code>-file is found in the <code>Queue</code>-folder, the server will start handing this over to the core function and start processing. There are three ways to add files to the <code>Queue</code>-folder: 1. Via the <code>New experiment</code>-tab in the GUI 2. Manually copying a <code>*.yaml</code>-file into the <code>Queue</code>-folder 3. Automatically via the <code>File watcher.</code></p>
+<p>The <code>File watcher</code> can be set up to monitor a folder; whenever a new file matching pre-defined settings is copied to the folder, it will create a <code>*.yaml</code>-file and add it to the <code>Queue</code>-folder.</p>
+<p>Whenever an experiment succeeds, the <code>*.yaml</code>-file will be appended by summary information of the experiment and moved to the <code>Finished</code>-folder. As the <code>*.yaml</code>-file is only very small in size (~kB), it is intended to serve as a history of processed files.</p>
+<p>Whenever an experiment fails, the <code>*.yaml</code>-file will be moved to the <code>Failed</code>-folder. It can be moved from there to the <code>Queue</code>-folder for reprocessing.</p>
+<section id="fasta-files" class="level3">
+<h3 class="anchored" data-anchor-id="fasta-files">FASTA files</h3>
+<p>When FASTA files are downloaded via the AlphaPept GUI, the files are stored in the FASTA folder in the alphapept home directory (e.g.&nbsp;<code>C:\Users\username\.alphapept\fasta</code>).</p>
+</section>
+<section id="history-and-results" class="level3">
+<h3 class="anchored" data-anchor-id="history-and-results">History and Results</h3>
+<p>AlphaPept screens all <code>*.yaml</code>-files in the finished folder and plots a run history based on the summary information. This is especially useful for QC or comparison purposes. Additionally, the <code>*.yaml</code>-files can be used to investigate the results of a run.</p>
+<p><img src="https://i.imgur.com/thGOrDk.jpg" class="img-fluid"></p>
+</section>
+</section>
+<section id="output-files" class="level2">
+<h2 class="anchored" data-anchor-id="output-files">Output Files</h2>
+<p>For each run, AlphaPept creates several output files: - For each raw file, there will a <code>.ms_data.hdf</code>-file with raw-specific data, such as <code>feature_table</code>, <code>first_search</code>, <code>second_search</code>, <code>peptide_fdr</code> and <code>identifications</code>. Note that the table <code>peptide_fdr</code> does not apply the set fdr cutoff. - For the entire experiment, there will be a <code>results.hdf</code> (name can be defined in the settings), which contains experiment-specific data, such as <code>protein_fdr</code> and the <code>protein_table</code> (containing quantified proteins over all files). - Additionally to the <code>results.hdf</code>, there will be a <code>*.yaml</code>-file which contains the run settings and summary information of the run. This <code>*.yaml</code> can be used to serve as a template to rerun other files with the same settings. - If a database is created from <code>FASTA</code>-files there will be a <code>database.hdf</code> (name can be defined in the settings). This contains theoretical spectra and can be reused for other experiments (and speedup total analysis time)</p>
+<p>The <code>ms_data.hdf</code>, <code>results.hdf</code> and database containers can be accessed via the <code>alphapept.io</code> library. The GUI also allows to explore these files. Additionally, the <code>results.hdf</code> can be directly loaded via the pandas-package (e.g.&nbsp;<code>pd.read_hdf('results.hdf', 'protein_table')</code>.</p>
+<p>For easier access, AlphaPept directly exports the most relevant tables as <code>*.csv</code>: - for each raw file: a <code>_ids.csv</code>-file with the best peptide-spectrum match per sepctrum. - for each raw file: if calibration was successfull, a <code>_calibration.png</code> to show the fragment calibration. - <code>results_peptides.csv</code>: The identified peptides after protein FDR. - <code>results_proteins.csv</code>: A table containing quantified proteins per file. Each column that additionally ends with <code>_LFQ</code> has the lfq intensity. This is after <code>delayed normalization</code> and <code>extraction of optimal protein ratios</code> (see the MaxLFQ paper). The column w/o <code>_LFQ</code>. Has the protein intensity after <code>delayed normalization</code>. Note: When LFQ is disabled, there is only one column per File and this is w/o delayed normalization. This leads to different intensities when comparing results w/ and w/o LFQ enabled and checking the non-<code>LFQ</code>-table. - <code>results_protein_summary.csv</code>: A table containing quantified proteins per file. This contains additional summary, e.g.&nbsp;the number of sequences that were found to identify the protein.</p>
+</section>
+<section id="column-headers" class="level2">
+<h2 class="anchored" data-anchor-id="column-headers">Column headers</h2>
+<p>Below is a description of the column headers in the output files.</p>
+<section id="protein_fdr" class="level3">
+<h3 class="anchored" data-anchor-id="protein_fdr">protein_fdr</h3>
+<table class="table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>delta_m_ppm_abs</td>
+<td>absolute value of <code>delta_m</code> in ppm</td>
+</tr>
+<tr class="even">
+<td>b-H2O_hits</td>
+<td>b-ion hit with a water loss</td>
+</tr>
+<tr class="odd">
+<td>b-NH3 hits</td>
+<td>b-ion hit with a NH3 loss</td>
+</tr>
+<tr class="even">
+<td>hits_b</td>
+<td>number of b ion hits</td>
+</tr>
+<tr class="odd">
+<td>charge</td>
+<td>charge of the peptide</td>
+</tr>
+<tr class="even">
+<td>db_idx</td>
+<td>index to the theoretical database</td>
+</tr>
+<tr class="odd">
+<td>decoy</td>
+<td>is the sequence a decoy or a hit (Yes / No)</td>
+</tr>
+<tr class="even">
+<td>decoys_cum</td>
+<td>cumulative number of decoys in table (used for FDR calculation)</td>
+</tr>
+<tr class="odd">
+<td>delta_m</td>
+<td>mean mass delta when comparing experimental fragments to theoretical fragments when searching</td>
+</tr>
+<tr class="even">
+<td>delta_m_ppm</td>
+<td><code>delta_m</code> in ppm</td>
+</tr>
+<tr class="odd">
+<td>dist</td>
+<td>a metric used to measure the distance of an MS1 feature (quantification) to a matching MS2 spectrum (identification). This is important in the mapping of MS1 features to MS2 spectra</td>
+</tr>
+<tr class="even">
+<td>fasta_index</td>
+<td>index to the fasta file that you use for searching</td>
+</tr>
+<tr class="odd">
+<td>fdr</td>
+<td>calculated false discovery rate value for this peptide in the table. As the PSM score decreases more decoys will be found the FDR score increases until you reach your FDR threshold cutoff, below which we don’t count any more hits.</td>
+</tr>
+<tr class="even">
+<td>feature_idx</td>
+<td>index to feature table from feature finding</td>
+</tr>
+<tr class="odd">
+<td>feature_rank</td>
+<td>multiple ms1 features will be mapped to a single ms2 spectra. The score_rank indicates the how close the feature was to the spectrum in comparison to other features in close distance.</td>
+</tr>
+<tr class="even">
+<td>fwhm</td>
+<td>fwhm of the feature</td>
+</tr>
+<tr class="odd">
+<td>hits</td>
+<td>total number of b- and y-ion hits. A hit occurs when a theoretical fragment can be found within the <code>frag_tol</code> of an experimentally recorded fragment</td>
+</tr>
+<tr class="even">
+<td>ms1_int_apex</td>
+<td>intensity at feature apex</td>
+</tr>
+<tr class="odd">
+<td>fragments_int_ratio</td>
+<td>mean intensity ratio: experimental fragment intensity divided by theoretical intensity (if no db intensity is available db intensity is set to 1) for each matched ion</td>
+</tr>
+<tr class="even">
+<td>ms1_int_sum</td>
+<td>summed intensity of the MS1-feature</td>
+</tr>
+<tr class="odd">
+<td>fragment_ion_idx</td>
+<td>index to ion dataframe for this PSM</td>
+</tr>
+<tr class="even">
+<td>fragment_ion_int</td>
+<td>intensity of each matched ion</td>
+</tr>
+<tr class="odd">
+<td>fragment_ion_type</td>
+<td>type of the matched ion</td>
+</tr>
+<tr class="even">
+<td>mass</td>
+<td>mass</td>
+</tr>
+<tr class="odd">
+<td>fragments_matched_int_sum</td>
+<td>sum of the intensity of fragments found in the PSM</td>
+</tr>
+<tr class="even">
+<td>fragments_matched_int_ratio</td>
+<td>ratio of the fragments_matched_int_sum to the total intensity in a spectrum</td>
+</tr>
+<tr class="odd">
+<td>fragments_matched_n_ratio</td>
+<td>number of ions that were found (hits) divided by the number of AAs in the matched sequence</td>
+</tr>
+<tr class="even">
+<td>mz</td>
+<td>mz</td>
+</tr>
+<tr class="odd">
+<td>n_AA</td>
+<td>number of AAs in the sequence</td>
+</tr>
+<tr class="even">
+<td>n_internal</td>
+<td>number of internal cleavage sites</td>
+</tr>
+<tr class="odd">
+<td>n_fragments_matched</td>
+<td>number of matched ions</td>
+</tr>
+<tr class="even">
+<td>n_missed</td>
+<td>number of missed cleavages</td>
+</tr>
+<tr class="odd">
+<td>sequence_naked</td>
+<td>naked sequence (i.e.&nbsp;withouth modifications)</td>
+</tr>
+<tr class="even">
+<td>prec_offset</td>
+<td>mass offset from theoretical precursor mass to actual precursor mass</td>
+</tr>
+<tr class="odd">
+<td>prec_offset_ppm</td>
+<td>prec_offset in ppm</td>
+</tr>
+<tr class="even">
+<td>prec_offset_raw_ppm</td>
+<td>prec_offset_raw in ppm</td>
+</tr>
+<tr class="odd">
+<td>prec_offset_raw</td>
+<td>mass offset from theoretical precursor mass to actual precursor mass (before recalibration)</td>
+</tr>
+<tr class="even">
+<td>precursor</td>
+<td>peptide + charge</td>
+</tr>
+<tr class="odd">
+<td>q_value</td>
+<td>q_value for FDR estiamtion</td>
+</tr>
+<tr class="even">
+<td>query_idx</td>
+<td>index to query (for the spectrum index use raw_idx)</td>
+</tr>
+<tr class="odd">
+<td>score_rank</td>
+<td>one query can have multiple matching PSMs. This is the score_rank of the PSM to the query with respect to the score. See also raw_rank</td>
+</tr>
+<tr class="even">
+<td>precursor_rank</td>
+<td>if a precursor is measured multiple times, this is the score_rank with respect to the score</td>
+</tr>
+<tr class="odd">
+<td>raw_idx</td>
+<td>index to the experimental spectrum</td>
+</tr>
+<tr class="even">
+<td>raw_rank</td>
+<td>one spectrum can have multiple matching PSMs. This is the score_rank of the PSM to the spectrum with respect to the score.</td>
+</tr>
+<tr class="odd">
+<td>rt</td>
+<td>retention time of the feature</td>
+</tr>
+<tr class="even">
+<td>rt_apex</td>
+<td>retention time of the feature (at maximum intensity)</td>
+</tr>
+<tr class="odd">
+<td>rt_end</td>
+<td>end timepoint of feature</td>
+</tr>
+<tr class="even">
+<td>rt_start</td>
+<td>start timepoint of feature</td>
+</tr>
+<tr class="odd">
+<td>scan_no</td>
+<td>scan number</td>
+</tr>
+<tr class="even">
+<td>score</td>
+<td>score used for FDR estiamtion</td>
+</tr>
+<tr class="odd">
+<td>sequence</td>
+<td>matched sequence</td>
+</tr>
+<tr class="even">
+<td>target</td>
+<td>boolean flag if sequence is target or decoy</td>
+</tr>
+<tr class="odd">
+<td>target_cum</td>
+<td>cumulative number of targets (used for FDR estiamtion)</td>
+</tr>
+<tr class="even">
+<td>fragments_int_sum</td>
+<td>summed intensity of all fragments in experimental spectrum</td>
+</tr>
+<tr class="odd">
+<td>x_tandem</td>
+<td>x_tandem score</td>
+</tr>
+<tr class="even">
+<td>y-H2O_hits</td>
+<td>number of y-ion hits with water loss</td>
+</tr>
+<tr class="odd">
+<td>y-NH3_hits</td>
+<td>number of y-ion hits with ammonia loss</td>
+</tr>
+<tr class="even">
+<td>hits_y</td>
+<td>number of y-ion hits</td>
+</tr>
+<tr class="odd">
+<td>filename</td>
+<td>full filename of raw data</td>
+</tr>
+<tr class="even">
+<td>shortname</td>
+<td>short filename of raw data (w/o folder path)</td>
+</tr>
+<tr class="odd">
+<td>protein</td>
+<td>identified protein</td>
+</tr>
+<tr class="even">
+<td>protein_group</td>
+<td>identified protein_group</td>
+</tr>
+<tr class="odd">
+<td>razor</td>
+<td>flag if peptide was used for protein grouping with razor approach</td>
+</tr>
+<tr class="even">
+<td>protein_idx</td>
+<td>index to protein (with respect to FASTA)</td>
+</tr>
+<tr class="odd">
+<td>decoy_protein</td>
+<td>flag if protein is decoy or not</td>
+</tr>
+<tr class="even">
+<td>n_possible_proteins</td>
+<td>number of possible proteins for this peptide</td>
+</tr>
+<tr class="odd">
+<td>score_protein_group</td>
+<td>score of the protein group</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="downstream-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="downstream-analysis">Downstream analysis</h2>
+<p>AlphaPept offers some basic plots in the results section (e.g., volcano, heatmap, and PCA). The <code>*.csv</code>-format should be generic to use with multiple other tools. Feel free to reach out in case you have ideas for plots or find that the output format not supported or has required columns missing. To reach out, report an issue <a href="https://github.com/MannLabs/alphapept/issues/new/choose">here</a> or send an email to opensource@alphapept.com.</p>
+<section id="using-with-perseus" class="level3">
+<h3 class="anchored" data-anchor-id="using-with-perseus">Using with Perseus</h3>
+<p>Perseus offers a generic table import, so you can directly use the <code>results_proteins.csv</code>.</p>
+<section id="example-volcano-plot" class="level4">
+<h4 class="anchored" data-anchor-id="example-volcano-plot">Example: Volcano-Plot</h4>
+<p>An excellent tutorial for creating volcano-plots with Perseus can be found <a href="http://www.coxdocs.org/doku.php?id=perseus:user:use_cases:interactions">here</a>.</p>
+<p>Below a quickstart to use AlphaPept with Perseus (tested with <code>1.6.15.0</code>) The file used here is <code>PXD006109</code> from the test runner (multi-species quantification test) with six files (three each group).</p>
+<ol type="1">
+<li><p>Open Perseus. <img src="https://i.imgur.com/L3C6Tn3.jpg" class="img-fluid"></p></li>
+<li><p>Drag and drop the <code>results_proteins.csv</code> in the central pane of Perseus. The <code>Generic matrix upload</code>-window will open. <img src="https://i.imgur.com/FRK9nJy.jpg" class="img-fluid"></p></li>
+<li><p>Select the appropriate columns (e.g., LFQ for LFQ-intensities) and select them for Main with the <code>&gt;</code>-Button. The first row is empty. Assign this for text. Click <code>OK,</code> and the table should be loaded. <img src="https://i.imgur.com/UgLNWIo.jpg" class="img-fluid"></p></li>
+<li><p>Click on the <code>f(x)</code>-button and press <code>OK</code> on the window that opens to apply a <code>log2(x)</code>-transformation. <img src="https://i.imgur.com/oGxVYn9.jpg" class="img-fluid"></p></li>
+<li><p>Click on <code>Annot. rows</code> &gt; <code>Categorical annotation rows</code> to assign a group for each file. Select multiple entries and click on the checkmark to assign multiple groups at the same time. Click <code>OK</code> to close the window. <img src="https://i.imgur.com/7wvafO7.jpg" class="img-fluid"></p></li>
+<li><p>Click on the <code>Volcano plot</code>-symbol in the upper right <code>Analysis</code>-column. For the tutorial, we keep the standard settings and press <code>OK</code>.</p></li>
+<li><p>You can double-click on the small volcano plot to show the plot. <img src="https://i.imgur.com/U6yLyPL.jpg" class="img-fluid"></p></li>
+</ol>
+<p>Enjoy your volcano-plot.</p>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

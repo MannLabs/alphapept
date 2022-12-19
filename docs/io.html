@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>alphapept - Input / Output</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="alphapept - Input / Output">
+<meta property="og:description" content="Input can be read from three different files formats:">
+<meta property="og:site-name" content="alphapept">
+<meta name="twitter:title" content="alphapept - Input / Output">
+<meta name="twitter:description" content="Input can be read from three different files formats:">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">alphapept</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Input / Output</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">AlphaPept</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./settings.html" class="sidebar-item-text sidebar-link">Settings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chem.html" class="sidebar-item-text sidebar-link">Chem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./io.html" class="sidebar-item-text sidebar-link active">Input / Output</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fasta.html" class="sidebar-item-text sidebar-link">FASTA</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./feature_finding.html" class="sidebar-item-text sidebar-link">Feature Finding</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./search.html" class="sidebar-item-text sidebar-link">Search</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./score.html" class="sidebar-item-text sidebar-link">Score</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./recalibration.html" class="sidebar-item-text sidebar-link">Recalibration</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quantification.html" class="sidebar-item-text sidebar-link">Quantification</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./matching.html" class="sidebar-item-text sidebar-link">Matching</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link">Constants</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interface.html" class="sidebar-item-text sidebar-link">Interface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./performance.html" class="sidebar-item-text sidebar-link">Performance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./export.html" class="sidebar-item-text sidebar-link">Export</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./label.html" class="sidebar-item-text sidebar-link">Label</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./additional_code.html" class="sidebar-item-text sidebar-link">Additional code</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#reading-raw-input" id="toc-reading-raw-input" class="nav-link active" data-scroll-target="#reading-raw-input">Reading raw input</a>
+  <ul class="collapse">
+  <li><a href="#thermo" id="toc-thermo" class="nav-link" data-scroll-target="#thermo">Thermo</a></li>
+  <li><a href="#load_thermo_raw" id="toc-load_thermo_raw" class="nav-link" data-scroll-target="#load_thermo_raw">load_thermo_raw</a></li>
+  <li><a href="#bruker" id="toc-bruker" class="nav-link" data-scroll-target="#bruker">Bruker</a></li>
+  <li><a href="#load_bruker_raw" id="toc-load_bruker_raw" class="nav-link" data-scroll-target="#load_bruker_raw">load_bruker_raw</a></li>
+  <li><a href="#one_over_k0_to_ccs" id="toc-one_over_k0_to_ccs" class="nav-link" data-scroll-target="#one_over_k0_to_ccs">one_over_k0_to_CCS</a></li>
+  <li><a href="#generic-.mzml-files" id="toc-generic-.mzml-files" class="nav-link" data-scroll-target="#generic-.mzml-files">Generic <code>.mzML</code> files</a></li>
+  <li><a href="#load_mzml_data" id="toc-load_mzml_data" class="nav-link" data-scroll-target="#load_mzml_data">load_mzml_data</a></li>
+  <li><a href="#extract_mzml_info" id="toc-extract_mzml_info" class="nav-link" data-scroll-target="#extract_mzml_info">extract_mzml_info</a></li>
+  <li><a href="#check_sanity" id="toc-check_sanity" class="nav-link" data-scroll-target="#check_sanity">check_sanity</a></li>
+  </ul></li>
+  <li><a href="#reading-other-files" id="toc-reading-other-files" class="nav-link" data-scroll-target="#reading-other-files">Reading other files</a>
+  <ul class="collapse">
+  <li><a href="#reading-maxquant-.xml-settings-file" id="toc-reading-maxquant-.xml-settings-file" class="nav-link" data-scroll-target="#reading-maxquant-.xml-settings-file">Reading MaxQuant .xml settings file</a></li>
+  <li><a href="#extract_mq_settings" id="toc-extract_mq_settings" class="nav-link" data-scroll-target="#extract_mq_settings">extract_mq_settings</a></li>
+  <li><a href="#parse_mq_seq" id="toc-parse_mq_seq" class="nav-link" data-scroll-target="#parse_mq_seq">parse_mq_seq</a></li>
+  </ul></li>
+  <li><a href="#preprocessing-data" id="toc-preprocessing-data" class="nav-link" data-scroll-target="#preprocessing-data">Preprocessing data</a>
+  <ul class="collapse">
+  <li><a href="#centroiding-profile-data" id="toc-centroiding-profile-data" class="nav-link" data-scroll-target="#centroiding-profile-data">Centroiding profile data</a></li>
+  <li><a href="#get_peaks" id="toc-get_peaks" class="nav-link" data-scroll-target="#get_peaks">get_peaks</a></li>
+  <li><a href="#gaussian_estimator" id="toc-gaussian_estimator" class="nav-link" data-scroll-target="#gaussian_estimator">gaussian_estimator</a></li>
+  <li><a href="#get_centroid" id="toc-get_centroid" class="nav-link" data-scroll-target="#get_centroid">get_centroid</a></li>
+  <li><a href="#centroid_data" id="toc-centroid_data" class="nav-link" data-scroll-target="#centroid_data">centroid_data</a></li>
+  <li><a href="#trimming-spectra-to-retain-the-n-most-intense-peaks" id="toc-trimming-spectra-to-retain-the-n-most-intense-peaks" class="nav-link" data-scroll-target="#trimming-spectra-to-retain-the-n-most-intense-peaks">Trimming spectra to retain the <code>n</code> most intense peaks</a></li>
+  <li><a href="#get_most_abundant" id="toc-get_most_abundant" class="nav-link" data-scroll-target="#get_most_abundant">get_most_abundant</a></li>
+  <li><a href="#get_local_intensity" id="toc-get_local_intensity" class="nav-link" data-scroll-target="#get_local_intensity">get_local_intensity</a></li>
+  <li><a href="#list_to_numpy_f32" id="toc-list_to_numpy_f32" class="nav-link" data-scroll-target="#list_to_numpy_f32">list_to_numpy_f32</a></li>
+  </ul></li>
+  <li><a href="#saving-output" id="toc-saving-output" class="nav-link" data-scroll-target="#saving-output">Saving output</a>
+  <ul class="collapse">
+  <li><a href="#hdf-containers-in-general" id="toc-hdf-containers-in-general" class="nav-link" data-scroll-target="#hdf-containers-in-general">HDF containers in general</a></li>
+  <li><a href="#using-hdf-containers-in-alphapept" id="toc-using-hdf-containers-in-alphapept" class="nav-link" data-scroll-target="#using-hdf-containers-in-alphapept">Using HDF containers in AlphaPept</a></li>
+  <li><a href="#hdf_file" id="toc-hdf_file" class="nav-link" data-scroll-target="#hdf_file">HDF_File</a></li>
+  <li><a href="#hdf_file.write" id="toc-hdf_file.write" class="nav-link" data-scroll-target="#hdf_file.write">HDF_File.write</a></li>
+  <li><a href="#hdf_file.read" id="toc-hdf_file.read" class="nav-link" data-scroll-target="#hdf_file.read">HDF_File.read</a></li>
+  <li><a href="#the-final-.ms_data.hdf-file" id="toc-the-final-.ms_data.hdf-file" class="nav-link" data-scroll-target="#the-final-.ms_data.hdf-file">The final <code>.ms_data.hdf</code> file</a></li>
+  <li><a href="#ms_data_file" id="toc-ms_data_file" class="nav-link" data-scroll-target="#ms_data_file">MS_Data_File</a></li>
+  <li><a href="#index_ragged_list" id="toc-index_ragged_list" class="nav-link" data-scroll-target="#index_ragged_list">index_ragged_list</a></li>
+  <li><a href="#ms_data_file.import_raw_dda_data" id="toc-ms_data_file.import_raw_dda_data" class="nav-link" data-scroll-target="#ms_data_file.import_raw_dda_data">MS_Data_File.import_raw_DDA_data</a></li>
+  <li><a href="#ms_data_file.read_dda_query_data" id="toc-ms_data_file.read_dda_query_data" class="nav-link" data-scroll-target="#ms_data_file.read_dda_query_data">MS_Data_File.read_DDA_query_data</a></li>
+  </ul></li>
+  <li><a href="#usage-in-workflows" id="toc-usage-in-workflows" class="nav-link" data-scroll-target="#usage-in-workflows">Usage in workflows</a>
+  <ul class="collapse">
+  <li><a href="#raw_conversion" id="toc-raw_conversion" class="nav-link" data-scroll-target="#raw_conversion">raw_conversion</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Input / Output</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<section id="reading-raw-input" class="level2">
+<h2 class="anchored" data-anchor-id="reading-raw-input">Reading raw input</h2>
+<p>Input can be read from three different files formats:</p>
+<ul>
+<li><code>.raw</code> files describing <code>Thermo</code> raw data.</li>
+<li><code>.d</code> folders describing <code>Bruker</code> raw data.</li>
+<li><code>.mzML</code> files describing generic input.</li>
+</ul>
+<p>All reading functions return a <code>query_data</code> dictionary similar to the following structure:</p>
+<pre><code>query_data = {
+    "scan_list_ms1":   np.array(...)
+    "rt_list_ms1":     np.array(...)
+    "mass_list_ms1":   np.array(...)
+    "int_list_ms1":    np.array(...)
+    "ms_list_ms1":     np.array(...)
+    "scan_list_ms2":   np.array(...)
+    "rt_list_ms2":     np.array(...)
+    "mass_list_ms2":   mass_list_ms2
+    "int_list_ms2":    int_list_ms2
+    "ms_list_ms2":     np.array(...)
+    "prec_mass_list2": np.array(...)
+    "mono_mzs2":       np.array(...)
+    "charge2":         np.array(...)
+}</code></pre>
+<section id="thermo" class="level3">
+<h3 class="anchored" data-anchor-id="thermo">Thermo</h3>
+<p>To read Thermo files, AlphaPept uses the <code>pyrawfilereader</code> package, a Python implementation of the commonly used <code>rawfilereader</code> tool. By using the custom python version, Thermo files can be read without having to install <code>MSFileReader</code>.</p>
+<p>The user can pass an additional flag <code>use_profile_ms1</code>. This will then use the profile data which is not centroided already an peform centroiding. Note that this will lead to slightly different intensities, as the centroided data uses the apex and the centroid algorithm the summed intensity.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L10" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="load_thermo_raw" class="level3">
+<h3 class="anchored" data-anchor-id="load_thermo_raw">load_thermo_raw</h3>
+<blockquote class="blockquote">
+<pre><code> load_thermo_raw (raw_file_name:str, n_most_abundant:int,
+                  use_profile_ms1:bool=False, callback:&lt;built-
+                  infunctioncallable&gt;=None)</code></pre>
+</blockquote>
+<p>Load raw thermo data as a dictionary.</p>
+<p>Args: raw_file_name (str): The name of a Thermo .raw file. n_most_abundant (int): The maximum number of peaks to retain per MS2 spectrum. use_profile_ms1 (bool): Use profile data or centroid it beforehand. Defaults to False. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: tuple: A dictionary with all the raw data and a string with the acquisition_date_time</p>
+</section>
+<section id="bruker" class="level3">
+<h3 class="anchored" data-anchor-id="bruker">Bruker</h3>
+<p>To access Bruker files, AlphaPept relies on the external <code>timsdata</code> library from Bruker (available in the <code>alphatims\ext</code> folder, licenses are applicable). Unfortunately, these libraries are only available on Windows and Linux. As a result, the reading of raw data is not available on macOS. However, once raw data is converted to <code>.ms_data.hdf</code> output, other workflow steps (besides feature feating) are possible without problems on macOS.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L134" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="load_bruker_raw" class="level3">
+<h3 class="anchored" data-anchor-id="load_bruker_raw">load_bruker_raw</h3>
+<blockquote class="blockquote">
+<pre><code> load_bruker_raw (d_folder_name:str, n_most_abundant:int, callback:&lt;built-
+                  infunctioncallable&gt;=None, **kwargs)</code></pre>
+</blockquote>
+<p>Load raw Bruker data as a dictionary.</p>
+<p>Args: d_folder_name (str): The name of a Bruker .d folder. n_most_abundant (int): The maximum number of peaks to retain per MS2 spectrum. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: tuple: A dictionary with all the raw data and a string with the acquisition_date_time</p>
+<p>For <code>ccs</code> (i.e., ion mobility) values, we need additional functions from the Bruker library. As the live feature-finder might not be able to determine some charge values, it is intended to perform this calculation at a later stage once we have charge values from the post-processing feature finder.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L212" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="one_over_k0_to_ccs" class="level3">
+<h3 class="anchored" data-anchor-id="one_over_k0_to_ccs">one_over_k0_to_CCS</h3>
+<blockquote class="blockquote">
+<pre><code> one_over_k0_to_CCS (one_over_k0s:numpy.ndarray, charges:numpy.ndarray,
+                     mzs:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Retrieve collisional cross section (CCS) values from (mobility, charge, mz) arrays.</p>
+<p>Args: one_over_k0s (np.ndarray): The ion mobilities (1D-np.float). charges (np.ndarray): The charges (1D-np.int). mzs (np.ndarray): The mz values (1D-np.float).</p>
+<p>Returns: np.ndarray: The CCS values.</p>
+<p>Due to availbility of Bruker libraries, this can only be tested on Windows and Linux.</p>
+</section>
+<section id="generic-.mzml-files" class="level3">
+<h3 class="anchored" data-anchor-id="generic-.mzml-files">Generic <code>.mzML</code> files</h3>
+<p>To access <code>.mzML</code> files, we rely on the <code>pyteomics</code> package. For using an mzml format for performing a search, Peak Picking (data centroiding) should be applied to all MS levels of the data.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L286" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="load_mzml_data" class="level3">
+<h3 class="anchored" data-anchor-id="load_mzml_data">load_mzml_data</h3>
+<blockquote class="blockquote">
+<pre><code> load_mzml_data (filename:str, n_most_abundant:int, callback:&lt;built-
+                 infunctioncallable&gt;=None, **kwargs)</code></pre>
+</blockquote>
+<p>Load data from an mzml file as a dictionary.</p>
+<p>Args: filename (str): The name of a .mzml file. n_most_abundant (int): The maximum number of peaks to retain per MS2 spectrum. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.</p>
+<p>Returns: tuple: A dictionary with all the raw data, a string with the acquisition_date_time and a string with the vendor.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L257" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="extract_mzml_info" class="level3">
+<h3 class="anchored" data-anchor-id="extract_mzml_info">extract_mzml_info</h3>
+<blockquote class="blockquote">
+<pre><code> extract_mzml_info (input_dict:dict)</code></pre>
+</blockquote>
+<p>Extract basic MS coordinate arrays from a dictionary.</p>
+<p>Args: input_dict (dict): A dictionary obtained by iterating over a Pyteomics mzml.read function.</p>
+<p>Returns: tuple: The rt, masses, intensities, ms_order, prec_mass, mono_mz, charge arrays retrieved from the input_dict. If the <code>ms level</code> in the input dict does not equal 2, the charge, mono_mz and prec_mass will be equal to 0.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L241" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="check_sanity" class="level3">
+<h3 class="anchored" data-anchor-id="check_sanity">check_sanity</h3>
+<blockquote class="blockquote">
+<pre><code> check_sanity (mass_list:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Sanity check for mass list to make sure the masses are sorted.</p>
+<p>Args: mass_list (np.ndarray): The mz values (1D-np.float).</p>
+<p>Raises: ValueError: When the mz values are not sorted.</p>
+</section>
+</section>
+<section id="reading-other-files" class="level2">
+<h2 class="anchored" data-anchor-id="reading-other-files">Reading other files</h2>
+<p>Benchmarking proteomics software against each other is not straightforward as various naming conventions exist and different algorithms are implemented. In this section, we define some helper functions that allow us to read results from other tools and facilitate the comparison of different tools against AlphaPept.</p>
+<section id="reading-maxquant-.xml-settings-file" class="level3">
+<h3 class="anchored" data-anchor-id="reading-maxquant-.xml-settings-file">Reading MaxQuant .xml settings file</h3>
+<p>One of the most commonly used tools to analyze MS data is MaxQuant. AlphaPept reads MaxQuant .xml files as follows:</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L438" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="extract_mq_settings" class="level3">
+<h3 class="anchored" data-anchor-id="extract_mq_settings">extract_mq_settings</h3>
+<blockquote class="blockquote">
+<pre><code> extract_mq_settings (path:str)</code></pre>
+</blockquote>
+<p>Function to return MaxQuant values as a dictionary for a given xml file.</p>
+<p>Args: path (str): File name of an xml file.</p>
+<p>Returns: dict: A dictionary with MaxQuant info.</p>
+<p>Raises: ValueError: When path is not a valid xml file.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mq_dict <span class="op">=</span> extract_mq_settings(<span class="st">'../testfiles/test_mqpar.xml'</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>mq_dict[<span class="st">'fastaFiles'</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>{'FastaFileInfo': {'fastaFilePath': 'testfile.fasta',
+  'identifierParseRule': '&gt;([^\\s]*)',
+  'descriptionParseRule': '&gt;(.*)',
+  'taxonomyParseRule': None,
+  'variationParseRule': None,
+  'modificationParseRule': None,
+  'taxonomyId': None}}</code></pre>
+</div>
+</div>
+<p>AlphaPept incorporates PTMs directly in amino acid sequences with lower case identifiers. Parsing MaxQuant sequences with PTMs is done with:</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L466" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="parse_mq_seq" class="level3">
+<h3 class="anchored" data-anchor-id="parse_mq_seq">parse_mq_seq</h3>
+<blockquote class="blockquote">
+<pre><code> parse_mq_seq (peptide:str)</code></pre>
+</blockquote>
+<p>Replaces maxquant convention to alphapept convention.</p>
+<p>ToDo: include more sequences</p>
+<p>Args: peptide (str): A peptide sequence from MaxQuant.</p>
+<p>Returns: str: A parsed peptide sequence compatible with AlphaPept.</p>
+<p>A quick test shows the results are correct:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>parse_mq_seq(<span class="st">'_AFQPFFVELTM(Oxidation (M))PYSVIR_'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>'AFQPFFVELToxMPYSVIR'</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="preprocessing-data" class="level2">
+<h2 class="anchored" data-anchor-id="preprocessing-data">Preprocessing data</h2>
+<p>Raw data needs to be preprocessed to simplify it for AlphaPept analysis. Currently, this requires:</p>
+<ul>
+<li>Profiling of the data</li>
+<li>Trimming of spectra to retain only the ‘n’-most intense peaks</li>
+</ul>
+<section id="centroiding-profile-data" class="level3">
+<h3 class="anchored" data-anchor-id="centroiding-profile-data">Centroiding profile data</h3>
+<p>Importing raw data frequently results in profile data. When having profile data, Alphapept first needs to perform centroiding to use this data properly. For this, it needs to search local maxima (“peaks”) of the intensity as a function of m/z. For this AlphaPept uses the function <a href="https://mannlabs.github.io/alphapept/io.html#get_peaks"><code>get_peaks</code></a>. A peak is described by three points, the <code>start</code> of the peak, the <code>center</code>, and the <code>end</code>. The function accepts an intensity array and calculates the delta (gradient) between consecutive data points to determine the start, center, and end.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L491" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_peaks" class="level3">
+<h3 class="anchored" data-anchor-id="get_peaks">get_peaks</h3>
+<blockquote class="blockquote">
+<pre><code> get_peaks (int_array:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Detects peaks in an array.</p>
+<p>Args: int_array (np.ndarray): An array with intensity values.</p>
+<p>Returns: list: A regular Python list with all peaks. A peak is a triplet of the form (start, center, end)</p>
+<p>A quick test to illustrate the function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>int_array <span class="op">=</span> np.array([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>])</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>get_peaks(int_array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<pre><code>[(2, 6, 9), (9, 13, 16)]</code></pre>
+</div>
+</div>
+<p>To determine the center of the peak, we distinguish based on the number of raw data points that are contained in the peak:</p>
+<ul>
+<li>One data point: m/z value of this point is taken as the center</li>
+<li>Two datapoints: Average of the two m/z values, weighted by the intensities</li>
+<li>Three or more data points: Gaussian estimation of the center position.</li>
+</ul>
+<p>For the Gaussian estimation, only the three central points are used to fit a Gaussian Peak shape. The Gaussian is then approximated with the logarithm.</p>
+<p>The gaussian estimator is defined in <a href="https://mannlabs.github.io/alphapept/io.html#gaussian_estimator"><code>gaussian_estimator</code></a> and is used by the wrapper <a href="https://mannlabs.github.io/alphapept/io.html#get_centroid"><code>get_centroid</code></a>.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L573" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="gaussian_estimator" class="level3">
+<h3 class="anchored" data-anchor-id="gaussian_estimator">gaussian_estimator</h3>
+<blockquote class="blockquote">
+<pre><code> gaussian_estimator (peak:tuple, mz_array:numpy.ndarray,
+                     int_array:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Three-point gaussian estimator.</p>
+<p>Args: peak (tuple): A triplet of the form (start, center, end) mz_array (np.ndarray): An array with mz values. int_array (np.ndarray): An array with intensity values.</p>
+<p>Returns: float: The gaussian estimate of the center.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L540" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_centroid" class="level3">
+<h3 class="anchored" data-anchor-id="get_centroid">get_centroid</h3>
+<blockquote class="blockquote">
+<pre><code> get_centroid (peak:tuple, mz_array:numpy.ndarray,
+               int_array:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Wrapper to estimate centroid center positions.</p>
+<p>Args: peak (tuple): A triplet of the form (start, center, end) mz_array (np.ndarray): An array with mz values. int_array (np.ndarray): An array with intensity values.</p>
+<p>Returns: tuple: A tuple of the form (center, intensity)</p>
+<p>The function performs as expected:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>int_array <span class="op">=</span> np.array([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>])</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>mz_array <span class="op">=</span> np.array([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">11</span>,<span class="dv">12</span>,<span class="dv">13</span>,<span class="dv">14</span>,<span class="dv">15</span>])</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>peak <span class="op">=</span> (<span class="dv">2</span>, <span class="dv">6</span>, <span class="dv">9</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(gaussian_estimator(peak, mz_array, int_array))</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(get_centroid(peak, mz_array, int_array))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>4.499999999999999
+(4.499999999999999, 12)</code></pre>
+</div>
+</div>
+<p>The detected centroid can also easily be visualized:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_centroid(peak, mz_array, int_array):</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">3</span>, <span class="dv">3</span>))</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    start, center, end <span class="op">=</span> peak</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    centroid <span class="op">=</span> get_centroid((start, center, end), mz_array, int_array)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>    plt.plot(mz_array[start <span class="op">-</span> <span class="dv">2</span> : end <span class="op">+</span> <span class="dv">2</span>], int_array[start <span class="op">-</span> <span class="dv">2</span> : end <span class="op">+</span> <span class="dv">2</span>])</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>    plt.plot(mz_array[start <span class="op">-</span> <span class="dv">2</span> : end <span class="op">+</span> <span class="dv">2</span>], int_array[start <span class="op">-</span> <span class="dv">2</span> : end <span class="op">+</span> <span class="dv">2</span>], <span class="st">"b."</span>)</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    plt.axvline(mz_array[start], color<span class="op">=</span><span class="st">"r"</span>)</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    plt.axvline(mz_array[end], color<span class="op">=</span><span class="st">"r"</span>)</span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>    plt.axvline(centroid[<span class="dv">0</span>], color<span class="op">=</span><span class="st">"g"</span>, label<span class="op">=</span><span class="st">'Center'</span>)</span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">"Centroid"</span>)</span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">"m/z"</span>)</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">"Intensity"</span>)</span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>int_array <span class="op">=</span> np.array([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">2</span>,<span class="dv">1</span>,<span class="dv">0</span>])</span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>mz_array <span class="op">=</span> np.array([<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>,<span class="dv">5</span>,<span class="dv">6</span>,<span class="dv">7</span>,<span class="dv">8</span>,<span class="dv">9</span>,<span class="dv">10</span>,<span class="dv">11</span>,<span class="dv">12</span>,<span class="dv">13</span>,<span class="dv">14</span>,<span class="dv">15</span>])</span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>peak <span class="op">=</span> (<span class="dv">2</span>, <span class="dv">6</span>, <span class="dv">9</span>)</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a>plot_centroid(peak, mz_array, int_array)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="02_io_files/figure-html/cell-17-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L610" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="centroid_data" class="level3">
+<h3 class="anchored" data-anchor-id="centroid_data">centroid_data</h3>
+<blockquote class="blockquote">
+<pre><code> centroid_data (mz_array:numpy.ndarray, int_array:numpy.ndarray)</code></pre>
+</blockquote>
+<p>Estimate centroids and intensities from profile data.</p>
+<p>Args: mz_array (np.ndarray): An array with mz values. int_array (np.ndarray): An array with intensity values.</p>
+<p>Returns: tuple: A tuple of the form (mz_array_centroided, int_array_centroided)</p>
+</section>
+<section id="trimming-spectra-to-retain-the-n-most-intense-peaks" class="level3">
+<h3 class="anchored" data-anchor-id="trimming-spectra-to-retain-the-n-most-intense-peaks">Trimming spectra to retain the <code>n</code> most intense peaks</h3>
+<p><a href="https://mannlabs.github.io/alphapept/io.html#get_most_abundant"><code>get_most_abundant</code></a>: In order to save spectra in a more memory-efficient form, we only keep the n most abundant peaks. This allows us to save data in a fast, accessible matrix format.</p>
+<p><a href="https://mannlabs.github.io/alphapept/io.html#get_local_intensity"><code>get_local_intensity</code></a>: This calculates the local intensity to get local maxima.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L668" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_most_abundant" class="level3">
+<h3 class="anchored" data-anchor-id="get_most_abundant">get_most_abundant</h3>
+<blockquote class="blockquote">
+<pre><code> get_most_abundant (mass:numpy.ndarray, intensity:numpy.ndarray,
+                    n_max:int, window:int=10)</code></pre>
+</blockquote>
+<p>Returns the n_max most abundant peaks of a spectrum.</p>
+<p>Args: mass (np.ndarray): An array with mz values. intensity (np.ndarray): An array with intensity values. n_max (int): The maximum number of peaks to retain. Setting <code>n_max</code> to -1 returns all peaks. window (int): Use local maximum in a window</p>
+<p>Returns: tuple: the filtered mass and intensity arrays.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L648" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="get_local_intensity" class="level3">
+<h3 class="anchored" data-anchor-id="get_local_intensity">get_local_intensity</h3>
+<blockquote class="blockquote">
+<pre><code> get_local_intensity (intensity, window=10)</code></pre>
+</blockquote>
+<p>Calculate the local intensity for a spectrum.</p>
+<p>Args: intensity (np.ndarray): An array with intensity values. window (int): Window Size Returns: nop.ndarray: local intensity</p>
+<p>For saving, we are currently relying on the hdf-container (see below).</p>
+<p>While we could, in principle, store the mz and int arrays as a list of variable length, this will come at a performance decrease. We, therefore, create an array of the dimensions of the n most abundant peaks and the number of spectra with the function <a href="https://mannlabs.github.io/alphapept/io.html#list_to_numpy_f32"><code>list_to_numpy_f32</code></a> and fill the unoccupied cells with <code>-1</code>. This allows an increase in accessing times at the cost of additional disk space.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L703" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="list_to_numpy_f32" class="level3">
+<h3 class="anchored" data-anchor-id="list_to_numpy_f32">list_to_numpy_f32</h3>
+<blockquote class="blockquote">
+<pre><code> list_to_numpy_f32 (long_list:list)</code></pre>
+</blockquote>
+<p>Function to convert a list to np.float32 array.</p>
+<p>Args: long_list (list): A regular Python list with values that can be converted to floats.</p>
+<p>Returns: np.ndarray: A np.float32 array.</p>
+</section>
+</section>
+<section id="saving-output" class="level2">
+<h2 class="anchored" data-anchor-id="saving-output">Saving output</h2>
+<p>As MS hardware has continued to improve over the years, MS data has become more complex. To deal with this complexity, the MS community has already used many different <a href="https://onlinelibrary.wiley.com/doi/full/10.1002/mas.21522">data formats</a> to store and access data. <a href="https://www.hdfgroup.org/solutions/hdf5/">HDF</a> containers are one option, but they have not yet gained widespread support.</p>
+<section id="hdf-containers-in-general" class="level3">
+<h3 class="anchored" data-anchor-id="hdf-containers-in-general">HDF containers in general</h3>
+<p>In general, an HDF container can be viewed as a compressed folder with metadata (i.e., attributes) associated to each single subfolder or file (i.e., data arrays of various types and sizes) within this container. A container might, for instance have contents that look like, e.g.:</p>
+<pre><code>HDF_Container
+    {
+        meta_data_1: "Some string",
+        meta_data_2: 1234567890,
+        ...
+    }
+    array_1
+        {
+            meta_data_of_array1_1: "Some other string",
+            ...
+        },
+        100x2 int8
+    array_2
+        1000x2 float64
+    subfolder_1
+        {
+            meta_data_of_subfolder_1_1: "Really any string of any length",
+            ...
+        }
+        array_1_of_subfolder_1
+        subfolder_1_1
+        ...
+    subfolder_n
+    ...</code></pre>
+<p>A few of the advantages of HDF are, e.g.:</p>
+<ul>
+<li>It has no upper limit with regards to file size</li>
+<li>It can be used on disk without consuming RAM memory</li>
+<li>It is fully portable on different machines and systems</li>
+<li>It is capable of fast IO operations</li>
+<li>It allows data to be structured very transparent while still providing a flexible way to store metadata</li>
+<li>…</li>
+</ul>
+<p>For these reasons, HDF containers have gained popularity in several scientific fields, including (astro)physics and geology. It is, therefore, no surprise that Python has excellent support for HDF containers. The two most used packages are <code>h5py</code> and <code>tables</code>, where the former has a generic API and the second is frequently used with <code>pandas</code> dataframes. An excellent viewer for HDF files is <a href="https://support.hdfgroup.org/projects/compass/">HDF Compass</a>.</p>
+</section>
+<section id="using-hdf-containers-in-alphapept" class="level3">
+<h3 class="anchored" data-anchor-id="using-hdf-containers-in-alphapept">Using HDF containers in AlphaPept</h3>
+<p>AlphaPept uses the python <code>h5py</code> package to store MS data in HDF containers, inspired by the <a href="https://github.com/swillems/ion_networks">ion_networks</a> repository.</p>
+<ul>
+<li>First, a generic class is defined that will serve as an API for HDF containers. To ensure full transparency, this will include immutable metadata such as <code>creation time</code>, <code>original_file_name</code> and <code>version</code>.</li>
+<li>The constructor of an HDF_File will be passed the <code>file_name</code> of an HDF container, an <code>is_read_only</code> flag, an <code>is_overwritable</code> flag and <code>is_new_file</code> flag.</li>
+<li>To compare HDF_Files, several (magic) functions need to be defined.</li>
+<li>Traceability and reproducibility are ensured by storing a <code>last_updated</code> and a <code>check</code> function to warn users about potential compatibility issues.</li>
+</ul>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L734" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="hdf_file" class="level3">
+<h3 class="anchored" data-anchor-id="hdf_file">HDF_File</h3>
+<blockquote class="blockquote">
+<pre><code> HDF_File (file_name:str, is_read_only:bool=True, is_new_file:bool=False,
+           is_overwritable:bool=False)</code></pre>
+</blockquote>
+<p>A generic class to store and retrieve on-disk data with an HDF container.</p>
+<p>Contents of HDF containers come in three variants:</p>
+<ol type="1">
+<li><code>Groups</code>: folders</li>
+<li><code>Datasets</code>: arrays</li>
+<li><code>Attributes</code>: metadata associated with individual datasets or groups (with the root folder also considered as a normal group)</li>
+</ol>
+<p>These contents can be accessed with <code>read</code> and <code>write</code> functions.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L1005" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="hdf_file.write" class="level3">
+<h3 class="anchored" data-anchor-id="hdf_file.write">HDF_File.write</h3>
+<blockquote class="blockquote">
+<pre><code> HDF_File.write (value, group_name:str=None, dataset_name:str=None,
+                 attr_name:str=None, overwrite:bool=None,
+                 dataset_compression:str=None, swmr:bool=False)</code></pre>
+</blockquote>
+<p>Write a <code>value</code> to an HDF_File.</p>
+<p>Args: value (type): The name of the data to write. If the <code>value</code> is pd.DataFrame, a <code>dataset_name</code> must be provided. group_name (str): The group where to write data. If no <code>group_name</code> is provided, write directly to the root group. Defaults to None. dataset_name (str): If no <code>dataset_name</code> is provided, create a new group with <code>value</code> as name. The dataset where to write data. Defaults to None. attr_name (str): The attr where to write data. Defaults to None. overwrite (bool): Overwrite pre-existing data and truncate existing groups. If the False, ignore the is_overwritable flag of this HDF_File. Defaults to None. dataset_compression (str): The compression type to use for datasets. Defaults to None. swmr (bool): Open files in swmr mode. Defaults to False.</p>
+<p>Raises: IOError: When the object is read-only. KeyError: When the group_name or attr_name does not exist. ValueError: When trying to overwrite something while overwiting is disabled.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L871" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="hdf_file.read" class="level3">
+<h3 class="anchored" data-anchor-id="hdf_file.read">HDF_File.read</h3>
+<blockquote class="blockquote">
+<pre><code> HDF_File.read (group_name:str=None, dataset_name:str=None,
+                attr_name:str=None, return_dataset_shape:bool=False,
+                return_dataset_dtype:bool=False,
+                return_dataset_slice:slice=slice(None, None, None),
+                swmr:bool=False)</code></pre>
+</blockquote>
+<p>Read contents of an HDF_File.</p>
+<p>Args: group_name (str): The group_name from where to read data. If no <code>group_name</code> has been provided, read directly from the root group. Defaults to None. dataset_name (str): The dataset to read. If no <code>dataset_name</code> has been provided, read directly from the group. If the <code>dataset_name</code> refers to a group, it is assumed to be pd.DataFrame and returned as such. Defaults to None. attr_name (str): The attribute to read. If <code>attr_name</code> is not None, read the attribute value instead of the contents of a group or dataset. If <code>attr_name</code> == ““, read all attributes as a dict. Defaults to None. return_dataset_shape (bool): Do not read complete dataset to minimize RAM and IO usage. Defaults to False. return_dataset_dtype (bool): Do not read complete dataset to minimize RAM and IO usage. Defaults to False. return_dataset_slice (slice): Do not read complete dataset to minimize RAM and IO usage. Defaults to slice(None). swmr (bool): Use swmr mode to read data. Defaults to False.</p>
+<p>Returns: type: Depending on what is requested, a dict, value, np.ndarray or pd.dataframe is returned.</p>
+<p>Raises: KeyError: When the group_name does not exist. KeyError: When the attr_name does not exist in the group or dataset. KeyError: When the dataset_name does not exist in the group. ValueError: When the requested dataset is not a np.ndarray or pd.dataframe.</p>
+<p>Unit tests for this generic HDF class include:</p>
+<ul>
+<li>Creation and truncation of files with various access.</li>
+<li>Writing and reading data from the container.</li>
+</ul>
+</section>
+<section id="the-final-.ms_data.hdf-file" class="level3">
+<h3 class="anchored" data-anchor-id="the-final-.ms_data.hdf-file">The final <code>.ms_data.hdf</code> file</h3>
+<p>Based on the generic HDF_File, a subclass that acts as an MS data container can be implemented. This class should contain all (centroided) fragment ions, all their coordinates, and all the metadata.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L1146" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ms_data_file" class="level3">
+<h3 class="anchored" data-anchor-id="ms_data_file">MS_Data_File</h3>
+<blockquote class="blockquote">
+<pre><code> MS_Data_File (file_name:str, is_read_only:bool=True,
+               is_new_file:bool=False, is_overwritable:bool=False)</code></pre>
+</blockquote>
+<p>A class to store and retrieve on-disk MS data with an HDF container.</p>
+<p>A single generic function should allow to read raw data and store spectra. Different arguments allow different vendor formats.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L1185" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="index_ragged_list" class="level3">
+<h3 class="anchored" data-anchor-id="index_ragged_list">index_ragged_list</h3>
+<blockquote class="blockquote">
+<pre><code> index_ragged_list (ragged_list:list)</code></pre>
+</blockquote>
+<p>Create lookup indices for a list of arrays for concatenation.</p>
+<p>Args: value (list): Input list of arrays.</p>
+<p>Returns: indices: A numpy array with indices.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L1152" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ms_data_file.import_raw_dda_data" class="level3">
+<h3 class="anchored" data-anchor-id="ms_data_file.import_raw_dda_data">MS_Data_File.import_raw_DDA_data</h3>
+<blockquote class="blockquote">
+<pre><code> MS_Data_File.import_raw_DDA_data (file_name:str, n_most_abundant:int=-1,
+                                   callback:&lt;built-
+                                   infunctioncallable&gt;=None,
+                                   query_data:dict=None, vendor:str=None)</code></pre>
+</blockquote>
+<p>Load centroided data and save it to this object.</p>
+<p>Args: file_name (str): The file name with raw data (Thermo, Bruker or mzml). n_most_abundant (int): The maximum number of peaks to retain per MS2 spectrum. Defaults to -1. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None. query_data (dict): A dictionary with raw data. If this is not None, data will only be saved and not imported. Defaults to None. vendor (str): The vendor name, must be Thermo or Bruker if provided. Defaults to None.</p>
+<p>Testing of the MS_Data_File container includes reading and writing from different file formats.</p>
+<p>While that HDF data structure could be used directly, it is often easier to read it and return a <code>query_data</code> dictionary similar to those that are returned by the readers of <code>Thermo</code>, <code>Bruker</code>, <code>mzML</code> and <code>mzXML</code> raw data.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L1343" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="ms_data_file.read_dda_query_data" class="level3">
+<h3 class="anchored" data-anchor-id="ms_data_file.read_dda_query_data">MS_Data_File.read_DDA_query_data</h3>
+<blockquote class="blockquote">
+<pre><code> MS_Data_File.read_DDA_query_data (calibrated_fragments:bool=False,
+                                   force_recalibrate:bool=False,
+                                   swmr:bool=False, **kwargs)</code></pre>
+</blockquote>
+<p>Read query data from this ms_data object and return it as a query_dict.</p>
+<p>Args: calibrated_fragments (bool): If True, calibrated fragments are retrieved. Calibration offsets can already be present in the ms_data or recalculated. Defaults to False. force_recalibrate (bool): If calibrated fragments is True, recalibrate mzs values even if a recalibration is already provided. Defaults to False. swmr (bool): Open the file in swmr mode. Defaults to False. **kwargs (type): Can contain a database file name that was used for recalibration.</p>
+<p>Returns: dict: A query_dict with data for MS1 and MS2 scans.</p>
+</section>
+</section>
+<section id="usage-in-workflows" class="level2">
+<h2 class="anchored" data-anchor-id="usage-in-workflows">Usage in workflows</h2>
+<p>To use all the above functionality from a workflow with several parameters, the following functions are defined. These functions also allow parallel processing.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/io.py#L1419" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="raw_conversion" class="level3">
+<h3 class="anchored" data-anchor-id="raw_conversion">raw_conversion</h3>
+<blockquote class="blockquote">
+<pre><code> raw_conversion (to_process:dict, callback:&lt;built-
+                 infunctioncallable&gt;=None, parallel:bool=False)</code></pre>
+</blockquote>
+<p>Wrapper function to convert raw to ms_data_file hdf.</p>
+<p>Args: to_process (dict): A dictionary with settings indicating which files are to be processed and how. callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None. parallel (bool): If True, process multiple files in parallel. This is not implemented yet! Defaults to False.</p>
+<p>Returns: bool: True if and only if the conversion was succesful.</p>
+<p>The following commands are bookkeeping to make sure this and other notebooks are properly parsed to python modules.</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Chemistry related functions">
+
+<title>alphapept - Chem</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="styles.css">
+<meta property="og:title" content="alphapept - Chem">
+<meta property="og:description" content="Chemistry related functions">
+<meta property="og:site-name" content="alphapept">
+<meta name="twitter:title" content="alphapept - Chem">
+<meta name="twitter:description" content="Chemistry related functions">
+<meta name="twitter:card" content="summary">
+</head>
+
+<body class="nav-sidebar floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">alphapept</span>
+    </a>
+  </div>
+          <div id="quarto-search" class="" title="Search"></div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+    <div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">Chem</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">AlphaPept</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./settings.html" class="sidebar-item-text sidebar-link">Settings</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./chem.html" class="sidebar-item-text sidebar-link active">Chem</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./io.html" class="sidebar-item-text sidebar-link">Input / Output</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./fasta.html" class="sidebar-item-text sidebar-link">FASTA</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./feature_finding.html" class="sidebar-item-text sidebar-link">Feature Finding</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./search.html" class="sidebar-item-text sidebar-link">Search</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./score.html" class="sidebar-item-text sidebar-link">Score</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./recalibration.html" class="sidebar-item-text sidebar-link">Recalibration</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./quantification.html" class="sidebar-item-text sidebar-link">Quantification</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./matching.html" class="sidebar-item-text sidebar-link">Matching</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./constants.html" class="sidebar-item-text sidebar-link">Constants</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./interface.html" class="sidebar-item-text sidebar-link">Interface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./performance.html" class="sidebar-item-text sidebar-link">Performance</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./export.html" class="sidebar-item-text sidebar-link">Export</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./label.html" class="sidebar-item-text sidebar-link">Label</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./additional_code.html" class="sidebar-item-text sidebar-link">Additional code</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./contributing.html" class="sidebar-item-text sidebar-link">How to contribute</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#isotopedistributions" id="toc-isotopedistributions" class="nav-link active" data-scroll-target="#isotopedistributions">IsotopeDistributions</a>
+  <ul class="collapse">
+  <li><a href="#dict_to_dist" id="toc-dict_to_dist" class="nav-link" data-scroll-target="#dict_to_dist">dict_to_dist</a></li>
+  <li><a href="#numba_bin" id="toc-numba_bin" class="nav-link" data-scroll-target="#numba_bin">numba_bin</a></li>
+  <li><a href="#fast_add" id="toc-fast_add" class="nav-link" data-scroll-target="#fast_add">fast_add</a></li>
+  <li><a href="#isotopedistribution" id="toc-isotopedistribution" class="nav-link" data-scroll-target="#isotopedistribution">IsotopeDistribution</a></li>
+  </ul></li>
+  <li><a href="#averagine" id="toc-averagine" class="nav-link" data-scroll-target="#averagine">Averagine</a>
+  <ul class="collapse">
+  <li><a href="#get_average_formula" id="toc-get_average_formula" class="nav-link" data-scroll-target="#get_average_formula">get_average_formula</a></li>
+  <li><a href="#mass_to_dist" id="toc-mass_to_dist" class="nav-link" data-scroll-target="#mass_to_dist">mass_to_dist</a></li>
+  </ul></li>
+  <li><a href="#mass-calculations" id="toc-mass-calculations" class="nav-link" data-scroll-target="#mass-calculations">Mass Calculations</a>
+  <ul class="collapse">
+  <li><a href="#calculate_mass" id="toc-calculate_mass" class="nav-link" data-scroll-target="#calculate_mass">calculate_mass</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title d-none d-lg-block">Chem</h1>
+</div>
+
+<div>
+  <div class="description">
+    Chemistry related functions
+  </div>
+</div>
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
+<p>This notebook contains all chemistry-related functionality. Here, a major part is functionality to generate isotope patterns and the averagine model. This is required for feature finding, where an isotope pattern is validated by being compared to its averagine model. We use the data structure <code>Isotopes</code> from constants to handle Isotopes. Next, we define the class <a href="https://mannlabs.github.io/alphapept/chem.html#isotopedistribution"><code>IsotopeDistribution</code></a> to calculate isotope distributions for a given Isotope. The core of the calculation is the function <a href="https://mannlabs.github.io/alphapept/chem.html#fast_add"><code>fast_add</code></a>, which allows the fast estimation of isotope distributions. <br> To calculate the isotope distribution for the averagine model, we define the function <a href="https://mannlabs.github.io/alphapept/chem.html#get_average_formula"><code>get_average_formula</code></a>, which calculates the amino acid composition of the averagine molecule for the given mass.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Ideally, we would like to have constants such as isotopes as global variables to not overload functions with parameters. However, currently, numba is not able to handle typed dictionaries or jitclasses as globals. We, therefore, pass them as arguments.*</p>
+</div>
+</div>
+<section id="isotopedistributions" class="level2">
+<h2 class="anchored" data-anchor-id="isotopedistributions">IsotopeDistributions</h2>
+<p>The calculation of isotope distributions is based on the algorithm introduced in the paper <em>Calculation of isotope distributions in mass spectrometry. A trivial solution for a non-trivial problem</em> by <em>Hugo Kubinyi</em>. A more detailed description of the algorithm can be found in the <a href="https://doi.org/10.1016/1044-0305(95)00017-8">paper</a>.</p>
+<p>The implementation is a Python port of the Java version of the <a href="https://github.com/fickludd/proteomicore/blob/c5e311c21c3191fc007798391ce77066531f1932/Proteins/src/main/java/se/lth/immun/chem/IsotopeDistribution.java">proteomicore - implementation</a> from Johan Teleman</p>
+<p>In brief, the approach avoids expanding polynomial expressions by combining precalculated patterns of hypothetical atom clusters and pruning low-intensity peaks. <br> To calculate the isotope distribution for a given isotope, we define the function <code>dict_to_dist,</code> which accepts a dictionary of amino acids and returns the isotope distribution.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/chem.py#L146" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="dict_to_dist" class="level3">
+<h3 class="anchored" data-anchor-id="dict_to_dist">dict_to_dist</h3>
+<blockquote class="blockquote">
+<pre><code> dict_to_dist (counted_AA:numba.typed.typeddict.Dict,
+               isotopes:numba.typed.typeddict.Dict)</code></pre>
+</blockquote>
+<p>Function to convert a dictionary with counts of atoms to an isotope distribution.</p>
+<p>Args: counted_AA (Dict): Numba-typed dict with counts of atoms. isotopes (Dict): Numba-typed lookup dict with isotopes.</p>
+<p>Returns: IsotopeDistribution: The calculated isotope distribution for the chemical compound.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/chem.py#L126" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="numba_bin" class="level3">
+<h3 class="anchored" data-anchor-id="numba_bin">numba_bin</h3>
+<blockquote class="blockquote">
+<pre><code> numba_bin (decimal:int)</code></pre>
+</blockquote>
+<p>Numba compatible function to convert a decimal number to a binary (list).</p>
+<p>Args: decimal (int): Decimal number.</p>
+<p>Returns: list: Number in binary.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/chem.py#L90" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="fast_add" class="level3">
+<h3 class="anchored" data-anchor-id="fast_add">fast_add</h3>
+<blockquote class="blockquote">
+<pre><code> fast_add (m0:int, dm0:int, int0:numpy.ndarray, m1:int, dm1:int,
+           int1:numpy.ndarray, prune_level:float=1e-06)</code></pre>
+</blockquote>
+<p>Helper function to quickly add isotope patterns.</p>
+<p>Args: m0 (float): the mono-isotopic mass of the first isotope distribution. dm0 (int): the number of isotope intensities in the first isotope distribution. int0 (np.ndarray:float): the intensity pattern of the first isotope distribution. m1 (float): the mono-isotopic mass of the second isotope distribution. dm1 (int): the number of isotope intensities in the second isotope distribution. int1 (np.ndarray:float): the intensity pattern of the second isotope distribution. prune_level (float): Precision threshold. Defaults to 0.000001.</p>
+<p>Returns: int: Mass of new pattern. int: Number of isotopes in new pattern. np.ndarray: Intensity of new pattern.</p>
+<hr>
+</section>
+<section id="isotopedistribution" class="level3">
+<h3 class="anchored" data-anchor-id="isotopedistribution">IsotopeDistribution</h3>
+<blockquote class="blockquote">
+<pre><code> IsotopeDistribution (*args, **kwargs)</code></pre>
+</blockquote>
+<p>Class to represent isotope distributions.</p>
+<p>Attributes: m0 (int): the mono-isotopic mass. dm (int): number of isotopes. intensities (np.ndarray): isotope intensities.</p>
+<p>Methods: add: add another isotope distribution. copy: create a copy of the current isotope distribution. mult: multiply the current isotope distribution.</p>
+<p>One can compare the implementation to the algorithm with plotting values from the paper against the own results. Example <span class="math inline">\(K_{23}I_{22}\)</span> is Table 2 from the paper.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> alphapept.constants <span class="im">import</span> isotopes</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numba.typed <span class="im">import</span> Dict</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> numba <span class="im">import</span> types</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Example from paper:</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>mass <span class="op">=</span> <span class="fl">3688.1</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>abundances <span class="op">=</span> np.array([<span class="fl">58.83</span>,<span class="fl">0.18</span>,<span class="dv">100</span>,<span class="fl">0.29</span>,<span class="fl">81.29</span>,<span class="fl">0.22</span>,<span class="fl">42.05</span>,<span class="fl">0.11</span>,<span class="fl">15.54</span>,<span class="fl">0.04</span>,<span class="fl">4.36</span>,<span class="fl">0.01</span>,<span class="fl">0.97</span>,<span class="fl">0.17</span>,<span class="fl">0.03</span>])<span class="op">/</span><span class="dv">100</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>masses <span class="op">=</span> [mass <span class="op">+</span> i <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(abundances))]</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculation with own function</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>counted_AA <span class="op">=</span> Dict.empty(key_type<span class="op">=</span>types.unicode_type, value_type<span class="op">=</span>types.int64)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>counted_AA[<span class="st">"K"</span>] <span class="op">=</span> <span class="dv">23</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>counted_AA[<span class="st">"I"</span>] <span class="op">=</span> <span class="dv">22</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>dist <span class="op">=</span> dict_to_dist(counted_AA, isotopes)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>masses_ <span class="op">=</span> [dist.m0 <span class="op">+</span> i <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(dist.intensities))]</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Plot </span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>masses <span class="op">=</span> [mass <span class="op">+</span> i <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(abundances))]</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>plt.bar(masses, abundances<span class="op">*</span><span class="dv">100</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, label<span class="op">=</span><span class="st">'Paper'</span>)</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>plt.bar(masses_, dist.intensities<span class="op">*</span><span class="dv">100</span>, alpha<span class="op">=</span><span class="fl">0.5</span>, label<span class="op">=</span><span class="st">'Implementation'</span>)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Mass'</span>)</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">'Relative Intensity (%)'</span>)</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01_chem_files/figure-html/cell-6-output-1.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="averagine" class="level2">
+<h2 class="anchored" data-anchor-id="averagine">Averagine</h2>
+<p>The averagine model is based on <a href="https://www.sciencedirect.com/science/article/pii/1044030595000178">Senko et al.</a>. We define the function <a href="https://mannlabs.github.io/alphapept/chem.html#get_average_formula"><code>get_average_formula</code></a> to calculate a dictionary with averagine masses.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/chem.py#L178" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="get_average_formula" class="level3">
+<h3 class="anchored" data-anchor-id="get_average_formula">get_average_formula</h3>
+<blockquote class="blockquote">
+<pre><code> get_average_formula (molecule_mass:float,
+                      averagine_aa:numba.typed.typeddict.Dict,
+                      isotopes:numba.typed.typeddict.Dict,
+                      sulphur:bool=True)</code></pre>
+</blockquote>
+<p>Function to calculate the averagine formula for a molecule mass.</p>
+<p>Args: molecule_mass (float): Input molecule mass for which the averagine model should be calculated. averagine_aa (Dict): Numba-typed dictionary with averagine masses. See alphapept.constants.averagine_aa. isotopes (Dict): Numba-typed lookup dict with isotopes. sulphur (bool, optional): Flag to consider sulphur. Defaults to True.</p>
+<p>Raises: NotImplementedError: If mode w/o sulphur is selected.</p>
+<p>Returns: Dict: Numba-typed dict with averagine composition.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> alphapept.constants <span class="im">import</span> averagine_aa, averagine_avg</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>molecule_mass <span class="op">=</span> <span class="dv">300</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(get_average_formula(molecule_mass, averagine_aa, isotopes, sulphur<span class="op">=</span><span class="va">True</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>{C: 13, H: 24, N: 4, O: 4, S: 0}</code></pre>
+</div>
+</div>
+<p>To directly calculate the isotope distribution of a molecule mass based on the averagine model, we define the wrapper function <a href="https://mannlabs.github.io/alphapept/chem.html#mass_to_dist"><code>mass_to_dist</code></a>.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/chem.py#L219" target="_blank" style="float:right; font-size:smaller">source</a></p>
+</section>
+<section id="mass_to_dist" class="level3">
+<h3 class="anchored" data-anchor-id="mass_to_dist">mass_to_dist</h3>
+<blockquote class="blockquote">
+<pre><code> mass_to_dist (molecule_mass:float,
+               averagine_aa:numba.typed.typeddict.Dict,
+               isotopes:numba.typed.typeddict.Dict)</code></pre>
+</blockquote>
+<p>Function to calculate an isotope distribution from a molecule mass using the averagine model.</p>
+<p>Args: molecule_mass (float, averagine_aa): input molecule mass. averagine_aa (Dict): Numba-typed dictionary with averagine masses. isotopes (Dict): Numba-typed lookup dict with isotopes.</p>
+<p>Returns: np.ndarray: isotope masses. np.ndarray: isotope intensity.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mass_to_dist(<span class="dv">300</span>, averagine_aa, isotopes))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(array([300.18252563, 301.18539427, 302.18826291, 303.19113155,
+       304.19400019, 305.19686883]), array([1.00000000e+00, 1.59501684e-01, 2.01508986e-02, 1.86370995e-03,
+       1.39934810e-04, 8.55900106e-06]))</code></pre>
+</div>
+</div>
+<p>We can use this to plot isotope distributions for a given mass.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_averagine(mass, averagine_aa, isotopes):</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    masses, intensity <span class="op">=</span> mass_to_dist(mass, averagine_aa, isotopes)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">"Averagine Isotopic Distribution for Mass </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mass))</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    plt.stem(masses, intensity<span class="op">*</span><span class="dv">100</span>, use_line_collection<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">"Relative Intensity (%)"</span>)</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">"Molecular Weight"</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>plot_averagine(<span class="dv">500</span>, averagine_aa, isotopes)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>plot_averagine(<span class="dv">1000</span>, averagine_aa, isotopes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<p><img src="01_chem_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="01_chem_files/figure-html/cell-12-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="mass-calculations" class="level2">
+<h2 class="anchored" data-anchor-id="mass-calculations">Mass Calculations</h2>
+<p><a href="https://mannlabs.github.io/alphapept/chem.html#calculate_mass"><code>calculate_mass</code></a>: This function allows to calculate the precursor mass from the monoisotopic m/z and the charge.</p>
+<hr>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/chem.py#L246" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<section id="calculate_mass" class="level3">
+<h3 class="anchored" data-anchor-id="calculate_mass">calculate_mass</h3>
+<blockquote class="blockquote">
+<pre><code> calculate_mass (mono_mz:float, charge:int)</code></pre>
+</blockquote>
+<p>Calculate the precursor mass from mono mz and charge.</p>
+<p>Args: mono_mz (float): mono m/z. charge (int): charge.</p>
+<p>Returns: float: precursor mass.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mz <span class="op">=</span> <span class="dv">300</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>charge <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(calculate_mass(mz, charge))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>597.98544706626</code></pre>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
