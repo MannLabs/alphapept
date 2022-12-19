@@ -21,6 +21,9 @@ FILE_DICT['all_uniprot_reviewed.fasta'] = 'https://datashare.biochem.mpg.de/s/Qb
 FILE_DICT['PXD006109_ref.txt'] = 'https://datashare.biochem.mpg.de/s/fLhxQ8mVb29x9xH/download'
 FILE_DICT['PXD006109_ref_evd.txt'] = 'https://datashare.biochem.mpg.de/s/BkMMHPregCQgKLg/download'
 
+FILE_DICT['PXD006109_MQ_2_1_4_0_PG.txt'] = 'https://datashare.biochem.mpg.de/s/LWAgb0YtU8p1sYT/download'
+FILE_DICT['PXD006109_MQ_2_1_4_0_EV.txt'] = 'https://datashare.biochem.mpg.de/s/7gORFBTYbAXCFJw/download'
+
 FILE_DICT['PXD006109_HeLa12_1.raw'] = 'https://datashare.biochem.mpg.de/s/8S6i1KObhDKABft/download'
 FILE_DICT['PXD006109_HeLa12_2.raw'] = 'https://datashare.biochem.mpg.de/s/y7uY3Pt6tq5PmFn/download'
 FILE_DICT['PXD006109_HeLa12_3.raw'] = 'https://datashare.biochem.mpg.de/s/wl6Av0BKY2eShsd/download'

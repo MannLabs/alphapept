@@ -407,7 +407,14 @@ def solve_profile(ratios: np.ndarray, method: str) -> [np.ndarray, bool]:
             
             ncor = max((20, int(2*np.ceil(np.sqrt(ratios.shape[0])))))
             
-            res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = method, options={'maxiter':int(1e6),'maxfun':int(ratios.shape[0]*2e4), 'eps': 1e-06, 'maxcor':ncor}, )
+            if method == 'L-BFGS-B':
+                options={'maxiter':int(1e6),'maxfun':int(ratios.shape[0]*2e4), 'eps': 1e-06, 'maxcor':ncor}
+            elif method == 'SLSQP':
+                options = {'maxiter':int(1e6)}
+            else:
+                options = {}
+                
+            res_wrapped = minimize(triangle_error, args = ratios , x0 = x0, bounds=bounds, method = method, options = options)
             solution = res_wrapped.x
 
     solution = solution/np.max(solution)
