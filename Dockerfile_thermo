@@ -13,7 +13,7 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E03280
 # Note: pycparser must be installed before pythonnet can be built
 
 RUN pip install pycparser \
-  && pip install pythonnet==2.5.0
+  && pip install pythonnet>=2.5.0
 
 WORKDIR /home/alphapept/
 COPY . .
