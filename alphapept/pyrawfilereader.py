@@ -1,8 +1,8 @@
-# Inspired by pyRawFileReader in [pDeep3](https://github.com/pFindStudio/pDeep3)@Zeng,Wen-Feng
 import os
 import sys
 import numpy as np
 import time
+import warnings
 
 # require pythonnet, pip install pythonnet on Windows
 import clr
@@ -11,15 +11,16 @@ import System
 from System.Threading import Thread
 from System.Globalization import CultureInfo
 
+from .clr_utils import DotNetArrayToNPArray, ext_dir
+
 de_fr = CultureInfo('fr-FR')
 other = CultureInfo('en-US')
 
 Thread.CurrentThread.CurrentCulture = other
 Thread.CurrentThread.CurrentUICulture = other
 
-path = os.path.dirname(os.path.abspath(__file__))
-clr.AddReference(os.path.join(path, "ext/thermo_fisher/ThermoFisher.CommonCore.Data.dll"))
-clr.AddReference(os.path.join(path, "ext/thermo_fisher/ThermoFisher.CommonCore.RawFileReader.dll"))
+clr.AddReference(os.path.join(ext_dir, "thermo_fisher/ThermoFisher.CommonCore.Data.dll"))
+clr.AddReference(os.path.join(ext_dir, "thermo_fisher/ThermoFisher.CommonCore.RawFileReader.dll"))
 import ThermoFisher
 from ThermoFisher.CommonCore.Data.Interfaces import IScanEventBase, IScanEvent
 
@@ -47,31 +48,6 @@ APIs to access Thermo's Raw Files
 >   `or` add these PKG_CONFIG_PATH into ~./bash_profile, and run "source ~/bash_profile". 6.12.0 is my mono version
 > 4. pip install pythonnet
 '''
-
-
-# see https://github.com/mobiusklein/ms_deisotope/blob/90b817d4b5ae7823cfe4ad61c57119d62a6e3d9d/ms_deisotope/data_source/thermo_raw_net.py#L217
-from System.Runtime.InteropServices import Marshal
-from System import IntPtr, Int64
-def DotNetArrayToNPArray(src, dtype=None):
-    '''A quick and dirty implementation of the fourth technique shown in
-    https://mail.python.org/pipermail/pythondotnet/2014-May/001525.html for
-    copying a .NET Array[Double] to a NumPy ndarray[np.float64] via a raw
-    memory copy.
-    ``int_ptr_tp`` must be an integer type that can hold a pointer. On Python 2
-    this is :class:`long`, and on Python 3 it is :class:`int`.
-    '''
-    # When the input .NET array pointer is None, return an empty array. On Py2
-    # this would happen automatically, but not on Py3, and perhaps not safely on
-    # all Py2 because it relies on pythonnet and the .NET runtime properly checking
-    # for nulls.
-    if src is None:
-        return np.array([], dtype=np.float64)
-    dest = np.empty(len(src), dtype=np.float64)
-    Marshal.Copy(
-        src, 0,
-        IntPtr.__overloads__[Int64](dest.__array_interface__['data'][0]),
-        len(src))
-    return dest
 
 '''
 APIs are similar to [pymsfilereader](https://github.com/frallain/pymsfilereader), but some APIs have not been implemented yet."
@@ -470,7 +446,7 @@ class RawFileReader(object):
         MS8  8
         MS9  9
         """
-        return IScanEventBase(self.source.GetScanEventForScanNumber(scanNumber)).MSOrder
+        return int(IScanEventBase(self.source.GetScanEventForScanNumber(scanNumber)).MSOrder)
 
     def GetNumberOfMSOrdersFromScanNum(self, scanNumber):
         """This function gets the number of MS reaction data items in the scan event for the scan
@@ -518,19 +494,31 @@ class RawFileReader(object):
     def GetProfileMassListFromScanNum(self, scanNumber):
         scanStatistics = self.source.GetScanStatsForScanNumber(scanNumber)
         segmentedScan = self.source.GetSegmentedScanFromScanNumber(scanNumber, scanStatistics)
-        return np.array([DotNetArrayToNPArray(segmentedScan.Positions, float), DotNetArrayToNPArray(segmentedScan.Intensities, float)])
+        return (
+            DotNetArrayToNPArray(segmentedScan.Positions),
+            DotNetArrayToNPArray(segmentedScan.Intensities)
+        )
 
     def GetCentroidMassListFromScanNum(self, scanNumber):
         scanStatistics = self.source.GetScanStatsForScanNumber(scanNumber)
         if scanStatistics.IsCentroidScan:
             segmentedScan = self.source.GetSegmentedScanFromScanNumber(scanNumber, scanStatistics)
-            return np.array([DotNetArrayToNPArray(segmentedScan.Positions, float), DotNetArrayToNPArray(segmentedScan.Intensities, float)])
+            return (
+                DotNetArrayToNPArray(segmentedScan.Positions),
+                DotNetArrayToNPArray(segmentedScan.Intensities)
+            )
         else:
             scan = ThermoFisher.CommonCore.Data.Business.Scan.FromFile(self.source, scanNumber)
             if scan.HasCentroidStream:
                 stream = self.source.GetCentroidStream(scanNumber, False)
-                return np.array([DotNetArrayToNPArray(stream.Masses, float), DotNetArrayToNPArray(stream.Intensities, float)])
+                return (
+                    DotNetArrayToNPArray(stream.Masses),
+                    DotNetArrayToNPArray(stream.Intensities)
+                )
             else:
-                print("Profile scan {0} cannot be centroided!".format(scanNumber))
+                warnings.warn(f"Profile scan {scanNumber} cannot be centroided!")
                 segmentedScan = self.source.GetSegmentedScanFromScanNumber(scanNumber, scanStatistics)
-                return np.array([DotNetArrayToNPArray(segmentedScan.Positions, float), DotNetArrayToNPArray(segmentedScan.Intensities, float)])
+                return (
+                    DotNetArrayToNPArray(segmentedScan.Positions),
+                    DotNetArrayToNPArray(segmentedScan.Intensities)
+                )
