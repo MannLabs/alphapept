@@ -489,7 +489,7 @@ class RawFileReader(object):
         MS8  8
         MS9  9
         """
-        return IScanEventBase(self.source.GetScanEventForScanNumber(scanNumber)).MSOrder
+        return int(IScanEventBase(self.source.GetScanEventForScanNumber(scanNumber)).MSOrder)
 
     def GetNumberOfMSOrdersFromScanNum(self, scanNumber):
         """This function gets the number of MS reaction data items in the scan event for the scan
