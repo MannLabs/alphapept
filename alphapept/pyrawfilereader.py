@@ -52,26 +52,45 @@ APIs to access Thermo's Raw Files
 # see https://github.com/mobiusklein/ms_deisotope/blob/90b817d4b5ae7823cfe4ad61c57119d62a6e3d9d/ms_deisotope/data_source/thermo_raw_net.py#L217
 from System.Runtime.InteropServices import Marshal
 from System import IntPtr, Int64
+# def DotNetArrayToNPArray(src, dtype=None):
+#     '''A quick and dirty implementation of the fourth technique shown in
+#     https://mail.python.org/pipermail/pythondotnet/2014-May/001525.html for
+#     copying a .NET Array[Double] to a NumPy ndarray[np.float64] via a raw
+#     memory copy.
+#     ``int_ptr_tp`` must be an integer type that can hold a pointer. On Python 2
+#     this is :class:`long`, and on Python 3 it is :class:`int`.
+#     '''
+#     # When the input .NET array pointer is None, return an empty array. On Py2
+#     # this would happen automatically, but not on Py3, and perhaps not safely on
+#     # all Py2 because it relies on pythonnet and the .NET runtime properly checking
+#     # for nulls.
+#     if src is None:
+#         return np.array([], dtype=np.float64)
+#     dest = np.empty(len(src), dtype=np.float64)
+#     Marshal.Copy(
+#         src, 0,
+#         IntPtr.__overloads__[Int64](dest.__array_interface__['data'][0]),
+#         len(src))
+#     return dest
+
+
+from System.Runtime.InteropServices import GCHandle, GCHandleType
+import ctypes
 def DotNetArrayToNPArray(src, dtype=None):
-    '''A quick and dirty implementation of the fourth technique shown in
-    https://mail.python.org/pipermail/pythondotnet/2014-May/001525.html for
-    copying a .NET Array[Double] to a NumPy ndarray[np.float64] via a raw
-    memory copy.
-    ``int_ptr_tp`` must be an integer type that can hold a pointer. On Python 2
-    this is :class:`long`, and on Python 3 it is :class:`int`.
     '''
-    # When the input .NET array pointer is None, return an empty array. On Py2
-    # this would happen automatically, but not on Py3, and perhaps not safely on
-    # all Py2 because it relies on pythonnet and the .NET runtime properly checking
-    # for nulls.
+    See https://mail.python.org/pipermail/pythondotnet/2014-May/001527.html
+    '''
     if src is None:
         return np.array([], dtype=np.float64)
-    dest = np.empty(len(src), dtype=np.float64)
-    Marshal.Copy(
-        src, 0,
-        IntPtr.__overloads__[Int64](dest.__array_interface__['data'][0]),
-        len(src))
-    return dest
+    src_hndl = GCHandle.Alloc(src, GCHandleType.Pinned)
+    try:
+        src_ptr = src_hndl.AddrOfPinnedObject().ToInt64()
+        bufType = ctypes.c_double*len(src)
+        cbuf = bufType.from_address(src_ptr)
+        dest = np.frombuffer(cbuf, dtype=cbuf._type_).copy()
+    finally:
+        if src_hndl.IsAllocated: src_hndl.Free()
+        return dest
 
 '''
 APIs are similar to [pymsfilereader](https://github.com/frallain/pymsfilereader), but some APIs have not been implemented yet."
