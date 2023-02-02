@@ -1,24 +1,15 @@
-FROM python:3.8.3
+FROM ubuntu:20.04
 
-# Mono: 5.20
+RUN apt-get update && apt-get install build-essential -y
+RUN apt-get install python3-pip procps -y
 
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF \
-  && echo "deb http://download.mono-project.com/repo/debian stretch/snapshots/5.20 main" > /etc/apt/sources.list.d/mono-official.list \
-  && apt-get update \
-  && apt-get install -y clang \
-  && apt-get install -y mono-devel=5.20\* \
-  && rm -rf /var/lib/apt/lists/* /tmp/*
+RUN pip install "alphapept[stable,gui-stable]"
 
-# Pythonnet: 2.5.0 (from PyPI)
-# Note: pycparser must be installed before pythonnet can be built
+RUN apt-get install libgomp1 -y
 
-RUN pip install pycparser \
-  && pip install pythonnet==2.5.0
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python3.8/dist-packages/alphapept/ext/bruker/FF/linux64/
+RUN chmod 555 -R  /usr/local/lib/python3.8/dist-packages/alphapept/ext/bruker/FF/linux64/uff-cmdline2
 
-WORKDIR /home/alphapept/
-COPY . .
-
-RUN pip install -r requirements.txt
-RUN pip install .
+RUN pip install "numpy<1.24.0"
 
 CMD ["bash"]
