@@ -30,7 +30,6 @@ def load_thermo_raw(
 
     spec_indices = range(rawfile.FirstSpectrumNumber, rawfile.LastSpectrumNumber + 1)
 
-
     scan_list = []
     rt_list = []
     mass_list = []
@@ -322,9 +321,9 @@ def load_mzml_data(
     prec_mzs_list = []
     mono_mzs_list = []
     charge_list = []
-
+    
     vendor = "Unknown"
-
+    
     for idx, i in enumerate(spec_indices):
         try:
             spec = next(reader)
@@ -336,28 +335,28 @@ def load_mzml_data(
 
             scan_list.append(i)
             rt, masses, intensities, ms_order, prec_mass, mono_mz, charge = extract_mzml_info(spec)
-
+            
             sortindex = np.argsort(masses)
-
+            
             masses = masses[sortindex]
             intensities = intensities[sortindex]
-
+            
             if ms_order == 2:
                 masses, intensities = get_most_abundant(masses, intensities, n_most_abundant)
             rt_list.append(rt)
-
+            
             #Remove zero intensities
             to_keep = intensities>0
             masses = masses[to_keep]
             intensities = intensities[to_keep]
-
+            
             mass_list.append(masses)
             int_list.append(intensities)
             ms_list.append(ms_order)
             prec_mzs_list.append(prec_mass)
             mono_mzs_list.append(mono_mz)
             charge_list.append(charge)
-
+            
         except KeyboardInterrupt as e:
             raise e
         except SystemExit as e:
@@ -658,10 +657,10 @@ def get_local_intensity(intensity, window=10):
     local_intensity = np.zeros(len(intensity))
 
     for i in range(len(intensity)):
-        start = max(0, i-window)
+        start = max(0, i-window) 
         end = min(len(intensity), i+window)
         local_intensity[i] = intensity[i]/np.max(intensity[start:end])
-
+        
     return local_intensity
 
 def get_most_abundant(
@@ -688,12 +687,12 @@ def get_most_abundant(
     if len(mass) < n_max:
         return mass, intensity
     else:
-
+        
         if window > 0:
             sortindex = np.argsort(get_local_intensity(intensity, window))[::-1][:n_max]
         else:
             sortindex = np.argsort(intensity)[::-1][:n_max]
-
+        
         sortindex.sort()
 
     return mass[sortindex], intensity[sortindex]
@@ -1179,8 +1178,8 @@ def import_raw_DDA_data(
             callback=callback
         )
     self._save_DDA_query_data(query_data, vendor, acquisition_date_time)
-
-
+    
+    
 def index_ragged_list(ragged_list: list)  -> np.ndarray:
     """Create lookup indices for a list of arrays for concatenation.
 
@@ -1193,7 +1192,7 @@ def index_ragged_list(ragged_list: list)  -> np.ndarray:
     indices = np.zeros(len(ragged_list) + 1, np.int64)
     indices[1:] = [len(i) for i in ragged_list]
     indices = np.cumsum(indices)
-
+    
     return indices
 
 def _read_DDA_query_data(
@@ -1457,3 +1456,4 @@ def raw_conversion(
         logging.error(f'File conversion of file {file_name} failed. Exception {e}')
         return f"{e}" #Can't return exception object, cast as string
     return True
+
