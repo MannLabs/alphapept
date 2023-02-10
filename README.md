@@ -141,7 +141,7 @@ AlphaPept as a package within the environment; see below.
     Linux](https://www.mono-project.com/download/stable/#download-lin).
     NOTE, the installed mono version should be at least 6.10, which
     requires you to add the ppa to your trusted sources!
-6.  Install pythonnet with `pip install pythonnet==2.5.2`
+6.  Install pythonnet with `pip install pythonnet>=2.5.2`
 
 ------------------------------------------------------------------------
 
@@ -172,7 +172,7 @@ AlphaPept as a package within the environment; see below.
   Make sure that the Path matches to your version (Here 6.12.0)
 - Save everything and execute `. ~/.zshrc`
 
-4.  Install pythonnet with `pip install pythonnet==2.5.2`
+4.  Install pythonnet with `pip install pythonnet>=2.5.2`
 
 ------------------------------------------------------------------------
 

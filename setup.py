@@ -61,7 +61,7 @@ setuptools.setup(
     include_package_data = True,
     install_requires=requirements + [
         "pywin32==225; sys_platform=='win32'",
-        "pythonnet==2.5.2; sys_platform=='win32'",
+        "pythonnet>=2.5.2; sys_platform=='win32'",
         "tables==3.6.1; sys_platform=='win32'"
     ],
     extras_require=extra_requirements,
