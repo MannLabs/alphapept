@@ -28,9 +28,7 @@ def load_thermo_raw(
     from alphapept.pyrawfilereader import RawFileReader
     rawfile = RawFileReader(raw_file_name)
 
-    spec_indices = np.array(
-        range(rawfile.FirstSpectrumNumber, rawfile.LastSpectrumNumber + 1)
-    )
+    spec_indices = range(rawfile.FirstSpectrumNumber, rawfile.LastSpectrumNumber + 1)
 
     scan_list = []
     rt_list = []
