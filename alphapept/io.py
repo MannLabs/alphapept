@@ -129,77 +129,58 @@ def load_thermo_raw(
     return query_data, acquisition_date_time
 
 # %% ../nbs/02_io.ipynb 6
-def load_bruker_raw(
-    d_folder_name: str,
-    n_most_abundant: int,
-    callback: callable = None,
-    **kwargs
-) -> tuple:
-    """Load raw Bruker data as a dictionary.
-
-    Args:
-        d_folder_name (str): The name of a Bruker .d folder.
-        n_most_abundant (int): The maximum number of peaks to retain per MS2 spectrum.
-        callback (callable): A function that accepts a float between 0 and 1 as progress. Defaults to None.
-
-    Returns:
-        tuple: A dictionary with all the raw data and a string with the acquisition_date_time
-
+def load_bruker_raw(raw_file, most_abundant, callback=None, **kwargs):
     """
+    Load bruker raw file and extract spectra
+    """
+    import alphatims.bruker
+    from .constants import mass_dict
+    from .io import list_to_numpy_f32, get_most_abundant
+
+    data = alphatims.bruker.TimsTOF(raw_file)
+    prec_data = data.precursors
+    frame_data = data.frames
+    frame_data = frame_data.set_index('Id')
+    
     import sqlalchemy as db
     import pandas as pd
-    from alphapept.constants import mass_dict
-    from alphapept.ext.bruker import timsdata
-    from alphapept.io import list_to_numpy_f32, get_most_abundant
 
-    tdf = os.path.join(d_folder_name, 'analysis.tdf')
+    tdf = os.path.join(raw_file, 'analysis.tdf')
     engine = db.create_engine('sqlite:///{}'.format(tdf))
-    prec_data = pd.read_sql_table('Precursors', engine)
-    frame_data = pd.read_sql_table('Frames', engine)
-    frame_data = frame_data.set_index('Id')
 
     global_metadata = pd.read_sql_table('GlobalMetadata', engine)
     global_metadata = global_metadata.set_index('Key').to_dict()['Value']
     acquisition_date_time = global_metadata['AcquisitionDateTime']
-
-    tdf = timsdata.TimsData(d_folder_name)
+    
 
     M_PROTON = mass_dict['Proton']
 
     prec_data['Mass'] = prec_data['MonoisotopicMz'].values * prec_data['Charge'].values - prec_data['Charge'].values*M_PROTON
 
-    mass_list_ms2 = []
-    int_list_ms2 = []
-    scan_list_ms2 = []
-
-    prec_data = prec_data.sort_values(by='Mass', ascending=True)
-
-    precursor_ids = prec_data['Id'].tolist()
-
-    for idx, key in enumerate(precursor_ids):
-
-        ms2_data = tdf.readPasefMsMs([key])
-        masses, intensity = ms2_data[key]
-        masses, intensity = get_most_abundant(np.array(masses), np.array(intensity), n_most_abundant)
-        mass_list_ms2.append(masses)
-        int_list_ms2.append(intensity)
-        scan_list_ms2.append(key)
-
-        if callback:
-            callback((idx+1)/len(precursor_ids))
-
-    check_sanity(mass_list_ms2)
-
     query_data = {}
+
     query_data['prec_mass_list2'] = prec_data['Mass'].values
     query_data['prec_id2'] = prec_data['Id'].values
     query_data['mono_mzs2'] = prec_data['MonoisotopicMz'].values
     query_data['rt_list_ms2'] = frame_data.loc[prec_data['Parent'].values]['Time'].values / 60 #convert to minutes
     query_data['scan_list_ms2'] = prec_data['Parent'].values
     query_data['charge2'] = prec_data['Charge'].values
-    query_data['mobility2'] = tdf.scanNumToOneOverK0(1, prec_data['ScanNumber'].to_list()) #check if its okay to always use first frame
-    query_data["mass_list_ms2"] = mass_list_ms2
-    query_data["int_list_ms2"] = int_list_ms2
+
+    query_data['mobility2'] = data.mobility_values[
+        data.precursors.ScanNumber.values.astype(np.int64)
+    ]
+    (
+        spectrum_indptr,
+        spectrum_tof_indices,
+        spectrum_intensity_values,
+    ) = data.index_precursors(
+        centroiding_window=5,
+        keep_n_most_abundant_peaks=most_abundant
+    )
+    # TODO: Centroid spectra and trim
+    query_data["alphatims_spectrum_indptr_ms2"] = spectrum_indptr[1:]
+    query_data["alphatims_spectrum_mz_values_ms2"] = data.mz_values[spectrum_tof_indices]
+    query_data["alphatims_spectrum_intensity_values_ms2"] = spectrum_intensity_values
 
     return query_data, acquisition_date_time
 
@@ -1253,30 +1234,14 @@ def _read_DDA_query_data(
     )
     return query_data, vendor, acquisition_date_time
 
-
 @patch
 def _save_DDA_query_data(
     self:MS_Data_File,
     query_data:dict,
     vendor:str,
     acquisition_date_time:str,
-    overwrite:bool=False
-) -> None:
-    """Save a query dict to this ms_data object.
-
-    Args:
-        query_data (dict): A dictionary with data for MS1 and MS2 scans.
-        vendor (str): The vendor name, must be Thermo or Bruker if provided.
-        acquisition_date_time (str): A string that indicates when the data was acquired.
-        overwrite (bool): Overwrite pre-existing data and truncate existing groups.
-            If the False, ignore the is_overwritable flag of this HDF_File.
-            Defaults to None.
-
-    Raises:
-        KeyError: If the query_dict contains keys that do not end with 1 or 2.
-            i.e. are not MS1 or MS2 spectra.
-
-    """
+    overwrite=False
+):
 #     if vendor == "Bruker":
 #         raise NotImplementedError("Unclear what are ms1 and ms2 attributes for bruker")
     if "Raw" not in self.read():
@@ -1291,7 +1256,9 @@ def _save_DDA_query_data(
         if key.endswith("1"):
 #             TODO: Weak check for ms2, imporve to _ms1 if consistency in naming is guaranteed
             if key == "mass_list_ms1":
-                indices = index_ragged_list(value)
+                indices = np.zeros(len(value) + 1, np.int64)
+                indices[1:] = [len(i) for i in value]
+                indices = np.cumsum(indices)
                 self.write(
                     indices,
                     dataset_name="indices_ms1",
@@ -1309,21 +1276,23 @@ def _save_DDA_query_data(
         elif key.endswith("2"):
 #             TODO: Weak check for ms2, imporve to _ms2 if consistency in naming is guaranteed
             if key == "mass_list_ms2":
-                indices = index_ragged_list(value)
+                indices = np.zeros(len(value) + 1, np.int64)
+                indices[1:] = [len(i) for i in value]
+                indices = np.cumsum(indices)
                 self.write(
                     indices,
                     dataset_name="indices_ms2",
                     group_name=f"Raw/MS2_scans"
                 )
-                if len(value) > 1: #in case there is no MS2
-                    value = np.concatenate(value)
-                else:
-                    value = np.array(value)
+                value = np.concatenate(value)
             elif key == "int_list_ms2":
-                if len(value) > 1: #in case there is no MS2
-                    value = np.concatenate(value)
-                else:
-                    value = np.array(value)
+                value = np.concatenate(value)
+            elif key == "alphatims_spectrum_indptr_ms2":
+                key = "indices_ms2"
+            elif key == "alphatims_spectrum_mz_values_ms2":
+                key = "mass_list_ms2"
+            elif key == "alphatims_spectrum_intensity_values_ms2":
+                key = "int_list_ms2"
             self.write(
                 value,
 #                 TODO: key should be trimmed: xxx_ms2 should just be e.g. xxx
@@ -1333,8 +1302,6 @@ def _save_DDA_query_data(
         else:
             raise KeyError("Unspecified scan type")
     return
-#     to_save["bounds"] = np.sum(to_save['mass_list_ms2']>=0,axis=0).astype(np.int64)
-#     logging.info('Converted file saved to {}'.format(save_path))
 
 # %% ../nbs/02_io.ipynb 54
 @patch

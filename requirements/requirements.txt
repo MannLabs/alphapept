@@ -15,3 +15,4 @@ scipy==1.8.1
 SQLAlchemy==1.4.39
 tables==3.6.1
 tqdm==4.64.0
+alphatims==1.0.7
