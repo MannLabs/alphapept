@@ -45,7 +45,7 @@ def parse_folder(file_folder: str) -> Tuple[list, list, list]:
     raw_files = [
         _
         for _ in os.listdir(file_folder)
-        if _.lower().endswith(".raw") or _.lower().endswith(".d") or _.lower().endswith(".mzml")
+        if _.lower().endswith(".raw") or _.lower().endswith(".d") or _.lower().endswith(".mzml")  or _.lower().endswith(".wiff")
     ]
     fasta_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith(".fasta")]
     db_files = [

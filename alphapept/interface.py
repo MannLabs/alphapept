@@ -1207,6 +1207,16 @@ def parallel_execute(
         set_global=False
     )
 
+    if False: #TODO Make the loop below more elegant with a dict 
+        MEMORY_LIMITS = {}
+        MEMORY_LIMITS['find_features'] = {}
+        MEMORY_LIMITS['find_features']['thermo'] = 8
+        MEMORY_LIMITS['find_features']['bruker'] = 25
+        MEMORY_LIMITS['raw_conversion']['bruker'] = 8
+        MEMORY_LIMITS['raw_conversion']['sciex'] = 30
+        MEMORY_LIMITS['search_db'] = 8
+    
+
     files = settings['experiment']['file_paths']
     n_files = len(files)
     logging.info(f'Processing {len(files)} files for step {step.__name__}')
@@ -1231,7 +1241,7 @@ def parallel_execute(
                 n_processes_temp = max((int(memory_available //25 ),1))
                 n_processes = min((n_processes, n_processes_temp))
                 logging.info(f'Using Bruker Feature Finder. Setting Process limit to {n_processes}.')
-            elif ext.lower() in ('.raw','.mzml'):
+            elif ext.lower() in ('.raw','.mzml','.wiff'):
                 memory_available = psutil.virtual_memory().available/1024**3
                 n_processes_temp = max((int(memory_available //8 ), 1))
                 n_processes = min((n_processes, n_processes_temp))
@@ -1254,6 +1264,12 @@ def parallel_execute(
                 n_processes = min((n_processes, n_processes_temp))
                 n_processes = min((n_processes, n_files)) #not more processes than files.
                 logging.info(f'Importing Raw data with Bruker. Setting Process limit to {n_processes}.')
+            elif ext.lower() == '.wiff':
+                memory_available = psutil.virtual_memory().available/1024**3
+                n_processes_temp = max((int(memory_available //30 ), 1)) # 8 gb per file: Todo: make this better
+                n_processes = min((n_processes, n_processes_temp))
+                n_processes = min((n_processes, n_files)) #not more processes than files.
+                logging.info(f'Importing Raw data with SciEx. Setting Process limit to {n_processes}.')
         else:
             pass
 
