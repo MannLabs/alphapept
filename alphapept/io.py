@@ -433,9 +433,6 @@ def one_over_k0_to_CCS(
     return ccs
 
 # %% ../nbs/02_io.ipynb 27
-from alpharaw.sciex import SciexWiffData
-from alpharaw.wrappers.alphapept_wrapper import parse_msdata_to_alphapept
-
 def import_sciex_as_alphapept(sciex_wiff):
     raw_data = SciexWiffData(centroided=False)
     raw_data.import_raw(sciex_wiff)
@@ -459,6 +456,8 @@ def load_sciex_raw(
 
     Note: SciEx file have one main file but multiple additional files which need to be present in the same location.
     """
+    from alpharaw.sciex import SciexWiffData
+    from alpharaw.wrappers.alphapept_wrapper import parse_msdata_to_alphapept
     from alphapept.chem import calculate_mass
     query_data, acquisition_date_time = import_sciex_as_alphapept(raw_file_name)
 

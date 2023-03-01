@@ -219,6 +219,7 @@ search = {}
 
 search["prec_tol"] = {'type':'spinbox', 'min':1, 'max':500, 'default':20, 'description':"Maximum allowed precursor mass offset."}
 search["frag_tol"] = {'type':'spinbox', 'min':1, 'max':500, 'default':50, 'description':"Maximum fragment mass tolerance."}
+search["top_n"] = {'type':'spinbox', 'min':1, 'max':50, 'default':1, 'description':"Top n selection of peptides for search."}
 search["min_frag_hits"] = {'type':'spinbox', 'min':1, 'max':99, 'default':7, 'description':"Minimum number of fragment hits."}
 search["ppm"] = {'type':'checkbox', 'default':True, 'description':"Use ppm instead of Dalton."}
 search["calibrate"] = {'type':'checkbox', 'default':True, 'description':"Recalibrate masses."}
@@ -235,7 +236,9 @@ SETTINGS_TEMPLATE["search"] = search
 # Score
 score = {}
 
-score["method"] = {'type':'combobox', 'value':['x_tandem','random_forest'], 'default':'random_forest', 'description':"Scoring method."}
+score["method"] = {'type':'combobox', 'value':['x_tandem','random_forest','generic_score','morpheus'], 'default':'random_forest', 'description':"Scoring method."}
+score["ml_ini_score"] = {'type':'combobox', 'value':['x_tandem','hits','generic_score'], 'default':'hits', 'description':"Initial score for ML. Hits is equivalent to Morpehus score."}
+
 SETTINGS_TEMPLATE["score"] = score
 
 # %% ../nbs/00_settings.ipynb 33

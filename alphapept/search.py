@@ -227,6 +227,7 @@ def get_psms(
     callback: Callable = None,
     prec_tol_calibrated:float = None,
     frag_tol_calibrated:float = None,
+    top_n: int = 10,
     **kwargs
 )->(np.ndarray, int):
     """[summary]
@@ -243,6 +244,7 @@ def get_psms(
         callback (Callable, optional): Optional callback. Defaults to None.
         prec_tol_calibrated (float, optional): Precursor tolerance if calibration exists. Defaults to None.
         frag_tol_calibrated (float, optional): Fragment tolerance if calibration exists. Defaults to None.
+        top_n (int): Number of top-n hits to keep.
 
     Returns:
         np.ndarray: Numpy recordarray storing the PSMs.
@@ -310,7 +312,6 @@ def get_psms(
 
     n_queries = len(query_masses)
     n_db = len(db_masses)
-    top_n = 5
 
     if alphapept.performance.COMPILATION_MODE == "cuda":
         import cupy
@@ -1267,7 +1268,7 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
                 if len(output) > 0:
                     psms = pd.concat(output)
                     if ms_file_path[j] in df_cache:
-                        temp = filter_top_n(pd.concat([df_cache[ms_file_path[j]], psms]))
+                        temp = filter_top_n(pd.concat([df_cache[ms_file_path[j]], psms]), settings['search']['top_n'])
                         selector = temp['temp_idx'].values
                         df_cache[ms_file_path[j]] = temp
                     else:
@@ -1298,7 +1299,7 @@ def search_parallel(settings: dict, calibration:Union[list, None] = None, fragme
                     if len(output) > 0:
                         psms = pd.concat(output)
                         if ms_file_path[j] in df_cache:
-                            temp = filter_top_n(pd.concat([df_cache[ms_file_path[j]], psms]))
+                            temp = filter_top_n(pd.concat([df_cache[ms_file_path[j]], psms]), settings['search']['top_n'])
                             selector = temp['temp_idx'].values
                             df_cache[ms_file_path[j]] = temp
                         else:

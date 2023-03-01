@@ -432,7 +432,7 @@ def train_RF(df: pd.DataFrame,
                                        'score_rank', 'db_idx', 'feature_idx', 'precursor', 'query_idx', 'raw_idx',
                                        'sequence', 'decoy', 'sequence_naked', 'target'],
              train_fdr_level: float = 0.1,
-             ini_score: str = 'x_tandem',
+             ini_score: str = 'hits',
              min_train: int = 1000,
              test_size: float = 0.8,
              max_depth: list = [5, 25, 50],
@@ -970,22 +970,25 @@ def score_hdf(to_process: tuple, callback: Callable = None, parallel: bool=False
             
             if settings["score"]["method"] == 'random_forest':
                 try:
-                    classifier, features = train_RF(df_, n_jobs = settings['general']['n_processes'])
+                    classifier, features = train_RF(df_, n_jobs = settings['general']['n_processes'], ini_score= settings['score']['ml_ini_score'])
                     df_['score'] = classifier.predict_proba(df_[features])[:,1]
                 except ValueError as e:
-                    logging.info('ML failed. Defaulting to x_tandem score')
+                    logging.info('ML failed. Defaulting to morpheus score')
                     logging.info(f"{e}")
                     
-                    logging.info('Converting x_tandem score to probabilities')
+                    logging.info('Converting morpheus score to probabilities')
                     
-                    x_, y_ = ecdf(df_['x_tandem'].values)
+                    x_, y_ = ecdf(df_['score'].values)
                     f = interp1d(x_, y_, bounds_error = False, fill_value=(y_.min(), y_.max()))
                 
                     df_['score'] = df_['x_tandem'].apply(lambda x: f(x))
                     
-                    
             elif settings["score"]["method"] == 'x_tandem':
                 df_['score'] = df_['x_tandem']
+            elif settings["score"]["method"] == 'generic_score':
+                df_['score'] = df_['generic_score']
+            elif settings["score"]["method"] == 'morpheus':
+                df_['score'] = df_['hits']
             else:
                 try:
                     import importlib
