@@ -13,7 +13,7 @@ import subprocess
 import numpy as np
 
 import alphapept.interface
-from alphapept.settings import load_settings, load_settings_as_template
+from alphapept.settings import load_settings, load_settings_as_template, create_default_settings
 import yaml
 import alphapept
 import alphapept.io
@@ -157,6 +157,7 @@ class TestRun():
         """
         Prepares the settings according to the test run
         """
+        create_default_settings()
 
         self.settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
 
