@@ -237,7 +237,7 @@ SETTINGS_TEMPLATE["search"] = search
 score = {}
 
 score["method"] = {'type':'combobox', 'value':['x_tandem','random_forest','generic_score','morpheus'], 'default':'random_forest', 'description':"Scoring method."}
-score["ml_ini_score"] = {'type':'combobox', 'value':['x_tandem','hits','generic_score'], 'default':'hits', 'description':"Initial score for ML. Hits is equivalent to Morpehus score."}
+score["ml_ini_score"] = {'type':'combobox', 'value':['x_tandem','hits','generic_score'], 'default':'generic_score', 'description':"Initial score for ML. Hits is equivalent to Morpehus score."}
 
 SETTINGS_TEMPLATE["score"] = score
 
