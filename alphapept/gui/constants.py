@@ -5,7 +5,7 @@ import pandas as pd
 import alphapept.constants
 import alphapept.settings
 
-@st.cache
+@st.cache_data
 def load_mods(path):
     df = pd.read_csv(path, delimiter="\t")
     return df

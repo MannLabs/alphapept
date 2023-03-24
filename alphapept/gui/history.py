@@ -129,7 +129,7 @@ def create_multiple_plots(all_results: dict, groups: list, to_plot: list):
                 all_results, files, acquisition_date_times, mode, groups, plot, minimum_date,
             )
 
-@st.cache
+@st.cache_data
 def filter_for_single_file(results):
 
     results_list = []
@@ -149,7 +149,7 @@ def filter_for_single_file(results):
 
     return result_df
 
-@st.cache
+@st.cache_data
 def convert_df(df):
     return df.to_csv().encode('utf-8')
 

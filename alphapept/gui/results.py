@@ -17,7 +17,7 @@ from sklearn.decomposition import PCA
 from alphapept.io import MS_Data_File
 
 
-@st.cache
+@st.cache_data
 def cached_file(file: str) -> pd.DataFrame:
     """Helper function to cache a file and not reload it.
     Args:
