@@ -168,7 +168,7 @@ def cut_fdr(df: pd.DataFrame, fdr_level:float=0.01, plot:bool=True, cut:bool=Tru
     if plot:
         import matplotlib.pyplot as plt
         plt.figure(figsize=(10, 5))
-        plt.plot(df["score"], df["fdr"])
+        plt.plot(df["score"].values, df["fdr"].values)
         plt.axhline(0.01, color="k", linestyle="--")
 
         plt.axvline(cutoff_value, color="r", linestyle="--")
