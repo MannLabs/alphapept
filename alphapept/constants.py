@@ -189,6 +189,7 @@ protease_dict["trypsin_full"] = "([KR](?=[^P]))|((?<=W)K(?=P))|((?<=M)R(?=P))"
 protease_dict["trypsin_exception"] = "((?<=[CD])K(?=D))|((?<=C)K(?=[HY]))|((?<=C)R(?=K))|((?<=R)R(?=[HR]))"
 protease_dict["non-specific"] = "()"
 protease_dict["trypsin"] = "([KR](?=[^P]))"
+protease_dict["trypsin/p"] = "[KR]"
 
 # %% ../nbs/10_constants.ipynb 25
 from numba.typed import Dict

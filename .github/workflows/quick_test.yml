@@ -27,8 +27,8 @@ jobs:
     - name: Run Alphapept on Thermo (IRT_Thermo_Win)
       run: |
         conda activate alphapept
-        python test_ci.py "${{ env.TMP_FOLDER }}" thermo_irt "${{ secrets.MONGODB_PW }}"
+        python test_ci.py "${{ env.TMP_FOLDER }}" thermo_irt
     - name: Run Alphapept on Bruker (IRT_Bruker_Win)
       run: |
         conda activate alphapept
-        python test_ci.py "${{ env.TMP_FOLDER }}" bruker_irt "${{ secrets.MONGODB_PW }}"
+        python test_ci.py "${{ env.TMP_FOLDER }}" bruker_irt

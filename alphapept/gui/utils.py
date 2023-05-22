@@ -12,7 +12,7 @@ from alphapept.paths import PROCESSED_PATH
 from alphapept.utils import get_size
 
 
-@st.cache(allow_output_mutation=True)
+@st.cache_data()
 def load_file(file:str) -> dict:
     """Cached streamlit function to read summary stats from a file.
 

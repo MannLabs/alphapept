@@ -17,9 +17,11 @@ RUN apt-get update \
     && mv libtbb.so.2 /usr/lib/
 
 RUN conda install -c anaconda pytables==3.6.1
-RUN conda install -c conda-forge pythonnet>=2.5.0
+RUN conda install -c conda-forge pythonnet
 RUN conda install numba==0.55.2 numpy==1.20.3 pandas==1.4.3
 
-RUN pip install "alphapept[stable,gui-stable]"
+COPY . .
+RUN pip install ".[stable,gui-stable]"
+
 
 CMD ["bash"]

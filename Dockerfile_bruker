@@ -1,14 +1,16 @@
 FROM ubuntu:20.04
 
 RUN apt-get update && apt-get install build-essential -y
-RUN apt-get install python3-pip -y
+RUN apt-get install python3-pip procps -y
 
-WORKDIR /home/alphapept/
-COPY . .
-
-RUN pip install .
+RUN pip install "alphapept[stable,gui-stable]"
 
 RUN apt-get install libgomp1 -y
-RUN cp  /usr/local/lib/python3.8/dist-packages/alphapept/ext/bruker/FF/linux64/libtbb.so.2 /usr/lib/libtbb.so.2
+
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib/python3.8/dist-packages/alphapept/ext/bruker/FF/linux64/
 RUN chmod 555 -R  /usr/local/lib/python3.8/dist-packages/alphapept/ext/bruker/FF/linux64/uff-cmdline2
+
+RUN pip install "numpy<1.24.0"
+RUN pip install "sqlalchemy<2.0"
+
 CMD ["bash"]

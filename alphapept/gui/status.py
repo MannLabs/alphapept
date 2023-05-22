@@ -16,6 +16,21 @@ import yaml
 import alphapept.interface
 
 
+def list_experiments(folder_path):
+
+    files = os.listdir(folder_path)
+    data = []
+
+    for file in files:
+        file_path = os.path.join(folder_path, file)
+        creation_time = os.path.getctime(file_path)
+        creation_time = datetime.datetime.fromtimestamp(creation_time).strftime('%Y-%m-%d %H:%M:%S')
+        data.append((creation_time, os.path.splitext(file)[0]))
+
+    df = pd.DataFrame(data, columns=['Creation Time', 'Experiment Name'])
+
+    return df
+
 def queue_watcher():
     """
     Start the queue_watcher.
@@ -189,8 +204,7 @@ def status():
     with st.expander(f"Queue"):
         queue_table = st.empty()
 
-    with st.expander(f"Failed"):
-        failed_table = st.empty()
+
 
     if st.checkbox("Terminate process"):
         st.error(
@@ -199,6 +213,10 @@ def status():
         if st.button("Confirm"):
             terminate_process()
 
+    st.write("## Last experiments")
+    res_table = st.empty()
+
+
     while True:
         ram.progress(
             1 - psutil.virtual_memory().available / psutil.virtual_memory().total
@@ -206,8 +224,7 @@ def status():
         cpu.progress(psutil.cpu_percent() / 100)
 
         queue_files = [_ for _ in os.listdir(QUEUE_PATH) if _.endswith(".yaml")]
-        failed_files = [_ for _ in os.listdir(FAILED_PATH) if _.endswith(".yaml")]
-        n_failed = len(failed_files)
+
         n_queue = len(queue_files)
 
         if n_queue == 0:
@@ -273,10 +290,16 @@ def status():
 
             queue_table.table(queue_df)
 
-        if n_failed == 1:
-            failed_msg.error(f"{n_failed} run failed. Please check {FAILED_PATH}.")
-        elif n_failed > 1:
-            failed_msg.error(f"{n_failed} runs failed. Please check {FAILED_PATH}.")
+        failed = list_experiments(FAILED_PATH)
+        failed['Success'] = "❌"
 
-        failed_table.table(pd.DataFrame(failed_files))
+        success = list_experiments(PROCESSED_PATH)
+        success['Success'] = "✅"
+
+        res = pd.concat([failed, success])
+        res = res.sort_values('Creation Time', ascending=False)
+
+        res = res.reset_index(drop=True)
+
+        res_table.table(res.head(5))
         time.sleep(0.4)

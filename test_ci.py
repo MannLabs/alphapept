@@ -13,7 +13,7 @@ import subprocess
 import numpy as np
 
 import alphapept.interface
-from alphapept.settings import load_settings, load_settings_as_template
+from alphapept.settings import load_settings, load_settings_as_template, create_default_settings
 import yaml
 import alphapept
 import alphapept.io
@@ -157,6 +157,7 @@ class TestRun():
         """
         Prepares the settings according to the test run
         """
+        create_default_settings()
 
         self.settings = load_settings_as_template(DEFAULT_SETTINGS_PATH)
 
@@ -243,7 +244,7 @@ class TestRun():
     def upload_to_db(self, password):
         from pymongo import MongoClient
         logging.info('Uploading to DB')
-        string = f"mongodb+srv://{MONGODB_USER}:{password}@{MONGODB_URL}?ssl=true&ssl_cert_reqs=CERT_NONE"
+        string = f"mongodb+srv://{MONGODB_USER}:{password}@{MONGODB_URL}"
         client = MongoClient(string)
 
         #When having keys with dots like filename.ms_data.hdf, mongodb causes an error. This is to remove the dots.

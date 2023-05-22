@@ -24,7 +24,7 @@ def get_missed_cleavages(sequences:list, n_missed_cleavages:int) -> list:
         list (of str): the sequences with missed cleavages.
     """
     missed = []
-    for k in range(len(sequences)-n_missed_cleavages):
+    for k in range(len(sequences)-n_missed_cleavages+1):
         missed.append(''.join(sequences[k-1:k+n_missed_cleavages]))
 
     return missed

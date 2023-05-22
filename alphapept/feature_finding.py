@@ -1875,6 +1875,8 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
             datatype='bruker'
         elif ext.lower() == '.mzml':
             datatype='mzml'
+        elif ext.lower() == '.wiff':
+            datatype='sciex'
         else:
             raise NotImplementedError('File extension {} not understood.'.format(ext))
 
@@ -1905,7 +1907,7 @@ def find_features(to_process:tuple, callback:Union[Callable, None] = None, paral
             if not settings['workflow']["find_features"]:
                 features = query_data_to_features(query_data)
             else:
-                if datatype in ['thermo','mzml']:
+                if datatype in ['thermo','mzml','sciex']:
 
                     from alphapept.constants import averagine_aa, isotopes
 

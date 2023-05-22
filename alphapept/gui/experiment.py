@@ -15,7 +15,6 @@ from alphapept.paths import (
 from alphapept.settings import load_settings_as_template, save_settings, load_settings
 from alphapept.gui.utils import escape_markdown, files_in_folder
 from alphapept.utils import get_size
-from st_aggrid import GridOptionsBuilder, AgGrid
 
 # Dict to match workflow
 WORKFLOW_DICT = {}
@@ -45,7 +44,7 @@ def parse_folder(file_folder: str) -> Tuple[list, list, list]:
     raw_files = [
         _
         for _ in os.listdir(file_folder)
-        if _.lower().endswith(".raw") or _.lower().endswith(".d") or _.lower().endswith(".mzml")
+        if _.lower().endswith(".raw") or _.lower().endswith(".d") or _.lower().endswith(".mzml")  or _.lower().endswith(".wiff")
     ]
     fasta_files = [_ for _ in os.listdir(file_folder) if _.lower().endswith(".fasta")]
     db_files = [
@@ -238,7 +237,7 @@ def file_df_from_files(raw_files: list, file_folder: str) -> pd.DataFrame:
     """
     raw_files.sort()
     sizes = [
-        round(get_size(os.path.join(file_folder, _)) / 1024 ** 3, 2)
+        round(get_size(os.path.join(file_folder, _)) / 1024**3, 2)
         for _ in raw_files
     ]
     created = [
@@ -265,7 +264,7 @@ def experiment():
 
     cwd = os.getcwd()
     file_folder = st.text_input(
-        "Enter path to folder that contains all experimental files. AlphaPept will parse for raw (.d / .raw), FASTA and AlphaPept database (.db_files.hdf) files and add them to the experiment.",
+        "Enter path to folder that contains all experimental files. AlphaPept will parse for raw (.d / .raw /. wiff), FASTA and AlphaPept database (.db_files.hdf) files and add them to the experiment.",
         cwd,
     )
 
@@ -281,42 +280,32 @@ def experiment():
 
             fasta_files = [os.path.join(file_folder, _) for _ in fasta_files]
 
-            recorder["experiment"]["file_paths"] = [
-                os.path.join(file_folder, _) for _ in raw_files
-            ]
-
             if len(raw_files) == 0:
                 st.warning("No raw files in folder.")
 
             else:
-                exclude = st.multiselect("Exclude files", raw_files)
-                raw_files = [_ for _ in raw_files if _ not in exclude]
 
                 file_df = file_df_from_files(raw_files, file_folder)
                 file_df['Sample group'] = file_df['Shortname']
                 file_df['Fraction'] = [1 for i in range(len(file_df))]
                 file_df["Matching group"] = [str(0)]*len(file_df)
 
-                gb = GridOptionsBuilder.from_dataframe(file_df)
-                gb.configure_default_column(
-                    groupable=True,
-                    value=True,
-                    enableRowGroup=True,
-                    aggFunc="sum",
-                    editable=True,
-                )
-                gb.configure_grid_options(domLayout="normal")
-                gridOptions = gb.build()
+                file_df['Use'] = True
 
-                grid_response = AgGrid(
-                    file_df,
-                    height=300,
-                    gridOptions=gridOptions,
-                )
+                file_df_selected = st.experimental_data_editor(file_df)
+            
+                file_df_selected = file_df_selected[file_df_selected['Use']]
 
-                file_df_selected = grid_response["data"]
+                recorder["experiment"]["file_paths"] = [
+                os.path.join(file_folder, _) for _ in file_df_selected['Filename']
+            ]
 
-                with st.expander("Additional info"):
+                if len(file_df_selected) == 0:
+                    st.warning("No files remaining.")
+                    st.stop()
+
+
+                with st.expander("Additional info about the columns"):
                     st.write(
                         "- Filename: Name of the file."
                         " \n- Creation date of file."
@@ -325,6 +314,7 @@ def experiment():
                         " \n- Sample group: Files with the same sample group will be quanted together (e.g. for fractionated samples)."
                         " \n- Fraction: Fraction number, if you have fractionated samples. Leave at 1 if no fractions exists."
                         " \n- Matching group: Match-between-runs only among members of this group or neighboring groups. Leave as is if matching between all files."
+                        " \n- Use: Uncheck to exclude files."
                     )
 
                 shortnames = file_df_selected["Shortname"].values.tolist()
@@ -372,7 +362,7 @@ def experiment():
                 ].values.tolist()
                 recorder["experiment"]["matching_group"] = matching_group
 
-                st.write(f"## Workflow")
+                st.write(f"## Processing steps")
 
                 with st.expander("Steps"):
                     group = SETTINGS_TEMPLATE["workflow"]
@@ -384,7 +374,7 @@ def experiment():
                 st.write("## Modify settings")
 
                 st.text(
-                    f"AlphaPept should run best with the default settings."
+                    f"AlphaPept runs best with the default settings."
                     "\nYou can overwrite the default setting by ticking a checkbox in Settings below and modifing a parameter."
                     "\nIf you uncheck a selected checkbox the values will be reset to default."
                 )
@@ -404,6 +394,9 @@ def experiment():
                 recorder = customize_settings(recorder, uploaded_settings, loaded)
 
                 st.write("## Submit experiment")
+                exp_size = file_df_selected['Size (GB)'].sum()
+                st.code(f'Experiment with {len(recorder["experiment"]["file_paths"])} files ({exp_size:.2f} GB).')
+
                 if error != 0:
                     st.warning("Some warnings exist. Please check settings.")
                 else:

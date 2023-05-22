@@ -141,7 +141,7 @@ AlphaPept as a package within the environment; see below.
     Linux](https://www.mono-project.com/download/stable/#download-lin).
     NOTE, the installed mono version should be at least 6.10, which
     requires you to add the ppa to your trusted sources!
-6.  Install pythonnet with `pip install pythonnet==2.5.2`
+6.  Install pythonnet with `pip install pythonnet>=2.5.2`
 
 ------------------------------------------------------------------------
 
@@ -172,7 +172,7 @@ AlphaPept as a package within the environment; see below.
   Make sure that the Path matches to your version (Here 6.12.0)
 - Save everything and execute `. ~/.zshrc`
 
-4.  Install pythonnet with `pip install pythonnet==2.5.2`
+4.  Install pythonnet with `pip install pythonnet>=2.5.2`
 
 ------------------------------------------------------------------------
 
@@ -226,6 +226,33 @@ To use AlphaPept as a stand-alone program for end-users, it can be
 installed on Windows machines via a one-click installer. Download the
 latest version
 [here](https://github.com/MannLabs/alphapept/releases/latest).
+
+## Docker
+
+It is possible to run AlphaPept in a docker container. For this, we
+provide two Dockerfiles: `Dockerfile_thermo` and `Dockerfile_bruker`,
+depending on which filetypes you want to analyse. They are split because
+of drastically different requirements.
+
+To run, navigate to the AlphaPept repository and rename the dockerfile
+you want to use, e.g. `Dockerfile_thermo` to `Dockerfile`.
+
+- Build the image with: `docker build -t docker-alphapept:latest .`
+- To run use
+  `docker run -p 8505:8505 -v /Users/username/Desktop/docker:/home/alphapept/ docker-alphapept:latest alphapept gui`
+  (Note that -v maps a local folder for convient file transfer)
+- Access the AlphaPept GUI via `localhost:8505` in your browser.
+- Note 1: The Thermo Dockerfile is built on a Jupyter image, so you can
+  also start a jupyter instance:
+  `docker run -p 8888:8888 -v /Users/username/Desktop/docker:/home/jovyan/ docker-alphapept:latest jupyter notebook --allow-root`
+
+### Docker Troubleshooting on M1-Mac
+
+- The Thermo dockerfile was tested on an M1-Mac. Resources were set to
+  18GB RAM and 2 CPUs, 200 GB disk
+- It was possible to build the Bruker dockerfile with the platform tag
+  `--platform linux/amd64`. However, it was very slow and the Bruker
+  file is not recommended for an M1-Mac. Windows worked nicely.
 
 ## Additional Documentation
 

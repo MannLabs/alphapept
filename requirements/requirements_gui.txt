@@ -1,5 +1,4 @@
 plotly_express==0.4.1
-streamlit-aggrid==0.2.3.post2
-streamlit>=1.13
+streamlit>=1.20.0
 watchdog==2.1.9
 wget==3.2

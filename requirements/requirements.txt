@@ -6,7 +6,7 @@ matplotlib==3.6.1
 networkx==2.8.6
 numba==0.55.2
 numpy==1.20.3
-pandas==1.4.3
+pandas==2.0.1
 psutil==5.9.1
 pyteomics==4.5.5
 pyyaml==6.0
@@ -15,3 +15,5 @@ scipy==1.8.1
 SQLAlchemy==1.4.39
 tables==3.6.1
 tqdm==4.64.0
+alphatims==1.0.7
+alpharaw==0.1.0

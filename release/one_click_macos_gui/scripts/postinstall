@@ -1,6 +1,0 @@
-#!/bin/sh
-
-# make sure this file itself is executable
-xattr -dr com.apple.quarantine /Applications/alphapept.app
-chmod -R 577 /Applications/alphapept.app
-echo "Postinstall finished"
