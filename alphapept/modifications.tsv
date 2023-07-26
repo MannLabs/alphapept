@@ -32,3 +32,13 @@ EASItag 6-plex on K	amino acid residue	K	266.0838675	266.0838675	0	0	none	999999
 Arg 10 on peptide C-terminus	peptide C-terminus	R	10.008269577760007	10.008269577760007	0	0	none	none	Arg10	13C615N4	arg10>R
 Arg 6 on peptide C-terminus	peptide C-terminus	R	6.020130000000005	6.020130000000005	0	0	none	none	Arg6	13C6	arg6>R
 Lys 8 on peptide C-terminus	peptide C-terminus	K	8.014199788880006	8.014199788880006	0	0	none	none	Lys8	13C15N2	lys8>K
+dimeth_0 on peptide N-terminus	peptide N-terminus	<	28.0313	28.0313	0	0	none	999999999	dimeth_0	none	dimeth0<^
+dimeth_0 on K	amino acid residue	K	28.0313	28.0313	0	0	none	999999999	dimeth_0	none	dimeth0K
+dimeth_4 on peptide N-terminus	peptide N-terminus	<	30.0439	30.0439	0	0	none	999999999	dimeth_4	none	dimeth4<^
+dimeth_4 on K	amino acid residue	K	30.0439	30.0439	0	0	none	999999999	dimeth_4	none	dimeth4K
+dimeth_8 on peptide N-terminus	peptide N-terminus	<	32.0564	32.0564	0	0	none	999999999	dimeth_8	none	dimeth8<^
+dimeth_8 on K	amino acid residue	K	32.0564	32.0564	0	0	none	999999999	dimeth_8	none	dimeth8K
+dimeth_12 on peptide N-terminus	peptide N-terminus	<	34.0690	34.0690	0	0	none	999999999	dimeth_12	none	dimeth12<^
+dimeth_12 on K	amino acid residue	K	34.0690	34.0690	0	0	none	999999999	dimeth_12	none	dimeth12K
+dimeth_16 on peptide N-terminus	peptide N-terminus	<	36.0757	36.0757	0	0	none	999999999	dimeth_16	none	dimeth16<^
+dimeth_16 on K	amino acid residue	K	36.0757	36.0757	0	0	none	999999999	dimeth_16	none	dimeth16K

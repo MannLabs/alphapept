@@ -258,11 +258,12 @@ def status():
                     log_txt = []
                     f = open(logfile, "r")
 
-                lines = f.readlines()[-200:]  # Limit to 200 lines
-
+                lines = f.readlines()[-200:]
+                
                 for line in lines:
                     if "__progress_current" in line:
                         current_p_ = float(line.split("__progress_current ")[1][:5])
+                        ##lol
                         current.progress(current_p_)
 
                         current_p.text(f"Current progress: {current_p_*100:.2f}%")
@@ -289,12 +290,12 @@ def status():
             queue_df["Created"] = created
 
             queue_table.table(queue_df)
-
+        
         failed = list_experiments(FAILED_PATH)
-        failed['Success'] = "❌"
+        failed['Success'] = "False"
 
         success = list_experiments(PROCESSED_PATH)
-        success['Success'] = "✅"
+        success['Success'] = "True/Processing"
 
         res = pd.concat([failed, success])
         res = res.sort_values('Creation Time', ascending=False)
@@ -303,3 +304,6 @@ def status():
 
         res_table.table(res.head(5))
         time.sleep(0.4)
+
+              
+                

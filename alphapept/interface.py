@@ -1232,6 +1232,13 @@ def parallel_execute(
         if not step(to_process[0], callback=callback, parallel=True):
             failed.append(files[0])
 
+    elif n_processes == 1:
+        logging.info(f'Proccessing one by one...')
+
+        for i in tqdm.tqdm(range(len(to_process))):
+                if not step(to_process[i], callback=callback, parallel=True):
+                    failed.append(files[i])
+                    
     else:
         #Limit number of processes for Bruker FF
         if step.__name__ == 'find_features':

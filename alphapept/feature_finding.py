@@ -1645,7 +1645,7 @@ def feature_finder_report(query_data:dict, isotope_patterns:list, isotope_charge
     mass_data = np.array(query_data['mass_list_ms1'])
     rt_idx = np.searchsorted(indices_, np.arange(len(mass_data)), side='right') - 1
     
-    lookup_idx= np.zeros((len(mass_data),2), dtype=np.int)-1
+    lookup_idx= np.zeros((len(mass_data),2), dtype=np.int32)-1
 
     int_data = np.array(query_data['int_list_ms1'])
 
