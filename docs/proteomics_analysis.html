@@ -6,9 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="A collection of functions primarily GUI operations">
 
-<title>alphapept - Display</title>
+<title>alphapept - AlphaPept: Proteomic Analysis</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -62,11 +61,11 @@ ul.task-list li input[type="checkbox"] {
 
 
 <link rel="stylesheet" href="styles.css">
-<meta property="og:title" content="alphapept - Display">
-<meta property="og:description" content="A collection of functions primarily GUI operations">
+<meta property="og:title" content="alphapept - AlphaPept: Proteomic Analysis">
+<meta property="og:description" content="This tutorial will cover the basic analysis of a mixed species dataset. We will analyze files from Puyvelde et al.">
 <meta property="og:site-name" content="alphapept">
-<meta name="twitter:title" content="alphapept - Display">
-<meta name="twitter:description" content="A collection of functions primarily GUI operations">
+<meta name="twitter:title" content="alphapept - AlphaPept: Proteomic Analysis">
+<meta name="twitter:description" content="This tutorial will cover the basic analysis of a mixed species dataset. We will analyze files from Puyvelde et al.">
 <meta name="twitter:card" content="summary">
 </head>
 
@@ -86,7 +85,7 @@ ul.task-list li input[type="checkbox"] {
     </nav>
   <nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
     <div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title">Display</h1>
+      <h1 class="quarto-secondary-nav-title">AlphaPept: Proteomic Analysis</h1>
       <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
         <i class="bi bi-chevron-right"></i>
       </button>
@@ -176,7 +175,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./display.html" class="sidebar-item-text sidebar-link active">Display</a>
+  <a href="./display.html" class="sidebar-item-text sidebar-link">Display</a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -201,7 +200,7 @@ ul.task-list li input[type="checkbox"] {
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./proteomics_analysis.html" class="sidebar-item-text sidebar-link">AlphaPept: Proteomic Analysis</a>
+  <a href="./proteomics_analysis.html" class="sidebar-item-text sidebar-link active">AlphaPept: Proteomic Analysis</a>
   </div>
 </li>
     </ul>
@@ -213,9 +212,16 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#sequence-coverage" id="toc-sequence-coverage" class="nav-link active" data-scroll-target="#sequence-coverage">Sequence coverage</a>
+  <li><a href="#prerequistes" id="toc-prerequistes" class="nav-link active" data-scroll-target="#prerequistes">Prerequistes</a></li>
+  <li><a href="#files" id="toc-files" class="nav-link" data-scroll-target="#files">Files</a></li>
+  <li><a href="#organize-files" id="toc-organize-files" class="nav-link" data-scroll-target="#organize-files">Organize Files</a></li>
+  <li><a href="#fasta-files" id="toc-fasta-files" class="nav-link" data-scroll-target="#fasta-files">FASTA files</a></li>
+  <li><a href="#creating-a-new-experiment" id="toc-creating-a-new-experiment" class="nav-link" data-scroll-target="#creating-a-new-experiment">Creating a new experiment</a>
   <ul class="collapse">
-  <li><a href="#calculate_sequence_coverage" id="toc-calculate_sequence_coverage" class="nav-link" data-scroll-target="#calculate_sequence_coverage">calculate_sequence_coverage</a></li>
+  <li><a href="#files-1" id="toc-files-1" class="nav-link" data-scroll-target="#files-1">Files</a></li>
+  <li><a href="#settings" id="toc-settings" class="nav-link" data-scroll-target="#settings">Settings</a></li>
+  <li><a href="#status" id="toc-status" class="nav-link" data-scroll-target="#status">Status</a></li>
+  <li><a href="#results" id="toc-results" class="nav-link" data-scroll-target="#results">Results</a></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/mannlabs/alphapept/issues/new" class="toc-action">Report an issue</a></p></div></div></nav>
@@ -225,14 +231,9 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title d-none d-lg-block">Display</h1>
+<h1 class="title d-none d-lg-block">AlphaPept: Proteomic Analysis</h1>
 </div>
 
-<div>
-  <div class="description">
-    A collection of functions primarily GUI operations
-  </div>
-</div>
 
 
 <div class="quarto-title-meta">
@@ -246,19 +247,92 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 <!-- WARNING: THIS FILE WAS AUTOGENERATED! DO NOT EDIT! -->
-<section id="sequence-coverage" class="level2">
-<h2 class="anchored" data-anchor-id="sequence-coverage">Sequence coverage</h2>
-<p>Calculate the coverage of a target protein sequence by peptides in a given list</p>
-<hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/display.py#L9" target="_blank" style="float:right; font-size:smaller">source</a></p>
-<section id="calculate_sequence_coverage" class="level3">
-<h3 class="anchored" data-anchor-id="calculate_sequence_coverage">calculate_sequence_coverage</h3>
-<blockquote class="blockquote">
-<pre><code> calculate_sequence_coverage (target_sequence:str, peptide_list:list)</code></pre>
-</blockquote>
-<p>Calculate the percentage of a target protein covered by a list of peptides. Args: target_sequence (str): the protein sequence against which the peptide_list should be compared. peptide_list (List[str]): the list of peptides (str) to be compared against the target_sequence. return: int: number of residues in target_sequence. int: number of residues in target_sequence covered by peptides in peptide_list. float: percentage of residues in target_sequence covered by peptides in peptide_list. list (dict{str:bool}): list of dicts where keys are residue one-letter codes and values are bool (covered = True, not-covered = False).</p>
+<p>This tutorial will cover the basic analysis of a mixed species dataset. We will analyze files from Puyvelde et al.: <a href="10.1038/s41597-022-01216-6">“A comprehensive LFQ benchmark dataset on modern day acquisition strategies in proteomics”</a>.</p>
+<p>The data is available at ProteomeXchange as <a href="https://proteomecentral.proteomexchange.org/cgi/GetDataset?ID=PXD028735">PXD028735</a>.</p>
+<section id="prerequistes" class="level2">
+<h2 class="anchored" data-anchor-id="prerequistes">Prerequistes</h2>
+<p>Download and install AlphaPept according to the Readme.</p>
+</section>
+<section id="files" class="level2">
+<h2 class="anchored" data-anchor-id="files">Files</h2>
+<p>We will download the files from the DDA dataset for Thermo. This is the following six files:</p>
+<ul>
+<li>LFQ_Orbitrap_DDA_Condition_A_Sample_Alpha_01.raw</li>
+<li>LFQ_Orbitrap_DDA_Condition_A_Sample_Alpha_02.raw</li>
+<li>LFQ_Orbitrap_DDA_Condition_A_Sample_Alpha_03.raw</li>
+<li>LFQ_Orbitrap_DDA_Condition_B_Sample_Alpha_01.raw</li>
+<li>LFQ_Orbitrap_DDA_Condition_B_Sample_Alpha_02.raw</li>
+<li>LFQ_Orbitrap_DDA_Condition_B_Sample_Alpha_03.raw</li>
+</ul>
+</section>
+<section id="organize-files" class="level2">
+<h2 class="anchored" data-anchor-id="organize-files">Organize Files</h2>
+<p>To process the data, we will place all files in one folder like so:</p>
+<p><img src="https://i.imgur.com/Nj7BCOQ.png" class="img-fluid"></p>
+</section>
+<section id="fasta-files" class="level2">
+<h2 class="anchored" data-anchor-id="fasta-files">FASTA files</h2>
+<p>You can either place the <code>.fasta</code>-files directly in the folder or you can use the FASTA management in the GUI. AlphaPept can directly download FASTA files from UniProt and stores them locally in the user folder (i.e., that is <code>C:\Users\admin\.alphapept\fasta</code>.</p>
+<p>We download all four FASTA files by clicking on the respective button, waiting for the download, and refreshing the page afterward. <img src="https://i.imgur.com/m1nq6VI.png" class="img-fluid"></p>
+<p><img src="https://i.imgur.com/j2vRaAI.png" class="img-fluid"></p>
+</section>
+<section id="creating-a-new-experiment" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-new-experiment">Creating a new experiment</h2>
+<section id="files-1" class="level3">
+<h3 class="anchored" data-anchor-id="files-1">Files</h3>
+<p>Next, we switch to the <code>New experiment</code>-Tab and enter the file path. The page should refresh, and all files should be listed.</p>
+<p><img src="https://i.imgur.com/U0Ww4Ke.png" class="img-fluid"></p>
+<p>ℹ️ Note that you can deselect images by moving the slider to the right and deselecting <code>Use</code>.</p>
+<p><img src="https://i.imgur.com/HuXv8qk.png" class="img-fluid"></p>
+<p>Next, select the FASTA files you want to use for this run. Click on the <code>Select FASTA files</code>-dropdown button. If a FASTA file was in your data folder, it would be selectable here; otherwise, it will list everything alphapept user folder. For the example, we will select all FASTA files.</p>
+<p><img src="https://i.imgur.com/OAHEWvA.png" class="img-fluid"></p>
+<p>ℹ️ Note that you can hover over your selection to display the full filename.</p>
+</section>
+<section id="settings" class="level3">
+<h3 class="anchored" data-anchor-id="settings">Settings</h3>
+<p>By default, settings in AlphaPept are collapsed; you will not need to change them. You can adjust the Processing steps (e.g.&nbsp;if you only want to do feature finding and no search) in <code>Processing steps</code> and change settings in <code>Modify settings</code>). Suppose you would want to add a fixed modification; you would select fasta. This enables the FASTA settings, and you can use the menus to add and change the settings:</p>
+<p><img src="https://i.imgur.com/qlzTOYN.png" class="img-fluid"></p>
+<p>For the tutorial, we will not change any settings. Give your experiment a meaningful name, and if no warnings appear, you can click on <code>Submit</code>. Once the job has been submitted you will be prompted to go to the Status page.</p>
+<p><img src="https://i.imgur.com/vPsz5xX.png" class="img-fluid"></p>
+<p>ℹ️ AlphaPept has an internal processing queue - so you can submit multiple experiments, and they will be processed one after another.</p>
+</section>
+<section id="status" class="level3">
+<h3 class="anchored" data-anchor-id="status">Status</h3>
+<p>The Status page will periodically update and show you the process. In the green bar, you can see how much time has been spent on the respective job. It can take 1-2 minutes until you will see the process once a job has started.</p>
+<p><img src="https://i.imgur.com/HmRnIEC.png" class="img-fluid"></p>
+<p>ℹ️ You can expand <code>Full log</code> and <code>Queue</code> to see a detailed log of your processing job or to inspect the queue of future jobs that will be processed.</p>
+<p>ℹ️ Once the experiment is done, it will show <code>No files to process</code>.</p>
+</section>
+<section id="results" class="level3">
+<h3 class="anchored" data-anchor-id="results">Results</h3>
+<p>Once an experiment is processed, we can do some basic data exploration within AlphaPept. For this, click on the <code>Results</code>-Tab.</p>
+<p><img src="https://i.imgur.com/AwCTCDf.png" class="img-fluid"></p>
+<p>All previous experiments that were run in the GUI will be selectable here. You can also select a <code>*.hdf</code> file. Once loaded, you will see a <code>Run File Summary</code>, showing the number of MS1-Features, Peptides, and Protein Groups per run. You can hover over each column to see the filename. Additionally, you can read the <code>Run summary</code> with information about the settings and timings and the <code>Run log</code>.</p>
+<section id="exploring-tables-from-experiment" class="level4">
+<h4 class="anchored" data-anchor-id="exploring-tables-from-experiment">Exploring tables from Experiment</h4>
+<p>AlphaPept provides basic plotting functions to explore results from an experiment.</p>
+<p><strong>Volcano Plot:</strong> In <code>Volcano plot</code>, you can create a volcano plot to explore differentially expressed proteins. For this, select the groups. You will have the filenames available, and if LFQ-based processing is present can choose between LFQ-intensity or normal intensity. For the example, we will divide in Condition A and B LFQ intensities according to the filenames. If you can’t read the filenames as they are too long, hover over the file and wait to see the full name. The plot will automatically update while selecting the groups. You can hover over each point in the volcano plot to see the protein id. Additionally, you can use <code>Highlight proteins</code> to annotate specific proteins in the plot. For the sake of demonstration, we choose <code>P46683</code> and <code>P36578</code> for highlighting. The field is interactive so you can type to search for specific proteins.</p>
+<p><img src="https://i.imgur.com/DLFMzz6.png" class="img-fluid"></p>
+<p><strong>Correlation heatmap:</strong></p>
+<p>In <code>Correlation heatmap</code>, you can create a correlation heatmap based on the protein intensities. In the example case, you can nicely see how the conditions correlate.</p>
+<p><img src="https://i.imgur.com/vcs9gEj.png" class="img-fluid"></p>
+<p><strong>Scatterplot:</strong></p>
+<p><code>Scatterplot</code> shows you a scatterplot of protein intensities in one sample against another. You can choose the two filenames via the Group1 and Group2 selector. You can only select one file per group but can select the same file for each group. For the tutorial case, we will create a scatter plot between two samples of condition A (01 and 02. We can see that they are nicely correlating. The output also provides the results of an OLS Regression. In our case, we have a <code>R-squared</code> of <code>0.979</code> highlighting the high correlation (as expected) of samples of the same condition.</p>
+<p>ℹ️ Hovering over a data point will show you the respective protein. This can be useful to identify outliers.</p>
+<p><img src="https://i.imgur.com/zdjhUYb.png" class="img-fluid"></p>
+<p><strong>PCA:</strong></p>
+<p><code>PCA</code> will perform a PCA analysis of the data and show the first two components as a scatterplot. This can be very useful for finding files that cluster together and e.g., identify batch effects. For our example, we see that condition A and condition B are in close proximity of each other and form clusters, as expected.</p>
+<p><img src="https://i.imgur.com/7VzsJQe.png" class="img-fluid"></p>
+<p><strong>Sequence coverage map:</strong></p>
+<p><code>Sequence coverage map</code> can show you which peptides were identified for a specific protein. Click on a protein of interest, select the filename, and see which part of the protein sequence is covered by identified peptides.</p>
+<p><img src="https://i.imgur.com/iASIXoo.png" class="img-fluid"></p>
+<p><strong>Select group:</strong></p>
+<p>This allows to display the tabular data, which is stored in the <code>*.hdf</code>-files. As tables can be very large, you can select the data range via the slider. Clicking <code>Create download link</code> allows you to download the table.</p>
+<p><img src="https://i.imgur.com/1gEAl31.png" class="img-fluid"></p>
+<p>ℹ️ By default, you explore the <code>results.hdf</code> of an experiment. By using <code>Select file from experiment</code>, you can select individual experimental files and explore tables only from the respective run.</p>
 
 
+</section>
 </section>
 </section>
 

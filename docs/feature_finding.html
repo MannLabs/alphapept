@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.1.189">
+<meta name="generator" content="quarto-1.2.258">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -128,15 +128,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link rel="stylesheet" href="styles.css">
 <meta property="og:title" content="alphapept - Feature Finding">
 <meta property="og:description" content="Functions related to feature finding">
-<meta property="og:image" content="https://mannlabs.github.io/alphapept/04_feature_finding_files/figure-html/cell-7-output-1.png">
+<meta property="og:image" content="https://mannlabs.github.io/alphapept/04_feature_finding_files\figure-html\cell-7-output-1.png">
 <meta property="og:site-name" content="alphapept">
-<meta property="og:image:height" content="333">
-<meta property="og:image:width" content="329">
+<meta property="og:image:height" content="470">
+<meta property="og:image:width" content="457">
 <meta name="twitter:title" content="alphapept - Feature Finding">
 <meta name="twitter:description" content="Functions related to feature finding">
-<meta name="twitter:image" content="https://mannlabs.github.io/alphapept/04_feature_finding_files/figure-html/cell-7-output-1.png">
-<meta name="twitter:image-height" content="333">
-<meta name="twitter:image-width" content="329">
+<meta name="twitter:image" content="https://mannlabs.github.io/alphapept/04_feature_finding_files\figure-html\cell-7-output-1.png">
+<meta name="twitter:image-height" content="470">
+<meta name="twitter:image-width" content="457">
 <meta name="twitter:card" content="summary_large_image">
 </head>
 
@@ -266,7 +266,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept: Workflow and Files</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./proteomics_analysis.html" class="sidebar-item-text sidebar-link">AlphaPept: Proteomic Analysis</a>
   </div>
 </li>
     </ul>
@@ -386,6 +391,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="quarto-title-meta">
 
     
+  
     
   </div>
   
@@ -1201,7 +1207,7 @@ False</code></pre>
 <h2 class="anchored" data-anchor-id="mapping">Mapping</h2>
 <p>Mapping MS1 to MS2</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L2037" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L2039" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="map_ms2" class="level3">
 <h3 class="anchored" data-anchor-id="map_ms2">map_ms2</h3>
 <blockquote class="blockquote">
@@ -1213,7 +1219,7 @@ False</code></pre>
 <p>Map MS1 features to MS2 based on rt and mz. If ccs is included also add. Args: feature_table (pd.DataFrame): Pandas DataFrame with features. query_data (dict): Data structure containing the query data. map_mz_range (float, optional): Mapping range for mz (Da). Defaults to 1. map_rt_range (float, optional): Mapping range for rt (min). Defaults to 0.5. map_mob_range (float, optional): Mapping range for mobility (%). Defaults to 0.3. map_n_neighbors (int, optional): Maximum number of neighbors to be extracted. Defaults to 5. search_unidentified (bool, optional): Flag to perform search on features that have no isotope pattern. Defaults to False.</p>
 <p>Returns: pd.DataFrame: Table with features.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L2022" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/feature_finding.py#L2024" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="replace_infs" class="level3">
 <h3 class="anchored" data-anchor-id="replace_infs">replace_infs</h3>
@@ -1270,7 +1276,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -1306,24 +1329,42 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>

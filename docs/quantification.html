@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.1.189">
+<meta name="generator" content="quarto-1.2.258">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -263,7 +263,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept: Workflow and Files</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./proteomics_analysis.html" class="sidebar-item-text sidebar-link">AlphaPept: Proteomic Analysis</a>
   </div>
 </li>
     </ul>
@@ -341,6 +346,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="quarto-title-meta">
 
     
+  
     
   </div>
   
@@ -476,30 +482,30 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <tr>
       <th>0</th>
       <td>L-BFGS-B</td>
-      <td>0.006430</td>
-      <td>0.664871</td>
-      <td>0.536730</td>
+      <td>0.038708</td>
+      <td>0.650344</td>
+      <td>0.549985</td>
     </tr>
     <tr>
       <th>1</th>
       <td>TNC</td>
-      <td>0.006432</td>
-      <td>0.711535</td>
-      <td>0.574400</td>
+      <td>0.036841</td>
+      <td>0.730719</td>
+      <td>0.617958</td>
     </tr>
     <tr>
       <th>2</th>
       <td>SLSQP</td>
-      <td>0.000985</td>
-      <td>0.664871</td>
-      <td>0.536730</td>
+      <td>0.004065</td>
+      <td>0.650344</td>
+      <td>0.549985</td>
     </tr>
     <tr>
       <th>3</th>
       <td>trf</td>
-      <td>0.059646</td>
-      <td>0.666316</td>
-      <td>0.537896</td>
+      <td>0.214873</td>
+      <td>0.650427</td>
+      <td>0.550056</td>
     </tr>
   </tbody>
 </table>
@@ -721,7 +727,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="solving-single-profiles" class="level2">
 <h2 class="anchored" data-anchor-id="solving-single-profiles">Solving single profiles</h2>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L423" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L430" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="protein_profile" class="level3">
 <h3 class="anchored" data-anchor-id="protein_profile">protein_profile</h3>
 <blockquote class="blockquote">
@@ -832,7 +838,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <li>protein_profile_prallalel_mq: A wrapper function to calculate protein ratios based on MaxQuant tabular data</li>
 </ul>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L493" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L500" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="protein_profile_parallel" class="level3">
 <h3 class="anchored" data-anchor-id="protein_profile_parallel">protein_profile_parallel</h3>
 <blockquote class="blockquote">
@@ -843,7 +849,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: df (pd.DataFrame): Feature table by alphapept. minimum_ratios (int): Minimum number of peptide ratios necessary to derive a protein ratio. field (str): The field containing the quantitative peptide information (i.e.&nbsp;precursor intensities). callback ([type], optional): Callback function. Defaults to None.</p>
 <p>Returns: pd.DataFrame: table containing the LFQ intensities of each protein in each sample.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L595" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L602" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="protein_profile_parallel_mq" class="level3">
 <h3 class="anchored" data-anchor-id="protein_profile_parallel_mq">protein_profile_parallel_mq</h3>
@@ -858,7 +864,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Raises: FileNotFoundError: if Maxquant files cannot be found.</p>
 <p>Returns: pd.DataFrame: table containing the LFQ intensities of each protein in each sample.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L565" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/quantification.py#L572" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="protein_profile_parallel_ap" class="level3">
 <h3 class="anchored" data-anchor-id="protein_profile_parallel_ap">protein_profile_parallel_ap</h3>
@@ -918,7 +924,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -954,24 +977,42 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>

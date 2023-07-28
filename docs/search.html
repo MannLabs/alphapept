@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.1.189">
+<meta name="generator" content="quarto-1.2.258">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -259,7 +259,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept workflow and files</a>
+  <a href="./file_formats.html" class="sidebar-item-text sidebar-link">AlphaPept: Workflow and Files</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./proteomics_analysis.html" class="sidebar-item-text sidebar-link">AlphaPept: Proteomic Analysis</a>
   </div>
 </li>
     </ul>
@@ -342,6 +347,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="quarto-title-meta">
 
     
+  
     
   </div>
   
@@ -499,10 +505,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
            features:pandas.core.frame.DataFrame, parallel:bool,
            frag_tol:float, prec_tol:float, ppm:bool, min_frag_hits:int,
            callback:Callable=None, prec_tol_calibrated:float=None,
-           frag_tol_calibrated:float=None, **kwargs)</code></pre>
+           frag_tol_calibrated:float=None, top_n:int=10, **kwargs)</code></pre>
 </blockquote>
 <p>[summary]</p>
-<p>Args: query_data (dict): Data structure containing the query data. db_data (dict): Data structure containing the database data. features (pd.DataFrame): Pandas dataframe containing feature data. parallel (bool): Flag to use parallel processing. frag_tol (float): Fragment tolerance for search. prec_tol (float): Precursor tolerance for search. ppm (bool): Flag to use ppm instead of Dalton. min_frag_hits (int): Minimum number of frag hits to report a PSMs. callback (Callable, optional): Optional callback. Defaults to None. prec_tol_calibrated (float, optional): Precursor tolerance if calibration exists. Defaults to None. frag_tol_calibrated (float, optional): Fragment tolerance if calibration exists. Defaults to None.</p>
+<p>Args: query_data (dict): Data structure containing the query data. db_data (dict): Data structure containing the database data. features (pd.DataFrame): Pandas dataframe containing feature data. parallel (bool): Flag to use parallel processing. frag_tol (float): Fragment tolerance for search. prec_tol (float): Precursor tolerance for search. ppm (bool): Flag to use ppm instead of Dalton. min_frag_hits (int): Minimum number of frag hits to report a PSMs. callback (Callable, optional): Optional callback. Defaults to None. prec_tol_calibrated (float, optional): Precursor tolerance if calibration exists. Defaults to None. frag_tol_calibrated (float, optional): Fragment tolerance if calibration exists. Defaults to None. top_n (int): Number of top-n hits to keep.</p>
 <p>Returns: np.ndarray: Numpy recordarray storing the PSMs. int: 0</p>
 </section>
 </section>
@@ -513,7 +519,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="frag-delta">Frag Delta</h3>
 <p><a href="https://mannlabs.github.io/alphapept/search.html#frag_delta"><code>frag_delta</code></a> substracts the experimental fragment masses from the theoretical fragment masses for each hit.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L358" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L359" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="frag_delta" class="level3">
 <h3 class="anchored" data-anchor-id="frag_delta">frag_delta</h3>
@@ -529,7 +535,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="intensity-fraction">Intensity Fraction</h3>
 <p><a href="https://mannlabs.github.io/alphapept/search.html#intensity_fraction"><code>intensity_fraction</code></a> calculates the fraction of matched intensity. This refers to the intensity of all hits compared to the intensity of all peaks in the query spectrum.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L379" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L380" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="intensity_fraction" class="level3">
 <h3 class="anchored" data-anchor-id="intensity_fraction">intensity_fraction</h3>
@@ -544,7 +550,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="file-format">File Format</h3>
 <p>To have an efficient data format to store PSMs in the search. We use <code>numpy</code>-recarrays and define the utility functions <a href="https://mannlabs.github.io/alphapept/search.html#add_column"><code>add_column</code></a> and <a href="https://mannlabs.github.io/alphapept/search.html#remove_column"><code>remove_column</code></a> to append and remove data.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L422" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L423" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="remove_column" class="level3">
 <h3 class="anchored" data-anchor-id="remove_column">remove_column</h3>
@@ -555,7 +561,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: recarray (np.ndarray): NumPy record array. name (str): Column name of the column to be removed.</p>
 <p>Returns: np.ndarray: NumPy record array with removed column.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L403" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L404" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="add_column" class="level3">
 <h3 class="anchored" data-anchor-id="add_column">add_column</h3>
@@ -585,7 +591,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h3 class="anchored" data-anchor-id="features">Features</h3>
 <p>In the <a href="https://mannlabs.github.io/alphapept/search.html#score"><code>score</code></a>-function we use the pre-filtered PSMs to extract additional columns for scoring such as the offset from theoretical to experimental precursor or the number of b- and y-ion hits.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L443" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L444" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_hits" class="level3">
 <h3 class="anchored" data-anchor-id="get_hits">get_hits</h3>
@@ -599,7 +605,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: query_frag (np.ndarray): Array with query fragments. query_int (np.ndarray): Array with query intensities. db_frag (np.ndarray): Array with database fragments. db_int (np.ndarray): Array with database intensities. frag_type (np.ndarray): Array with fragment types. mtol (float): Mass tolerance. ppm (bool): Flag to use ppm instead of Dalton. losses (list): List of losses.</p>
 <p>Returns: np.ndarray: NumPy array that stores ion information.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L503" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L504" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="score" class="level3">
 <h3 class="anchored" data-anchor-id="score">score</h3>
@@ -616,7 +622,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: psms (np.recarray): Recordarray containing PSMs. query_masses (np.ndarray): Array with query masses. query_masses_raw (np.ndarray): Array with raw query masses. query_frags (np.ndarray): Array with frag types of the query data. query_ints (np.ndarray): Array with fragment intensities from the query. query_indices (np.ndarray): Array with indices to the query data. db_masses (np.ndarray): Array with database masses. db_frags (np.ndarray): Array with fragment masses. frag_types (np.ndarray): Array with fragment types. mtol (float): Mass tolerance. db_indices (np.ndarray): Array with indices to the database array. ppm (bool): Flag to use ppm instead of Dalton. psms_dtype (list): List describing the dtype of the PSMs record array. db_ints (np.ndarray, optional): Array with database intensities. Defaults to None. parallel (bool, optional): Flag to use parallel processing. Defaults to False.</p>
 <p>Returns: np.recarray: Recordarray containing PSMs with additional columns. np.ndarray: NumPy array containing ion information.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L613" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L614" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_sequences" class="level3">
 <h3 class="anchored" data-anchor-id="get_sequences">get_sequences</h3>
@@ -627,7 +633,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: psms (np.recarray): Recordarray containing PSMs. db_seqs (np.ndarray): NumPy array containing sequences.</p>
 <p>Returns: np.ndarray: NumPy array containing a subset of sequences.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L631" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L632" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="get_score_columns" class="level3">
 <h3 class="anchored" data-anchor-id="get_score_columns">get_score_columns</h3>
@@ -647,7 +653,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="plot" class="level2">
 <h2 class="anchored" data-anchor-id="plot">Plot</h2>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L812" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L813" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="plot_psms" class="level3">
 <h3 class="anchored" data-anchor-id="plot_psms">plot_psms</h3>
 <blockquote class="blockquote">
@@ -667,7 +673,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h2 class="anchored" data-anchor-id="searching-with-database">Searching with database</h2>
 <p>We save intermediate results to hdf5 files</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L903" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L904" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="search_db" class="level3">
 <h3 class="anchored" data-anchor-id="search_db">search_db</h3>
 <blockquote class="blockquote">
@@ -678,7 +684,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: to_process (tuple): Tuple containing an index to the file and the experiment settings. callback (Callable, optional): Callback function to indicate progress. Defaults to None. parallel (bool, optional): Flag to use parallel processing. Defaults to False. first_search (bool, optional): Flag to indicate this is the first search. Defaults to True.</p>
 <p>Returns: Union[bool, str]: Returns True if the search was successfull, otherwise returns a string containing the Exception.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L876" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L877" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="store_hdf" class="level3">
 <h3 class="anchored" data-anchor-id="store_hdf">store_hdf</h3>
@@ -693,7 +699,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <section id="searching-large-fasta-and-or-search-space" class="level2">
 <h2 class="anchored" data-anchor-id="searching-large-fasta-and-or-search-space">Searching Large Fasta and or Search Space</h2>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L994" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L995" target="_blank" style="float:right; font-size:smaller">source</a></p>
 <section id="search_fasta_block" class="level3">
 <h3 class="anchored" data-anchor-id="search_fasta_block">search_fasta_block</h3>
 <blockquote class="blockquote">
@@ -703,7 +709,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: to_process (tuple): Tuple containing a fasta_index, fasta_block, a list of files and a list of experimental settings.</p>
 <p>Returns: list: A list of dataframes when searching the respective file. int: Number of new peptides that were generated in this iteration.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L1105" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L1106" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="filter_top_n" class="level3">
 <h3 class="anchored" data-anchor-id="filter_top_n">filter_top_n</h3>
@@ -714,7 +720,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: temp (pd.DataFrame): Pandas DataFrame containing PSMs. top_n (int, optional): Number of top-n entries to be kept. Defaults to 10.</p>
 <p>Returns: pd.DataFrame: Filtered DataFrame.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L1199" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L1200" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="search_parallel" class="level3">
 <h3 class="anchored" data-anchor-id="search_parallel">search_parallel</h3>
@@ -727,7 +733,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Args: settings (dict): Settings file containg the experimental definitions. calibration (Union[list, None], optional): List of calibrated offsets. Defaults to None. fragment_calibration (Union[list, None], optional): List of calibrated fragment offsets. Defaults to None. callback (Union[Callable, None], optional): Callback function. Defaults to None.</p>
 <p>Returns: dict: FASTA dictionary.</p>
 <hr>
-<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L1143" target="_blank" style="float:right; font-size:smaller">source</a></p>
+<p><a href="https://github.com/mannlabs/alphapept/blob/master/alphapept/search.py#L1144" target="_blank" style="float:right; font-size:smaller">source</a></p>
 </section>
 <section id="ion_extractor" class="level3">
 <h3 class="anchored" data-anchor-id="ion_extractor">ion_extractor</h3>
@@ -785,7 +791,24 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     button.classList.add('code-copy-button-checked');
     var currentTitle = button.getAttribute("title");
     button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
     setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
       button.setAttribute("title", currentTitle);
       button.classList.remove('code-copy-button-checked');
     }, 1000);
@@ -821,24 +844,42 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
   var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
   for (var i=0; i<bibliorefs.length; i++) {
     const ref = bibliorefs[i];
-    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
-    tippyHover(ref, function() {
-      var popup = window.document.createElement('div');
-      cites.forEach(function(cite) {
-        var citeDiv = window.document.createElement('div');
-        citeDiv.classList.add('hanging-indent');
-        citeDiv.classList.add('csl-entry');
-        var biblioDiv = window.document.getElementById('ref-' + cite);
-        if (biblioDiv) {
-          citeDiv.innerHTML = biblioDiv.innerHTML;
-        }
-        popup.appendChild(citeDiv);
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
       });
-      return popup.innerHTML;
-    });
+    }
   }
 });
 </script>
