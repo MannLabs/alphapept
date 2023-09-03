@@ -13,7 +13,7 @@ pyyaml==6.0
 scikit-learn==1.1.2
 scipy==1.8.1
 SQLAlchemy==1.4.39
-tables==3.6.1
+tables==3.8.0
 tqdm==4.64.0
 alphatims==1.0.7
 alpharaw==0.1.0
