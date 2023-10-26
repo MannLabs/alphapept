@@ -292,7 +292,7 @@ def experiment():
 
                 file_df['Use'] = True
 
-                file_df_selected = st.experimental_data_editor(file_df)
+                file_df_selected = st.data_editor(file_df)
             
                 file_df_selected = file_df_selected[file_df_selected['Use']]
 
