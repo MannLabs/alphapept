@@ -1,0 +1,60 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite both the article from preferred-citation and the software itself."
+authors:
+  - family-names: Strauss
+    given-names: Maximilian T.
+  - family-names: Bludau
+    given-names: Isabell
+  - family-names: Zeng
+    given-names: Wen-Feng
+  - family-names: Voytik
+    given-names: Eugenia
+  - family-names: Ammar
+    given-names: Constantin
+  - family-names: Schessner
+    given-names: Julia P.
+  - family-names: Ilango
+    given-names: Rajesh
+  - family-names: Gill
+    given-names: Michelle
+  - family-names: Meier
+    given-names: Florian
+  - family-names: Willems
+    given-names: Sander
+  - family-names: Mann
+    given-names: Matthias
+title: "AlphaPept: a modern and open framework for MS-based proteomics"
+version: 15.1
+date-released: 2024-03-09
+doi: "10.1038/s41467-024-46485-4"
+repository-code: [Your repository link here]
+license: [Your license here]
+preferred-citation:
+  authors:
+    - family-names: Strauss
+      given-names: Maximilian T.
+    - family-names: Bludau
+      given-names: Isabell
+    - family-names: Zeng
+      given-names: Wen-Feng
+    - family-names: Voytik
+      given-names: Eugenia
+    - family-names: Ammar
+      given-names: Constantin
+    - family-names: Schessner
+      given-names: Julia P.
+    - family-names: Ilango
+      given-names: Rajesh
+    - family-names: Gill
+      given-names: Michelle
+    - family-names: Meier
+      given-names: Florian
+    - family-names: Willems
+      given-names: Sander
+    - family-names: Mann
+      given-names: Matthias
+  title: "AlphaPept: a modern and open framework for MS-based proteomics"
+  type: article
+  year: 2024
+  doi: "10.1038/s41467-024-46485-4"
+  journal: "Nature Communications"
