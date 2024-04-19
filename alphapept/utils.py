@@ -252,7 +252,10 @@ def check_size(settings):
         if free < size:
             logging.info(f'Required disk space for {base} - {size:.2f} Gb, Available {free:.2f} Gb.')
             logging.info('Not enough disk space for analysis. Please free disk space.')
-            raise
+
+            #raise if windows system
+            if os.name == 'nt':
+                raise MemoryError('Not enough disk space for analysis. Please free disk space.')
         else:
             logging.info(f'Required disk space for {base} - {size:.2f} Gb, Available {free:.2f} Gb OK.')
 
