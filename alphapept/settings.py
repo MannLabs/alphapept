@@ -322,29 +322,30 @@ def create_default_settings():
     save_settings(SETTINGS_TEMPLATE,  os.path.join(AP_PATH, 'settings_template.yaml'))
     
 
-import os
-import logging
+if __name__ == "__main__":
+    import os
+    import logging
 
-md5, sha1 = hash_file(modfile_path)
+    md5, sha1 = hash_file(modfile_path)
 
-HOME = os.path.expanduser("~")
-AP_PATH = os.path.join(HOME, ".alphapept")
-DEFAULT_SETTINGS_PATH = os.path.join(AP_PATH, 'default_settings.yaml')
+    HOME = os.path.expanduser("~")
+    AP_PATH = os.path.join(HOME, ".alphapept")
+    DEFAULT_SETTINGS_PATH = os.path.join(AP_PATH, 'default_settings.yaml')
 
-skip = False
+    skip = False
 
-previous_md5 = None
-if os.path.isfile(DEFAULT_SETTINGS_PATH):
-    s_ = load_settings(DEFAULT_SETTINGS_PATH)
-    if 'modfile_hash' in s_['general']:
-        previous_md5 = s_['general']['modfile_hash'] 
+    previous_md5 = None
+    if os.path.isfile(DEFAULT_SETTINGS_PATH):
+        s_ = load_settings(DEFAULT_SETTINGS_PATH)
+        if 'modfile_hash' in s_['general']:
+            previous_md5 = s_['general']['modfile_hash'] 
 
-if previous_md5 is not None:
-    if previous_md5 == md5:
-        skip = True
-                
-if not skip:     
-    logging.info('Creating default settings.')
-    create_default_settings()
-else:
-    logging.info('Using existing settings.')
+    if previous_md5 is not None:
+        if previous_md5 == md5:
+            skip = True
+                    
+    if not skip:     
+        logging.info('Creating default settings.')
+        create_default_settings()
+    else:
+        logging.info('Using existing settings.')
